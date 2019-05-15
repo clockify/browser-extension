@@ -1,0 +1,206 @@
+.settings__header {
+    width: 100%;
+    margin: 20px 20px;
+    box-shadow: inset 0px -1px 1px -1px #bbb;
+}
+
+.settings__title {
+    text-align: center;
+}
+
+.settings__content {
+    width: 50%;
+    margin: 25px auto 0 auto;
+}
+
+.settings__permissions__filter {
+    width: 210px;
+    padding: 3px 20px 3px 3px;
+    box-sizing: border-box;
+    color: rgb(68, 68, 68);
+    min-height: 2em;
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgb(191, 191, 191);
+    border-image: initial;
+    border-radius: 2px;
+    font: inherit;
+    margin: 0px;
+    outline: none;
+}
+
+.settings__permissions-toolbar {
+    margin-top: 20px;
+}
+
+.settings__permissions__button-container {
+    margin: 10px 0 10px 0;
+}
+
+.settings__permissions__button-enable-all {
+    min-height: 2em;
+    min-width: 4em;
+    user-select: none;
+    background-image: linear-gradient(rgb(237, 237, 237), rgb(237, 237, 237) 38%, rgb(222, 222, 222));
+    box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 0px, rgba(255, 255, 255, 0.75) 0px 1px 2px inset;
+    color: rgb(68, 68, 68);
+    text-shadow: rgb(240, 240, 240) 0px 1px 0px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgba(0, 0, 0, 0.25);
+    border-image: initial;
+    border-radius: 2px;
+    font: inherit;
+    margin: 0px 1px 0px 0px;
+    outline: none;
+}
+
+.settings__permissions__button-disable-all {
+    min-height: 2em;
+    min-width: 4em;
+    user-select: none;
+    background-image: linear-gradient(rgb(237, 237, 237), rgb(237, 237, 237) 38%, rgb(222, 222, 222));
+    box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 0px, rgba(255, 255, 255, 0.75) 0px 1px 2px inset;
+    color: rgb(68, 68, 68);
+    text-shadow: rgb(240, 240, 240) 0px 1px 0px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgba(0, 0, 0, 0.25);
+    border-image: initial;
+    border-radius: 2px;
+    font: inherit;
+    margin: 0px 1px 0px 0px;
+    outline: none;
+}
+
+.settings__custom-domains__button-container {
+    display: flex;
+    margin-top: 15px;
+}
+
+.settings__custom-domains__button {
+    min-height: 2em;
+    min-width: 4em;
+    user-select: none;
+    background-image: linear-gradient(rgb(237, 237, 237), rgb(237, 237, 237) 38%, rgb(222, 222, 222));
+    box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 0px, rgba(255, 255, 255, 0.75) 0px 1px 2px inset;
+    color: rgb(68, 68, 68);
+    text-shadow: rgb(240, 240, 240) 0px 1px 0px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgba(0, 0, 0, 0.25);
+    border-image: initial;
+    border-radius: 2px;
+    font: inherit;
+    margin: 0px 1px 0px 0px;
+    outline: none;
+}
+
+.settings__custom-domains__input {
+    width: 210px;
+    padding: 3px 20px 3px 3px;
+    box-sizing: border-box;
+    color: rgb(68, 68, 68);
+    min-height: 2em;
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgb(191, 191, 191);
+    border-image: initial;
+    border-radius: 2px;
+    font: inherit;
+    margin: 0px;
+    outline: none;
+}
+
+.settings__custom-domains__custom-origin-list {
+    border: 1px solid #cccaca;
+    list-style: none;
+    max-height: 290px;
+    border-radius: 3px;
+    padding: 5px;
+    overflow: auto;
+    width: 375px;
+    font-size: 12px;
+}
+
+.settings__custom-domains__custom-origin-list li {
+    height: 25px;
+    border-bottom: 1px solid #e8e8e8;
+    cursor: pointer;
+    vertical-align: middle;
+    padding-left: 5px;
+}
+
+.settings__custom-domains__custom-origin-list li:hover {
+    background-color: #bbb;
+}
+
+.settings__custom_domains__remove {
+    display: block;
+    text-align: left;
+    text-decoration: none;
+    color: #ef2d2d;
+    font-size: 9px;
+    cursor: pointer;
+    margin-right: 5px;
+    line-height: 12px;
+    padding: 5px;
+    float: right;
+}
+
+.settings__custom_domains__remove:hover{
+    color: white;
+    background-color: #ef2d2d;
+}
+
+.settings__tabs {
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+}
+
+.settings__tabs button:hover {
+    background-color: #ddd;
+}
+
+.settings__tabs button.active {
+    background-color: #ccc;
+}
+
+.settings__tabs button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+    font-size: 17px;
+}
+
+.settings__telemetry__errors input {
+    height: 1.5em;
+    width: 1.5em;
+    vertical-align: middle;
+}
+
+.settings__telemetry__errors label {
+    font-size: 14px;
+    height: 22px;
+    line-height: 22px;
+    vertical-align: middle;
+}
+
+.settings__telemetry__errors span {
+    margin-top: 3px;
+    margin-left: 3px;
+    color: rgb(119, 119, 119);
+    align-self: stretch;
+    width: 100%;
+    padding: 5px 0;
+}
+
+
+
+
+

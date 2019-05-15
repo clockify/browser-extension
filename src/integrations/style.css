@@ -1,0 +1,21 @@
+.clockify-button-active {
+  color: #03A9F4;
+  padding: 20px;
+  cursor: pointer;
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAXxJREFUeNp0k80rRFEYxufOYKGkhCRlQbGi7ORrMYWdDbGzQooFO/8GCx9JFlJTiixGkY1m7WMlosjEbHwkxBB+r56r02nmrV/3nnvf5znvOec9QSzxEskRHTAMcaiBTziH2dqZphU3scATlsMy9HnfLa8EdjWuh0v4iTpJFZDyxE9wDIfQw+xpnm0aWyWBW8EaNOj9BqZhC9GXk2PiHVVTapWFBjZrt96voBVhxltGOyQl3oQh25twCZNO4ihkcuzBgifO2g8ziGnXI9qYPU/cBdXQK5N/cehcCUUan3hiO8pVuJfJuH/eVkFhJH+862kzfudKMIM7+NC42fufgBZ9r4I5f8KouiylcZ3W6sYRPMI+TMC6axKewrwjWNJ63bBeGIE36JfJXwsEuguBdj8ugXXcFGzTD1nHqFONVAwbdiKBc5mslQ+g0RE8w7U2cBCzM5kkVcVY4N3GMlhUmX6k1aHpfJfJ4gEGLFFGp/CqSm7VVBYXJraXXwEGAPIxW+w1jko3AAAAAElFTkSuQmCC) left center no-repeat;
+}
+
+.clockify-button-inactive {
+  color: rgb(68,68,68);
+  padding: 20px;
+  cursor: pointer;
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAXZJREFUeNp0k8srRVEUh8+9LjNMkMSIuiORmZCB8hiZUIyYIMVEpv4JBh5JBiIRRpTHRHdi4jUhUYpQN48UeXWvb9XvaLe7Vn2ds85Z67fW3nvtSO/oWJDBGqAHmqAUvuECxmHODYx5iQUwC+3ed4vLhW35FXAF6agTVAgJL/kFjuEQWuAW6uRbJxG3gwWI6/0GRmADfpwYS95SN/nWWShgVZv1fg218OAtox42lbwOXbY34RKGncD+DMlWaMpL/rIfJpClXQ+0MTteciOUQKtE/pJD5SLIkX/iJdtRzsOjRAb987YOsoP/7UNPq5jKFGAC9/Apv8r7vww1+l4ME37BqKYsIb9ca3XtCJ5hD4Zg0RUJT2HSSZjRel2zWeiDd+iQSMwVWFMFszI4UGCOI7IPbY7Ikp1gKJCGbjiXbxdoBZJwqnGOOyJvWlbKvQtJjeqq8y0PKrWJuxI2kWoY8C+T2RN0apSn4UzVXuFOQ2V2qa6DXwEGAANHVAADyBvoAAAAAElFTkSuQmCC) left center no-repeat;
+}
+
+.backlog-table-body .user-story-name a.clockify-button-inactive{
+  flex-grow: 0;
+}
+
+.backlog-table-body .user-story-name a.clockify-button-active{
+  flex-grow: 0;
+}

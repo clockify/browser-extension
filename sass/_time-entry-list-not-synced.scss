@@ -1,0 +1,38 @@
+.time-entries-list-not-synced {
+  position: relative;
+  top: -40px;
+  margin: 20px;
+  border: 1px solid $border;
+}
+
+.time-entry-not-synced {
+  background: white;
+  padding: 15px;
+  border-bottom: 1px solid $border;
+  cursor: pointer;
+}
+
+.time-entry-not-synced-sync {
+  float: right;
+  width: 25px;
+  height: 25px;
+  background-image: url("../assets/images/reload-normal.png");
+
+  &:hover {
+    width: 25px;
+    height: 25px;
+    background-image: url("../assets/images/reload-hover.png");
+  }
+}
+
+.time-entry-not-synced-description {
+  display: inline-block;
+  width: 170px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.time-entry-not-synced-time {
+  color: $dark_text;
+}

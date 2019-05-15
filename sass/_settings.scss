@@ -1,0 +1,176 @@
+.settings-buttons {
+  margin: 25px 0px;
+  border-top: 1px dotted $border;
+  padding: 25px 0;
+}
+
+.settings-button-save {
+  width: 110px;
+  height: 40px;
+  margin-left: 20px;
+  border: none;
+  border-radius: 3px;
+  color: white;
+  background: $blue;
+  cursor: pointer;
+}
+
+.settings-button-cancel {
+
+  margin-left: 20px;
+  color: $blue;
+  cursor: pointer;
+}
+
+.workspace-list-open {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.8);
+  left: 0;
+  top: 0;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  z-index: 5;
+}
+
+.workspace-list-selection {
+  padding: 5px 0;
+  margin: 20px;
+  border: 1px solid $border;
+  background: white;
+  cursor: pointer;
+}
+
+.workspace-list-default {
+  display: inline-block;
+  padding: 5px 10px;
+  color: $middle_light_text;
+  width: 250px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.workspace-list-dropdown {
+  width: 100%;
+  margin: 20px;
+  max-height: 250px;
+  min-height: 150px;
+  background: white;
+  z-index: 2;
+  box-shadow: 0 0 7px #ccc;
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+
+.workspace-list-title {
+  margin: 10px;
+  font-size: 14px;
+  font-weight: bold;
+  color: $middle_light_text;
+}
+
+.workspace-list-item {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  margin-left: 20px;
+  margin-top: 10px;
+  font-size: 13px;
+  color: $dark_text;
+
+  &--name {
+    width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+}
+
+.workspace-list-active {
+  margin-right: 15px;
+  color: $green;
+
+  &__img {
+    display: inline-block;
+    width: 14px;
+    height: 10px;
+    margin-right: 5px;
+    background-image: url("../assets/images/checked.png");
+  }
+}
+
+.workspace-list-title {
+  margin: 20px;
+  font-weight: bold;
+  columns: $dark_text;
+}
+
+.user-settings {
+  display: flex;
+  padding: 20px;
+  border-bottom: 1px dotted $border;
+}
+
+.user-settings span img {
+  display: inline-block;
+  width: 70px;
+  border-radius: 50%;
+}
+
+.user-settings span {
+  margin: auto;
+  color: $middle_light_text;
+  font-style: italic;
+  font-size: 15px;
+}
+
+.app-version {
+  position: absolute;
+  margin: 20px;
+  bottom: 0;
+  right: 0;
+  color: $dark_text;
+  font-size: 12px;
+}
+
+.settings-project-title {
+  margin-left: 10px;
+  font-size: 13px;
+  font-weight: bold;
+  color: $middle_light_text;
+}
+
+.settings-default-project {
+  diplay: flex;
+  margin: 20px;
+  align-items: center;
+
+  &__project-list {
+    margin-top: 15px;
+  }
+}
+
+.settings-default-project-checkbox {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  border: 1px solid $border;
+  position: relative;
+  cursor: pointer;
+  background: white;
+
+  &--img {
+    content: url("../assets/images/checked.png");
+    margin-top: 2px;
+  }
+
+  &--img_hidden {
+    content: url("../assets/images/checked.png");
+    margin-top: 2px;
+    visibility: hidden;
+  }
+}

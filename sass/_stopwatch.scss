@@ -1,0 +1,117 @@
+.stopwatch {
+    display: inline-flex;
+    padding: 13px 5px;
+    font-size: 20px;
+    cursor: pointer;
+    max-width: 190px;
+}
+
+.stopwatch div {
+    min-width: 35px;
+    max-width: 150px;
+    padding-left: 3px;
+    padding-top: 1px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 13px;
+}
+
+.stopwatch-disabled {
+    display: none;
+}
+
+.stopwatch_dot {
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    min-width: 5px;
+    margin-top: 7px;
+    margin-right: 2px;
+    margin-left: 5px;
+    border-radius: 14px;
+}
+
+.stopwatch_dot-disabled {
+    display: none;
+}
+
+.stopwatch_button-disable {
+    display: none;
+}
+
+
+.stopwatch_input {
+    width: 100px;
+    margin: 18px 0;
+    padding-left: 10px;
+    float: right;
+    border: none;
+    border-left: 1px dotted;
+    background: transparent;
+    font-size: 18px;
+    color: #333333;
+}
+
+.stopwatch_input:focus {
+    outline: none;
+}
+.stopwatch_input-disabled {
+    display: none;
+}
+
+.description-gray {
+    color: #999999;
+}
+.stopwatch-disabled {
+    display: none;
+}
+
+.stopwatch input {
+    border: none;
+}
+
+.stopwatch input:focus {
+    outline: none;
+}
+
+.edit-duration {
+    padding: 10px 20px;
+}
+
+.duration {
+    display: inline-block;
+    width: 100%;
+    border: 1px solid #C6D2D9;
+    border-radius: 2px;
+    background: white;
+}
+
+.time {
+    display: inline-block;
+    margin-top: 20px;
+    margin-left: 10px;
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+
+.time label {
+    margin-right: 5px;
+    color: #999999;
+}
+
+.time-start {
+    width: 70px;
+    border: none;
+    color: #666666;
+    font-size: 16px;
+    outline: none;
+}
+
+.time-start-disabled {
+    display: none;
+}
+
+.time-disabled {
+    display: none;
+}

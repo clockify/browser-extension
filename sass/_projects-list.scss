@@ -1,0 +1,134 @@
+.project-list {
+
+}
+
+.project-list-button {
+  width: 100%;
+  padding: 5px 0;
+  background: white;
+  border: 1px solid $border;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.project-list-button-offline {
+  width: 100%;
+  height: 40px;
+  background: $disabled;
+  margin: 10px 0;
+  border: 1px solid $border;
+  border-radius: 2px;
+  cursor: not-allowed;
+}
+
+.project-list-name {
+  display: inline-block;
+  padding: 5px 10px;
+  width: 85%;
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.project-list-arrow {
+  position: relative;
+  top: 10px;
+  right: 10px;
+  float: right;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 9px solid #999999;
+  align-self: center;
+}
+
+.project-list-dropdown {
+  width: 100%;
+  margin: 20px;
+  height: 250px;
+  background: white;
+  z-index: 2;
+  box-shadow: 0 0 7px #ccc;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  font-size: 14px;
+}
+
+.project-list-input {
+  background: white;
+  padding: 10px;
+}
+
+.project-list-filter {
+  width: 100%;
+  height: 40px;
+  padding: 10px;
+  border: 1px solid $border;
+}
+
+.tasks-arrow-down {
+  content: url("../assets/images/filter-arrow-down.png");
+  margin-left: 10px;
+}
+
+.tasks-arrow-right {
+  content: url("../assets/images/filter-arrow-right.png");
+  position: relative;
+  top: 2px;
+  margin-left: 10px;
+}
+
+.project-item {
+  margin: 10px 0 0 15px;
+  cursor: pointer;
+}
+
+.project-item-task {
+  margin-right: 5px;
+  float: right;
+  color: $lighter_text;
+  font-size: 13px;
+}
+
+.project-name {
+  display: inline-block;
+  position: relative;
+  top: 3px;
+  width: 190px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.task-item {
+  margin: 5px 10px;
+  color: $dark_text;
+}
+
+.project-list-load {
+  text-align: center;
+  margin-top: 15px;
+  margin-bottom: 10px;
+  color: $middle_light_text;
+  cursor: pointer;
+}
+
+.project-list-open {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.8);
+  left: 0;
+  top: 0;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  z-index: 5;
+}
+
+.project-list-client {
+  margin: 10px;
+  padding-top: 5px;
+  border-top: 1px dotted $border;
+  color: $lighter_text;
+}

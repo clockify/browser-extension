@@ -1,0 +1,45 @@
+.time-entries-list {
+    background: $background;
+    margin: 20px;
+    border: 1px solid $border;
+    border-radius: 2px;
+}
+
+.time-entries-list-time {
+    background: $entries_header;
+    color: $lighter_text;
+    padding: 15px 15px 30px 15px;
+    border-bottom: 1px solid $border;
+    border-radius: 2px;
+}
+
+.time-entries-list-day {
+    float: left;
+    color: $dark_text;
+}
+
+.time-entries-list-total {
+    float: right;
+    color: $dark_text;
+}
+
+.no-entries-img {
+    content: url("../assets/images/clockify_illustration.svg");
+}
+
+.no-entries {
+    margin: 70px;
+    text-align: center;
+}
+
+.no-entries span {
+    display: block;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.no-entries label {
+    color: #999;
+}

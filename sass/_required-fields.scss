@@ -1,0 +1,20 @@
+.required-fields {
+  text-align: center;
+}
+
+.required-fields button {
+  width: 105px;
+  height: 45px;
+  background-color: $red;
+  color: #ffffff;
+  border: 1px solid $red;
+  text-transform: uppercase;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.required-fields span {
+  display: block;
+  margin: 50px;
+  font-size: 17px;
+}

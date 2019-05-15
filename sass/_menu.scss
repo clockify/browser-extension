@@ -1,0 +1,64 @@
+.menu {
+  position: absolute;
+  right: 10px;
+  width: 130px;
+  padding: 15px;
+  border: none;
+  background: white;
+  z-index: 2;
+  box-shadow: 0 0 7px #ccc;
+  text-align: left;
+  font-size: 13px;
+}
+
+.menu div {
+  color: $middle_light_text;
+  margin: 15px 0;
+  cursor: pointer;
+}
+
+.menu span {
+  display: block;
+  margin: 15px 0;
+  color: $middle_light_text;
+  cursor: auto;
+}
+
+.menu_manual-active img {
+  content: url("../assets/images/manual-hover.png");
+}
+
+.menu_manual-inactive img {
+  content: url("../assets/images/manual.png");
+}
+
+.menu_timer-active img {
+  content: url("../assets/images/automatic-hover.png");
+}
+
+.menu_timer-inactive img {
+  content: url("../assets/images/automatic.png");
+}
+
+.menu label {
+  position: relative;
+  bottom: 6px;
+  left: 10px;
+  cursor: pointer;
+}
+
+.rectangle {
+  position: relative;
+  top: 7px;
+  width: 15px;
+  height: 15px;
+  transform: rotate(45deg);
+  box-shadow: -2px -2px 5px -1px #ccc;
+  background: white;
+  z-index: 3;
+}
+
+.disable-manual {
+  color: $lighter_text !important;
+  cursor: not-allowed !important;
+}

@@ -1,0 +1,57 @@
+{
+  "manifest_version" : 2,
+  "name": "Clockify Time Tracker",
+  "short_name": "Clockify",
+  "description": "Track time from anywhere on the web and improve productivity.",
+  "background": {
+    "scripts": [
+      "bundle.js",
+      "contentScripts/background.js",
+      "contentScripts/timeEntry-httpRequests-background.js",
+      "contentScripts/token-background.js"
+    ]
+  },
+  "version": "1.5.5",
+  "browser_action": {
+    "default_popup": "index.html",
+    "default_title": "Clockify"
+  },
+  "content_scripts": [
+    {
+      "js": ["contentScripts/contentScript.js"],
+      "matches":[
+        "https://clockify.me/*"
+      ]
+    }
+  ],
+  "options_page": "settings.html",
+  "commands": {
+    "quick-start-stop-entry": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+U"
+      },
+      "description": "Quick start/stop current entry"
+    }
+  },
+  "icons": {
+    "16":"assets/images/logo-16.png",
+    "48":"assets/images/logo-48.png",
+    "128":"assets/images/logo-128.png"
+  },
+  "oauth2": {
+    "client_id": "your-client-id-from-google-api-console",
+    "scopes": ["openid", "email", "profile", "https://www.googleapis.com/auth/userinfo.email"]
+  },
+  "permissions": [
+    "contextMenus",
+    "https://clockify.me/api/*",
+    "storage",
+    "tabs",
+    "webNavigation",
+    "activeTab",
+    "<all_urls>",
+    "identity",
+    "https://accounts.google.com/*"
+  ],
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
+}

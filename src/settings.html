@@ -1,0 +1,79 @@
+<html>
+<head>
+    <title>Clockify - Settings</title>
+    <link rel="stylesheet" href="/styles/settings.css"/>
+</head>
+<body>
+<div class="settings">
+    <div class="settings__header">
+        <h1 class="settings__title">Clockify - Settings</h1>
+    </div>
+    <div class="settings__tabs">
+        <button id="integrationsTab"
+                class="settings__tablinks">
+            Integrations
+        </button>
+        <button id="telemetryTab"
+                class="settings__tablinks">
+            Telemetry
+        </button>
+    </div>
+    <div id="integrations" class="settings__content">
+        <div class="settings__permissions">
+            <h2>Url permissions</h2>
+            <p>Enable the tools you want to use with Clockify extension. You can enable
+                everything by clicking the "Enable all" button.
+            </p>
+            <div class="settings__permissions-toolbar" data-id="regular">
+                <input type="text"
+                       id="permission-filter"
+                       placeholder="Filter permissions"
+                       class="settings__permissions__filter"/>
+                <div class="settings__permissions__button-container">
+                    <button id="enable-all"
+                            class="settings__permissions__button-enable-all">
+                        Enable all
+                    </button>
+                    <button id="disable-all"
+                            class="settings__permissions__button-disable-all">
+                        Disable all
+                    </button>
+                </div>
+            </div>
+            <div id="settings__permissions-container"></div>
+        </div>
+        <div class="settings__custom-domains">
+            <h2>Custom domains</h2>
+            <p>If you use a tool hosted on a custom domain, you can enable it here.
+                Enter the domain name in the format "mydomain.com" and select the integration from
+                the dropdown. Ports are not supported.
+            </p>
+            <input type="text"
+                   id="custom-domain-url"
+                   placeholder="Custom domain url"
+                   class="settings__custom-domains__input"/>
+            <div class="settings__custom-domains__button-container">
+                <div id="settings__custom-domains__origins-container"></div>
+                <button id="add-custom-domain"
+                        class="settings__custom-domains__button">
+                    Add
+                </button>
+            </div>
+            <div id="settings__custom-domains__custom-perm-container"></div>
+        </div>
+    </div>
+
+    <div id="telemetry" class="settings__content">
+        <h2>Telemetry</h2>
+        <div class="settings__telemetry__errors">
+            <div>
+                <input id="errorReports" type="checkbox">
+                <label>Send error reports</label>
+            </div>
+            <span>Submit error reports to help us fix issues with Clockify Button.</span>
+        </div>
+    </div>
+</div>
+<script src="settings.js"></script>
+</body>
+</html>

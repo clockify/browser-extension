@@ -1,0 +1,209 @@
+.login {
+  width: 87%;
+  margin: 20px;
+  margin-top: 50px;
+
+  &__oauth {
+
+    &--button {
+      display: flex;
+      width: 87%;
+      height: 50px;
+      margin: 20px;
+      background: white;
+      border: 1px solid $border;
+      border-radius: 2px;
+      color: $lighter_text;
+      font-size: 14px;
+      cursor: pointer;
+      justify-content: space-evenly;
+      align-items: baseline;
+    }
+
+    &--img {
+      position: relative;
+      top: 7px;
+      margin-right: 10px;
+    }
+  }
+
+  &__saml2 {
+
+    &--button {
+      width: 87%;
+      height: 50px;
+      margin: 20px;
+      background: white;
+      border: 1px solid $border;
+      border-radius: 2px;
+      color: $lighter_text;
+      font-size: 14px;
+      cursor: pointer;
+    }
+  }
+}
+
+.login input {
+  width: 100%;
+  height: 40px;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 3px;
+}
+
+.login input[type=email], input[type=password] {
+  border: 1px solid $border;
+}
+
+.login-submit {
+  display: block;
+  padding: 5px 10px;
+  margin: 20px auto;
+  font-size: 14px;
+  width: 100%;
+  height: 50px;
+  border: 1px solid  $blue;
+  background-color: $blue;
+  text-transform: uppercase;
+  color: #ffffff;
+}
+
+.login p#info{
+  height: 0.01rem;
+  padding: 10px;
+  font-size: 13px;
+  color: $red;
+}
+
+.login input[type=submit]:hover {
+  background-color: $blue_hover;
+  border: 1px solid $blue_hover;
+}
+
+.login a{
+  display: block;
+  margin-bottom: 20px;
+  margin-top: 10px;
+  font-size: 14px;
+  text-decoration: none;
+  cursor: pointer;
+  color: $blue;
+}
+
+.login a:hover {
+  color: $blue_hover;
+  text-decoration: underline;
+}
+
+.new-account{
+  display: flex;
+  flex-wrap: nowrap;
+  margin-right: auto;
+  margin-left: auto;
+  width: 43%;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.new-account p{
+  font-size: 14px;
+  color: $lighter_text;
+  margin: 0;
+}
+
+.new-account a{
+  color: $blue;
+  font-size: 14px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.new-account a:hover {
+  color: $blue_hover;
+  text-decoration: underline;
+}
+
+.self-hosting-url {
+  display: flex;
+  padding-top: 30px;
+  padding-bottom: 30px;
+  width: 70%;
+  margin-right: auto;
+  margin-left: auto;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: baseline;
+
+  p {
+    font-size: 14px;
+    color: $lighter_text;
+    margin: 0;
+  }
+
+  a {
+    color: $blue;
+    font-size: 14px;
+    text-decoration: none;
+    cursor: pointer;
+
+    &:hover {
+      color: $blue_hover;
+      text-decoration: underline;
+    }
+  }
+
+}
+
+.cloud-version-url {
+  display: flex;
+  padding-top: 30px;
+  padding-bottom: 30px;
+  width: 79%;
+  margin-right: auto;
+  margin-left: auto;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: baseline;
+
+  p {
+    font-size: 14px;
+    color: $lighter_text;
+    margin: 0;
+  }
+
+  a {
+    color: $blue;
+    font-size: 14px;
+    text-decoration: none;
+    cursor: pointer;
+
+    &:hover {
+      color: $blue_hover;
+      text-decoration: underline;
+    }
+  }
+
+}
+
+.google-login {
+  width: 87%;
+  height: 50px;
+  margin: 20px;
+  background: white;
+  border: 1px solid $border;
+  border-radius: 2px;
+  color: $lighter_text;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.google-img {
+  position: relative;
+  top: 3px;
+  margin-right: 10px;
+  content: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAARCAYAAADUryzEAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAIPSURBVHgBlVM/aBNhFH/vS5qmiz0XbXToBaQOor2znUQwZBCcUu1YEIugDkqrTiroKYjrqYM4BQfJoJQgimiHHhlEtJET3L1BtFTbntGSo6Tf8921F+9Sr9jfcHy/9733e//uQ+jA54KmZFPpMyDpGACpACJNQD/4/A5J3slZthP1xyiZKwxNsMUgAAUSgIhmU7Zu5i3b9bkIL74VDxqEYG4W7IOIJrtRFEOeDoILQ5eB4EbcE57y50WQBTEvgU5yfhVX8XSuVp9qV9R8Ceqvh/s+rv7MbluPdIDEeM6ataJ6X4t6P0mh77bq1VhL3ms4R43Mg8bjAZBuNyDh/j5r9hP8J3BlGma474JPvPc7nvVenS9FHQ4ZS5rYZC68Itgbkq7h+doGh5Qo8zy0hHhX8Nraq+TDAmwNil+Bh38FNmRCHmp8teifQ76E3iu4hwIuPPf64f7yoOs2Rd4er7pJKY/capT5zzzlnwnJEiRgylw+ALd/D0ODuhTMpsyk4MPG94EwOADRo6B6vTI6g+ubWLPjNFLryoexat3nWnlEEVkx0fPl2mSquScs36ld780HAlplREUQLIJqvH/0uP9FltwV2jKLJcgslNwVKfW3xnanvYEkkU6woNMzd/b4m4tH7bUk8VvUKycusfV8pxARuPwS70qvZUaHjEmZBiujOj+iPiK5E2TKtsee2P/y+wNydMMjOPbkvQAAAABJRU5ErkJggg==");
+}
+
+.google-login-disabled {
+  display: none;
+}

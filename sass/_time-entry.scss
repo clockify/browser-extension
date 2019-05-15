@@ -1,0 +1,78 @@
+.time-entry {
+  height: 60px;
+  background: white;
+  border-bottom: 1px solid $border;
+  cursor: pointer;
+  font-size: 14px;
+  color: $dark_text;
+
+  &__project-name {
+    display: inline-block;
+    width: 90%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__task-name {
+    width: 90%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.time-entry-locked {
+  height: 60px;
+  background: $background;
+  border-bottom: 1px solid $border;
+  cursor: not-allowed;
+  font-size: 14px;
+  color: $dark_text;
+}
+
+.time-entry:hover {
+  background: $background;
+}
+
+.time-entry-description {
+  display: inline-block;
+  position: relative;
+  width: 55%;
+  top: 50%;
+  transform: translate(0, -50%);
+  float: left;
+  margin-left: 15px;
+}
+
+.time-entry-arrow {
+  position: relative;
+  float: right;
+  top: 50%;
+  transform: translate(0, -50%);
+  margin-right: 15px;
+  content: url("../assets/images/play-normal.png");
+}
+
+.time-entry-arrow:hover {
+  content: url("../assets/images/play-hover.png");
+}
+
+.time-entry-duration {
+  position: relative;
+  top: 22px;
+  margin-left: 10px;
+}
+
+.time-entry-project {
+  display: flex;
+  flex-direction: column;
+  font-size: 13px;
+  width: 100%;
+}
+
+.description {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

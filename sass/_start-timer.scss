@@ -1,0 +1,83 @@
+.start-timer {
+  height: 50px;
+  margin: 10px 20px;
+  background: white;
+  border: 1px solid $border;
+  border-radius: 2px;
+}
+
+.start-timer_button-red {
+  float: right;
+  width: 110px;
+  height: 40px;
+  margin: 5px;
+  border: none;
+  border-radius: 2px;
+  background: $red;
+  color: $background;
+  cursor: pointer;
+}
+
+.start-timer_button-red:hover .button_timer {
+  display: none;
+}
+
+.start-timer_button-red:hover .button_stop {
+  display: block;
+}
+
+.button_stop {
+  display: none;
+}
+
+.start-timer_button-start {
+  float: right;
+  width: 110px;
+  height: 40px;
+  margin: 5px;
+  border: none;
+  border-radius: 2px;
+  background: $blue;
+  color: $background;
+  cursor: pointer;
+}
+
+.start-timer_button-start:hover {
+  background: $blue_hover;
+}
+
+.start-timer_description-input {
+  height: 95%;
+  width: 57%;
+  padding-left: 10px;
+  border: 0;
+  outline: none;
+}
+
+.start-timer_description-input::-ms-clear {
+  display: none;
+}
+
+.start-timer_description {
+  position: absolute;
+  margin-top: 17px;
+  margin-bottom: 17px;
+  margin-left: 17px;
+  font-size: 14px;
+  cursor: pointer;
+  overflow: hidden;
+  white-space: nowrap;
+  width: 47%;
+  text-overflow: ellipsis;
+}
+
+.start-timer_description_grey {
+  position: absolute;
+  width: 47%;
+  margin-top: 17px;
+  margin-bottom: 17px;
+  margin-left: 17px;
+  font-size: 14px;
+  color: $lighter_text;
+  cursor: pointer;
+}

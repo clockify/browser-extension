@@ -1,0 +1,79 @@
+
+.edit-form {
+  border-top: 1px dotted $border;
+  padding: 20px;
+}
+
+.edit-form-description {
+  position: relative;
+  width: 100%;
+  height: 85px;
+  border: none;
+  resize: none;
+  font-size: 14px;
+  outline: none;
+  font-family: 'Helvetica';
+  color: $dark_text;
+}
+
+.description-textarea {
+  border: 1px solid $border;
+  padding: 10px;
+  background: white;
+}
+
+.edit-form-checkbox {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  top: 13px;
+  background: white;
+  border: 1px solid $border;
+  position: relative;
+  cursor: pointer;
+}
+
+.edit-form-buttons {
+  margin-top: 20px;
+}
+
+.edit-form-billable-img {
+  content: url("../assets/images/checked.png");
+  margin-top: 2px;
+}
+
+.edit-form-billable-img-hidden {
+  content: url("../assets/images/checked.png");
+  margin-top: 2px;
+  visibility: hidden;
+}
+
+.edit-form-billable {
+  position: relative;
+  top: 13px;
+  margin-left: 10px;
+  color: $middle_light_text;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.edit-form-right-buttons {
+  float: right;
+}
+
+.edit-form-delete {
+  color: red;
+  cursor: pointer;
+}
+
+.edit-form-done {
+  width: 110px;
+  height: 40px;
+  margin-left: 15px;
+  border: none;
+  border-radius: 3px;
+  color: white;
+  background: $blue;
+  cursor: pointer;
+}
+
