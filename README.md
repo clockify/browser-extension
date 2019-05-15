@@ -4,9 +4,9 @@
 2. Navigate to root folder and run `sudo npm install`
 3. Build Chrome extension by running `npm run compile.dev.chrome` (to build Firefox add-on run `npm run compile.dev.firefox`)
 4. Load and test the Chrome extension: 
- 1. Go to [Extension Settings](chrome://extensions/)
- 2. Turn on "Developer mode" in the top right corner
- 3. Click "Load unpacked" and select the generated `www/chrome.dev` folder
+    1. Open Chrome's Settings > Extension (or go to chrome://extensions/)
+    2. Turn on "Developer mode" (located in the top right corner)
+    3. Click "Load unpacked" and select the `www/chrome.dev` folder that you've built
 
 ## Developing and updating integrations
 
