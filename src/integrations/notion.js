@@ -10,6 +10,7 @@ clockifyButton.render(
             );
 
         link = clockifyButton.createButton(descriptionElem.textContent.trim());
+        link.style.cursor = 'pointer';
 
         container.appendChild(link);
         clockifyButtonLoc.parentElement.parentNode.firstChild.after(container);

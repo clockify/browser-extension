@@ -23,7 +23,7 @@ export class Desktop {
         const token = this.loadFromStorage('token');
         const userId = this.loadFromStorage('userId');
         if (token && token !=='' && userId) {
-            if (JSON.parse(localStorageService.get('offline'))) {
+            if (!JSON.parse(localStorageService.get('offline'))) {
                 userService.getUser(userId)
                     .then(response => {
                         let data = response.data;

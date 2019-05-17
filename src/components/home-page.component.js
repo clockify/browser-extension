@@ -17,6 +17,7 @@ import {TimeEntryService} from "../services/timeEntry-service";
 import {WorkspaceService} from "../services/workspace-service";
 import {ProjectService} from "../services/project-service";
 import {getBrowser} from "../helpers/browser-helpers";
+import {isAppTypeExtension} from "../helpers/app-types-helpers";
 import {LocalStorageService} from "../services/localStorage-service";
 
 const projectService = new ProjectService();
@@ -57,16 +58,14 @@ class HomePage extends React.Component {
         localStorage.setItem('appVersion', packageJson.version);
         document.addEventListener('backbutton', this.handleBackButton, false);
         document.addEventListener('scroll', this.handleScroll, false);
-        getBrowser().storage.local.get(['sendErrors'], (result) => {
-            if (result.sendErrors) {
-                this.setUserContextForMetrics();
-            }
-        });
+        this.setUserContextForMetrics();
 
         this.getWorkspaceSettings();
         this.saveAllOfflineEntries();
 
-        this.enableAllIntegrationsButtonIfNoneIsEnabled();
+        if (isAppTypeExtension()) {
+            this.enableAllIntegrationsButtonIfNoneIsEnabled();
+        }
     }
 
     setUserContextForMetrics() {
