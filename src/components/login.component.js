@@ -390,7 +390,7 @@ class Login extends React.Component {
             const GOOGLE_TOKEN_URL = 'https://www.googleapis.com/oauth2/v4/token';
             let body = {
                 code: responseCode,
-                client_id: 'your-desktop-client-id',
+                client_id: environment.webClientId,
                 redirect_uri: 'urn:ietf:wg:oauth:2.0:oob:auto',
                 grant_type: 'authorization_code'
             };

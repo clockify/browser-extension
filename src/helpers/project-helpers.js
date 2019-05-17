@@ -125,26 +125,32 @@ export class ProjectHelpers {
             .filter((defProject) => defProject.workspaceId === activeWorkspaceId)[0];
     }
 
-    async getProjectForButton(projectName) {
-        let project;
+    getProjectForButton(projectName) {
         const page = 0;
-        const pageSize = 1;
+        const pageSize = 50;
+        let projectFilter;
+        let project;
 
         if (!!projectName) {
             const isSpecialFilter =
                 localStorageService.get('workspaceSettings') ?
                     JSON.parse(localStorageService.get('workspaceSettings')).projectPickerSpecialFilter : false;
             if (isSpecialFilter) {
-                projectName = '@' + projectName;
+                projectFilter = '@' + projectName;
+            } else {
+                projectFilter = projectName;
             }
 
-            project = await projectService.getProjectsWithFilter(projectName, page, pageSize).then(response => {
-                return response.data.filter(project => project.name === projectName)[0];
+            return projectService.getProjectsWithFilter(projectFilter, page, pageSize).then(response => {
+                if (response && response.data && response.data.length > 0) {
+                    project = response.data.filter(project => project.name === projectName)[0];
+                    return project ? project : this.getDefaultProject();
+                } else {
+                    return this.getDefaultProject();
+                }
             });
-        } else if (!projectName || !project){
-            project = await this.getDefaultProject();
+        } else {
+            return this.getDefaultProject();
         }
-
-        return project;
     }
 }
