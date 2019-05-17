@@ -13,7 +13,7 @@ export class Mobile {
     afterLoad() {
         const userId = this.loadFromStorage('userId');
         if (this.loadFromStorage('token') && userId) {
-            if (JSON.parse(localStorageService.get('offline'))) {
+            if (!JSON.parse(localStorageService.get('offline'))) {
                 userService.getUser(userId)
                     .then(response => {
                         let data = response.data;
