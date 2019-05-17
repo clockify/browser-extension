@@ -58,7 +58,6 @@ class HomePage extends React.Component {
         localStorage.setItem('appVersion', packageJson.version);
         document.addEventListener('backbutton', this.handleBackButton, false);
         document.addEventListener('scroll', this.handleScroll, false);
-        this.setUserContextForMetrics();
 
         this.getWorkspaceSettings();
         this.saveAllOfflineEntries();
@@ -66,6 +65,13 @@ class HomePage extends React.Component {
         if (isAppTypeExtension()) {
             this.enableAllIntegrationsButtonIfNoneIsEnabled();
         }
+    }
+
+    setUserContextForMetrics() {
+        const userId = localStorageService.get('userId', "");
+        const userEmail = localStorageService.get('userEmail', "");
+        const userContext = {userId: userId, userEmail: userEmail};
+        window.metricService.setUserContext(userContext);
     }
 
     saveAllOfflineEntries() {
