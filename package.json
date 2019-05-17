@@ -39,7 +39,7 @@
     "react-dom": "^16.5.2",
     "react-google-login": "^3.2.1",
     "react-google-login-component": "^0.9.3",
-    "react-http-request": "^1.0.3",
+    "react-http-request": "^2.0.0",
     "react-iframe": "^1.3.3",
     "react-mobile-datepicker": "^3.0.12",
     "react-pullable": "^1.0.3",
