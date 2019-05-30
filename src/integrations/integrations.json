@@ -371,6 +371,12 @@
     "script": "visualstudio.js",
     "clone": false
   },
+  "wekan.github.io": {
+    "name": "Wekan",
+    "link": "*://*.wekan*/*",
+    "script": "wekan.js",
+    "clone": false
+  },
   "wrike.com": {
     "name": "Wrike",
     "link": "*://*.wrike.com/*",
