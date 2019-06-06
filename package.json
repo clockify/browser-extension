@@ -1,6 +1,6 @@
 {
   "name": "Clockify",
-  "version": "1.5.5",
+  "version": "1.5.8",
   "description": "Clockify App 100% Free",
   "main": "main.js",
   "productName": "Clockify",
@@ -9,13 +9,14 @@
     "clean.build.chrome.dev": "node tools/clean-build-script.js www/chrome.dev/",
     "clean.build.firefox.dev": "node tools/clean-build-script.js www/firefox.dev/",
     "compile.dev.chrome": "npm run clean.build.chrome.dev && compass compile -c config_chrome.dev.rb && TARGET=chrome.dev webpack",
-    "compile.dev.firefox": "npm run clean.build.firefox.dev && compass compile -c config_firefox.dev.rb && TARGET=firefox.dev webpack"
+    "compile.dev.firefox": "npm run clean.build.firefox.dev && compass compile -c config_firefox.dev.rb && TARGET=firefox.dev webpack",
+    "copy.assets": "node tools/copy-assets-from-node-modules.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "antd": "^3.18.2",
     "axios": "^0.18.0",
-    "tar": ">=4.4.2",
     "babel-core": "^6.24.1",
     "babel-loader": "^7.0.0",
     "babel-polyfill": "^6.26.0",
@@ -45,6 +46,7 @@
     "react-mobile-datepicker": "^3.0.12",
     "react-pullable": "^1.0.3",
     "rimraf": "^2.6.2",
+    "tar": ">=4.4.2",
     "terser-webpack-plugin": "^1.2.3",
     "url-parse": "^1.4.3",
     "webpack": "4.14.0",

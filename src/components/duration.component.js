@@ -1,11 +1,14 @@
 import * as React from 'react';
 import moment from 'moment';
-import {parseTimeEntryDuration} from './duration-input-converter';
 import DatePicker from 'react-datepicker';
 import MyDatePicker from "./my-date-picker";
-import {parseInput} from "./time-input-converter"
 import {getAppTypes} from "../enums/applications-types.enum";
 import {add24hIfEndBeforeStart} from "../helpers/time.helpers";
+import TimePicker from 'antd/lib/time-picker';
+import {HtmlStyleHelpers} from "../helpers/html-style-helpers";
+import {isAppTypeMobile} from "../helpers/app-types-helpers";
+
+const htmlStyleHelpers = new HtmlStyleHelpers();
 
 class Duration extends React.Component {
 
@@ -13,78 +16,93 @@ class Duration extends React.Component {
         super(props);
 
         this.state = {
-            changeStart: false,
-            changeEnd: false,
-            changeDuration: false,
-            datePickerOpen: false
+            editDuration: false,
+            datePickerOpen: false,
+            timeFormat: this.props.timeFormat === 'HOUR12' ? 'h:mm A' : 'HH:mm',
+            startTime: moment(this.props.timeEntry.timeInterval.start),
+            endTime: moment(this.props.timeEntry.timeInterval.end),
+            selectedDuration: null,
+            dayAfterLockedEntries: 'January 1, 1970, 00:00:00 UTC'
         }
     }
 
     componentDidMount(){
+        this.setDayAfterLockedEntries();
     }
 
-    getStartTime(event) {
-        document.getElementById('start_time_edit').value = event.target.value;
+    setDayAfterLockedEntries() {
+        if (!this.props.isUserOwnerOrAdmin && !!this.props.workspaceSettings.lockTimeEntries) {
+            this.setState({
+                dayAfterLockedEntries: this.props.workspaceSettings.lockTimeEntries
+            });
+        }
+    }
+
+    selectStartTime(time) {
+        if (time) {
+            this.setState({
+                startTime: time
+            });
+        }
+    }
+
+    selectEndTime(time) {
+        if (time) {
+            this.setState({
+                endTime:time
+            });
+        }
+    }
+
+    changeStart(time) {
         this.setState({
-            changeStart: true
-        })
+            startTime: time
+        });
+        if (moment().diff(time) < 0) {
+            time = time.subtract(1, 'days');
+        }
+        this.props.timeEntry.timeInterval.start = time;
+        this.props.timeEntry.timeInterval.end = add24hIfEndBeforeStart(
+            this.props.timeEntry.timeInterval.start,
+            this.props.timeEntry.timeInterval.end
+        );
+        this.props.changeInterval(this.props.timeEntry.timeInterval);
     }
 
-    changeStart(event) {
-        const startFromInput = parseInput(event.target.value);
-        this.props.timeEntry.timeInterval.start =
-            moment(this.props.timeEntry.timeInterval.start)
-                .hour(parseInt(startFromInput.substring(0, 2)))
-                .minutes(parseInt(startFromInput.substring(2, 4)));
+    changeEnd(time) {
+        this.setState({
+            endTime: time
+        });
+
+        this.props.timeEntry.timeInterval.end = time;
         this.props.timeEntry.timeInterval.end = add24hIfEndBeforeStart(
             this.props.timeEntry.timeInterval.start,
             this.props.timeEntry.timeInterval.end
         );
 
         this.props.changeInterval(this.props.timeEntry.timeInterval);
-        this.setState({
-            changeStart: false
-        })
-
     }
 
-    getEndTime(event) {
-        document.getElementById('end_time_edit').value = event.target.value;
+    openPicker() {
         this.setState({
-            changeEnd: true
-        });
-    }
-
-    changeEnd(event) {
-        const endFromInput = parseInput(event.target.value);
-        const endTime = moment(this.props.timeEntry.timeInterval.end)
-                            .hour(parseInt(endFromInput.substring(0, 2)))
-                            .minutes(parseInt(endFromInput.substring(2, 4)));
-
-        this.props.timeEntry.timeInterval.end = add24hIfEndBeforeStart(
-            this.props.timeEntry.timeInterval.start,
-            endTime
-        );
-
-        this.props.changeInterval(this.props.timeEntry.timeInterval);
-        this.setState({
-            changeEnd: false
+            editDuration: this.props.end ? true : false
+        }, () => {
+            if (this.props.end) {
+                document.getElementById('durationTimePicker').click();
+            }
         })
     }
 
-    getCurrentDuration(event) {
-        document.getElementById('duration_edit').value = event.target.value;
-        this.setState({
-            changeDuration: true
-        })
+    selectDuration(time, timeString) {
+        if (!!timeString) {
+            this.setState({
+                selectedDuration: timeString
+            });
+        }
     }
 
-    changeDuration(event) {
-        let duration = parseTimeEntryDuration(event.target.value);
-        this.props.changeDuration(duration);
-        this.setState({
-            changeDuration: false
-        })
+    changeDuration(selectedDuration) {
+        this.props.changeDuration(selectedDuration);
     }
 
     selectDate(date) {
@@ -106,45 +124,75 @@ class Duration extends React.Component {
         })
     }
 
-    render(){
+    fadeBackgroundAroundTimePicker(event) {
+        if (event) {
+            htmlStyleHelpers.fadeBackground();
+        } else {
+            setTimeout(() => {
+                htmlStyleHelpers.unfadeBackground();
+            }, 100);
+        }
+    }
 
+    openDurationPickerChange(event) {
+        this.fadeBackgroundAroundTimePicker(event);
+        if (!event) {
+            if (this.state.selectedDuration) {
+               this.changeDuration(this.state.selectedDuration);
+
+               this.setState({
+                  selectedDuration: null
+               });
+            }
+            setTimeout(() => {
+                this.setState({
+                    editDuration: false
+                });
+            }, 100);
+        }
+    }
+
+    openStartTimePicker(event) {
+        this.fadeBackgroundAroundTimePicker(event);
+        if (!event) {
+            if (this.state.startTime) {
+                this.changeStart(this.state.startTime);
+            }
+        }
+    }
+
+    openEndTimePicker(event) {
+        this.fadeBackgroundAroundTimePicker(event);
+        if (!event) {
+            if (this.state.endTime) {
+                this.changeEnd(this.state.endTime);
+            }
+        }
+    }
+
+    render(){
         return (
             <div className="duration">
                 <div className="duration-time">
                     <label className={!this.props.end ? "duration-label" : "disabled"}>Start:</label>
-                    <input
-                        className={!this.state.changeStart ? "duration-start" : "disabled"}
-                        value={this.props.timeFormat === 'HOUR12' ?
-                            moment(this.props.start).format('h:mm A') :
-                            moment(this.props.start).format('HH:mm')}
-                        title={"Change start time."}
-                        id="start_time"
-                        autoComplete="off"
-                        onFocus={this.getStartTime.bind(this)}
+                    <TimePicker id="startTimePicker"
+                                value={this.state.startTime}
+                                format={this.state.timeFormat}
+                                size="small"
+                                inputReadOnly={isAppTypeMobile()}
+                                onChange={this.selectStartTime.bind(this)}
+                                onOpenChange={this.openStartTimePicker.bind(this)}
                     />
-                    <input
-                        className={this.state.changeStart ? "duration-start" : "disabled"}
-                        title={"Change start time."}
-                        id={"start_time_edit"}
-                        onBlur={this.changeStart.bind(this)}
+                    <label className={this.props.end ? "duration-dash" : "disabled"}>-</label>
+                    <TimePicker id="endTimePicker"
+                                className={this.props.end ? "duration-end" : "disabled"}
+                                value={this.state.endTime}
+                                size="small"
+                                inputReadOnly={isAppTypeMobile()}
+                                format={this.state.timeFormat}
+                                onChange={this.selectEndTime.bind(this)}
+                                onOpenChange={this.openEndTimePicker.bind(this)}
                     />
-                    <label className={this.props.end ? "duration-label" : "disabled"}>-</label>
-                    <input
-                        className={!this.state.changeEnd && this.props.end ? "duration-end" : "disabled"}
-                        value={this.props.timeFormat === 'HOUR12' ?
-                            moment(this.props.end).format('h:mm A') :
-                            moment(this.props.end).format('HH:mm')}
-                        title={"Change end time."}
-                        id="end_time"
-                        onFocus={this.getEndTime.bind(this)}
-                    />
-                    <input
-                        className={this.state.changeEnd && this.props.end ? "duration-end" : "disabled"}
-                        title={"Change end time."}
-                        id={"end_time_edit"}
-                        onBlur={this.changeEnd.bind(this)}
-                    />
-
                     <span>
                         {
                             localStorage.getItem('appType') === getAppTypes().MOBILE ?
@@ -155,30 +203,36 @@ class Duration extends React.Component {
                                     openDatePicker={this.openDatePicker.bind(this)}
                                     selectDate={this.selectDate.bind(this)}
                                     cancelDate={this.cancelDate.bind(this)}
+                                    min={this.state.dayAfterLockedEntries}
                                 />:
                                 <DatePicker
                                     selected={moment(this.props.start)}
                                     onChange={this.selectDate.bind(this)}
                                     customInput={<img src="./assets/images/calendar.png"/>}
                                     withPortal
-                                    maxDate={!this.props.end ? moment(this.props.start) : moment().add(10, 'years')}
+                                    maxDate={!this.props.end ?
+                                        moment(this.props.start) : moment().add(10, 'years')}
+                                    minDate={moment(new Date(this.state.dayAfterLockedEntries))}
                                 />
                         }
 
                     </span>
 
                     <input
-                        className={!this.state.changeDuration ? "duration-duration" : "disabled"}
+                        className={!this.state.editDuration ? "duration-duration" : "disabled"}
                         title={"Please write duration in the 'hh:mm:ss' format."}
                         value={this.props.time}
                         id="duration"
-                        onFocus={this.getCurrentDuration.bind(this)}
+                        onClick={this.openPicker.bind(this)}
                     />
-                    <input
-                        className={this.state.changeDuration ? "duration-duration" : "disabled"}
-                        title={"Please write duration in the 'hh:mm:ss' format."}
-                        id="duration_edit"
-                        onBlur={this.changeDuration.bind(this)}
+                    <TimePicker id="durationTimePicker"
+                                className={this.state.editDuration ? "duration-duration" : "disabled"}
+                                defaultOpenValue={moment(this.props.time, 'HH:mm:ss')}
+                                placeholder="Select duration (HH:mm:ss)"
+                                size="small"
+                                inputReadOnly={isAppTypeMobile()}
+                                onChange={this.selectDuration.bind(this)}
+                                onOpenChange={this.openDurationPickerChange.bind(this)}
                     />
                 </div>
             </div>

@@ -28,7 +28,7 @@ export class Desktop {
                     .then(response => {
                         let data = response.data;
 
-                        localStorage.setItem('userEmail', data.activeWorkspace);
+                        localStorage.setItem('userEmail', data.email);
                         localStorage.setItem('activeWorkspaceId', data.activeWorkspace);
                         localStorage.setItem('userSettings', JSON.stringify(data.settings));
 

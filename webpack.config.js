@@ -12,16 +12,14 @@ module.exports = {
     ],
     output: {
         path: path.join(__dirname, `www/${process.env.TARGET}`),
-        filename: 'bundle.js',
+        filename: '[name].bundle.js',
     },
-    optimization: DEV ? {
-        minimize: false
-    } : {
-        minimizer: [
-            new TerserPlugin({
-                sourceMap: true
-            })
-        ],
+    optimization: {
+        minimize: DEV ? false : true,
+        splitChunks: {
+            chunks: "all",
+            automaticNameDelimiter: "."
+        }
     },
     module: {
         rules: [

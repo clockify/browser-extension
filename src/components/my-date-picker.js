@@ -49,6 +49,7 @@ class MyDatePicker extends React.Component {
                     confirmText={"Confirm"}
                     cancelText={"Cancel"}
                     max={this.props.end ? new Date(2050, 0, 1) : new Date()}
+                    min={this.props.min}
                 />
             </div>
         )

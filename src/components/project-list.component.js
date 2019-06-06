@@ -30,15 +30,6 @@ class ProjectList extends React.Component {
                 }] :
                 !this.props.workspaceSettings.forceProjects ?
                     [{name: 'No project', color: '#999999', tasks: []}] : [],
-            projectListBackUp: this.props.defaultProject === true ?
-                [{
-                    name: 'Last used project',
-                    color: '#999999',
-                    tasks: [],
-                    id: getDefaultProjectEnums().LAST_USED_PROJECT
-                }] :
-                !this.props.workspaceSettings.forceProjects ?
-                    [{name: 'No project', color: '#999999', tasks: []}] : [],
             page: 1,
             ready: false,
             loadMore: true,
@@ -59,8 +50,6 @@ class ProjectList extends React.Component {
         if (page === 0) {
             this.setState({
                 projectList: !this.props.workspaceSettings.forceProjects ?
-                    [{name: 'No project', color: '#999999', tasks: []}] : [],
-                projectListBackUp: !this.props.workspaceSettings.forceProjects ?
                     [{name: 'No project', color: '#999999', tasks: []}] : []
             })
         }
@@ -69,76 +58,16 @@ class ProjectList extends React.Component {
                 .then(response => {
                     this.setState({
                         projectList: this.state.projectList.concat(response.data),
-                        projectListBackUp: this.state.projectList.concat(response.data),
                         page: this.state.page + 1,
                         ready: true
                     }, () => {
                         this.setState({
                             clients: this.getClients(this.state.projectList),
-                            loadMore: response.data.length >= pageSize ? true : false
+                            loadMore: response.data.length === pageSize ? true : false
                         });
 
-                        let selectedProject =
-                            this.state.projectList
-                                .filter(p => p.id === this.props.selectedProject)[0];
-                        if (this.props.selectedProject && selectedProject) {
-                            this.setState({
-                                selectedProject: selectedProject
-                            }, () => {
-                                this.setState({
-                                    title: this.createTitle()
-                                });
-                                const selectedTask = this.state.selectedProject.tasks ?
-                                    this.state.selectedProject.tasks.filter(
-                                        t => t.id === this.props.selectedTask)[0] : null;
-                                if (this.props.selectedTask && selectedTask) {
-                                    this.setState({
-                                        selectedTaskName: selectedTask.name
-                                    }, () => {
-                                        this.setState({
-                                            title: this.createTitle()
-                                        });
-                                    });
-                                }
-                            })
-                        } else {
-                            if (this.props.selectedProject) {
-                                const projectIds = [];
-                                projectIds.push(this.props.selectedProject);
-                                projectService.getProjectsByIds(projectIds).then(response => {
-                                    this.setState({
-                                        selectedProject: response.data[0]
-                                    }, () => {
-                                        this.setState({
-                                            title: this.createTitle()
-                                        });
-                                        const selectedTask = this.state.selectedProject.tasks ?
-                                            this.state.selectedProject.tasks.filter(
-                                                t => t.id === this.props.selectedTask)[0] : null;
-                                        if (selectedTask) {
-                                            this.setState({
-                                                selectedTaskName: selectedTask.name
-                                            }, () => {
-                                                this.setState({
-                                                    title: this.createTitle()
-                                                });
-                                            });
-                                        }
-                                    });
-                                });
-                            } else {
-                                this.setState({
-                                    selectedProject: {
-                                        name: this.props.defaultProject === true ?
-                                            'Select default project' : 'Add project',
-                                        color: '#999999'
-                                    }
-                                }, () => {
-                                    this.setState({
-                                        title: this.createTitle()
-                                    });
-                                });
-                            }
+                        if(!this.state.isOpen) {
+                            this.mapSelectedProject();
                         }
                     })
 
@@ -149,6 +78,79 @@ class ProjectList extends React.Component {
             this.setState({
                 ready: true
             })
+        }
+    }
+
+    mapSelectedProject() {
+
+        const selectedProject = this.props.selectedProject === 'lastUsedProject' ?
+            {
+                name: 'Last used project',
+                color: '#999999',
+                tasks: [],
+                id: getDefaultProjectEnums().LAST_USED_PROJECT
+            } :
+            this.state.projectList.filter(p => p.id === this.props.selectedProject)[0];
+
+
+        if (this.props.selectedProject && selectedProject) {
+            this.setState({
+                selectedProject: selectedProject
+            }, () => {
+                this.setState({
+                    title: this.createTitle()
+                });
+                const selectedTask = this.state.selectedProject.tasks ?
+                    this.state.selectedProject.tasks.filter(
+                        t => t.id === this.props.selectedTask)[0] : null;
+                if (this.props.selectedTask && selectedTask) {
+                    this.setState({
+                        selectedTaskName: selectedTask.name
+                    }, () => {
+                        this.setState({
+                            title: this.createTitle()
+                        });
+                    });
+                }
+            })
+        } else {
+            if (this.props.selectedProject) {
+                const projectIds = [];
+                projectIds.push(this.props.selectedProject);
+                projectService.getProjectsByIds(projectIds).then(response => {
+                    this.setState({
+                        selectedProject: response.data[0]
+                    }, () => {
+                        this.setState({
+                            title: this.createTitle()
+                        });
+                        const selectedTask = this.state.selectedProject.tasks ?
+                            this.state.selectedProject.tasks.filter(
+                                t => t.id === this.props.selectedTask)[0] : null;
+                        if (selectedTask) {
+                            this.setState({
+                                selectedTaskName: selectedTask.name
+                            }, () => {
+                                this.setState({
+                                    title: this.createTitle()
+                                });
+                            });
+                        }
+                    });
+                });
+            } else {
+                this.setState({
+                    selectedProject: {
+                        name: this.props.defaultProject === true ?
+                            'Select default project' : 'Add project',
+                        color: '#999999'
+                    }
+                }, () => {
+                    this.setState({
+                        title: this.createTitle()
+                    });
+                });
+            }
         }
     }
 
@@ -193,19 +195,22 @@ class ProjectList extends React.Component {
     }
 
     closeProjectList() {
+        document.getElementById('project-dropdown').scroll(0, 0);
         this.setState({
             isOpen: false,
-            projectList: this.state.projectListBackUp
+            projectList: !this.props.workspaceSettings.forceProjects ?
+            [{name: 'No project', color: '#999999', tasks: []}] : [],
+            page: 1,
+            filter: ''
         }, () => {
             document.getElementById('filter').value = "";
-        })
+            this.getProjects(this.state.page, pageSize);
+        });
     }
 
     filterProjects() {
         this.setState({
             projectList: !this.props.workspaceSettings.forceProjects ?
-                [{name: 'No project', color: '#999999', tasks: []}] : [],
-            projectListBackUp: !this.props.workspaceSettings.forceProjects ?
                 [{name: 'No project', color: '#999999', tasks: []}] : [],
             filter: document.getElementById('filter').value.toLowerCase(),
             page: 1
@@ -257,7 +262,8 @@ class ProjectList extends React.Component {
                     </div>
                     <div className={this.state.isOpen ? "project-list-open" : "disabled"}>
                         <div onClick={this.closeProjectList.bind(this)} className="invisible"></div>
-                        <div className="project-list-dropdown" id="project-dropdown">
+                        <div className="project-list-dropdown"
+                             id="project-dropdown">
                             <div className="project-list-input">
                                 <input
                                     placeholder={
@@ -301,7 +307,6 @@ class ProjectList extends React.Component {
                                  onClick={this.loadMoreProjects.bind(this)}>Load more
                             </div>
                         </div>
-
                     </div>
                 </div>
             )

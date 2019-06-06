@@ -9,12 +9,16 @@ export class TagService extends HttpWrapperService {
         super();
     }
 
-    getAllTags() {
+    getAllTagsWithFilter(page, pageSize, filter) {
         const baseUrl = localStorageService.get('baseUrl');
         const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
-        let getTagsUrl = `${baseUrl}/workspaces/${activeWorkspaceId}/tags`;
+        let getTagsUrl = `${baseUrl}/v1/workspaces/${activeWorkspaceId}/tags` +
+            `?page=${page}&pageSize${pageSize}`;
 
-        return super.get(getTagsUrl, addToken)
+        if (!!filter) {
+            getTagsUrl = getTagsUrl.concat(`&name=${filter}`);
+        }
+
+        return super.get(getTagsUrl, addToken);
     }
-
 }

@@ -156,6 +156,10 @@ class StartTimer extends React.Component {
     setDuration(event) {
         let duration = parseTimeEntryDuration(event.target.value);
 
+        if (!duration) {
+            return;
+        }
+
         let start = moment().add(-parseInt(duration.split(':')[0]), 'hours')
                             .add(-parseInt(duration.split(':')[1]), 'minutes')
                             .add(-parseInt(duration.split(':')[2]), 'seconds');
@@ -285,7 +289,8 @@ class StartTimer extends React.Component {
         ReactDOM.render(<EditForm changeMode={this.changeMode.bind(this)}
                                   timeEntry={this.state.timeEntry}
                                   workspaceSettings={this.props.workspaceSettings}
-                                  timeFormat={this.props.timeFormat}/>,
+                                  timeFormat={this.props.timeFormat}
+                                  isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}/>,
                         document.getElementById('mount'));
     }
 
@@ -298,7 +303,8 @@ class StartTimer extends React.Component {
                 ReactDOM.render(<EditFormManual changeMode={this.changeMode.bind(this)}
                                                 workspaceSettings={this.props.workspaceSettings}
                                                 timeEntry={this.state.timeEntry}
-                                                timeFormat={this.props.timeFormat}/>,
+                                                timeFormat={this.props.timeFormat}
+                                                isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}/>,
                                 document.getElementById('mount'));
             })
         } else {
@@ -306,7 +312,8 @@ class StartTimer extends React.Component {
             ReactDOM.render(<EditFormManual changeMode={this.changeMode.bind(this)}
                                             workspaceSettings={this.props.workspaceSettings}
                                             timeEntry={this.state.timeEntry}
-                                            timeFormat={this.props.timeFormat}/>,
+                                            timeFormat={this.props.timeFormat}
+                                            isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}/>,
                             document.getElementById('mount'));
         }
     }

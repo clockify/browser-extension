@@ -89,7 +89,6 @@ class EditForm extends React.Component {
             this.setState({
                 interval: interval
             })
-
         } else {
             let currentPeriod = moment(this.state.timeEntry.timeInterval.end).diff(this.state.timeEntry.timeInterval.start);
             this.setState({
@@ -136,8 +135,8 @@ class EditForm extends React.Component {
                         timeEntry: data
                     }, () => {
                         this.setTime();
-                    }).catch(() => {});
-                });
+                    });
+                }).catch((error) => {});
             } else if (timeInterval.start && !timeInterval.end) {
                 timeEntryService.changeStart(
                     timeInterval.start,
@@ -148,18 +147,27 @@ class EditForm extends React.Component {
                         timeEntry: data
                     }, () => {
                         this.setTime();
-                    }).catch(() => {});
-                });
+                    });
+                }).catch((error) => {});
             }
         }
     }
 
     changeDuration(duration) {
+        if (!duration) {
+            return;
+        }
+
         if (JSON.parse(localStorage.getItem('offline'))) {
             let timeEntry = localStorage.getItem('timeEntryInOffline') ? JSON.parse(localStorage.getItem('timeEntryInOffline')) : null;
-            let start = moment().add(-parseInt(duration.split(':')[0]), 'hours').add(-parseInt(duration.split(':')[1]), 'minutes').add(-parseInt(duration.split(':')[2]), 'seconds');
+            let start = moment().add(-parseInt(duration.split(':')[0]), 'hours')
+                                .add(-parseInt(duration.split(':')[1]), 'minutes')
+                                .add(-parseInt(duration.split(':')[2]), 'seconds');
             if (this.state.timeEntry.timeInterval.end) {
-                start = moment(this.state.timeEntry.timeInterval.end).add(-parseInt(duration.split(':')[0]), 'hours').add(-parseInt(duration.split(':')[1]), 'minutes').add(-parseInt(duration.split(':')[2]), 'seconds');
+                start = moment(this.state.timeEntry.timeInterval.end)
+                            .add(-parseInt(duration.split(':')[0]), 'hours')
+                            .add(-parseInt(duration.split(':')[1]), 'minutes')
+                            .add(-parseInt(duration.split(':')[2]), 'seconds');
             }
             if (timeEntry && timeEntry.id === this.state.timeEntry.id) {
                 timeEntry.timeInterval.start = start;
@@ -168,6 +176,10 @@ class EditForm extends React.Component {
                     timeEntry: timeEntry
                 }, () => {
                     this.setTime();
+                    this.duration.setState({
+                        startTime: moment(data.timeInterval.start),
+                        endTime: moment(data.timeInterval.end)
+                    });
                 })
             } else {
                 let timeEntries = localStorage.getItem('timeEntriesOffline') ? JSON.parse(localStorage.getItem('timeEntriesOffline')) : [];
@@ -178,6 +190,10 @@ class EditForm extends React.Component {
                             timeEntry: entry
                         }, () => {
                             this.setTime();
+                            this.duration.setState({
+                                startTime: moment(data.timeInterval.start),
+                                endTime: moment(data.timeInterval.end)
+                            });
                         })
                     }
                     return entry;
@@ -208,9 +224,12 @@ class EditForm extends React.Component {
                     timeEntry: data
                 }, () => {
                     this.setTime();
-                }).catch(() => {})
-
-            });
+                    this.duration.setState({
+                        startTime: moment(data.timeInterval.start),
+                        endTime: moment(data.timeInterval.end)
+                    });
+                });
+            }).catch(() => {});
         }
     }
 
@@ -291,7 +310,7 @@ class EditForm extends React.Component {
     editTags(tagId) {
         let tagList = this.state.timeEntry.tagIds ? this.state.timeEntry.tagIds : [];
 
-        if(tagList.indexOf(tagId) > -1) {
+        if(tagList.includes(tagId)) {
             tagList.splice(tagList.indexOf(tagId), 1);
         } else {
             tagList.push(tagId);
@@ -464,6 +483,9 @@ class EditForm extends React.Component {
                         changeMode={this.changeMode.bind(this)}
                     />
                     <Duration
+                        ref={instance => {
+                            this.duration = instance;
+                        }}
                         timeEntry={this.state.timeEntry}
                         start={this.state.timeEntry.timeInterval.start}
                         end={this.state.timeEntry.timeInterval.end}
@@ -472,6 +494,8 @@ class EditForm extends React.Component {
                         changeInterval={this.changeInterval.bind(this)}
                         changeDuration={this.changeDuration.bind(this)}
                         changeDate={this.state.timeEntry.timeInterval.end ? this.changeDate.bind(this) : this.changeStartDate.bind(this)}
+                        workspaceSettings={this.props.workspaceSettings}
+                        isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}
                     />
                     <div className="edit-form">
                         <div className="description-textarea">

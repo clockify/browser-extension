@@ -1,5 +1,5 @@
 export function parseTimeEntryDuration(input) {
-    if (input) {
+    if (!!input) {
         input = input.replace(',', '.').replace('.0', 'h');
 
         const timeDurationData = input.split(/[:\/;\-]/);

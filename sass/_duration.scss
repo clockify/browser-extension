@@ -8,6 +8,24 @@
   &__date-picker {
     padding: 13px 4px;
   }
+
+  .ant-time-picker {
+    width: 85px;
+
+    &-input {
+      margin-top: 3px;
+      border: none;
+      text-align: center;
+    }
+
+    &-icon {
+      display: none;
+    }
+
+    &-clear {
+      display: none;
+    }
+  }
 }
 
 .duration-time {
@@ -34,23 +52,13 @@
 }
 
 .duration-end {
-  padding-top: 13px;
-  padding-bottom: 13px;
-  position: relative;
-  top: 2px;
-  width: 70px;
-  outline: none;
-  border: none;
-  color: $middle_light_text;
-  font-size: 14px;
-  margin-left: 5px;
-  text-align: center;
+  display: block;
 }
 
 .duration-duration {
   position: relative;
   margin-left: 6px;
-  padding: 13px 5px;
+  padding: 14px 5px;
   border: none;
   border-left: 1px dotted;
   width: 85px;

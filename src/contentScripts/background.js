@@ -111,7 +111,7 @@ function loadScripts(tabId, file) {
 
 function extractDomain(url, permissions) {
     let domain, file;
-    if (url.indexOf("://") > -1) {
+    if (url.includes("://")) {
         domain = url.split('/')[2];
     } else {
         domain = url.split('/')[0];
@@ -131,7 +131,13 @@ function extractDomain(url, permissions) {
 }
 
 function extractToken(url) {
-    return url.split('?')[1].split('=')[1];
+    let token = "";
+
+    if (!!url) {
+        token = url.split('?')[1].split('=')[1];
+    }
+
+    return token;
 }
 
 function checkState(state) {
@@ -144,9 +150,13 @@ function checkState(state) {
 
 
 function getParamFromUrl(params, paramName) {
-    return params.split("&")
-        .filter(param => param.includes(paramName))
-        .map(code => code.split('=')[1])[0];
+    let param = "";
+
+    if (!!params) {
+        param = params.split("&").filter(param => param.includes(paramName))
+                      .map(code => code.split('=')[1])[0];
+    }
+    return param;
 }
 
 function getOriginFileName(domain, permissionsFromStorage) {

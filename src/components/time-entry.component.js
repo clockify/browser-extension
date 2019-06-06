@@ -19,7 +19,7 @@ class TimeEntry extends React.Component {
     }
 
     goToEdit() {
-        if(!this.props.timeEntry.isLocked) {
+        if(!this.props.timeEntry.isLocked || this.props.isUserOwnerOrAdmin) {
             ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
             if (checkConnection()) {
                 ReactDOM.render(<Login/>, document.getElementById('mount'));
@@ -27,14 +27,14 @@ class TimeEntry extends React.Component {
             ReactDOM.render(<EditForm changeMode={this.changeMode.bind(this)}
                                       timeEntry={this.props.timeEntry}
                                       workspaceSettings={this.props.workspaceSettings}
-                                      timeFormat={this.props.timeFormat}/>, document.getElementById('mount'));
+                                      timeFormat={this.props.timeFormat}
+                                      isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}/>,
+                            document.getElementById('mount'));
         }
     }
 
     continueTimeEntry() {
-        if(!this.props.timeEntry.isLocked) {
-            this.props.playTimeEntry(this.props.timeEntry);
-        }
+        this.props.playTimeEntry(this.props.timeEntry);
     }
 
     createTitle() {
@@ -75,7 +75,7 @@ class TimeEntry extends React.Component {
         if (this.props.project !== undefined && this.props.task !== undefined) {
             if (this.state.ready) {
                 return (
-                    <div className={this.props.timeEntry.isLocked ? "time-entry-locked" : "time-entry"}
+                    <div className={this.props.timeEntry.isLocked && !this.props.isUserOwnerOrAdmin ? "time-entry-locked" : "time-entry"}
                          title={this.state.title}>
                         <div className="time-entry-description" onClick={this.goToEdit.bind(this)}>
                             <div className="description"
@@ -93,14 +93,21 @@ class TimeEntry extends React.Component {
                                 </span>
                             </span>
                         </div>
-                        <span onClick={this.goToEdit.bind(this)}
-                              className="time-entry-duration">
-                            {this.props.timeEntry.duration}
-                        </span>
-                        <span onClick={this.continueTimeEntry.bind(this)}
-                              className="time-entry-arrow">
-                            <img id="play-icon" src="./assets/images/play-normal.png"/>
-                        </span>
+                        <div className="time-entry__right-side">
+                            <span onClick={this.goToEdit.bind(this)}>
+                                {this.props.timeEntry.duration}
+                            </span>
+                            <div className="time-entry__right-side__lock_and_duration">
+                                <span className={this.props.timeEntry.isLocked && !this.props.isUserOwnerOrAdmin ?
+                                    "time-entry__right-side__lock" : "disabled"}>
+                                    <img src="./assets/images/lock-indicator.png"/>
+                                </span>
+                                <span onClick={this.continueTimeEntry.bind(this)}
+                                      className="time-entry-arrow">
+                                    <img id="play-icon" src="./assets/images/play-normal.png"/>
+                                </span>
+                            </div>
+                        </div>
                     </div>
                 )
             } else {

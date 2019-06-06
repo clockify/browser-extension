@@ -5,6 +5,9 @@
   cursor: pointer;
   font-size: 14px;
   color: $dark_text;
+  position: relative;
+  z-index: 1;
+  transition: all 0.2s ease;
 
   &__project-name {
     display: inline-block;
@@ -20,6 +23,31 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+
+  &__right-side {
+    display: flex;
+    align-items: center;
+    position: relative;
+    top: 50%;
+    transform: translate(0, -50%);
+    justify-content: space-between;
+    width: 100px;
+
+    &__lock_and_duration {
+      display: flex;
+      margin-left: 10px;
+      align-items: center;
+    }
+
+    &__lock {
+      display: block;
+    }
+  }
+
+  &:hover {
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    z-index: 2;
+  }
 }
 
 .time-entry-locked {
@@ -29,10 +57,6 @@
   cursor: not-allowed;
   font-size: 14px;
   color: $dark_text;
-}
-
-.time-entry:hover {
-  background: $background;
 }
 
 .time-entry-description {
@@ -46,16 +70,13 @@
 }
 
 .time-entry-arrow {
-  position: relative;
-  float: right;
-  top: 50%;
-  transform: translate(0, -50%);
-  margin-right: 15px;
+  padding: 8px;
   content: url("../assets/images/play-normal.png");
 }
 
 .time-entry-arrow:hover {
   content: url("../assets/images/play-hover.png");
+  cursor: pointer;
 }
 
 .time-entry-duration {

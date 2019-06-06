@@ -1,3 +1,4 @@
+@import "../styles/antd-time-picker.css";
 @import "colors";
 @import "login";
 @import "header";
@@ -15,7 +16,6 @@
 @import "sign-up";
 @import "time-entry-list-not-synced";
 @import "self-hosting";
-
 
 @-webkit-keyframes rotation {
   from {
@@ -40,6 +40,23 @@ hr{
   margin: 0px;
   border-top:0px;
   border-bottom: 1px dotted #cacaca;
+}
+
+.modalBackground {
+  display: none;
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.8);
+  left: 0;
+  top: 0;
+  justify-content: center;
+  align-items: center;
+  z-index: 1040;
+
+  &.show {
+    display: flex;
+  }
 }
 
 .dot {

@@ -45,7 +45,8 @@ class HomePage extends React.Component {
             projects: [],
             tasks: [],
             userSettings: JSON.parse(localStorage.getItem('userSettings')),
-            durationMap: {}
+            durationMap: {},
+            isUserOwnerOrAdmin: false
         };
 
         this.application = new Application(localStorage.getItem('appType'));
@@ -65,13 +66,23 @@ class HomePage extends React.Component {
         if (isAppTypeExtension()) {
             this.enableAllIntegrationsButtonIfNoneIsEnabled();
         }
+
+        this.setIsUserOwnerOrAdmin();
     }
 
-    setUserContextForMetrics() {
-        const userId = localStorageService.get('userId', "");
-        const userEmail = localStorageService.get('userEmail', "");
-        const userContext = {userId: userId, userEmail: userEmail};
-        window.metricService.setUserContext(userContext);
+    setIsUserOwnerOrAdmin() {
+        workspaceService.getPermissionsForUser().then(workspacePermissions => {
+            const isUserOwnerOrAdmin = workspacePermissions.filter(permission =>
+                permission.name === getWorkspacePermissionsEnums().WORKSPACE_OWN ||
+                permission.name === getWorkspacePermissionsEnums().WORKSPACE_ADMIN
+            ).length > 0;
+            this.setState({
+                isUserOwnerOrAdmin: isUserOwnerOrAdmin
+            }, () => {
+                localStorageService.set('isUserOwnerOrAdmin', isUserOwnerOrAdmin);
+                this.handleRefresh();
+            });
+        });
     }
 
     saveAllOfflineEntries() {
@@ -244,11 +255,13 @@ class HomePage extends React.Component {
                     const data = response.data;
                     const entries = data.timeEntriesList.filter(entry => entry.timeInterval.end);
                     const durationMap = data.durationMap;
+                    const newDurationMap = this.concatDurationMap(this.state.durationMap, durationMap);
                     this.setState({
                         timeEntries: this.groupEntries(
                             this.state.timeEntries.concat(entries),
-                            this.concatDurationMap(this.state.durationMap, durationMap)
+                            newDurationMap
                         ),
+                        durationMap: newDurationMap,
                         loading: false
                     }, () => {
                         if (this.state.timeEntries.length === data.allEntriesCount) {
@@ -399,7 +412,9 @@ class HomePage extends React.Component {
         ReactDOM.render(<EditForm changeMode={this.changeMode.bind(this)}
                                   timeEntry={this.state.inProgress}
                                   workspaceSettings={this.state.workspaceSettings}
-                                  timeFormat={this.state.userSettings.timeFormat}/>, document.getElementById('mount'));
+                                  timeFormat={this.state.userSettings.timeFormat}
+                                  isUserOwnerOrAdmin={this.state.isUserOwnerOrAdmin}/>,
+                        document.getElementById('mount'));
     }
 
     continueTimeEntry(timeEntry) {
@@ -423,7 +438,8 @@ class HomePage extends React.Component {
                     <EditForm changeMode={this.changeMode.bind(this)}
                               timeEntry={timeEntryOffline}
                               workspaceSettings={this.state.workspaceSettings}
-                              timeFormat={this.state.userSettings.timeFormat}/>,
+                              timeFormat={this.state.userSettings.timeFormat}
+                              isUserOwnerOrAdmin={this.state.isUserOwnerOrAdmin}/>,
                     document.getElementById('mount')
                 );
             } else {
@@ -442,7 +458,8 @@ class HomePage extends React.Component {
                         <EditForm changeMode={this.changeMode.bind(this)}
                                   timeEntry={data}
                                   workspaceSettings={this.state.workspaceSettings}
-                                  timeFormat={this.state.userSettings.timeFormat}/>,
+                                  timeFormat={this.state.userSettings.timeFormat}
+                                  isUserOwnerOrAdmin={this.state.isUserOwnerOrAdmin}/>,
                         document.getElementById('mount')
                     );
 
@@ -588,6 +605,7 @@ class HomePage extends React.Component {
                         workspaceSettings={this.state.workspaceSettings}
                         timeEntries={this.state.timeEntries}
                         timeFormat={this.state.userSettings.timeFormat}
+                        isUserOwnerOrAdmin={this.state.isUserOwnerOrAdmin}
                     />
                     <div
                         className={this.state.timeEntries.length > 0 ? "pull-loading" : "disabled"}>
@@ -605,6 +623,7 @@ class HomePage extends React.Component {
                             handleRefresh={this.handleRefresh.bind(this)}
                             workspaceSettings={this.state.workspaceSettings}
                             timeFormat={this.state.userSettings.timeFormat}
+                            isUserOwnerOrAdmin={this.state.isUserOwnerOrAdmin}
                         />
                     </div>
                     <div className={this.state.ready ? (this.state.timeEntries.length === 0 ?
@@ -621,6 +640,7 @@ class HomePage extends React.Component {
                             changeMode={this.changeMode.bind(this)}
                             timeFormat={this.state.userSettings.timeFormat}
                             workspaceSettings={this.state.workspaceSettings}
+                            isUserOwnerOrAdmin={this.state.isUserOwnerOrAdmin}
                         />
                     </div>
                     <div className={this.state.loading ? "pull-loading-entries" : "disabled"}>

@@ -6,6 +6,8 @@ import {getEnv} from '../environment';
 import * as moment from 'moment-timezone';
 import {AuthService} from "../services/auth-service";
 import {UserService} from "../services/user-service";
+import {isAppTypeExtension} from "../helpers/app-types-helpers";
+import {getBrowser, isChrome} from "../helpers/browser-helpers";
 
 const environment = getEnv();
 
@@ -56,6 +58,14 @@ class SignUp extends React.Component {
             authService.signup(this.state.email, this.state.password, moment.tz.guess())
                 .then(response => {
                     let data = response.data;
+                    if (isAppTypeExtension()) {
+                        getBrowser().storage.sync.set({
+                            token: (data.token),
+                            userId: (data.id),
+                            refreshToken: (data.refreshToken),
+                            userEmail: (data.email)
+                        });
+                    }
                     localStorage.setItem('userId', data.id);
                     localStorage.setItem('userEmail', data.email);
                     localStorage.setItem('token', data.token);
@@ -78,6 +88,15 @@ class SignUp extends React.Component {
             .then(response => {
                 let data = response.data;
                 localStorage.setItem('activeWorkspaceId', data.activeWorkspace);
+                localStorage.setItem("userSettings",
+                    JSON.stringify(data.settings));
+
+                if (isAppTypeExtension()) {
+                    getBrowser().storage.sync.set({
+                        activeWorkspaceId: (data.activeWorkspace),
+                        userSettings: JSON.stringify(data.settings)
+                    });
+                }
                 ReactDOM.render(<HomePage/>, document.getElementById('mount'));
             }).catch(error => {
         })

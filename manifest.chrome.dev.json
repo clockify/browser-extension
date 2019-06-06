@@ -5,13 +5,14 @@
   "description": "Track time from anywhere on the web and improve productivity.",
   "background": {
     "scripts": [
-      "bundle.js",
+      "main.bundle.js",
+      "vendors.main.bundle.js",
       "contentScripts/background.js",
       "contentScripts/timeEntry-httpRequests-background.js",
       "contentScripts/token-background.js"
     ]
   },
-  "version": "1.5.5",
+  "version": "1.5.8",
   "browser_action": {
     "default_popup": "index.html",
     "default_title": "Clockify"

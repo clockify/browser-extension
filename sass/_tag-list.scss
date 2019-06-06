@@ -65,6 +65,14 @@
   padding: 10px;
 }
 
+.tag-list-load {
+  text-align: center;
+  margin-top: 15px;
+  margin-bottom: 10px;
+  color: $middle_light_text;
+  cursor: pointer;
+}
+
 .tag-list-dropdown {
   width: 100%;
   margin: 20px;
@@ -105,6 +113,10 @@
 .tag-list-item-row {
   margin: 5px 15px;
   cursor: pointer;
+  width: 250px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .tag-list-item {

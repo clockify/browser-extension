@@ -95,7 +95,9 @@ class EditFormManual extends React.Component {
     }
 
     changeDuration(duration){
-
+        if (!duration) {
+            return;
+        }
         let timeEntry = this.state.timeEntry;
 
         let start = moment()
@@ -149,7 +151,7 @@ class EditFormManual extends React.Component {
 
         let tagList = this.state.timeEntry.tagIds ? this.state.timeEntry.tagIds : [];
 
-        if(tagList.indexOf(tagId) > -1) {
+        if(tagList.includes(tagId)) {
             tagList.splice(tagList.indexOf(tagId), 1);
         } else {
             tagList.push(tagId);
@@ -304,6 +306,8 @@ class EditFormManual extends React.Component {
                         changeDuration={this.changeDuration.bind(this)}
                         changeDate={this.changeDate.bind(this)}
                         timeFormat={this.props.timeFormat}
+                        isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}
+                        workspaceSettings={this.props.workspaceSettings}
                     />
                     <div className="edit-form">
                         <div className="description-textarea">

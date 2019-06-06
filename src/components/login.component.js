@@ -356,7 +356,7 @@ class Login extends React.Component {
             }
 
             localStorageService.removeItem('oAuthState');
-            if (code && stateFromResponse) {
+            if (!!code && !!stateFromResponse) {
                 authService.loginWithCode(code, stateFromResponse, nonce, redirectUrl)
                     .then(response => response.json()).then(data => {
                     aBrowser.storage.sync.set({
@@ -437,9 +437,14 @@ class Login extends React.Component {
     }
 
     getParamFromUrl(params, paramName) {
-        return params.split("&")
-            .filter(param => param.includes(paramName))
-            .map(code => code.split('=')[1])[0];
+        let param = "";
+
+        if (!!params && params.includes("&")) {
+            param = params.split("&").filter(param => param.includes(paramName))
+                          .map(code => code.split('=')[1])[0];
+        }
+
+        return param;
     }
 
     isStateFromResponseSameWithSentState(state) {
