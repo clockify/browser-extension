@@ -4,8 +4,11 @@ import Settings from './settings.component';
 import {TokenService} from "../services/token-service";
 import {getBrowser} from "../helpers/browser-helpers";
 import {isAppTypeExtension} from "../helpers/app-types-helpers";
+import {getAppTypes} from "../enums/applications-types.enum";
+import {getEnv} from "../environment";
 
 const tokenService = new TokenService();
+const environment = getEnv();
 
 class Menu extends React.Component {
 
@@ -41,6 +44,14 @@ class Menu extends React.Component {
         tokenService.logout();
     }
 
+    openWebDashboard() {
+        if (localStorage.getItem('appType') === getAppTypes().DESKTOP) {
+            openExternal(`${environment.home}/dashboard`);
+        } else {
+            window.open(`${environment.home}/dashboard`, '_blank');
+        }
+    }
+
     render() {
         if (this.props.isOpen) {
             return (
@@ -70,12 +81,19 @@ class Menu extends React.Component {
                         </div>
                         <hr/>
                         {/*<div>REPORTS</div>*/}
-                        <div className={JSON.parse(localStorage.getItem('offline')) ? "disable-manual" : ""} onClick={this.openSettings.bind(this)}>SETTINGS</div>
+                        <div className={JSON.parse(localStorage.getItem('offline')) ? "disable-manual" : ""}
+                             onClick={this.openSettings.bind(this)}>SETTINGS</div>
                         <div className={isAppTypeExtension() ?
                                     JSON.parse(localStorage.getItem('offline')) ? "disable-manual" : ""
                                      : "disabled"}
                              onClick={this.openUrlPermissions.bind(this)}>
-                            URL PERMISSIONS
+                            INTEGRATIONS
+                        </div>
+                        <div className={"menu__dashboard"} onClick={this.openWebDashboard.bind(this)}>
+                            <p className={JSON.parse(localStorage.getItem('offline')) ? "disable-manual" : ""}>
+                                DASHBOARD
+                            </p>
+                            <span className="menu__dashboard__out"></span>
                         </div>
                         <div className={JSON.parse(localStorage.getItem('offline')) ? "disable-manual" : ""} onClick={this.logout.bind(this)}>LOG OUT</div>
                     </div>

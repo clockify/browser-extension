@@ -11,10 +11,13 @@ import {Application} from "../application";
 import {ProjectHelpers} from "../helpers/project-helpers";
 import {TimeEntryService} from "../services/timeEntry-service";
 import {getKeyCodes} from "../enums/key-codes.enum";
-import {isAppTypeMobile} from "../helpers/app-types-helpers";
+import {isAppTypeExtension, isAppTypeMobile} from "../helpers/app-types-helpers";
+import {getBrowser} from "../helpers/browser-helpers";
+import {LocalStorageService} from "../services/localStorage-service";
 
 const projectHelpers = new ProjectHelpers();
 const timeEntryService = new TimeEntryService();
+const localStorageService = new LocalStorageService();
 let interval;
 
 class StartTimer extends React.Component {
@@ -29,7 +32,7 @@ class StartTimer extends React.Component {
             ready: false
         };
 
-        this.application = new Application(localStorage.getItem('appType'));
+        this.application = new Application(localStorageService.get('appType'));
     }
 
     componentDidMount() {
@@ -73,7 +76,7 @@ class StartTimer extends React.Component {
             timeEntryService.getEntryInProgress().then(response => {
 
                 let timeEntry = response.data;
-                    this.setTimeEntryInProgress(timeEntry);
+                this.setTimeEntryInProgress(timeEntry);
                 })
                 .catch(() => {
                     this.application.setIcon(
@@ -210,6 +213,11 @@ class StartTimer extends React.Component {
                     this.props.changeMode('timer');
                     this.props.setTimeEntryInProgress(data);
                     this.application.setIcon(getIconStatus().timeEntryStarted);
+                    if (isAppTypeExtension()) {
+                        const backgroundPage = getBrowser().extension.getBackgroundPage();
+                        backgroundPage.addIdleListenerIfIdleIsEnabled();
+                        backgroundPage.removeReminderTimer();
+                    }
                     this.goToEdit();
                 });
             })
@@ -241,7 +249,7 @@ class StartTimer extends React.Component {
     stopEntryInProgress() {
 
         if(checkConnection()) {
-            let timeEntriesOffline = localStorage.getItem('timeEntriesOffline') ? JSON.parse(localStorage.getItem('timeEntriesOffline')) : [];
+            const timeEntriesOffline = localStorage.getItem('timeEntriesOffline') ? JSON.parse(localStorage.getItem('timeEntriesOffline')) : [];
             let timeEntryOffline = localStorage.getItem('timeEntryInOffline') ? JSON.parse(localStorage.getItem('timeEntryInOffline')) : null;
             timeEntryOffline.timeInterval.end = moment();
             timeEntryOffline.timeInterval.duration = duration(moment().diff(timeEntryOffline.timeInterval.start));
@@ -272,7 +280,11 @@ class StartTimer extends React.Component {
                     document.getElementById('description').value = '';
                     this.props.setTimeEntryInProgress(null);
                     this.props.endStarted();
-
+                    if (isAppTypeExtension()) {
+                        const backgroundPage = getBrowser().extension.getBackgroundPage();
+                        backgroundPage.removeIdleListenerIfIdleIsEnabled();
+                        backgroundPage.addReminderTimer();
+                    }
                     this.application.setIcon(getIconStatus().timeEntryEnded);
                 })
                 .catch(() => {

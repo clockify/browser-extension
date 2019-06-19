@@ -7,7 +7,6 @@ import {getEnv} from "./environment";
 
 const extension = new Extension();
 const desktop = new Desktop();
-const mobile = new Mobile();
 const settingsService = new SettingsService();
 const environment = getEnv();
 
@@ -26,9 +25,6 @@ export class Application {
                 break;
             case getAppTypes().DESKTOP:
                 desktop.afterLoad();
-                break;
-            case getAppTypes().MOBILE:
-                mobile.afterLoad();
                 break;
         }
     }

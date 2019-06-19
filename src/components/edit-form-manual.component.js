@@ -64,7 +64,7 @@ class EditFormManual extends React.Component {
         clearInterval(this.state.interval);
         if(!this.state.timeEntry.timeInterval.end) {
             let currentPeriod = moment().diff(moment(this.state.timeEntry.timeInterval.start));
-            let interval =setInterval(() => {
+            let interval = setInterval(() => {
                 currentPeriod = currentPeriod + 1000;
                 this.setState({
                     time: duration(currentPeriod).format('HH:mm:ss', {trim: false})
@@ -98,6 +98,7 @@ class EditFormManual extends React.Component {
         if (!duration) {
             return;
         }
+
         let timeEntry = this.state.timeEntry;
 
         let start = moment()

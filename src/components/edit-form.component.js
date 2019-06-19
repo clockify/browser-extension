@@ -10,7 +10,8 @@ import HomePage from "./home-page.component";
 import {checkConnection} from "./check-connection";
 import {ProjectHelpers} from "../helpers/project-helpers";
 import {TimeEntryService} from "../services/timeEntry-service";
-import {isAppTypeMobile} from "../helpers/app-types-helpers";
+import {isAppTypeExtension, isAppTypeMobile} from "../helpers/app-types-helpers";
+import {getBrowser} from "../helpers/browser-helpers";
 
 const projectHelpers = new ProjectHelpers();
 const timeEntryService = new TimeEntryService();
@@ -383,6 +384,11 @@ class EditForm extends React.Component {
         } else {
             timeEntryService.deleteTimeEntry(this.state.timeEntry.id)
                 .then(response => {
+                    if (isAppTypeExtension()) {
+                        const backgroundPage = getBrowser().extension.getBackgroundPage();
+                        backgroundPage.removeIdleListenerIfIdleIsEnabled();
+                        backgroundPage.addReminderTimer();
+                    }
                     ReactDOM.render(<HomePage/>, document.getElementById('mount'));
                 })
                 .catch(() => {

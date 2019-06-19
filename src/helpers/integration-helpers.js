@@ -112,4 +112,6 @@ async function startTimeEntryRequestAndFetch (timeEntryUrl, token, description, 
             .then(response => response.json());
 }
 
-
+export async function getDefaultProjectBackground() {
+    return await projectHelpers.getProjectForButton('');
+}
