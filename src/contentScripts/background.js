@@ -180,7 +180,7 @@ function extractToken(url) {
     let token = "";
 
     if (!!url) {
-        token = url.split('?')[1].split('=')[1]
+        token = url.split('?')[1].split('=')[1];
     }
 
     return token;
