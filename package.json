@@ -1,6 +1,6 @@
 {
   "name": "Clockify",
-  "version": "1.5.8",
+  "version": "1.6.2",
   "description": "Clockify App 100% Free",
   "main": "main.js",
   "productName": "Clockify",
@@ -8,7 +8,7 @@
   "scripts": {
     "clean.build.chrome.dev": "node tools/clean-build-script.js www/chrome.dev/",
     "clean.build.firefox.dev": "node tools/clean-build-script.js www/firefox.dev/",
-    "compile.dev.chrome": "npm run clean.build.chrome.dev && compass compile -c config_chrome.dev.rb && TARGET=chrome.dev webpack",
+    "compile.dev.chrome": "npm run clean.build.chrome.dev && compass compile -c config_chrome.dev.rb && TARGET=chrome.dev webpack --watch",
     "compile.dev.firefox": "npm run clean.build.firefox.dev && compass compile -c config_firefox.dev.rb && TARGET=firefox.dev webpack",
     "copy.assets": "node tools/copy-assets-from-node-modules.js"
   },

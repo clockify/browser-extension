@@ -9,10 +9,13 @@
       "vendors.main.bundle.js",
       "contentScripts/background.js",
       "contentScripts/timeEntry-httpRequests-background.js",
-      "contentScripts/token-background.js"
+      "contentScripts/token-background.js",
+      "contentScripts/idle-detection-background.js",
+      "contentScripts/notification-background.js",
+      "contentScripts/reminder-background.js"
     ]
   },
-  "version": "1.5.8",
+  "version": "1.6.2",
   "browser_action": {
     "default_popup": "index.html",
     "default_title": "Clockify"
@@ -44,6 +47,7 @@
     "scopes": ["openid", "email", "profile", "https://www.googleapis.com/auth/userinfo.email"]
   },
   "permissions": [
+    "background",
     "contextMenus",
     "https://clockify.me/api/*",
     "storage",
@@ -52,7 +56,9 @@
     "activeTab",
     "<all_urls>",
     "identity",
-    "https://accounts.google.com/*"
+    "https://accounts.google.com/*",
+    "idle",
+    "notifications"
   ],
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
 }

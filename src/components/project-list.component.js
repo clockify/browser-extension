@@ -190,7 +190,9 @@ class ProjectList extends React.Component {
         if (!JSON.parse(localStorage.getItem('offline'))) {
             this.setState({
                 isOpen: true
-            })
+            }, () => {
+                document.getElementById('filter').focus();
+            });
         }
     }
 

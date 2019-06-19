@@ -87,9 +87,7 @@ class TimeEntryList extends React.Component {
                                            />
                                        )
                                     })}
-
                                 </div>
-
                             )
                         })
                     }

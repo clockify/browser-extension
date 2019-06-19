@@ -8,6 +8,8 @@ import {getEntryInProgress, startTimer, stopInProgress} from "../helpers/integra
 import {checkConnection} from "../components/check-connection";
 import {LocalStorageService} from "../services/localStorage-service";
 import {UserService} from "../services/user-service";
+import {isAppTypeExtension} from "../helpers/app-types-helpers";
+import {getLocalStorageEnums} from "../enums/local-storage.enum";
 
 const localStorageService = new LocalStorageService();
 const userService = new UserService();
@@ -118,7 +120,7 @@ export class Extension {
     }
 
     loadFromStorage(key) {
-        return localStorage.getItem(key);
+        return localStorageService.get(key);
     }
 
     registerButtonHandlers() {
@@ -138,6 +140,9 @@ export class Extension {
     stopEntryInProgress(sendResponse) {
         return stopInProgress().then((response) => {
             if (response.status !== 400) {
+                if (isAppTypeExtension) {
+                    getBrowser().notifications.clear('idleDetection');
+                }
                 this.setIcon(getIconStatus().timeEntryEnded);
             }
             sendResponse({status: response.status});
@@ -157,6 +162,9 @@ export class Extension {
     stopTimerAndStartNewEntry(request, sendResponse) {
         return stopInProgress().then((response) => {
             if (response.status === 200) {
+                if (isAppTypeExtension) {
+                    getBrowser().notifications.clear('idleDetection');
+                }
                 return this.startTimer(request)
                     .then((response) => {
                         if (!response.message) {
