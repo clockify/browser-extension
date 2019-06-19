@@ -28,8 +28,7 @@ class TimeEntry extends React.Component {
                                       timeEntry={this.props.timeEntry}
                                       workspaceSettings={this.props.workspaceSettings}
                                       timeFormat={this.props.timeFormat}
-                                      isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}/>,
-                            document.getElementById('mount'));
+                                      isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}/>, document.getElementById('mount'));
         }
     }
 

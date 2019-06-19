@@ -24,8 +24,7 @@ class TimeEntryListNotsyncedComponent extends React.Component {
         ReactDOM.render(<EditFormManual timeEntry={timeEntry}
                                         workspaceSettings={this.props.workspaceSettings}
                                         timeFormat={this.props.timeFormat}
-                                        isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}/>,
-                        document.getElementById('mount'));
+                                        isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}/>, document.getElementById('mount'));
     }
 
     render() {

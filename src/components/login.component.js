@@ -438,10 +438,10 @@ class Login extends React.Component {
 
     getParamFromUrl(params, paramName) {
         let param = "";
-
         if (!!params && params.includes("&")) {
-            param = params.split("&").filter(param => param.includes(paramName))
-                          .map(code => code.split('=')[1])[0];
+            param = params.split("&")
+                .filter(param => param.includes(paramName))
+                .map(code => code.split('=')[1])[0];
         }
 
         return param;

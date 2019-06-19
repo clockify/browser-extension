@@ -17,8 +17,10 @@ import {TimeEntryService} from "../services/timeEntry-service";
 import {WorkspaceService} from "../services/workspace-service";
 import {ProjectService} from "../services/project-service";
 import {getBrowser} from "../helpers/browser-helpers";
-import {isAppTypeExtension} from "../helpers/app-types-helpers";
+import {isAppTypeExtension, isAppTypeMobile} from "../helpers/app-types-helpers";
 import {LocalStorageService} from "../services/localStorage-service";
+import {getWorkspacePermissionsEnums} from "../enums/workspace-permissions.enum";
+import {getLocalStorageEnums} from "../enums/local-storage.enum";
 
 const projectService = new ProjectService();
 const localStorageService = new LocalStorageService();
@@ -49,7 +51,7 @@ class HomePage extends React.Component {
             isUserOwnerOrAdmin: false
         };
 
-        this.application = new Application(localStorage.getItem('appType'));
+        this.application = new Application(localStorageService.get('appType'));
 
         this.handleScroll = this.handleScroll.bind(this);
         this.loadMoreEntries = this.loadMoreEntries.bind(this);
@@ -68,14 +70,18 @@ class HomePage extends React.Component {
         }
 
         this.setIsUserOwnerOrAdmin();
+
+        if(!isAppTypeMobile()) {
+            this.enableTimerShortcutForFirstTime();
+        }
     }
 
     setIsUserOwnerOrAdmin() {
         workspaceService.getPermissionsForUser().then(workspacePermissions => {
             const isUserOwnerOrAdmin = workspacePermissions.filter(permission =>
-                permission.name === getWorkspacePermissionsEnums().WORKSPACE_OWN ||
-                permission.name === getWorkspacePermissionsEnums().WORKSPACE_ADMIN
-            ).length > 0;
+                                            permission.name === getWorkspacePermissionsEnums().WORKSPACE_OWN ||
+                                            permission.name === getWorkspacePermissionsEnums().WORKSPACE_ADMIN
+                                        ).length > 0;
             this.setState({
                 isUserOwnerOrAdmin: isUserOwnerOrAdmin
             }, () => {
@@ -83,6 +89,26 @@ class HomePage extends React.Component {
                 this.handleRefresh();
             });
         });
+    }
+
+    enableTimerShortcutForFirstTime() {
+        const userId = localStorageService.get('userId');
+        let timerShortcutFromStorage =
+            localStorageService.get('timerShortcut') ? JSON.parse(localStorageService.get('timerShortcut')) : [];
+
+        if (
+            timerShortcutFromStorage.length === 0 ||
+            (timerShortcutFromStorage.length > 0 &&
+                timerShortcutFromStorage.filter(timerShortcut => timerShortcut.userId === userId).length === 0)
+        ) {
+            timerShortcutFromStorage.push({userId: userId, enabled: true});
+
+            localStorageService.set(
+                'timerShortcut',
+                JSON.stringify(timerShortcutFromStorage),
+                getLocalStorageEnums().PERMANENT_PREFIX
+            );
+        }
     }
 
     saveAllOfflineEntries() {
@@ -342,6 +368,9 @@ class HomePage extends React.Component {
         } else {
             timeEntryService.stopEntryInProgress(moment())
                 .then(() => {
+                    if (isAppTypeExtension()) {
+                        getBrowser().extension.getBackgroundPage().removeIdleListenerIfIdleIsEnabled();
+                    }
                     timeEntryService.createEntry(
                         timeEntry.description,
                         moment(),
@@ -352,6 +381,9 @@ class HomePage extends React.Component {
                         timeEntry.billable
                     ).then(response => {
                         let data = response.data;
+                        if (isAppTypeExtension()) {
+                            getBrowser().extension.getBackgroundPage().addIdleListenerIfIdleIsEnabled();
+                        }
                         ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
                         ReactDOM.render(
                             <EditForm changeMode={this.changeMode.bind(this)}
@@ -413,7 +445,7 @@ class HomePage extends React.Component {
                                   timeEntry={this.state.inProgress}
                                   workspaceSettings={this.state.workspaceSettings}
                                   timeFormat={this.state.userSettings.timeFormat}
-                                  isUserOwnerOrAdmin={this.state.isUserOwnerOrAdmin}/>,
+                                  isUserOwnerOrAdmin={this.state.isUserOwnerOrAdmin}/>, 
                         document.getElementById('mount'));
     }
 
@@ -438,8 +470,7 @@ class HomePage extends React.Component {
                     <EditForm changeMode={this.changeMode.bind(this)}
                               timeEntry={timeEntryOffline}
                               workspaceSettings={this.state.workspaceSettings}
-                              timeFormat={this.state.userSettings.timeFormat}
-                              isUserOwnerOrAdmin={this.state.isUserOwnerOrAdmin}/>,
+                              timeFormat={this.state.userSettings.timeFormat}/>,
                     document.getElementById('mount')
                 );
             } else {
@@ -453,13 +484,15 @@ class HomePage extends React.Component {
                     timeEntry.billable
                 ).then(response => {
                     let data = response.data;
+                    if (isAppTypeExtension()) {
+                        getBrowser().extension.getBackgroundPage().addIdleListenerIfIdleIsEnabled();
+                    }
                     ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
                     ReactDOM.render(
                         <EditForm changeMode={this.changeMode.bind(this)}
                                   timeEntry={data}
                                   workspaceSettings={this.state.workspaceSettings}
-                                  timeFormat={this.state.userSettings.timeFormat}
-                                  isUserOwnerOrAdmin={this.state.isUserOwnerOrAdmin}/>,
+                                  timeFormat={this.state.userSettings.timeFormat}/>,
                         document.getElementById('mount')
                     );
 
@@ -578,7 +611,7 @@ class HomePage extends React.Component {
 
         getBrowser().storage.local.set({permissions: permissionsForStorage});
     }
-
+    
     render() {
         if (!this.state.ready) {
             return null;

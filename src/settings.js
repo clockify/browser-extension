@@ -27,13 +27,9 @@ document.getElementById('permission-filter')
     .addEventListener('keyup', this.filterPermissions);
 document.getElementById('add-custom-domain')
     .addEventListener('click', addCustomDomain);
-document.getElementById('errorReports')
-    .addEventListener('click', toggleSendErrors);
 document.querySelector('#settings__custom-domains__custom-perm-container')
     .addEventListener('click', removeCustomDomain);
 integrationsTab.addEventListener('click', openTab);
-document.getElementById('telemetryTab')
-    .addEventListener('click', openTab);
 
 function createOriginList() {
     fetch('integrations/integrations.json')
@@ -75,7 +71,6 @@ function createOriginList() {
 function initLoad() {
     createOriginList();
     showCustomDomains();
-    enableSendErrorsForFirstTime();
 }
 
 function restore_options() {
@@ -307,22 +302,4 @@ function openTab(event) {
     }
     document.getElementById(tabName).style.display = "block";
     event.currentTarget.className += " active";
-}
-
-function enableSendErrorsForFirstTime() {
-    aBrowser.storage.local.get(['sendErrors'], (result) => {
-        let checked;
-        if (typeof result.sendErrors === "undefined") {
-            aBrowser.storage.local.set({"sendErrors": true});
-            checked = true;
-        } else {
-            checked = result.sendErrors;
-        }
-
-        document.getElementById('errorReports').checked = checked;
-    });
-}
-
-function toggleSendErrors(event) {
-    aBrowser.storage.local.set({'sendErrors': event.target.checked});
 }

@@ -9,7 +9,10 @@
       "vendors.main.bundle.js",
       "contentScripts/background.js",
       "contentScripts/timeEntry-httpRequests-background.js",
-      "contentScripts/token-background.js"
+      "contentScripts/token-background.js",
+      "contentScripts/idle-detection-background.js",
+      "contentScripts/notification-background.js",
+      "contentScripts/reminder-background.js"
     ]
   },
   "applications": {
@@ -18,7 +21,7 @@
       "strict_min_version": "57.0a1"
     }
   },
-  "version": "1.5.8",
+  "version": "1.6.2",
   "browser_action": {
     "default_popup": "index.html",
     "default_title": "Clockify"

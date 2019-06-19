@@ -1,7 +1,19 @@
-let aBrowser = chrome || browser;
+let aBrowser = this.isChrome() ? chrome : browser;
+
+function isChrome() {
+    if (typeof chrome !== "undefined") {
+        if (typeof browser !== "undefined") {
+            return false;
+        } else {
+            return true;
+        }
+    }
+}
+
 const iconPathEnded = '../assets/images/logo-16-gray.png';
 const iconPathStarted = '../assets/images/logo-16.png';
 const clockifyProd = 'https://clockify.me/tracker';
+let windowIds = [];
 
 const tabStatus = {
     COMPLETE: 'complete',
@@ -20,6 +32,34 @@ aBrowser.runtime.onInstalled.addListener((details) => {
         aBrowser.browserAction.setIcon({
             path: iconPathEnded
         });
+    }
+});
+
+aBrowser.windows.onCreated.addListener((window) => {
+    if (this.isLoggedIn() && windowIds.length === 0) {
+        this.getEntryInProgress()
+            .then(response => response.json())
+            .then(data => {})
+            .catch(() => {
+                this.addReminderTimerOnStartingBrowser();
+                this.startTimerOnStartingBrowser();
+            });
+        if (!document.connection) {
+            this.connectWebSocket();
+        }
+    }
+    windowIds = [...windowIds, window.id];
+});
+
+aBrowser.windows.onRemoved.addListener((window) => {
+    if (windowIds.includes(window)) {
+        windowIds.splice(windowIds.indexOf(window), 1);
+    }
+
+    if (windowIds.length === 0) {
+        this.removeReminderTimer();
+        this.endInProgressOnClosingBrowser();
+        this.disconnectWebSocket();
     }
 });
 
@@ -54,30 +94,40 @@ aBrowser.contextMenus.create({
 aBrowser.commands.onCommand.addListener((command) => {
     const activeWorkspaceId = localStorage.getItem("activeWorkspaceId");
     const token = localStorage.getItem('token');
-    if (isLoggedIn()) {
-        if (command === commands.startStop) {
-            getInProgress(activeWorkspaceId, token)
-                .then(response => response.json())
-                .then(data => {
-                    endInProgress(activeWorkspaceId, token)
-                        .then(response => {
-                            if (response.status === 400) {
-                                alert("You already have entry in progress which can't be saved" +
-                                    " without project/task/description or tags. Please edit your time entry.");
-                            } else {
-                                window.inProgress = false;
-                                aBrowser.browserAction.setIcon({
-                                    path: iconPathEnded
-                                });
-                            }
-                        });
-                })
-                .catch(error => {
-                    startTimer(activeWorkspaceId, token, "");
-                })
+
+    const timerShortcutFromStorage = localStorage.getItem('permanent_timerShortcut');
+    const userId = localStorage.getItem('userId');
+
+    const isTimerShortcutOn = timerShortcutFromStorage && JSON.parse(timerShortcutFromStorage)
+        .filter(timerShortcutByUser =>
+            timerShortcutByUser.userId === userId && JSON.parse(timerShortcutByUser.enabled)).length > 0;
+
+    if (isTimerShortcutOn) {
+        if (isLoggedIn()) {
+            if (command === commands.startStop) {
+                getInProgress(activeWorkspaceId, token)
+                    .then(response => response.json())
+                    .then(data => {
+                        this.endInProgress(new Date())
+                            .then(response => {
+                                if (response.status === 400) {
+                                    alert("You already have entry in progress which can't be saved" +
+                                        " without project/task/description or tags. Please edit your time entry.");
+                                } else {
+                                    window.inProgress = false;
+                                    aBrowser.browserAction.setIcon({
+                                        path: iconPathEnded
+                                    });
+                                }
+                            });
+                    })
+                    .catch(error => {
+                        startTimerBackground(activeWorkspaceId, token, "");
+                    })
+            }
+        } else {
+            alert('You must log in to use keyboard shortcut');
         }
-    } else {
-        alert('You must log in to use keyboard shortcut');
     }
 });
 
@@ -134,7 +184,7 @@ function extractToken(url) {
     let token = "";
 
     if (!!url) {
-        token = url.split('?')[1].split('=')[1];
+        token = url.split('?')[1].split('=')[1]
     }
 
     return token;
@@ -153,9 +203,11 @@ function getParamFromUrl(params, paramName) {
     let param = "";
 
     if (!!params) {
-        param = params.split("&").filter(param => param.includes(paramName))
-                      .map(code => code.split('=')[1])[0];
+        param = params.split("&")
+            .filter(param => param.includes(paramName))
+            .map(code => code.split('=')[1])[0];
     }
+
     return param;
 }
 
@@ -220,7 +272,7 @@ function startTimerWithDescription(info) {
                 endInProgressAndStartNew(info);
             })
             .catch(error => {
-                startTimer(activeWorkspaceId, token, info ? info.selectionText : "");
+                startTimerBackground(activeWorkspaceId, token, info ? info.selectionText : "");
             })
     });
 }
@@ -267,13 +319,13 @@ function endInProgressAndStartNew(info) {
     aBrowser.storage.sync.get(['token', 'activeWorkspaceId'], (result) => {
         let token = result.token;
         let activeWorkspaceId = result.activeWorkspaceId;
-        endInProgress(activeWorkspaceId, token)
+        this.endInProgress(new Date())
             .then(response => response.json())
             .then(data => {
                 if (data.code === 501) {
                     alert("You already have entry in progress which can't be saved without project/task/description or tags. Please edit your time entry.")
                 } else {
-                    startTimer(activeWorkspaceId, token, info && info.selectionText ? info.selectionText : "");
+                    startTimerBackground(activeWorkspaceId, token, info && info.selectionText ? info.selectionText : "");
                 }
             })
             .catch(() => {
@@ -284,7 +336,7 @@ function endInProgressAndStartNew(info) {
     });
 }
 
-function startTimer(activeWorkspaceId, token, description) {
+function startTimerBackground(activeWorkspaceId, token, description) {
     const apiEndpoint = localStorage.getItem('permanent_baseUrl');
     let timeEntryUrl =
         `${apiEndpoint}/workspaces/${activeWorkspaceId}/timeEntries/`;
@@ -319,23 +371,6 @@ function startTimer(activeWorkspaceId, token, description) {
         })
         .catch(error => {
         })
-}
-
-function endInProgress(activeWorkspaceId, token) {
-    const apiEndpoint = localStorage.getItem('permanent_baseUrl');
-    let endInProgressUrl = `${apiEndpoint}/workspaces/${activeWorkspaceId}/timeEntries/endStarted`;
-    let endRequest = new Request(endInProgressUrl, {
-        method: 'PUT',
-        headers: new Headers({
-            'X-Auth-Token': token,
-            'Content-Type': 'application/json',
-        }),
-        body: JSON.stringify({
-            end: new Date()
-        })
-    });
-
-    return fetch(endRequest);
 }
 
 function getInProgress(activeWorkspaceId, token) {
