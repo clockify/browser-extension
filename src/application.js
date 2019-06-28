@@ -1,7 +1,6 @@
 import {getAppTypes} from "./enums/applications-types.enum";
 import {Extension} from "./application-types/extension";
 import {Desktop} from "./application-types/desktop";
-import {Mobile} from "./application-types/mobile";
 import {SettingsService} from "./services/settings-service";
 import {getEnv} from "./environment";
 
@@ -17,6 +16,7 @@ export class Application {
     }
 
     afterLoad() {
+        this.setWebSocketParamsToStorage();
         this.setBaseUrl();
         this.setHomeUrl();
         switch (this.appType) {
@@ -38,6 +38,11 @@ export class Application {
                 desktop.setIcon(iconStatus);
                 break;
         }
+    }
+
+    setWebSocketParamsToStorage() {
+        localStorage.setItem("webSocketEndpoint", environment.webSocket.endpoint);
+        localStorage.setItem("webSocketClientId", environment.webSocket.clientId);
     }
 
     setBaseUrl() {

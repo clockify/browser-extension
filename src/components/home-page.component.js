@@ -16,16 +16,27 @@ import {Application} from "../application";
 import {TimeEntryService} from "../services/timeEntry-service";
 import {WorkspaceService} from "../services/workspace-service";
 import {ProjectService} from "../services/project-service";
-import {getBrowser} from "../helpers/browser-helpers";
-import {isAppTypeExtension, isAppTypeMobile} from "../helpers/app-types-helpers";
+import {getBrowser} from "../helpers/browser-helper";
+import {isAppTypeExtension, isAppTypeMobile} from "../helpers/app-types-helper";
+import {getWebSocketEventsEnums} from "../enums/web-socket-events.enum";
 import {LocalStorageService} from "../services/localStorage-service";
 import {getWorkspacePermissionsEnums} from "../enums/workspace-permissions.enum";
 import {getLocalStorageEnums} from "../enums/local-storage.enum";
 
 const projectService = new ProjectService();
 const localStorageService = new LocalStorageService();
+const messages = [
+    'TIME_ENTRY_STARTED',
+    'TIME_ENTRY_STOPPED',
+    'TIME_ENTRY_DELETED',
+    'TIME_ENTRY_UPDATED',
+    'TIME_ENTRY_CREATED',
+    'WORKSPACE_SETTINGS_UPDATED',
+    'CHANGED_ADMIN_PERMISSION'
+];
 const timeEntryService = new TimeEntryService();
 const workspaceService = new WorkspaceService();
+let websocketHandlerListener;
 
 class HomePage extends React.Component {
 
@@ -64,14 +75,18 @@ class HomePage extends React.Component {
 
         this.getWorkspaceSettings();
         this.saveAllOfflineEntries();
+        this.webSocketMessagesHandler();
 
         if (isAppTypeExtension()) {
             this.enableAllIntegrationsButtonIfNoneIsEnabled();
+            getBrowser().runtime.sendMessage({
+                    eventName: "webSocketConnect",
+                });
         }
 
         this.setIsUserOwnerOrAdmin();
 
-        if(!isAppTypeMobile()) {
+        if(isAppTypeExtension()) {
             this.enableTimerShortcutForFirstTime();
         }
     }
@@ -109,6 +124,55 @@ class HomePage extends React.Component {
                 getLocalStorageEnums().PERMANENT_PREFIX
             );
         }
+    }
+
+    webSocketMessagesHandler() {
+        websocketHandlerListener = (request, sender, sendResponse) => {
+            if (messages.includes(request.eventName)) {
+                this.setState({
+                    mode: 'timer',
+                    pageCount: 0
+                }, () => {
+                    switch (request.eventName) {
+                        case getWebSocketEventsEnums().TIME_ENTRY_STARTED:
+                            timeEntryService.getEntryInProgress()
+                                .then(response => {
+                                   this.start.setTimeEntryInProgress(response.data);
+                                });
+                            break;
+                        case getWebSocketEventsEnums().TIME_ENTRY_CREATED:
+                            this.getTimeEntries();
+                            break;
+                        case getWebSocketEventsEnums().TIME_ENTRY_STOPPED:
+                            this.start.setTimeEntryInProgress(null);
+                            this.getTimeEntries();
+                            break;
+                        case getWebSocketEventsEnums().TIME_ENTRY_UPDATED:
+                            timeEntryService.getEntryInProgress()
+                                .then(response => {
+                                    this.start.setTimeEntryInProgress(response.data);
+                                });
+                            this.getTimeEntries();
+                            break;
+                        case getWebSocketEventsEnums().TIME_ENTRY_DELETED:
+                            timeEntryService.getEntryInProgress()
+                                .then(response => {
+                                    this.start.setTimeEntryInProgress(response.data);
+                                });
+                            this.getTimeEntries();
+                            break;
+                        case getWebSocketEventsEnums().WORKSPACE_SETTINGS_UPDATED:
+                            this.getWorkspaceSettings();
+                            break;
+                        case getWebSocketEventsEnums().CHANGED_ADMIN_PERMISSION:
+                            this.setIsUserOwnerOrAdmin();
+                            break;
+                    }
+                });
+            }
+        };
+
+        getBrowser().runtime.onMessage.addListener(websocketHandlerListener);
     }
 
     saveAllOfflineEntries() {
@@ -199,27 +263,18 @@ class HomePage extends React.Component {
 
     groupEntries(timeEntries, durationMap) {
         let dates = [];
-        const trackTimeDownToSeconds = this.state.workspaceSettings.trackTimeDownToSecond;
+        const trackTimeDownToSeconds =
+            typeof this.state.workspaceSettings.trackTimeDownToSecond !== "undefined" ?
+                this.state.workspaceSettings.trackTimeDownToSecond :
+                JSON.parse(localStorageService.get("workspaceSettings")).trackTimeDownToSecond;
+
         if (timeEntries.length > 0) {
-            timeEntries.map(timeEntry => {
-                if (moment(timeEntry.timeInterval.start).isSame(moment(), 'day')) {
-                    timeEntry.start = 'Today';
-                } else {
-                    timeEntry.start = moment(timeEntry.timeInterval.start).format('ddd, Do MMM');
-                }
-                timeEntry.duration =
-                    duration(moment(timeEntry.timeInterval.end)
-                        .diff(timeEntry.timeInterval.start))
-                        .format(trackTimeDownToSeconds ? 'HH:mm:ss' : 'h:mm', {trim: false});
-                if (dates.indexOf(timeEntry.start) === -1) {
-                    dates.push(timeEntry.start);
-                }
-            });
+            this.groupTimeEntriesByDays(timeEntries, trackTimeDownToSeconds, dates);
         }
         const formatedDurationMap = this.formatDurationMap(durationMap);
 
         dates = dates.map(day => {
-            let dayDuration;
+            let dayDuration = duration(0);
             if (durationMap) {
                 dayDuration = formatedDurationMap[day];
             } else {
@@ -228,7 +283,7 @@ class HomePage extends React.Component {
                 });
             }
             return day + "-" + duration(dayDuration).format(
-                trackTimeDownToSeconds ? 'HH:mm:ss' : 'h:mm', {trim: false}
+                true ? 'HH:mm:ss' : 'hh:mm', {trim: false}
             );
         });
 
@@ -237,6 +292,23 @@ class HomePage extends React.Component {
         });
 
         return timeEntries;
+    }
+
+    groupTimeEntriesByDays(timeEntries, trackTimeDownToSeconds, dates) {
+        timeEntries.map(timeEntry => {
+            if (moment(timeEntry.timeInterval.start).isSame(moment(), 'day')) {
+                timeEntry.start = 'Today';
+            } else {
+                timeEntry.start = moment(timeEntry.timeInterval.start).format('ddd, Do MMM');
+            }
+            timeEntry.duration =
+                duration(moment(timeEntry.timeInterval.end)
+                    .diff(timeEntry.timeInterval.start))
+                    .format(trackTimeDownToSeconds ? 'HH:mm:ss' : 'h:mm', {trim: false});
+            if (dates.indexOf(timeEntry.start) === -1) {
+                dates.push(timeEntry.start);
+            }
+        });
     }
 
     formatDurationMap(durationMap) {
@@ -445,8 +517,7 @@ class HomePage extends React.Component {
                                   timeEntry={this.state.inProgress}
                                   workspaceSettings={this.state.workspaceSettings}
                                   timeFormat={this.state.userSettings.timeFormat}
-                                  isUserOwnerOrAdmin={this.state.isUserOwnerOrAdmin}/>, 
-                        document.getElementById('mount'));
+                                  isUserOwnerOrAdmin={this.state.isUserOwnerOrAdmin}/>, document.getElementById('mount'));
     }
 
     continueTimeEntry(timeEntry) {
@@ -563,8 +634,15 @@ class HomePage extends React.Component {
             this.saveAllOfflineEntries();
             this.setState({
                 pageCount: 0
-            }, () => this.getWorkspaceSettings());
+            }, () => {
+                this.getWorkspaceSettings();
+            });
+            window.scrollTo(0,0);
             ReactDOM.render(<HomePage/>, document.getElementById('mount'));
+
+            if (this.start) {
+                this.start.getTimeEntryInProgress();
+            }
         }
     }
 
@@ -611,35 +689,40 @@ class HomePage extends React.Component {
 
         getBrowser().storage.local.set({permissions: permissionsForStorage});
     }
-    
+
+    componentWillUnmount() {
+        getBrowser().runtime.onMessage.removeListener(websocketHandlerListener);
+    }
+
     render() {
         if (!this.state.ready) {
             return null;
         } else {
             return (
-                <div>
-                    <Header showActions={true}
-                            showSync={true}
-                            changeMode={this.changeMode.bind(this)}
+                <div className="home_page">
+                    <div className="header_and_timer">
+                        <Header showActions={true}
+                                showSync={true}
+                                changeMode={this.changeMode.bind(this)}
+                                mode={this.state.mode}
+                                disableManual={!!this.state.inProgress}
+                                handleRefresh={this.handleRefresh.bind(this)}
+                                workspaceSettings={this.state.workspaceSettings}
+                        />
+                        <StartTimer
+                            ref={instance => {
+                                this.start = instance;
+                            }}
                             mode={this.state.mode}
-                            disableManual={!!this.state.inProgress}
-                            handleRefresh={this.handleRefresh.bind(this)}
+                            changeMode={this.changeMode.bind(this)}
+                            endStarted={this.getTimeEntries.bind(this)}
+                            setTimeEntryInProgress={this.inProgress.bind(this)}
                             workspaceSettings={this.state.workspaceSettings}
-                    />
-
-                    <StartTimer
-                        ref={instance => {
-                            this.start = instance;
-                        }}
-                        mode={this.state.mode}
-                        changeMode={this.changeMode.bind(this)}
-                        endStarted={this.getTimeEntries.bind(this)}
-                        setTimeEntryInProgress={this.inProgress.bind(this)}
-                        workspaceSettings={this.state.workspaceSettings}
-                        timeEntries={this.state.timeEntries}
-                        timeFormat={this.state.userSettings.timeFormat}
-                        isUserOwnerOrAdmin={this.state.isUserOwnerOrAdmin}
-                    />
+                            timeEntries={this.state.timeEntries}
+                            timeFormat={this.state.userSettings.timeFormat}
+                            isUserOwnerOrAdmin={this.state.isUserOwnerOrAdmin}
+                        />
+                    </div>
                     <div
                         className={this.state.timeEntries.length > 0 ? "pull-loading" : "disabled"}>
                         <img src="./assets/images/circle_1.svg" className="pull-loading-img1"/>

@@ -81,6 +81,9 @@ class Header extends React.Component {
     render() {
         return (
             <div>
+                <div className={this.state.menuOpen ? "invisible-menu" : "disabled"}
+                     onClick={this.closeMenu.bind(this)}>
+                </div>
                 <div className={JSON.parse(localStorage.getItem('offline')) ? "header-offline" : "disabled"}>
                     Offline
                 </div>
@@ -100,11 +103,8 @@ class Header extends React.Component {
                             </div> :
                             <div>
                                 <div onClick={this.handleRefresh.bind(this)}
-                                     className={localStorage.getItem('appType') !== getAppTypes().MOBILE && this.props.showSync ?
+                                     className={localStorageService.get('appType') !== getAppTypes().MOBILE && this.props.showSync ?
                                          "header-sync" : "disabled"}>
-                                </div>
-                                <div className={this.state.menuOpen ? "invisible" : "disabled"}
-                                     onClick={this.closeMenu.bind(this)}>
                                 </div>
                                 <div className={this.props.showActions ? "actions" : "disabled"}
                                      onClick={this.openMenu.bind(this)}>

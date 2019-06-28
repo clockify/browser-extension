@@ -9,7 +9,7 @@ const projectService = new ProjectService();
 const workspaceService = new WorkspaceService();
 const localStorageService = new LocalStorageService();
 
-export class ProjectHelpers {
+export class ProjectHelper {
     constructor() {
     }
 

@@ -1,10 +1,17 @@
 .project-list-button {
-  width: 100%;
   padding: 5px 0;
   background: white;
   border: 1px solid $border;
   border-radius: 2px;
   cursor: pointer;
+
+  &-required {
+    padding: 5px 0;
+    background: white;
+    border: 1px solid $red;
+    border-radius: 2px;
+    cursor: pointer;
+  }
 }
 
 .project-list-button-offline {
@@ -53,6 +60,10 @@
 .project-list-input {
   background: white;
   padding: 10px;
+
+  &--border {
+    position: relative;
+  }
 }
 
 .project-list-filter {
@@ -60,6 +71,17 @@
   height: 40px;
   padding: 10px;
   border: 1px solid $border;
+  border-radius: 2px;
+
+  &__clear {
+    position: absolute;
+    right: 10px;
+    top: 14px;
+    height: 12px;
+    width: 12px;
+    content: url("../assets/images/x.png");
+    cursor: pointer;
+  }
 }
 
 .tasks-arrow-down {

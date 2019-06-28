@@ -35,17 +35,31 @@ class TimeEntryListNotsyncedComponent extends React.Component {
 
                 <div className="time-entries-list-not-synced">
                     <div className="time-entries-list-time">
-                        <span className="time-entries-list-day">Not synced</span>
+                        <span className="time-entries-list-day">Not synced - missing info</span>
                     </div>
-                        {this.props.timeEntries && this.props.timeEntries.map(entry => {
+                        {
+                            this.props.timeEntries && this.props.timeEntries.map(entry => {
                             return (
-                               <div className="time-entry-not-synced" value={JSON.stringify(entry)} onClick={this.syncEntry.bind(this)}>
-                                   <span value={JSON.stringify(entry)} className="time-entry-not-synced-description">{entry.description}</span>
-                                   <span value={JSON.stringify(entry)} className="time-entry-not-synced-time">{duration(entry.timeInterval.duration).format('HH:mm:ss', {trim: false})}</span>
-                                   <span value={JSON.stringify(entry)} className="time-entry-not-synced-sync"></span>
+                               <div className="time-entry-not-synced"
+                                    value={JSON.stringify(entry)}
+                                    onClick={this.syncEntry.bind(this)}
+                                    title="Can't sync while the required field is empty.">
+                                   <span value={JSON.stringify(entry)}
+                                         className={!!entry.description ?
+                                             "time-entry-not-synced-description" :
+                                             "time-entry-not-synced-placeholder"}>
+                                       {!!entry.description ? entry.description : "What's up"}
+                                   </span>
+                                   <span value={JSON.stringify(entry)}
+                                         className="time-entry-not-synced-time">
+                                       {duration(entry.timeInterval.duration).format('HH:mm:ss', {trim: false})}
+                                   </span>
+                                   <span value={JSON.stringify(entry)}
+                                         className="time-entry-not-synced-sync">
+                                   </span>
                                </div>
-                           )
-                        })
+                               )
+                            })
 
                         }
                 </div>

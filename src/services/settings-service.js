@@ -19,10 +19,7 @@ export class SettingsService extends HttpWrapperService {
     }
 
     getLoginSettings(url) {
-        const loginSettingsUrl =
-            `${url}/system-settings/login-settings`;
-
-        return super.get(loginSettingsUrl);
+        return super.get(url);
     }
 
     setSelfHosted(value) {

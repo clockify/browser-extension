@@ -25,12 +25,23 @@
   }
 }
 
-.time-entry-not-synced-description {
-  display: inline-block;
-  width: 170px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.time-entry-not-synced {
+  &-description {
+      display: inline-block;
+      width: 170px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+  }
+
+  &-placeholder {
+    display: inline-block;
+    width: 170px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: $lighter_text;
+  }
 }
 
 .time-entry-not-synced-time {

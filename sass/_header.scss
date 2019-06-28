@@ -1,3 +1,12 @@
+.header_and_timer {
+  position: fixed;
+  width: 100%;
+  z-index: 1111;
+  background: #eff4f7;
+  box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+  top: 0;
+}
+
 .logo {
   display: block;
   width: 100px;
@@ -34,6 +43,7 @@
 .actions {
   float: right;
   cursor: pointer;
+  z-index: 1051;
 }
 
 .action {

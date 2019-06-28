@@ -44,6 +44,9 @@ aBrowser.windows.onCreated.addListener((window) => {
                 this.addReminderTimerOnStartingBrowser();
                 this.startTimerOnStartingBrowser();
             });
+        if (!document.connection) {
+            this.connectWebSocket();
+        }
     }
     windowIds = [...windowIds, window.id];
 });
@@ -56,6 +59,7 @@ aBrowser.windows.onRemoved.addListener((window) => {
     if (windowIds.length === 0) {
         this.removeReminderTimer();
         this.endInProgressOnClosingBrowser();
+        this.disconnectWebSocket();
     }
 });
 
@@ -180,7 +184,7 @@ function extractToken(url) {
     let token = "";
 
     if (!!url) {
-        token = url.split('?')[1].split('=')[1];
+        token = url.split('?')[1].split('=')[1]
     }
 
     return token;
