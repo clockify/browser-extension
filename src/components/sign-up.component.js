@@ -6,8 +6,8 @@ import {getEnv} from '../environment';
 import * as moment from 'moment-timezone';
 import {AuthService} from "../services/auth-service";
 import {UserService} from "../services/user-service";
-import {isAppTypeExtension} from "../helpers/app-types-helpers";
-import {getBrowser, isChrome} from "../helpers/browser-helpers";
+import {isAppTypeExtension} from "../helpers/app-types-helper";
+import {getBrowser, isChrome} from "../helpers/browser-helper";
 
 const environment = getEnv();
 

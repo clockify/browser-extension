@@ -1,4 +1,4 @@
-export class HtmlStyleHelpers {
+export class HtmlStyleHelper {
 
     constructor() {
     }

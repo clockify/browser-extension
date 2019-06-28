@@ -3,19 +3,19 @@ const minuteInMilliseconds =  60000;
 const idleButtons = ['Discard idle time', 'Discard and continue'];
 const idleChangeStateListener = (callback) => {
     const idleDetectionByUser = this.getIdleDetectionByUser();
-    this.getEntryInProgress().then(response => response.json()).then(data => {
+    if (document.timeEntry) {
         if (idleDetectionByUser && callback === 'idle') {
             idleDetectedIn = (new Date() - parseInt(idleDetectionByUser.counter) * minuteInMilliseconds);
-            this.setTimeEntryToDetectedIdleTime(data.id);
+            this.setTimeEntryToDetectedIdleTime(document.timeEntry.id);
         } else if (
             idleDetectedIn &&
             parseInt(idleDetectedIn) > 0 &&
             callback === 'active' &&
-            idleDetectionByUser.timeEntryId === data.id
+            idleDetectionByUser.timeEntryId === document.timeEntry.id
         ) {
-            this.createIdleNotification(data.description, idleDetectedIn);
+            this.createIdleNotification(document.timeEntry.description, idleDetectedIn);
         }
-    }).catch();
+    }
 };
 
 this.setIdleDetectionOnBrowserStart();
@@ -25,13 +25,13 @@ aBrowser.runtime.onMessage.addListener((request, sender, sendResponse) => {
         if (parseInt(request.counter) > 0) {
             aBrowser.idle.setDetectionInterval(parseInt(request.counter) * 60);
 
-            this.getEntryInProgress().then(response => response.json()).then(data => {
+            if (document.timeEntry) {
                 aBrowser.idle.onStateChanged.addListener(idleChangeStateListener);
-            }).catch(() => {
-                if (aBrowser.idle.onStateChanged.hasListener(idleChangeStateListener)) {
+            } else {
+                if (idleChangeStateListener && aBrowser.idle.onStateChanged.hasListener(idleChangeStateListener)) {
                     aBrowser.idle.onStateChanged.removeListener(idleChangeStateListener)
                 }
-            });
+            }
         } else {
             if (idleChangeStateListener && aBrowser.idle.onStateChanged.hasListener(idleChangeStateListener)) {
                 aBrowser.idle.onStateChanged.removeListener(idleChangeStateListener);
@@ -66,13 +66,13 @@ function setIdleDetectionOnBrowserStart() {
     if (idleDetectionByUser && idleDetectionByUser.counter > 0) {
         aBrowser.idle.setDetectionInterval(parseInt(idleDetectionByUser.counter) * 60);
 
-        this.getEntryInProgress().then(response => response.json()).then(data => {
+        if (document.timeEntry) {
             aBrowser.idle.onStateChanged.addListener(idleChangeStateListener);
-        }).catch(() => {
-            if (aBrowser.idle.onStateChanged.hasListener(idleChangeStateListener)) {
-                aBrowser.idle.onStateChanged.removeListener(idleChangeStateListener)
+        } else {
+            if (idleChangeStateListener && aBrowser.idle.onStateChanged.hasListener(idleChangeStateListener)) {
+                aBrowser.idle.onStateChanged.removeListener(idleChangeStateListener);
             }
-        });
+        };
     } else {
         if (idleChangeStateListener && aBrowser.idle.onStateChanged.hasListener(idleChangeStateListener)) {
             aBrowser.idle.onStateChanged.removeListener(idleChangeStateListener);
@@ -157,7 +157,6 @@ function discardIdleTimeAndStopEntry() {
     this.getEntryInProgress().then(response => response.json()).then(data => {
         this.endInProgress(new Date(idleDetectedIn)).then((response) => {
             this.clearNotification('idleDetection');
-            this.addReminderTimer();
 
             if (response.status == 400) {
                 this.saveEntryOfflineAndStopItByDeletingIt(data, idleDetectedIn);

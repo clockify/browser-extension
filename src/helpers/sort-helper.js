@@ -1,4 +1,4 @@
-export class SortHeplers {
+export class SortHepler {
 
     constructor() {}
 

@@ -17,7 +17,7 @@ class ProjectList extends React.Component {
         this.state = {
             isOpen: false,
             selectedProject: {
-                name: 'Add project',
+                name: this.createNameForSelectedProject(),
                 color: '#999999'
             },
             selectedTaskName: '',
@@ -142,7 +142,7 @@ class ProjectList extends React.Component {
                 this.setState({
                     selectedProject: {
                         name: this.props.defaultProject === true ?
-                            'Select default project' : 'Add project',
+                            'Select default project' : this.createNameForSelectedProject(),
                         color: '#999999'
                     }
                 }, () => {
@@ -191,7 +191,7 @@ class ProjectList extends React.Component {
             this.setState({
                 isOpen: true
             }, () => {
-                document.getElementById('filter').focus();
+                document.getElementById('project-filter').focus();
             });
         }
     }
@@ -205,7 +205,7 @@ class ProjectList extends React.Component {
             page: 1,
             filter: ''
         }, () => {
-            document.getElementById('filter').value = "";
+            document.getElementById('project-filter').value = "";
             this.getProjects(this.state.page, pageSize);
         });
     }
@@ -214,7 +214,7 @@ class ProjectList extends React.Component {
         this.setState({
             projectList: !this.props.workspaceSettings.forceProjects ?
                 [{name: 'No project', color: '#999999', tasks: []}] : [],
-            filter: document.getElementById('filter').value.toLowerCase(),
+            filter: document.getElementById('project-filter').value.toLowerCase(),
             page: 1
         }, () => {
             this.getProjects(this.state.page, pageSize);
@@ -242,6 +242,34 @@ class ProjectList extends React.Component {
         return title;
     }
 
+    createNameForSelectedProject() {
+        let name = 'Add project';
+
+        if (this.props.projectRequired) {
+            name += ' (project ';
+
+            if (this.props.taskRequired) {
+                name += 'and task ';
+            }
+
+            name += 'required)'
+        }
+
+        return name;
+    }
+
+    clearProjectFilter() {
+        this.setState({
+            projectList: !this.props.workspaceSettings.forceProjects ?
+                [{name: 'No project', color: '#999999', tasks: []}] : [],
+            filter: '',
+            page: 1
+        }, () => {
+            this.getProjects(this.state.page, pageSize);
+            document.getElementById('project-filter').value = null
+        });
+    }
+
     render() {
         if (!this.state.ready) {
             return null;
@@ -251,7 +279,8 @@ class ProjectList extends React.Component {
                      title={this.state.title}>
                     <div onClick={this.openProjectDropdown.bind(this)}
                          className={JSON.parse(localStorage.getItem('offline')) ?
-                             "project-list-button-offline" : "project-list-button"}>
+                             "project-list-button-offline" : this.props.projectRequired || this.props.taskRequired ?
+                                 "project-list-button-required" : "project-list-button"}>
                     <span style={{color: this.state.selectedProject.color}}
                           className="project-list-name">
                         {this.state.selectedProject.name}
@@ -267,15 +296,19 @@ class ProjectList extends React.Component {
                         <div className="project-list-dropdown"
                              id="project-dropdown">
                             <div className="project-list-input">
-                                <input
-                                    placeholder={
-                                        this.state.isSpecialFilter ?
-                                            "Filter task @project or client" : "Filter projects"
-                                    }
-                                    className="project-list-filter"
-                                    onChange={this.filterProjects.bind(this)}
-                                    id="filter"
-                                />
+                                <div className="project-list-input--border">
+                                    <input
+                                        placeholder={
+                                            this.state.isSpecialFilter ?
+                                                "Filter task @project or client" : "Filter projects"
+                                        }
+                                        className="project-list-filter"
+                                        onChange={this.filterProjects.bind(this)}
+                                        id="project-filter"
+                                    />
+                                    <span className={!!this.state.filter ? "project-list-filter__clear" : "disabled"}
+                                          onClick={this.clearProjectFilter.bind(this)}></span>
+                                </div>
                             </div>
                             {
                                 this.state.clients.map(client => {

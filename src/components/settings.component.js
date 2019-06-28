@@ -2,10 +2,10 @@ import * as React from 'react';
 import HomePage from './home-page.component';
 import * as ReactDOM from 'react-dom';
 import ProjectList from "./project-list.component";
-import {getBrowser, isChrome} from "../helpers/browser-helpers";
-import {isAppTypeDesktop, isAppTypeExtension, isAppTypeMobile} from "../helpers/app-types-helpers";
+import {getBrowser, isChrome} from "../helpers/browser-helper";
+import {isAppTypeDesktop, isAppTypeExtension, isAppTypeMobile} from "../helpers/app-types-helper";
 import {getDefaultProjectEnums} from "../enums/default-project.enum";
-import {ProjectHelpers} from "../helpers/project-helpers";
+import {ProjectHelper} from "../helpers/project-helper";
 import Header from "./header.component";
 import WorkspaceList from "./workspace-list.component";
 import {UserService} from "../services/user-service";
@@ -13,13 +13,13 @@ import {LocalStorageService} from "../services/localStorage-service";
 import {getLocalStorageEnums} from "../enums/local-storage.enum";
 import TimePicker from 'antd/lib/time-picker';
 import moment from "moment";
-import {HtmlStyleHelpers} from "../helpers/html-style-helpers";
+import {HtmlStyleHelper} from "../helpers/html-style-helper";
 import {getKeyCodes} from "../enums/key-codes.enum";
 
-const projectHelpers = new ProjectHelpers();
+const projectHelpers = new ProjectHelper();
 const userService = new UserService();
 const localStorageService = new LocalStorageService();
-const htmlStyleHelpers = new HtmlStyleHelpers();
+const htmlStyleHelpers = new HtmlStyleHelper();
 
 const daysOfWeek = [
     {id:1, name:"Mo"},
@@ -807,7 +807,7 @@ class Settings extends React.Component {
                                      "settings__auto_start_on_browser_start__checkbox--img_hidden"}/>
                         </span>
                         <span className="settings__auto_start_on_browser_start__title">
-                            Start automatically when browser starts
+                            Start timer when browser starts
                         </span>
                     </div>
                     <div className={isAppTypeExtension() && isChrome() ? "settings__auto_stop_on_browser_close" : "disabled"}>
@@ -819,7 +819,7 @@ class Settings extends React.Component {
                                      "settings__auto_stop_on_browser_close__checkbox--img_hidden"}/>
                         </span>
                         <span className="settings__auto_stop_on_browser_close__title">
-                            Stop automatically when browser closes
+                            Stop timer when browser closes
                         </span>
                     </div>
                     <div className={isAppTypeExtension() ? "settings__idle-detection expandTrigger" : "disabled"}>

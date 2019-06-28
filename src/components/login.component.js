@@ -10,13 +10,13 @@ import * as qs from 'qs';
 import * as moment from 'moment-timezone';
 import packageJson from '../../package';
 import {getAppTypes} from "../enums/applications-types.enum";
-import {determineAppType, isAppTypeDesktop, isAppTypeExtension} from "../helpers/app-types-helpers";
+import {determineAppType, isAppTypeDesktop, isAppTypeExtension} from "../helpers/app-types-helper";
 import {UserService} from "../services/user-service";
 import {AuthService} from "../services/auth-service";
 import SelfHostedUrl from "./self-hosted-url.component";
 import {LocalStorageService} from "../services/localStorage-service";
 import {getLocalStorageEnums} from "../enums/local-storage.enum";
-import {getBrowser, isChrome} from "../helpers/browser-helpers";
+import {getBrowser, isChrome} from "../helpers/browser-helper";
 import {TokenService} from "../services/token-service";
 
 const environment = getEnv();
@@ -223,8 +223,10 @@ class Login extends React.Component {
     }
 
     loginWithCredentials() {
-        ReactDOM.render(<PostAuth email = {this.state.email} password = {this.state.password}/>,
-        document.getElementById("mount"));
+        ReactDOM.render(
+            <PostAuth email = {this.state.email} password = {this.state.password}/>,
+            document.getElementById("mount")
+        );
     }
 
     googleLogin() {

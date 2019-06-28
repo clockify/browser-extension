@@ -8,6 +8,7 @@
       "main.bundle.js",
       "vendors.main.bundle.js",
       "contentScripts/background.js",
+      "contentScripts/webSocket-background.js",
       "contentScripts/timeEntry-httpRequests-background.js",
       "contentScripts/token-background.js",
       "contentScripts/idle-detection-background.js",
@@ -15,7 +16,7 @@
       "contentScripts/reminder-background.js"
     ]
   },
-  "version": "1.6.2",
+  "version": "1.6.4",
   "browser_action": {
     "default_popup": "index.html",
     "default_title": "Clockify"

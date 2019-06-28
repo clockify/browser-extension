@@ -2,8 +2,8 @@ import React from 'react';
 import Request from 'react-http-request';
 import Login from './login.component';
 import HomePage from './home-page.component';
-import {getBrowser} from "../helpers/browser-helpers";
-import {isAppTypeExtension} from "../helpers/app-types-helpers";
+import {getBrowser} from "../helpers/browser-helper";
+import {isAppTypeExtension} from "../helpers/app-types-helper";
 import {LocalStorageService} from "../services/localStorage-service";
 
 const localStorageService = new LocalStorageService();

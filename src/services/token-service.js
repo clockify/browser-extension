@@ -2,8 +2,8 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import Login from '../components/login.component';
 import * as jwt from 'jsonwebtoken';
-import {getBrowser} from "../helpers/browser-helpers";
-import {isAppTypeExtension} from "../helpers/app-types-helpers";
+import {getBrowser} from "../helpers/browser-helper";
+import {isAppTypeExtension} from "../helpers/app-types-helper";
 import {HttpService} from "./http-service";
 import {LocalStorageService} from "./localStorage-service";
 

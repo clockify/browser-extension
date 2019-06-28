@@ -2,8 +2,8 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import Settings from './settings.component';
 import {TokenService} from "../services/token-service";
-import {getBrowser} from "../helpers/browser-helpers";
-import {isAppTypeExtension} from "../helpers/app-types-helpers";
+import {getBrowser} from "../helpers/browser-helper";
+import {isAppTypeExtension} from "../helpers/app-types-helper";
 import {getAppTypes} from "../enums/applications-types.enum";
 import {getEnv} from "../environment";
 
@@ -41,6 +41,7 @@ class Menu extends React.Component {
     }
 
     logout() {
+        this.disconnectWebSocket();
         tokenService.logout();
     }
 
@@ -49,6 +50,14 @@ class Menu extends React.Component {
             openExternal(`${environment.home}/dashboard`);
         } else {
             window.open(`${environment.home}/dashboard`, '_blank');
+        }
+    }
+
+    disconnectWebSocket() {
+        if (!JSON.parse(localStorage.getItem('selfHosted_selfHosted')) && isAppTypeExtension()) {
+            getBrowser().runtime.sendMessage({
+                eventName: "webSocketDisconnect"
+            });
         }
     }
 

@@ -8,14 +8,14 @@ import EditFormManual from './edit-form-manual.component';
 import {checkConnection} from "./check-connection";
 import {getIconStatus} from "../enums/browser-icon-status-enum";
 import {Application} from "../application";
-import {ProjectHelpers} from "../helpers/project-helpers";
+import {ProjectHelper} from "../helpers/project-helper";
 import {TimeEntryService} from "../services/timeEntry-service";
 import {getKeyCodes} from "../enums/key-codes.enum";
-import {isAppTypeExtension, isAppTypeMobile} from "../helpers/app-types-helpers";
-import {getBrowser} from "../helpers/browser-helpers";
+import {isAppTypeExtension, isAppTypeMobile} from "../helpers/app-types-helper";
+import {getBrowser} from "../helpers/browser-helper";
 import {LocalStorageService} from "../services/localStorage-service";
 
-const projectHelpers = new ProjectHelpers();
+const projectHelpers = new ProjectHelper();
 const timeEntryService = new TimeEntryService();
 const localStorageService = new LocalStorageService();
 let interval;
@@ -230,24 +230,19 @@ class StartTimer extends React.Component {
         if(JSON.parse(localStorage.getItem('offline'))) {
             this.stopEntryInProgress();
         } else if(this.props.workspaceSettings.forceDescription && (this.state.timeEntry.description === "" || !this.state.timeEntry.description)) {
-            ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
-            ReactDOM.render(<RequiredFields field={"description"} goToEdit={this.goToEdit.bind(this)}/>, document.getElementById('mount'));
+            this.goToEdit();
         } else if(this.props.workspaceSettings.forceProjects && !this.state.timeEntry.projectId) {
-            ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
-            ReactDOM.render(<RequiredFields field={"project"} goToEdit={this.goToEdit.bind(this)}/>, document.getElementById('mount'));
+            this.goToEdit();
         } else if(this.props.workspaceSettings.forceTasks && !this.state.timeEntry.taskId) {
-            ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
-            ReactDOM.render(<RequiredFields field={"task"} goToEdit={this.goToEdit.bind(this)}/>, document.getElementById('mount'));
+            this.goToEdit();
         }else if(this.props.workspaceSettings.forceTags && (!this.state.timeEntry.tagIds || !this.state.timeEntry.tagIds.length > 0)) {
-            ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
-            ReactDOM.render(<RequiredFields field={"tags"} goToEdit={this.goToEdit.bind(this)}/>, document.getElementById('mount'));
+            this.goToEdit();
         } else {
             this.stopEntryInProgress();
         }
     }
 
     stopEntryInProgress() {
-
         if(checkConnection()) {
             const timeEntriesOffline = localStorage.getItem('timeEntriesOffline') ? JSON.parse(localStorage.getItem('timeEntriesOffline')) : [];
             let timeEntryOffline = localStorage.getItem('timeEntryInOffline') ? JSON.parse(localStorage.getItem('timeEntryInOffline')) : null;
@@ -311,10 +306,11 @@ class StartTimer extends React.Component {
             this.setState({
                 timeEntry: {timeInterval: {start: moment(), end: moment()}}
             }, () => {
+                const entry = {timeInterval: {start: moment(), end: moment()}};
                 ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
                 ReactDOM.render(<EditFormManual changeMode={this.changeMode.bind(this)}
                                                 workspaceSettings={this.props.workspaceSettings}
-                                                timeEntry={this.state.timeEntry}
+                                                timeEntry={entry}
                                                 timeFormat={this.props.timeFormat}
                                                 isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}/>,
                                 document.getElementById('mount'));
@@ -351,10 +347,18 @@ class StartTimer extends React.Component {
            <div id="start-timer">
                <div className="start-timer">
                     <span className={this.props.mode === 'timer' ? 'start-timer-description' : 'disabled'}>
-                        <span onClick={this.goToEdit.bind(this)} className={this.state.timeEntry.id && !this.state.timeEntry.description ? "start-timer_description_grey" : "disabled"}>What's up</span>
-                        <span onClick={this.goToEdit.bind(this)} className={this.state.timeEntry.id && this.state.timeEntry.description ? "start-timer_description" : "disabled"}>{this.state.timeEntry ? this.state.timeEntry.description : ""}</span>
+                        <span onClick={this.goToEdit.bind(this)}
+                              className={this.state.timeEntry.id && !this.state.timeEntry.description ?
+                                  "start-timer_description_grey" : "disabled"}>
+                            What's up
+                        </span>
+                        <span onClick={this.goToEdit.bind(this)}
+                              className={this.state.timeEntry.id && this.state.timeEntry.description ?
+                                  "start-timer_description" : "disabled"}>
+                            {this.state.timeEntry ? this.state.timeEntry.description : ""}
+                        </span>
                         <input className={!this.state.timeEntry.id ? "start-timer_description-input" : "disabled"}
-                               placeholder={"What's up"}
+                               placeholder={"What's up?"}
                                onChange={this.setDescription.bind(this)}
                                id="description"
                                onKeyDown={this.onKey.bind(this)}
@@ -385,9 +389,7 @@ class StartTimer extends React.Component {
                    <button className={this.props.mode === 'manual' ? "start-timer_button-start" : "disabled"} onClick={this.goToEditManual.bind(this)}>
                        <span>ADD TIME</span>
                    </button>
-
                </div>
-               <hr/>
            </div>
         )
     }

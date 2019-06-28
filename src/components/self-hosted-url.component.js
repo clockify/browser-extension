@@ -2,9 +2,7 @@ import React from 'react';
 import * as ReactDOM from 'react-dom';
 import Header from './header.component';
 import Login from './login.component';
-import {SettingsService} from "../services/settings-service";
-
-const settingsService = new SettingsService();
+import SelfHostedLoginSettings from "./self-hosted-login-settings.component";
 
 class SelfHostedUrl extends React.Component {
     constructor(props) {
@@ -34,17 +32,11 @@ class SelfHostedUrl extends React.Component {
     }
 
     submitUrl() {
-        const url = this.state.url + '/api';
-
-        settingsService.getLoginSettings(url).then(response => {
-            settingsService.setBaseUrl(url);
-            settingsService.setHomeUrl(
-                url.replace('api.', '').replace('api', '')
-            );
-            settingsService.setSelfHosted(true);
-            ReactDOM.render(<Login loginSettings={response.data}/>, document.getElementById('mount'))
-        }).catch(error => {
-        });
+        let url = document.getElementById('selfHostedurl').value;
+        ReactDOM.render(
+            <SelfHostedLoginSettings url={url}/>,
+            document.getElementById("mount")
+        );
     }
 
     cancel() {
@@ -62,8 +54,7 @@ class SelfHostedUrl extends React.Component {
                 <form className="self-hosted-url">
                     <div>
                         <label className="self-hosted-url__server_url">Server url</label>
-                        <input required = {true} name="url" id="url" placeholder="https://"
-                               onChange={this.onChange.bind(this)}/>
+                        <input required = {true} id="selfHostedurl" placeholder="https://"/>
                     </div>
                 </form>
                 <div className="self-hosted-url__actions">

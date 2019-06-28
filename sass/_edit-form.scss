@@ -1,4 +1,3 @@
-
 .edit-form {
   border-top: 1px dotted $border;
   padding: 20px;
@@ -20,6 +19,14 @@
   border: 1px solid $border;
   padding: 10px;
   background: white;
+  border-radius: 2px;
+
+  &-required {
+    border: 1px solid $red;
+    padding: 10px;
+    background: white;
+    border-radius: 2px;
+  }
 }
 
 .edit-form-checkbox {
@@ -75,5 +82,15 @@
   color: white;
   background: $blue;
   cursor: pointer;
+
+  &-disabled {
+    width: 110px;
+    height: 40px;
+    margin-left: 15px;
+    border: none;
+    border-radius: 3px;
+    color: white;
+    background: $lighter_text;
+  }
 }
 

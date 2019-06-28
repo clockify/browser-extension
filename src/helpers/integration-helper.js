@@ -1,11 +1,12 @@
 import {TokenService} from "../services/token-service";
 import * as React from 'react';
-import {ProjectHelpers} from "./project-helpers";
+import {ProjectHelper} from "./project-helper";
 import {LocalStorageService} from "../services/localStorage-service";
+
 
 const localStorageService = new LocalStorageService();
 const tokenService = new TokenService();
-const projectHelpers = new ProjectHelpers();
+const projectHelpers = new ProjectHelper();
 
 export function getEntryInProgress() {
     const activeWorkspaceId = localStorageService.get('activeWorkspaceId');

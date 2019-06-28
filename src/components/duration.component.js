@@ -3,12 +3,13 @@ import moment from 'moment';
 import DatePicker from 'react-datepicker';
 import MyDatePicker from "./my-date-picker";
 import {getAppTypes} from "../enums/applications-types.enum";
-import {add24hIfEndBeforeStart} from "../helpers/time.helpers";
+import {add24hIfEndBeforeStart} from "../helpers/time.helper";
 import TimePicker from 'antd/lib/time-picker';
-import {HtmlStyleHelpers} from "../helpers/html-style-helpers";
-import {isAppTypeMobile} from "../helpers/app-types-helpers";
+import {HtmlStyleHelper} from "../helpers/html-style-helper";
+import {isAppTypeMobile} from "../helpers/app-types-helper";
 
-const htmlStyleHelpers = new HtmlStyleHelpers();
+const htmlStyleHelpers = new HtmlStyleHelper();
+const dayInSeconds = 86400;
 
 class Duration extends React.Component {
 
@@ -58,9 +59,13 @@ class Duration extends React.Component {
         this.setState({
             startTime: time
         });
+
         if (moment().diff(time) < 0) {
             time = time.subtract(1, 'days');
+        } else if (moment().diff(time) > dayInSeconds * 1000) {
+            time = time.add(1, 'days');
         }
+
         this.props.timeEntry.timeInterval.start = time;
         this.props.timeEntry.timeInterval.end = add24hIfEndBeforeStart(
             this.props.timeEntry.timeInterval.start,

@@ -1,15 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {getBrowser} from "../helpers/browser-helpers";
+import {getBrowser} from "../helpers/browser-helper";
 import {getIconStatus} from "../enums/browser-icon-status-enum";
 import Login from "../components/login.component";
 import HomePage from "../components/home-page.component";
-import {getEntryInProgress, startTimer, stopInProgress} from "../helpers/integration-helpers";
+import {getEntryInProgress, startTimer, stopInProgress} from "../helpers/integration-helper";
 import {checkConnection} from "../components/check-connection";
 import {LocalStorageService} from "../services/localStorage-service";
 import {UserService} from "../services/user-service";
-import {isAppTypeExtension} from "../helpers/app-types-helpers";
-import {getLocalStorageEnums} from "../enums/local-storage.enum";
+import {isAppTypeExtension} from "../helpers/app-types-helper";
 
 const localStorageService = new LocalStorageService();
 const userService = new UserService();

@@ -57,6 +57,6 @@ function createNotification(notificationId, notificationOptions) {
 
 function clearNotification(notificationId) {
     try {
-        aBrowser.notifications.clear(notificationId);
+        aBrowser.notification.clear(notificationId);
     } catch (e) {}
 }

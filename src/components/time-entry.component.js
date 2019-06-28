@@ -79,7 +79,7 @@ class TimeEntry extends React.Component {
                         <div className="time-entry-description" onClick={this.goToEdit.bind(this)}>
                             <div className="description"
                                  style={this.props.timeEntry.description ? {color: '#000'} : {color: '#999999'}}>
-                                {this.props.timeEntry.description ? this.props.timeEntry.description : "What's up"}
+                                {this.props.timeEntry.description ? this.props.timeEntry.description : "No description"}
                             </div>
                             <span style={this.props.project ? {color: this.props.project.color} : {}} className={this.props.project ? "time-entry-project" : "disabled"}>
                                 <div>
