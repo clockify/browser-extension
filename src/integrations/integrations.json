@@ -233,6 +233,12 @@
     "script": "outlook.js",
     "clone": false
   },
+  "phacility.com": {
+    "name": "Phabricator",
+    "link": "*://*.phacility.com/*,*://phabricator.*",
+    "script": "phabricator.js",
+    "clone": false
+  },
   "pipefy.com": {
     "name": "Pipefy",
     "link": "*://app.pipefy.com/*",
