@@ -245,6 +245,12 @@
     "script": "pipefy.js",
     "clone": false
   },
+  "produck.io": {
+    "name": "Produck",
+    "link": "*://*.produck.io/*",
+    "script": "produck.js",
+    "clone": false
+  },
   "pivotaltracker.com": {
     "name": "PivotalTracker",
     "link": "*://*.pivotaltracker.com/*",
