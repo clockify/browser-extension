@@ -12,6 +12,8 @@ const webSocketEventsEnums = {
 Object.freeze(webSocketEventsEnums);
 
 document.isFirstTimeSettingTimeEntry = true;
+let connection;
+
 let onErrorReconnectTimeout;
 let onCloseReconnectTimeout;
 
@@ -20,38 +22,41 @@ function connectWebSocket() {
         return;
     }
 
-    const webSocketClientId = localStorage.getItem('webSocketClientId');
+    const webSocketClientId = localStorage.getItem('permanent_webSocketClientId');
     const userEmail = localStorage.getItem('userEmail');
-    const webSocketEndpoint = localStorage.getItem("webSocketEndpoint");
+    const webSocketEndpoint = localStorage.getItem("permanent_webSocketEndpoint");
 
-    if (!webSocketClientId || !userEmail || !webSocketEndpoint) {
+
+    if (!webSocketClientId || !userEmail || !webSocketEndpoint || connection) {
         return;
     }
 
-    const connectionId = `/${localStorage.getItem('webSocketClientId')}/` +
+    const connectionId = `/${webSocketClientId}/` +
         `${localStorage.getItem('userEmail')}/` +
         `${Math.random().toString(36).substring(2, 10)}`;
 
-    document.connection = new WebSocket(
-        `${localStorage.getItem("webSocketEndpoint")}${connectionId}`
+    connection = new WebSocket(
+        `${webSocketEndpoint}${connectionId}`
     );
 
-    document.connection.onopen = (event) => {
+    connection.onopen = (event) => {
         if (event.type === 'open') {
             this.getToken().then(token => {
                 if (!!token) {
                     this.authenticate(token);
+                    localStorage.setItem('wsConnectionId', connectionId);
                 }
             });
         }
     };
 
-    document.connection.onclose = (event) => {
+    connection.onclose = (event) => {
         if (onErrorReconnectTimeout) {
             clearTimeout(onErrorReconnectTimeout);
         }
 
         if (event.code === 4000) {
+            connection = null;
             return;
         }
 
@@ -60,11 +65,11 @@ function connectWebSocket() {
     };
 
 
-    document.connection.onmessage = (message) => {
+    connection.onmessage = (message) => {
         this.messageHandler(message);
     };
 
-    document.connection.onerror = (error) => {
+    connection.onerror = (error) => {
         if (onCloseReconnectTimeout) {
             clearTimeout(onCloseReconnectTimeout);
         }
@@ -74,9 +79,9 @@ function connectWebSocket() {
 }
 
 function disconnectWebSocket() {
-    if (document.connection) {
-        document.connection.close(4000, 'Closing connection permanent');
-        document.connection = null;
+    if (connection) {
+        connection.close(4000, 'Closing connection permanent');
+        localStorage.removeItem('wsConnectionId');
     }
 }
 
@@ -93,6 +98,8 @@ function messageHandler(event) {
             this.sendWebSocketEventToExtension(event.data);
             this.addIdleListenerIfIdleIsEnabled();
             this.removeReminderTimer();
+            this.restartPomodoro();
+            this.addPomodoroTimer();
             break;
         case webSocketEventsEnums.TIME_ENTRY_CREATED:
             this.sendWebSocketEventToExtension(event.data);
@@ -106,6 +113,7 @@ function messageHandler(event) {
             this.sendWebSocketEventToExtension(event.data);
             this.removeIdleListenerIfIdleIsEnabled();
             this.addReminderTimer();
+            this.restartPomodoro();
             break;
         case webSocketEventsEnums.TIME_ENTRY_UPDATED:
             this.getEntryInProgress().then(response => response.json()).then(data => {
@@ -129,6 +137,7 @@ function messageHandler(event) {
                  });
                  this.removeIdleListenerIfIdleIsEnabled();
                  this.addReminderTimer();
+                 this.restartPomodoro();
              });
             this.sendWebSocketEventToExtension(event.data);
              break;
@@ -146,20 +155,20 @@ function sendWebSocketEventToExtension(event) {
 }
 
 function authenticate(token) {
-    if (!document.connection || !token) return;
+    if (!connection || !token) return;
 
-    document.connection.send(token);
+    connection.send(token);
 }
 
 aBrowser.runtime.onMessage.addListener((request, sender, sendResponse) => {
     switch (request.eventName) {
         case "webSocketConnect":
-            if (!document.connection) {
+            if (!connection) {
                 this.connectWebSocket();
             }
             break;
         case "webSocketDisconnect":
-            if (document.connection) {
+            if (connection) {
                 this.disconnectWebSocket();
             }
             break;

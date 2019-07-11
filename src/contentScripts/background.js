@@ -44,9 +44,7 @@ aBrowser.windows.onCreated.addListener((window) => {
                 this.addReminderTimerOnStartingBrowser();
                 this.startTimerOnStartingBrowser();
             });
-        if (!document.connection) {
             this.connectWebSocket();
-        }
     }
     windowIds = [...windowIds, window.id];
 });
@@ -60,6 +58,7 @@ aBrowser.windows.onRemoved.addListener((window) => {
         this.removeReminderTimer();
         this.endInProgressOnClosingBrowser();
         this.disconnectWebSocket();
+        this.restartPomodoro();
     }
 });
 

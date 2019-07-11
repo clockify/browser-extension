@@ -1,8 +1,10 @@
 import {HttpService} from "./http-service";
 import {TokenService} from "./token-service";
+import {LocalStorageService} from "./localStorage-service";
 
 const httpService = new HttpService();
 const tokenService = new TokenService();
+const localStorageService = new LocalStorageService();
 
 export class HttpWrapperService {
     constructor() {}
@@ -33,6 +35,10 @@ export class HttpWrapperService {
             'Content-Type': 'application/json'
         };
 
+        if (localStorageService.get('wsConnectionId')) {
+            headers['socket-connection-id'] = localStorageService.get('wsConnectionId');
+        }
+
         if (addToken) {
             return tokenService.getToken().then(token => {
                 if (token) {
@@ -52,6 +58,10 @@ export class HttpWrapperService {
             'Content-Type': 'application/json'
         };
 
+        if (localStorageService.get('wsConnectionId')) {
+            headers['socket-connection-id'] = localStorageService.get('wsConnectionId');
+        }
+
         if (addToken) {
             return tokenService.getToken().then(token => {
                 if (token) {
@@ -70,6 +80,10 @@ export class HttpWrapperService {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         };
+
+        if (localStorageService.get('wsConnectionId')) {
+            headers['socket-connection-id'] = localStorageService.get('wsConnectionId');
+        }
 
         if (addToken) {
             return tokenService.getToken().then(token => {

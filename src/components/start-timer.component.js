@@ -14,6 +14,7 @@ import {getKeyCodes} from "../enums/key-codes.enum";
 import {isAppTypeExtension, isAppTypeMobile} from "../helpers/app-types-helper";
 import {getBrowser} from "../helpers/browser-helper";
 import {LocalStorageService} from "../services/localStorage-service";
+import {getWebSocketEventsEnums} from "../enums/web-socket-events.enum";
 
 const projectHelpers = new ProjectHelper();
 const timeEntryService = new TimeEntryService();
@@ -217,6 +218,7 @@ class StartTimer extends React.Component {
                         const backgroundPage = getBrowser().extension.getBackgroundPage();
                         backgroundPage.addIdleListenerIfIdleIsEnabled();
                         backgroundPage.removeReminderTimer();
+                        backgroundPage.addPomodoroTimer();
                     }
                     this.goToEdit();
                 });
@@ -279,6 +281,7 @@ class StartTimer extends React.Component {
                         const backgroundPage = getBrowser().extension.getBackgroundPage();
                         backgroundPage.removeIdleListenerIfIdleIsEnabled();
                         backgroundPage.addReminderTimer();
+                        backgroundPage.removeAllPomodoroTimers();
                     }
                     this.application.setIcon(getIconStatus().timeEntryEnded);
                 })

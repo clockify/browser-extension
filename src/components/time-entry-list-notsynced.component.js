@@ -11,7 +11,6 @@ class TimeEntryListNotsyncedComponent extends React.Component {
     }
 
     componentDidMount() {
-
     }
 
     handleRefresh() {

@@ -289,12 +289,12 @@ class EditFormManual extends React.Component {
                     this.state.timeEntry.tagIds,
                     this.state.timeEntry.billable
                 ).then(response => {
-                    ReactDOM.render(<HomePage/>, document.getElementById('mount'));
                     let timeEntries = localStorage.getItem('timeEntriesOffline') ? JSON.parse(localStorage.getItem('timeEntriesOffline')) : [];
                     if(timeEntries.findIndex(entryOffline => entryOffline.id === this.state.timeEntry.id) > -1) {
                         timeEntries.splice( timeEntries.findIndex(entry => entry.id === this.state.timeEntry.id), 1);
                     }
                     localStorage.setItem('timeEntriesOffline', JSON.stringify(timeEntries));
+                    ReactDOM.render(<HomePage/>, document.getElementById('mount'));
                 })
                     .catch(() => {
                     });
