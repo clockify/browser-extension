@@ -2,7 +2,22 @@
 
 Add Clockify one-click time tracking button to popular web tools. 
 
-[See the full list of integrations →](https://clockify.me/integrations)
+[About Clockify →](https://clockify.me)
+[List of integrations →](https://clockify.me/integrations)
+
+## Adding integration
+
+Want to create an integration or improve an existing one? Awesome! Just fork the repo, make your changes, and send us a pull request. 
+
+Adding your tool is super easy and quick. You need basic web programming skills (HTML, Javascript, Git) and can be done in a couple of hours.
+
+## Something needs fixing?
+
+[Create an issue](https://github.com/clockify/browser-extension/issues) here on Github.
+
+Our team will take a look once we get the chance, but that may take a few weeks or more (depending on our workload). 
+
+If you need the fix quicker, feel free to update the integration yourself and send us a pull request. We typically take care of them within a few days, meaning your fix can sometimes go live within the same week.
 
 ## Setup 
 
@@ -26,11 +41,6 @@ Add Clockify one-click time tracking button to popular web tools.
 3. Click "Load Temporary Add-on"
 4. Select the `www/firefox.dev/manifest.json` file
 
-## Contributing
-
-Want to improve an existing integration or create a new one? That's great!
-
-Just fork the repo, make your changes, and send us a pull request. 
 
 ### Adding a new tool
 
