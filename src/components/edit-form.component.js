@@ -9,7 +9,8 @@ import HomePage from "./home-page.component";
 import {checkConnection} from "./check-connection";
 import {ProjectHelper} from "../helpers/project-helper";
 import {TimeEntryService} from "../services/timeEntry-service";
-import {isAppTypeMobile} from "../helpers/app-types-helper";
+import {isAppTypeExtension, isAppTypeMobile} from "../helpers/app-types-helper";
+import {getBrowser} from "../helpers/browser-helper";
 
 const projectHelpers = new ProjectHelper();
 const timeEntryService = new TimeEntryService();
@@ -396,6 +397,9 @@ class EditForm extends React.Component {
         } else {
             timeEntryService.deleteTimeEntry(this.state.timeEntry.id)
                 .then(response => {
+                    if (isAppTypeExtension()) {
+                        getBrowser().extension.getBackgroundPage().restartPomodoro();
+                    }
                     ReactDOM.render(<HomePage/>, document.getElementById('mount'));
                 })
                 .catch(() => {

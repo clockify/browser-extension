@@ -3,11 +3,14 @@ import {Extension} from "./application-types/extension";
 import {Desktop} from "./application-types/desktop";
 import {SettingsService} from "./services/settings-service";
 import {getEnv} from "./environment";
+import {LocalStorageService} from "./services/localStorage-service";
+import {getLocalStorageEnums} from "./enums/local-storage.enum";
 
 const extension = new Extension();
 const desktop = new Desktop();
 const settingsService = new SettingsService();
 const environment = getEnv();
+const localStorageService = new LocalStorageService();
 
 export class Application {
 
@@ -41,8 +44,14 @@ export class Application {
     }
 
     setWebSocketParamsToStorage() {
-        localStorage.setItem("webSocketEndpoint", environment.webSocket.endpoint);
-        localStorage.setItem("webSocketClientId", environment.webSocket.clientId);
+        localStorageService.set(
+            "webSocketEndpoint",
+            environment.webSocket.endpoint,
+            getLocalStorageEnums().PERMANENT_PREFIX);
+        localStorageService.set(
+            "webSocketClientId",
+            environment.webSocket.clientId,
+            getLocalStorageEnums().PERMANENT_PREFIX);
     }
 
     setBaseUrl() {

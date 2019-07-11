@@ -1,6 +1,5 @@
 .settings-buttons {
   margin: 25px 0px;
-  border-top: 1px dotted $border;
   padding: 25px 0;
 }
 
@@ -16,7 +15,6 @@
 }
 
 .settings-button-cancel {
-
   margin-left: 20px;
   color: $blue;
   cursor: pointer;
@@ -219,7 +217,7 @@
 
   &__idle-detection {
     diplay: flex;
-    margin: 20px 20px 5px 20px;
+    margin: 13px 20px 5px 20px;
     align-items: center;
 
     &__checkbox {
@@ -286,6 +284,33 @@
 
   &__reminder {
     background-color: $entries_header;
+
+    &__section {
+      diplay: flex;
+      margin: 20px 20px 5px 20px;
+      align-items: center;
+
+      &__checkbox {
+        display: inline-block;
+        width: 15px;
+        height: 15px;
+        border: 1px solid $border;
+        position: relative;
+        cursor: pointer;
+        background: white;
+
+        &--img {
+          content: url("../assets/images/checked.png");
+          margin-top: 2px;
+        }
+
+        &--img_hidden {
+          content: url("../assets/images/checked.png");
+          margin-top: 2px;
+          visibility: hidden;
+        }
+      }
+    }
 
     &__week {
       display: flex;

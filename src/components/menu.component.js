@@ -54,10 +54,12 @@ class Menu extends React.Component {
     }
 
     disconnectWebSocket() {
-        if (!JSON.parse(localStorage.getItem('selfHosted_selfHosted')) && isAppTypeExtension()) {
-            getBrowser().runtime.sendMessage({
-                eventName: "webSocketDisconnect"
-            });
+        if (!JSON.parse(localStorage.getItem('selfHosted_selfHosted'))) {
+            if (isAppTypeExtension()) {
+                getBrowser().runtime.sendMessage({
+                    eventName: "webSocketDisconnect"
+                });
+            }
         }
     }
 

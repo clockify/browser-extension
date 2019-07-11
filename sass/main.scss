@@ -1,4 +1,5 @@
 @import "../styles/antd-time-picker.css";
+@import "../styles/antd-switch.css";
 @import "colors";
 @import "login";
 @import "header";
@@ -16,6 +17,7 @@
 @import "sign-up";
 @import "time-entry-list-not-synced";
 @import "self-hosting";
+@import "pomodoro";
 
 @-webkit-keyframes rotation {
   from {

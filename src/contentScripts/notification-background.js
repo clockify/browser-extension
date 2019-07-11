@@ -17,6 +17,27 @@ const buttonClickedListener = (notificationId, buttonIndex) => {
                 this.addReminderTimer();
             }
             break;
+        case 'pomodoroBreak':
+            if (breakButtons[buttonIndex] === 'Stop timer') {
+                this.stopTimerByPomodoro();
+            } else if (breakButtons[buttonIndex] === 'Start break') {
+                this.startBreak('Pomodoro break');
+            }
+            break;
+        case 'pomodoroLongBreak':
+            if (longBreakButtons[buttonIndex] === 'Stop timer') {
+                this.stopTimerByPomodoro();
+            } else {
+                this.startBreak('Pomodoro long break');
+            }
+            break;
+        case 'breakOver':
+            if (breakOverButtons[buttonIndex] === 'Start timer') {
+                this.startTimerByPomodoro();
+            } else {
+                this.continueLastEntryByPomodoro();
+            }
+            break;
     }
 };
 
@@ -35,28 +56,60 @@ const notificationClosedListener = (notificationId) => {
 const notificationClickedListener = (notificationId) => {
     switch (notificationId) {
         case 'idleDetection' :
-            this.discardIdleTimeAndStopEntry();
+            if (!this.isChrome()) {
+                this.discardIdleTimeAndStopEntry();
+            }
             break;
         case 'reminder' :
-            this.removeReminderTimer();
-            this.addReminderTimer();
+            if (!this.isChrome()) {
+                this.removeReminderTimer();
+                this.addReminderTimer();
+            }
+            break;
+        case 'pomodoroBreak':
+            if (!this.isChrome()) {
+                this.startBreak('Pomodoro break');
+            }
+            break;
+        case 'pomodoroLongBreak':
+            if (!this.isChrome()) {
+                this.startBreak('Pomodoro long break');
+            }
+            break;
+        case 'breakOver':
+            if (!this.isChrome()) {
+                this.continueLastEntryByPomodoro();
+            }
+            break;
+        case 'pomodoroBreakNotify':
+            this.clearNotification('pomodoroBreakNotify');
+            break;
+        case 'pomodoroBreakOverNotify':
+            this.clearNotification('pomodoroBreakOverNotify');
             break;
     }
 };
 
-function createNotification(notificationId, notificationOptions) {
+function createNotification(notificationId, notificationOptions, isAudioOn) {
     aBrowser.notifications.create(notificationId, notificationOptions, (callback) => {
-        if (this.isChrome()) {
-            aBrowser.notifications.onButtonClicked.addListener(buttonClickedListener);
-        } else {
-            aBrowser.notifications.onClicked.addListener(notificationClickedListener);
-        }
+        aBrowser.notifications.onButtonClicked.addListener(buttonClickedListener);
+        aBrowser.notifications.onClicked.addListener(notificationClickedListener);
         aBrowser.notifications.onClosed.addListener(notificationClosedListener);
     });
+
+    if (isAudioOn) {
+        this.audioNotification();
+    }
+}
+
+function audioNotification() {
+    const audio = new Audio('../assets/audio/pomodoro-notification.ogg');
+    audio.play();
 }
 
 function clearNotification(notificationId) {
     try {
-        aBrowser.notification.clear(notificationId);
-    } catch (e) {}
+        aBrowser.notifications.clear(notificationId);
+    } catch (e) {
+    }
 }

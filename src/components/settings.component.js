@@ -15,6 +15,7 @@ import TimePicker from 'antd/lib/time-picker';
 import moment from "moment";
 import {HtmlStyleHelper} from "../helpers/html-style-helper";
 import {getKeyCodes} from "../enums/key-codes.enum";
+import Pomodoro from "./pomodoro.component";
 
 const projectHelpers = new ProjectHelper();
 const userService = new UserService();
@@ -189,6 +190,9 @@ class Settings extends React.Component {
                     defaultProjectEnabled: false
                 });
                 this.updateDefaultProjectEnabled(this.getDefaultProject());
+                if (isAppTypeExtension()) {
+                    getBrowser().extension.getBackgroundPage().restartPomodoro();
+                }
             })
             .catch(() => {
             });
@@ -364,16 +368,20 @@ class Settings extends React.Component {
     }
 
     sendIdleDetectionRequest(counter) {
-        getBrowser().runtime.sendMessage({
-            eventName: "idleDetection",
-            counter: counter
-        });
+        if (isAppTypeExtension()) {
+            getBrowser().runtime.sendMessage({
+                eventName: "idleDetection",
+                counter: counter
+            });
+        }
     }
 
     sendReminderRequest() {
-        getBrowser().runtime.sendMessage({
-            eventName: "reminder"
-        });
+        if (isAppTypeExtension()) {
+            getBrowser().runtime.sendMessage({
+                eventName: "reminder"
+            });
+        }
     }
 
     toggleTimerShortcut() {
@@ -522,8 +530,10 @@ class Settings extends React.Component {
             getLocalStorageEnums().PERMANENT_PREFIX
         );
 
-        getBrowser().extension.getBackgroundPage().removeReminderTimer();
-        getBrowser().extension.getBackgroundPage().addReminderTimer();
+        if (isAppTypeExtension()) {
+            getBrowser().extension.getBackgroundPage().removeReminderTimer();
+            getBrowser().extension.getBackgroundPage().addReminderTimer();
+        }
     }
 
     changeReminderMinutesState(event) {
@@ -540,11 +550,12 @@ class Settings extends React.Component {
                 if (reminder.userId === userId) {
                     if (reminder.dates.includes(day.id)) {
                         reminder.dates.splice(reminder.dates.indexOf(day.id), 1);
-                        document.getElementById(day.name).style.border = "1px solid #C6D2D9";
                     } else {
                         reminder.dates.push(day.id);
-                        document.getElementById(day.name).style.border = "1px solid #0091ea";
                     }
+                    setTimeout(() => {
+                        document.getElementById(day.name).style.border = "1px solid #C6D2D9";
+                    }, 100);
                 }
 
                 return reminder;
@@ -556,8 +567,10 @@ class Settings extends React.Component {
             getLocalStorageEnums().PERMANENT_PREFIX
         );
 
-        getBrowser().extension.getBackgroundPage().removeReminderTimer();
-        getBrowser().extension.getBackgroundPage().addReminderTimer();
+        if (isAppTypeExtension()) {
+            getBrowser().extension.getBackgroundPage().removeReminderTimer();
+            getBrowser().extension.getBackgroundPage().addReminderTimer();
+        }
     }
 
     selectReminderFromTime(time, timeString) {
@@ -616,8 +629,10 @@ class Settings extends React.Component {
             getLocalStorageEnums().PERMANENT_PREFIX
         );
 
-        getBrowser().extension.getBackgroundPage().removeReminderTimer();
-        getBrowser().extension.getBackgroundPage().addReminderTimer();
+        if (isAppTypeExtension()) {
+            getBrowser().extension.getBackgroundPage().removeReminderTimer();
+            getBrowser().extension.getBackgroundPage().addReminderTimer();
+        }
     }
 
     fadeBackgroundAroundTimePicker(event) {
@@ -822,13 +837,13 @@ class Settings extends React.Component {
                             Stop timer when browser closes
                         </span>
                     </div>
-                    <div className={isAppTypeExtension() ? "settings__idle-detection expandTrigger" : "disabled"}>
-                        <span className="settings__idle-detection__checkbox"
+                    <div className={isAppTypeExtension() ? "settings__reminder__section expandTrigger" : "disabled"}>
+                        <span className="settings__reminder__section__checkbox"
                               onClick={this.toggleReminder.bind(this)}>
                             <img src="./assets/images/checked.png"
                                  className={this.state.reminder ?
-                                     "settings__idle-detection__checkbox--img" :
-                                     "settings__idle-detection__checkbox--img_hidden"}/>
+                                     "settings__reminder__section__checkbox--img" :
+                                     "settings__reminder__section__checkbox--img_hidden"}/>
                         </span>
                         <span className="settings__send-errors__title">Remind me to track time</span>
                     </div>
@@ -901,6 +916,7 @@ class Settings extends React.Component {
                             <p>minutes</p>
                         </div>
                     </div>
+                    <Pomodoro/>
                     <div className="settings-buttons">
                         <button onClick={this.saveSettings.bind(this)} className="settings-button-save">DONE</button>
                     </div>

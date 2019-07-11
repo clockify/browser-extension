@@ -143,6 +143,12 @@
     "script": "helpscout.js",
     "clone": false
   },
+  "app.hubspot.com": {
+    "name": "Hubspot",
+    "link": "*://app.hubspot.com/*",
+    "script": "hubspot.js",
+    "clone": false
+  },
   "huskymarketingplanner.com": {
     "name": "Husky Marketing Planner",
     "link": "*://*.huskymarketingplanner.com/*",

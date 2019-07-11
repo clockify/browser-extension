@@ -13,10 +13,11 @@
       "contentScripts/token-background.js",
       "contentScripts/idle-detection-background.js",
       "contentScripts/notification-background.js",
-      "contentScripts/reminder-background.js"
+      "contentScripts/reminder-background.js",
+      "contentScripts/pomodoro-background.js"
     ]
   },
-  "version": "1.6.4",
+  "version": "1.6.7",
   "browser_action": {
     "default_popup": "index.html",
     "default_title": "Clockify"

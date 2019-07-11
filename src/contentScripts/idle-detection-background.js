@@ -72,7 +72,7 @@ function setIdleDetectionOnBrowserStart() {
             if (idleChangeStateListener && aBrowser.idle.onStateChanged.hasListener(idleChangeStateListener)) {
                 aBrowser.idle.onStateChanged.removeListener(idleChangeStateListener);
             }
-        };
+        }
     } else {
         if (idleChangeStateListener && aBrowser.idle.onStateChanged.hasListener(idleChangeStateListener)) {
             aBrowser.idle.onStateChanged.removeListener(idleChangeStateListener);
@@ -162,7 +162,7 @@ function discardIdleTimeAndStopEntry() {
                 this.saveEntryOfflineAndStopItByDeletingIt(data, idleDetectedIn);
             }
         });
-    }).catch();
+    });
 }
 
 function discardIdleTimeAndContinueEntry() {
@@ -184,7 +184,7 @@ function discardIdleTimeAndContinueEntry() {
                 }
             )
         });
-    }).catch();
+    });
 }
 
 function setTimeEntryToDetectedIdleTime(timeEntryId) {

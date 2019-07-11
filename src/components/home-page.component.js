@@ -82,13 +82,22 @@ class HomePage extends React.Component {
             getBrowser().runtime.sendMessage({
                     eventName: "webSocketConnect",
                 });
+            this.getEntryFromPomodoroEvents();
         }
 
         this.setIsUserOwnerOrAdmin();
 
-        if(isAppTypeExtension()) {
+        if(!isAppTypeMobile()) {
             this.enableTimerShortcutForFirstTime();
         }
+    }
+
+    getEntryFromPomodoroEvents() {
+        getBrowser().runtime.onMessage.addListener((request, sender, sendResponse) => {
+            if (request.eventName === 'pomodoroEvent') {
+                this.start.setTimeEntryInProgress(request.timeEntry);
+            }
+        });
     }
 
     setIsUserOwnerOrAdmin() {
@@ -283,7 +292,7 @@ class HomePage extends React.Component {
                 });
             }
             return day + "-" + duration(dayDuration).format(
-                true ? 'HH:mm:ss' : 'hh:mm', {trim: false}
+                trackTimeDownToSeconds ? 'HH:mm:ss' : 'hh:mm', {trim: false}
             );
         });
 
@@ -557,6 +566,7 @@ class HomePage extends React.Component {
                     let data = response.data;
                     if (isAppTypeExtension()) {
                         getBrowser().extension.getBackgroundPage().addIdleListenerIfIdleIsEnabled();
+                        getBrowser().extension.getBackgroundPage().addPomodoroTimer();
                     }
                     ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
                     ReactDOM.render(

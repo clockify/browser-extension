@@ -8,7 +8,7 @@ document.getElementById('settings__permissions-container')
         if (e.target.tagName === "INPUT" && e.target.type === "checkbox") {
             this.save_permissions();
         }
-});
+    });
 
 aBrowser.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request === 'closeOptionsPage') {
@@ -36,6 +36,7 @@ function createOriginList() {
         .then(result => result.json())
         .then(data => {
             clockifyOrigins = data;
+            addIntegrationsInPermissionsIfNewIntegrationsExist(clockifyOrigins);
             let origins = document.createElement('select');
             let option;
             origins.id = 'origins';
@@ -150,7 +151,7 @@ function showCustomDomains() {
     customDomainsHtml.className = 'settings__custom-domains__custom-origin-list';
 
     aBrowser.storage.local.get(['permissions'], (result) => {
-       result.permissions
+        result.permissions
             .filter(permissionByUser => permissionByUser.userId === userId)[0].permissions
             .filter(permission => permission.isCustom)
             .forEach(p => {
@@ -174,19 +175,19 @@ function showCustomDomains() {
                 customDomainsHtml.appendChild(li);
             });
 
-       if (customDomainsHtml.childNodes.length > 0) {
-           replaceContent(
-               '#settings__custom-domains__custom-perm-container',
-               customDomainsHtml
-           );
-       } else {
-           if (
-               document.getElementById('settings__custom-domains__custom-perm-container')
-                   .childNodes.length > 0) {
-               document.getElementById('settings__custom-domains__custom-perm-container')
-                   .removeChild(document.getElementById('custom-permissions-list'));
-           }
-       }
+        if (customDomainsHtml.childNodes.length > 0) {
+            replaceContent(
+                '#settings__custom-domains__custom-perm-container',
+                customDomainsHtml
+            );
+        } else {
+            if (
+                document.getElementById('settings__custom-domains__custom-perm-container')
+                    .childNodes.length > 0) {
+                document.getElementById('settings__custom-domains__custom-perm-container')
+                    .removeChild(document.getElementById('custom-permissions-list'));
+            }
+        }
     });
 }
 
@@ -302,4 +303,38 @@ function openTab(event) {
     }
     document.getElementById(tabName).style.display = "block";
     event.currentTarget.className += " active";
+}
+
+function addIntegrationsInPermissionsIfNewIntegrationsExist(origins) {
+    aBrowser.storage.local.get(['permissions'], (result) => {
+        let permissionsForStorage = result.permissions;
+        const permissionsByUser = permissionsForStorage
+            .filter(permissionByUser => permissionByUser.userId === userId)[0];
+        const permissionsDomainsByUser = permissionsByUser.permissions
+            .map(permission => permission.domain);
+
+        console.log(permissionsForStorage);
+
+        for (let key in clockifyOrigins) {
+            if (!permissionsDomainsByUser.includes(key)) {
+                let permission = {};
+                permission['domain'] = key;
+                permission['isEnabled'] = true;
+                permission['script'] = clockifyOrigins[key].script;
+                permission['name'] = clockifyOrigins[key].name;
+                permission['isCustom'] = false;
+                permissionsByUser.permissions.push(permission);
+            }
+        }
+
+        permissionsForStorage = permissionsForStorage.map(permissionForStorage => {
+            if (permissionForStorage.userId === userId) {
+                permissionForStorage.permissions = permissionsByUser.permissions;
+            }
+
+            return permissionForStorage;
+        });
+
+        aBrowser.storage.local.set({permissions: permissionsForStorage});
+    });
 }

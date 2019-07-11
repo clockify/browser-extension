@@ -1,4 +1,4 @@
-const rm = require('rimraf');
+const fs = require('fs-extra');
 const dirPath = process.argv[2];
 
-rm.sync(dirPath);
+fs.removeSync(dirPath);

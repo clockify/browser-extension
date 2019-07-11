@@ -25,7 +25,10 @@ clockifyButton.render('.phui-oi-content-box:not(.clockify)', {observe: true}, (e
     var task_anchor = $('.phui-oi-link', elem);
     var task_number = task_anchor.href.split('/').pop();
     // test if it is a task element
-    if (! /^(T[0-9]+)$/.test(task_number) || document.URL.includes('/project/') || document.URL.includes('/tag/')) {
+    if (! /^(T[0-9]+)$/.test(task_number) ||
+        document.URL.includes('/project/') ||
+        document.URL.includes('/tag/')
+    )  {
         return;
     }
     var description = task_number + ': ' + task_anchor.textContent.trim();
