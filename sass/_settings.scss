@@ -1,3 +1,16 @@
+.settings_page {
+  padding-top: 60px;
+
+  &__header {
+    position: fixed;
+    width: 100%;
+    z-index: 1111;
+    background: #eff4f7;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+    top: 0;
+  }
+}
+
 .settings-buttons {
   margin: 25px 0px;
   padding: 25px 0;
@@ -20,107 +33,22 @@
   cursor: pointer;
 }
 
-.workspace-list-open {
-  position: fixed;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.8);
-  left: 0;
-  top: 0;
-  justify-content: center;
-  align-items: center;
-  display: flex;
-  z-index: 5;
-}
-
-.workspace-list-selection {
-  padding: 5px 0;
-  margin: 20px;
-  border: 1px solid $border;
-  background: white;
-  cursor: pointer;
-}
-
-.workspace-list-default {
-  display: inline-block;
-  padding: 5px 10px;
-  color: $middle_light_text;
-  width: 250px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.workspace-list-dropdown {
-  width: 100%;
-  margin: 20px;
-  max-height: 250px;
-  min-height: 150px;
-  background: white;
-  z-index: 2;
-  box-shadow: 0 0 7px #ccc;
-  overflow-x: hidden;
-  overflow-y: scroll;
-}
-
-.workspace-list-title {
-  margin: 10px;
-  font-size: 14px;
-  font-weight: bold;
-  color: $middle_light_text;
-}
-
-.workspace-list-item {
-  display: flex;
-  flex-wrap: nowrap;
-  justify-content: space-between;
-  margin-left: 20px;
-  margin-top: 10px;
-  font-size: 13px;
-  color: $dark_text;
-
-  &--name {
-    width: 150px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    cursor: pointer;
-    white-space: nowrap;
-  }
-}
-
-.workspace-list-active {
-  margin-right: 15px;
-  color: $green;
-
-  &__img {
-    display: inline-block;
-    width: 14px;
-    height: 10px;
-    margin-right: 5px;
-    background-image: url("../assets/images/checked.png");
-  }
-}
-
-.workspace-list-title {
-  margin: 20px;
-  font-weight: bold;
-  columns: $dark_text;
-}
-
 .user-settings {
   display: flex;
   padding: 20px;
   border-bottom: 1px dotted $border;
+  align-items: center;
 }
 
 .user-settings span img {
   display: inline-block;
-  width: 70px;
-  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  border-radius: 16px;
 }
 
-.user-settings span {
-  margin: auto;
+.user-settings span:last-child {
+  margin-left: 10px;
   color: $middle_light_text;
   font-style: italic;
   font-size: 15px;
@@ -135,44 +63,6 @@
   font-size: 12px;
 }
 
-.settings-project-title {
-  margin-left: 10px;
-  font-size: 13px;
-  font-weight: bold;
-  color: $middle_light_text;
-}
-
-.settings-default-project {
-  diplay: flex;
-  margin: 20px;
-  align-items: center;
-
-  &__project-list {
-    margin-top: 15px;
-  }
-}
-
-.settings-default-project-checkbox {
-  display: inline-block;
-  width: 15px;
-  height: 15px;
-  border: 1px solid $border;
-  position: relative;
-  cursor: pointer;
-  background: white;
-
-  &--img {
-    content: url("../assets/images/checked.png");
-    margin-top: 2px;
-  }
-
-  &--img_hidden {
-    content: url("../assets/images/checked.png");
-    margin-top: 2px;
-    visibility: hidden;
-  }
-}
-
 .settings {
   &__send-errors {
     diplay: flex;
@@ -181,8 +71,8 @@
 
     &__checkbox {
       display: inline-block;
-      width: 15px;
-      height: 15px;
+      width: 16px;
+      height: 16px;
       border: 1px solid $border;
       position: relative;
       cursor: pointer;
@@ -190,12 +80,14 @@
 
       &--img {
         content: url("../assets/images/checked.png");
-        margin-top: 2px;
+        margin-top: 3px;
+        margin-bottom: 2px;
       }
 
       &--img_hidden {
         content: url("../assets/images/checked.png");
-        margin-top: 2px;
+        margin-top: 3px;
+        margin-bottom: 2px;
         visibility: hidden;
       }
     }
@@ -222,8 +114,8 @@
 
     &__checkbox {
       display: inline-block;
-      width: 15px;
-      height: 15px;
+      width: 16px;
+      height: 16px;
       border: 1px solid $border;
       position: relative;
       cursor: pointer;
@@ -231,12 +123,14 @@
 
       &--img {
         content: url("../assets/images/checked.png");
-        margin-top: 2px;
+        margin-top: 3px;
+        margin-bottom: 2px;
       }
 
       &--img_hidden {
         content: url("../assets/images/checked.png");
-        margin-top: 2px;
+        margin-top: 3px;
+        margin-bottom: 2px;
         visibility: hidden;
       }
     }
@@ -292,8 +186,8 @@
 
       &__checkbox {
         display: inline-block;
-        width: 15px;
-        height: 15px;
+        width: 16px;
+        height: 16px;
         border: 1px solid $border;
         position: relative;
         cursor: pointer;
@@ -301,12 +195,14 @@
 
         &--img {
           content: url("../assets/images/checked.png");
-          margin-top: 2px;
+          margin-top: 3px;
+          margin-bottom: 2px;
         }
 
         &--img_hidden {
           content: url("../assets/images/checked.png");
-          margin-top: 2px;
+          margin-top: 3px;
+          margin-bottom: 2px;
           visibility: hidden;
         }
       }
@@ -324,7 +220,7 @@
         width: 40px;
         height: 40px;
         border: 1px solid $border;
-        border-radius: 5px;
+        border-radius: 2px;
         background-color: $input-background;
         text-align: center;
 
@@ -404,7 +300,7 @@
           width: 40px;
           height: 40px;
           border: 1px solid #C6D2D9;
-          border-radius: 5px;
+          border-radius: 2px;
           color: #999999;
           font-style: normal;
           font-weight: normal;
@@ -430,8 +326,8 @@
 
     &__checkbox {
       display: inline-block;
-      width: 15px;
-      height: 15px;
+      width: 16px;
+      height: 16px;
       border: 1px solid $border;
       position: relative;
       cursor: pointer;
@@ -439,12 +335,14 @@
 
       &--img {
         content: url("../assets/images/checked.png");
-        margin-top: 2px;
+        margin-top: 3px;
+        margin-bottom: 2px;
       }
 
       &--img_hidden {
         content: url("../assets/images/checked.png");
-        margin-top: 2px;
+        margin-top: 3px;
+        margin-bottom: 2px;
         visibility: hidden;
       }
     }
@@ -464,8 +362,8 @@
 
     &__checkbox {
       display: inline-block;
-      width: 15px;
-      height: 15px;
+      width: 16px;
+      height: 16px;
       border: 1px solid $border;
       position: relative;
       cursor: pointer;
@@ -473,12 +371,14 @@
 
       &--img {
         content: url("../assets/images/checked.png");
-        margin-top: 2px;
+        margin-top: 3px;
+        margin-bottom: 2px;
       }
 
       &--img_hidden {
         content: url("../assets/images/checked.png");
-        margin-top: 2px;
+        margin-top: 3px;
+        margin-bottom: 2px;
         visibility: hidden;
       }
     }

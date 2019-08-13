@@ -30,7 +30,7 @@ export class Extension {
                 'weekStart', 'timeZone', 'refreshToken', 'userSettings'], (result) => {
                 const mountHtmlElem = document.getElementById('mount');
                 if (mountHtmlElem) {
-                    mountHtmlElem.style.width = '340px';
+                    mountHtmlElem.style.width = '360px';
                     mountHtmlElem.style.minHeight = '430px';
                 }
 
@@ -39,7 +39,6 @@ export class Extension {
                         userService.getUser(result.userId)
                             .then(response => {
                                 let data = response.data;
-
                                 localStorage.setItem('userEmail', data.email);
                                 localStorage.setItem('activeWorkspaceId', data.activeWorkspace);
                                 localStorage.setItem('userSettings', JSON.stringify(data.settings));
@@ -73,6 +72,7 @@ export class Extension {
             const baseUrl = localStorageService.get('baseUrl');
             let clientUrl = this.setHomeUrlFromBaseUrl(baseUrl);
             const clockifyTabs = tabs.filter(tab => tab.url && tab.url.includes(clientUrl));
+
             if (!clockifyTabs.length) {
                 return;
             }
@@ -80,7 +80,7 @@ export class Extension {
             getBrowser().tabs.sendMessage(clockifyTabs[0].id, {method: "getLocalStorage"}, (response) => {
                 const mountHtmlElem = document.getElementById('mount');
                 if (mountHtmlElem) {
-                    mountHtmlElem.style.width = '340px';
+                    mountHtmlElem.style.width = '360px';
                     mountHtmlElem.style.minHeight = '430px';
                 }
                 if (response && response.token !== 'null' && response.userId) {
@@ -94,6 +94,7 @@ export class Extension {
                         userSettings: JSON.stringify(JSON.parse(response.user).settings),
                         userEmail: response.userEmail
                     };
+
                     this.saveAllToStorages(storageItems);
                     if (mountHtmlElem) {
                         ReactDOM.render(
@@ -137,7 +138,7 @@ export class Extension {
     }
 
     stopEntryInProgress(sendResponse) {
-        return stopInProgress().then((response) => {
+        stopInProgress().then((response) => {
             if (response.status !== 400) {
                 if (isAppTypeExtension) {
                     getBrowser().notifications.clear('idleDetection');
@@ -149,7 +150,7 @@ export class Extension {
     }
 
     startNewEntry(request, sendResponse) {
-        return getEntryInProgress().then((response) => {
+        getEntryInProgress().then((response) => {
             if (response && response.id) {
                 return this.stopTimerAndStartNewEntry(request, sendResponse);
             } else {
@@ -159,19 +160,12 @@ export class Extension {
     }
 
     stopTimerAndStartNewEntry(request, sendResponse) {
-        return stopInProgress().then((response) => {
+        stopInProgress().then((response) => {
             if (response.status === 200) {
                 if (isAppTypeExtension) {
                     getBrowser().notifications.clear('idleDetection');
                 }
-                return this.startTimer(request)
-                    .then((response) => {
-                        if (!response.message) {
-                            window.inProgress = true;
-                            this.setIcon(getIconStatus().timeEntryStarted);
-                            sendResponse({status: 200})
-                        }
-                    })
+                this.startTimer(request, sendResponse);
             } else {
                 sendResponse({status: response.status})
             }
@@ -179,12 +173,12 @@ export class Extension {
     }
 
     startTimer(request, sendResponse) {
-        return startTimer(request.description || "", request.project)
+        startTimer(request.description || "", request.project)
             .then((response) => {
                 if (!response.message) {
                     window.inProgress = true;
                     this.setIcon(getIconStatus().timeEntryStarted);
-                    sendResponse({status: 200})
+                    sendResponse({status: 200, data: response})
                 }
             })
     }

@@ -14,14 +14,14 @@
 
 .time-entry-not-synced-sync {
   float: right;
-  width: 25px;
-  height: 25px;
-  background-image: url("../assets/images/reload-normal.png");
+  width: 20px;
+  height: 20px;
+  background-image: url("../assets/images/edit-unsynced.png");
 
   &:hover {
-    width: 25px;
-    height: 25px;
-    background-image: url("../assets/images/reload-hover.png");
+    width: 20px;
+    height: 20px;
+    background-image: url("../assets/images/edit-unsynced-hover.png");
   }
 }
 

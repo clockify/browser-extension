@@ -1,28 +1,18 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import HomePage from "../components/home-page.component";
-import {getIconStatus} from "../enums/browser-icon-status-enum";
-import {UserService} from "../services/user-service";
 import Login from "../components/login.component";
+import {UserService} from "../services/user-service";
 import {LocalStorageService} from "../services/localStorage-service";
 
 const userService = new UserService();
 const localStorageService = new LocalStorageService();
 
-export class Desktop {
-
-    setIcon(iconStatus) {
-        if (iconStatus === getIconStatus().timeEntryStarted) {
-            changeTrayIcon(true);
-        } else {
-            changeTrayIcon(false);
-        }
-    }
+export class Mobile {
 
     afterLoad() {
-        const token = this.loadFromStorage('token');
         const userId = this.loadFromStorage('userId');
-        if (token && token !=='' && userId) {
+        if (this.loadFromStorage('token') && userId) {
             if (!JSON.parse(localStorageService.get('offline'))) {
                 userService.getUser(userId)
                     .then(response => {

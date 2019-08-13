@@ -4,6 +4,7 @@
   border: 1px solid $border;
   border-radius: 2px;
   cursor: pointer;
+  align-items: center;
 
   &-required {
     padding: 5px 0;
@@ -32,29 +33,32 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  color: $lighter_text;
 }
 
 .project-list-arrow {
   position: relative;
-  top: 10px;
-  right: 10px;
+  width: 10px;
+  height: 5px;
   float: right;
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-  border-top: 9px solid #999999;
-  align-self: center;
+  padding-right: 15px;
+  top: 11px;
+  content: url("../assets/images/arrow-light-mode.png");
 }
 
 .project-list-dropdown {
+  position: absolute;
   width: 100%;
-  margin: 20px;
-  height: 400px;
+  left: 0;
+  top: 39px;
+  height: 279px;
   background: white;
   z-index: 2;
-  box-shadow: 0 0 7px #ccc;
+  box-shadow: 0 5px 7px #ccc;
   overflow-x: hidden;
   overflow-y: scroll;
   font-size: 14px;
+  border-radius: 2px;
 }
 
 .project-list-input {
@@ -100,6 +104,10 @@
   padding: 7px 0 8px 15px;
   cursor: pointer;
   font-size: 16px;
+
+  &:hover {
+    background-color: $entries_header;
+  }
 }
 
 .project-item-task {
@@ -116,15 +124,29 @@
   width: 190px;
   text-overflow: ellipsis;
   overflow: hidden;
+  font-size: 14px;
+  line-height: 16px;
   white-space: nowrap;
+  color: $dark_text;
 }
 
 .task-item {
-  padding: 7px 10px;
+  padding: 7px 0 7px 25px;
+  background-color: $task-background;
   color: $dark_text;
-  font-size: 16px;
+  font-size: 14px;
+  line-height: 16px;
+  &:hover {
+    background-color: $entries_header;
+    cursor: pointer;
+  }
+  &:first-child {
+    padding-top: 10px;
+  }
+  &:last-child {
+    padding-bottom: 10px;
+  }
 }
-
 .project-list-load {
   text-align: center;
   margin-top: 15px;
@@ -132,23 +154,12 @@
   color: $middle_light_text;
   cursor: pointer;
 }
-
-.project-list-open {
-  position: fixed;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.8);
-  left: 0;
-  top: 0;
-  justify-content: center;
-  align-items: center;
-  display: flex;
-  z-index: 5;
-}
-
 .project-list-client {
   margin: 10px;
   padding-top: 5px;
   border-top: 1px dotted $border;
   color: $lighter_text;
+}
+.projects-list {
+  position: relative;
 }

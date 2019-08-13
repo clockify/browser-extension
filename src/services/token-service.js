@@ -78,4 +78,8 @@ export class TokenService {
         ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
         ReactDOM.render(<Login logout={true}/>, document.getElementById('mount'));
     }
+
+    isLoggedIn() {
+        return localStorageService.get('token') !== null && localStorageService.get('token') !== undefined;
+    }
 }

@@ -271,6 +271,7 @@ function stopTimerByPomodoro() {
         }
 
         document.timeEntry = null;
+        this.entryInProgressChangedEventHandler(null);
         aBrowser.browserAction.setIcon({
             path: iconPathEnded
         });

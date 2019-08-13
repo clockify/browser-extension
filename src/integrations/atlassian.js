@@ -1,277 +1,113 @@
-// Jira 2018-11 issue page. Uses functions for timer values due to SPA on issue-lists.
+//Active sprint modal - Jira 2019-07
 clockifyButton.render(
-  '.new-issue-container:not(.clockify)',
-  { observe: true },
-    (elem) => {
-    var link,
-      issueNumberElement,
-      container,
-      titleElement,
-      projectElement;
-
-    issueNumberElement = $('a[href^="/browse/"][target=_blank]:not([role=list-item])', elem);
-    container = issueNumberElement.parentElement.parentElement.parentElement;
-
-    function getDescription () {
-      var description = '';
-      titleElement = $('h1 ~ button[aria-label]', elem).previousSibling;
-
-      if (issueNumberElement) {
-        description += issueNumberElement.textContent.trim();
-      }
-
-      if (titleElement) {
-        if (description) description += ' ';
-        description += titleElement.textContent.trim();
-      }
-
-      return description
-    }
-
-      link = clockifyButton.createButton(getDescription);
-      link.style.position = "relative";
-      link.style.top = "-18px";
-
-      container.appendChild(link);
-  }
-);
-
-//Jira ServiceDesk redesign of issue page 2019-05
-clockifyButton.render(
-    '.sd-queue-issue:not(.clockify)',
+    'div[role="dialog"] > div > div > header:not(.clockify)',
     { observe: true },
     (elem) => {
-        let link,
-            issueNumberElement,
-            container,
-            titleElement,
-            description,
-            projectElement;
-
-        issueNumberElement = $('a[href^="/browse/"][target=_blank]:not([role=list-item])', elem);
-        titleElement = $('h1', elem);
-        container = $('.sc-eqGige', elem);
-
-        description = '';
-        if (issueNumberElement) {
-            description += issueNumberElement.textContent.trim();
+        if (document.getElementById('clockifyButton')) {
+            document.getElementById('clockifyButton').remove();
         }
+        const root = elem.closest('div[role="dialog"]');
+        const page = elem.closest('div[id="page"]');
+        const issueNumber = $('a > span > span', elem).textContent;
+        const container = $('div > div > div > div > div > div:first-child > div > div:first-child', elem);
+        const desc = $('h1', root).textContent;
+        const project = $('div[role="presentation"] > button', page).childNodes[1].childNodes[0].textContent;
 
-        if (titleElement) {
-            if (description) description += ' ';
-            description += titleElement.textContent.trim();
-        }
-
-        link = clockifyButton.createButton(description);
-        link.style.position = "relative";
-
-        container.firstChild.appendChild(link);
-    }
-);
-// Jira 2017 board sidebar
-clockifyButton.render(
-  '.sc-kkbgRg:not(.clockify)',
-  { observe: true },
-  () => {
-    var link,
-      description,
-      rootElem = $('#ghx-detail-view'),
-      container = createTag('div', 'jira-ghx-clockify-button'),
-      titleElem = $('[spacing] h1', rootElem),
-      numElem = $('[spacing] a', rootElem),
-      projectElem = $('.bgdPDV');
-
-    description = titleElem.textContent;
-    if (numElem !== null) {
-      description = numElem.textContent + ' ' + description;
-    }
-
-    link = clockifyButton.createSmallButton(description);
-    link.style.position = "relative";
-    link.style.left = "10px";
-
-    container.appendChild(link);
-    numElem.parentNode.appendChild(container);
-  }
-);
-
-// Jira 2018-06 new sprint modal
-// Classes are random keep changing so we need to rely on other attributes
-clockifyButton.render(
-  'div[role="dialog"] h1 + button[aria-label="Edit Summary"]',
-  { observe: true },
-    (needle) => {
-    var root = needle.closest('div[role="dialog"]'),
-      id = $('div:last-child > a[spacing="none"][href^="/browse/"]:last-child', root),
-      description = $('h1:first-child', root),
-      project = $('a[spacing="none"][href*="/projects/"]'),
-      container = createTag('div', 'jira-ghx-clockify-button'),
-      link;
-
-    if (project === null) {
-        project = $('div[data-test-id="navigation-apps.project-switcher-v2"] button >' +
-           ' div:nth-child(1) > div:first-child');
-    }
-
-    if (id !== null && description !== null) {
-        link = clockifyButton.createButton(id.textContent + ' ' + description.textContent);
+        const link = clockifyButton.createButton(issueNumber + ' ' + desc, project);
         link.style.position = "relative";
         link.style.left = "10px";
+        link.style.top = "-18px";
+        container.appendChild(link);
+    }
+);
+
+
+if (document.getElementById('clockifyButton-jiraIntegration')) {
+    document.getElementById('clockifyButton-jiraIntegration').classList.remove('clockify');
+
+    if (document.getElementById('clockifyButton')) {
+        document.getElementById('clockifyButton').remove();
+    }
+}
+//Issues and filter(browse one issue) - Jira 2019-07
+clockifyButton.render(
+    'div[id="jira-frontend"] > div > div > div > div:last-child:not(.clockify)',
+    { observe: true },
+    (elem) => {
+        if (!document.getElementById('clockifyButton-jiraIntegration')) {
+            elem.setAttribute('id', 'clockifyButton-jiraIntegration');
+        }
+        const page = elem.closest('div[id="page"]');
+        const container =
+            $('div > div > div > div > div > div > div[id="jira-issue-header"] ' +
+                '> div > div > div > div > div > div:first-child > div > div', elem);
+        const issueNumber = $('a > span > span', container).textContent;
+        const descElement = $('div[id="jira-issue-header"]', elem).parentNode;
+        const desc = $('h1', descElement).textContent;
+        const project = $('div[role="presentation"] > button', page).childNodes[1].childNodes[0].textContent;
+
+        const link = clockifyButton.createButton(issueNumber + ' ' + desc, project);
+
+        link.style.position = "relative";
+        link.style.left = "10px";
+        link.style.top = "-18px";
 
         container.appendChild(link);
-        id.parentNode.appendChild(container);
+        container.style.height = '25px';
     }
-  }
 );
 
-// Jira 2018-08 sprint modal
-// Using the h1 as selector to make sure that it will only try to render the button
-// after Jira has fully rendered the modal content
+//Issues and filter(browse one issue) - old view
 clockifyButton.render(
-  'div[role="dialog"].sc-krDsej h1:not(.clockify)',
-  { observe: true },
-    (needle) => {
-    var root = needle.closest('div[role="dialog"]'),
-      id = $('a:first-child', root),
-      description = $('h1:first-child', root),
-      project = $('.sc-cremA'),
-      container = createTag('div', 'jira-ghx-clockify-button'),
-      link;
+    'div[id="issue-content"]:not(.clockify)',
+    { observe: true },
+    (elem) => {
+        if (document.getElementById('clockifyButton')) {
+            document.getElementById('clockifyButton').remove();
+        }
+        const page = elem.closest('div[id="page"]');
+        const container = $('header > div > header > div > div > ol', elem);
+        const issueNumber = $('li:last-child > a', container).textContent;
+        const desc = $('h1', elem).textContent;
+        const project = $('div[role="presentation"] > button', page).childNodes[1].childNodes[0].textContent;
 
-    if (id !== null && description !== null && project !== null) {
-      link = clockifyButton.createSmallButton(id.textContent + ' ' + description.textContent);
+        const link = clockifyButton.createButton(issueNumber + ' ' + desc, project);
 
-      container.appendChild(link);
-      $('.sc-iBmynh', root).appendChild(container);
+        link.style.position = "relative";
+        link.style.left = "15px";
+        link.style.top = "0px";
+
+        container.appendChild(link);
     }
-  }
 );
 
-// Jira 2018 sprint modal
-// Using the h1 as selector to make sure that it will only try to render the button
-// after Jira has fully rendered the modal content
+if (document.getElementById('jira-issue-header')) {
+    document.getElementById('jira-issue-header').classList.remove('clockify');
+
+    if (document.getElementById('clockifySmallButton')) {
+        document.getElementById('clockifySmallButton').remove();
+    }
+}
+
+//Scrum board(backlog) - detail view
 clockifyButton.render(
-  'div[role="dialog"] .ffQQbf:not(.clockify)',
-  { observe: true },
-    (needle) => {
-    var root = needle.closest('div[role="dialog"]'),
-      id = $('a:first-child', root),
-      description = $('h1:first-child', root),
-      project = $('.bgdPDV'),
-      container = createTag('div', 'jira-ghx-clockify-button'),
-      link;
+    'div[id="ghx-detail-view"] > div > div:last-child > div > div > div > div[id="jira-issue-header"]:not(.clockify)',
+    { observe: true },
+    (elem) => {
+        const page = elem.closest('div[id="page"]');
+        const root = $('div[id="ghx-detail-view"]');
+        const container = $('a', elem).parentNode.parentNode;
+        const issueNumber = $('a > span > span', container).textContent;
+        const desc = $('h1', root).textContent;
+        const project = $('div[role="presentation"] > button', page).childNodes[1].childNodes[0].textContent;
 
-      if (id !== null && description !== null && project !== null) {
-          link = clockifyButton.createButton(id.textContent + ' ' + description.textContent);
+        const link = clockifyButton.createSmallButton(issueNumber + ' ' + desc, project);
 
-          container.appendChild(link);
-          id.parentNode.appendChild(container);
-      }
-  }
+        link.style.position = "relative";
+        link.style.left = "85px";
+        link.style.top = "-32px";
+
+        container.appendChild(link);
+        container.style.height = '25px';
+    }
 );
-
-// Jira 2017 issue page
-clockifyButton.render(
-  '.issue-header-content:not(.clockify)',
-  { observe: true },
-  (elem) => {
-    var link,
-      description,
-      numElem = $('#key-val', elem),
-      titleElem = $('#summary-val', elem) || '',
-      projectElem = $('.bgdPDV');
-
-    if (!!titleElem) {
-      description = titleElem.textContent.trim();
-    }
-
-    if (numElem !== null) {
-      if (!!description) {
-        description = ' ' + description;
-      }
-      description = numElem.textContent + description;
-    }
-
-    // JIRA server support
-    if (projectElem === null) {
-      projectElem = $('#project-name-val');
-    }
-
-      link = clockifyButton.createButton(description);
-
-      link.style.marginLeft = '8px';
-
-      var issueLinkContainer =
-          $('.issue-link').parentElement || $('.aui-nav li').lastElementChild;
-      issueLinkContainer && issueLinkContainer.appendChild(link);
-  }
-);
-
-// Jira pre-2017
-clockifyButton.render('#ghx-detail-issue:not(.clockify)', { observe: true }, function(
-  elem
-) {
-  var link,
-    description,
-    container = createTag('div', 'ghx-clockify-button'),
-    titleElem = $('[data-field-id="summary"]', elem),
-    numElem = $('.ghx-fieldname-issuekey a'),
-    projectElem = $('.ghx-project', elem);
-
-  description = titleElem.textContent;
-  if (numElem !== null) {
-    description = numElem.textContent + ' ' + description;
-  }
-
-    link = clockifyButton.createButton(description);
-
-    container.appendChild(link);
-    $('#ghx-detail-head').appendChild(container);
-});
-
-// Jira pre-2017
-clockifyButton.render(
-  '.issue-header-content:not(.clockify)',
-  { observe: true },
-  (elem) => {
-    var link,
-      description,
-      ul,
-      li,
-      numElem = $('#key-val', elem),
-      titleElem = $('#summary-val', elem) || '',
-      projectElem = $('#project-name-val', elem);
-
-    if (!!titleElem) {
-      description = titleElem.textContent;
-    }
-
-    if (numElem !== null) {
-      if (!!description) {
-        description = ' ' + description;
-      }
-      description = numElem.textContent + description;
-    }
-
-      link = clockifyButton.createButton(description);
-
-      ul = createTag('ul', 'toolbar-group');
-      li = createTag('li', 'toolbar-item');
-      li.appendChild(link);
-      ul.appendChild(li);
-      $('.toolbar-split-left').appendChild(ul);
-  }
-);
-
-//Confluence
-clockifyButton.render('#title-heading:not(.clockify)', { observe: true }, (elem) => {
-  var link,
-    description,
-    titleElem = $('[id="title-text"]', elem);
-
-    description = titleElem.textContent.trim();
-
-    link = clockifyButton.createButton(description);
-
-    $('#title-text').appendChild(link);
-});

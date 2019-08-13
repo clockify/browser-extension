@@ -27,6 +27,7 @@ function endInProgressAndStartNew(info) {
                 if(data.status === 400) {
                     alert("You already have entry in progress which can't be saved without project/task/description or tags. Please edit your time entry.")
                 } else {
+                    this.entryInProgressChangedEventHandler(null);
                     startTimer(info && info.selectionText ? info.selectionText : "");
                 }
             })
@@ -42,16 +43,9 @@ function endInProgress(end, isWebSocketHeader) {
     const token = localStorage.getItem('token');
     const activeWorkspaceId = localStorage.getItem('activeWorkspaceId');
     const apiEndpoint = localStorage.getItem('permanent_baseUrl');
+    const headers = new Headers(this.createHttpHeaders(token));
 
     const endInProgressUrl = `${apiEndpoint}/workspaces/${activeWorkspaceId}/timeEntries/endStarted`;
-    let headers = new Headers({
-        'X-Auth-Token': token,
-        'Content-Type': 'application/json',
-    });
-
-    if (isWebSocketHeader && localStorage.getItem('wsConnectionId')) {
-        headers.append('socket-connection-id', localStorage.getItem('wsConnectionId'));
-    }
 
     const endRequest = new Request(endInProgressUrl, {
         method: 'PUT',
@@ -68,17 +62,10 @@ function startTimer(description, options) {
     const token = localStorage.getItem('token');
     const activeWorkspaceId = localStorage.getItem('activeWorkspaceId');
     const apiEndpoint = localStorage.getItem('permanent_baseUrl');
+    const headers = new Headers(this.createHttpHeaders(token));
+
     let timeEntryUrl =
         `${apiEndpoint}/workspaces/${activeWorkspaceId}/timeEntries/`;
-    let headers = new Headers({
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'X-Auth-Token': token
-    });
-
-    if (options && options.isWebSocketHeader && localStorage.getItem('wsConnectionId')) {
-        headers.append('socket-connection-id', localStorage.getItem('wsConnectionId'));
-    }
 
     let timeEntryRequest = new Request(timeEntryUrl, {
         method: 'POST',
@@ -105,6 +92,7 @@ function startTimer(description, options) {
                 if (options.isWebSocketHeader) {
                     document.timeEntry = data;
                 }
+                this.entryInProgressChangedEventHandler(data);
             }
             return data;
         })
@@ -117,13 +105,12 @@ function getEntryInProgress() {
     const apiEndpoint = localStorage.getItem('permanent_baseUrl');
     const activeWorkspaceId = localStorage.getItem('activeWorkspaceId');
     const token = localStorage.getItem('token');
+    const headers = new Headers(this.createHttpHeaders(token));
 
     let inProgressUrl = `${apiEndpoint}/workspaces/${activeWorkspaceId}/timeEntries/inProgress`;
     let timeEntryInProgressRequest = new Request(inProgressUrl, {
         method: 'GET',
-        headers: new Headers({
-            'X-Auth-Token': token
-        })
+        headers: headers
     });
 
     return fetch(timeEntryInProgressRequest);
@@ -137,13 +124,7 @@ function deleteEntry(entryId, isWebSocketHeader) {
     const deleteUrl =
         `${apiEndpoint}/workspaces/${activeWorkspaceId}/timeEntries/${entryId}`;
 
-    let headers = new Headers({
-        'X-Auth-Token': token
-    });
-
-    if (isWebSocketHeader && localStorage.getItem('wsConnectionId')) {
-        headers.append('socket-connection-id', localStorage.getItem('wsConnectionId'));
-    }
+    const headers = new Headers(this.createHttpHeaders(token));
 
     let deleteEntryRequest = new Request(deleteUrl, {
         method: 'DELETE',
@@ -154,6 +135,7 @@ function deleteEntry(entryId, isWebSocketHeader) {
         if (isWebSocketHeader) {
             document.timeEntry = null;
         }
+        this.entryInProgressChangedEventHandler(null);
     });
 
 }
@@ -222,9 +204,8 @@ function getLastEntry() {
 
     const getLastEntryUrl = `${apiEndpoint}/v1/workspaces/${activeWorkspaceId}/user/${userId}/time-entries?page-size=2`;
 
-    const headers = new Headers({
-        'X-Auth-Token': token
-    });
+    const headers = new Headers(this.createHttpHeaders(token));
+
 
     let lastEntryRequest = new Request(getLastEntryUrl, {
         method: 'GET',

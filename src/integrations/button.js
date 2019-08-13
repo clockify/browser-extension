@@ -1,6 +1,5 @@
 const aBrowser = chrome || browser;
 var clockifyButton = {
-
     links: [],
     inProgressDescription: "",
     beforeRender: (next) => {
@@ -67,6 +66,9 @@ var clockifyButton = {
                         clockifyButton.inProgressDescription = null;
                         active = false;
                         setButtonProperties(button, title, active);
+                        aBrowser.storage.sync.set({
+                            timeEntryInProgress: null
+                        });
                     }
                 });
             } else {
@@ -81,6 +83,9 @@ var clockifyButton = {
                         active = true;
                         setButtonProperties(button, title, active);
                         clockifyButton.inProgressDescription = title;
+                        aBrowser.storage.sync.set({
+                            timeEntryInProgress: response.data
+                        });
                     }
                 });
             }
@@ -107,6 +112,9 @@ var clockifyButton = {
                         clockifyButton.inProgressDescription = null;
                         active = false;
                         setButtonProperties(button, title, active);
+                        aBrowser.storage.sync.set({
+                            timeEntryInProgress: null
+                        });
                     }
                 });
             } else {
@@ -121,6 +129,9 @@ var clockifyButton = {
                         active = true;
                         setButtonProperties(button, title, active);
                         clockifyButton.inProgressDescription = title;
+                        aBrowser.storage.sync.set({
+                            timeEntryInProgress: response.data
+                        });
                     }
                 });
             }
@@ -167,12 +178,18 @@ function setButtonProperties(button, title, active) {
         button.classList.add('clockify-button-active');
         if (!button.classList.contains('small')) {
             button.textContent = 'Stop timer';
+            button.setAttribute('id', 'clockifyButton');
+        } else {
+            button.setAttribute('id', 'clockifySmallButton');
         }
     } else {
         button.classList.remove('clockify-button-active');
         button.classList.add('clockify-button-inactive');
         if (!button.classList.contains('small')) {
             button.textContent = 'Start timer';
+            button.setAttribute('id', 'clockifyButton');
+        } else {
+            button.setAttribute('id', 'clockifySmallButton');
         }
     }
 }

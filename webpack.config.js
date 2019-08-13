@@ -2,7 +2,6 @@ const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const webpack = require('webpack');
 const serviceVersion = require("./package.json").version;
-const TerserPlugin = require('terser-webpack-plugin');
 
 const DEV = !process.env.NODE_ENV || process.env.NODE_ENV !== 'prod';
 

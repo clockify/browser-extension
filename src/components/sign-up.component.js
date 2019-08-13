@@ -13,6 +13,7 @@ const environment = getEnv();
 
 const authService = new AuthService();
 const userService = new UserService();
+let disabledSignup = false;
 
 class SignUp extends React.Component {
 
@@ -36,6 +37,9 @@ class SignUp extends React.Component {
 
     signup(event) {
         event.preventDefault();
+        if (disabledSignup) {
+            return;
+        }
         if(this.state.email.indexOf("@") < 0 || this.state.email.length < 3) {
             this.setState({
                 emailAlert: true,
@@ -55,6 +59,7 @@ class SignUp extends React.Component {
                 termsAlert: true
             })
         } else {
+            disabledSignup = true;
             authService.signup(this.state.email, this.state.password, moment.tz.guess())
                 .then(response => {
                     let data = response.data;
@@ -73,6 +78,7 @@ class SignUp extends React.Component {
                     this.fetchUser(data.id);
                 })
                 .catch(error => {
+                    disabledSignup = false;
                     this.setState({
                         emailExists: true,
                         emailAlert: false,
@@ -97,6 +103,7 @@ class SignUp extends React.Component {
                         userSettings: JSON.stringify(data.settings)
                     });
                 }
+                disabledSignup = false;
                 ReactDOM.render(<HomePage/>, document.getElementById('mount'));
             }).catch(error => {
         })

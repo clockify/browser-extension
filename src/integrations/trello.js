@@ -1,38 +1,34 @@
-'use strict';
-clockifyButton.render('.window-header:not(.clockify)', {observe: true}, (elem) => {
-    let link, container = createTag('div', 'button-link trello-tb-wrapper'),
-        desc, project,
-        titleElem = $('.window-title h2', elem),
-        projectElem = $('.board-header-btn-name > span'),
-        descriptionElem = $('.js-move-card');
-    if (!descriptionElem) {
-        return;
-    }
+setTimeout(() => {
+    'use strict';
+    clockifyButton.render('.window-sidebar:not(.clockify)', {observe: true}, (elem) => {
+        const root = $('div[id="trello-root"]');
+        const container = elem.lastChild.childNodes[1];
+        const htmlTag = createTag('div', 'button-link');
+        const projectElem = $('.board-header-btn-text', root).textContent.trim();
+        const desc = $('div[class="window-title"] > h2', root).textContent.trim();
 
-    desc = titleElem.textContent;
+        const link = clockifyButton.createButton(desc, projectElem);
+        htmlTag.appendChild(link);
+        container.prepend(htmlTag);
+    });
 
-    project = projectElem.textContent.trim();
+    /* Checklist buttons */
+    clockifyButton.render('.checklist-item-details:not(.clockify)', {observe: true}, (elem) => {
+        const root = $('div[id="trello-root"]');
+        const project= $('.board-header-btn > span').textContent.trim();
+        const desc = $('div[class="window-title"] > h2', root).textContent;
+        const task = $('.checklist-item-details-text', elem).textContent;
 
-    link = clockifyButton.createButton(desc, project);
-    container.appendChild(link);
-    descriptionElem.parentNode.insertBefore(container, descriptionElem);
-}, ".window-wrapper");
-
-/* Checklist buttons */
-clockifyButton.render('.checklist-item-details:not(.clockify)', {observe: true}, (elem) => {
-    let link,
-        projectElem = $('.board-header-btn-name > span'),
-        titleElem = $('.window-title h2'),
-        taskElem = $('.checklist-item-details-text', elem);
-
-    link = clockifyButton.createSmallButton(
-        titleElem.textContent + " - " + taskElem.textContent,
-        projectElem.textContent.trim()
+        const link = clockifyButton.createSmallButton(
+            desc + " - " + task,
+            project
         );
-    link.classList.add('checklist-item-button');
-    link.style.position = 'absolute';
-    link.style.paddingTop = 0;
-    link.style.right = 0;
-    link.style.top = 0;
-    elem.parentNode.appendChild(link);
-}, ".checklist-items-list, .window-wrapper");
+        link.classList.add('checklist-item-button');
+        link.style.position = 'absolute';
+        link.style.paddingTop = 0;
+        link.style.paddingRight = 0;
+        link.style.right = '30px';
+        link.style.top = '6px';
+        elem.appendChild(link);
+    });
+}, 1000);

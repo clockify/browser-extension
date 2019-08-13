@@ -8,19 +8,36 @@
 .time-entries-list-time {
     background: $entries_header;
     color: $lighter_text;
-    padding: 15px 15px 30px 15px;
+    padding: 20px 10px;
     border-bottom: 1px solid $border;
-    border-radius: 2px;
 }
 
 .time-entries-list-day {
+    position: relative;
+    top: -7px;
     float: left;
     color: $dark_text;
+    font-size: 12px;
+    line-height: 14px;
+}
+
+.time-entries-total-and-time {
+    position: relative;
+    top: -7px;
+    float: right;
+}
+
+.time-entries-list-total-time {
+    color: $dark_text;
+    font-size: 12px;
+    line-height: 14px;
 }
 
 .time-entries-list-total {
-    float: right;
-    color: $dark_text;
+    margin-right: 3px;
+    color: $lighter_text;
+    font-size: 12px;
+    line-height: 14px;
 }
 
 .no-entries-img {

@@ -64,9 +64,10 @@ export class TimeEntryService extends HttpWrapperService {
 
     getEntryInProgress() {
         const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
+        const userId = localStorageService.get('userId');
         const baseUrl = localStorageService.get('baseUrl');
         const entryInProgressUrl =
-            `${baseUrl}/workspaces/${activeWorkspaceId}/timeEntries/inProgress`;
+            `${baseUrl}/v1/workspaces/${activeWorkspaceId}/user/${userId}/time-entries?in-progress=true&hydrated=true`;
 
         return super.get(entryInProgressUrl, addToken);
     }

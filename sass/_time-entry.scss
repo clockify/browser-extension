@@ -8,42 +8,71 @@
   position: relative;
   z-index: 1;
   transition: all 0.2s ease;
-
-  &__project-name {
+  &-description {
     display: inline-block;
-    width: 90%;
+    margin-bottom: 2px;
+    position: relative;
+    width: 48%;
+    top: 50%;
+    transform: translate(0, -50%);
+    float: left;
+    margin-left: 10px;
+  }
+  &__project-wrapper{
+    display: flex;
+    align-items: center;
+    max-width: 65%;
+  }
+  &__project-name {
+    margin-left: 3px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-
   &__task-name {
     width: 90%;
+    margin-left: 5px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    color: $lighter_text;
   }
-
   &__right-side {
     display: flex;
+    margin-right: 10px;
+    float: right;
     align-items: center;
     position: relative;
     top: 50%;
     transform: translate(0, -50%);
-    justify-content: space-between;
-    width: 100px;
-
-    &__lock_and_duration {
+    &__tag_billable_and_lock {
       display: flex;
-      margin-left: 10px;
+      margin-right: 10px;
+      max-width: 100px;
+      align-items: center;
+      justify-content: space-between;
+    }
+    &__billable {
+      content: url("../assets/images/billable.png");
+      margin-right: 5px;
+    }
+    &__tag {
+      content: url("../assets/images/tag.png");
+      margin-right: 5px;
+    }
+    &__duration_and_play {
+      display: flex;
+      margin-left: 5px;
       align-items: center;
     }
-
     &__lock {
       display: block;
     }
+    &--duration {
+      position: relative;
+      top: -1px;
+    }
   }
-
   &:hover {
     box-shadow: 0 0 20px rgba(0,0,0,0.1);
     z-index: 2;
@@ -58,19 +87,10 @@
   font-size: 14px;
   color: $dark_text;
 }
-
-.time-entry-description {
-  display: inline-block;
-  position: relative;
-  width: 55%;
-  top: 50%;
-  transform: translate(0, -50%);
-  float: left;
-  margin-left: 15px;
-}
-
 .time-entry-arrow {
-  padding: 8px;
+  position:relative;
+  top: 3px;
+  margin-left: 10px;
   content: url("../assets/images/play-normal.png");
 }
 
@@ -87,13 +107,21 @@
 
 .time-entry-project {
   display: flex;
-  flex-direction: column;
+  margin-top: 2px;
+  align-items: center;
   font-size: 13px;
   width: 100%;
+  line-height: 16px;
 }
 
-.description {
+.description, .no-description {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.description {
+  color: #000;
+}
+.no-description {
+  color: $lighter_text;
 }
