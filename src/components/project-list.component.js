@@ -4,6 +4,7 @@ import {getDefaultProjectEnums} from "../enums/default-project.enum";
 import {ProjectService} from "../services/project-service";
 import {debounce} from "lodash";
 import {LocalStorageService} from "../services/localStorage-service";
+import {isAppTypeMobile} from "../helpers/app-types-helper";
 
 const projectService = new ProjectService();
 const localStorageService = new LocalStorageService();
@@ -18,7 +19,7 @@ class ProjectList extends React.Component {
             isOpen: false,
             selectedProject: {
                 name: this.createNameForSelectedProject(),
-                color: '#999999'
+                color: this.getColorForProject()
             },
             selectedTaskName: '',
             projectList: this.props.defaultProject === true ?
@@ -37,7 +38,7 @@ class ProjectList extends React.Component {
             title: '',
             filter: '',
             isSpecialFilter: localStorageService.get('workspaceSettings') ?
-                    JSON.parse(localStorageService.get('workspaceSettings')).projectPickerSpecialFilter : false
+                JSON.parse(localStorageService.get('workspaceSettings')).projectPickerSpecialFilter : false
         };
         this.filterProjects = debounce(this.filterProjects, 500);
     }
@@ -82,7 +83,6 @@ class ProjectList extends React.Component {
     }
 
     mapSelectedProject() {
-
         const selectedProject = this.props.selectedProject === 'lastUsedProject' ?
             {
                 name: 'Last used project',
@@ -143,7 +143,7 @@ class ProjectList extends React.Component {
                     selectedProject: {
                         name: this.props.defaultProject === true ?
                             'Select default project' : this.createNameForSelectedProject(),
-                        color: '#999999'
+                        color: this.getColorForProject()
                     }
                 }, () => {
                     this.setState({
@@ -191,7 +191,10 @@ class ProjectList extends React.Component {
             this.setState({
                 isOpen: true
             }, () => {
-                document.getElementById('project-filter').focus();
+                if (!isAppTypeMobile()) {
+                    document.getElementById('project-filter').focus();
+                }
+                this.props.projectListOpened();
             });
         }
     }
@@ -201,7 +204,7 @@ class ProjectList extends React.Component {
         this.setState({
             isOpen: false,
             projectList: !this.props.workspaceSettings.forceProjects ?
-            [{name: 'No project', color: '#999999', tasks: []}] : [],
+                [{name: 'No project', color: '#999999', tasks: []}] : [],
             page: 1,
             filter: ''
         }, () => {
@@ -270,6 +273,20 @@ class ProjectList extends React.Component {
         });
     }
 
+    getColorForProject() {
+        const userId = localStorageService.get('userId');
+        const darkModeFromStorage = localStorageService.get('darkMode') ?
+            JSON.parse(localStorageService.get('darkMode')) : [];
+
+        if (darkModeFromStorage.length > 0 &&
+            darkModeFromStorage.filter(darkMode => darkMode.userId === userId && darkMode.enabled).length > 0
+        ) {
+            return '#90A4AE';
+        } else {
+            return '#999999';
+        }
+    }
+
     render() {
         if (!this.state.ready) {
             return null;
@@ -322,15 +339,13 @@ class ProjectList extends React.Component {
                                                         (!project.client && client === 'Without client'))
                                                     .map(project => {
                                                         return (
-                                                            <a>
-                                                                <ProjectItem
-                                                                    project={project}
-                                                                    noTasks={this.props.noTasks}
-                                                                    selectProject={this.selectProject.bind(this)}
-                                                                    selectTask={this.selectTask.bind(this)}
-                                                                    workspaceSettings={this.props.workspaceSettings}
-                                                                />
-                                                            </a>
+                                                            <ProjectItem
+                                                                project={project}
+                                                                noTasks={this.props.noTasks}
+                                                                selectProject={this.selectProject.bind(this)}
+                                                                selectTask={this.selectTask.bind(this)}
+                                                                workspaceSettings={this.props.workspaceSettings}
+                                                            />
                                                         )
                                                     })
                                             }

@@ -1,69 +1,7 @@
-.menu div {
-  color: $middle_light_text;
-  margin: 15px 0;
-  cursor: pointer;
-}
-
-.menu span {
-  display: block;
-  margin: 15px 0;
-  color: $middle_light_text;
-  cursor: auto;
-}
-
-.menu {
-  position: absolute;
-  right: 10px;
-  width: 130px;
-  padding: 15px;
-  border: none;
-  background: white;
-  z-index: 1061;
-  box-shadow: 0 0 7px #ccc;
-  text-align: left;
-  font-size: 13px;
-
-  &__dashboard {
-    display: flex;
-    align-items: center;
-
-    p {
-      margin: 0 10px 0 0 !important;
-    }
-
-    &__out {
-      content: url("../assets/images/out-link.png");
-      margin: 0 !important;
-    }
-  }
-}
-
-.menu_manual-active img {
-  content: url("../assets/images/manual-hover.png");
-}
-
-.menu_manual-inactive img {
-  content: url("../assets/images/manual.png");
-}
-
-.menu_timer-active img {
-  content: url("../assets/images/automatic-hover.png");
-}
-
-.menu_timer-inactive img {
-  content: url("../assets/images/automatic.png");
-}
-
-.menu label {
-  position: relative;
-  bottom: 6px;
-  left: 10px;
-  cursor: pointer;
-}
-
 .rectangle {
   position: relative;
-  top: 7px;
+  top: 24px;
+  right: -3px;
   width: 15px;
   height: 15px;
   transform: rotate(45deg);
@@ -71,8 +9,66 @@
   background: white;
   z-index: 3;
 }
-
+.dropdown-menu {
+  position: absolute;
+  top: 53px;
+  right: 3px;
+  width: 250px;
+  padding: 5px 0;
+  box-shadow: 0 0 7px #ccc;
+  background: white;
+  text-align: left;
+  font-size: 13px;
+  z-index: 1061;
+}
+.dropdown-header {
+  padding: 10px 20px;
+  color: $lighter_text;
+}
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  text-decoration: none;
+  text-transform: uppercase;
+  color: $middle_light_text;
+  font-size: 12px;
+  &.active {
+    color: $blue;
+    & .menu-manual-img {
+      background: url("../assets/images/manual-hover.png");
+    }
+    & .menu-timer-img {
+      background: url("../assets/images/automatic-hover.png");
+    }
+  }
+}
+.dropdown-item:hover {
+  background: $entries_header;
+}
+.menu-manual-img, .menu-timer-img {
+  width: 20px;
+  height: 19px;
+  margin-right: 10px;
+}
+.menu-manual-img {
+  background: url("../assets/images/manual.png");
+}
+.menu-timer-img {
+  background: url("../assets/images/automatic.png");
+}
+.dropdown-divider {
+  height: 1px;
+  border-bottom: 1px dotted #cacaca;
+  margin: 5px 0;
+}
 .disable-manual {
   color: $lighter_text !important;
   cursor: not-allowed !important;
+}
+.menu-img-right {
+  width: 12px;
+  height: 12px;
+  background: url("../assets/images/out-link.png");
+  margin-left: 10px;
 }

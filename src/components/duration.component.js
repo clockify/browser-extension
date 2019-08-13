@@ -23,7 +23,9 @@ class Duration extends React.Component {
             startTime: moment(this.props.timeEntry.timeInterval.start),
             endTime: moment(this.props.timeEntry.timeInterval.end),
             selectedDuration: null,
-            dayAfterLockedEntries: 'January 1, 1970, 00:00:00 UTC'
+            dayAfterLockedEntries: 'January 1, 1970, 00:00:00 UTC',
+            endTimeChanged: false,
+            startTimeChanged: false
         }
     }
 
@@ -40,22 +42,29 @@ class Duration extends React.Component {
     }
 
     selectStartTime(time) {
-        if (time) {
+        if (time && !time.isSame(this.state.startTime)) {
             this.setState({
-                startTime: time
+                startTime: time,
+                startTimeChanged: true
             });
         }
     }
 
     selectEndTime(time) {
-        if (time) {
+        if (time && !time.isSame(this.state.endTime)) {
             this.setState({
-                endTime:time
+                endTime:time,
+                endTimeChanged: true
             });
         }
     }
 
     changeStart(time) {
+        if (!this.state.startTimeChanged) {
+            return;
+        }
+
+        time = moment(time).set('second', 0);
         this.setState({
             startTime: time
         });
@@ -75,6 +84,11 @@ class Duration extends React.Component {
     }
 
     changeEnd(time) {
+        if (!this.state.endTimeChanged) {
+            return;
+        }
+
+        time = moment(time).set('second', 0);
         this.setState({
             endTime: time
         });
@@ -143,11 +157,11 @@ class Duration extends React.Component {
         this.fadeBackgroundAroundTimePicker(event);
         if (!event) {
             if (this.state.selectedDuration) {
-               this.changeDuration(this.state.selectedDuration);
+                this.changeDuration(this.state.selectedDuration);
 
-               this.setState({
-                  selectedDuration: null
-               });
+                this.setState({
+                    selectedDuration: null
+                });
             }
             setTimeout(() => {
                 this.setState({
@@ -182,6 +196,7 @@ class Duration extends React.Component {
                     <label className={!this.props.end ? "duration-label" : "disabled"}>Start:</label>
                     <TimePicker id="startTimePicker"
                                 value={this.state.startTime}
+                                className="duration-start"
                                 format={this.state.timeFormat}
                                 size="small"
                                 inputReadOnly={isAppTypeMobile()}
@@ -222,7 +237,7 @@ class Duration extends React.Component {
                         }
 
                     </span>
-
+                    <span className="duration-divider"></span>
                     <input
                         className={!this.state.editDuration ? "duration-duration" : "disabled"}
                         title={"Please write duration in the 'hh:mm:ss' format."}

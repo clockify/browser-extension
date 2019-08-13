@@ -71,7 +71,10 @@ class TimeEntryList extends React.Component {
                                 <div className="time-entries-list">
                                     <div className="time-entries-list-time">
                                         <span className="time-entries-list-day">{day.split("-")[0]}</span>
-                                        <span className="time-entries-list-total">{day.split("-")[1]}</span>
+                                        <div className="time-entries-total-and-time">
+                                            <span className="time-entries-list-total">Total:</span>
+                                            <span className="time-entries-list-total-time">{day.split("-")[1]}</span>
+                                        </div>
                                     </div>
                                     {this.props.timeEntries.filter(timeEntry => timeEntry.start === day.split("-")[0]).map(timeEntry => {
                                        return (

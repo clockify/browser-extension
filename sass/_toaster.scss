@@ -1,0 +1,31 @@
+.toaster__container {
+  position: fixed;
+  width: calc(100% - 30px);
+  left: 15px;
+  bottom: 15px;
+  z-index: 1112;
+}
+.toaster__message {
+  &--container {
+    padding: 15px;
+    margin-top: 5px;
+    box-sizing: border-box;
+    background-color: $green;
+    color: $input-background;
+    border-radius: 2px;
+    font-size: 14px;
+    line-height: 16px;
+    position: relative;
+    bottom: 15px;
+    left: 0;
+    animation: toaster-fadein 0.5s ease, toaster-fadeout 0.5s cubic-bezier(1, -.5, 0, 1) 1.5s;
+  }
+}
+@keyframes toaster-fadein {
+  from {bottom: 0; opacity: 0;}
+  to {bottom: 15px; opacity: 1;}
+}
+@keyframes toaster-fadeout {
+  from {left: 0; opacity: 1;}
+  to {left: 100%; opacity: 0;}
+}

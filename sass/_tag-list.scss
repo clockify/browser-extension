@@ -1,148 +1,134 @@
-.tag-list-open {
-  position: fixed;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.8);
-  left: 0;
-  top: 0;
-  justify-content: center;
-  align-items: center;
-  display: flex;
-  z-index: 5;
-}
+.tag-list {
+  position: relative;
 
-.tag-list-button {
-  padding: 5px 0;
-  background: white;
-  border: 1px solid $border;
-  border-radius: 2px;
-  cursor: pointer;
-
-  &-required {
+  &-button {
     padding: 5px 0;
     background: white;
-    border: 1px solid $red;
+    border: 1px solid $border;
     border-radius: 2px;
     cursor: pointer;
+    &-required {
+      padding: 5px 0;
+      background: white;
+      border: 1px solid $red;
+      border-radius: 2px;
+      cursor: pointer;
+    }
+    &-offline {
+      width: 100%;
+      height: 40px;
+      background: $disabled;
+      border: 1px solid $border;
+      border-radius: 2px;
+      cursor: not-allowed;
+    }
   }
-}
+  &-arrow {
+    position: relative;
+    width: 10px;
+    height: 5px;
+    float: right;
+    padding-right: 15px;
+    top: 10px;
+    content: url("../assets/images/arrow-light-mode.png");
+  }
+  &-add {
+    display: inline-block;
+    padding: 5px 10px;
+    font-size: 14px;
+    color: $lighter_text;
+  }
+  &-selected-item {
+    display: inline-block;
+    max-width: 40px;
+    margin-left: 3px;
+    padding: 5px 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    background: $tags;
+    border-radius: 3px;
+    color: white;
+    white-space: nowrap;
+  }
+  &-input {
+    background: white;
+    padding: 10px;
 
-.tag-list-button-offline {
-  width: 100%;
-  height: 40px;
-  background: $disabled;
-  border: 1px solid $border;
-  border-radius: 2px;
-  cursor: not-allowed;
-}
-
-.tag-list-arrow {
-  position: relative;
-  top: 10px;
-  right: 10px;
-  float: right;
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-  border-top: 9px solid #999999;
-  align-self: center;
-}
-
-.tag-list-add {
-  display: inline-block;
-  padding: 5px 10px;
-  font-size: 14px;
-  color: $lighter_text;
-}
-
-.tag-list-selected-item {
-  display: inline-block;
-  max-width: 40px;
-  margin-left: 3px;
-  padding: 5px 10px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  background: $tags;
-  border-radius: 3px;
-  color: white;
-  white-space: nowrap;
-}
-
-.tag-list-input {
-  background: white;
-  padding: 10px;
-
- &--border {
-   position: relative;
- }
-}
-
-.tag-list-load {
-  text-align: center;
-  margin-top: 15px;
-  margin-bottom: 10px;
-  color: $middle_light_text;
-  cursor: pointer;
-}
-
-.tag-list-dropdown {
-  width: 100%;
-  margin: 20px;
-  min-height: 150px;
-  max-height: 250px;
-  background: white;
-  box-shadow: 0 0 7px #ccc;
-  overflow-x: hidden;
-  overflow-y: scroll;
-  z-index: 3;
-}
-
-.tag-list-filter {
-  width: 100%;
-  height: 40px;
-  padding: 10px 32px 10px 10px;
-  border: 1px solid $border;
-  border-radius: 2px;
-
-  &__clear {
-    position: absolute;
-    right: 10px;
-    top: 14px;
-    height: 12px;
-    width: 12px;
-    content: url("../assets/images/x.png");
+    &--border {
+      position: relative;
+    }
+  }
+  &-load {
+    text-align: center;
+    margin-top: 15px;
+    margin-bottom: 10px;
+    color: $middle_light_text;
     cursor: pointer;
   }
-}
+  &-dropdown {
+    position: absolute;
+    width: 100%;
+    height: 230px;
+    top: 40px;
+    background: white;
+    box-shadow: 0 5px 7px #ccc;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    z-index: 2;
+    font-size: 14px;
+    border-radius: 2px;
+  }
+  &-filter {
+    width: 100%;
+    height: 40px;
+    padding: 10px 32px 10px 10px;
+    border: 1px solid $border;
+    border-radius: 2px;
 
-.tag-list-checked {
-  margin-top: 2px;
-  content: url("../assets/images/checked.png");
-}
-
-.tag-list-checked-hidden {
-  margin-top: 2px;
-  content: url("../assets/images/checked.png");
-  visibility: hidden;
-}
-
-.tag-list-checkbox {
-  display: inline-block;
-  width: 14px;
-  height: 14px;
-  border: 1px solid $border;
-}
-
-.tag-list-item-row {
-  margin: 5px 15px;
-  cursor: pointer;
-  width: 250px;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-}
-
-.tag-list-item {
-  font-size: 14px;
-  margin-left: 10px;
-  color: $middle_light_text;
+    &__clear {
+      position: absolute;
+      right: 10px;
+      top: 14px;
+      height: 12px;
+      width: 12px;
+      content: url("../assets/images/x.png");
+      cursor: pointer;
+    }
+  }
+  &-checked {
+    margin-top: 2px;
+    margin-left: 1px;
+    content: url("../assets/images/checked.png");
+    &-hidden {
+      margin-top: 2px;
+      margin-left: 1px;
+      content: url("../assets/images/checked.png");
+      visibility: hidden;
+    }
+  }
+  &-checkbox {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 1px solid $border;
+  }
+  &-item {
+    font-size: 14px;
+    line-height: 16px;
+    margin-left: 10px;
+    color: $middle_light_text;
+    &-row {
+      padding: 7px 15px;
+      cursor: pointer;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+      &:hover {
+        background-color: $entries_header;
+      }
+    }
+  }
+  &--not_tags {
+    margin-left: 10px;
+  }
 }

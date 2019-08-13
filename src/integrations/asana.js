@@ -87,17 +87,22 @@ clockifyButton.render('.SingleTaskPane-titleRowInput:not(.clockify)', {observe: 
             $('.SingleTaskPane-projects .TaskProjects-projectList', elem.parentNode),
         project = "";
     if (projectList && projectList.childNodes.length > 0) {
-        project = projectList.childNodes[0].firstChild.textContent;
+        setTimeout(() => {
+            project = projectList.childNodes[0].firstChild.textContent;
+            link = clockifyButton.createButton(description, project);
+            link.style.marginLeft = '20px';
+            container.appendChild(link);
+        }, 1000);
+    } else {
+        link = clockifyButton.createButton(description);
+        link.style.marginLeft = '20px';
+        container.appendChild(link);
     }
-
-    link = clockifyButton.createButton(description, project);
-    link.style.marginLeft = '20px';
-    container.appendChild(link);
 });
 
 // New UI Board task detail view v2
 clockifyButton.render('.SingleTaskPane-titleRow:not(.clockify)', {observe: true}, (elem) => {
-    if (!!$('.clockify-button-active', elem) || !!$('.clockify-button-inactive', elem)) {hahaha
+    if (!!$('.clockify-button-active', elem) || !!$('.clockify-button-inactive', elem)) {
         return;
     }
     var link,

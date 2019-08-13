@@ -5,17 +5,15 @@ clockifyButton.render('section.todos li.todo:not(.clockify)', {observe: true}, (
     var link, behavior = 'hover_content',
         container = $('.wrapper', elem), spanTag,
         projectFunc;
-
     if (container === null) {
         return;
     }
 
     projectFunc = function () {
         var p = $(".project > title") || $(".project > header > h1 > a");
-        return p ? p.textContent : "";
+        return p ? p.textContent : "aaaaaaa";
     };
-
-    link = clockifyButton.createSmallButton($('.content_for_perma', elem).textContent);
+    link = clockifyButton.createSmallButton($('.content_for_perma', elem).textContent, projectFunc);
 
     spanTag = document.createElement("span");
     container.appendChild(spanTag.appendChild(link));
@@ -25,7 +23,11 @@ clockifyButton.render('section.todos li.todo:not(.clockify)', {observe: true}, (
 clockifyButton.render('.items_wrapper .item > .content:not(.clockify)', {observe: true}, (elem) => {
     var link, behavior = 'selectable_target', spanTag;
 
-    link = clockifyButton.createButton(elem.querySelector('span.content > span').textContent.trim());
+    link = clockifyButton.createButton(
+        elem.querySelector('span.content > span').textContent.trim(),
+        $('.project') ?
+            ($('.project > title') || $('.project > header > h1 > a')).textContent : ''
+    );
     link.style.marginLeft = '150px';
 
     link.setAttribute('data-behavior', '');
@@ -44,17 +46,30 @@ clockifyButton.render('.items_wrapper .item > .content:not(.clockify)', {observe
 
 // Basecamp 3
 clockifyButton.render('.todos li.todo:not(.clockify):not(.completed)', {observe: true}, (elem) => {
-    var link, project,
+    let link,
+        project,
+        nav,
         description,
-        parent = $('.checkbox__content', elem);
-
-
+        header,
+        article,
+        parent = $('.checkbox__content', elem),
+        root = $('main[id="main-content"]');
     description = parent.childNodes[1].textContent.trim();
-    project = $('#a-breadcrumb-menu-button');
-    project = project ? project.textContent : "";
+    nav = $('nav > h1 > div', root);
+    header = $('header > div > h1', root);
+    article = $('article', root).childNodes[5];
 
-    link = clockifyButton.createSmallButton(description);
+    if (nav) {
+        project = $('a' , nav.childNodes[3]).textContent;
+    } else if (header) {
+        project = header.textContent;
+    } else if (article) {
+        project = $('div > span > a', article).textContent;
+    } else {
+        project = "";
+    }
+
+    link = clockifyButton.createSmallButton(description, project.trim());
     link.style.marginLeft = '150px';
-
     parent.appendChild(link);
 });

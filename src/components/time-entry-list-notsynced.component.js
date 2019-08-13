@@ -59,7 +59,6 @@ class TimeEntryListNotsyncedComponent extends React.Component {
                                </div>
                                )
                             })
-
                         }
                 </div>
 

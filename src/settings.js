@@ -8,7 +8,7 @@ document.getElementById('settings__permissions-container')
         if (e.target.tagName === "INPUT" && e.target.type === "checkbox") {
             this.save_permissions();
         }
-    });
+});
 
 aBrowser.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request === 'closeOptionsPage') {
@@ -151,7 +151,7 @@ function showCustomDomains() {
     customDomainsHtml.className = 'settings__custom-domains__custom-origin-list';
 
     aBrowser.storage.local.get(['permissions'], (result) => {
-        result.permissions
+       result.permissions
             .filter(permissionByUser => permissionByUser.userId === userId)[0].permissions
             .filter(permission => permission.isCustom)
             .forEach(p => {
@@ -175,19 +175,19 @@ function showCustomDomains() {
                 customDomainsHtml.appendChild(li);
             });
 
-        if (customDomainsHtml.childNodes.length > 0) {
-            replaceContent(
-                '#settings__custom-domains__custom-perm-container',
-                customDomainsHtml
-            );
-        } else {
-            if (
-                document.getElementById('settings__custom-domains__custom-perm-container')
-                    .childNodes.length > 0) {
-                document.getElementById('settings__custom-domains__custom-perm-container')
-                    .removeChild(document.getElementById('custom-permissions-list'));
-            }
-        }
+       if (customDomainsHtml.childNodes.length > 0) {
+           replaceContent(
+               '#settings__custom-domains__custom-perm-container',
+               customDomainsHtml
+           );
+       } else {
+           if (
+               document.getElementById('settings__custom-domains__custom-perm-container')
+                   .childNodes.length > 0) {
+               document.getElementById('settings__custom-domains__custom-perm-container')
+                   .removeChild(document.getElementById('custom-permissions-list'));
+           }
+       }
     });
 }
 

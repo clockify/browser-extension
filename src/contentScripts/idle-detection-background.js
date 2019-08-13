@@ -161,6 +161,7 @@ function discardIdleTimeAndStopEntry() {
             if (response.status == 400) {
                 this.saveEntryOfflineAndStopItByDeletingIt(data, idleDetectedIn);
             }
+            this.entryInProgressChangedEventHandler(null);
         });
     });
 }

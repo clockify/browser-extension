@@ -1,0 +1,74 @@
+.workspace-list {
+  position: relative;
+  &-selection {
+    position: relative;
+    padding: 5px 0;
+    margin: 20px;
+    border: 1px solid $border;
+    background: white;
+    cursor: pointer;
+  }
+  &-default {
+    display: inline-block;
+    padding: 5px 10px;
+    color: $middle_light_text;
+    width: 162px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  &-dropdown {
+    position: absolute;
+    width: 84%;
+    height: 230px;
+    left: 20px;
+    top: 73px;
+    background: white;
+    z-index: 2;
+    box-shadow: 0 5px 7px #ccc;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    font-size: 14px;
+    border-radius: 2px;
+  }
+  &-title {
+    margin: 20px;
+    font-weight: bold;
+    font-size: 14px;
+    color: $middle_light_text;
+  }
+  &-item {
+    display: flex;
+    padding-bottom: 10px;
+    padding-top: 10px;
+    padding-left: 20px;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    font-size: 13px;
+    color: $dark_text;
+
+    &:hover {
+      background: $entries_header;
+    }
+
+    &--name {
+      width: 150px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+  }
+  &-active {
+    margin-right: 15px;
+    color: $green;
+
+    &__img {
+      display: inline-block;
+      width: 15px;
+      height: 12px;
+      margin-right: 5px;
+      background-image: url("../assets/images/workspace-checked.png");
+    }
+  }
+}

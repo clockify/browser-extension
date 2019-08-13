@@ -1,15 +1,5 @@
 let aBrowser = this.isChrome() ? chrome : browser;
 
-function isChrome() {
-    if (typeof chrome !== "undefined") {
-        if (typeof browser !== "undefined") {
-            return false;
-        } else {
-            return true;
-        }
-    }
-}
-
 const iconPathEnded = '../assets/images/logo-16-gray.png';
 const iconPathStarted = '../assets/images/logo-16.png';
 const clockifyProd = 'https://clockify.me/tracker';
@@ -284,7 +274,8 @@ function loginWithCode(code, state, nonce, redirectUri) {
         method: 'POST',
         headers: new Headers({
             'Accept': 'application/json',
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'App-Name': this.createAppName()
         }),
         body: JSON.stringify({
             code: code,
@@ -301,14 +292,11 @@ function loginWithCode(code, state, nonce, redirectUri) {
 function fetchUser(userId) {
     const baseUrl = localStorage.getItem('permanent_baseUrl');
     const userUrl = `${baseUrl}/users/${userId}`;
+    const headers = new Headers(this.createHttpHeaders(localStorage.getItem('token')));
 
     let getUserRequest = new Request(userUrl, {
         method: 'GET',
-        headers: new Headers({
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'X-Auth-Token': localStorage.getItem('token')
-        })
+        headers: headers
     });
 
     return fetch(getUserRequest).then(response => response.json());
@@ -324,6 +312,7 @@ function endInProgressAndStartNew(info) {
                 if (data.code === 501) {
                     alert("You already have entry in progress which can't be saved without project/task/description or tags. Please edit your time entry.")
                 } else {
+                    this.entryInProgressChangedEventHandler(null);
                     startTimerBackground(activeWorkspaceId, token, info && info.selectionText ? info.selectionText : "");
                 }
             })
@@ -339,14 +328,11 @@ function startTimerBackground(activeWorkspaceId, token, description) {
     const apiEndpoint = localStorage.getItem('permanent_baseUrl');
     let timeEntryUrl =
         `${apiEndpoint}/workspaces/${activeWorkspaceId}/timeEntries/`;
+    const headers = new Headers(this.createHttpHeaders(token));
 
     let timeEntryRequest = new Request(timeEntryUrl, {
         method: 'POST',
-        headers: new Headers({
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'X-Auth-Token': token
-        }),
+        headers: headers,
         body: JSON.stringify({
             start: new Date(),
             description: description,
@@ -365,6 +351,8 @@ function startTimerBackground(activeWorkspaceId, token, description) {
                 aBrowser.browserAction.setIcon({
                     path: iconPathStarted
                 });
+                document.timeEntry = data;
+                this.entryInProgressChangedEventHandler(data);
             }
 
         })
@@ -375,11 +363,11 @@ function startTimerBackground(activeWorkspaceId, token, description) {
 function getInProgress(activeWorkspaceId, token) {
     const apiEndpoint = localStorage.getItem('permanent_baseUrl');
     let inProgressUrl = `${apiEndpoint}/workspaces/${activeWorkspaceId}/timeEntries/inProgress`;
+    const headers = new Headers(this.createHttpHeaders(token));
+
     let timeEntryInProgressRequest = new Request(inProgressUrl, {
         method: 'GET',
-        headers: new Headers({
-            'X-Auth-Token': token
-        })
+        headers: headers
     });
 
     return fetch(timeEntryInProgressRequest);
@@ -465,13 +453,11 @@ function saml2Login(request) {
 function refreshToken(token, tabId) {
     const endpoint = localStorage.getItem('permanent_baseUrl');
     const refreshTokenUrl = `${endpoint}/auth/token/refresh`;
+    const headers = new Headers(this.createHttpHeaders(token));
 
     let refreshTokenRequest = new Request(refreshTokenUrl, {
         method: 'POST',
-        headers: new Headers({
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        }),
+        headers: headers,
         body: JSON.stringify({
             refreshToken: token
         })

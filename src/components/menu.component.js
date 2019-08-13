@@ -4,11 +4,20 @@ import Settings from './settings.component';
 import {TokenService} from "../services/token-service";
 import {getBrowser} from "../helpers/browser-helper";
 import {isAppTypeExtension} from "../helpers/app-types-helper";
+import {WebSocketClient} from "../web-socket/web-socket-client";
 import {getAppTypes} from "../enums/applications-types.enum";
 import {getEnv} from "../environment";
+import {HtmlStyleHelper} from "../helpers/html-style-helper";
+import WorkspaceList from './workspace-list.component';
+import {LocalStorageService} from "../services/localStorage-service";
+import {UserService} from "../services/user-service";
 
 const tokenService = new TokenService();
+const webSocketClient = new WebSocketClient();
 const environment = getEnv();
+const htmlStyleHelper = new HtmlStyleHelper();
+const localStorageService = new LocalStorageService();
+const userService = new UserService();
 
 class Menu extends React.Component {
 
@@ -16,13 +25,25 @@ class Menu extends React.Component {
         super(props);
     }
 
+    setActiveClassToActiveElement() {
+        if (this.props.mode === 'timer') {
+            document.getElementById('timer').classList.add('active');
+            document.getElementById('manual').classList.remove('active');
+        } else {
+            document.getElementById('manual').classList.add('active');
+            document.getElementById('timer').classList.remove('active');
+        }
+    }
+
     changeModeToManual() {
+        if (this.props.mode === 'manual') return;
         if(!JSON.parse(this.props.disableManual)) {
             this.props.changeModeToManual();
         }
     }
 
     changeModeToTimer() {
+        if (this.props.mode === 'timer') return;
         this.props.changeModeToTimer();
     }
 
@@ -42,6 +63,7 @@ class Menu extends React.Component {
 
     logout() {
         this.disconnectWebSocket();
+        htmlStyleHelper.removeDarkModeClassFromBodyElement();
         tokenService.logout();
     }
 
@@ -59,57 +81,87 @@ class Menu extends React.Component {
                 getBrowser().runtime.sendMessage({
                     eventName: "webSocketDisconnect"
                 });
+            } else {
+                webSocketClient.disconnect();
             }
         }
+    }
+
+    selectWorkspace(workspaceId) {
+        userService.setDefaultWorkspace(workspaceId)
+            .then(response => {
+                localStorageService.set('activeWorkspaceId', workspaceId);
+                if (isAppTypeExtension()) {
+                    getBrowser().storage.sync.set({
+                        activeWorkspaceId: (workspaceId)
+                    });
+                }
+                this.setState({
+                    defaultProjectEnabled: false
+                });
+                if (isAppTypeExtension()) {
+                    getBrowser().extension.getBackgroundPage().restartPomodoro();
+                }
+                this.props.workspaceChanged();
+            })
+            .catch(() => {
+            });
     }
 
     render() {
         if (this.props.isOpen) {
             return (
-                <div>
+                <div title="">
                     <div className="rectangle"></div>
-                    <div className="menu">
-                        <span>Entry mode</span>
-                        <div onClick={this.changeModeToManual.bind(this)}
-                            className={this.props.mode === 'manual' ? "menu_manual-active" : "disabled"}>
-                            <img src="./assets/images/manual-hover.png"/>
-                            <label className={JSON.parse(this.props.disableManual)? "disable-manual" : ""}>MANUAL</label>
-                        </div>
-                        <div onClick={this.changeModeToManual.bind(this)}
-                             className={this.props.mode !== 'manual' ? "menu_manual-inactive" : "disabled"}>
-                            <img src="./assets/images/manual.png"/>
-                            <label className={JSON.parse(this.props.disableManual)? "disable-manual" : ""}>MANUAL</label>
-                        </div>
-                        <div onClick={this.changeModeToTimer.bind(this)}
-                            className={this.props.mode === 'timer' ? "menu_timer-active" : "disabled"}>
-                            <img src="./assets/images/automatic-hover.png"/>
-                            <label>TIMER</label>
-                        </div>
-                        <div onClick={this.changeModeToTimer.bind(this)}
-                             className={this.props.mode !== 'timer' ? "menu_timer-inactive" : "disabled"}>
-                            <img src="./assets/images/automatic.png"/>
-                            <label>TIMER</label>
-                        </div>
-                        <hr/>
-                        {/*<div>REPORTS</div>*/}
-                        <div className={JSON.parse(localStorage.getItem('offline')) ? "disable-manual" : ""}
-                             onClick={this.openSettings.bind(this)}>SETTINGS</div>
-                        <div className={isAppTypeExtension() ?
-                                    JSON.parse(localStorage.getItem('offline')) ? "disable-manual" : ""
-                                     : "disabled"}
-                             onClick={this.openUrlPermissions.bind(this)}>
-                            INTEGRATIONS
-                        </div>
-                        <div className={"menu__dashboard"} onClick={this.openWebDashboard.bind(this)}>
-                            <p className={JSON.parse(localStorage.getItem('offline')) ? "disable-manual" : ""}>
-                                DASHBOARD
-                            </p>
-                            <span className="menu__dashboard__out"></span>
-                        </div>
-                        <div className={JSON.parse(localStorage.getItem('offline')) ? "disable-manual" : ""} onClick={this.logout.bind(this)}>LOG OUT</div>
+                    <div className="dropdown-menu">
+                        <div className="dropdown-header">Entry mode</div>
+                        <a id="manual"
+                           className={JSON.parse(this.props.disableManual) ?
+                               "dropdown-item disable-manual" : this.props.mode === "manual" ?
+                                   "dropdown-item active" : "dropdown-item"}
+                           href="#"
+                           onClick={this.changeModeToManual.bind(this)}>
+                            <span className="menu-manual-img"></span>
+                            <span className={JSON.parse(this.props.disableManual) ? "disable-manual" : ""}>Manual</span>
+                        </a>
+                        <a id="timer"
+                           className={this.props.mode === 'timer' ? "dropdown-item active" : "dropdown-item"}
+                           href="#"
+                           onClick={this.changeModeToTimer.bind(this)}>
+                            <span className="menu-timer-img"></span>
+                            <span>Timer</span>
+                        </a>
+                        <div className="dropdown-divider"></div>
+                        <WorkspaceList
+                            selectWorkspace={this.selectWorkspace.bind(this)}
+                        />
+                        <a onClick={this.openSettings.bind(this)}
+                           className="dropdown-item"
+                           href="#">
+                            <span>Settings</span>
+                        </a>
+                        <a onClick={this.openUrlPermissions.bind(this)}
+                           className={isAppTypeExtension() ? "dropdown-item" : "disabled"} href="#">
+                            <span className={JSON.parse(localStorage.getItem('offline')) ? "disable-manual" : ""}>
+                                Integrations
+                            </span>
+                        </a>
+                        <a onClick={this.openWebDashboard.bind(this)}
+                           className="dropdown-item" href="#">
+                            <span className={JSON.parse(localStorage.getItem('offline')) ? "disable-manual" : ""}>
+                                Dashboard
+                            </span>
+                            <span className="menu-img-right"></span>
+                        </a>
+                        <a onClick={this.logout.bind(this)}
+                           className="dropdown-item" href="#">
+                            <span className={JSON.parse(localStorage.getItem('offline')) ? "disable-manual" : ""}>
+                                Log out
+                            </span>
+                        </a>
                     </div>
                 </div>
-            )
+            );
         } else {
             return null;
         }

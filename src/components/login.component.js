@@ -18,6 +18,7 @@ import {LocalStorageService} from "../services/localStorage-service";
 import {getLocalStorageEnums} from "../enums/local-storage.enum";
 import {getBrowser, isChrome} from "../helpers/browser-helper";
 import {TokenService} from "../services/token-service";
+import {HtmlStyleHelper} from "../helpers/html-style-helper";
 
 const environment = getEnv();
 const authService = new AuthService();
@@ -25,6 +26,7 @@ const userService = new UserService();
 const localStorageService = new LocalStorageService();
 const tokenService = new TokenService();
 const GOOGLE_AUTHORIZATION_URL = 'https://accounts.google.com/o/oauth2/v2/auth';
+const htmlStyleHelper = new HtmlStyleHelper();
 
 class Login extends React.Component {
 
@@ -55,6 +57,7 @@ class Login extends React.Component {
     }
 
     componentDidMount() {
+        this.removeDarkMode();
         this.setAppVersionToStorage();
         this.setAppType();
         this.setRedirectUriToStorage();
@@ -66,6 +69,10 @@ class Login extends React.Component {
         if (this.props.loginSettings) {
             this.setActiveLoginSettings(this.props.loginSettings);
         }
+    }
+
+    removeDarkMode() {
+        htmlStyleHelper.removeDarkModeClassFromBodyElement();
     }
 
     setAppType() {

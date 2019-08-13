@@ -1,0 +1,43 @@
+.default-project {
+  margin: 20px 20px 10px 20px;
+
+  &-checkbox {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 1px solid $border;
+    position: relative;
+    cursor: pointer;
+    background: white;
+
+    &--img {
+      content: url("../assets/images/checked.png");
+      margin-top: 3px;
+      margin-bottom: 2px;
+    }
+
+    &--img_hidden {
+      content: url("../assets/images/checked.png");
+      margin-top: 3px;
+      margin-bottom: 2px;
+      visibility: hidden;
+    }
+  }
+
+  &-title {
+    position: relative;
+    bottom: 3px;
+    margin-left: 10px;
+    font-size: 13px;
+    font-weight: bold;
+    color: $middle_light_text;
+  }
+
+  &__project-list {
+    .project-list-dropdown {
+      position: relative;
+      top: 0;
+      height: 245px;
+    }
+  }
+}

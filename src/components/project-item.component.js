@@ -12,7 +12,8 @@ class ProjectItem extends React.Component {
 
     componentDidMount(){}
 
-    openTasks() {
+    openTasks(e) {
+        e.preventDefault();
         this.setState({
             isTaskOpen: !this.state.isTaskOpen
         })
@@ -29,12 +30,12 @@ class ProjectItem extends React.Component {
 
     render(){
         return(
-            <div className="project-item">
-                <div>
-                    <span style={{color: this.props.project.color}} className="project-item-name">
-                        <span style={{background: this.props.project.color}} className="dot"></span>
+            <div>
+                <div className="project-item">
+                    <span className="project-item-name">
+                        <span style={{background: this.props.project.color}} className="dot-project-picker"></span>
                         <span onClick={!this.props.workspaceSettings.forceTasks ?
-                                        this.chooseProject.bind(this) : this.openTasks.bind(this)}
+                            this.chooseProject.bind(this) : this.openTasks.bind(this)}
                               className={!this.props.noTasks ? "project-name" : "disabled"}>
                             {this.props.project.name}
                         </span>
@@ -64,6 +65,7 @@ class ProjectItem extends React.Component {
                     })}
                 </div>
             </div>
+
 
         )
     }

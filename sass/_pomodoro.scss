@@ -10,8 +10,8 @@
 
   &__checkbox {
     display: inline-block;
-    width: 15px;
-    height: 15px;
+    width: 16px;
+    height: 16px;
     border: 1px solid $border;
     position: relative;
     cursor: pointer;
@@ -19,12 +19,14 @@
 
     &--img {
       content: url("../assets/images/checked.png");
-      margin-top: 2px;
+      margin-top: 3px;
+      margin-bottom: 2px;
     }
 
     &--img_hidden {
       content: url("../assets/images/checked.png");
-      margin-top: 2px;
+      margin-top: 3px;
+      margin-bottom: 2px;
       visibility: hidden;
     }
   }

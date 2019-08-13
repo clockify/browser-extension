@@ -41,7 +41,7 @@
   padding-top: 13px;
   padding-bottom: 13px;
   position: relative;
-  top: 2px;
+  top: 0px;
   width: 65px;
   outline: none;
   border: none;
@@ -57,10 +57,8 @@
 
 .duration-duration {
   position: relative;
-  margin-left: 6px;
-  padding: 14px 5px;
+  padding: 6px 2px;
   border: none;
-  border-left: 1px dotted;
   width: 85px;
   font-size: 18px;
   color: $dark_text;
@@ -75,5 +73,14 @@
 .duration-label {
   margin-left: 7px;
   position: relative;
-  top: 2px;
+  top: 0px;
+}
+
+
+.duration-divider {
+  position: relative;
+  top: -2px;
+  height: 50px;
+  border-left: 1px dotted #cacaca;
+  background-color: white;
 }

@@ -77,29 +77,35 @@ class TimeEntry extends React.Component {
                     <div className={this.props.timeEntry.isLocked && !this.props.isUserOwnerOrAdmin ? "time-entry-locked" : "time-entry"}
                          title={this.state.title}>
                         <div className="time-entry-description" onClick={this.goToEdit.bind(this)}>
-                            <div className="description"
-                                 style={this.props.timeEntry.description ? {color: '#000'} : {color: '#999999'}}>
-                                {this.props.timeEntry.description ? this.props.timeEntry.description : "No description"}
+                            <div className={this.props.timeEntry.description ? "description" : "no-description"}>
+                                {this.props.timeEntry.description ? this.props.timeEntry.description : "(no description)"}
                             </div>
-                            <span style={this.props.project ? {color: this.props.project.color} : {}} className={this.props.project ? "time-entry-project" : "disabled"}>
-                                <div>
+                            <div style={this.props.project ? {color: this.props.project.color} : {}}
+                                 className={this.props.project ? "time-entry-project" : "disabled"}>
+                                <div className="time-entry__project-wrapper">
                                     <div style={this.props.project ? {background: this.props.project.color} : {}} className="dot"></div>
                                     <span className="time-entry__project-name" >{this.props.project ? this.props.project.name : ""}</span>
                                 </div>
-                                <span className="time-entry__task-name"
-                                      style={{color: "#999999"}}>
-                                    {this.props.task ? " -" + " " + this.props.task.name : ""}
+                                <span className="time-entry__task-name">
+                                    {this.props.task ? " - " + this.props.task.name : ""}
                                 </span>
-                            </span>
+                            </div>
                         </div>
                         <div className="time-entry__right-side">
-                            <span onClick={this.goToEdit.bind(this)}>
-                                {this.props.timeEntry.duration}
-                            </span>
-                            <div className="time-entry__right-side__lock_and_duration">
+                            <div className="time-entry__right-side__tag_billable_and_lock"
+                                 onClick={this.goToEdit.bind(this)}>
+                                <span className={this.props.timeEntry.tagIds && this.props.timeEntry.tagIds.length > 0 ?
+                                    "time-entry__right-side__tag" : "disabled"}></span>
+                                <span className={this.props.timeEntry.billable ?
+                                    "time-entry__right-side__billable" : "disabled"}></span>
                                 <span className={this.props.timeEntry.isLocked && !this.props.isUserOwnerOrAdmin ?
                                     "time-entry__right-side__lock" : "disabled"}>
                                     <img src="./assets/images/lock-indicator.png"/>
+                                </span>
+                            </div>
+                            <div className="time-entry__right-side__lock_and_play">
+                                <span className="time-entry__right-side--duration">
+                                    {this.props.timeEntry.duration}
                                 </span>
                                 <span onClick={this.continueTimeEntry.bind(this)}
                                       className="time-entry-arrow">

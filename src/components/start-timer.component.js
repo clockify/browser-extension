@@ -3,7 +3,6 @@ import moment, {duration} from 'moment';
 import {parseTimeEntryDuration} from './duration-input-converter';
 import EditForm from './edit-form.component';
 import * as ReactDOM from 'react-dom';
-import RequiredFields from './required-fields.component';
 import EditFormManual from './edit-form-manual.component';
 import {checkConnection} from "./check-connection";
 import {getIconStatus} from "../enums/browser-icon-status-enum";
@@ -14,7 +13,6 @@ import {getKeyCodes} from "../enums/key-codes.enum";
 import {isAppTypeExtension, isAppTypeMobile} from "../helpers/app-types-helper";
 import {getBrowser} from "../helpers/browser-helper";
 import {LocalStorageService} from "../services/localStorage-service";
-import {getWebSocketEventsEnums} from "../enums/web-socket-events.enum";
 
 const projectHelpers = new ProjectHelper();
 const timeEntryService = new TimeEntryService();
@@ -57,7 +55,6 @@ class StartTimer extends React.Component {
                 timeEntry: localStorage.getItem('timeEntryInOffline') && JSON.parse(localStorage.getItem('timeEntryInOffline')) ? JSON.parse(localStorage.getItem('timeEntryInOffline')) : {}
             }, () => {
                 if(this.state.timeEntry.timeInterval) {
-
                     let currentPeriod = moment().diff(moment(this.state.timeEntry.timeInterval.start));
                     interval = setInterval(() => {
                         currentPeriod = currentPeriod + 1000;
@@ -75,14 +72,12 @@ class StartTimer extends React.Component {
             })
         } else {
             timeEntryService.getEntryInProgress().then(response => {
+                let timeEntry = response.data[0];
 
-                let timeEntry = response.data;
                 this.setTimeEntryInProgress(timeEntry);
                 })
                 .catch(() => {
-                    this.application.setIcon(
-                        inProgress ? getIconStatus().timeEntryStarted : getIconStatus().timeEntryEnded
-                    );
+                    this.application.setIcon(getIconStatus().timeEntryEnded);
                 })
         }
     }
@@ -102,8 +97,9 @@ class StartTimer extends React.Component {
                         timeEntryService.updateBillable(defaultProject.billable, timeEntry.id);
                     }
                 } else {
-                    const activeWorkspaceId = localStorage.getItem('activeWorkspaceId');
-                    projectHelpers.clearDefaultProjectForWorkspace(activeWorkspaceId);
+                    const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
+                    const userId = localStorageService.get('userId');
+                    projectHelpers.removeDefaultProjectForWorkspaceAndUser(activeWorkspaceId, userId);
 
                     this.setState({
                         ready: true
@@ -219,6 +215,7 @@ class StartTimer extends React.Component {
                         backgroundPage.addIdleListenerIfIdleIsEnabled();
                         backgroundPage.removeReminderTimer();
                         backgroundPage.addPomodoroTimer();
+                        backgroundPage.entryInProgressChangedEventHandler(data);
                     }
                     this.goToEdit();
                 });
@@ -233,11 +230,11 @@ class StartTimer extends React.Component {
             this.stopEntryInProgress();
         } else if(this.props.workspaceSettings.forceDescription && (this.state.timeEntry.description === "" || !this.state.timeEntry.description)) {
             this.goToEdit();
-        } else if(this.props.workspaceSettings.forceProjects && !this.state.timeEntry.projectId) {
+        } else if(this.props.workspaceSettings.forceProjects && !this.state.timeEntry.project) {
             this.goToEdit();
-        } else if(this.props.workspaceSettings.forceTasks && !this.state.timeEntry.taskId) {
+        } else if(this.props.workspaceSettings.forceTasks && !this.state.timeEntry.task) {
             this.goToEdit();
-        }else if(this.props.workspaceSettings.forceTags && (!this.state.timeEntry.tagIds || !this.state.timeEntry.tagIds.length > 0)) {
+        }else if(this.props.workspaceSettings.forceTags && (!this.state.timeEntry.tags || !this.state.timeEntry.tags.length > 0)) {
             this.goToEdit();
         } else {
             this.stopEntryInProgress();
@@ -282,6 +279,7 @@ class StartTimer extends React.Component {
                         backgroundPage.removeIdleListenerIfIdleIsEnabled();
                         backgroundPage.addReminderTimer();
                         backgroundPage.removeAllPomodoroTimers();
+                        backgroundPage.entryInProgressChangedEventHandler(null);
                     }
                     this.application.setIcon(getIconStatus().timeEntryEnded);
                 })
@@ -350,16 +348,24 @@ class StartTimer extends React.Component {
            <div id="start-timer">
                <div className="start-timer">
                     <span className={this.props.mode === 'timer' ? 'start-timer-description' : 'disabled'}>
-                        <span onClick={this.goToEdit.bind(this)}
-                              className={this.state.timeEntry.id && !this.state.timeEntry.description ?
-                                  "start-timer_description_grey" : "disabled"}>
-                            What's up
-                        </span>
-                        <span onClick={this.goToEdit.bind(this)}
-                              className={this.state.timeEntry.id && this.state.timeEntry.description ?
+                        <div onClick={this.goToEdit.bind(this)}
+                              className={this.state.timeEntry.id ?
                                   "start-timer_description" : "disabled"}>
-                            {this.state.timeEntry ? this.state.timeEntry.description : ""}
-                        </span>
+                            <span>
+                                {this.state.timeEntry.description || "(no description)"}
+                            </span>
+                            <div style={this.state.timeEntry.project ? {color: this.state.timeEntry.project.color} : {}}
+                                 className={this.state.timeEntry.project ?
+                                    "time-entry-project" : "disabled"}>
+                                <div className="time-entry__project-wrapper">
+                                    <div style={this.state.timeEntry.project ? {background: this.state.timeEntry.project.color} : {}} className="dot"></div>
+                                    <span className="time-entry__project-name" >{this.state.timeEntry.project ? this.state.timeEntry.project.name : ""}</span>
+                                </div>
+                                <span className="time-entry__task-name">
+                                    {this.state.timeEntry.task ? " - " + this.state.timeEntry.task.name : ""}
+                                </span>
+                            </div>
+                        </div>
                         <input className={!this.state.timeEntry.id ? "start-timer_description-input" : "disabled"}
                                placeholder={"What's up?"}
                                onChange={this.setDescription.bind(this)}

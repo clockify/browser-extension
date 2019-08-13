@@ -5,9 +5,12 @@ import {getAppTypes} from "../enums/applications-types.enum";
 import {LocalStorageService} from "../services/localStorage-service";
 import * as ReactDOM from "react-dom";
 import Login from './login.component';
+import {TokenService} from "../services/token-service";
+import HomePage from "./home-page.component";
 
 const environment = getEnv();
 const localStorageService = new LocalStorageService();
+const tokenService = new TokenService();
 
 class Header extends React.Component {
 
@@ -74,6 +77,15 @@ class Header extends React.Component {
         ReactDOM.render(<Login/>, document.getElementById('mount'));
     }
 
+    goBack() {
+        ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
+        ReactDOM.render(<HomePage/>, document.getElementById('mount'));
+    }
+
+    workspaceChange() {
+        this.props.workspaceChanged();
+    }
+
     handleRefresh() {
         this.props.handleRefresh();
     }
@@ -103,14 +115,13 @@ class Header extends React.Component {
                             </div> :
                             <div>
                                 <div onClick={this.handleRefresh.bind(this)}
+                                     title="Refresh"
                                      className={localStorageService.get('appType') !== getAppTypes().MOBILE && this.props.showSync ?
                                          "header-sync" : "disabled"}>
                                 </div>
                                 <div className={this.props.showActions ? "actions" : "disabled"}
+                                     title="Settings"
                                      onClick={this.openMenu.bind(this)}>
-                                    <div className="action"></div>
-                                    <div className="action"></div>
-                                    <div className="action"></div>
                                     <Menu
                                         isOpen={this.state.menuOpen}
                                         mode={this.state.mode}
@@ -118,12 +129,15 @@ class Header extends React.Component {
                                         changeModeToTimer={this.changeToTimerMode.bind(this)}
                                         disableManual={this.props.disableManual}
                                         workspaceSettings={this.props.workspaceSettings}
+                                        workspaceChanged={this.workspaceChange.bind(this)}
                                     />
                                 </div>
+                                <span className={this.props.backButton ? "header-back" : "disabled"}
+                                      onClick={this.goBack.bind(this)}>Back</span>
                             </div>
                     }
                 </div>
-                <hr/>
+                <hr className={!tokenService.isLoggedIn() ? "header__break" : "disabled"}/>
             </div>
         )
     }

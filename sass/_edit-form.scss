@@ -1,6 +1,9 @@
 .edit-form {
-  border-top: 1px dotted $border;
   padding: 20px;
+
+  &__project_list {
+    margin-bottom: 10px;
+  }
 }
 
 .edit-form-description {
@@ -16,12 +19,14 @@
 }
 
 .description-textarea {
+  margin-bottom: 10px;
   border: 1px solid $border;
   padding: 10px;
   background: white;
   border-radius: 2px;
 
   &-required {
+    margin-bottom: 10px;
     border: 1px solid $red;
     padding: 10px;
     background: white;
@@ -31,27 +36,34 @@
 
 .edit-form-checkbox {
   display: inline-block;
-  width: 15px;
-  height: 15px;
+  width: 16px;
+  height: 16px;
   top: 13px;
   background: white;
   border: 1px solid $border;
+  border-radius: 2px;
   position: relative;
   cursor: pointer;
 }
 
 .edit-form-buttons {
   margin-top: 20px;
+
+  &__billable {
+    margin-bottom: 30px;
+  }
 }
 
 .edit-form-billable-img {
   content: url("../assets/images/checked.png");
   margin-top: 2px;
+  margin-left: 1px;
 }
 
 .edit-form-billable-img-hidden {
   content: url("../assets/images/checked.png");
   margin-top: 2px;
+  margin-left: 1px;
   visibility: hidden;
 }
 
@@ -65,7 +77,18 @@
 }
 
 .edit-form-right-buttons {
-  float: right;
+  margin-top: 20px;
+
+  &__back_and_delete {
+    display: flex;
+    margin-top: 20px;
+    justify-content: space-between;
+  }
+
+  &__back {
+    color: $blue;
+    cursor: pointer;
+  }
 }
 
 .edit-form-delete {
@@ -74,9 +97,8 @@
 }
 
 .edit-form-done {
-  width: 110px;
-  height: 40px;
-  margin-left: 15px;
+  width: 100%;
+  height: 50px;
   border: none;
   border-radius: 3px;
   color: white;
@@ -84,9 +106,8 @@
   cursor: pointer;
 
   &-disabled {
-    width: 110px;
-    height: 40px;
-    margin-left: 15px;
+    width: 100%;
+    height: 50px;
     border: none;
     border-radius: 3px;
     color: white;
