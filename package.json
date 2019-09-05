@@ -49,7 +49,9 @@
     "url-parse": "^1.4.3",
     "webpack": "^4.14.0",
     "webpack-dev-middleware": "^1.10.2",
-    "whatwg-fetch": "^2.0.3"
+    "whatwg-fetch": "^2.0.3",
+    "set-value": "^3.0.1",
+    "mixin-deep": "^2.0.1"
   },
   "devDependencies": {
     "babel-preset-es2015": "^6.24.1",
