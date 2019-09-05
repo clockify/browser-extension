@@ -10,7 +10,8 @@ class ProjectItem extends React.Component {
         }
     }
 
-    componentDidMount(){}
+    componentDidMount(){
+    }
 
     openTasks(e) {
         e.preventDefault();

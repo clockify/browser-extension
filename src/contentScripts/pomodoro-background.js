@@ -1,5 +1,5 @@
-let pomodoroTimer;
-let breakTimer;
+let pomodoroInterval;
+let breakInterval;
 let breakCounter = 0;
 const breakButtons = ['Stop timer', 'Start break'];
 const longBreakButtons = ['Stop timer', 'Start long break'];
@@ -20,43 +20,58 @@ function addPomodoroTimer() {
     if (pomodoroForUser && pomodoroForUser.enabled) {
         this.getEntryInProgress().then(response => response.json()).then(data => {
             document.timeEntry = data;
-            const currDate = new Date();
             const start = new Date(data.timeInterval.start);
-            const diff = currDate.getTime() - start.getTime();
+            let diff;
 
             if (data.description === 'Pomodoro break' || data.description === 'Pomodoro long break') {
-                return;
-            }
+                this.removeBreakInterval();
+                const pomodoroBreakLength = data.description === 'Pomodoro break' ?
+                    pomodoroForUser.shortBreak * 60 * 1000 : pomodoroForUser.longBreak * 60 * 1000;
 
-            if (diff >= pomodoroForUser.timerInterval * 60 * 1000) {
-                if (pomodoroForUser.isAutomaticStartStop) {
-                    this.startBreakAndNotify("Pomodoro break", pomodoroForUser);
-                } else {
-                    this.createBreakNotification(pomodoroForUser);
-                }
-                return;
+                breakInterval = setInterval(() => {
+                    const currDate = new Date();
+                    diff = currDate.getTime() - start.getTime();
+                    if (diff >= pomodoroBreakLength) {
+                        if (pomodoroForUser.isAutomaticStartStop) {
+                            this.continueLastEntryAndNotify(pomodoroForUser);
+                        } else {
+                            this.createBreakOverNotification(pomodoroForUser);
+                        }
+                        data.description === 'Pomodoro break' && pomodoroForUser.isLongBreakEnabled ?
+                            breakCounter++ : breakCounter = 0;
+                    }
+                }, 1000);
+            } else {
+                this.removePomodoroInterval();
+                pomodoroInterval = setInterval(() => {
+                    const currDate = new Date();
+                    diff = currDate.getTime() - start.getTime();
+                    if (diff >= pomodoroForUser.timerInterval * 60 * 1000) {
+                        if (pomodoroForUser.isAutomaticStartStop) {
+                            this.startBreakAndNotify("Pomodoro break", pomodoroForUser);
+                        } else {
+                            if (pomodoroForUser.isLongBreakEnabled && breakCounter === pomodoroForUser.breakCounter) {
+                                this.createLongBreakNotification(pomodoroForUser);
+                            } else {
+                                this.createBreakNotification(pomodoroForUser);
+                            }
+                        }
+                    }
+                }, 1000);
             }
-
-            pomodoroTimer = setTimeout(() => {
-                if (pomodoroForUser.isAutomaticStartStop) {
-                    this.startBreakAndNotify("Pomodoro break", pomodoroForUser);
-                } else {
-                    this.createBreakNotification(pomodoroForUser);
-                }
-            }, pomodoroForUser.timerInterval * 60 * 1000);
         }).catch();
     }
 }
 
-function removePomodoroTimer() {
-    if (pomodoroTimer) {
-        clearTimeout(pomodoroTimer);
+function removePomodoroInterval() {
+    if (pomodoroInterval) {
+        clearInterval(pomodoroInterval);
     }
 }
 
-function removeBreakTimer() {
-    if (breakTimer) {
-        clearTimeout(breakTimer);
+function removeBreakInterval() {
+    if (breakInterval) {
+        clearInterval(breakInterval);
     }
 }
 
@@ -64,14 +79,15 @@ function clearTimeoutForRemovingNotification(notificationId, timeout) {
     const clearTimeout = setTimeout(() => {
         this.clearNotification(notificationId);
         this.clearTimeout(clearTimeout);
-    }, timeout * 60 * 1000);
+    }, timeout * 1000);
 }
 
 function removeAllPomodoroTimers() {
-    this.removePomodoroTimer();
-    this.removeBreakTimer();
+    this.removePomodoroInterval();
+    this.removeBreakInterval();
     this.clearBreakOverNotification();
     this.clearBreakNotification();
+    this.clearLongBreakNotification();
 }
 
 function clearBreakOverNotification() {
@@ -87,13 +103,14 @@ function clearLongBreakNotification() {
 }
 
 function startBreakAndNotify(description, pomodoroForUser) {
-    this.removePomodoroTimer();
+    this.removePomodoroInterval();
     this.startBreak(description);
 
     this.notifyAboutStartingBrake(description, pomodoroForUser);
 }
 
 function continueLastEntryAndNotify(pomodoroForUser) {
+    this.removeBreakInterval();
     this.continueLastEntryByPomodoro();
 
     this.notifyThatBreakIsOver(pomodoroForUser);
@@ -126,7 +143,7 @@ function notifyThatBreakIsOver(pomodoroForUser) {
 }
 
 function createBreakNotification(pomodoroForUser) {
-    this.removePomodoroTimer();
+    this.removePomodoroInterval();
 
     const buttonsForMessage = [
         {title: breakButtons[0]},
@@ -154,8 +171,8 @@ function createBreakNotification(pomodoroForUser) {
     this.createNotification('pomodoroBreak', notificationOptions, pomodoroForUser.isSoundNotification);
 }
 
-function createBreakOverNotification() {
-    this.removeBreakTimer();
+function createBreakOverNotification(pomodoroForUser) {
+    this.removeBreakInterval();
 
     const buttonsForMessage = [
         {title: breakOverButtons[0]},
@@ -176,11 +193,11 @@ function createBreakOverNotification() {
         notificationOptions.message = notificationOptions.message + " Click here to start timer."
     }
 
-    this.createNotification('breakOver', notificationOptions);
+    this.createNotification('breakOver', notificationOptions, pomodoroForUser.isSoundNotification);
 }
 
 function createLongBreakNotification(pomodoroForUser) {
-    this.removePomodoroTimer();
+    this.removePomodoroInterval();
 
     const buttonsForMessage = [
         {title: longBreakButtons[0]},
@@ -216,7 +233,6 @@ function startBreak(description) {
                 .then(response => {
                     this.startBreakTimer(description, isWebSocketHeader);
                 });
-            return;
         } else {
             this.startBreakTimer(description, isWebSocketHeader);
         }
@@ -242,18 +258,23 @@ function startBreakTimer(description, isWebSocketHeader) {
                 JSON.parse(localStorage.getItem('permanent_pomodoro'))
                     .filter(pomodoro => pomodoro.userId === userId)[0] :
                 null;
+            const start = new Date(response.timeInterval.start);
+            const pomodoroBreakLength = description === 'Pomodoro break' ?
+                pomodoroForUser.shortBreak * 60 * 1000 : pomodoroForUser.longBreak * 60 * 1000;
 
-            breakTimer = setTimeout(() => {
-                if (pomodoroForUser.isAutomaticStartStop) {
-                    this.continueLastEntryAndNotify(pomodoroForUser);
-                } else {
-                    this.createBreakOverNotification();
+            breakInterval = setInterval(() => {
+                const currDate = new Date();
+                const diff = currDate.getTime() - start.getTime();
+                if (diff >= pomodoroBreakLength) {
+                    if (pomodoroForUser.isAutomaticStartStop) {
+                        this.continueLastEntryAndNotify(pomodoroForUser);
+                    } else {
+                        this.createBreakOverNotification(pomodoroForUser);
+                    }
+                    description === 'Pomodoro break' && pomodoroForUser.isLongBreakEnabled ?
+                        breakCounter++ : breakCounter = 0;
                 }
-                description === 'Pomodoro break' && pomodoroForUser.isLongBreakEnabled ?
-                    breakCounter++ : breakCounter = 0;
-
-            }, description === 'Pomodoro break' ?
-                pomodoroForUser.shortBreak * 60 * 1000 : pomodoroForUser.longBreak * 60 * 1000);
+            }, 1000);
         }
     });
 }
@@ -313,14 +334,19 @@ function startNewEntryTimer(isWebSocketHeader) {
                 JSON.parse(localStorage.getItem('permanent_pomodoro'))
                     .filter(pomodoro => pomodoro.userId === userId)[0] :
                 null;
+            const start = new Date(response.timeInterval.start);
 
-            pomodoroTimer = setTimeout(() => {
-                if (pomodoroForUser.isLongBreakEnabled && breakCounter === pomodoroForUser.breakCounter) {
-                    this.createLongBreakNotification(pomodoroForUser);
-                } else {
-                    this.createBreakNotification(pomodoroForUser);
+            pomodoroInterval = setInterval(() => {
+                const currDate = new Date();
+                const diff = currDate.getTime() - start.getTime();
+                if (diff >= pomodoroForUser.timerInterval * 60 * 1000) {
+                    if (pomodoroForUser.isLongBreakEnabled && breakCounter === pomodoroForUser.breakCounter) {
+                        this.createLongBreakNotification(pomodoroForUser);
+                    } else {
+                        this.createBreakNotification(pomodoroForUser);
+                    }
                 }
-            }, pomodoroForUser.timerInterval * 60 * 1000);
+            }, 1000);
         }
     });
 }
@@ -360,22 +386,27 @@ function continueLastEntryTimer(entry, isWebSocketHeader) {
                 JSON.parse(localStorage.getItem('permanent_pomodoro'))
                     .filter(pomodoro => pomodoro.userId === userId)[0] :
                 null;
+            const start = new Date(response.timeInterval.start);
 
-            pomodoroTimer = setTimeout(() => {
-                if (pomodoroForUser.isLongBreakEnabled && breakCounter === pomodoroForUser.breakCounter) {
-                    if (pomodoroForUser.isAutomaticStartStop) {
-                        this.startBreakAndNotify('Pomodoro long break', pomodoroForUser);
+            pomodoroInterval = setInterval(() => {
+                const currDate = new Date();
+                const diff = currDate.getTime() - start.getTime();
+                if (diff >= pomodoroForUser.timerInterval * 60 * 1000) {
+                    if (pomodoroForUser.isLongBreakEnabled && breakCounter === pomodoroForUser.breakCounter) {
+                        if (pomodoroForUser.isAutomaticStartStop) {
+                            this.startBreakAndNotify('Pomodoro long break', pomodoroForUser);
+                        } else {
+                            this.createLongBreakNotification(pomodoroForUser);
+                        }
                     } else {
-                        this.createLongBreakNotification(pomodoroForUser);
-                    }
-                } else {
-                    if (pomodoroForUser.isAutomaticStartStop) {
-                        this.startBreakAndNotify('Pomodoro break', pomodoroForUser);
-                    } else {
-                        this.createBreakNotification(pomodoroForUser);
+                        if (pomodoroForUser.isAutomaticStartStop) {
+                            this.startBreakAndNotify('Pomodoro break', pomodoroForUser);
+                        } else {
+                            this.createBreakNotification(pomodoroForUser);
+                        }
                     }
                 }
-            }, pomodoroForUser.timerInterval * 60 * 1000);
+            }, 1000);
         }
     });
 }

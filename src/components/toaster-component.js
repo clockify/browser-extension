@@ -16,16 +16,39 @@ class Toaster extends React.Component {
             case 'success':
                 this.showSuccessToast(message, removeAfterSeconds);
                 break;
+            case 'error':
+                this.showErrorToast(message, removeAfterSeconds);
         }
     }
 
     showSuccessToast(message, removeAfterSeconds) {
-        const successToastId = 'toast' + counter;
+        const successToastId = 'successToast' + counter;
+
         counter++;
 
+        this.createToastMessage(successToastId, message, 'success');
+
+        if (removeAfterSeconds) {
+            this.autoRemoveToast(successToastId, removeAfterSeconds);
+        }
+    }
+
+    showErrorToast(message, removeAfterSeconds) {
+        const errorToastId = 'errorToast' + counter;
+
+        counter++;
+
+        this.createToastMessage(errorToastId, message, 'error');
+
+        if (removeAfterSeconds) {
+            this.autoRemoveToast(errorToastId, removeAfterSeconds);
+        }
+    }
+
+    createToastMessage(successToastId, message, type) {
         const toastMessageContainer = document.createElement('div');
         toastMessageContainer.setAttribute('id', successToastId);
-        toastMessageContainer.setAttribute('class', 'toaster__message--container');
+        toastMessageContainer.setAttribute('class', 'toaster__message--container_' + type);
 
         const toastMessageContent = document.createElement('span');
         toastMessageContent.setAttribute('class', 'toaster__message--content');
@@ -36,15 +59,13 @@ class Toaster extends React.Component {
         const toasterContainer = document.getElementById('toaster-container');
 
         toasterContainer.appendChild(toastMessageContainer);
-
-        if (removeAfterSeconds) {
-            this.autoRemoveToast(successToastId, removeAfterSeconds);
-        }
     }
 
     autoRemoveToast(successToastId, removeAfterSeconds) {
         setTimeout(() => {
-            document.getElementById(successToastId).remove();
+            if (document.getElementById(successToastId)) {
+                document.getElementById(successToastId).remove();
+            }
         }, parseInt(removeAfterSeconds*1000));
     }
 

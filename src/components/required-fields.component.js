@@ -21,6 +21,7 @@ class RequiredFields extends React.Component {
                     showActions={true}
                     mode={localStorage.getItem('mode')}
                     disableManual={localStorage.getItem('inProgress')}
+                    disableAutomatic={false}
                 />
                 <div className="required-fields">
                     <h3>ALERT</h3>

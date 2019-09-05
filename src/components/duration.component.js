@@ -10,6 +10,7 @@ import {isAppTypeMobile} from "../helpers/app-types-helper";
 
 const htmlStyleHelpers = new HtmlStyleHelper();
 const dayInSeconds = 86400;
+const daysOfWeek = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
 
 class Duration extends React.Component {
 
@@ -31,6 +32,16 @@ class Duration extends React.Component {
 
     componentDidMount(){
         this.setDayAfterLockedEntries();
+        this.setStartDayInDatePicker(this.props.userSettings.weekStart);
+    }
+
+    setStartDayInDatePicker(weekStart) {
+        moment.updateLocale('en', {
+            week: {
+                dow: daysOfWeek.indexOf(weekStart),
+                doy: 7 + daysOfWeek.indexOf(weekStart) - 1
+            }
+        });
     }
 
     setDayAfterLockedEntries() {
@@ -199,6 +210,7 @@ class Duration extends React.Component {
                                 className="duration-start"
                                 format={this.state.timeFormat}
                                 size="small"
+                                use12Hours={this.props.timeFormat === 'HOUR12'}
                                 inputReadOnly={isAppTypeMobile()}
                                 onChange={this.selectStartTime.bind(this)}
                                 onOpenChange={this.openStartTimePicker.bind(this)}
@@ -208,6 +220,7 @@ class Duration extends React.Component {
                                 className={this.props.end ? "duration-end" : "disabled"}
                                 value={this.state.endTime}
                                 size="small"
+                                use12Hours={this.props.timeFormat === 'HOUR12'}
                                 inputReadOnly={isAppTypeMobile()}
                                 format={this.state.timeFormat}
                                 onChange={this.selectEndTime.bind(this)}
@@ -248,8 +261,10 @@ class Duration extends React.Component {
                     <TimePicker id="durationTimePicker"
                                 className={this.state.editDuration ? "duration-duration" : "disabled"}
                                 defaultOpenValue={moment(this.props.time, 'HH:mm:ss')}
-                                placeholder="Select duration (HH:mm:ss)"
+                                placeholder={this.props.workspaceSettings.trackTimeDownToSecond ?
+                                    "Duration (HH:mm:ss)" : "Duration (h:mm)"}
                                 size="small"
+                                format={this.props.workspaceSettings.trackTimeDownToSecond ? "HH:mm:ss" : "H:mm"}
                                 inputReadOnly={isAppTypeMobile()}
                                 onChange={this.selectDuration.bind(this)}
                                 onOpenChange={this.openDurationPickerChange.bind(this)}

@@ -1,106 +1,118 @@
-.signup-logo {
-  text-align: center;
+.signup {
+  &-logo {
+    text-align: center;
+  }
+  &-logo-img{
+    content: url("../assets/images/clockify_logo.svg");
+    cursor: pointer;
+  }
+  &-title_and_text {
+    margin: 5px 20px 20px 20px;
+    text-align: center;
+  }
+  &-title {
+    font-size: 18px;
+    line-height: 21px;
+    color: $dark_text;
+  }
+  &-text {
+    font-size: 14px;
+    line-height: 21px;
+    color: $dark_text;
+  }
+  &-form {
+    margin-right: 20px;
+    margin-left: 20px;
+    &--email {
+      margin-bottom: 20px;
+    }
+    &--password {
+      margin-bottom: 20px;
+    }
+  }
+  &-input{
+    width: 100%;
+    height: 2.5rem;
+    border-radius: 5px;
+    border: 1px solid #c6d2d9;
+    padding: 15px;
+  }
+  &-terms {
+    display: flex;
+    align-items: center;
+    &--agree {
+      margin-left: 10px;
+      font-size: 14px;
+      line-height: 16px;
+      color: $dark_text;
+      a {
+        margin-left: 5px;
+        color: #03a9f4;
+        cursor: pointer;
+      }
+    }
+    &_and_alert {
+      margin-top: 20px;
+      margin-bottom: 20px;
+    }
+  }
+  &-button {
+    width: 100%;
+    height: 50px;
+    border-radius: 3px;
+    border: 1px solid #c6d2d9;
+    background: #03a9f4;
+    color: white;
+    cursor: pointer;
+  }
+  &-alert {
+    display: inline-block;
+    margin-top: 5px;
+    font-size: 14px;
+    color: red;
+  }
+  &-checkbox {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    top: 13px;
+    background: white;
+    border: 1px solid $border;
+    border-radius: 2px;
+    cursor: pointer;
+    &-img {
+      content: url("../assets/images/checked.png");
+      margin-top: 2px;
+      margin-left: 1px;
+    }
+    &-img-hidden {
+      content: url("../assets/images/checked.png");
+      margin-top: 2px;
+      margin-left: 1px;
+      visibility: hidden;
+    }
+  }
+  &--divider {
+    margin-bottom: 20px;
+    border-bottom: 1px dotted $disabled;
+    height: 1px;
+  }
+  &--login-url {
+    text-align: center;
+    a {
+      margin-left: 5px;
+      color: #03a9f4;
+      font-size: 14px;
+      line-height: 16px;
+      cursor: pointer;
+    }
+    p {
+      font-size: 14px;
+      line-height: 16px;
+      color: $dark_text;
+    }
+  }
 }
-
-.signup-logo-img{
-  content: url("../assets/images/clockify_logo.svg");
-  cursor: pointer;
-}
-.signup-form {
-  margin: 30px;
-}
-
-.signup-input{
-  width: 100%;
-  height: 2.5rem;
-  border-radius: 5px;
-  border: 1px solid #c6d2d9;
-  padding: 15px;
-  margin-bottom: 20px;
-}
-.ios-switch {
-  display: none;
-  position: relative;
-}
-
-.ios-switch + label .small {
-  font-size: 0.8em;
-  color: #999;
-  line-height: 1.5em;
-  display:block;
-}
-
-.ios-switch + label {
-  display: inline-block;
-}
-
-.ios-switch + label span.sw {
-  display:inline-block;
-  width: 46px;
-  height: 27px;
-  border-radius: 16px;
-  margin-right: 10px;
-  margin-left: 10px;
-  border: 2px solid #e3e3e3;
-  background-color: #fff;
-  transition: all ease 300ms;
-}
-
-.ios-switch + label span.sw:before
-{
-  content:'';
-  position:absolute;
-  background-color : #fff;
-  margin-top: 0px;
-  margin-left: 0px;
-  height: 27px;
-  width: 27px;
-  border-radius: 15px;
-  transition: all ease 300ms;
-  box-shadow: 0px 2px 8px rgba(0,0,0,0.3);
-}
-
-.ios-switch:checked + label span.sw{
-  background-color: #03a9f4;
-  border: 2px solid #03a9f4;
-}
-
-.ios-switch:checked + label span:before
-{
-  margin-left: 19px;
-  background-color : #fff;
-}
-
-
-.signup-terms {
-  font-size: 15px;
-  position: relative;
-  top: -10px;
-}
-
-.signup-terms a {
-  color: #03a9f4;
-  cursor: pointer;
-}
-
-.signup-button {
-  width: 100%;
-  height: 50px;
-  margin: 30px 0;
-  border-radius: 3px;
-  border: 1px solid #c6d2d9;
-  background: #03a9f4;
-  color: white;
-  cursor: pointer;
-}
-
-.signup-alert {
-  display: inline-block;
-  margin: 5px;
-  font-size: 14px;
-  color: red;
-}
-
 .disabled {
   display: none;
 }

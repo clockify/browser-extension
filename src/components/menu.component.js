@@ -44,7 +44,9 @@ class Menu extends React.Component {
 
     changeModeToTimer() {
         if (this.props.mode === 'timer') return;
-        this.props.changeModeToTimer();
+        if(!JSON.parse(this.props.disableAutomatic)) {
+            this.props.changeModeToTimer();
+        }
     }
 
     openSettings() {
@@ -125,7 +127,8 @@ class Menu extends React.Component {
                             <span className={JSON.parse(this.props.disableManual) ? "disable-manual" : ""}>Manual</span>
                         </a>
                         <a id="timer"
-                           className={this.props.mode === 'timer' ? "dropdown-item active" : "dropdown-item"}
+                           className={this.props.mode === 'timer' ?
+                                   "dropdown-item active" : "dropdown-item"}
                            href="#"
                            onClick={this.changeModeToTimer.bind(this)}>
                             <span className="menu-timer-img"></span>

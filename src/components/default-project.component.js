@@ -171,6 +171,7 @@ class DefaultProject extends React.Component {
                         noTasks={true}
                         defaultProject={true}
                         workspaceSettings={this.props.workspaceSettings}
+                        createProject={false}
                         projectListOpened={this.projectListOpened.bind(this)}
                     />
                 </div>

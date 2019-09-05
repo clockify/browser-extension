@@ -83,6 +83,7 @@ class PostAuth extends React.Component {
                                                 getBrowser().storage.sync.set({
                                                     activeWorkspaceId: JSON.parse(result.text).activeWorkspace
                                                 });
+                                                getBrowser().extension.getBackgroundPage().addPomodoroTimer();
                                             }
                                             localStorage.setItem("activeWorkspaceId",
                                                 JSON.parse(result.text).activeWorkspace);

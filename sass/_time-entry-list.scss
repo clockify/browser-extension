@@ -41,12 +41,17 @@
 }
 
 .no-entries-img {
-    content: url("../assets/images/clockify_illustration.svg");
+    width:299px;
+    height: 85px;
+    content: url("../assets/images/clockify_illustration.png");
 }
 
 .no-entries {
-    margin: 70px;
+    margin-top: 70px;
+    margin-right: auto;
+    margin-left: auto;
     text-align: center;
+    width: 300px;
 }
 
 .no-entries span {

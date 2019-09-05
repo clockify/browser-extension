@@ -150,7 +150,7 @@ class Pomodoro extends React.Component {
 
         if (isAppTypeExtension()) {
             if (isEnabled) {
-                this.sendPomodoroRequest();
+                getBrowser().extension.getBackgroundPage().addPomodoroTimer();
             } else {
                 getBrowser().extension.getBackgroundPage().restartPomodoro();
             }
@@ -190,11 +190,14 @@ class Pomodoro extends React.Component {
             getLocalStorageEnums().PERMANENT_PREFIX
         );
         this.props.changeSaved();
+        if (isAppTypeExtension()) {
+            getBrowser().extension.getBackgroundPage().addPomodoroTimer();
+        }
     }
 
     changePomodoroPropertyOnEnter(event) {
         if (event.keyCode === getKeyCodes().enter) {
-            this.changePomodoroPropertyOnEnter(event);
+            this.changePomodoroProperty(event);
         }
     }
 

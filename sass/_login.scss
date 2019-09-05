@@ -1,38 +1,42 @@
 .login {
   width: 87%;
   margin: 20px;
-  margin-top: 50px;
-
   &__oauth {
-
     &--button {
       display: flex;
-      width: 87%;
+      margin-bottom: 20px;
+      width: 100%;
       height: 50px;
-      margin: 20px;
-      background: white;
-      border: 1px solid $border;
+      background: $input-background;
+      border: 1px solid $blue;
       border-radius: 2px;
       color: $lighter_text;
       font-size: 14px;
       cursor: pointer;
       justify-content: space-evenly;
       align-items: baseline;
+      &__img_and_text {
+        display: flex;
+        justify-content: center;
+        align-items: baseline;
+        p {
+          color: $blue;
+          margin-right: 10px;
+          margin-left: 10px;
+        }
+      }
     }
-
     &--img {
       position: relative;
       top: 7px;
       margin-right: 10px;
     }
   }
-
   &__saml2 {
-
     &--button {
-      width: 87%;
+      margin-bottom: 20px;
+      width: 100%;
       height: 50px;
-      margin: 20px;
       background: white;
       border: 1px solid $border;
       border-radius: 2px;
@@ -42,7 +46,6 @@
     }
   }
 }
-
 .login input {
   width: 100%;
   height: 40px;
@@ -50,11 +53,9 @@
   padding: 10px;
   border-radius: 3px;
 }
-
 .login input[type=email], input[type=password] {
   border: 1px solid $border;
 }
-
 .login-submit {
   display: block;
   padding: 5px 10px;
@@ -63,27 +64,24 @@
   width: 100%;
   height: 50px;
   border: 1px solid  $blue;
+  border-radius: 2px;
   background-color: $blue;
   text-transform: uppercase;
   color: #ffffff;
 }
-
 .login p#info{
   height: 0.01rem;
   padding: 10px;
   font-size: 13px;
   color: $red;
 }
-
 .login input[type=submit]:hover {
   background-color: $blue_hover;
   border: 1px solid $blue_hover;
 }
-
 .login a{
   display: block;
   margin-bottom: 20px;
-  margin-top: 10px;
   font-size: 14px;
   text-decoration: none;
   cursor: pointer;
@@ -99,8 +97,9 @@
   display: flex;
   flex-wrap: nowrap;
   margin-right: auto;
+  margin-top: 20px;
   margin-left: auto;
-  width: 43%;
+  width: 60%;
   justify-content: space-between;
   align-items: baseline;
 }
@@ -125,20 +124,13 @@
 
 .self-hosting-url {
   display: flex;
-  padding-top: 30px;
-  padding-bottom: 30px;
-  width: 70%;
+  width: 49%;
   margin-right: auto;
+  margin-top: 20px;
   margin-left: auto;
   flex-wrap: nowrap;
   justify-content: space-between;
   align-items: baseline;
-
-  p {
-    font-size: 14px;
-    color: $lighter_text;
-    margin: 0;
-  }
 
   a {
     color: $blue;
@@ -156,10 +148,9 @@
 
 .cloud-version-url {
   display: flex;
-  padding-top: 30px;
-  padding-bottom: 30px;
-  width: 79%;
+  width: 49%;
   margin-right: auto;
+  margin-top: 20px;
   margin-left: auto;
   flex-wrap: nowrap;
   justify-content: space-between;
@@ -186,9 +177,9 @@
 }
 
 .google-login {
-  width: 87%;
+  margin-bottom: 20px;
+  width: 100%;
   height: 50px;
-  margin: 20px;
   background: white;
   border: 1px solid $border;
   border-radius: 2px;

@@ -15,7 +15,6 @@ export class ProjectService extends HttpWrapperService {
         const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
         const projectUrl =
             `${baseUrl}/workspaces/${activeWorkspaceId}/projects/ids`;
-
         const body = {
             ids: projectIds
         };
@@ -26,8 +25,7 @@ export class ProjectService extends HttpWrapperService {
     getAllProjects() {
         const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
         const baseUrl = localStorageService.get('baseUrl');
-
-        let getAllProjectsUrl = `${baseUrl}/workspaces/${activeWorkspaceId}/projects/`;
+        const getAllProjectsUrl = `${baseUrl}/workspaces/${activeWorkspaceId}/projects/`;
 
         return super.get(getAllProjectsUrl, addToken);
     }
@@ -52,9 +50,7 @@ export class ProjectService extends HttpWrapperService {
     getAllTasks(taskIds) {
         const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
         const baseUrl = localStorageService.get('baseUrl');
-
-        let getAllTasksUrl = `${baseUrl}/workspaces/${activeWorkspaceId}/projects/taskIds`;
-
+        const getAllTasksUrl = `${baseUrl}/workspaces/${activeWorkspaceId}/projects/taskIds`;
         const body = {
             ids: taskIds
         };
@@ -65,9 +61,27 @@ export class ProjectService extends HttpWrapperService {
     getLastUsedProject() {
         const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
         const baseUrl = localStorageService.get('baseUrl');
-
-        let getLastUsedUrl = `${baseUrl}/workspaces/${activeWorkspaceId}/projects/last-used`;
+        const getLastUsedUrl = `${baseUrl}/workspaces/${activeWorkspaceId}/projects/last-used`;
 
         return super.get(getLastUsedUrl, addToken);
+    }
+
+    createProject(project) {
+        const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
+        const baseUrl = localStorageService.get('baseUrl');
+        const createProjectUrl = `${baseUrl}/v1/workspaces/${activeWorkspaceId}/projects`;
+        const body = project;
+
+        return super.post(createProjectUrl, body, addToken);
+    }
+
+    getProjectsPermissions(ids) {
+        const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
+        const userId = localStorageService.get('userId');
+        const baseUrl = localStorageService.get('baseUrl');
+        const projectPermissionsUrl = `${baseUrl}/workspaces/${activeWorkspaceId}/projects/users/${userId}/permissions`;
+        const body = {projectIds: ids};
+
+        return super.post(projectPermissionsUrl, body, addToken);
     }
 }

@@ -1,14 +1,14 @@
-.tag-list {
+.client-list{
   position: relative;
-
   &-button {
+    display: flex;
     padding: 6px 0;
     background: white;
     border: 1px solid $border;
     border-radius: 2px;
     cursor: pointer;
+    align-items: center;
     box-sizing: border-box;
-
     &-required {
       padding: 5px 0;
       background: white;
@@ -16,49 +16,53 @@
       border-radius: 2px;
       cursor: pointer;
     }
-
     &-offline {
       width: 100%;
       height: 40px;
       background: $disabled;
+      margin: 10px 0;
       border: 1px solid $border;
       border-radius: 2px;
       cursor: not-allowed;
     }
   }
-
+  &-open {
+    .invisible {
+      height: 100vh;
+      width: 100vw;
+      top: -120px;
+      left: -20px;
+    }
+  }
   &-arrow {
-    position: relative;
     width: 10px;
     height: 5px;
-    float: right;
-    padding-right: 15px;
-    top: 10px;
     content: url("../assets/images/arrow-light-mode.png");
   }
-
-  &-add {
+  &-name {
     display: inline-block;
     padding: 5px 10px;
+    width: 85%;
     font-size: 14px;
-    color: $lighter_text;
-  }
-
-  &-selected {
-    display: inline-block;
-    max-width: 260px;
-    margin-left: 10px;
-    border-radius: 2px;
-    background-color: $tags;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    color: $middle_light_text;
+  }
+  &-dropdown {
+    position: absolute;
+    width: 100%;
+    left: 0;
+    top: 39px;
+    background: white;
+    z-index: 2;
+    box-shadow: 0 5px 7px #ccc;
+    font-size: 14px;
+    border-radius: 2px;
 
-    &-item {
-      display: inline-block;
-      padding: 5px 5px;
-      border-radius: 3px;
-      color: $blue_tag;
+    &--content {
+      height: 279px;
+      overflow-y: auto;
     }
   }
   &-input {
@@ -69,31 +73,10 @@
       position: relative;
     }
   }
-  &-load {
-    text-align: center;
-    margin-top: 15px;
-    margin-bottom: 10px;
-    color: $middle_light_text;
-    cursor: pointer;
-  }
-  &-dropdown {
-    position: absolute;
-    width: 100%;
-    top: 40px;
-    background: white;
-    box-shadow: 0 5px 7px #ccc;
-    z-index: 2;
-    font-size: 14px;
-    border-radius: 2px;
-    &--content {
-      height: 217px;
-      overflow-y: auto;
-    }
-  }
   &-filter {
     width: 100%;
     height: 40px;
-    padding: 10px 32px 10px 10px;
+    padding: 10px;
     border: 1px solid $border;
     border-radius: 2px;
 
@@ -107,43 +90,20 @@
       cursor: pointer;
     }
   }
-  &-checked {
-    margin-top: 2px;
-    margin-left: 1px;
-    content: url("../assets/images/checked.png");
-    &-hidden {
-      margin-top: 2px;
-      margin-left: 1px;
-      content: url("../assets/images/checked.png");
-      visibility: hidden;
-    }
+  &-client {
+    margin: 10px;
+    padding-top: 5px;
+    color: $lighter_text;
+    cursor: pointer;
   }
-  &-checkbox {
-    display: inline-block;
-    width: 16px;
-    height: 16px;
-    border: 1px solid $border;
-  }
-  &-item {
-    font-size: 14px;
-    line-height: 16px;
-    margin-left: 10px;
+  &-load {
+    text-align: center;
+    margin-top: 15px;
+    margin-bottom: 10px;
     color: $middle_light_text;
-    &-row {
-      padding: 7px 15px;
-      cursor: pointer;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      white-space: nowrap;
-      &:hover {
-        background-color: $entries_header;
-      }
-    }
+    cursor: pointer;
   }
-  &--not_tags {
-    margin-left: 10px;
-  }
-  &__create-tag {
+  &__create-client {
     position: absolute;
     display: flex;
     align-items: center;
@@ -220,7 +180,7 @@
       line-height: 21px;
       color: $middle_light_text;
     }
-    &--tag-name {
+    &--client-name {
       margin-bottom: 20px;
       padding-left: 10px;
       border: 1px solid $border;
