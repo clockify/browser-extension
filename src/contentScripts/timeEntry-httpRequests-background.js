@@ -17,26 +17,21 @@ function startTimerWithDescription(info) {
 }
 
 function endInProgressAndStartNew(info) {
-    aBrowser.storage.sync.get(['token', 'activeWorkspaceId'], function (result) {
-        let token = result.token;
-        let activeWorkspaceId = result.activeWorkspaceId;
-
-        this.endInProgress(new Date())
-            .then(response => response)
-            .then(data => {
-                if(data.status === 400) {
-                    alert("You already have entry in progress which can't be saved without project/task/description or tags. Please edit your time entry.")
-                } else {
-                    this.entryInProgressChangedEventHandler(null);
-                    startTimer(info && info.selectionText ? info.selectionText : "");
-                }
-            })
-            .catch(() => {
-                aBrowser.browserAction.setIcon({
-                    path: iconPathEnded
-                });
-            })
-    });
+    this.endInProgress(new Date())
+        .then(response => response)
+        .then(data => {
+            if(data.status === 400) {
+                alert("You already have entry in progress which can't be saved without project/task/description or tags. Please edit your time entry.")
+            } else {
+                this.entryInProgressChangedEventHandler(null);
+                startTimer(info && info.selectionText ? info.selectionText : "");
+            }
+        })
+        .catch(() => {
+            aBrowser.browserAction.setIcon({
+                path: iconPathEnded
+            });
+        })
 }
 
 function endInProgress(end, isWebSocketHeader) {
@@ -147,7 +142,9 @@ function startTimerOnStartingBrowser() {
             .filter(autoStart => autoStart.userId === userId && autoStart.enabled).length > 0 : false;
 
     if (autoStartForCurrentUserEnabled) {
-        this.startTimer('');
+        this.getDefaultProject().then(defaultProject => {
+            this.startTimer('', defaultProject ? {projectId: defaultProject.id} : {});
+        });
     }
 }
 
@@ -159,6 +156,23 @@ function endInProgressOnClosingBrowser() {
 
     if (autoStopForCurrentUserEnabled) {
         this.getEntryInProgress().then(response => response.json()).then(data => {
+            if (!data.projectId) {
+                this.getDefaultProject().then(defaultProject => {
+                    if (defaultProject) {
+                        this.updateProject(defaultProject.id, data.id)
+                            .then(response => response.json())
+                            .then(data => {
+                                this.endInProgress(new Date()).then((response) => {
+                                    if (response.status === 400) {
+                                        const endTime = new Date();
+                                        this.saveEntryOfflineAndStopItByDeletingIt(data, endTime);
+                                    }
+                                });
+                            }
+                        );
+                    }
+                });
+            }
             this.endInProgress(new Date()).then((response) => {
                 if (response.status === 400) {
                     const endTime = new Date();
@@ -219,4 +233,24 @@ function getLastEntry() {
             return new Promise((resolve, reject) => reject());
         }
     });
+}
+
+function updateProject(projectId, timeEntryId) {
+    const apiEndpoint = localStorage.getItem('permanent_baseUrl');
+    const activeWorkspaceId = localStorage.getItem('activeWorkspaceId');
+    const token = localStorage.getItem('token');
+    const updateProjectUrl =
+        `${apiEndpoint}/workspaces/${activeWorkspaceId}/timeEntries/${timeEntryId}/project`;
+    const headers = new Headers(this.createHttpHeaders(token));
+    const body = {
+        projectId: projectId
+    };
+
+    let updateProjectRequest = new Request(updateProjectUrl, {
+        method: 'PUT',
+        headers: headers,
+        body: JSON.stringify(body)
+    });
+
+    return fetch(updateProjectRequest);
 }

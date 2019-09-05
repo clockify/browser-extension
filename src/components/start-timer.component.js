@@ -294,12 +294,15 @@ class StartTimer extends React.Component {
 
     goToEdit() {
         ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
-        ReactDOM.render(<EditForm changeMode={this.changeMode.bind(this)}
-                                  timeEntry={this.state.timeEntry}
-                                  workspaceSettings={this.props.workspaceSettings}
-                                  timeFormat={this.props.timeFormat}
-                                  isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}/>,
-                        document.getElementById('mount'));
+        ReactDOM.render(
+            <EditForm changeMode={this.changeMode.bind(this)}
+                      timeEntry={this.state.timeEntry}
+                      workspaceSettings={this.props.workspaceSettings}
+                      timeFormat={this.props.timeFormat}
+                      isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}
+                      userSettings={this.props.userSettings}
+            />, document.getElementById('mount')
+        );
     }
 
     goToEditManual() {
@@ -309,21 +312,26 @@ class StartTimer extends React.Component {
             }, () => {
                 const entry = {timeInterval: {start: moment(), end: moment()}};
                 ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
-                ReactDOM.render(<EditFormManual changeMode={this.changeMode.bind(this)}
-                                                workspaceSettings={this.props.workspaceSettings}
-                                                timeEntry={entry}
-                                                timeFormat={this.props.timeFormat}
-                                                isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}/>,
-                                document.getElementById('mount'));
+                ReactDOM.render(
+                    <EditFormManual changeMode={this.changeMode.bind(this)}
+                                    workspaceSettings={this.props.workspaceSettings}
+                                    timeEntry={entry}
+                                    timeFormat={this.props.timeFormat}
+                                    isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}
+                                    userSettings={this.props.userSettings}
+                    />, document.getElementById('mount')
+                );
             })
         } else {
             ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
-            ReactDOM.render(<EditFormManual changeMode={this.changeMode.bind(this)}
-                                            workspaceSettings={this.props.workspaceSettings}
-                                            timeEntry={this.state.timeEntry}
-                                            timeFormat={this.props.timeFormat}
-                                            isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}/>,
-                            document.getElementById('mount'));
+            ReactDOM.render(
+                <EditFormManual changeMode={this.changeMode.bind(this)}
+                                workspaceSettings={this.props.workspaceSettings}
+                                timeEntry={this.state.timeEntry}
+                                timeFormat={this.props.timeFormat}
+                                isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}
+                                userSettings={this.props.userSettings}
+                />, document.getElementById('mount'));
         }
     }
 

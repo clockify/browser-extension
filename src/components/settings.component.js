@@ -10,9 +10,11 @@ import moment from "moment";
 import {HtmlStyleHelper} from "../helpers/html-style-helper";
 import {getKeyCodes} from "../enums/key-codes.enum";
 import Pomodoro from "./pomodoro.component";
-import DarkMode from "./dark-mode";
+import DarkModeComponent from "./dark-mode.component";
 import DefaultProject from "./default-project.component";
 import Toaster from "./toaster-component";
+import * as ReactDOM from "react-dom";
+import HomePage from "./home-page.component";
 
 const userService = new UserService();
 const localStorageService = new LocalStorageService();
@@ -36,6 +38,7 @@ class Settings extends React.Component {
         this.state = {
             userEmail: '',
             userPicture: null,
+            sendErrors: JSON.parse(localStorageService.get('sendErrors')),
             isSelfHosted: JSON.parse(localStorageService.get('selfHosted', false)),
             idleDetection: false,
             idleDetectionCounter: null,
@@ -688,6 +691,11 @@ class Settings extends React.Component {
         this.toaster.toast('success', 'Change saved.', 2);
     }
 
+    goBackToHomePage() {
+        ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
+        ReactDOM.render(<HomePage/>, document.getElementById('mount'));
+    }
+
     render(){
         let version;
         if (isAppTypeDesktop()) {
@@ -709,6 +717,7 @@ class Settings extends React.Component {
                         <Header
                             showActions={false}
                             backButton={true}
+                            goBackTo={this.goBackToHomePage.bind(this)}
                         />
                     </div>
                     <div className="user-settings">
@@ -719,7 +728,7 @@ class Settings extends React.Component {
                         workspaceSettings={this.props.workspaceSettings}
                         changeSaved={this.showSuccessMessage.bind(this)}
                     />
-                    <DarkMode
+                    <DarkModeComponent
                         changeSaved={this.showSuccessMessage.bind(this)}
                     />
                     <div className={isAppTypeExtension() && !this.state.isSelfHosted ?

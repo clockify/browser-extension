@@ -23,6 +23,9 @@
 @import "default-project";
 @import "workspace-list";
 @import "toaster";
+@import "create-project";
+@import "client-list";
+@import "color-picker";
 
 @-webkit-keyframes rotation {
   from {
@@ -33,16 +36,18 @@
   }
 }
 
-body{
+body {
   background-color: #eff4f7;
   margin: 0px;
   overflow-y: overlay;
   overflow-x: hidden;
-  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
   scrollbar-base-color: $blue;
 }
+* {
+  font-family: Roboto, Arial, sans-serif !important;
+}
 
-hr{
+hr {
   padding-top: 0px;
   margin: 0px;
   border-top:0px;

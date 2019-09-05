@@ -24,11 +24,15 @@ class TimeEntry extends React.Component {
             if (checkConnection()) {
                 ReactDOM.render(<Login/>, document.getElementById('mount'));
             }
-            ReactDOM.render(<EditForm changeMode={this.changeMode.bind(this)}
-                                      timeEntry={this.props.timeEntry}
-                                      workspaceSettings={this.props.workspaceSettings}
-                                      timeFormat={this.props.timeFormat}
-                                      isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}/>, document.getElementById('mount'));
+            ReactDOM.render(
+                <EditForm changeMode={this.changeMode.bind(this)}
+                          timeEntry={this.props.timeEntry}
+                          workspaceSettings={this.props.workspaceSettings}
+                          timeFormat={this.props.timeFormat}
+                          isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}
+                          userSettings={this.props.userSettings}
+                />, document.getElementById('mount')
+            );
         }
     }
 

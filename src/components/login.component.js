@@ -69,7 +69,18 @@ class Login extends React.Component {
         if (this.props.loginSettings) {
             this.setActiveLoginSettings(this.props.loginSettings);
         }
+
+        if (isAppTypeExtension()) {
+            this.clearAllActiveTimers();
+        }
     }
+
+    clearAllActiveTimers() {
+        const backgroundPage = getBrowser().extension.getBackgroundPage();
+        backgroundPage.removeIdleListenerIfIdleIsEnabled();
+        backgroundPage.removeAllPomodoroTimers();
+        backgroundPage.removeReminderTimer();
+    };
 
     removeDarkMode() {
         htmlStyleHelper.removeDarkModeClassFromBodyElement();
@@ -102,7 +113,7 @@ class Login extends React.Component {
     }
 
     setSaml2LoginSettings(loginSettings) {
-        if (loginSettings.saml2Settings.active) {
+        if (loginSettings.saml2Settings && loginSettings.saml2Settings.active) {
             this.setState({
                 saml2Active: true,
                 saml2Request: loginSettings.saml2Settings.samlRequest,
@@ -114,7 +125,7 @@ class Login extends React.Component {
     }
 
     setOAuthLoginSettings(loginSettings) {
-        if (loginSettings.oAuthConfiguration.active) {
+        if (loginSettings.oAuthConfiguration && loginSettings.oAuthConfiguration.active) {
             this.setState({
                 oAuthActive: true,
                 oAuthUrl: loginSettings.oAuthConfiguration.url,
@@ -125,7 +136,7 @@ class Login extends React.Component {
     }
 
     setLdapLoginSettings(loginSettings) {
-        if (loginSettings.ldapLoginSettings.active) {
+        if (loginSettings.ldapLoginSettings && loginSettings.ldapLoginSettings.active) {
             this.setState({
                 ldapActive: true
             }, () => this.setLdapConfigurationToStorage());
@@ -608,9 +619,13 @@ class Login extends React.Component {
                                       "login__oauth--button" : "disabled"}
                             type="button"
                             onClick={this.loginWithOAuth.bind(this)}>
-                        <p>{this.state.selfHosted ? "Continue with" : "Continue with Google"}</p>
-                        <img className={this.state.selfHosted ? "login__oauth--img" : "disabled"}
-                             src={this.state.oAuthLogoUrl ? this.state.oAuthLogoUrl.toString() : ""}/>
+                        <div className="login__oauth--button__img_and_text">
+                            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAARCAYAAADUryzEAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAIPSURBVHgBlVM/aBNhFH/vS5qmiz0XbXToBaQOor2znUQwZBCcUu1YEIugDkqrTiroKYjrqYM4BQfJoJQgimiHHhlEtJET3L1BtFTbntGSo6Tf8921F+9Sr9jfcHy/9733e//uQ+jA54KmZFPpMyDpGACpACJNQD/4/A5J3slZthP1xyiZKwxNsMUgAAUSgIhmU7Zu5i3b9bkIL74VDxqEYG4W7IOIJrtRFEOeDoILQ5eB4EbcE57y50WQBTEvgU5yfhVX8XSuVp9qV9R8Ceqvh/s+rv7MbluPdIDEeM6ataJ6X4t6P0mh77bq1VhL3ms4R43Mg8bjAZBuNyDh/j5r9hP8J3BlGma474JPvPc7nvVenS9FHQ4ZS5rYZC68Itgbkq7h+doGh5Qo8zy0hHhX8Nraq+TDAmwNil+Bh38FNmRCHmp8teifQ76E3iu4hwIuPPf64f7yoOs2Rd4er7pJKY/capT5zzzlnwnJEiRgylw+ALd/D0ODuhTMpsyk4MPG94EwOADRo6B6vTI6g+ubWLPjNFLryoexat3nWnlEEVkx0fPl2mSquScs36ld780HAlplREUQLIJqvH/0uP9FltwV2jKLJcgslNwVKfW3xnanvYEkkU6woNMzd/b4m4tH7bUk8VvUKycusfV8pxARuPwS70qvZUaHjEmZBiujOj+iPiK5E2TKtsee2P/y+wNydMMjOPbkvQAAAABJRU5ErkJggg=="
+                                 className={!this.state.selfHosted ? "google-img" : "disabled"}/>
+                            <p>{this.state.selfHosted ? "Continue with" : "Continue with Google"}</p>
+                            <img className={this.state.selfHosted ? "login__oauth--img" : "disabled"}
+                                 src={this.state.oAuthLogoUrl ? this.state.oAuthLogoUrl.toString() : ""}/>
+                        </div>
                     </button>
                     <button className={this.state.selfHosted && this.state.saml2Active ?
                                         "login__saml2--button" : "disabled"}
@@ -618,22 +633,21 @@ class Login extends React.Component {
                             onClick={this.loginWithSaml.bind(this)}>
                         Continue with SAML2
                     </button>
-                    <br/>
-                    <hr/>
-                    <br/>
+                    <hr className="login__divider"/>
                     <div className={!this.state.ldapActive && !this.state.oAuthForceSSO ? "new-account" : "disabled"}>
                         <p>New here?</p>
-                        <a onClick={this.signup}>Sign up</a>
+                        <a onClick={this.signup}>Create an account</a>
                     </div>
+                    <hr className={!this.state.ldapActive && !this.state.oAuthForceSSO ? "login__divider" : "disabled"}/>
                     {
-                        this.state.appType !== getAppTypes().MOBILE && !this.state.selfHosted ?
-                            <div className="self-hosting-url">
-                                <p>For self hosted version </p>
-                                <a onClick={this.enterBaseUrl}>click here</a>
+                         !this.state.selfHosted ?
+                            <div className={this.state.appType !== getAppTypes().MOBILE ?
+                                "self-hosting-url" : "disabled"}>
+                                <a onClick={this.enterBaseUrl}>Log in to custom domain</a>
                             </div> :
-                            <div className="cloud-version-url">
-                                <p>To return to cloud version </p>
-                                <a onClick={this.backToCloudVersion.bind(this)}>click here</a>
+                            <div className={this.state.appType !== getAppTypes().MOBILE ?
+                                "cloud-version-url" : "disabled"}>
+                                <a onClick={this.backToCloudVersion.bind(this)}>Return to Clockify cloud</a>
                             </div>
                     }
                 </div>

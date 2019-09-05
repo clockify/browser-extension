@@ -109,7 +109,8 @@ body.dark {
   .settings__auto_stop_on_browser_close__checkbox,
   .settings__reminder__section__checkbox,
   .settings__idle-detection__checkbox,
-  .pomodoro__checkbox {
+  .pomodoro__checkbox,
+  .create-project__checkbox {
     background-color: $bg-10;
     border: 1px solid $bg-12;
   }
@@ -326,5 +327,99 @@ body.dark {
     &-row:hover {
       background-color: $bg-10;
     }
+  }
+  .projects-list__create-project,
+  .tag-list__create-tag,
+  .client-list__create-client,
+  .client-list-dropdown {
+    background-color: $bg-12;
+    box-shadow: none;
+  }
+  .create-project__project-name {
+    border: 1px solid $bg-12;
+    background-color: $bg-10;
+    color: $bg-03;
+    &::placeholder {
+      color: $bg-04;
+    }
+  }
+  .color-picker__title,
+  .create-project__billable-title {
+    color: $bg-04;
+  }
+  .create-project__divider {
+    border-bottom: 1px dotted $bg-12;
+  }
+  .client-list-button {
+    border: 1px solid $bg-12;
+    background-color: $bg-10;
+  }
+  .client-list-name {
+    color: $bg-04;
+  }
+  .client-list-arrow {
+    content: url("/assets/images/arrow-dark-mode.png");
+  }
+  .client-list-input {
+    background: $bg-12;
+  }
+  .client-list-filter {
+    background-color: $bg-10;
+    border: none;
+    &::placeholder {
+      color: $bg-03;
+    }
+  }
+  .client-list-client {
+    color: $bg-04;
+  }
+  .client-list__create-form {
+    background-color: $bg-09;
+    &--open {
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+    &--divider {
+      border-bottom: 1px dotted $bg-12;
+    }
+    &--title {
+      color: $bg-03;
+    }
+    &--client-name {
+      border: 1px solid $bg-12;
+      background-color: $bg-10;
+      color: $bg-03;
+      &::placeholder {
+        color: $bg-04;
+      }
+    }
+  }
+  .tag-list__create-form {
+    background-color: $bg-09;
+    &--open {
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+    &--divider {
+      border-bottom: 1px dotted $bg-12;
+    }
+    &--title {
+      color: $bg-03;
+    }
+    &--tag-name {
+      border: 1px solid $bg-12;
+      background-color: $bg-10;
+      color: $bg-03;
+      &::placeholder {
+        color: $bg-04;
+      }
+    }
+  }
+  .tag-list-selected {
+    background-color: $bg-12;
+  }
+  .tag-list-item--comma {
+    color: white;
+  }
+  .app-version {
+    color: $bg-03;
   }
 }

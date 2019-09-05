@@ -97,6 +97,29 @@ aBrowser.commands.onCommand.addListener((command) => {
                 getInProgress(activeWorkspaceId, token)
                     .then(response => response.json())
                     .then(data => {
+                        if (!data.projectId) {
+                            this.getDefaultProject().then(defaultProject => {
+                                if (defaultProject) {
+                                    this.updateProject(defaultProject.id, data.id)
+                                        .then(response => response.json())
+                                        .then(data => {
+                                            this.endInProgress(new Date())
+                                                .then(response => {
+                                                    if (response.status === 400) {
+                                                        alert("You already have entry in progress which can't be saved" +
+                                                            " without project/task/description or tags. Please edit your time entry.");
+                                                    } else {
+                                                        window.inProgress = false;
+                                                        aBrowser.browserAction.setIcon({
+                                                            path: iconPathEnded
+                                                        });
+                                                        aBrowser.runtime.sendMessage({eventName: 'TIME_ENTRY_STOPPED'});
+                                                    }
+                                                });
+                                        });
+                                }
+                            });
+                        }
                         this.endInProgress(new Date())
                             .then(response => {
                                 if (response.status === 400) {
@@ -107,6 +130,7 @@ aBrowser.commands.onCommand.addListener((command) => {
                                     aBrowser.browserAction.setIcon({
                                         path: iconPathEnded
                                     });
+                                    aBrowser.runtime.sendMessage({eventName: 'TIME_ENTRY_STOPPED'});
                                 }
                             });
                     })
@@ -258,6 +282,17 @@ function startTimerWithDescription(info) {
         getInProgress(activeWorkspaceId, token)
             .then(response => response.json())
             .then(data => {
+                if (!data.projectId) {
+                    this.getDefaultProject().then(defaultProject => {
+                        if (defaultProject) {
+                            this.updateProject(defaultProject.id, data.id)
+                                .then(response => response.json())
+                                .then(data => {
+                                    endInProgressAndStartNew(info);
+                                });
+                        }
+                    })
+                }
                 endInProgressAndStartNew(info);
             })
             .catch(error => {
@@ -313,6 +348,7 @@ function endInProgressAndStartNew(info) {
                     alert("You already have entry in progress which can't be saved without project/task/description or tags. Please edit your time entry.")
                 } else {
                     this.entryInProgressChangedEventHandler(null);
+                    aBrowser.runtime.sendMessage({eventName: 'TIME_ENTRY_STOPPED'});
                     startTimerBackground(activeWorkspaceId, token, info && info.selectionText ? info.selectionText : "");
                 }
             })
@@ -330,34 +366,37 @@ function startTimerBackground(activeWorkspaceId, token, description) {
         `${apiEndpoint}/workspaces/${activeWorkspaceId}/timeEntries/`;
     const headers = new Headers(this.createHttpHeaders(token));
 
-    let timeEntryRequest = new Request(timeEntryUrl, {
-        method: 'POST',
-        headers: headers,
-        body: JSON.stringify({
-            start: new Date(),
-            description: description,
-            billable: false,
-            projectId: null,
-            tagIds: [],
-            taskId: null
-        })
+    this.getDefaultProject().then(defaultProject => {
+        let timeEntryRequest = new Request(timeEntryUrl, {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify({
+                start: new Date(),
+                description: description,
+                billable: false,
+                projectId: defaultProject ? defaultProject.id : null,
+                tagIds: [],
+                taskId: null
+            })
+        });
+
+        fetch(timeEntryRequest)
+            .then(response => response.json())
+            .then(data => {
+                if(!data.message) {
+                    window.inProgress = true;
+                    aBrowser.browserAction.setIcon({
+                        path: iconPathStarted
+                    });
+                    document.timeEntry = data;
+                    this.entryInProgressChangedEventHandler(data);
+                    aBrowser.runtime.sendMessage({eventName: 'TIME_ENTRY_STARTED'});
+                }
+
+            })
+            .catch(error => {
+            })
     });
-
-    fetch(timeEntryRequest)
-        .then(response => response.json())
-        .then(data => {
-            if(!data.message) {
-                window.inProgress = true;
-                aBrowser.browserAction.setIcon({
-                    path: iconPathStarted
-                });
-                document.timeEntry = data;
-                this.entryInProgressChangedEventHandler(data);
-            }
-
-        })
-        .catch(error => {
-        })
 }
 
 function getInProgress(activeWorkspaceId, token) {

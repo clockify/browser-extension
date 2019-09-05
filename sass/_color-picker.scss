@@ -1,0 +1,32 @@
+.color-picker {
+  margin-top: 20px;
+  &__title {
+    margin-left: 20px;
+    font-size: 14px;
+    line-height: 16px;
+    color: $middle_light_text;
+  }
+  &__container {
+    display: flex;
+    margin-left: 20px;
+    width: 320px;
+    flex-wrap: wrap;
+  }
+  &__color_box {
+    margin-top: 10px;
+    margin-right: 11px;
+    width: 20px;
+    height: 20px;
+    border-radius: 2px;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+  &__billable-img {
+    margin-top: 5px;
+    margin-left: 3px;
+    &-hidden {
+      visibility: hidden;
+    }
+  }
+}

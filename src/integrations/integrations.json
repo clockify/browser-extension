@@ -407,12 +407,6 @@
     "script": "wunderlist.js",
     "clone": false
   },
-  "zammad.com": {
-    "name": "Zammad",
-    "link": "*://*.zammad.com/*",
-    "script": "zammad.js",
-    "clone": false
-  },
   "zendesk.com": {
     "name": "Zendesk",
     "link": "*://*.zendesk.com/*",

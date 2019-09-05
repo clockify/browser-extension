@@ -51,10 +51,13 @@ function refreshToken(refreshToken) {
 
 function isTokenValid(token) {
     if (!token) {
-        return;
+        return false;
     }
 
     const base64Url = token.split('.')[1];
+    if (!base64Url) {
+        return false;
+    }
     const base64 = base64Url
         .replace(/-/g, '+')
         .replace(/_/g, '/');

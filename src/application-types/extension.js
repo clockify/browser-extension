@@ -142,6 +142,7 @@ export class Extension {
             if (response.status !== 400) {
                 if (isAppTypeExtension) {
                     getBrowser().notifications.clear('idleDetection');
+                    getBrowser().extension.getBackgroundPage().restartPomodoro();
                 }
                 this.setIcon(getIconStatus().timeEntryEnded);
             }
@@ -164,6 +165,7 @@ export class Extension {
             if (response.status === 200) {
                 if (isAppTypeExtension) {
                     getBrowser().notifications.clear('idleDetection');
+                    getBrowser().extension.getBackgroundPage().restartPomodoro();
                 }
                 this.startTimer(request, sendResponse);
             } else {
@@ -178,6 +180,7 @@ export class Extension {
                 if (!response.message) {
                     window.inProgress = true;
                     this.setIcon(getIconStatus().timeEntryStarted);
+                    getBrowser().extension.getBackgroundPage().addPomodoroTimer();
                     sendResponse({status: 200, data: response})
                 }
             })

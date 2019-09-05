@@ -63,7 +63,7 @@ class HomePage extends React.Component {
             tasks: [],
             userSettings: JSON.parse(localStorage.getItem('userSettings')),
             durationMap: {},
-            isUserOwnerOrAdmin: false
+            isUserOwnerOrAdmin: false,
         };
 
         this.application = new Application(localStorageService.get('appType'));
@@ -88,6 +88,8 @@ class HomePage extends React.Component {
                 eventName: "webSocketConnect",
             });
             this.getEntryFromPomodoroEvents();
+        } else {
+            webSocketClient.connect();
         }
 
         this.setIsUserOwnerOrAdmin();
@@ -264,8 +266,8 @@ class HomePage extends React.Component {
                 });
         } else {
             this.setState({
-                timeEntries: this.groupEntries(localStorage.getItem('timeEntriesOffline') ?
-                    JSON.parse(localStorage.getItem('timeEntriesOffline')) : []),
+                timeEntries: localStorage.getItem('timeEntriesOffline') ?
+                    this.groupEntries(JSON.parse(localStorage.getItem('timeEntriesOffline'))) : [],
                 ready: true
             })
         }
@@ -298,7 +300,7 @@ class HomePage extends React.Component {
                 });
             }
             return day + "-" + duration(dayDuration).format(
-                trackTimeDownToSeconds ? 'HH:mm:ss' : 'hh:mm', {trim: false}
+                trackTimeDownToSeconds ? 'HH:mm:ss' : 'h:mm', {trim: false}
             );
         });
 
@@ -316,6 +318,16 @@ class HomePage extends React.Component {
             } else {
                 timeEntry.start = moment(timeEntry.timeInterval.start).format('ddd, Do MMM');
             }
+
+            if (!trackTimeDownToSeconds) {
+                const diffInSeconds = moment(timeEntry.timeInterval.end)
+                    .diff(timeEntry.timeInterval.start) / 1000;
+                if (diffInSeconds%60 > 0) {
+                    timeEntry.timeInterval.end =
+                        moment(timeEntry.timeInterval.end).add(60 - diffInSeconds%60, 'seconds');
+                }
+            }
+
             timeEntry.duration =
                 duration(moment(timeEntry.timeInterval.end)
                     .diff(timeEntry.timeInterval.start))
@@ -514,11 +526,15 @@ class HomePage extends React.Component {
 
     goToEdit() {
         ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
-        ReactDOM.render(<EditForm changeMode={this.changeMode.bind(this)}
-                                  timeEntry={this.state.inProgress}
-                                  workspaceSettings={this.state.workspaceSettings}
-                                  timeFormat={this.state.userSettings.timeFormat}
-                                  isUserOwnerOrAdmin={this.state.isUserOwnerOrAdmin}/>, document.getElementById('mount'));
+        ReactDOM.render(
+            <EditForm changeMode={this.changeMode.bind(this)}
+                      timeEntry={this.state.inProgress}
+                      workspaceSettings={this.state.workspaceSettings}
+                      timeFormat={this.state.userSettings.timeFormat}
+                      userSettings={this.state.userSettings}
+                      isUserOwnerOrAdmin={this.state.isUserOwnerOrAdmin}
+            />, document.getElementById('mount')
+        );
     }
 
     continueTimeEntry(timeEntry) {
@@ -628,6 +644,8 @@ class HomePage extends React.Component {
             if (this.start) {
                 this.start.getTimeEntryInProgress();
             }
+        } else {
+            this.getTimeEntries();
         }
     }
 
@@ -691,6 +709,7 @@ class HomePage extends React.Component {
                                 changeMode={this.changeMode.bind(this)}
                                 mode={this.state.mode}
                                 disableManual={!!this.state.inProgress}
+                                disableAutomatic={false}
                                 handleRefresh={this.handleRefresh.bind(this)}
                                 workspaceSettings={this.state.workspaceSettings}
                                 workspaceChanged={this.handleRefresh.bind(this)}
@@ -707,6 +726,7 @@ class HomePage extends React.Component {
                             timeEntries={this.state.timeEntries}
                             timeFormat={this.state.userSettings.timeFormat}
                             isUserOwnerOrAdmin={this.state.isUserOwnerOrAdmin}
+                            userSettings={this.state.userSettings}
                         />
                     </div>
                     <div
@@ -726,6 +746,7 @@ class HomePage extends React.Component {
                             workspaceSettings={this.state.workspaceSettings}
                             timeFormat={this.state.userSettings.timeFormat}
                             isUserOwnerOrAdmin={this.state.isUserOwnerOrAdmin}
+                            userSettings={this.state.userSettings}
                         />
                     </div>
                     <div className={this.state.ready ? (this.state.timeEntries.length === 0 ?
@@ -743,6 +764,7 @@ class HomePage extends React.Component {
                             timeFormat={this.state.userSettings.timeFormat}
                             workspaceSettings={this.state.workspaceSettings}
                             isUserOwnerOrAdmin={this.state.isUserOwnerOrAdmin}
+                            userSettings={this.state.userSettings}
                         />
                     </div>
                     <div className={this.state.loading ? "pull-loading-entries" : "disabled"}>

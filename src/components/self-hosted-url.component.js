@@ -55,7 +55,7 @@ class SelfHostedUrl extends React.Component {
                     showActions={false}/>
                 <form className="self-hosted-url">
                     <div>
-                        <label className="self-hosted-url__server_url">Server url</label>
+                        <label className="self-hosted-url__server_url">Custom domain URL</label>
                         <input required = {true} id="selfHostedurl" placeholder="https://"/>
                     </div>
                 </form>

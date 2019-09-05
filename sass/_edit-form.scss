@@ -14,7 +14,6 @@
   resize: none;
   font-size: 14px;
   outline: none;
-  font-family: 'Helvetica';
   color: $dark_text;
 }
 
@@ -42,7 +41,6 @@
   background: white;
   border: 1px solid $border;
   border-radius: 2px;
-  position: relative;
   cursor: pointer;
 }
 
@@ -50,7 +48,7 @@
   margin-top: 20px;
 
   &__billable {
-    margin-bottom: 30px;
+    margin-bottom: 20px;
   }
 }
 
@@ -68,7 +66,6 @@
 }
 
 .edit-form-billable {
-  position: relative;
   top: 13px;
   margin-left: 10px;
   color: $middle_light_text;
@@ -80,9 +77,9 @@
   margin-top: 20px;
 
   &__back_and_delete {
-    display: flex;
     margin-top: 20px;
     justify-content: space-between;
+    text-align: center;
   }
 
   &__back {

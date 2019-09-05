@@ -11,7 +11,8 @@ import {ProjectHelper} from "../helpers/project-helper";
 import {TimeEntryService} from "../services/timeEntry-service";
 import {isAppTypeExtension, isAppTypeMobile} from "../helpers/app-types-helper";
 import {getBrowser} from "../helpers/browser-helper";
-import DeleteEntryConfirmation from "./delete-entry-confirmation";
+import DeleteEntryConfirmationComponent from "./delete-entry-confirmation.component";
+import Toaster from "./toaster-component";
 
 const projectHelpers = new ProjectHelper();
 const timeEntryService = new TimeEntryService();
@@ -32,7 +33,8 @@ class EditForm extends React.Component {
             projectRequired: false,
             taskRequired: false,
             tagsRequired: false,
-            askToDeleteEntry: false
+            askToDeleteEntry: false,
+            tagIds: []
         };
     }
 
@@ -65,6 +67,8 @@ class EditForm extends React.Component {
         if (isAppTypeMobile()) {
             this.getEntryInProgressOnResume();
         }
+
+        this.mapTagsToTagIds();
     }
 
     getEntryInProgressOnResume() {
@@ -153,6 +157,9 @@ class EditForm extends React.Component {
                         timeEntry: data
                     }, () => {
                         this.setTime();
+                        if (isAppTypeExtension()) {
+                            getBrowser().extension.getBackgroundPage().addPomodoroTimer();
+                        }
                     });
                 }).catch((error) => {});
             }
@@ -170,7 +177,9 @@ class EditForm extends React.Component {
             let end = moment(this.state.timeEntry.timeInterval.start)
                 .add(parseInt(newDuration.split(':')[0]), 'hours')
                 .add(parseInt(newDuration.split(':')[1]), 'minutes')
-                .add(parseInt(newDuration.split(':')[2]), 'seconds');
+                .add(newDuration.split(':')[2] ?
+                    parseInt(newDuration.split(':')[2]) : 0,
+                    'seconds');
 
             if (timeEntry && timeEntry.id === this.state.timeEntry.id) {
                 timeEntry.timeInterval.end = end;
@@ -212,7 +221,9 @@ class EditForm extends React.Component {
                 moment(this.state.timeEntry.timeInterval.start)
                     .add(parseInt(newDuration.split(':')[0]), 'hours')
                     .add(parseInt(newDuration.split(':')[1]), 'minutes')
-                    .add(parseInt(newDuration.split(':')[2]), 'seconds');
+                    .add(newDuration.split(':')[2] ?
+                        parseInt(newDuration.split(':')[2]) : 0,
+                        'seconds');
 
             timeEntry.timeInterval.end = end;
 
@@ -313,7 +324,7 @@ class EditForm extends React.Component {
     }
 
     editTags(tagId) {
-        let tagList = this.state.timeEntry.tagIds ? this.state.timeEntry.tagIds : [];
+        let tagList = this.state.tagIds ? this.state.tagIds : [];
 
         if(tagList.includes(tagId)) {
             tagList.splice(tagList.indexOf(tagId), 1);
@@ -569,6 +580,22 @@ class EditForm extends React.Component {
         ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
         ReactDOM.render(<HomePage/>, document.getElementById('mount'));
     }
+    mapTagsToTagIds() {
+        let tagIds = [];
+        if (this.state.timeEntry.tagIds) {
+            tagIds = this.state.timeEntry.tagIds;
+        } else if (this.state.timeEntry.tags && this.state.timeEntry.tags.length > 0) {
+            this.state.timeEntry.tags.map(tag => tagIds.push(tag.id));
+        }
+
+        this.setState({
+            tagIds: tagIds
+        });
+    }
+
+    notifyAboutError(message) {
+        this.toaster.toast('error', message, 2);
+    }
 
     render(){
         if(!this.state.ready) {
@@ -577,11 +604,17 @@ class EditForm extends React.Component {
             return (
                 <div>
                     <Header
-                        showActions={true}
+                        backButton={true}
                         mode={localStorage.getItem('mode')}
                         disableManual={localStorage.getItem('inProgress')}
                         changeMode={this.changeMode.bind(this)}
                         workspaceSettings={JSON.parse(localStorage.getItem('workspaceSettings'))}
+                        goBackTo={this.goBack.bind(this)}
+                    />
+                    <Toaster
+                        ref={instance => {
+                            this.toaster = instance
+                        }}
                     />
                     <Duration
                         ref={instance => {
@@ -597,6 +630,7 @@ class EditForm extends React.Component {
                         changeDate={this.state.timeEntry.timeInterval.end ? this.changeDate.bind(this) : this.changeStartDate.bind(this)}
                         workspaceSettings={this.props.workspaceSettings}
                         isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}
+                        userSettings={this.props.userSettings}
                     />
                     <div className="edit-form">
                         <div className={this.state.descRequired ?
@@ -628,19 +662,29 @@ class EditForm extends React.Component {
                                 selectTask={this.editTask.bind(this)}
                                 noTask={false}
                                 workspaceSettings={this.props.workspaceSettings}
+                                isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}
+                                createProject={true}
                                 projectRequired={this.state.projectRequired}
                                 taskRequired={this.state.taskRequired}
                                 projectListOpened={this.projectListOpened.bind(this)}
+                                timeEntry={this.state.timeEntry}
+                                editForm={true}
+                                timeFormat={this.props.timeFormat}
+                                userSettings={this.props.userSettings}
                             />
                         </div>
                         <TagsList
                             ref={instance => {
                                 this.tagList = instance;
                             }}
-                            tagIds={this.state.timeEntry.tagIds ? this.state.timeEntry.tagIds : []}
+                            tagIds={this.state.tagIds}
                             editTag={this.editTags.bind(this)}
                             tagsRequired={this.state.tagsRequired}
                             tagListOpened={this.tagListOpened.bind(this)}
+                            isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}
+                            workspaceSettings={this.props.workspaceSettings}
+                            editForm={true}
+                            errorMessage={this.notifyAboutError.bind(this)}
                         />
                         <div className="edit-form-buttons">
                             <div className="edit-form-buttons__billable">
@@ -665,14 +709,12 @@ class EditForm extends React.Component {
                                                 "edit-form-done-disabled" : "edit-form-done"}>OK
                                 </button>
                                 <div className="edit-form-right-buttons__back_and_delete">
-                                    <span onClick={this.goBack.bind(this)}
-                                          className="edit-form-right-buttons__back">Back</span>
                                     <span onClick={this.askToDeleteEntry.bind(this)}
                                       className="edit-form-delete">Delete</span>
                                 </div>
-                                <DeleteEntryConfirmation askToDeleteEntry={this.state.askToDeleteEntry}
-                                                         canceled={this.cancelDeletingEntry.bind(this)}
-                                                         confirmed={this.deleteEntry.bind(this)}/>
+                                <DeleteEntryConfirmationComponent askToDeleteEntry={this.state.askToDeleteEntry}
+                                                                  canceled={this.cancelDeletingEntry.bind(this)}
+                                                                  confirmed={this.deleteEntry.bind(this)}/>
                             </div>
                         </div>
                     </div>

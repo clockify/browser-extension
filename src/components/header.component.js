@@ -3,10 +3,7 @@ import Menu from './menu.component';
 import {getEnv} from '../environment';
 import {getAppTypes} from "../enums/applications-types.enum";
 import {LocalStorageService} from "../services/localStorage-service";
-import * as ReactDOM from "react-dom";
-import Login from './login.component';
 import {TokenService} from "../services/token-service";
-import HomePage from "./home-page.component";
 
 const environment = getEnv();
 const localStorageService = new LocalStorageService();
@@ -72,14 +69,10 @@ class Header extends React.Component {
         }
     }
 
-    dismiss() {
-        ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
-        ReactDOM.render(<Login/>, document.getElementById('mount'));
-    }
+
 
     goBack() {
-        ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
-        ReactDOM.render(<HomePage/>, document.getElementById('mount'));
+        this.props.goBackTo();
     }
 
     workspaceChange() {
@@ -102,40 +95,32 @@ class Header extends React.Component {
                 <div className="header">
                     <div className="self-hosted-url__logo">
                         <a onClick={this.goToClockify.bind(this)}>
-                            <span className={this.state.selfHosted ? "logo-selfhosted" : "disabled"}>
-                            </span>
-                            <span className={!this.state.selfHosted ? "logo" : "disabled"}>
-                            </span>
+                            <span className="logo"></span>
                         </a>
                     </div>
-                    {
-                        this.props.showLogin ?
-                            <div className="header__login-url">
-                                <a onClick={this.dismiss.bind(this)}>Log in</a>
-                            </div> :
-                            <div>
-                                <div onClick={this.handleRefresh.bind(this)}
-                                     title="Refresh"
-                                     className={localStorageService.get('appType') !== getAppTypes().MOBILE && this.props.showSync ?
-                                         "header-sync" : "disabled"}>
-                                </div>
-                                <div className={this.props.showActions ? "actions" : "disabled"}
-                                     title="Settings"
-                                     onClick={this.openMenu.bind(this)}>
-                                    <Menu
-                                        isOpen={this.state.menuOpen}
-                                        mode={this.state.mode}
-                                        changeModeToManual={this.changeToManualMode.bind(this)}
-                                        changeModeToTimer={this.changeToTimerMode.bind(this)}
-                                        disableManual={this.props.disableManual}
-                                        workspaceSettings={this.props.workspaceSettings}
-                                        workspaceChanged={this.workspaceChange.bind(this)}
-                                    />
-                                </div>
-                                <span className={this.props.backButton ? "header-back" : "disabled"}
-                                      onClick={this.goBack.bind(this)}>Back</span>
-                            </div>
-                    }
+                    <div>
+                        <div onClick={this.handleRefresh.bind(this)}
+                             title="Refresh"
+                             className={localStorageService.get('appType') !== getAppTypes().MOBILE && this.props.showSync ?
+                                 "header-sync" : "disabled"}>
+                        </div>
+                        <div className={this.props.showActions ? "actions" : "disabled"}
+                             title="Settings"
+                             onClick={this.openMenu.bind(this)}>
+                            <Menu
+                                isOpen={this.state.menuOpen}
+                                mode={this.state.mode}
+                                changeModeToManual={this.changeToManualMode.bind(this)}
+                                changeModeToTimer={this.changeToTimerMode.bind(this)}
+                                disableManual={this.props.disableManual}
+                                disableAutomatic={this.props.disableAutomatic}
+                                workspaceSettings={this.props.workspaceSettings}
+                                workspaceChanged={this.workspaceChange.bind(this)}
+                            />
+                        </div>
+                        <span className={this.props.backButton ? "header-back" : "disabled"}
+                              onClick={this.goBack.bind(this)}>Back</span>
+                    </div>
                 </div>
                 <hr className={!tokenService.isLoggedIn() ? "header__break" : "disabled"}/>
             </div>

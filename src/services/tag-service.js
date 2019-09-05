@@ -21,4 +21,14 @@ export class TagService extends HttpWrapperService {
 
         return super.get(getTagsUrl, addToken);
     }
+
+    createTag(tag) {
+        const baseUrl = localStorageService.get('baseUrl');
+        const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
+        const createTagUrl = `${baseUrl}/v1/workspaces/${activeWorkspaceId}/tags`;
+
+        const body = tag;
+
+        return super.post(createTagUrl, body, addToken);
+    }
 }

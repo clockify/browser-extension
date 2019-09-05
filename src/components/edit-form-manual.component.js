@@ -10,8 +10,9 @@ import HomePage from './home-page.component';
 import {checkConnection} from "./check-connection";
 import {ProjectHelper} from "../helpers/project-helper";
 import {TimeEntryService} from "../services/timeEntry-service";
-import DeleteEntryConfirmation from "./delete-entry-confirmation";
+import DeleteEntryConfirmationComponent from "./delete-entry-confirmation.component";
 import {LocalStorageService} from "../services/localStorage-service";
+import Toaster from "./toaster-component";
 
 const projectHelpers = new ProjectHelper();
 const timeEntryService = new TimeEntryService();
@@ -236,14 +237,6 @@ class EditFormManual extends React.Component {
         });
     }
 
-    goToEdit() {
-        ReactDOM.render(
-            <EditFormManual timeEntry={this.state.timeEntry}
-                            workspaceSettings={this.props.workspaceSettings}/>,
-            document.getElementById('mount')
-        );
-    }
-
     done() {
         if (
             this.state.descRequired ||
@@ -358,6 +351,10 @@ class EditFormManual extends React.Component {
         ReactDOM.render(<HomePage/>, document.getElementById('mount'));
     }
 
+    notifyAboutError(message) {
+        this.toaster.toast('error', message, 2);
+    }
+
     render(){
         if(!this.state.ready) {
             return null;
@@ -365,11 +362,18 @@ class EditFormManual extends React.Component {
             return(
                 <div>
                     <Header
-                        showActions={true}
+                        backButton={true}
                         mode={localStorage.getItem('mode')}
                         disableManual={localStorage.getItem('inProgress')}
+                        disableAutomatic={false}
                         changeMode={this.changeMode.bind(this)}
                         workspaceSettings={JSON.parse(localStorage.getItem('workspaceSettings'))}
+                        goBackTo={this.goBack.bind(this)}
+                    />
+                    <Toaster
+                        ref={instance => {
+                            this.toaster = instance
+                        }}
                     />
                     <Duration
                         ref={instance => {
@@ -385,6 +389,7 @@ class EditFormManual extends React.Component {
                         timeFormat={this.props.timeFormat}
                         isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}
                         workspaceSettings={this.props.workspaceSettings}
+                        userSettings={this.props.userSettings}
                     />
                     <div className="edit-form">
                         <div className={this.state.descRequired ?
@@ -408,9 +413,14 @@ class EditFormManual extends React.Component {
                                 selectTask={this.editTask.bind(this)}
                                 noTasks={false}
                                 workspaceSettings={this.props.workspaceSettings}
+                                isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}
+                                createProject={true}
                                 projectRequired={this.state.projectRequired}
                                 taskRequired={this.state.taskRequired}
                                 projectListOpened={this.projectListOpened.bind(this)}
+                                timeEntry={this.state.timeEntry}
+                                createProject={true}
+                                editForm={false}
                             />
                         </div>
                         <TagsList
@@ -421,6 +431,10 @@ class EditFormManual extends React.Component {
                             editTag={this.editTags.bind(this)}
                             tagsRequired={this.state.tagsRequired}
                             tagListOpened={this.tagListOpened.bind(this)}
+                            isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}
+                            workspaceSettings={this.props.workspaceSettings}
+                            editForm={false}
+                            errorMessage={this.notifyAboutError.bind(this)}
                         />
                         <div className="edit-form-buttons">
                             <div className="edit-form-buttons__billable">
@@ -442,14 +456,12 @@ class EditFormManual extends React.Component {
                                             this.state.taskRequired || this.state.tagsRequired ?
                                                 "edit-form-done-disabled" : "edit-form-done"}>OK</button>
                                 <div className="edit-form-right-buttons__back_and_delete">
-                                    <span onClick={this.goBack.bind(this)}
-                                          className="edit-form-right-buttons__back">Back</span>
                                     <span onClick={this.askToDeleteEntry.bind(this)}
                                           className="edit-form-delete">Delete</span>
                                 </div>
-                                <DeleteEntryConfirmation askToDeleteEntry={this.state.askToDeleteEntry}
-                                                         canceled={this.cancelDeletingEntry.bind(this)}
-                                                         confirmed={this.deleteEntry.bind(this)}/>
+                                <DeleteEntryConfirmationComponent askToDeleteEntry={this.state.askToDeleteEntry}
+                                                                  canceled={this.cancelDeletingEntry.bind(this)}
+                                                                  confirmed={this.deleteEntry.bind(this)}/>
                             </div>
                         </div>
                     </div>
