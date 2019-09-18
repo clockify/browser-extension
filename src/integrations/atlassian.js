@@ -8,7 +8,8 @@ clockifyButton.render(
         }
         const root = elem.closest('div[role="dialog"]');
         const page = elem.closest('div[id="page"]');
-        const issueNumber = $('a > span > span', elem).textContent;
+        const issues = elem.querySelectorAll('a > span > span');
+        const issueNumber = issues[issues.length - 1].textContent;
         const container = $('div > div > div > div > div > div:first-child > div > div:first-child', elem);
         const desc = $('h1', root).textContent;
         const project = $('div[role="presentation"] > button', page).childNodes[1].childNodes[0].textContent;
@@ -41,7 +42,8 @@ clockifyButton.render(
         const container =
             $('div > div > div > div > div > div > div[id="jira-issue-header"] ' +
                 '> div > div > div > div > div > div:first-child > div > div', elem);
-        const issueNumber = $('a > span > span', container).textContent;
+        const issues = container.querySelectorAll('a > span > span');
+        const issueNumber = issues[issues.length - 1].textContent;
         const descElement = $('div[id="jira-issue-header"]', elem).parentNode;
         const desc = $('h1', descElement).textContent;
         const project = $('div[role="presentation"] > button', page).childNodes[1].childNodes[0].textContent;
@@ -96,8 +98,9 @@ clockifyButton.render(
     (elem) => {
         const page = elem.closest('div[id="page"]');
         const root = $('div[id="ghx-detail-view"]');
-        const container = $('a', elem).parentNode.parentNode;
-        const issueNumber = $('a > span > span', container).textContent;
+        const container = $('div > div:last-child > div > div > div > div[id="jira-issue-header"] > div > div > div > div > div > div > div > div', root);
+        const issues = container.querySelectorAll('a > span > span');
+        const issueNumber = issues[issues.length - 1].textContent;
         const desc = $('h1', root).textContent;
         const project = $('div[role="presentation"] > button', page).childNodes[1].childNodes[0].textContent;
 
