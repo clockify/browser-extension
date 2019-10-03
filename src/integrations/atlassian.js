@@ -17,8 +17,7 @@ clockifyButton.render(
         const link = clockifyButton.createButton(issueNumber + ' ' + desc, project);
         link.style.position = "relative";
         link.style.left = "10px";
-        link.style.top = "-18px";
-        container.appendChild(link);
+        container.parentElement.appendChild(link);
     }
 );
 
@@ -54,7 +53,7 @@ clockifyButton.render(
         link.style.left = "10px";
         link.style.top = "-18px";
 
-        container.appendChild(link);
+        container.parentElement.appendChild(link);
         container.style.height = '25px';
     }
 );
@@ -69,6 +68,7 @@ clockifyButton.render(
         }
         const page = elem.closest('div[id="page"]');
         const container = $('header > div > header > div > div > ol', elem);
+
         const issueNumber = $('li:last-child > a', container).textContent;
         const desc = $('h1', elem).textContent;
         const project = $('div[role="presentation"] > button', page).childNodes[1].childNodes[0].textContent;
@@ -107,10 +107,8 @@ clockifyButton.render(
         const link = clockifyButton.createSmallButton(issueNumber + ' ' + desc, project);
 
         link.style.position = "relative";
-        link.style.left = "85px";
-        link.style.top = "-32px";
 
-        container.appendChild(link);
+        container.parentElement.parentElement.parentElement.appendChild(link);
         container.style.height = '25px';
     }
 );
