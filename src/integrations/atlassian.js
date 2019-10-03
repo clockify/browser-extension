@@ -62,7 +62,7 @@ clockifyButton.render(
         const link = clockifyButton.createButton(issueNumber + ' ' + desc, project);
         link.style.position = "relative";
         link.style.padding = "2px 0 0 20px";
-
+      
         container.appendChild(link);
     }
 );
