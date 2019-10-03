@@ -108,7 +108,6 @@ class Login extends React.Component {
     }
 
     async setActiveLoginSettings() {
-        console.log("222222222222");
         let loginSettings;
         if (this.props.loginSettings) {
             loginSettings = this.props.loginSettings;
@@ -116,7 +115,6 @@ class Login extends React.Component {
             loginSettings = await settingsService.getLoginSettings();
         }
 
-        console.log("!!!!!!!!!!!!!", loginSettings);
         if (loginSettings.loginPreferences && loginSettings.loginPreferences.length > 0) {
             loginSettings.loginPreferences.forEach(loginPreference => {
                 switch (loginPreference) {
@@ -227,7 +225,7 @@ class Login extends React.Component {
         window.plugins.googleplus.login(
             {
                 'scopes':'',
-                'webClientId': '800081634217-rbfe00vph9bbuk3cldi3hfemufs7r2bd.apps.googleusercontent.com',
+                'webClientId': environment.webClientId,
                 'offline': false
             },
             (user) => {
@@ -390,7 +388,7 @@ class Login extends React.Component {
             const GOOGLE_TOKEN_URL = 'https://www.googleapis.com/oauth2/v4/token';
             let body = {
                 code: responseCode,
-                client_id: '800081634217-38lf9eop18c3bltrol2deg89qqkm9m07.apps.googleusercontent.com',
+                client_id: environment.webClientId,
                 redirect_uri: 'urn:ietf:wg:oauth:2.0:oob:auto',
                 grant_type: 'authorization_code'
             };
