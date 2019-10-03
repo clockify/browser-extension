@@ -8,19 +8,25 @@ clockifyButton.render(
         }
         const root = elem.closest('div[role="dialog"]');
         const page = elem.closest('div[id="page"]');
-        const issueNumber = $('a > span > span', elem).textContent;
-        const container = $('div > div > div > div > div > div:first-child > div > div:first-child', elem);
+        const container = $('div > div > div > div > div > div:first-child > div > div:first-child > div', elem);
+        const issueNumber = $('a > span > span', container.lastChild).textContent;
         const desc = $('h1', root).textContent;
-        const project = $('div[role="presentation"] > button', page).childNodes[1].childNodes[0].textContent;
+
+        // Try to find the project
+        let project = $('div[role="presentation"] > button', page);
+        if (project) {
+            project = project.childNodes[1].childNodes[0].textContent;
+        } else {
+            project = '';
+        }
 
         const link = clockifyButton.createButton(issueNumber + ' ' + desc, project);
         link.style.position = "relative";
-        link.style.left = "10px";
-        link.style.top = "-18px";
+        link.style.padding = "2px 0 0 20px";
+
         container.appendChild(link);
     }
 );
-
 
 if (document.getElementById('clockifyButton-jiraIntegration')) {
     document.getElementById('clockifyButton-jiraIntegration').classList.remove('clockify');
@@ -41,19 +47,23 @@ clockifyButton.render(
         const container =
             $('div > div > div > div > div > div > div[id="jira-issue-header"] ' +
                 '> div > div > div > div > div > div:first-child > div > div', elem);
-        const issueNumber = $('a > span > span', container).textContent;
+        const issueNumber = $('a > span > span', container.lastChild).textContent;
         const descElement = $('div[id="jira-issue-header"]', elem).parentNode;
         const desc = $('h1', descElement).textContent;
-        const project = $('div[role="presentation"] > button', page).childNodes[1].childNodes[0].textContent;
+
+        // Try to find the project
+        let project = $('div[role="presentation"] > button', page);
+        if (project) {
+            project = project.childNodes[1].childNodes[0].textContent;
+        } else {
+            project = '';
+        }
 
         const link = clockifyButton.createButton(issueNumber + ' ' + desc, project);
-
         link.style.position = "relative";
-        link.style.left = "10px";
-        link.style.top = "-18px";
-
+        link.style.padding = "2px 0 0 20px";
+      
         container.appendChild(link);
-        container.style.height = '25px';
     }
 );
 
@@ -65,17 +75,24 @@ clockifyButton.render(
         if (document.getElementById('clockifyButton')) {
             document.getElementById('clockifyButton').remove();
         }
+
         const page = elem.closest('div[id="page"]');
-        const container = $('header > div > header > div > div > ol', elem);
-        const issueNumber = $('li:last-child > a', container).textContent;
+        const container =
+            $('div[id="jira-issue-header"] > div > div > div > div > div > div:first-child > div > div', elem);
+        const issueNumber = $('a > span > span', container.lastChild).textContent;
         const desc = $('h1', elem).textContent;
-        const project = $('div[role="presentation"] > button', page).childNodes[1].childNodes[0].textContent;
+
+        // Try to find the project
+        let project = $('div[role="presentation"] > button', page);
+        if (project) {
+            project = project.childNodes[1].childNodes[0].textContent;
+        } else {
+            project = '';
+        }
 
         const link = clockifyButton.createButton(issueNumber + ' ' + desc, project);
-
         link.style.position = "relative";
-        link.style.left = "15px";
-        link.style.top = "0px";
+        link.style.padding = "2px 0 0 20px";
 
         container.appendChild(link);
     }
@@ -96,18 +113,23 @@ clockifyButton.render(
     (elem) => {
         const page = elem.closest('div[id="page"]');
         const root = $('div[id="ghx-detail-view"]');
-        const container = $('a', elem).parentNode.parentNode;
-        const issueNumber = $('a > span > span', container).textContent;
+        const container =
+            $('div[id="jira-issue-header"] > div > div > div > div > div > div:first-child > div > div', elem);
+        const issueNumber = $('a > span > span', container.lastChild).textContent;
         const desc = $('h1', root).textContent;
-        const project = $('div[role="presentation"] > button', page).childNodes[1].childNodes[0].textContent;
+
+        // Try to find the project
+        let project = $('div[role="presentation"] > button', page);
+        if (project) {
+            project = project.childNodes[1].childNodes[0].textContent;
+        } else {
+            project = '';
+        }
 
         const link = clockifyButton.createSmallButton(issueNumber + ' ' + desc, project);
-
         link.style.position = "relative";
-        link.style.left = "85px";
-        link.style.top = "-32px";
+        link.style.padding = "0 0 0 20px";
 
         container.appendChild(link);
-        container.style.height = '25px';
     }
 );

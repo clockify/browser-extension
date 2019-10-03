@@ -335,6 +335,12 @@
     "script": "sprintly.js",
     "clone": false
   },
+  "app.startinfinity.com": {
+    "name": "Infinity",
+    "link": "*://app.startinfinity.com/*",
+    "script": "infinity.js",
+    "clone": false
+  },
   "taiga.io": {
     "name": "Taiga",
     "link": "*://*.taiga.io/*",
