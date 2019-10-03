@@ -17,7 +17,6 @@ class Header extends React.Component {
         this.state = {
             menuOpen: false,
             mode: localStorage.getItem('mode') ? localStorage.getItem('mode') : 'timer',
-            selfHosted: JSON.parse(localStorageService.get('selfHosted', false))
         };
 
         this.closeMenu = this.closeMenu.bind(this);

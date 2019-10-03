@@ -19,6 +19,8 @@ import {getLocalStorageEnums} from "../enums/local-storage.enum";
 import {getBrowser, isChrome} from "../helpers/browser-helper";
 import {TokenService} from "../services/token-service";
 import {HtmlStyleHelper} from "../helpers/html-style-helper";
+import SubDomainName from "./sub-domain-name.component";
+import {SettingsService} from "../services/settings-service";
 
 const environment = getEnv();
 const authService = new AuthService();
@@ -27,6 +29,7 @@ const localStorageService = new LocalStorageService();
 const tokenService = new TokenService();
 const GOOGLE_AUTHORIZATION_URL = 'https://accounts.google.com/o/oauth2/v2/auth';
 const htmlStyleHelper = new HtmlStyleHelper();
+const settingsService = new SettingsService();
 
 class Login extends React.Component {
 
@@ -41,14 +44,16 @@ class Login extends React.Component {
             activeWorkspace: null,
             offline: false,
             selfHosted: JSON.parse(localStorageService.get('selfHosted', false)),
-            oAuthActive: JSON.parse(localStorageService.get('oAuthActive', false)),
-            oAuthUrl: localStorageService.get('oAuthUrl', ''),
-            oAuthLogoUrl: localStorageService.get('oAuthLogoUrl', 'assets/'),
-            oAuthForceSSO:  JSON.parse(localStorageService.get('oAuthForceSSO', false)),
-            saml2Active: JSON.parse(localStorageService.get('saml2Active', false)),
-            saml2Request: localStorageService.get('saml2Request', ''),
-            saml2Url: localStorageService.get('saml2Url', ''),
-            ldapActive: JSON.parse(localStorageService.get('ldapActive', false))
+            nativeLogin: true,
+            oAuthActive: false,
+            oAuthUrl: '',
+            oAuthLogoUrl: '',
+            oAuthForceSSO: false,
+            saml2Active: false,
+            saml2Request: '',
+            saml2Url: '',
+            ldapActive: false,
+            isSubDomain: !!localStorageService.get('subDomainName')
         };
 
         this.onChange = this.onChange.bind(this);
@@ -65,10 +70,7 @@ class Login extends React.Component {
         if (this.props.logout) {
             this.logout();
         }
-
-        if (this.props.loginSettings) {
-            this.setActiveLoginSettings(this.props.loginSettings);
-        }
+        this.setActiveLoginSettings();
 
         if (isAppTypeExtension()) {
             this.clearAllActiveTimers();
@@ -105,96 +107,70 @@ class Login extends React.Component {
         localStorageService.set('appVersion', packageJson.version);
     }
 
-    setActiveLoginSettings(loginSettings) {
+    async setActiveLoginSettings() {
+        console.log("222222222222");
+        let loginSettings;
+        if (this.props.loginSettings) {
+            loginSettings = this.props.loginSettings;
+        } else {
+            loginSettings = await settingsService.getLoginSettings();
+        }
 
-        this.setLdapLoginSettings(loginSettings);
-        this.setOAuthLoginSettings(loginSettings);
-        this.setSaml2LoginSettings(loginSettings);
+        console.log("!!!!!!!!!!!!!", loginSettings);
+        if (loginSettings.loginPreferences && loginSettings.loginPreferences.length > 0) {
+            loginSettings.loginPreferences.forEach(loginPreference => {
+                switch (loginPreference) {
+                    case 'LDAP':
+                        this.setLdapLoginSettings(loginSettings);
+                        break;
+                    case 'OAUTH2':
+                        this.setOAuthLoginSettings(loginSettings);
+                        break;
+                    case 'SAML2':
+                        this.setSaml2LoginSettings(loginSettings);
+                        break;
+                }
+            });
+
+            if (!loginSettings.loginPreferences.includes('NATIVE_LOGIN')) {
+                this.setState({
+                    nativeLogin: false
+                });
+            }
+        } else {
+            if (loginSettings.ldapLoginSettings && loginSettings.ldapLoginSettings.active) {
+                this.setLdapLoginSettings(loginSettings);
+            }
+            if (loginSettings.oAuthConfiguration && loginSettings.oAuthConfiguration.active) {
+                this.setOAuthLoginSettings(loginSettings);
+            }
+            if (loginSettings.saml2Settings && loginSettings.saml2Settings.active) {
+                this.setSaml2LoginSettings(loginSettings);
+            }
+        }
     }
 
     setSaml2LoginSettings(loginSettings) {
-        if (loginSettings.saml2Settings && loginSettings.saml2Settings.active) {
-            this.setState({
-                saml2Active: true,
-                saml2Request: loginSettings.saml2Settings.samlRequest,
-                saml2Url: loginSettings.saml2Settings.loginUrl
-            }, () => {
-                this.setSaml2ConfigurationToStorage(loginSettings);
-            });
-        }
+        this.setState({
+            saml2Active: true,
+            saml2Request: loginSettings.saml2Settings.samlRequest,
+            saml2Url: loginSettings.saml2Settings.loginUrl
+        });
     }
 
     setOAuthLoginSettings(loginSettings) {
-        if (loginSettings.oAuthConfiguration && loginSettings.oAuthConfiguration.active) {
-            this.setState({
-                oAuthActive: true,
-                oAuthUrl: loginSettings.oAuthConfiguration.url,
-                oAuthLogoUrl: loginSettings.oAuthConfiguration.logoUri,
-                oAuthForceSSO: loginSettings.oAuthConfiguration.forceSSO
-            }, () => this.setOAuthConfigurationToStorage(loginSettings));
-        }
+        this.setState({
+            oAuthActive: true,
+            oAuthUrl: loginSettings.oAuthConfiguration.url,
+            oAuthLogoUrl: loginSettings.oAuthConfiguration.logoUri,
+            oAuthForceSSO: loginSettings.oAuthConfiguration.forceSSO
+        });
     }
 
-    setLdapLoginSettings(loginSettings) {
-        if (loginSettings.ldapLoginSettings && loginSettings.ldapLoginSettings.active) {
-            this.setState({
-                ldapActive: true
-            }, () => this.setLdapConfigurationToStorage());
-        }
-    }
-
-    setLdapConfigurationToStorage() {
-        localStorageService.set(
-            'ldapActive',
-            true,
-            getLocalStorageEnums().SELF_HOSTED_PREFIX
-        );
-    }
-
-    setSaml2ConfigurationToStorage(loginSettings) {
-        localStorageService.set(
-            'saml2Active',
-            true,
-            getLocalStorageEnums().SELF_HOSTED_PREFIX
-        );
-        localStorageService.set(
-            'saml2Url',
-            loginSettings.saml2Settings.loginUrl,
-            getLocalStorageEnums().SELF_HOSTED_PREFIX
-        );
-        localStorageService.set(
-            'saml2Logout',
-            loginSettings.saml2Settings.logoutUrl,
-            getLocalStorageEnums().SELF_HOSTED_PREFIX
-        );
-        localStorageService.set(
-            'saml2Request',
-            loginSettings.saml2Settings.samlRequest,
-            getLocalStorageEnums().SELF_HOSTED_PREFIX
-        );
-    }
-
-    setOAuthConfigurationToStorage(loginSettings) {
-        localStorageService.set(
-            'oAuthActive',
-            true,
-            getLocalStorageEnums().SELF_HOSTED_PREFIX
-        );
-        localStorageService.set(
-            'oAuthUrl',
-            loginSettings.oAuthConfiguration.url,
-            getLocalStorageEnums().SELF_HOSTED_PREFIX
-        );
-        localStorageService.set(
-            'oAuthLogoUrl',
-            loginSettings.oAuthConfiguration.logoUri,
-            getLocalStorageEnums().SELF_HOSTED_PREFIX
-        );
-        localStorageService.set(
-            'oAuthForceSSO',
-            loginSettings.oAuthConfiguration.forceSSO,
-            getLocalStorageEnums().SELF_HOSTED_PREFIX
-        );
+    setLdapLoginSettings() {
+        this.setState({
+            ldapActive: true
+        });
     }
 
     setRedirectUriToStorage() {
@@ -251,7 +227,7 @@ class Login extends React.Component {
         window.plugins.googleplus.login(
             {
                 'scopes':'',
-                'webClientId': environment.webClientId,
+                'webClientId': '800081634217-rbfe00vph9bbuk3cldi3hfemufs7r2bd.apps.googleusercontent.com',
                 'offline': false
             },
             (user) => {
@@ -280,20 +256,24 @@ class Login extends React.Component {
         ReactDOM.render(<SelfHostedUrl/>, document.getElementById('mount'));
     }
 
+    enterSubDomainName() {
+        ReactDOM.render(<SubDomainName/>, document.getElementById('mount'));
+    }
+
     backToCloudVersion() {
         localStorageService.set('baseUrl', environment.endpoint, getLocalStorageEnums().PERMANENT_PREFIX);
         localStorageService.set('homeUrl', environment.home, getLocalStorageEnums().PERMANENT_PREFIX);
-        localStorageService.clearByPrefix(getLocalStorageEnums().SELF_HOSTED_PREFIX);
+        localStorageService.clearByPrefixes(
+            [getLocalStorageEnums().SELF_HOSTED_PREFIX, getLocalStorageEnums().SUB_DOMAIN_PREFIX]
+        );
 
         this.setState({
             selfHosted: false,
+            isSubDomain: false,
             oAuthLogoUrl: "",
             ldapActive: false,
+            nativeLogin: true,
             oAuthForceSSO: false
-        }, () => {
-            this.header.setState({
-                selfHosted: false
-            });
         });
     }
 
@@ -410,7 +390,7 @@ class Login extends React.Component {
             const GOOGLE_TOKEN_URL = 'https://www.googleapis.com/oauth2/v4/token';
             let body = {
                 code: responseCode,
-                client_id: environment.webClientId,
+                client_id: '800081634217-38lf9eop18c3bltrol2deg89qqkm9m07.apps.googleusercontent.com',
                 redirect_uri: 'urn:ietf:wg:oauth:2.0:oob:auto',
                 grant_type: 'authorization_code'
             };
@@ -476,11 +456,8 @@ class Login extends React.Component {
     }
 
     loginWithSaml() {
-        const saml2Url = localStorageService.get('saml2Url');
-        const saml2Request = localStorageService.get('saml2Request');
-
-        this.saml2LoginForExtension(saml2Url, saml2Request);
-        this.saml2LoginForDesktop(saml2Url, saml2Request);
+        this.saml2LoginForExtension(this.state.saml2Url, this.state.saml2Request);
+        this.saml2LoginForDesktop(this.state.saml2Url, this.state.saml2Request);
     }
 
     saml2LoginForExtension(url, request) {
@@ -573,22 +550,19 @@ class Login extends React.Component {
     render() {
         return (
             <div onKeyPress={this.handleKeyPressed.bind(this)}>
-                <Header
-                    ref={instance => {
-                        this.header = instance;
-                    }}
-                    showActions={false}
-                />
-                <form className="login">
+                <Header showActions={false}/>
+                <form className={this.state.nativeLogin || this.state.ldapActive ?
+                    "login" : "disabled"}>
                     <div>
                         {
-                            this.state.ldapConfiguration ?
+                            this.state.ldapActive ?
                                 <input required={true}
                                        name="email"
                                        id="email"
-                                       placeholder="Username"
+                                       placeholder={this.state.nativeLogin && this.state.ldapActive ?
+                                           "E-mail or username" : "Username"}
                                        value={this.state.email}
-                                       onchange={this.onChange}/> :
+                                       onChange={this.onChange}/> :
                                 <input required={true}
                                        name="email"
                                        type="email"
@@ -604,31 +578,43 @@ class Login extends React.Component {
                     </div>
                     <p hidden={this.props.info?false:true} id="info">{this.props.info}</p>
 
-                    <a onClick={this.forgotPassword}>Forgot password</a>
+                    <a className={this.state.nativeLogin ? "login__forgot-password" : "disabled"}
+                       onClick={this.forgotPassword}>
+                        Forgot password
+                    </a>
                 </form>
                 <div className="login">
-                    <button className="login-submit" onClick={this.loginWithCredentials}>Log in</button>
-                    <button className={this.state.appType !== getAppTypes().EXTENSION && !this.state.selfHosted ? "google-login" : "google-login-disabled"}
-                            onClick={this.state.appType === getAppTypes().MOBILE ? this.googleLogin.bind(this) : this.loginWithGoogle.bind(this)}>
+                    <button className={this.state.nativeLogin || this.state.ldapConfiguration ?
+                        "login-submit" : "disabled"}
+                            onClick={this.loginWithCredentials}>Log in</button>
+                    <button className={this.state.appType !== getAppTypes().EXTENSION &&
+                                      !this.state.selfHosted ? "google-login" : "google-login-disabled"}
+                            onClick={this.state.appType === getAppTypes().MOBILE ?
+                                this.googleLogin.bind(this) : this.loginWithGoogle.bind(this)}>
                         <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAARCAYAAADUryzEAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAIPSURBVHgBlVM/aBNhFH/vS5qmiz0XbXToBaQOor2znUQwZBCcUu1YEIugDkqrTiroKYjrqYM4BQfJoJQgimiHHhlEtJET3L1BtFTbntGSo6Tf8921F+9Sr9jfcHy/9733e//uQ+jA54KmZFPpMyDpGACpACJNQD/4/A5J3slZthP1xyiZKwxNsMUgAAUSgIhmU7Zu5i3b9bkIL74VDxqEYG4W7IOIJrtRFEOeDoILQ5eB4EbcE57y50WQBTEvgU5yfhVX8XSuVp9qV9R8Ceqvh/s+rv7MbluPdIDEeM6ataJ6X4t6P0mh77bq1VhL3ms4R43Mg8bjAZBuNyDh/j5r9hP8J3BlGma474JPvPc7nvVenS9FHQ4ZS5rYZC68Itgbkq7h+doGh5Qo8zy0hHhX8Nraq+TDAmwNil+Bh38FNmRCHmp8teifQ76E3iu4hwIuPPf64f7yoOs2Rd4er7pJKY/capT5zzzlnwnJEiRgylw+ALd/D0ODuhTMpsyk4MPG94EwOADRo6B6vTI6g+ubWLPjNFLryoexat3nWnlEEVkx0fPl2mSquScs36ld780HAlplREUQLIJqvH/0uP9FltwV2jKLJcgslNwVKfW3xnanvYEkkU6woNMzd/b4m4tH7bUk8VvUKycusfV8pxARuPwS70qvZUaHjEmZBiujOj+iPiK5E2TKtsee2P/y+wNydMMjOPbkvQAAAABJRU5ErkJggg=="
                              className="google-img"/>
                         Continue with Google</button>
-                    <button className={this.state.appType !== getAppTypes().MOBILE &&
-                                       ((!this.state.selfHosted && isChrome()) ||
-                                       (this.state.selfHosted && this.state.oAuthActive)) ?
+                    <button className={this.state.appType === getAppTypes().EXTENSION &&
+                                       ((!this.state.selfHosted &&
+                                           !this.state.isSubDomain && isChrome()) ||
+                                       ((this.state.selfHosted ||
+                                           this.state.isSubDomain) && this.state.oAuthActive)) ?
                                       "login__oauth--button" : "disabled"}
                             type="button"
                             onClick={this.loginWithOAuth.bind(this)}>
                         <div className="login__oauth--button__img_and_text">
                             <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAARCAYAAADUryzEAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAIPSURBVHgBlVM/aBNhFH/vS5qmiz0XbXToBaQOor2znUQwZBCcUu1YEIugDkqrTiroKYjrqYM4BQfJoJQgimiHHhlEtJET3L1BtFTbntGSo6Tf8921F+9Sr9jfcHy/9733e//uQ+jA54KmZFPpMyDpGACpACJNQD/4/A5J3slZthP1xyiZKwxNsMUgAAUSgIhmU7Zu5i3b9bkIL74VDxqEYG4W7IOIJrtRFEOeDoILQ5eB4EbcE57y50WQBTEvgU5yfhVX8XSuVp9qV9R8Ceqvh/s+rv7MbluPdIDEeM6ataJ6X4t6P0mh77bq1VhL3ms4R43Mg8bjAZBuNyDh/j5r9hP8J3BlGma474JPvPc7nvVenS9FHQ4ZS5rYZC68Itgbkq7h+doGh5Qo8zy0hHhX8Nraq+TDAmwNil+Bh38FNmRCHmp8teifQ76E3iu4hwIuPPf64f7yoOs2Rd4er7pJKY/capT5zzzlnwnJEiRgylw+ALd/D0ODuhTMpsyk4MPG94EwOADRo6B6vTI6g+ubWLPjNFLryoexat3nWnlEEVkx0fPl2mSquScs36ld780HAlplREUQLIJqvH/0uP9FltwV2jKLJcgslNwVKfW3xnanvYEkkU6woNMzd/b4m4tH7bUk8VvUKycusfV8pxARuPwS70qvZUaHjEmZBiujOj+iPiK5E2TKtsee2P/y+wNydMMjOPbkvQAAAABJRU5ErkJggg=="
-                                 className={!this.state.selfHosted ? "google-img" : "disabled"}/>
-                            <p>{this.state.selfHosted ? "Continue with" : "Continue with Google"}</p>
-                            <img className={this.state.selfHosted ? "login__oauth--img" : "disabled"}
+                                 className={!this.state.selfHosted &&
+                                            !this.state.isSubDomain ? "google-img" : "disabled"}/>
+                            <p>{this.state.selfHosted ||
+                                this.state.isSubDomain ? "Continue with" : "Continue with Google"}</p>
+                            <img className={this.state.selfHosted ||
+                                            this.state.isSubDomain? "login__oauth--img" : "disabled"}
                                  src={this.state.oAuthLogoUrl ? this.state.oAuthLogoUrl.toString() : ""}/>
                         </div>
                     </button>
-                    <button className={this.state.selfHosted && this.state.saml2Active ?
-                                        "login__saml2--button" : "disabled"}
+                    <button className={(this.state.isSubDomain || this.state.selfHosted) &&
+                                        this.state.saml2Active ? "login__saml2--button" : "disabled"}
                             type="button"
                             onClick={this.loginWithSaml.bind(this)}>
                         Continue with SAML2
@@ -638,18 +624,19 @@ class Login extends React.Component {
                         <p>New here?</p>
                         <a onClick={this.signup}>Create an account</a>
                     </div>
-                    <hr className={!this.state.ldapActive && !this.state.oAuthForceSSO ? "login__divider" : "disabled"}/>
-                    {
-                         !this.state.selfHosted ?
-                            <div className={this.state.appType !== getAppTypes().MOBILE ?
-                                "self-hosting-url" : "disabled"}>
-                                <a onClick={this.enterBaseUrl}>Log in to custom domain</a>
-                            </div> :
-                            <div className={this.state.appType !== getAppTypes().MOBILE ?
-                                "cloud-version-url" : "disabled"}>
-                                <a onClick={this.backToCloudVersion.bind(this)}>Return to Clockify cloud</a>
-                            </div>
-                    }
+                    <hr className={!this.state.ldapActive && !this.state.oAuthForceSSO ?
+                        "login__divider" : "disabled"}/>
+                    <div className={!this.state.selfHosted && !this.state.isSubDomain &&
+                        this.state.appType !== getAppTypes().MOBILE ?
+                        "self-hosting-url" : "disabled"}>
+                        <a onClick={this.enterBaseUrl}>Log in to custom domain</a>
+                        <hr className="login__divider"/>
+                        <a onClick={this.enterSubDomainName}>Log in to sub domain</a>
+                    </div>
+                    <div className={(this.state.selfHosted || this.state.isSubDomain) &&
+                        this.state.appType !== getAppTypes().MOBILE ? "cloud-version-url" : "disabled"}>
+                        <a onClick={this.backToCloudVersion.bind(this)}>Return to Clockify cloud</a>
+                    </div>
                 </div>
             </div>
         )

@@ -45,6 +45,15 @@
       cursor: pointer;
     }
   }
+
+  &__forgot-password {
+    display: block;
+    margin-bottom: 20px;
+    font-size: 14px;
+    text-decoration: none;
+    cursor: pointer;
+    color: $blue;
+  }
 }
 .login input {
   width: 100%;
@@ -52,8 +61,6 @@
   margin-bottom: 10px;
   padding: 10px;
   border-radius: 3px;
-}
-.login input[type=email], input[type=password] {
   border: 1px solid $border;
 }
 .login-submit {
@@ -87,12 +94,10 @@
   cursor: pointer;
   color: $blue;
 }
-
 .login a:hover {
   color: $blue_hover;
   text-decoration: underline;
 }
-
 .new-account{
   display: flex;
   flex-wrap: nowrap;
@@ -103,49 +108,36 @@
   justify-content: space-between;
   align-items: baseline;
 }
-
 .new-account p{
   font-size: 14px;
   color: $lighter_text;
   margin: 0;
 }
-
 .new-account a{
   color: $blue;
   font-size: 14px;
   text-decoration: none;
   cursor: pointer;
 }
-
 .new-account a:hover {
   color: $blue_hover;
   text-decoration: underline;
 }
-
 .self-hosting-url {
-  display: flex;
-  width: 49%;
-  margin-right: auto;
-  margin-top: 20px;
-  margin-left: auto;
-  flex-wrap: nowrap;
-  justify-content: space-between;
-  align-items: baseline;
-
   a {
+    margin-top: 20px;
     color: $blue;
     font-size: 14px;
     text-decoration: none;
     cursor: pointer;
+    text-align: center;
 
     &:hover {
       color: $blue_hover;
       text-decoration: underline;
     }
   }
-
 }
-
 .cloud-version-url {
   display: flex;
   width: 49%;
@@ -175,7 +167,6 @@
   }
 
 }
-
 .google-login {
   margin-bottom: 20px;
   width: 100%;
@@ -187,14 +178,12 @@
   font-size: 14px;
   cursor: pointer;
 }
-
 .google-img {
   position: relative;
   top: 3px;
   margin-right: 10px;
   content: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAARCAYAAADUryzEAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAIPSURBVHgBlVM/aBNhFH/vS5qmiz0XbXToBaQOor2znUQwZBCcUu1YEIugDkqrTiroKYjrqYM4BQfJoJQgimiHHhlEtJET3L1BtFTbntGSo6Tf8921F+9Sr9jfcHy/9733e//uQ+jA54KmZFPpMyDpGACpACJNQD/4/A5J3slZthP1xyiZKwxNsMUgAAUSgIhmU7Zu5i3b9bkIL74VDxqEYG4W7IOIJrtRFEOeDoILQ5eB4EbcE57y50WQBTEvgU5yfhVX8XSuVp9qV9R8Ceqvh/s+rv7MbluPdIDEeM6ataJ6X4t6P0mh77bq1VhL3ms4R43Mg8bjAZBuNyDh/j5r9hP8J3BlGma474JPvPc7nvVenS9FHQ4ZS5rYZC68Itgbkq7h+doGh5Qo8zy0hHhX8Nraq+TDAmwNil+Bh38FNmRCHmp8teifQ76E3iu4hwIuPPf64f7yoOs2Rd4er7pJKY/capT5zzzlnwnJEiRgylw+ALd/D0ODuhTMpsyk4MPG94EwOADRo6B6vTI6g+ubWLPjNFLryoexat3nWnlEEVkx0fPl2mSquScs36ld780HAlplREUQLIJqvH/0uP9FltwV2jKLJcgslNwVKfW3xnanvYEkkU6woNMzd/b4m4tH7bUk8VvUKycusfV8pxARuPwS70qvZUaHjEmZBiujOj+iPiK5E2TKtsee2P/y+wNydMMjOPbkvQAAAABJRU5ErkJggg==");
 }
-
 .google-login-disabled {
   display: none;
 }

@@ -30,8 +30,10 @@ export class LocalStorageService {
             keysToDelete = Object.keys(localStorage);
         } else {
             keysToDelete = Object.keys(localStorage)
-                .filter(key => !key.includes(getLocalStorageEnums().PERMANENT_PREFIX) &&
-                                         !key.includes(getLocalStorageEnums().SELF_HOSTED_PREFIX)
+                .filter(key =>
+                    !key.includes(getLocalStorageEnums().PERMANENT_PREFIX) &&
+                    !key.includes(getLocalStorageEnums().SELF_HOSTED_PREFIX) &&
+                    !key.includes(getLocalStorageEnums().SUB_DOMAIN_PREFIX)
                 );
         }
 
@@ -40,8 +42,10 @@ export class LocalStorageService {
         }
     }
 
-    clearByPrefix(prefixToDelete) {
-        const keysToDelete = Object.keys(localStorage).filter(key => key.includes(prefixToDelete));
+    clearByPrefixes(prefixesToDelete) {
+        const keysToDelete = Object.keys(localStorage).filter(key => {
+            return prefixesToDelete.filter(prefixToDelete => key.includes(prefixToDelete)).length > 0
+        });
 
         for (let key in keysToDelete) {
             localStorage.removeItem(keysToDelete[key]);

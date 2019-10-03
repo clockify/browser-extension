@@ -16,6 +16,10 @@ function createHttpHeaders(token) {
 
     headers['App-Name'] = appName;
 
+    if (localStorage.getItem('sub-domain_subDomainName')) {
+        headers['sub-domain-name'] = localStorage.getItem('sub-domain_subDomainName');
+    }
+
     return headers;
 }
 
@@ -123,5 +127,29 @@ function getLastUsedProjectFromTimeEntries() {
         } else {
             return Promise.resolve(null);
         }
+    });
+}
+
+function refreshTokenAndFetchUser(token) {
+    this.refreshToken(token).then(response => response.json()).then(data => {
+        aBrowser.storage.sync.set({
+            token: (data.token),
+            userId: (data.id),
+            refreshToken: (data.refreshToken),
+            userEmail: (data.email)
+        });
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('refreshToken', data.refreshToken);
+        localStorage.setItem('userId', data.id);
+        localStorage.setItem('userEmail', data.email);
+
+        fetchUser(data.id).then(data => {
+            aBrowser.storage.sync.set({
+                activeWorkspaceId: (data.activeWorkspace),
+                userSettings: (JSON.stringify(data.settings))
+            });
+            localStorage.setItem('activeWorkspaceId', data.activeWorkspace);
+            localStorage.setItem('userSettings', JSON.stringify(data.settings));
+        });
     });
 }
