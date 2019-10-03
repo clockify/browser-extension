@@ -35,6 +35,10 @@ export class HttpHeadersHelper {
             appType += '-android';
         }
 
+        if (localStorageService.get('subDomainName')) {
+            headers['sub-domain-name'] = localStorageService.get('subDomainName');
+        }
+
         headers['App-Name'] = appType;
 
         return headers;

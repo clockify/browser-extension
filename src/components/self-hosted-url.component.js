@@ -2,9 +2,7 @@ import React from 'react';
 import * as ReactDOM from 'react-dom';
 import Header from './header.component';
 import Login from './login.component';
-import {SettingsService} from "../services/settings-service";
 import SelfHostedLoginSettings from "./self-hosted-login-settings.component";
-const settingsService = new SettingsService();
 
 class SelfHostedUrl extends React.Component {
     constructor(props) {
@@ -16,9 +14,6 @@ class SelfHostedUrl extends React.Component {
     }
 
     componentDidMount() {
-        this.header.setState({
-            selfHosted: true
-        });
     }
 
     onChange(e) {
@@ -48,11 +43,7 @@ class SelfHostedUrl extends React.Component {
     render() {
         return (
             <div onKeyPress={this.keyPressed.bind(this)}>
-                <Header
-                    ref={instance => {
-                        this.header = instance;
-                    }}
-                    showActions={false}/>
+                <Header showActions={false}/>
                 <form className="self-hosted-url">
                     <div>
                         <label className="self-hosted-url__server_url">Custom domain URL</label>

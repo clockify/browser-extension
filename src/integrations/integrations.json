@@ -23,6 +23,12 @@
     "script": "atlassian.js",
     "clone": true
   },
+  "custom-atlassian.com": {
+    "name": "Custom Atlassian",
+    "link": "*://*.atlassian.com/*",
+    "script": "custom-atlassian.js",
+    "clone": false
+  },
   "axosoft.com": {
     "name": "Axosoft",
     "link": "axosoft.com/",
@@ -405,6 +411,12 @@
     "name": "Wunderlist",
     "link": "*://*.wunderlist.com/*",
     "script": "wunderlist.js",
+    "clone": false
+  },
+  "zammad.com": {
+    "name": "Zammad",
+    "link": "*://*.zammad.com/*",
+    "script": "zammad.js",
     "clone": false
   },
   "zendesk.com": {

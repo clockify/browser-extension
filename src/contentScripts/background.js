@@ -158,7 +158,7 @@ aBrowser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
                 }
             } else if (tab.url.includes(aBrowser.identity.getRedirectURL())) {
                 const token  = extractToken(tab.url);
-                refreshToken(token, tab.id);
+                this.refreshTokenAndFetchUser(token);
                 aBrowser.tabs.remove(tabId, () => {});
             }
         }
@@ -462,8 +462,12 @@ function saml2Login(request) {
     aBrowser.tabs.create(
         {url: aBrowser.runtime.getURL("saml2extension.html")},
         (tab) => {
+            const relayState = {
+                location: aBrowser.identity.getRedirectURL(),
+                organizationName: localStorage.getItem('sub-domain_subDomainName') ?
+                    localStorage.getItem('sub-domain_subDomainName') : null
+            };
             let handler = (tabId, changeInfo) => {
-
                 if(tabId === tab.id && changeInfo.status === "complete"){
                     aBrowser.tabs.onUpdated.removeListener(handler);
                     aBrowser.tabs.sendMessage(
@@ -471,7 +475,7 @@ function saml2Login(request) {
                         {
                             url: request.saml2Url,
                             SAMLRequest: request.saml2Request,
-                            RelayState: aBrowser.identity.getRedirectURL()
+                            RelayState: JSON.stringify(relayState)
                         }
                     );
                 }
@@ -482,46 +486,10 @@ function saml2Login(request) {
                 {
                     url: request.saml2Url,
                     SAMLRequest: request.saml2Request,
-                    RelayState: aBrowser.identity.getRedirectURL()
+                    RelayState: JSON.stringify(relayState)
                 }
             );
         }
     );
-}
-
-function refreshToken(token, tabId) {
-    const endpoint = localStorage.getItem('permanent_baseUrl');
-    const refreshTokenUrl = `${endpoint}/auth/token/refresh`;
-    const headers = new Headers(this.createHttpHeaders(token));
-
-    let refreshTokenRequest = new Request(refreshTokenUrl, {
-        method: 'POST',
-        headers: headers,
-        body: JSON.stringify({
-            refreshToken: token
-        })
-    });
-
-    fetch(refreshTokenRequest).then(response => response.json()).then(data => {
-        aBrowser.storage.sync.set({
-            token: (data.token),
-            userId: (data.id),
-            refreshToken: (data.refreshToken),
-            userEmail: (data.email)
-        });
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('refreshToken', data.refreshToken);
-        localStorage.setItem('userId', data.id);
-        localStorage.setItem('userEmail', data.email);
-
-        fetchUser(data.id).then(data => {
-            aBrowser.storage.sync.set({
-                activeWorkspaceId: (data.activeWorkspace),
-                userSettings: (JSON.stringify(data.settings))
-            });
-            localStorage.setItem('activeWorkspaceId', data.activeWorkspace);
-            localStorage.setItem('userSettings', JSON.stringify(data.settings));
-        });
-    });
 }
 

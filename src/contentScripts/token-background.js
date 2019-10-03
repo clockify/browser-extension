@@ -31,18 +31,16 @@ function getToken() {
     });
 }
 
-function refreshToken(refreshToken) {
-    const baseUrl = localStorage.getItem('permanent_baseUrl');
-    const refreshTokenUrl = `${baseUrl}/auth/token/refresh`;
+function refreshToken(token) {
+    const endpoint = localStorage.getItem('permanent_baseUrl');
+    const refreshTokenUrl = `${endpoint}/auth/token/refresh`;
+    const headers = new Headers(this.createHttpHeaders(token));
 
     let refreshTokenRequest = new Request(refreshTokenUrl, {
         method: 'POST',
-        headers: new Headers({
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        }),
+        headers: headers,
         body: JSON.stringify({
-            refreshToken: refreshToken
+            refreshToken: token
         })
     });
 

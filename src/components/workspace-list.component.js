@@ -1,7 +1,9 @@
 import * as React from 'react';
 import {WorkspaceService} from "../services/workspace-service";
+import {LocalStorageService} from "../services/localStorage-service";
 
 const workspaceService = new WorkspaceService();
+const localStorageService = new LocalStorageService();
 
 class WorkspaceList  extends React.Component {
 
@@ -11,7 +13,8 @@ class WorkspaceList  extends React.Component {
         this.state = {
             workspaces: [],
             isOpen: false,
-            selectedWorkspace: null
+            selectedWorkspace: null,
+            isSubDomain: !!localStorageService.get('subDomainName')
         }
     }
 
@@ -34,6 +37,10 @@ class WorkspaceList  extends React.Component {
     }
 
     toggleWorkspaceList() {
+        if (this.state.isSubDomain) {
+            return;
+        }
+
         this.setState({
             isOpen: !this.state.isOpen
         })
@@ -62,7 +69,9 @@ class WorkspaceList  extends React.Component {
             return(
                 <div className="workspace-list">
                     <div className="workspace-list-title">Workspace</div>
-                    <div className="workspace-list-selection" onClick={this.toggleWorkspaceList.bind(this)}>
+                    <div className={this.state.isSubDomain ?
+                            "workspace-list-selection list-disabled" : "workspace-list-selection"}
+                         onClick={this.toggleWorkspaceList.bind(this)}>
                         <span className="workspace-list-default"
                               title={this.state.selectedWorkspace.name}>
                             {this.state.selectedWorkspace.name}

@@ -26,6 +26,7 @@
 @import "create-project";
 @import "client-list";
 @import "color-picker";
+@import "sub-domain";
 
 @-webkit-keyframes rotation {
   from {
@@ -211,6 +212,11 @@ hr {
   span {
     color: $input-background;
   }
+}
+
+.list-disabled {
+  opacity: 0.4;
+  cursor: default;
 }
 
 @import "dark-mode";
