@@ -73,7 +73,9 @@ class Menu extends React.Component {
         if (localStorage.getItem('appType') === getAppTypes().DESKTOP) {
             openExternal(`${environment.home}/dashboard`);
         } else {
-            window.open(`${environment.home}/dashboard`, '_blank');
+            const homeUrl = localStorageService.get('subDomainName') ?
+                localStorageService.get('subDomainName') + environment.home : environment.home;
+            window.open(`${homeUrl}/dashboard`, '_blank');
         }
     }
 
@@ -128,7 +130,7 @@ class Menu extends React.Component {
                         </a>
                         <a id="timer"
                            className={this.props.mode === 'timer' ?
-                                   "dropdown-item active" : "dropdown-item"}
+                               "dropdown-item active" : "dropdown-item"}
                            href="#"
                            onClick={this.changeModeToTimer.bind(this)}>
                             <span className="menu-timer-img"></span>

@@ -34,7 +34,7 @@ aBrowser.windows.onCreated.addListener((window) => {
                 this.addReminderTimerOnStartingBrowser();
                 this.startTimerOnStartingBrowser();
             });
-            this.connectWebSocket();
+        this.connectWebSocket();
     }
     windowIds = [...windowIds, window.id];
 });
@@ -248,8 +248,8 @@ function getOriginFileName(domain, permissionsFromStorage) {
 
         while (
             domain.length > 0 && enabledPermissions
-                        .filter(enabledPermission => enabledPermission.domain === domain.join("."))
-                        .length === 0
+                .filter(enabledPermission => enabledPermission.domain === domain.join("."))
+                .length === 0
             ) {
             domain.shift();
         }
@@ -257,8 +257,8 @@ function getOriginFileName(domain, permissionsFromStorage) {
 
         if (
             enabledPermissions
-            .filter(enabledPermission => enabledPermission.domain === domain)
-            .length === 0
+                .filter(enabledPermission => enabledPermission.domain === domain)
+                .length === 0
         ) {
             return null
         }
@@ -299,42 +299,6 @@ function startTimerWithDescription(info) {
                 startTimerBackground(activeWorkspaceId, token, info ? info.selectionText : "");
             })
     });
-}
-
-function loginWithCode(code, state, nonce, redirectUri) {
-    const baseUrl = localStorage.getItem('permanent_baseUrl');
-    const loginWithCodeUrl = `${baseUrl}/auth/code`;
-
-    let loginWithCodeRequest = new Request(loginWithCodeUrl, {
-        method: 'POST',
-        headers: new Headers({
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'App-Name': this.createAppName()
-        }),
-        body: JSON.stringify({
-            code: code,
-            timeZone: null,
-            state: state,
-            nonce: nonce,
-            redirectURI: redirectUri
-        })
-    });
-
-    return fetch(loginWithCodeRequest);
-}
-
-function fetchUser(userId) {
-    const baseUrl = localStorage.getItem('permanent_baseUrl');
-    const userUrl = `${baseUrl}/users/${userId}`;
-    const headers = new Headers(this.createHttpHeaders(localStorage.getItem('token')));
-
-    let getUserRequest = new Request(userUrl, {
-        method: 'GET',
-        headers: headers
-    });
-
-    return fetch(getUserRequest).then(response => response.json());
 }
 
 function endInProgressAndStartNew(info) {
@@ -428,31 +392,8 @@ function oAuthLogin(request, sendResponse) {
             localStorage.removeItem('selfhosted_oAuthState');
 
             if (code && stateFromUrl) {
-                loginWithCode(code, stateFromUrl, request.nonce, request.redirectUri)
-                    .then(response => response.json())
-                    .then(data => {
-                    aBrowser.storage.sync.set({
-                        token: (data.token),
-                        userId: (data.id),
-                        refreshToken: (data.refreshToken),
-                        userEmail: (data.email)
-                    });
-                    localStorage.setItem('token', data.token);
-                    localStorage.setItem('refreshToken', data.refreshToken);
-                    localStorage.setItem('userId', data.id);
-                    localStorage.setItem('userEmail', data.email);
-
-                    fetchUser(data.id).then(data => {
-                        aBrowser.storage.sync.set({
-                            activeWorkspaceId: (data.activeWorkspace),
-                            userSettings: (JSON.stringify(data.settings))
-                        });
-                        localStorage.setItem('activeWorkspaceId', data.activeWorkspace);
-                        localStorage.setItem('userSettings', JSON.stringify(data.settings));
-
-                        sendResponse(true);
-                    });
-                });
+                this.loginWithCodeAndFetchUser(
+                    code, stateFromUrl, request.nonce, request.redirectUri, sendResponse);
             }
         }
     );
