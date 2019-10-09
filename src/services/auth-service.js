@@ -11,6 +11,7 @@ export class AuthService {
 
     loginWithGoogle(provider, idToken, email, timeZone) {
         const baseUrl = localStorageService.get('baseUrl');
+        const subDomainName = localStorageService.get('subDomainName', null);
         const googleUrl = `${baseUrl}/auth/google`;
         const body = {
             provider: provider,
@@ -21,7 +22,8 @@ export class AuthService {
 
         let headers = {
             'Accept': 'application/json',
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'sub-domain-name': subDomainName
         };
 
         return httpService.post(googleUrl, body, headers);
@@ -44,6 +46,7 @@ export class AuthService {
     signup(email, password, timeZone) {
         const baseUrl = localStorageService.get('baseUrl');
         const signupUrl = `${baseUrl}/auth/`;
+        const subDomainName = localStorageService.get('subDomainName', null);
         const body = {
             key: email,
             secret: password,
@@ -52,7 +55,8 @@ export class AuthService {
 
         let headers = {
             'Accept': 'application/json',
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'sub-domain-name': subDomainName
         };
 
         return httpService.post(signupUrl, body, headers)

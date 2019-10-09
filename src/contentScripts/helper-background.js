@@ -153,3 +153,63 @@ function refreshTokenAndFetchUser(token) {
         });
     });
 }
+
+function loginWithCodeAndFetchUser(code, stateFromUrl, nonce, redirectUri, sendResponse) {
+    this.loginWithCode(code, stateFromUrl, nonce, redirectUri)
+        .then(response => response.json())
+        .then(data => {
+            aBrowser.storage.sync.set({
+                token: (data.token),
+                userId: (data.id),
+                refreshToken: (data.refreshToken),
+                userEmail: (data.email)
+            });
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('refreshToken', data.refreshToken);
+            localStorage.setItem('userId', data.id);
+            localStorage.setItem('userEmail', data.email);
+
+            this.fetchUser(data.id).then(data => {
+                aBrowser.storage.sync.set({
+                    activeWorkspaceId: (data.activeWorkspace),
+                    userSettings: (JSON.stringify(data.settings))
+                });
+                localStorage.setItem('activeWorkspaceId', data.activeWorkspace);
+                localStorage.setItem('userSettings', JSON.stringify(data.settings));
+
+                sendResponse(true);
+            });
+        });
+}
+
+function fetchUser(userId) {
+    const baseUrl = localStorage.getItem('permanent_baseUrl');
+    const userUrl = `${baseUrl}/users/${userId}`;
+    const headers = new Headers(this.createHttpHeaders(localStorage.getItem('token')));
+
+    let getUserRequest = new Request(userUrl, {
+        method: 'GET',
+        headers: headers
+    });
+
+    return fetch(getUserRequest).then(response => response.json());
+}
+
+function loginWithCode(code, state, nonce, redirectUri) {
+    const baseUrl = localStorage.getItem('permanent_baseUrl');
+    const loginWithCodeUrl = `${baseUrl}/auth/code`;
+
+    let loginWithCodeRequest = new Request(loginWithCodeUrl, {
+        method: 'POST',
+        headers: new Headers(this.createHttpHeaders()),
+        body: JSON.stringify({
+            code: code,
+            timeZone: null,
+            state: state,
+            nonce: nonce,
+            redirectURI: redirectUri
+        })
+    });
+
+    return fetch(loginWithCodeRequest);
+}

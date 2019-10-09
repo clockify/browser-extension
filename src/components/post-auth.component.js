@@ -16,12 +16,14 @@ class PostAuth extends React.Component {
 
     render() {
         const baseUrl = localStorageService.get("baseUrl");
+        const subDomainName = localStorageService.get('subDomainName');
         return (
             <Request
                 url={`${baseUrl}/auth/token`}
                 method='post'
                 accept='application/json'
                 type="application/json"
+                headers={{'sub-domain-name': subDomainName ? subDomainName : null}}
                 verbose={true}
                 send = {JSON.stringify({"email" : this.props.email,
                     "password" : this.props.password})}>
@@ -38,7 +40,7 @@ class PostAuth extends React.Component {
                                     <img src="./assets/images/circle_2.svg"
                                          className="pull-loading-img2"/>
                                 </div>
-                        )
+                            )
                         } else {
                             let userId = JSON.parse(result.text).id;
                             let userEmail = JSON.parse(result.text).email;
@@ -67,7 +69,9 @@ class PostAuth extends React.Component {
                                 {
                                     ({error, result, loading}) => {
                                         if (error) {
-                                            return;
+                                            return <Login info={error.response.body.message}
+                                                          logout={true}
+                                            />;
                                         }
                                         if (loading) {
                                             return (

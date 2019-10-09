@@ -27,7 +27,6 @@ const authService = new AuthService();
 const userService = new UserService();
 const localStorageService = new LocalStorageService();
 const tokenService = new TokenService();
-const GOOGLE_AUTHORIZATION_URL = 'https://accounts.google.com/o/oauth2/v2/auth';
 const htmlStyleHelper = new HtmlStyleHelper();
 const settingsService = new SettingsService();
 
@@ -47,7 +46,7 @@ class Login extends React.Component {
             nativeLogin: true,
             oAuthActive: false,
             oAuthUrl: '',
-            oAuthLogoUrl: '',
+            loginLogoUrl: '',
             oAuthForceSSO: false,
             saml2Active: false,
             saml2Request: '',
@@ -65,7 +64,6 @@ class Login extends React.Component {
         this.removeDarkMode();
         this.setAppVersionToStorage();
         this.setAppType();
-        this.setRedirectUriToStorage();
 
         if (this.props.logout) {
             this.logout();
@@ -152,7 +150,9 @@ class Login extends React.Component {
         this.setState({
             saml2Active: true,
             saml2Request: loginSettings.saml2Settings.samlRequest,
-            saml2Url: loginSettings.saml2Settings.loginUrl
+            saml2Url: loginSettings.saml2Settings.loginUrl,
+            loginLogoUrl: loginSettings.logoURL ?
+                loginSettings.logoURL : loginSettings.oAuthConfiguration.logoUri
         });
     }
 
@@ -160,7 +160,8 @@ class Login extends React.Component {
         this.setState({
             oAuthActive: true,
             oAuthUrl: loginSettings.oAuthConfiguration.url,
-            oAuthLogoUrl: loginSettings.oAuthConfiguration.logoUri,
+            loginLogoUrl: loginSettings.logoURL ?
+                loginSettings.logoURL : loginSettings.oAuthConfiguration.logoUri,
             oAuthForceSSO: loginSettings.oAuthConfiguration.forceSSO
         });
     }
@@ -169,35 +170,6 @@ class Login extends React.Component {
         this.setState({
             ldapActive: true
         });
-    }
-
-    setRedirectUriToStorage() {
-        if (isAppTypeExtension()) {
-            const baseUrl = localStorageService.get('homeUrl');
-            localStorageService.set(
-                'redirectUriOauthChromeExtension',
-                baseUrl + '/' + environment.redirectUriOauthChromeExtension,
-                getLocalStorageEnums().SELF_HOSTED_PREFIX
-            );
-            localStorageService.set(
-                'redirectUriOauthFirefoxExtension',
-                baseUrl + '' + environment.redirectUriOauthFirefoxExtension,
-                getLocalStorageEnums().SELF_HOSTED_PREFIX
-            );
-        }
-
-        if (isAppTypeDesktop()) {
-            localStorageService.set(
-                'redirectUriOauthDesktop',
-                environment.redirectUriOauthDesktop,
-                getLocalStorageEnums().SELF_HOSTED_PREFIX
-            );
-            localStorageService.set(
-                'redirectUriSaml2Desktop',
-                environment.redirectUriSaml2Desktop,
-                getLocalStorageEnums().SELF_HOSTED_PREFIX
-            );
-        }
     }
 
     onChange(e) {
@@ -268,7 +240,7 @@ class Login extends React.Component {
         this.setState({
             selfHosted: false,
             isSubDomain: false,
-            oAuthLogoUrl: "",
+            loginLogoUrl: "",
             ldapActive: false,
             nativeLogin: true,
             oAuthForceSSO: false
@@ -282,19 +254,12 @@ class Login extends React.Component {
     }
 
     loginWithOAuth() {
-        let authorizationUrl = "";
         const state = Math.random().toString(36);
         const nonce = Math.random().toString(36);
 
         localStorageService.set('oAuthState', state, getLocalStorageEnums().SELF_HOSTED_PREFIX);
+        const authorizationUrl = this.state.oAuthUrl;
 
-        if (this.state.selfHosted) {
-            authorizationUrl = this.state.oAuthUrl;
-        } else {
-            authorizationUrl = GOOGLE_AUTHORIZATION_URL +
-                '?response_type=code' +
-                '&scope=profile email';
-        }
 
         let oAuthUrl = authorizationUrl +
             '&state=' + btoa(state) +
@@ -309,20 +274,19 @@ class Login extends React.Component {
         if (!isAppTypeExtension()) {
             return;
         }
+
+        const baseUrl = localStorageService.get('homeUrl');
         let redirectUri = "";
 
         if (typeof chrome !== "undefined") {
             if (typeof browser !== "undefined") {
-                redirectUri = localStorageService.get('redirectUriOauthFirefoxExtension');
+                redirectUri = baseUrl + '/' + environment.redirectUriOauthFirefoxExtension;
             } else {
-                redirectUri = localStorageService.get('redirectUriOauthChromeExtension');
+                redirectUri = baseUrl + '/' + environment.redirectUriOauthChromeExtension;
             }
         }
 
-        url = url +
-            '&client_id=' + environment.webClientId +
-            '&redirect_uri=' + redirectUri;
-
+        url = url + '&redirect_uri=' + redirectUri;
         getBrowser().runtime.sendMessage({
             eventName: 'oAuthLogin',
             oAuthUrl: url,
@@ -509,10 +473,10 @@ class Login extends React.Component {
                 });
                 ReactDOM.render(<HomePage/>, document.getElementById('mount'));
             }).catch(error => {
-                this.setState({
-                    isReady: false,
-                })
+            this.setState({
+                isReady: false,
             })
+        })
     }
 
     logout() {
@@ -586,53 +550,57 @@ class Login extends React.Component {
                         "login-submit" : "disabled"}
                             onClick={this.loginWithCredentials}>Log in</button>
                     <button className={this.state.appType !== getAppTypes().EXTENSION &&
-                                      !this.state.selfHosted ? "google-login" : "google-login-disabled"}
+                    !this.state.selfHosted ? "google-login" : "google-login-disabled"}
                             onClick={this.state.appType === getAppTypes().MOBILE ?
                                 this.googleLogin.bind(this) : this.loginWithGoogle.bind(this)}>
                         <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAARCAYAAADUryzEAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAIPSURBVHgBlVM/aBNhFH/vS5qmiz0XbXToBaQOor2znUQwZBCcUu1YEIugDkqrTiroKYjrqYM4BQfJoJQgimiHHhlEtJET3L1BtFTbntGSo6Tf8921F+9Sr9jfcHy/9733e//uQ+jA54KmZFPpMyDpGACpACJNQD/4/A5J3slZthP1xyiZKwxNsMUgAAUSgIhmU7Zu5i3b9bkIL74VDxqEYG4W7IOIJrtRFEOeDoILQ5eB4EbcE57y50WQBTEvgU5yfhVX8XSuVp9qV9R8Ceqvh/s+rv7MbluPdIDEeM6ataJ6X4t6P0mh77bq1VhL3ms4R43Mg8bjAZBuNyDh/j5r9hP8J3BlGma474JPvPc7nvVenS9FHQ4ZS5rYZC68Itgbkq7h+doGh5Qo8zy0hHhX8Nraq+TDAmwNil+Bh38FNmRCHmp8teifQ76E3iu4hwIuPPf64f7yoOs2Rd4er7pJKY/capT5zzzlnwnJEiRgylw+ALd/D0ODuhTMpsyk4MPG94EwOADRo6B6vTI6g+ubWLPjNFLryoexat3nWnlEEVkx0fPl2mSquScs36ld780HAlplREUQLIJqvH/0uP9FltwV2jKLJcgslNwVKfW3xnanvYEkkU6woNMzd/b4m4tH7bUk8VvUKycusfV8pxARuPwS70qvZUaHjEmZBiujOj+iPiK5E2TKtsee2P/y+wNydMMjOPbkvQAAAABJRU5ErkJggg=="
                              className="google-img"/>
                         Continue with Google</button>
                     <button className={this.state.appType === getAppTypes().EXTENSION &&
-                                       ((!this.state.selfHosted &&
-                                           !this.state.isSubDomain && isChrome()) ||
-                                       ((this.state.selfHosted ||
-                                           this.state.isSubDomain) && this.state.oAuthActive)) ?
-                                      "login__oauth--button" : "disabled"}
+                    ((!this.state.selfHosted &&
+                        !this.state.isSubDomain && isChrome()) ||
+                        ((this.state.selfHosted ||
+                            this.state.isSubDomain) && this.state.oAuthActive)) ?
+                        "login__oauth--button" : "disabled"}
                             type="button"
                             onClick={this.loginWithOAuth.bind(this)}>
                         <div className="login__oauth--button__img_and_text">
-                            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAARCAYAAADUryzEAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAIPSURBVHgBlVM/aBNhFH/vS5qmiz0XbXToBaQOor2znUQwZBCcUu1YEIugDkqrTiroKYjrqYM4BQfJoJQgimiHHhlEtJET3L1BtFTbntGSo6Tf8921F+9Sr9jfcHy/9733e//uQ+jA54KmZFPpMyDpGACpACJNQD/4/A5J3slZthP1xyiZKwxNsMUgAAUSgIhmU7Zu5i3b9bkIL74VDxqEYG4W7IOIJrtRFEOeDoILQ5eB4EbcE57y50WQBTEvgU5yfhVX8XSuVp9qV9R8Ceqvh/s+rv7MbluPdIDEeM6ataJ6X4t6P0mh77bq1VhL3ms4R43Mg8bjAZBuNyDh/j5r9hP8J3BlGma474JPvPc7nvVenS9FHQ4ZS5rYZC68Itgbkq7h+doGh5Qo8zy0hHhX8Nraq+TDAmwNil+Bh38FNmRCHmp8teifQ76E3iu4hwIuPPf64f7yoOs2Rd4er7pJKY/capT5zzzlnwnJEiRgylw+ALd/D0ODuhTMpsyk4MPG94EwOADRo6B6vTI6g+ubWLPjNFLryoexat3nWnlEEVkx0fPl2mSquScs36ld780HAlplREUQLIJqvH/0uP9FltwV2jKLJcgslNwVKfW3xnanvYEkkU6woNMzd/b4m4tH7bUk8VvUKycusfV8pxARuPwS70qvZUaHjEmZBiujOj+iPiK5E2TKtsee2P/y+wNydMMjOPbkvQAAAABJRU5ErkJggg=="
-                                 className={!this.state.selfHosted &&
-                                            !this.state.isSubDomain ? "google-img" : "disabled"}/>
-                            <p>{this.state.selfHosted ||
-                                this.state.isSubDomain ? "Continue with" : "Continue with Google"}</p>
-                            <img className={this.state.selfHosted ||
-                                            this.state.isSubDomain? "login__oauth--img" : "disabled"}
-                                 src={this.state.oAuthLogoUrl ? this.state.oAuthLogoUrl.toString() : ""}/>
+                            <img className="login__oauth--img"
+                                 src={this.state.loginLogoUrl ?
+                                     this.state.loginLogoUrl.toString() : ""}/>
+                            <p>Login with OAuth2</p>
                         </div>
                     </button>
                     <button className={(this.state.isSubDomain || this.state.selfHosted) &&
-                                        this.state.saml2Active ? "login__saml2--button" : "disabled"}
+                    this.state.saml2Active && isChrome() ? "login__saml2--button" : "disabled"}
                             type="button"
                             onClick={this.loginWithSaml.bind(this)}>
-                        Continue with SAML2
+                        <div className="login__oauth--button__img_and_text">
+                            <img className="login__oauth--img"
+                                 src={this.state.loginLogoUrl ?
+                                     this.state.loginLogoUrl.toString() : ""}/>
+                            <p>Continue with SAML2</p>
+                        </div>
                     </button>
                     <hr className="login__divider"/>
-                    <div className={!this.state.ldapActive && !this.state.oAuthForceSSO ? "new-account" : "disabled"}>
+                    <div className={this.state.nativeLogin &&
+                    !this.state.ldapActive &&
+                    !this.state.oAuthForceSSO ?
+                        "new-account" : "disabled"}>
                         <p>New here?</p>
                         <a onClick={this.signup}>Create an account</a>
                     </div>
                     <hr className={!this.state.ldapActive && !this.state.oAuthForceSSO ?
                         "login__divider" : "disabled"}/>
                     <div className={!this.state.selfHosted && !this.state.isSubDomain &&
-                        this.state.appType !== getAppTypes().MOBILE ?
+                    this.state.appType  === getAppTypes().EXTENSION ?
                         "self-hosting-url" : "disabled"}>
                         <a onClick={this.enterBaseUrl}>Log in to custom domain</a>
                         <hr className="login__divider"/>
                         <a onClick={this.enterSubDomainName}>Log in to sub domain</a>
                     </div>
                     <div className={(this.state.selfHosted || this.state.isSubDomain) &&
-                        this.state.appType !== getAppTypes().MOBILE ? "cloud-version-url" : "disabled"}>
+                    this.state.appType !== getAppTypes().MOBILE ? "cloud-version-url" : "disabled"}>
                         <a onClick={this.backToCloudVersion.bind(this)}>Return to Clockify cloud</a>
                     </div>
                 </div>
