@@ -6,34 +6,26 @@
   z-index: 1112;
 }
 .toaster__message {
-  &--container_success {
-    padding: 15px;
-    margin-top: 5px;
-    box-sizing: border-box;
-    background-color: $green;
-    color: $input-background;
-    border-radius: 2px;
-    font-size: 14px;
-    line-height: 16px;
-    position: relative;
-    bottom: 15px;
-    left: 0;
-    animation: toaster-fadein 0.5s ease, toaster-fadeout 0.5s cubic-bezier(1, -.5, 0, 1) 1.5s;
-  }
-  &--container_error {
-    padding: 15px;
-    margin-top: 5px;
-    box-sizing: border-box;
-    background-color: $red;
-    color: $input-background;
-    border-radius: 2px;
-    font-size: 14px;
-    line-height: 16px;
-    position: relative;
-    bottom: 15px;
-    left: 0;
-    animation: toaster-fadein 0.5s ease, toaster-fadeout 0.5s cubic-bezier(1, -.5, 0, 1) 1.5s;
-  }
+    &--container_success,
+    &--container_error {
+      padding: 15px;
+      margin-top: 5px;
+      box-sizing: border-box;
+      color: $input-background;
+      border-radius: 2px;
+      font-size: 14px;
+      line-height: 16px;
+      position: relative;
+      bottom: 15px;
+      left: 0;
+      animation: toaster-fadein 0.5s ease, toaster-fadeout 0.5s cubic-bezier(1, -.5, 0, 1) 1.5s;
+    }
+    &--container_success {
+      background-color: $green;
+    }
+    &--container_error {
+      background-color: $red;
+    }
 }
 @keyframes toaster-fadein {
   from {bottom: 0; opacity: 0;}
