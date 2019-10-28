@@ -2,7 +2,7 @@
 
 function getProjectNameFromLabel(elem) {
   var projectLabel = '',
-    projectLabelEle = $('.project_item__name', elem.parentNode.parentNode);
+      projectLabelEle = $('.project_item__name', elem.parentNode.parentNode);
   if (projectLabelEle) {
     projectLabel = projectLabelEle.textContent.trim();
   }
@@ -45,10 +45,10 @@ function projectWasJustCreated(projectId) {
 
 function getSidebarCurrentEle(elem) {
   var editorInstance,
-    projectId,
-    sidebarRoot,
-    sidebarColorEle,
-    sidebarCurrentEle;
+      projectId,
+      sidebarRoot,
+      sidebarColorEle,
+      sidebarCurrentEle;
   editorInstance = elem.closest('.project_editor_instance');
   if (editorInstance) {
     projectId = editorInstance.getAttribute('data-project-id');
@@ -81,49 +81,23 @@ function getProjectNames(elem) {
   return projectNames;
 }
 
-clockifyButton.render(
-  '.task_item .content:not(.clockify)',
-  { observe: true },
-  (elem) => {
-    let link,
-      descFunc,
-      container = $('.text', elem),
-      projectNames = getProjectNames(elem),
-      project = projectNames.length > 0 ? projectNames[0] : "";
+setTimeout(() => {
+  clockifyButton.render(
+      '.task_item .content:not(.clockify)',
+      { observe: true },
+      (elem) => {
 
+        let link,
+            description,
+            container = $('.text', elem),
+            projectNames = getProjectNames(elem),
+            project = projectNames.length > 0 ? projectNames[0] : "";
 
-    descFunc = function() {
-      var clone = container.cloneNode(true),
-        i = 0,
-        child = null;
+        description = $('.task_item_content_text', elem).textContent;
+        link = clockifyButton.createSmallButton(description, project);
+        link.style.marginLeft = "10px";
 
-      while (clone.children.length > i) {
-        child = clone.children[i];
-        if (
-          child.tagName === 'B' ||
-          child.tagName === 'I' ||
-          child.tagName === 'STRONG' ||
-          child.tagName === 'EM'
-        ) {
-          i++;
-        } else if (child.tagName === 'A') {
-          if (
-            child.classList.contains('ex_link') ||
-            child.getAttribute('href').indexOf('mailto:') === 0
-          ) {
-            i++;
-          } else {
-            child.remove();
-          }
-        } else {
-          child.remove();
-        }
+        container.insertBefore(link, container.lastChild);
       }
-
-      return clone.textContent.trim();
-    };
-    link = clockifyButton.createSmallButton(descFunc(), project);
-
-    container.insertBefore(link, container.lastChild);
-  }
-);
+  );
+}, 1000);
