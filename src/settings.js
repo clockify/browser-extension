@@ -8,7 +8,7 @@ document.getElementById('settings__permissions-container')
         if (e.target.tagName === "INPUT" && e.target.type === "checkbox") {
             this.save_permissions();
         }
-});
+    });
 
 aBrowser.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request === 'closeOptionsPage') {
@@ -50,24 +50,29 @@ function createOriginList() {
             permContainer.style.borderRadius = '2px';
 
             for(let key in data) {
-                const checkbox = addCheckbox(key, data[key]);
-                permContainer.appendChild(checkbox);
-
-                if (!data[key].clone) {
-                    option = document.createElement('option');
-                    option.id = 'origin';
-                    option.value = key;
-                    option.setAttribute('data-id', key);
-                    option.textContent = data[key].name;
-
-                    origins.appendChild(option);
+                if (!data[key].script.includes("custom-")) {
+                    const checkbox = addCheckbox(key, data[key]);
+                    permContainer.appendChild(checkbox);
                 }
+
+                createOriginListForCustomDomain(data, key, option, origins);
             }
             replaceContent('#settings__custom-domains__origins-container', origins);
             restore_options();
         });
 }
 
+function createOriginListForCustomDomain(data, key, option, origins) {
+    if (!data[key].clone) {
+        option = document.createElement('option');
+        option.id = 'origin';
+        option.value = key;
+        option.setAttribute('data-id', key);
+        option.textContent = data[key].name;
+
+        origins.appendChild(option);
+    }
+}
 
 function initLoad() {
     createOriginList();
@@ -80,11 +85,14 @@ function restore_options() {
             const permissionsByUser =
                 result.permissions.filter(permission => permission.userId === userId)[0];
 
-            if (permissionsByUser) {
-                for (let key in permissionsByUser.permissions.filter(p => !p.isCustom)) {
-                    document.getElementById(permissionsByUser.permissions[key].domain).checked =
-                        permissionsByUser.permissions[key].isEnabled;
-                }
+            if (!permissionsByUser) {
+                return;
+            }
+            const filteredPermissions = permissionsByUser.permissions
+                .filter(p => !p.isCustom && !p.script.includes("custom-"));
+            for (let key in filteredPermissions) {
+                document.getElementById(filteredPermissions[key].domain).checked =
+                    filteredPermissions[key].isEnabled;
             }
         }
     });
@@ -97,12 +105,15 @@ function save_permissions() {
             const permissionsByUser =
                 result.permissions.filter(permission => permission.userId === userId)[0];
 
-            if (permissionsByUser) {
-                for (let i in permissionsByUser.permissions.filter(p => !p.isCustom)) {
-                    let permission = permissionsByUser.permissions[i];
-                    permission['isEnabled'] =
-                        document.getElementById(permissionsByUser.permissions[i].domain).checked;
-                }
+            if (!permissionsByUser) {
+                return;
+            }
+            const filteredPermissions = permissionsByUser.permissions
+                .filter(p => !p.isCustom && !p.script.includes("custom-"));
+            for (let i in filteredPermissions) {
+                let permission = filteredPermissions[i];
+                permission['isEnabled'] =
+                    document.getElementById(filteredPermissions[i].domain).checked;
             }
 
             aBrowser.storage.local.set({"permissions": permissionsForStorage});
@@ -151,7 +162,7 @@ function showCustomDomains() {
     customDomainsHtml.className = 'settings__custom-domains__custom-origin-list';
 
     aBrowser.storage.local.get(['permissions'], (result) => {
-       result.permissions
+        result.permissions
             .filter(permissionByUser => permissionByUser.userId === userId)[0].permissions
             .filter(permission => permission.isCustom)
             .forEach(p => {
@@ -175,19 +186,19 @@ function showCustomDomains() {
                 customDomainsHtml.appendChild(li);
             });
 
-       if (customDomainsHtml.childNodes.length > 0) {
-           replaceContent(
-               '#settings__custom-domains__custom-perm-container',
-               customDomainsHtml
-           );
-       } else {
-           if (
-               document.getElementById('settings__custom-domains__custom-perm-container')
-                   .childNodes.length > 0) {
-               document.getElementById('settings__custom-domains__custom-perm-container')
-                   .removeChild(document.getElementById('custom-permissions-list'));
-           }
-       }
+        if (customDomainsHtml.childNodes.length > 0) {
+            replaceContent(
+                '#settings__custom-domains__custom-perm-container',
+                customDomainsHtml
+            );
+        } else {
+            if (
+                document.getElementById('settings__custom-domains__custom-perm-container')
+                    .childNodes.length > 0) {
+                document.getElementById('settings__custom-domains__custom-perm-container')
+                    .removeChild(document.getElementById('custom-permissions-list'));
+            }
+        }
     });
 }
 
@@ -254,7 +265,10 @@ function addCheckbox(key, origin) {
 function enableAllOrigins() {
 
     for (let key in clockifyOrigins) {
-        document.getElementById(key).checked = true;
+        const elementById = document.getElementById(key);
+        if (elementById) {
+            elementById.checked = true;
+        }
     }
 
     save_permissions();
@@ -262,7 +276,10 @@ function enableAllOrigins() {
 
 function disableAllOrigins() {
     for (let key in clockifyOrigins) {
-        document.getElementById(key).checked = false;
+        const elementById = document.getElementById(key);
+        if (elementById) {
+            elementById.checked = false;
+        }
     }
 
     save_permissions();
@@ -312,8 +329,6 @@ function addIntegrationsInPermissionsIfNewIntegrationsExist(origins) {
             .filter(permissionByUser => permissionByUser.userId === userId)[0];
         const permissionsDomainsByUser = permissionsByUser.permissions
             .map(permission => permission.domain);
-
-        console.log(permissionsForStorage);
 
         for (let key in clockifyOrigins) {
             if (!permissionsDomainsByUser.includes(key)) {
