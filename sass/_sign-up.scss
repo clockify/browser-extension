@@ -1,4 +1,17 @@
 .signup {
+  &__disabled {
+    width: calc(100% - 40px);
+    padding: 15px;
+    margin-top: 20px;
+    box-sizing: border-box;
+    color: #FFFFFF;
+    border-radius: 2px;
+    font-size: 14px;
+    line-height: 16px;
+    position: relative;
+    left: 20px;
+    background-color: $blue;
+  }
   &-logo {
     text-align: center;
   }

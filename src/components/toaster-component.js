@@ -18,6 +18,7 @@ class Toaster extends React.Component {
                 break;
             case 'error':
                 this.showErrorToast(message, removeAfterSeconds);
+                break;
         }
     }
 

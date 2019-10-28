@@ -7,7 +7,7 @@ import * as moment from 'moment-timezone';
 import {AuthService} from "../services/auth-service";
 import {UserService} from "../services/user-service";
 import {isAppTypeExtension} from "../helpers/app-types-helper";
-import {getBrowser, isChrome} from "../helpers/browser-helper";
+import {getBrowser} from "../helpers/browser-helper";
 import Login from "./login.component";
 
 const environment = getEnv();
@@ -28,7 +28,8 @@ class SignUp extends React.Component {
             termsOfUse: true,
             termsAlert: false,
             emailAlert: false,
-            emailExists: false
+            emailExists: false,
+            signupDisabledMessage: null
         };
 
         this.onChange = this.onChange.bind(this);
@@ -65,6 +66,9 @@ class SignUp extends React.Component {
                                     refreshToken: (data.refreshToken),
                                     userEmail: (data.email)
                                 });
+                                this.setState({
+                                    signupDisabledMessage: null
+                                })
                             }
                             localStorage.setItem('userId', data.id);
                             localStorage.setItem('userEmail', data.email);
@@ -74,9 +78,15 @@ class SignUp extends React.Component {
                         })
                         .catch(error => {
                             disabledSignup = false;
-                            this.setState({
-                                emailExists: true
-                            })
+                            if (error.response.data.code === 503) {
+                                this.setState({
+                                    signupDisabledMessage: error.response.data.message
+                                })
+                            } else {
+                                this.setState({
+                                    emailExists: true
+                                })
+                            }
                         })
                 }
             });
@@ -131,6 +141,9 @@ class SignUp extends React.Component {
                         showSync={false}
                         mode={localStorage.getItem('mode')}
                 />
+                <div className={this.state.signupDisabledMessage ? "signup__disabled" : "disabled"}>
+                    {this.state.signupDisabledMessage}
+                </div>
                 <div className="signup-title_and_text">
                     <p className="signup-title">Get started with Clockify</p>
                     <p className="signup-text">Create a free account to start tracking time and supercharge your productivity</p>
