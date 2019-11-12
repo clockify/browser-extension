@@ -17,6 +17,7 @@ import {LocalStorageService} from "../services/localStorage-service";
 const projectHelpers = new ProjectHelper();
 const timeEntryService = new TimeEntryService();
 const localStorageService = new LocalStorageService();
+let interval;
 
 class StartTimer extends React.Component {
     constructor(props) {
@@ -31,7 +32,6 @@ class StartTimer extends React.Component {
         };
 
         this.application = new Application(localStorageService.get('appType'));
-        this.interval = null;
     }
 
     componentDidMount() {
@@ -44,7 +44,7 @@ class StartTimer extends React.Component {
 
     getEntryInProgressOnResume() {
         document.addEventListener("resume", () => {
-            clearInterval(this.interval);
+            clearInterval(interval);
             this.getTimeEntryInProgress();
         });
     }
@@ -56,7 +56,7 @@ class StartTimer extends React.Component {
             }, () => {
                 if(this.state.timeEntry.timeInterval) {
                     let currentPeriod = moment().diff(moment(this.state.timeEntry.timeInterval.start));
-                    this.interval = setInterval(() => {
+                    interval = setInterval(() => {
                         currentPeriod = currentPeriod + 1000;
                         this.setState({
                             time: duration(currentPeriod).format('HH:mm:ss', {trim: false})
@@ -82,8 +82,8 @@ class StartTimer extends React.Component {
     setTimeEntryInProgress(timeEntry) {
         let inProgress = false;
 
-        if (this.interval) {
-            clearInterval(this.interval);
+        if (interval) {
+            clearInterval(interval);
         }
 
         if(timeEntry) {
@@ -107,7 +107,7 @@ class StartTimer extends React.Component {
                     timeEntry: timeEntry
                 }, () => {
                     let currentPeriod = moment().diff(moment(this.state.timeEntry.timeInterval.start));
-                    this.interval = setInterval(() => {
+                    interval = setInterval(() => {
                         currentPeriod = currentPeriod + 1000;
                         this.setState({
                             time: duration(currentPeriod).format('HH:mm:ss', {trim: false})
@@ -168,8 +168,8 @@ class StartTimer extends React.Component {
     }
 
     startNewEntry() {
-        if (this.interval) {
-            clearInterval(this.interval);
+        if (interval) {
+            clearInterval(interval);
         }
         if(checkConnection()) {
             this.setState({
@@ -244,7 +244,7 @@ class StartTimer extends React.Component {
             localStorage.setItem('timeEntriesOffline', JSON.stringify(timeEntriesOffline));
             localStorage.setItem('timeEntryInOffline', null);
 
-            clearInterval(this.interval);
+            clearInterval(interval);
             this.setState({
                 timeEntry: {},
                 time: moment().hour(0).minute(0).second(0).format('HH:mm:ss')
@@ -255,7 +255,7 @@ class StartTimer extends React.Component {
         } else {
             timeEntryService.stopEntryInProgress(moment())
                 .then(() => {
-                    clearInterval(this.interval);
+                    clearInterval(interval);
                     this.setState({
                         timeEntry: {},
                         time: moment().hour(0).minute(0).second(0).format('HH:mm:ss')
