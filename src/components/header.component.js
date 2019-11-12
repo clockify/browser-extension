@@ -61,10 +61,12 @@ class Header extends React.Component {
     }
 
     goToClockify() {
+        const subDomain = localStorageService.get("subDomainName", null);
+        const homeUrl = subDomain ? `${subDomain}/${environment.home}` : environment.home;
         if (localStorage.getItem('appType') === getAppTypes().DESKTOP) {
-            openExternal(`${environment.home}/tracker`);
+            openExternal(`${homeUrl}/tracker`);
         } else {
-            window.open(`${environment.home}/tracker`, '_blank');
+            window.open(`${homeUrl}/tracker`, '_blank');
         }
     }
 
