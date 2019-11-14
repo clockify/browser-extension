@@ -98,7 +98,7 @@ class HomePage extends React.Component {
     getEntryFromPomodoroEvents() {
         getBrowser().runtime.onMessage.addListener((request, sender, sendResponse) => {
             if (request.eventName === 'pomodoroEvent') {
-                this.start.setTimeEntryInProgress(request.timeEntry);
+                this.start.getTimeEntryInProgress();
             }
         });
     }
@@ -474,7 +474,7 @@ class HomePage extends React.Component {
                         timeEntry.billable
                     ).then(response => {
                         let data = response.data;
-                        this.start.setTimeEntryInProgress(data);
+                        this.start.getTimeEntryInProgress();
                         if (isAppTypeExtension()) {
                             getBrowser().extension.getBackgroundPage().addIdleListenerIfIdleIsEnabled();
                             getBrowser().extension.getBackgroundPage().entryInProgressChangedEventHandler(data);
@@ -565,7 +565,7 @@ class HomePage extends React.Component {
                     timeEntry.billable
                 ).then(response => {
                     let data = response.data;
-                    this.start.setTimeEntryInProgress(data);
+                    this.start.getTimeEntryInProgress();
                     if (isAppTypeExtension()) {
                         getBrowser().extension.getBackgroundPage().addIdleListenerIfIdleIsEnabled();
                         getBrowser().extension.getBackgroundPage().addPomodoroTimer();

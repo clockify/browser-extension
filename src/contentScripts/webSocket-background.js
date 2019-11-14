@@ -206,5 +206,5 @@ function getReconnectTimeout() {
     const max = 15 * 1000;
 
     return Math.floor(Math.random() * (max - min + 1)) + min;
-};
+}
 

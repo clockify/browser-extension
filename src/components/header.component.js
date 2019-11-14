@@ -62,7 +62,7 @@ class Header extends React.Component {
 
     goToClockify() {
         const subDomain = localStorageService.get("subDomainName", null);
-        const homeUrl = subDomain ? `${subDomain}/${environment.home}` : environment.home;
+        const homeUrl = subDomain ? `https://${subDomain}.${environment.home.split('https://')[1]}` : environment.home;
         if (localStorage.getItem('appType') === getAppTypes().DESKTOP) {
             openExternal(`${homeUrl}/tracker`);
         } else {

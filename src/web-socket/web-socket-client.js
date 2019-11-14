@@ -26,6 +26,7 @@ export class WebSocketClient {
                 tokenService.getToken().then(token => {
                     if (!!token) {
                         this.authenticate(token);
+                        localStorage.setItem('wsConnectionId', this.connectionId);
                     }
                 });
             }
