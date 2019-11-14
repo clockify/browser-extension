@@ -17,7 +17,6 @@ import {LocalStorageService} from "../services/localStorage-service";
 const projectHelpers = new ProjectHelper();
 const timeEntryService = new TimeEntryService();
 const localStorageService = new LocalStorageService();
-let interval;
 
 class StartTimer extends React.Component {
     constructor(props) {
@@ -32,6 +31,7 @@ class StartTimer extends React.Component {
         };
 
         this.application = new Application(localStorageService.get('appType'));
+        this.interval = null;
     }
 
     componentDidMount() {
@@ -44,7 +44,7 @@ class StartTimer extends React.Component {
 
     getEntryInProgressOnResume() {
         document.addEventListener("resume", () => {
-            clearInterval(interval);
+            clearInterval(this.interval);
             this.getTimeEntryInProgress();
         });
     }
@@ -56,7 +56,7 @@ class StartTimer extends React.Component {
             }, () => {
                 if(this.state.timeEntry.timeInterval) {
                     let currentPeriod = moment().diff(moment(this.state.timeEntry.timeInterval.start));
-                    interval = setInterval(() => {
+                    this.interval = setInterval(() => {
                         currentPeriod = currentPeriod + 1000;
                         this.setState({
                             time: duration(currentPeriod).format('HH:mm:ss', {trim: false})
@@ -64,9 +64,6 @@ class StartTimer extends React.Component {
                     }, 1000);
 
                     this.props.changeMode('timer');
-                    this.setState({
-                        interval: interval
-                    });
                     this.props.setTimeEntryInProgress(this.state.timeEntry);
                 }
             })
@@ -85,8 +82,8 @@ class StartTimer extends React.Component {
     setTimeEntryInProgress(timeEntry) {
         let inProgress = false;
 
-        if (this.state.interval) {
-            clearInterval(this.state.interval);
+        if (this.interval) {
+            clearInterval(this.interval);
         }
 
         if(timeEntry) {
@@ -110,7 +107,7 @@ class StartTimer extends React.Component {
                     timeEntry: timeEntry
                 }, () => {
                     let currentPeriod = moment().diff(moment(this.state.timeEntry.timeInterval.start));
-                    let interval = setInterval(() => {
+                    this.interval = setInterval(() => {
                         currentPeriod = currentPeriod + 1000;
                         this.setState({
                             time: duration(currentPeriod).format('HH:mm:ss', {trim: false})
@@ -118,10 +115,6 @@ class StartTimer extends React.Component {
                     }, 1000);
 
                     this.props.changeMode('timer');
-                    this.setState({
-                        interval: interval
-                    });
-
                     this.props.setTimeEntryInProgress(timeEntry);
                 });
                 inProgress = true;
@@ -132,7 +125,6 @@ class StartTimer extends React.Component {
         } else {
             this.setState({
                 timeEntry: {},
-                interval: "",
                 time: moment().hour(0).minute(0).second(0).format('HH:mm:ss')
             });
             this.props.setTimeEntryInProgress(timeEntry);
@@ -176,8 +168,8 @@ class StartTimer extends React.Component {
     }
 
     startNewEntry() {
-        if (interval) {
-            clearInterval(interval);
+        if (this.interval) {
+            clearInterval(this.interval);
         }
         if(checkConnection()) {
             this.setState({
@@ -252,12 +244,10 @@ class StartTimer extends React.Component {
             localStorage.setItem('timeEntriesOffline', JSON.stringify(timeEntriesOffline));
             localStorage.setItem('timeEntryInOffline', null);
 
-            clearInterval(this.state.interval);
-            clearInterval(interval);
+            clearInterval(this.interval);
             this.setState({
                 timeEntry: {},
-                time: moment().hour(0).minute(0).second(0).format('HH:mm:ss'),
-                interval: ""
+                time: moment().hour(0).minute(0).second(0).format('HH:mm:ss')
             });
             document.getElementById('description').value = '';
             this.props.setTimeEntryInProgress(null);
@@ -265,8 +255,7 @@ class StartTimer extends React.Component {
         } else {
             timeEntryService.stopEntryInProgress(moment())
                 .then(() => {
-                    clearInterval(this.state.interval);
-                    clearInterval(interval);
+                    clearInterval(this.interval);
                     this.setState({
                         timeEntry: {},
                         time: moment().hour(0).minute(0).second(0).format('HH:mm:ss')

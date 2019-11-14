@@ -474,11 +474,11 @@ class HomePage extends React.Component {
                         timeEntry.billable
                     ).then(response => {
                         let data = response.data;
+                        this.start.setTimeEntryInProgress(data);
                         if (isAppTypeExtension()) {
                             getBrowser().extension.getBackgroundPage().addIdleListenerIfIdleIsEnabled();
                             getBrowser().extension.getBackgroundPage().entryInProgressChangedEventHandler(data);
                         }
-                        this.handleRefresh();
                     }).catch(() => {});
                 })
                 .catch(() => {
@@ -565,12 +565,12 @@ class HomePage extends React.Component {
                     timeEntry.billable
                 ).then(response => {
                     let data = response.data;
+                    this.start.setTimeEntryInProgress(data);
                     if (isAppTypeExtension()) {
                         getBrowser().extension.getBackgroundPage().addIdleListenerIfIdleIsEnabled();
                         getBrowser().extension.getBackgroundPage().addPomodoroTimer();
                         getBrowser().extension.getBackgroundPage().entryInProgressChangedEventHandler(data);
                     }
-                    this.handleRefresh();
                     this.application.setIcon(getIconStatus().timeEntryStarted);
                 }).catch(() => {});
             }
