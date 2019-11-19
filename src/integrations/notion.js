@@ -1,21 +1,21 @@
 clockifyButton.render(
-    '.notion-overlay-container .notion-peek-renderer .notion-page-controls + .notion-selectable > [contenteditable="true"][placeholder="Untitled"]:not(.clockify)',
-    { observe: true },
-    (elem) => {
-        let link,
-            container = createTag('div', 'button-link notion-tb-wrapper'),
-            descriptionElem = elem,
-            clockifyButtonLoc = $(
-                '.notion-overlay-container .notion-topbar-more-button'
-            );
+  '.notion-overlay-container .notion-peek-renderer .notion-page-controls + .notion-selectable > [contenteditable="true"][placeholder="Untitled"]:not(.clockify)',
+  { observe: true },
+  (elem) => {
+    let link,
+    container = createTag('div', 'button-link notion-tb-wrapper'),
+    descriptionElem = elem,
+    clockifyButtonLoc = $(
+      '.notion-overlay-container .notion-topbar-more-button'
+      );
 
-        link = clockifyButton.createButton(descriptionElem.textContent.trim());
-        link.style.cursor = 'pointer';
+    link = clockifyButton.createButton(descriptionElem.textContent.trim());
+    link.style.cursor = 'pointer';
 
-        container.appendChild(link);
-        clockifyButtonLoc.parentElement.parentNode.firstChild.after(container);
-    }
-);
+    container.appendChild(link);
+    clockifyButtonLoc.parentElement.parentNode.firstChild.after(container);
+  }
+  );
 
 
 clockifyButton.render(
@@ -26,13 +26,19 @@ clockifyButton.render(
 
     clockifyButtonLoc = $(
       '.notion-page-controls > div'
-    );
+      );
     setTimeout(function(){ 
-    link = clockifyButton.createButton(document.title);
+    try {  
+      projectP = $("div.notion-topbar > div > div:nth-child(1) > div.notion-selectable > a > div > div > div:nth-child(2)").textContent;
+      link = clockifyButton.createButton(document.title, projectP);
+    } catch (err) {
+      projectM = $("div.notion-topbar > div > div:nth-child(1) > div > div:nth-child(2)").textContent;
+      link = clockifyButton.createButton(document.title, projectM);
+    }
     link.style.cursor = 'pointer';
 
     container.appendChild(link);
     clockifyButtonLoc.parentNode.insertBefore(container, clockifyButtonLoc);
-     }, 500);
+  }, 500);
   }
-);
+  );
