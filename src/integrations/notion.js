@@ -9,7 +9,8 @@ clockifyButton.render(
       '.notion-overlay-container .notion-topbar-more-button'
       );
 
-    link = clockifyButton.createButton(descriptionElem.textContent.trim());
+    project = $('#notion-app > div > div.notion-cursor-listener > div.notion-frame > div:nth-child(1) > div.notion-topbar > div > div:nth-child(1) > div > div:nth-child(2)').textContent;
+    link = clockifyButton.createButton(descriptionElem.textContent.trim(), project);
     link.style.cursor = 'pointer';
 
     container.appendChild(link);
