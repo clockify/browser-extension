@@ -16,3 +16,23 @@ clockifyButton.render(
         clockifyButtonLoc.parentElement.parentNode.firstChild.after(container);
     }
 );
+
+
+clockifyButton.render(
+  '.notion-page-controls:not(.clockify)',
+  { observe: true },
+  function (elem) {
+    container = createTag('div', 'button-link notion-tb-wrapper');
+
+    clockifyButtonLoc = $(
+      '.notion-page-controls > div'
+    );
+    setTimeout(function(){ 
+    link = clockifyButton.createButton(document.title);
+    link.style.cursor = 'pointer';
+
+    container.appendChild(link);
+    clockifyButtonLoc.parentNode.insertBefore(container, clockifyButtonLoc);
+     }, 500);
+  }
+);
