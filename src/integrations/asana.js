@@ -1,4 +1,3 @@
-'use strict';
 setTimeout(() => {
     clockifyButton.render('.SingleTaskPane:not(.clockify)', {observe: true}, (elem) => {
         var link,
@@ -14,6 +13,23 @@ setTimeout(() => {
 
     });
 }, 1000);
+
+// New task pane list detail modal
+setTimeout(() => {
+    clockifyButton.render('.SingleTaskPaneSpreadsheet:not(.clockify)', {observe: true}, (elem) => {
+        var link,
+            container = $('.SingleTaskPaneToolbarAnimation-row', elem),
+            description = $('[aria-label="Task Name"]', elem) ?
+                $('[aria-label="Task Name"]', elem).textContent : "",
+            projectElements = document.getElementsByClassName('PotTokenizerPill-name'),
+            project = projectElements && projectElements.length > 0 ?
+                projectElements[0].textContent : "";
+        link = clockifyButton.createButton(description, project);
+        link.style.marginLeft = "10px";
+        container.appendChild(link);
+
+    });
+},100);
 
 // // New UI v1
 // clockifyButton.render('#right_pane__contents .SingleTaskPane:not(.clockify)', {observe: true}, (elem) => {
