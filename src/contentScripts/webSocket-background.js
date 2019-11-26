@@ -143,7 +143,7 @@ function messageHandler(event) {
             this.sendWebSocketEventToExtension(event.data);
             break;
     }
-};
+}
 
 function sendWebSocketEventToExtension(event) {
     aBrowser.runtime.sendMessage({eventName: event});

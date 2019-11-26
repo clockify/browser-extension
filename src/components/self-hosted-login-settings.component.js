@@ -34,8 +34,8 @@ class SelfHostedLoginSettings extends React.Component {
                                 </div>
                             )
                         } else {
-                            let url = this.props.url + '/api';
-                            settingsService.setBaseUrl(url);
+                            let url = this.props.url;
+                            settingsService.setBaseUrl(url + '/api');
                             settingsService.setHomeUrl(
                                 url.replace('api.', '').replace('api', '')
                             );
