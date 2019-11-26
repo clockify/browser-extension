@@ -464,6 +464,11 @@ class HomePage extends React.Component {
                         getBrowser().extension.getBackgroundPage().removeIdleListenerIfIdleIsEnabled();
                         getBrowser().extension.getBackgroundPage().entryInProgressChangedEventHandler(null);
                     }
+                    this.setState({
+                        page: 0
+                    }, () => {
+                        this.getWorkspaceSettings();
+                    });
                     timeEntryService.createEntry(
                         timeEntry.description,
                         moment(),

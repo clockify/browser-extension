@@ -30,7 +30,6 @@ class StartTimer extends React.Component {
             mode: this.props.mode,
             ready: false
         };
-
         this.application = new Application(localStorageService.get('appType'));
     }
 
