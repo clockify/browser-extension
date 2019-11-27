@@ -133,3 +133,23 @@ clockifyButton.render(
         container.appendChild(link);
     }
 );
+
+// Confluence
+setTimeout(() => {
+clockifyButton.render(
+  '#content-header-container:not(.clockify)',
+  { observe: true },
+  (elem) => {
+    let link,
+    container = createTag('div', 'button-link notion-tb-wrapper'),
+    clockifyButtonLoc = $(
+      '[data-test-id="content-buttons"]'
+      );
+
+    link = clockifyButton.createButton(document.title);
+    link.style.cursor = 'pointer';
+    container.appendChild(link);
+    clockifyButtonLoc.parentElement.parentNode.firstChild.before(container);
+  }
+);
+}, 1000);
