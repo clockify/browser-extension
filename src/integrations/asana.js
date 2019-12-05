@@ -19,8 +19,8 @@ setTimeout(() => {
     clockifyButton.render('.SingleTaskPaneSpreadsheet:not(.clockify)', {observe: true}, (elem) => {
         var link,
             container = $('.SingleTaskPaneToolbarAnimation-row', elem),
-            description = $('[aria-label="Task Name"]', elem) ?
-                $('[aria-label="Task Name"]', elem).textContent : "",
+            description = $('.SingleTaskTitleInput-taskName textarea', elem) ?
+                $('.SingleTaskTitleInput-taskName textarea', elem).textContent : "",
             projectElements = document.getElementsByClassName('PotTokenizerPill-name'),
             project = projectElements && projectElements.length > 0 ?
                 projectElements[0].textContent : "";
