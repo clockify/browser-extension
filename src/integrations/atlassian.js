@@ -1,3 +1,45 @@
+// AUI layout
+clockifyButton.render(
+    'div[id="issue-content"]:not(.clockify)',
+    { observe: true },
+    (elem) => {
+        if (document.getElementById('clockifyButton')) {
+            document.getElementById('clockifyButton').remove();
+        }
+
+        const page = elem.closest('div[id="page"]');
+        const container = $('div[class="aui-page-header-main"]', elem);
+        const targetEl = $('.search-container');
+        const issueNumber = $('a[class="issue-link"]', container).textContent;
+        const desc = $('h1[id="summary-val"]', elem).textContent;
+
+        // Try to find the project
+        let project = $('a[id="project-name-val"]', page);
+        if (project) {
+            project = project.textContent;
+        } else {
+            project = '';
+        }
+
+        const link = clockifyButton.createButton(issueNumber + ' ' + desc, project);
+        link.style.position = "relative";
+        link.style.padding = "6px 10px 7px 20px";
+        link.style.marginLeft = "10px";
+        link.style.verticalAlign = "top";
+        link.style.lineHeight = "30px";
+
+        targetEl.appendChild(link);
+    }
+);
+
+if (document.getElementById('issue-content')) {
+    document.getElementById('issue-content').classList.remove('clockify');
+
+    if (document.getElementById('clockifyButton')) {
+        document.getElementById('clockifyButton').remove();
+    }
+}
+
 //Active sprint modal - Jira 2019-07
 clockifyButton.render(
     'div[role="dialog"] > div > div > header:not(.clockify)',
