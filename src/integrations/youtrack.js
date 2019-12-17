@@ -29,7 +29,10 @@ clockifyButton.render(
     const parent = elem.closest('.yt-issue-view');
     const issueId = parent.querySelector('.js-issue-id').textContent;
     const link = clockifyButton.createButton(issueId + ' ' + $('h1').textContent.trim(), issueId.split('-')[0]);
-
+    link.style.position = 'absolute';
+    link.style.right = '0px';
+    link.style.top = '-12px';
+    
     elem.insertBefore(link, $('.yt-issue-view__star'));
   }
 );
