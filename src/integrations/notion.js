@@ -2,6 +2,11 @@ clockifyButton.render(
   '.notion-page-controls:not(.clockify)',
   { observe: true },
   function (elem) {
+
+    if ($('#clockifyButton')) {
+      elem.removeChild($('#clockifyButton'));
+    }
+
     const container = createTag('div', 'button-link notion-tb-wrapper');
 
     const descriptionElem = () => {
@@ -25,6 +30,7 @@ clockifyButton.render(
   '.notion-overlay-container .notion-peek-renderer .notion-page-controls + .notion-selectable > [contenteditable="true"][placeholder="Untitled"]:not(.clockify)',
   { observe: true },
   (elem) => {
+
     let link,
     container = createTag('div', 'button-link notion-tb-wrapper'),
     descriptionElem = elem,
@@ -35,6 +41,10 @@ clockifyButton.render(
     project = $('#notion-app > div > div.notion-cursor-listener > div.notion-frame > div:nth-child(1) > div.notion-topbar > div > div:nth-child(1) > div > div:nth-child(2)').textContent;
     link = clockifyButton.createButton(descriptionElem.textContent.trim(), project);
     link.style.cursor = 'pointer';
+
+    if (elem.querySelector('#clockifyButton')) {
+      elem.removeChild(elem.querySelector('#clockifyButton'));
+    }
 
     container.appendChild(link);
     clockifyButtonLoc.parentElement.parentNode.firstChild.after(container);
