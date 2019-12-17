@@ -1,40 +1,57 @@
-/*jslint indent: 2 */
-/*global $: false, document: false, clockifyButton: false*/
-'use strict';
-
 /* the first selector is required for youtrack-5 and the second for youtrack-6 */
-clockifyButton.render('.yt-issue-view__toolbar:not(.clockify)', {observe: true}, function (elem) {
-    var link, description,
-        numElem = $('.yt-issue-toolbar__edit-section'),
-        titleElem = $(".yt-issue-body__summary"),
-        projectElem = $('.fsi-properties a[title^="Project"], .fsi-properties .disabled.bold');
+clockifyButton.render(
+  '.fsi-toolbar-content:not(.clockify), .toolbar_fsi:not(.clockify)',
+  { observe: true },
+  function (elem) {
+    let description;
+    const numElem = $('a.issueId');
+    const titleElem = $('.issue-summary');
 
-    let ticketNum = location.href.split('/');
+    const projectElem = $(
+      '.fsi-properties a[title^="Project"], .fsi-properties .disabled.bold'
+    );
 
-    description ='#' + ticketNum[ticketNum.length - 1] + " - " + titleElem.textContent;
+    description = titleElem.textContent;
+    description =
+      numElem.firstChild.textContent.trim() + ' ' + description.trim();
 
-    link = clockifyButton.createButton(description);
-    link.style.marginLeft = '20px';
+    const link = clockifyButton.createButton(description, projectElem.textContent);
 
-    numElem.parentNode.insertBefore(link, numElem.nextSibling);
-});
+    elem.insertBefore(link, titleElem);
+  }
+);
+
+/* new view for single issues — obligatory since YouTrack 2018.3 */
+clockifyButton.render(
+  '.yt-issue-body:not(.clockify)',
+  { observe: true },
+  function (elem) {
+    const parent = elem.closest('.yt-issue-view');
+    const issueId = parent.querySelector('.js-issue-id').textContent;
+    const link = clockifyButton.createButton(issueId + ' ' + $('h1').textContent.trim(), issueId.split('-')[0]);
+
+    elem.insertBefore(link, $('.yt-issue-view__star'));
+  }
+);
 
 // Agile board
-clockifyButton.render('.yt-agile-card:not(.clockify)', {observe: true}, function (elem) {
-    var link,
-        container = $('.yt-agile-card__header', elem),
-        projectName = $('.yt-issue-id').textContent.split('-'),
-        description = function () {
-            var text = $('.yt-agile-card__summary', elem).textContent,
-                id = $('.yt-agile-card__id ', elem).textContent;
-            return (id ? id + " " : '') + (text ? text.trim() : '');
-        };
+clockifyButton.render('.yt-agile-card:not(.clockify)', { observe: true }, function (
+  elem
+) {
+  const container = $('.yt-agile-card__summary', elem);
+  const projectName = $('.yt-issue-id').textContent.split('-');
 
-    if (projectName.length > 1) {
-        projectName.pop();
-    }
+  const description = function () {
+    const text = $('.yt-agile-card__summary', elem).textContent;
+    const id = $('.yt-agile-card__id ', elem).textContent;
+    return (id ? id + ' ' : '') + (text ? text.trim() : '');
+  };
 
-    link = clockifyButton.createSmallButton(description);
+  if (projectName.length > 1) {
+    projectName.pop();
+  }
 
-    container.appendChild(link);
+  const link = clockifyButton.createButton(description, projectName.join(''));
+
+  container.appendChild(link);
 });
