@@ -187,7 +187,9 @@ clockifyButton.render(
     clockifyButtonLoc = $(
       '[data-test-id="content-buttons"]'
       );
-
+    if (document.getElementById('clockifyButton')) {
+        document.getElementById('clockifyButton').remove();
+    }
     link = clockifyButton.createButton(document.title);
     link.style.cursor = 'pointer';
     container.appendChild(link);
