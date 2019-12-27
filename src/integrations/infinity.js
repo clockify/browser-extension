@@ -1,18 +1,16 @@
 'use strict';
+clockifyButton.render('.item-sidebar .mobile-item-navigation:not(.clockify)', {observe: true}, function (elem) {
 
-clockifyButton.render('.item-sidebar .item-name:not(.clockify)', {observe: false}, function (elem) {
+    setTimeout(function(){
 
-    elem.classList.remove("clockify");
+        let description = $('.item-sidebar .item-name');
+        let link = clockifyButton.createButton(description.textContent.trim());
 
-    if (document.getElementById('clockifyButton')) {
-        document.getElementById('clockifyButton').remove();
-    }
+        link.style.paddingTop = "0";
+        link.style.paddingBottom = "0";
+        link.style.cursor = 'pointer';
 
-    let description = $('.item-sidebar .item-name');
-    let link = clockifyButton.createButton(description.textContent.trim());
+        elem.appendChild(link);
+    }, 300);
 
-    link.style.paddingTop = "0";
-    link.style.paddingBottom = "0";
-
-    elem.parentNode.appendChild(link);
 });
