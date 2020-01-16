@@ -35,6 +35,12 @@
     "script": "axosoft.js",
     "clone": false
   },
+  "azure.com": {
+    "name": "Azure",
+    "link": "*://*.azure.com/*",
+    "script": "azure.js",
+    "clone": false
+  },
   "basecamp.com": {
     "name": "Basecamp",
     "link": "*://*.basecamp.com/*",
