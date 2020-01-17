@@ -155,6 +155,12 @@
     "script": "helpscout.js",
     "clone": false
   },
+  "helprace.com": {
+    "name": "Helprace",
+    "link": "*://*.helprace.com/*",
+    "script": "helprace.js",
+    "clone": false
+  },
   "app.hubspot.com": {
     "name": "Hubspot",
     "link": "*://app.hubspot.com/*",
