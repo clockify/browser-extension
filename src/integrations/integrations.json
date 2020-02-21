@@ -448,5 +448,11 @@
     "link": "*://zenkit.com/*",
     "script": "zenkit.js",
     "clone": false
+  },
+  "rallydev.com": {
+    "name": "Rally",
+    "link": "*://rally1.rallydev.com/#/*/detail/*",
+    "script": "rallydev.js",
+    "clone": false
   }
 }
