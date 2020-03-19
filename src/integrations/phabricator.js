@@ -1,5 +1,3 @@
-'use strict';
-
 // For a Maniphest task on a project workboard
 clockifyButton.render('.phui-workcard:not(.clockify)', {observe: true}, (elem) => {
     var description = $('.phui-oi-objname', elem).textContent + ': ' + $('.phui-oi-link', elem).textContent.trim();

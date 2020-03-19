@@ -1,8 +1,18 @@
-'use strict';
+clockifyButton.render('#task-detail-view:not(.clockify)', { observe: true }, function renderTickTick (elem) {
+  function getProject () {
+    const projectEl = elem.querySelector('.project-setting input');
+    return projectEl ? projectEl.value.trim() : '';
+  }
 
-clockifyButton.render('#task-detail-view:not(.clockify)', { observe: true }, (elem) => {
-  var text = $('.task-title', elem).textContent,
-  link = clockifyButton.createButton(text);
+  function getDescription () {
+    const descriptionEl = elem.querySelector('.task-title');
+    return descriptionEl ? descriptionEl.textContent.trim() : '';
+  }
 
-  $('#tasktitle').appendChild(link);
+  const button = clockifyButton.createButton(getDescription,getProject);
+
+  const root = elem.querySelector('#td-caption');
+  if (root) {
+    root.insertBefore(button, root.firstChild);
+  }
 });

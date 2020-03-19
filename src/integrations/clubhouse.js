@@ -1,5 +1,3 @@
-'use strict';
-
 clockifyButton.render('.story-state:not(.clockify)', {observe: true}, (elem) => {
     var link, wrap = createTag('div'),
         element = elem,

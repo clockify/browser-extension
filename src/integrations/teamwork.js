@@ -1,8 +1,6 @@
 /*jslint indent: 2 */
 /*global $: false, document: false, clockifyButton: false, createTag:false, Promise: false*/
 
-'use strict';
-
 // Tasks listing page in project
 clockifyButton.render('div.taskRHS:not(.clockify), div.row-rightElements:not(.clockify)', {observe: true}, (elem) => {
 

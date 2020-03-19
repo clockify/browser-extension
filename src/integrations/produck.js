@@ -1,5 +1,3 @@
-'use strict'
-
 // Issue details view
 clockifyButton.render('[data-toggl-issue] [data-toggl-sidebar]:not(.clockify)', {observe: true}, elem => {
   function getAlias() {

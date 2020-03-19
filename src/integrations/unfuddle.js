@@ -1,4 +1,3 @@
-'use strict';
 clockifyButton.render(
   '.tasks-task__paper:not(.clockify)',
   { observe: true },

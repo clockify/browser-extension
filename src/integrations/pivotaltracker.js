@@ -1,5 +1,3 @@
-"use strict";
-
 clockifyButton.render('form.story:not(.clockify)', {observe: true}, (elem) => {
     var link,
         titleElem = $('textarea', elem),

@@ -1,7 +1,5 @@
 /*jslint indent: 2 */
 /*global $: false, document: false, clockifyButton: false, createTag: false*/
-'use strict';
-
 clockifyButton.render('#gwt-debug-NoteTitleView-textBox:not(.clockify)', {observe: true}, (elem) => {
     var link,
         descFunc,

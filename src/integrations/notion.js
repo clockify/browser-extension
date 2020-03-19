@@ -7,17 +7,17 @@ clockifyButton.render(
       elem.removeChild($('#clockifyButton'));
     }
 
-    const container = createTag('div', 'button-link notion-tb-wrapper');
+    var container = createTag('div', 'button-link notion-tb-wrapper');
 
-    const descriptionElem = () => {
+    var descriptionElem = () => {
       return document.title;
     };
 
-    const clockifyButtonLoc = $(
+    var clockifyButtonLoc = $(
       '.notion-page-controls > div'
     );
 
-    const link = clockifyButton.createButton(descriptionElem);
+    var link = clockifyButton.createButton(descriptionElem);
     link.style.cursor = 'pointer';
 
     container.appendChild(link);
@@ -25,54 +25,26 @@ clockifyButton.render(
   }
 );
 
-// modal
+// Popup/dialog view
 clockifyButton.render(
-  '.notion-overlay-container .notion-peek-renderer .notion-page-controls + .notion-selectable > [contenteditable="true"][placeholder="Untitled"]:not(.clockify)',
+  '.notion-peek-renderer:not(.clockify)',
   { observe: true },
-  (elem) => {
-
-    let link,
-    container = createTag('div', 'button-link notion-tb-wrapper'),
-    descriptionElem = elem,
-    clockifyButtonLoc = $(
-      '.notion-overlay-container .notion-topbar-more-button'
-      );
-
-    project = $('#notion-app > div > div.notion-cursor-listener > div.notion-frame > div:nth-child(1) > div.notion-topbar > div > div:nth-child(1) > div > div:nth-child(2)').textContent;
-    link = clockifyButton.createButton(descriptionElem.textContent.trim(), project);
-    link.style.cursor = 'pointer';
-
-    if (elem.querySelector('#clockifyButton')) {
-      elem.removeChild(elem.querySelector('#clockifyButton'));
+  function (elem) {
+    function getDescription () {
+      const descriptionElem = elem.querySelector('.notion-scroller .notion-selectable div[contenteditable="true"]');
+      return descriptionElem ? descriptionElem.textContent.trim() : '';
     }
 
-    container.appendChild(link);
-    clockifyButtonLoc.parentElement.parentNode.firstChild.after(container);
+    const link = clockifyButton.createButton(getDescription);
+    link.style.cursor = 'pointer';
+
+    const wrapper = document.createElement('div');
+    wrapper.classList.add('clockify-button-notion-wrapper');
+    wrapper.appendChild(link);
+
+    const root = elem.querySelector('div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(3)');
+    if (root) {
+      root.prepend(wrapper);
+    }
   }
 );
-
-
-// clockifyButton.render(
-//   '.notion-page-controls:not(.clockify)',
-//   { observe: true },
-//   function (elem) {
-//     container = createTag('div', 'button-link notion-tb-wrapper');
-
-//     clockifyButtonLoc = $(
-//       '.notion-page-controls > div'
-//       );
-//     setTimeout(function(){ 
-//     try {  
-//       projectP = $("div.notion-topbar > div > div:nth-child(1) > div.notion-selectable > a > div > div > div:nth-child(2)").textContent;
-//       link = clockifyButton.createButton(document.title, projectP);
-//     } catch (err) {
-//       projectM = $("div.notion-topbar > div > div:nth-child(1) > div > div:nth-child(2)").textContent;
-//       link = clockifyButton.createButton(document.title, projectM);
-//     }
-//     link.style.cursor = 'pointer';
-
-//     container.appendChild(link);
-//     clockifyButtonLoc.parentNode.insertBefore(container, clockifyButtonLoc);
-//   }, 500);
-//   }
-// );

@@ -1,7 +1,5 @@
 /*jslint indent: 2 */
 /*global $: false, document: false, clockifyButton: false*/
-'use strict';
-
 clockifyButton.render('.js-box-wrapper:not(.clockify)', {observe: true}, (elem) => {
     var link, description, clockifyButtonElement, project, tagFunc;
 

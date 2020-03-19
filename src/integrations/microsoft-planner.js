@@ -1,5 +1,3 @@
-'use strict';
-
 clockifyButton.render('.taskCard:not(.clockify)', { observe: true }, (elem) => {
   var link,
     description = $('.title', elem).textContent;

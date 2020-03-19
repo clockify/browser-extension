@@ -1,6 +1,5 @@
 setTimeout(() => {
-    'use strict';
-    clockifyButton.render('.window-sidebar:not(.clockify)', {observe: true}, (elem) => {
+        clockifyButton.render('.window-sidebar:not(.clockify)', {observe: true}, (elem) => {
         const root = $('div[id="trello-root"]');
         const container = elem.lastChild.childNodes[1];
         const htmlTag = createTag('div', 'button-link');

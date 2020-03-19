@@ -1,4 +1,3 @@
-'use strict';
 clockifyButton.render('#issue-header:not(.clockify)', {}, (elem) => {
     var link, description,
         numElem = $('.issue-id'),

@@ -1,6 +1,3 @@
-
-'use strict';
-
 clockifyButton.render('.issue-details .detail-page-description:not(.clockify)', {observe: true}, (elem) => {
     var link, description,
         numElem = $(".identifier") || $(".breadcrumbs-list li:last-child .breadcrumbs-sub-title"),

@@ -1,5 +1,3 @@
-'use strict';
-
 clockifyButton.render('.item-title-group:not(.clockify)', {observe: true}, (elem) => {
     let description = $('h3').textContent.trim();
     let link = clockifyButton.createButton(description);

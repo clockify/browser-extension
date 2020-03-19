@@ -1,5 +1,3 @@
-'use strict';
-
 // Basecamp Next
 clockifyButton.render('section.todos li.todo:not(.clockify)', {observe: true}, (elem) => {
     var link, behavior = 'hover_content',

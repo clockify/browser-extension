@@ -1,4 +1,3 @@
-'use strict';
 clockifyButton.render(
   '.page-content .widget-toolbox .pull-left:not(.clockify)',
   { observe: true },

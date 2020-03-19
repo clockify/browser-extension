@@ -1,5 +1,3 @@
-'use strict';
-
 clockifyButton.render(
   '.modal-content .card_container:not(.clockify)',
   { observe: true },

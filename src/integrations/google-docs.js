@@ -1,5 +1,3 @@
-'use strict';
-
 clockifyButton.render('#docs-bars:not(.clockify)', {}, (elem) => {
     var link,
     title = $(".docs-title-input");

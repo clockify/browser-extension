@@ -1,5 +1,3 @@
-'use strict';
-
 function getProjectNameFromLabel(elem) {
   var projectLabel = '',
       projectLabelEle = $('.project_item__name', elem.parentNode.parentNode);

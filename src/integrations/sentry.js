@@ -1,5 +1,3 @@
-'use strict';
-
 clockifyButton.render('.group-detail:not(.clockify)', { observe: true }, () => {
   var link,
       issueNo = $('.short-id-box > div').textContent.trim(),

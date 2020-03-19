@@ -1,5 +1,3 @@
-'use strict';
-
 clockifyButton.render(
   '#TaskContainer > .row:not(.clockify), div.taskRow:not(.clockify)',
   { observe: true },

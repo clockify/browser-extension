@@ -1,4 +1,3 @@
-'use strict';
 clockifyButton.render('.ha:not(.clockify)', {observe: true}, function (elem) {
     var link, description = $('h2', elem);
 

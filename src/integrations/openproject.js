@@ -1,5 +1,3 @@
-'use strict';
-
 // Work packages list items
 clockifyButton.render('table.work-package-table tbody tr td.id:not(.clockify)', {observe: true}, (elem) => {
     var link,

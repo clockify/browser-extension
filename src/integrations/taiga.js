@@ -1,5 +1,3 @@
-'use strict';
-
 /* Epic/User story/Task/Issue details button */
 clockifyButton.render('.detail-title-wrapper:not(.clockify)', {observe: true}, (elem) => {
     var link,

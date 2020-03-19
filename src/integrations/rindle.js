@@ -1,5 +1,3 @@
-'use strict';
-
 clockifyButton.render(
   '.time__tracker .toggl__container:not(.clockify)',
   { observe: true },

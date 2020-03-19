@@ -83,6 +83,12 @@
     "script": "clubhouse.js",
     "clone": false
   },
+  "coda.io": {
+    "name": "Coda",
+    "link": "*://*.coda.io/*",
+    "script": "coda.js",
+    "clone": false
+  },
   "evernote.com": {
     "name": "Evernote",
     "link": "*://*.evernote.com/*",
@@ -287,6 +293,12 @@
     "script": "podio.js",
     "clone": false
   },
+  "pipedrive.com": {
+    "name": "Pipedrive",
+    "link": "*://*.pipedrive.com/*",
+    "script": "pipedrive.js",
+    "clone": false
+  },
   "redbooth.com": {
     "name": "Redbooth",
     "link": "*://*.redbooth.com/*",
@@ -451,7 +463,7 @@
   },
   "rallydev.com": {
     "name": "Rally",
-    "link": "*://rally1.rallydev.com/#/*/detail/*",
+    "link": "*://*.rallydev.com/#/*/detail/*",
     "script": "rallydev.js",
     "clone": false
   }

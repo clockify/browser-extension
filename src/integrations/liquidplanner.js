@@ -1,5 +1,3 @@
-'use strict';
-
 clockifyButton.render(
   '#treeitem_panel .details.page:not(.clockify)',
   { observe: true },

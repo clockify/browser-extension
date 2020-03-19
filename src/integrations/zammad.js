@@ -1,5 +1,3 @@
-'use strict';
-
 clockifyButton.render('.ticketZoom-header:not(.clockify)', {observe: true}, function (elem) {
 	var link, titleFunc, description,
 		divTag = document.createElement("div");

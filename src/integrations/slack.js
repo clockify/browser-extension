@@ -1,5 +1,3 @@
-'use strict';
-
 clockifyButton.render('#channel_name:not(.clockify)', {observe: true}, () => {
     var link,
         placeholder = $('.channel_title_info'),

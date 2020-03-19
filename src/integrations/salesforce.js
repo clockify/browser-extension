@@ -1,4 +1,14 @@
-'use strict';
+// Cases
+if ((window.location.href.indexOf("Case") !== -1)) {
+clockifyButton.render('.slds-media__body:not(.clockify)', {observe: true}, (elem) => {
+    let description = $('lightning-formatted-text[support-outputcasesubjectfield_outputcasesubjectfield]', elem);
+    let caseNumber = $('.uiOutputText').textContent;
+
+    let link = clockifyButton.createButton("#" + caseNumber + " " + description.textContent);
+    elem.parentNode.appendChild(link);
+
+});
+}
 
 // Updated Listing view
 clockifyButton.render('.bMyTask .list tr.dataRow:not(.clockify)', {observe: true}, (elem) => {

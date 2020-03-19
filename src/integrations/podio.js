@@ -1,5 +1,3 @@
-'use strict';
-
 clockifyButton.render('.item-topbar:not(.clockify)', {observe: true}, (elem) => {
     var delay = 1000; //1 second
     setTimeout(function () {

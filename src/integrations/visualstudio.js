@@ -1,5 +1,3 @@
-'use strict';
-
 // Individual Work Item & Backlog page
 clockifyButton.render('.witform-layout-content-container:not(.clockify)', {observe: true}, function () {
     var link,

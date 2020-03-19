@@ -1,5 +1,3 @@
-'use strict';
-
 // List items
 clockifyButton.render('.list li:not(.clockify)', {observe: true}, (elem) => {
     var link,

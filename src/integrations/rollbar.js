@@ -1,5 +1,3 @@
-'use strict';
-
 clockifyButton.render(
   '#item-title-control:not(.clockify)',
   { observe: true },

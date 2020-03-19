@@ -1,5 +1,3 @@
-'use strict';
-
 clockifyButton.render( '.card-content:not(.clockify)', { observe: true }, (elem) => {
 
     var link, description;

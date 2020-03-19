@@ -1,4 +1,3 @@
-'use strict';
 clockifyButton.render('.item-sidebar .mobile-item-navigation:not(.clockify)', {observe: true}, function (elem) {
 
     setTimeout(function(){

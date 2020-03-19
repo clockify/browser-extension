@@ -1,5 +1,3 @@
-'use strict';
-
 clockifyButton.render('.taskItem-titleWrapper:not(.clockify)', {observe: true}, function (elem) {
     var link, container = createTag('a', 'taskItem-clockify'),
         listElem = $('.lists-scroll'),

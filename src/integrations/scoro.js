@@ -1,5 +1,3 @@
-'use strict';
-
 if ((window.location.href.indexOf("main") !== -1) || (window.location.href.indexOf("tasks") !== -1)) {
     clockifyButton.render('.Tasktd:not(.clockify)', {observe: true}, (elem) => {
         var link, titleElem = $('.eventName', elem), title = $('.bold', titleElem);

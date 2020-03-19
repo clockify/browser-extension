@@ -1,5 +1,3 @@
-'use strict';
-
 clockifyButton.render('.case:not(.clockify)', {observe: true}, (elem) => {
 
     var link,

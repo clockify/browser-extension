@@ -1,5 +1,3 @@
-'use strict';
-
 clockifyButton.render(
   '.details__attributes-right:not(.clockify)',
   { observe: true },

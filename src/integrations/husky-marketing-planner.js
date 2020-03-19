@@ -1,5 +1,3 @@
-'use strict';
-
 clockifyButton.render('.toggl-target:not(.clockify)', { observe: true }, (elem) => {
   var link,
     description = elem.getAttribute('data-descr'),

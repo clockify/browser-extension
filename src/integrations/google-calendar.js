@@ -1,23 +1,11 @@
-'use strict';
-
-//Google Calendar Modern
-function insertButtonModern(target, description) {
-    var link = clockifyButton.createButton(description);
-    link.style.marginTop = "-5px";
-    target.prepend(link);
-}
-
-// Popup view Google Calendar Modern
-clockifyButton.render('div[data-chips-dialog="true"]:not(.clockify)', {observe: true}, (elem) => {
-    if ($('.clockify-button', elem)) {
-        return;
-    }
-    const target = $('[aria-label]:last-child', elem).parentElement.nextSibling;
-    var title = $('span[role="heading"]', elem);
-    let description;
-    if (title) {
-        description = title.textContent;
-    }
-    insertButtonModern(target, description || "");
-
+clockifyButton.render('#xDetDlg > div:not(.clockify)', {observe: true}, function (elem) {
+  var link, description;
+  description = $('[role="heading"]', elem).textContent;
+  link = clockifyButton.createButton(description);
+  link.style.display = "block";
+  link.style.cursor = 'pointer';
+  link.style.position = 'absolute';
+  link.style.top = '0px';
+  link.style.left = '30px';
+  elem.appendChild(link);
 });

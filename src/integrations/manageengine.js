@@ -1,5 +1,3 @@
-'use strict';
-
 // On premise installation
 clockifyButton.render('.requestEditbrsty:not(.clockify)', { observe: true }, function (
     elem

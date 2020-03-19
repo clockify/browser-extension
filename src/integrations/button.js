@@ -1,4 +1,4 @@
-const aBrowser = chrome || browser;
+var aBrowser = chrome || browser;
 var clockifyButton = {
     links: [],
     inProgressDescription: "",

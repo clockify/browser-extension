@@ -1,5 +1,3 @@
-'use strict';
-
 clockifyButton.render('.convo-actions:not(.clockify)', { observe: true }, () => {
   var link,
     description =

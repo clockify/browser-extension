@@ -1,8 +1,6 @@
 /*jslint indent: 2, unparam: true*/
 /*global $: false, document: false, clockifyButton: false*/
 
-'use strict';
-
 // Tickets
 clockifyButton.render('#ticket_tabs_container #ticket_thread:not(.clockify)', { observe: true }, (elem) => {
     var link, description,
