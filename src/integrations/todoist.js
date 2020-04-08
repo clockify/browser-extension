@@ -87,15 +87,16 @@ setTimeout(() => {
 
         let link,
             description,
-            container = $('.text', elem),
+            container = $('.task_item_details_bottom', elem),
             projectNames = getProjectNames(elem),
             project = projectNames.length > 0 ? projectNames[0] : "";
 
         description = $('.task_item_content_text', elem).textContent;
         link = clockifyButton.createSmallButton(description, project);
-        link.style.marginLeft = "10px";
+        link.style.paddingTop = "0px";
+        link.style.paddingLeft = "0px";
 
-        container.insertBefore(link, container.lastChild);
+        container.insertBefore(link, container.firstChild);
       }
   );
 }, 1000);

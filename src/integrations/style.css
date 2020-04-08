@@ -1,4 +1,4 @@
-.clockify-button-active {
+.clockify-button-active, .clockify-button-inactive:hover {
   color: #03A9F4;
   padding: 20px;
   cursor: pointer;
