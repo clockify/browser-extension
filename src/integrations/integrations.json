@@ -185,12 +185,6 @@
     "script": "liquidplanner.js",
     "clone": false
   },
-  "ladesk.com": {
-    "name": "LiveAgent",
-    "link": "*://*.ladesk.com/*",
-    "script": "liveagent.js",
-    "clone": false
-  },
   "manageengine.com": {
     "name": "ManageEngine",
     "link": "*://*.manageengine.com/*",
@@ -237,12 +231,6 @@
     "name": "Myjetbrains",
     "link": "*://*.myjetbrains.com/*",
     "script": "youtrack.js",
-    "clone": false
-  },
-  "nela.com.br": {
-    "name": "Nela",
-    "link": "*://*.nela.com.br/*",
-    "script": "nela.js",
     "clone": false
   },
   "notion.so": {
@@ -477,6 +465,24 @@
     "name": "Rally",
     "link": "*://*.rallydev.com/#/*/detail/*",
     "script": "rallydev.js",
+    "clone": false
+  },
+  "ladesk.com": {
+    "name": "LiveAgent",
+    "link": "*://*.ladesk.com/*",
+    "script": "liveagent.js",
+    "clone": false
+  },
+  "nela.com.br": {
+    "name": "Nela",
+    "link": "*://*.nela.com.br/*",
+    "script": "nela.js",
+    "clone": false
+  },
+  "intercom.com": {
+    "name": "Rally",
+    "link": "*://*.intercom.com/*",
+    "script": "intercom.js",
     "clone": false
   }
 }

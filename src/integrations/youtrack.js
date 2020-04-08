@@ -45,8 +45,8 @@ clockifyButton.render('.yt-agile-card:not(.clockify)', { observe: true }, functi
   const projectName = $('.yt-issue-id').textContent.split('-');
 
   const description = function () {
-    const text = $('.yt-agile-card__summary', elem).textContent;
-    const id = $('.yt-agile-card__id ', elem).textContent;
+    const text = $('.yt-agile-card__summary span', elem).textContent;
+    const id = $('.yt-agile-card__summary a', elem).textContent;
     return (id ? id + ' ' : '') + (text ? text.trim() : '');
   };
 

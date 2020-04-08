@@ -100,3 +100,36 @@ setTimeout(() => {
       }
   );
 }, 1000);
+
+// task view
+clockifyButton.render('.item_detail:not(.clockify)', { observe: true }, elem => {
+  const container = elem.querySelector('.item_actions');
+
+  const descriptionSelector = () =>
+    elem.querySelector('.item_overview_content').firstChild.textContent;
+
+  function getParentIfProject (elem) {
+    const parent = elem.querySelector('.item_detail_parent_info');
+    let project = '';
+
+    if (parent.querySelector('circle, .item_detail_parent_icon__inbox_icon')) {
+      project = parent.querySelector('.item_detail_parent_name').textContent;
+    }
+
+    return project;
+  }
+  const project = getParentIfProject(elem);
+
+  const link = clockifyButton.createButton(descriptionSelector, project);
+
+  const wrapper = document.createElement('div');
+  wrapper.classList.add('item_action');
+  wrapper.style.display = 'flex';
+  wrapper.style.alignItems = 'center';
+  wrapper.style.justifyContent = 'center';
+  wrapper.appendChild(link);
+
+  if (container) {
+    container.insertBefore(wrapper, container.firstChild);
+  }
+});

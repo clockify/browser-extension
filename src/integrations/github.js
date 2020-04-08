@@ -25,3 +25,17 @@ clockifyButton.render('#partial-discussion-sidebar:not(.clockify)', {observe: tr
     div.appendChild(link);
     elem.prepend(div);
 });
+
+clockifyButton.render('.project-comment-title-hover:not(.clockify)', {observe: true}, function (elem) {
+  var link, itemId, description, project;
+  itemId =  $('.js-project-card-details-external-link .text-gray-light', elem).textContent;
+  description = $('.js-project-card-details-external-link .js-issue-title', elem).textContent;
+  project = $('[data-pjax="#js-repo-pjax-container"]').textContent;
+  link = clockifyButton.createSmallButton(itemId + " " + description, project);
+  link.style.display = "block";
+  link.style.paddingTop = "0";
+  link.style.paddingBottom = "0";
+  link.style.marginBottom = "10px";
+  link.style.cursor = 'pointer';
+  elem.appendChild(link);
+});
