@@ -41,6 +41,13 @@ If you need the fix quicker, feel free to update the integration yourself and se
 3. Click "Load Temporary Add-on"
 4. Select the `www/firefox.dev/manifest.json` file
 
+#### For use compiled firefox addon you need:
+1. Go to `www/firefox.dev` and compress to `zip`
+2. Change name of compressed file to *.xpi
+3. Go to `about:config` from firefox
+4. Type `xpinstall.signatures.required` and chenge to `false`
+5. Go to `about:addons` and click `Install addons from file`, choose file `*.xpi`
+
 
 ### Adding a new tool
 
