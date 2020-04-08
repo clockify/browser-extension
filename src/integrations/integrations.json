@@ -185,6 +185,12 @@
     "script": "liquidplanner.js",
     "clone": false
   },
+  "ladesk.com": {
+    "name": "LiveAgent",
+    "link": "*://*.ladesk.com/*",
+    "script": "liveagent.js",
+    "clone": false
+  },
   "manageengine.com": {
     "name": "ManageEngine",
     "link": "*://*.manageengine.com/*",
