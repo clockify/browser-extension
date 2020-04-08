@@ -239,6 +239,12 @@
     "script": "youtrack.js",
     "clone": false
   },
+  "nela.com.br": {
+    "name": "Nela",
+    "link": "*://*.nela.com.br/*",
+    "script": "nela.js",
+    "clone": false
+  },
   "notion.so": {
     "name": "Notion",
     "link": "*://*.notion.so/*",
