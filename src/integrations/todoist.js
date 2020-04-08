@@ -93,7 +93,8 @@ setTimeout(() => {
 
         description = $('.task_item_content_text', elem).textContent;
         link = clockifyButton.createSmallButton(description, project);
-        
+        link.style.paddingTop = "0px";
+        link.style.paddingLeft = "0px";
 
         container.insertBefore(link, container.firstChild);
       }
