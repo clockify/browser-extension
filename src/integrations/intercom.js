@@ -10,7 +10,14 @@ clockifyButton.render('.conversation__card__content-expanded__controls .inbox__c
   };
 
   const link = clockifyButton.createButton(descriptionSelector);
-  link.style.paddingRight = '15px';
+  link.style.textDecoration = 'none';
+  link.style.position = 'relative';
+  link.style.top = '7px';
+  link.style.right = '10px';
+
+  if (elem.querySelector('#clockifyButton')) {
+    elem.removeChild(elem.querySelector('#clockifyButton'));
+  }
 
   link.addEventListener('mousedown', (e) => {
     e.preventDefault();
@@ -23,11 +30,12 @@ clockifyButton.render('.conversation__card__content-expanded__controls .inbox__c
 clockifyButton.render('.articles__editor__header-text:not(.clockify)', { observe: true }, function (elem) {
   const descriptionSelector = () => {
     const description = elem.textContent;
-    return description ? description.trim() : '';
+    return description ? description.trim().replace(" Start timer", "") : '';
   };
 
-  const link = clockifyButton.createSmallButton(descriptionSelector);
+  const link = clockifyButton.createButton(descriptionSelector);
   link.style.margin = '3px 15px';
+  link.style.textDecoration = 'none';
 
   elem.appendChild(link);
 });
