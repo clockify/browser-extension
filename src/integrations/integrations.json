@@ -1,4 +1,10 @@
 {
+  "stackoverflow.com": {
+    "name": "Stackoverflow",
+    "link": "*://stackoverflow.com/*",
+    "script": "localhost.js",
+    "clone": false
+  },
   "airtable.com": {
     "name": "Airtable",
     "link": "*://airtable.com/*",
@@ -33,12 +39,6 @@
     "name": "Axosoft",
     "link": "axosoft.com/",
     "script": "axosoft.js",
-    "clone": false
-  },
-  "azure.com": {
-    "name": "Azure",
-    "link": "*://*.azure.com/*",
-    "script": "azure.js",
     "clone": false
   },
   "basecamp.com": {
@@ -81,12 +81,6 @@
     "name": "Clubhouse",
     "link": "*://app.clubhouse.io/*",
     "script": "clubhouse.js",
-    "clone": false
-  },
-  "coda.io": {
-    "name": "Coda",
-    "link": "*://*.coda.io/*",
-    "script": "coda.js",
     "clone": false
   },
   "evernote.com": {
@@ -137,6 +131,12 @@
     "script": "google-docs.js",
     "clone": false
   },
+  "helpdesk.ad-ins.com": {
+    "name": "Helpdesk Jira",
+    "link": "*://helpdesk.ad-ins.com/*",
+    "script": "helpdesk-jira.js",
+    "clone": false
+  },
   "keep.google.com": {
     "name": "Google Keep",
     "link": "*://keep.google.com/*",
@@ -159,12 +159,6 @@
     "name": "Helpscout",
     "link": "*://*.helpscout.net/*",
     "script": "helpscout.js",
-    "clone": false
-  },
-  "helprace.com": {
-    "name": "Helprace",
-    "link": "*://*.helprace.com/*",
-    "script": "helprace.js",
     "clone": false
   },
   "app.hubspot.com": {
@@ -215,10 +209,10 @@
     "script": "meistertask.js",
     "clone": false
   },
-  "microsoft-planner": {
+  "tasks.office.com": {
     "name": "Microsoft Planner",
     "link": "*://tasks.office.com/*",
-    "script": "microsoft-planner.js",
+    "script": "microsoftplanner.js",
     "clone": false
   },
   "monday.com": {
@@ -291,12 +285,6 @@
     "name": "Podio",
     "link": "*://*.podio.com/*",
     "script": "podio.js",
-    "clone": false
-  },
-  "pipedrive.com": {
-    "name": "Pipedrive",
-    "link": "*://*.pipedrive.com/*",
-    "script": "pipedrive.js",
     "clone": false
   },
   "redbooth.com": {
@@ -425,6 +413,12 @@
     "script": "visualstudio.js",
     "clone": false
   },
+  "web.whatsapp.com": {
+    "name": "Whatsapp",
+    "link": "*://*.whatsapp*/*",
+    "script": "whatsapp.js",
+    "clone": false
+  },
   "wekan.github.io": {
     "name": "Wekan",
     "link": "*://*.wekan*/*",
@@ -459,30 +453,6 @@
     "name": "Zenkit",
     "link": "*://zenkit.com/*",
     "script": "zenkit.js",
-    "clone": false
-  },
-  "rallydev.com": {
-    "name": "Rally",
-    "link": "*://*.rallydev.com/#/*/detail/*",
-    "script": "rallydev.js",
-    "clone": false
-  },
-  "ladesk.com": {
-    "name": "LiveAgent",
-    "link": "*://*.ladesk.com/*",
-    "script": "liveagent.js",
-    "clone": false
-  },
-  "nela.com.br": {
-    "name": "Nela",
-    "link": "*://*.nela.com.br/*",
-    "script": "nela.js",
-    "clone": false
-  },
-  "intercom.com": {
-    "name": "Rally",
-    "link": "*://*.intercom.com/*",
-    "script": "intercom.js",
     "clone": false
   }
 }

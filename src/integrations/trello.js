@@ -2,6 +2,7 @@ setTimeout(() => {
         clockifyButton.render('.window-sidebar:not(.clockify)', {observe: true}, (elem) => {
         const root = $('div[id="trello-root"]');
         const container = elem.lastChild.childNodes[1];
+        console.log(elem);
         const htmlTag = createTag('div', 'button-link');
         const projectElem = $('.board-header-btn-text', root).textContent.trim();
         const desc = $('div[class="window-title"] > h2', root).textContent.trim();
