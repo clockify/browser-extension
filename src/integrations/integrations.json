@@ -490,5 +490,11 @@
     "link": "*://*.intercom.com/*",
     "script": "intercom.js",
     "clone": false
+  },
+  "wikipedia.org": {
+    "name": "Wikipedia",
+    "link": "*://*.wikipedia.org/*",
+    "script": "wikipedia.js",
+    "clone": false
   }
 }
