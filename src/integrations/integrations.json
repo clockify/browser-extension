@@ -71,6 +71,12 @@
     "script": "capsulecrm.js",
     "clone": false
   },
+  "cerb.ai": {
+    "name": "Cerb",
+    "link": "*://*.cerb.ai/*",
+    "script": "cerb.js",
+    "clone": false
+  },
   "clickup.com": {
     "name": "ClickUp",
     "link": "*://*.clickup.com/*",
