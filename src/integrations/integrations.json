@@ -71,12 +71,6 @@
     "script": "capsulecrm.js",
     "clone": false
   },
-  "cerb.ai": {
-    "name": "Cerb",
-    "link": "*://*.cerb.ai/*",
-    "script": "cerb.js",
-    "clone": false
-  },
   "clickup.com": {
     "name": "ClickUp",
     "link": "*://*.clickup.com/*",
@@ -491,10 +485,10 @@
     "script": "intercom.js",
     "clone": false
   },
-  "wikipedia.org": {
-    "name": "Wikipedia",
-    "link": "*://*.wikipedia.org/*",
-    "script": "wikipedia.js",
+  "to-do.live.com": {
+    "name": "Microsoft To-Do",
+    "link": "*://to-do.live.com/*",
+    "script": "microsoft-todo.js",
     "clone": false
   }
 }

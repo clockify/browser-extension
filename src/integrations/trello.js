@@ -26,7 +26,7 @@ setTimeout(() => {
         link.style.position = 'absolute';
         link.style.paddingTop = 0;
         link.style.paddingRight = 0;
-        link.style.right = '30px';
+        link.style.right = '80px';
         link.style.top = '6px';
         elem.appendChild(link);
     });

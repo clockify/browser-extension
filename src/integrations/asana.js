@@ -4,7 +4,7 @@ setTimeout(() => {
             container = $('.SingleTaskPaneToolbar-leftItems', elem),
             description = $('.SingleTaskPane-titleRowInput > div > textarea', elem) ?
                 $('.SingleTaskPane-titleRowInput > div > textarea', elem).textContent : "",
-            projectElements = document.getElementsByClassName('TaskProjectPill-pill'),
+            projectElements = document.getElementsByClassName('PotTokenizerPillBase-name'),
             project = projectElements && projectElements.length > 0 ?
                 projectElements[0].textContent : "";
         link = clockifyButton.createButton(description, project);
@@ -21,7 +21,7 @@ setTimeout(() => {
             container = $('.SingleTaskPaneToolbarAnimation-row', elem),
             description = $('.SingleTaskTitleInput-taskName textarea', elem) ?
                 $('.SingleTaskTitleInput-taskName textarea', elem).textContent : "",
-            projectElements = document.getElementsByClassName('PotTokenizerPill-name'),
+            projectElements = document.getElementsByClassName('PotTokenizerPillBase-name'),
             project = projectElements && projectElements.length > 0 ?
                 projectElements[0].textContent : "";
         link = clockifyButton.createButton(description, project);

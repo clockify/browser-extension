@@ -5,11 +5,12 @@ setTimeout(function(){
 
   const container = elem.parentElement;
   const subject = document.querySelector('[data-test-id="sticky-subject-header"]').textContent;
-  const ticketId = window.location.href.split('/')[6].replace("#reply-editor", "");
-  const contact = document.querySelector(".customer-data-sidebar--highlight .private-truncated-string__inner").textContent;
-  const description = "[#" + ticketId + "] " + subject + " (" + contact  + ")";
+  const sender = document.querySelector('.SenderHeaderContent__StyledFullSenderName-sc-18ouvmy-0').textContent; 
+  // const ticketId = window.location.href.split('/')[6].replace("#reply-editor", "");
+  // const contact = document.querySelector(".customer-data-sidebar--highlight .private-truncated-string__inner").textContent;
+  // const description = "[#" + ticketId + "] " + subject + " (" + contact  + ")";
 
-  const link = clockifyButton.createButton(description);
+  const link = clockifyButton.createButton(sender + ": " + subject);
   link.style.position = 'absolute';
   link.style.right = '0px';
   link.style.top = '45px';
