@@ -123,8 +123,13 @@ async function getOrCreateTask(token, project, taskName) {
 }
 
 async function getOrCreateTags(tagNames) {
-    const existingTags = tagService.getAllTagsWithFilter(1, 100);
+    const existingTagsResponse = await tagService.getAllTagsWithFilter(1, 100);
 
+    if (existingTagsResponse.status !== 200) {
+        return [];
+    }
+    
+    const existingTags = existingTagsResponse.data;
     const tags = [];
 
     for (const n of tagNames) {
@@ -132,7 +137,10 @@ async function getOrCreateTags(tagNames) {
         if (t) {
             tags.push(t);
         } else {
-            tags.push(await tagService.createTag({ name: n }));
+            const r = await tagService.createTag({ name: n });
+            if (r.status === 201) {
+                tags.push(r.data);
+            }
         }
     }
 
@@ -143,7 +151,7 @@ async function startTimeEntryRequestAndFetch (timeEntryUrl, token, options) {
     const headers =  new Headers(httpHeadersHelper.createHttpHeaders(token));
     const project = await projectHelpers.getProjectForButton(options.projectName);
     const task = options.taskName ? await getOrCreateTask(token, project, options.taskName) : null;
-    const tags = options.tagNames ? await getOrCreateTags(token, options.tagNames) : [];
+    const tags = options.tagNames ? await getOrCreateTags(options.tagNames) : [];
 
     let billable = options.billable;
     if (_.isNil(billable)) {
@@ -158,7 +166,7 @@ async function startTimeEntryRequestAndFetch (timeEntryUrl, token, options) {
             description: options.description,
             billable: billable,
             projectId: project ? project.id : null,
-            tagIds: [],
+            tagIds: tags.map(e => e.id),
             taskId: task ? task.id : null
         })
     });
