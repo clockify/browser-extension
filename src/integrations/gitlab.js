@@ -9,13 +9,13 @@ clockifyButton.render('.issue-details .detail-page-description:not(.clockify)', 
         description = numElem.textContent.split(" ").pop().trim() + " " + description;
     }
 
-    var billable = Array.from($$("div.labels .gl-label-text")).some(e => e.innerText === "billable");
+    var tags = Array.from($$("div.labels .gl-label-text")).map(e => e.innerText);
 
     link = clockifyButton.createButton({
         description: description,
         projectName: projectElem.textContent.trim(),
         taskName: description,
-        billable: billable
+        tagNames: tags
     });
     link.style.marginRight = '15px';
     link.style.padding = '0px';

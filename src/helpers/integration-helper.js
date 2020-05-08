@@ -2,12 +2,14 @@ import * as _ from "lodash";
 import {TokenService} from "../services/token-service";
 import * as React from 'react';
 import {ProjectHelper} from "./project-helper";
+import {TagService} from "../services/tag-service";
 import {LocalStorageService} from "../services/localStorage-service";
 import {HttpHeadersHelper} from "./http-headers-helper";
 
 const localStorageService = new LocalStorageService();
 const tokenService = new TokenService();
 const projectHelpers = new ProjectHelper();
+const tagService = new TagService();
 const httpHeadersHelper = new HttpHeadersHelper();
 
 export function getEntryInProgress() {
@@ -120,10 +122,28 @@ async function getOrCreateTask(token, project, taskName) {
     }
 }
 
+async function getOrCreateTags(tagNames) {
+    const existingTags = tagService.getAllTagsWithFilter(1, 100);
+
+    const tags = [];
+
+    for (const n of tagNames) {
+        const t = existingTags.find(e => e.name === n);
+        if (t) {
+            tags.push(t);
+        } else {
+            tags.push(await tagService.createTag({ name: n }));
+        }
+    }
+
+    return tags;
+}
+
 async function startTimeEntryRequestAndFetch (timeEntryUrl, token, options) {
     const headers =  new Headers(httpHeadersHelper.createHttpHeaders(token));
     const project = await projectHelpers.getProjectForButton(options.projectName);
     const task = options.taskName ? await getOrCreateTask(token, project, options.taskName) : null;
+    const tags = options.tagNames ? await getOrCreateTags(token, options.tagNames) : [];
 
     let billable = options.billable;
     if (_.isNil(billable)) {
