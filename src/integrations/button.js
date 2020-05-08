@@ -44,11 +44,12 @@ var clockifyButton = {
             renderer(element);
         }
     },
-    createButton: (description, project) => {
+    createButton: (description, project, task) => {
         const button = document.createElement('a');
         let title = invokeIfFunction(description);
         let active = title && title === clockifyButton.inProgressDescription;
         const projectName = !!project ? project : null;
+        const taskName = !!task ? task : null;
 
         setButtonProperties(button, title, active);
 
@@ -75,7 +76,8 @@ var clockifyButton = {
                 aBrowser.runtime.sendMessage({
                     eventName: 'startWithDescription',
                     description: title,
-                    project: projectName
+                    project: projectName,
+                    task: taskName
                 }, (response) => {
                     if (response.status === 400) {
                         alert("Can't end entry without project/task/description or tags.Please edit your time entry.");

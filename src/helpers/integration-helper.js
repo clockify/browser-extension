@@ -43,7 +43,7 @@ export function stopInProgress() {
     });
 }
 
-export function startTimer(description, projectName) {
+export function startTimer(description, projectName, taskName) {
     const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
     const baseUrl = localStorageService.get('baseUrl');
     let timeEntryUrl =
@@ -51,7 +51,7 @@ export function startTimer(description, projectName) {
 
     return tokenService.getToken().then(token => {
         if (token) {
-            return startTimeEntryRequestAndFetch(timeEntryUrl, token, description, projectName);
+            return startTimeEntryRequestAndFetch(timeEntryUrl, token, description, projectName, taskName);
         } else {
             tokenService.logout();
             return new Promise((resolve, reject) => {
@@ -88,9 +88,18 @@ function createStopInProgressUrlAndFetch (endInProgressUrl, token) {
         .then(response => response);
 }
 
-async function startTimeEntryRequestAndFetch (timeEntryUrl, token, description, projectName) {
+async function startTimeEntryRequestAndFetch (timeEntryUrl, token, description, projectName, taskName) {
     const headers =  new Headers(httpHeadersHelper.createHttpHeaders(token));
     const project = await projectHelpers.getProjectForButton(projectName);
+
+    console.log("YEEEEYYY");
+    console.log(taskName);
+    console.log(project);
+
+    // try to find the appropriate task for this
+    const task = project.tasks.find(t => t.name === taskName);
+    console.log(task);
+
     const timeEntryRequest = new Request(timeEntryUrl, {
         method: 'POST',
         headers: headers,
@@ -100,7 +109,7 @@ async function startTimeEntryRequestAndFetch (timeEntryUrl, token, description, 
             billable: project ? project.billable : false,
             projectId: project ? project.id : null,
             tagIds: [],
-            taskId: null
+            taskId: task ? task.id : null
         })
     });
         return fetch(timeEntryRequest)
