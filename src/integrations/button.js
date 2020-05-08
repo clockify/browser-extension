@@ -45,11 +45,23 @@ var clockifyButton = {
         }
     },
     createButton: (description, project, task) => {
+        let timeEntryOptions;
+        if (typeof description === 'object') {
+            // mode: only one parameter that contains the options
+            timeEntryOptions = description;
+        } else {
+            // legacy mode: multiple parameters
+            timeEntryOptions = {
+                description: description || "",
+                projectName: project || null,
+                taskName: task || null,
+                billable: null
+            };
+        }
+
         const button = document.createElement('a');
-        let title = invokeIfFunction(description);
+        let title = invokeIfFunction(timeEntryOptions.description);
         let active = title && title === clockifyButton.inProgressDescription;
-        const projectName = !!project ? project : null;
-        const taskName = !!task ? task : null;
 
         setButtonProperties(button, title, active);
 
@@ -58,7 +70,7 @@ var clockifyButton = {
         });
 
         button.onclick = () => {
-            title = invokeIfFunction(description);
+            title = invokeIfFunction(timeEntryOptions.description);
             if (title && title === clockifyButton.inProgressDescription) {
                 aBrowser.runtime.sendMessage({eventName: 'endInProgress'}, (response) => {
                     if (response.status === 400) {
@@ -75,9 +87,7 @@ var clockifyButton = {
             } else {
                 aBrowser.runtime.sendMessage({
                     eventName: 'startWithDescription',
-                    description: title,
-                    project: projectName,
-                    task: taskName
+                    timeEntryOptions: timeEntryOptions
                 }, (response) => {
                     if (response.status === 400) {
                         alert("Can't end entry without project/task/description or tags.Please edit your time entry.");

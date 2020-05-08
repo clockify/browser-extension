@@ -1,3 +1,4 @@
+import * as _ from "lodash";
 import {TokenService} from "../services/token-service";
 import * as React from 'react';
 import {ProjectHelper} from "./project-helper";
@@ -43,7 +44,7 @@ export function stopInProgress() {
     });
 }
 
-export function startTimer(description, projectName, taskName) {
+export function startTimer(timeEntryOptions) {
     const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
     const baseUrl = localStorageService.get('baseUrl');
     let timeEntryUrl =
@@ -51,7 +52,7 @@ export function startTimer(description, projectName, taskName) {
 
     return tokenService.getToken().then(token => {
         if (token) {
-            return startTimeEntryRequestAndFetch(timeEntryUrl, token, description, projectName, taskName);
+            return startTimeEntryRequestAndFetch(timeEntryUrl, token, timeEntryOptions);
         } else {
             tokenService.logout();
             return new Promise((resolve, reject) => {
@@ -119,18 +120,23 @@ async function getOrCreateTask(token, project, taskName) {
     }
 }
 
-async function startTimeEntryRequestAndFetch (timeEntryUrl, token, description, projectName, taskName) {
+async function startTimeEntryRequestAndFetch (timeEntryUrl, token, options) {
     const headers =  new Headers(httpHeadersHelper.createHttpHeaders(token));
-    const project = await projectHelpers.getProjectForButton(projectName);
-    const task = taskName ? await getOrCreateTask(token, project, taskName) : null;
+    const project = await projectHelpers.getProjectForButton(options.projectName);
+    const task = options.taskName ? await getOrCreateTask(token, project, options.taskName) : null;
+
+    let billable = options.billable;
+    if (_.isNil(billable)) {
+        billable = project ? project.billable : false;
+    }
 
     const timeEntryRequest = new Request(timeEntryUrl, {
         method: 'POST',
         headers: headers,
         body: JSON.stringify({
             start: new Date(),
-            description: description,
-            billable: project ? project.billable : false,
+            description: options.description,
+            billable: billable,
             projectId: project ? project.id : null,
             tagIds: [],
             taskId: task ? task.id : null
