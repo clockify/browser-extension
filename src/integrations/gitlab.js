@@ -9,15 +9,20 @@ clockifyButton.render('.issue-details .detail-page-description:not(.clockify)', 
         description = numElem.textContent.split(" ").pop().trim() + " " + description;
     }
 
+    var billable = Array.from($$("div.labels .gl-label-text")).some(e => e.innerText === "billable");
+
     link = clockifyButton.createButton({
         description: description,
         projectName: projectElem.textContent.trim(),
         taskName: description,
-        billable: false
+        billable: billable
     });
     link.style.marginRight = '15px';
     link.style.padding = '0px';
     link.style.paddingLeft = '20px';
+    if (billable) {
+        link.style.background = 'red';
+    }
     actionsElem.parentElement.insertBefore(link, actionsElem);
 });
 
@@ -37,8 +42,7 @@ clockifyButton.render('.merge-request-details .detail-page-description:not(.cloc
     link = clockifyButton.createButton({
         description: description,
         projectName: projectElem.textContent.trim(),
-        taskName: description,
-        billable: false
+        taskName: description
     });
     link.style.marginRight = '15px';
     link.style.padding = '0px';

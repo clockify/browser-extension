@@ -165,6 +165,11 @@ function $(s, elem) {
     return elem.querySelector(s);
 }
 
+function $$(s, elem) {
+    elem = elem || document;
+    return elem.querySelectorAll(s);
+}
+
 function invokeIfFunction(trial) {
     if (trial instanceof Function) {
         return trial();
