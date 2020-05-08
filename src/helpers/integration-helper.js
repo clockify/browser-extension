@@ -88,17 +88,41 @@ function createStopInProgressUrlAndFetch (endInProgressUrl, token) {
         .then(response => response);
 }
 
+async function createTask(token, projectId, taskName) {
+    const headers =  new Headers(httpHeadersHelper.createHttpHeaders(token));
+
+    const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
+    const baseUrl = localStorageService.get('baseUrl');
+    let url = `${baseUrl}/workspaces/${activeWorkspaceId}/projects/${projectId}/tasks/`;
+
+    const req = new Request(url, {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify({
+            name: taskName,
+            projectId: projectId
+        })
+    });
+
+    return fetch(req)
+        .then(response => response.json());
+}
+
+async function getOrCreateTask(token, project, taskName) {
+    // try to find the appropriate task for this
+    const task = project.tasks.find(t => t.name === taskName);
+
+    if (task) {
+        return task;
+    } else {
+        return await createTask(token, project.id, taskName)
+    }
+}
+
 async function startTimeEntryRequestAndFetch (timeEntryUrl, token, description, projectName, taskName) {
     const headers =  new Headers(httpHeadersHelper.createHttpHeaders(token));
     const project = await projectHelpers.getProjectForButton(projectName);
-
-    console.log("YEEEEYYY");
-    console.log(taskName);
-    console.log(project);
-
-    // try to find the appropriate task for this
-    const task = project.tasks.find(t => t.name === taskName);
-    console.log(task);
+    const task = taskName ? await getOrCreateTask(token, project, taskName) : null;
 
     const timeEntryRequest = new Request(timeEntryUrl, {
         method: 'POST',
