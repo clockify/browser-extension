@@ -1,4 +1,3 @@
-import * as _ from "lodash";
 import {TokenService} from "../services/token-service";
 import * as React from 'react';
 import {ProjectHelper} from "./project-helper";
@@ -154,7 +153,7 @@ async function startTimeEntryRequestAndFetch (timeEntryUrl, token, options) {
     const tags = options.tagNames ? await getOrCreateTags(options.tagNames) : [];
 
     let billable = options.billable;
-    if (_.isNil(billable)) {
+    if (billable === undefined || billable === null) {
         billable = project ? project.billable : false;
     }
 
