@@ -151,8 +151,117 @@ var clockifyButton = {
 
         clockifyButton.links.push(button);
         return button;
+    },
+
+    createInput: (timeEntryOptions) => {
+        const form = document.createElement('form');
+        const input = document.createElement('input');
+        input.setAttribute("placeholder", "Format: 4d 5h 30m");
+
+        form.appendChild(input);
+
+        form.onsubmit = (a) => {
+            try {
+                const time = input.value;
+                const m = time.match(/^(\d+d)?\s*(\d+h)?\s*(\d+m)?$/);
+                if (m) {
+                    input.readOnly = true;
+
+                    var totalMins = 8 * 60 * parseInt(m[1] || 0, 10) +
+                        60 * parseInt(m[2] || 0, 10) +
+                        parseInt(m[3] || 0, 10);
+                    
+                    aBrowser.runtime.sendMessage({
+                        eventName: 'submitTime',
+                        totalMins: totalMins,
+                        timeEntryOptions: timeEntryOptions,
+                    }, (response) => {
+                        if (!response || response.status !== 201) {
+                            input.style.background = '#ff0000';
+                            input.value = "Error: " + (response && response.code);
+                            console.error(response);
+                
+                            setTimeout(() => {
+                                input.value = time;
+                                input.style.background = 'white';
+                                input.readOnly = false;
+                            }, 1000);
+                        } else {
+                            input.style.background = '#00ff00';
+                            input.value = "YEY! Submission successful!";
+                
+                            setTimeout(() => {
+                                input.value = "";
+                                input.style.background = 'white';
+                                input.readOnly = false;
+                            }, 1000);
+                        }
+                    });
+                } else {
+                    input.readOnly = true;
+                    input.style.background = '#ff0000';
+                    input.value = "Input format: 4d 3h 30m";
+        
+                    setTimeout(() => {
+                        input.value = time;
+                        input.style.background = 'white';
+                        input.readOnly = false;
+                    }, 1000);
+                }
+            } catch (e) {
+                console.error(e);
+            }
+
+            // don't reload the page
+            return false;
+        };
+
+        // setButtonProperties(button, title, active);
+    
+        // button.addEventListener('click', (e) => {
+        //     e.stopPropagation();
+        // });
+    
+        // button.onclick = () => {
+        //     title = invokeIfFunction(timeEntryOptions.description);
+        //     if (title && title === clockifyButton.inProgressDescription) {
+        //         aBrowser.runtime.sendMessage({eventName: 'endInProgress'}, (response) => {
+        //             if (response.status === 400) {
+        //                 alert("Can't end entry without project/task/description or tags.Please edit your time entry.");
+        //             } else {
+        //                 clockifyButton.inProgressDescription = null;
+        //                 active = false;
+        //                 setButtonProperties(button, title, active);
+        //                 aBrowser.storage.sync.set({
+        //                     timeEntryInProgress: null
+        //                 });
+        //             }
+        //         });
+        //     } else {
+        //         aBrowser.runtime.sendMessage({
+        //             eventName: 'startWithDescription',
+        //             timeEntryOptions: timeEntryOptions
+        //         }, (response) => {
+        //             if (response.status === 400) {
+        //                 alert("Can't end entry without project/task/description or tags.Please edit your time entry.");
+        //             } else {
+        //                 active = true;
+        //                 setButtonProperties(button, title, active);
+        //                 clockifyButton.inProgressDescription = title;
+        //                 aBrowser.storage.sync.set({
+        //                     timeEntryInProgress: response.data
+        //                 });
+        //             }
+        //         });
+        //     }
+    
+        // };
+        // clockifyButton.links.push(button);
+
+        return form;
     }
 };
+
 
 function fetchEntryInProgress(callback) {
     aBrowser.runtime.sendMessage({eventName: "getEntryInProgress"}, (response) => {

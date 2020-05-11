@@ -21,6 +21,15 @@ clockifyButton.render('.issue-details .detail-page-description:not(.clockify)', 
     link.style.padding = '0px';
     link.style.paddingLeft = '20px';
     actionsElem.parentElement.insertBefore(link, actionsElem);
+
+    var inputForm = clockifyButton.createInput({
+        description: description,
+        projectName: projectElem.textContent.trim(),
+        taskName: description,
+        tagNames: tags
+    });
+    inputForm.firstChild.setAttribute("class", "form-control");
+    actionsElem.parentElement.insertBefore(inputForm, actionsElem);
 });
 
 clockifyButton.render('.merge-request-details .detail-page-description:not(.clockify)', {observe: true}, (elem) => {

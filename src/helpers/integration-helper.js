@@ -162,7 +162,8 @@ async function startTimeEntryRequestAndFetch (timeEntryUrl, token, options) {
         method: 'POST',
         headers: headers,
         body: JSON.stringify({
-            start: new Date(),
+            start: options.start || new Date(),
+            end: options.end, // can be undefined
             description: options.description,
             billable: billable,
             projectId: project ? project.id : null,

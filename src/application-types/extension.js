@@ -132,6 +132,9 @@ export class Extension {
                 case 'startWithDescription':
                     this.startNewEntry(request, sendResponse);
                     break;
+                case 'submitTime':
+                    this.submitTime(request, sendResponse);
+                    break;
             }
             return true;
         });
@@ -182,6 +185,22 @@ export class Extension {
                     this.setIcon(getIconStatus().timeEntryStarted);
                     getBrowser().extension.getBackgroundPage().addPomodoroTimer();
                     sendResponse({status: 200, data: response})
+                }
+            })
+    }
+
+    submitTime(request, sendResponse) {
+        const end = new Date();
+        request.timeEntryOptions.start = new Date(end.getTime() - request.totalMins * 60000);
+        request.timeEntryOptions.end = end;
+
+        startTimer(request.timeEntryOptions)
+            .then((response) => {
+                if (!response.message) {
+                    sendResponse({ status: 201, data: response })
+                } else {
+                    response.status = response.code;
+                    sendResponse(response);
                 }
             })
     }
