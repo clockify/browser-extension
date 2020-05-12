@@ -149,8 +149,16 @@ async function getOrCreateTags(tagNames) {
 async function startTimeEntryRequestAndFetch (timeEntryUrl, token, options) {
     const headers =  new Headers(httpHeadersHelper.createHttpHeaders(token));
     const project = await projectHelpers.getProjectForButton(options.projectName);
-    const task = options.taskName ? await getOrCreateTask(token, project, options.taskName) : null;
-    const tags = options.tagNames ? await getOrCreateTags(options.tagNames) : [];
+
+    let task = null;
+    if (project && options.taskName) {
+        task = await getOrCreateTask(token, project, options.taskName);
+    }
+
+    let tags = [];
+    if (options.tagNames) {
+        tags = await getOrCreateTags(options.tagNames);
+    }
 
     let billable = options.billable;
     if (billable === undefined || billable === null) {
