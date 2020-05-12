@@ -7,7 +7,7 @@ setTimeout(() => {
             projectElements = document.getElementsByClassName('PotTokenizerPillBase-name'),
             project = projectElements && projectElements.length > 0 ?
                 projectElements[0].textContent : "";
-        link = clockifyButton.createButton(description, project);
+        link = clockifyButton.createButton(description, project, description);
         link.style.marginLeft = "10px";
         container.appendChild(link);
 
@@ -24,11 +24,23 @@ setTimeout(() => {
             projectElements = document.getElementsByClassName('PotTokenizerPillBase-name'),
             project = projectElements && projectElements.length > 0 ?
                 projectElements[0].textContent : "";
-        link = clockifyButton.createButton(description, project);
+        link = clockifyButton.createButton(description, project, description);
         link.style.marginLeft = "10px";
         container.appendChild(link);
 
     });
+},100);
+
+// subtasks
+setTimeout(() => {
+  clockifyButton.render('.ItemRowTwoColumnStructure-left:not(.clockify)', {observe: true}, (elem) => {
+      projectElements = document.getElementsByClassName('PotTokenizerPillBase-name'),
+      project = projectElements && projectElements.length > 0 ?
+                projectElements[0].textContent : "";
+      let description = $('.simpleTextarea.AutogrowTextarea-input', elem).textContent.trim();
+      let link = clockifyButton.createSmallButton(description, project);
+      elem.parentNode.appendChild(link);
+  });
 },100);
 
 // // New UI v1
