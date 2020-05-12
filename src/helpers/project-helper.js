@@ -147,8 +147,6 @@ export class ProjectHelper {
 
             return projectService.getProjectsWithFilter(projectFilter, page, pageSize).then(response => {
                 if (response && response.data && response.data.length > 0) {
-                    console.log("FETCH");
-                    console.log(response);
                     project = response.data.filter(project => project.name === projectName)[0];
                 }
 
@@ -158,8 +156,6 @@ export class ProjectHelper {
                         color: "#03a9f4"
                     }).then(response => {
                         if (response.status === 201) {
-                            console.log("POST");
-                            console.log(response);
                             return response.data;
                         } else {
                             // something went wrong, ignore and return default project
