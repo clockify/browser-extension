@@ -107,18 +107,21 @@ async function createTask(token, projectId, taskName) {
     });
 
     return fetch(req)
-        .then(response => response.json());
+        .then(response => {
+            if (response.status === 201) {
+                return response.json();
+            } else {
+                // task creation failed
+                return null;
+            }
+        });
 }
 
 async function getOrCreateTask(token, project, taskName) {
     // try to find the appropriate task for this
     const task = project.tasks.find(t => t.name === taskName);
 
-    if (task) {
-        return task;
-    } else {
-        return await createTask(token, project.id, taskName)
-    }
+    return task || (await createTask(token, project.id, taskName));
 }
 
 async function getOrCreateTags(tagNames) {
@@ -136,9 +139,15 @@ async function getOrCreateTags(tagNames) {
         if (t) {
             tags.push(t);
         } else {
-            const r = await tagService.createTag({ name: n });
-            if (r.status === 201) {
-                tags.push(r.data);
+            try {
+                const r = await tagService.createTag({ name: n });
+                if (r.status === 201) {
+                    tags.push(r.data);
+                }
+            }
+            catch (e) {
+                // request failed, probably because of wrong permissions; we just ignore this tag
+                console.error(e);
             }
         }
     }
