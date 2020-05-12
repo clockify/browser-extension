@@ -119,7 +119,9 @@ async function createTask(token, projectId, taskName) {
 
 async function getOrCreateTask(token, project, taskName) {
     // try to find the appropriate task for this
-    const task = project.tasks.find(t => t.name === taskName);
+    // if project.tasks is not present, this most certainly means that this
+    // project was freshly created in which case there simply are no tasks
+    const task = (project.tasks || []).find(t => t.name === taskName);
 
     return task || (await createTask(token, project.id, taskName));
 }
