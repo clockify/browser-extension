@@ -39,6 +39,7 @@ class Settings extends React.Component {
             userEmail: '',
             userPicture: null,
             sendErrors: JSON.parse(localStorageService.get('sendErrors')),
+            createObjects: JSON.parse(localStorageService.get('createObjects', false)), // TODO what is the sensible default here?
             isSelfHosted: JSON.parse(localStorageService.get('selfHosted', false)),
             idleDetection: false,
             idleDetectionCounter: null,
@@ -193,6 +194,21 @@ class Settings extends React.Component {
             window.metricService.disable();
             this.setState({
                 sendErrors: true
+            });
+        }
+        this.showSuccessMessage();
+    }
+
+    toggleCreateObjects() {
+        if (this.state.createObjects) {
+            localStorageService.set('createObjects', false, getLocalStorageEnums().PERMANENT_PREFIX);
+            this.setState({
+                createObjects: false
+            });
+        } else {
+            localStorageService.set('createObjects', true, getLocalStorageEnums().PERMANENT_PREFIX);
+            this.setState({
+                createObjects: true
             });
         }
         this.showSuccessMessage();
@@ -728,6 +744,17 @@ class Settings extends React.Component {
                         workspaceSettings={this.props.workspaceSettings}
                         changeSaved={this.showSuccessMessage.bind(this)}
                     />
+                    <div className={isAppTypeExtension() ? "settings__send-errors" : "disabled"}
+                         onClick={this.toggleCreateObjects.bind(this)}>
+                        <span className={this.state.createObjects ?
+                            "settings__send-errors__checkbox checked" : "settings__send-errors__checkbox"}>
+                            <img src="./assets/images/checked.png"
+                                 className={this.state.createObjects ?
+                                     "settings__send-errors__checkbox--img" :
+                                     "settings__send-errors__checkbox--img_hidden"}/>
+                        </span>
+                        <span className="settings__send-errors__title">Create projects/tasks/tags if they're not existing</span>
+                    </div>
                     <DarkModeComponent
                         changeSaved={this.showSuccessMessage.bind(this)}
                     />

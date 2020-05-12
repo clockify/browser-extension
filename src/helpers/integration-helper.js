@@ -123,7 +123,11 @@ async function getOrCreateTask(token, project, taskName) {
     // project was freshly created in which case there simply are no tasks
     const task = (project.tasks || []).find(t => t.name === taskName);
 
-    return task || (await createTask(token, project.id, taskName));
+    if (task) {
+        return task;
+    } else if (localStorageService.get('createObjects')) {
+        return await createTask(token, project.id, taskName);
+    }
 }
 
 async function getOrCreateTags(tagNames) {
@@ -140,7 +144,7 @@ async function getOrCreateTags(tagNames) {
         const t = existingTags.find(e => e.name === n);
         if (t) {
             tags.push(t);
-        } else {
+        } else if (localStorageService.get('createObjects')) {
             try {
                 const r = await tagService.createTag({ name: n });
                 if (r.status === 201) {
