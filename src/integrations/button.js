@@ -108,10 +108,16 @@ var clockifyButton = {
     },
 
     createSmallButton: (description, project) => {
+        const timeEntryOptions = {
+            description: description || "",
+            projectName: project || null,
+            taskName: null,
+            billable: null
+        };
+
         const button = document.createElement('a');
-        let title = invokeIfFunction(description);
+        let title = invokeIfFunction(timeEntryOptions.description);
         let active = clockifyButton.inProgressDescription === title;
-        const projectName = !!project ? project : null;
         button.classList.add('small');
         setButtonProperties(button, title, active);
 
@@ -132,8 +138,7 @@ var clockifyButton = {
             } else {
                 aBrowser.runtime.sendMessage({
                     eventName: 'startWithDescription',
-                    description: title,
-                    project: projectName
+                    timeEntryOptions: timeEntryOptions
                 }, (response) => {
                     if (response.status === 400) {
                         alert("Can't end entry without project/task/description or tags.Please edit your time entry.");
