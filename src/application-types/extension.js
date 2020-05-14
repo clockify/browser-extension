@@ -175,7 +175,7 @@ export class Extension {
     }
 
     startTimer(request, sendResponse) {
-        startTimer(request.description || "", request.project)
+        startTimer(request.timeEntryOptions)
             .then((response) => {
                 if (!response.message) {
                     window.inProgress = true;
