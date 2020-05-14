@@ -133,7 +133,7 @@ export class ProjectHelper {
         const page = 0;
         const pageSize = 50;
         let projectFilter;
-        let project;
+        let project = null;
 
         if (!!projectName) {
             const isSpecialFilter =
@@ -148,9 +148,25 @@ export class ProjectHelper {
             return projectService.getProjectsWithFilter(projectFilter, page, pageSize).then(response => {
                 if (response && response.data && response.data.length > 0) {
                     project = response.data.filter(project => project.name === projectName)[0];
-                    return project ? project : this.getDefaultProject();
+                }
+
+                if (!project && localStorageService.get('createObjects')) {
+                    return projectService.createProject({
+                        name: projectName,
+                        color: "#03a9f4"
+                    }).then(response => {
+                        if (response.status === 201) {
+                            return response.data;
+                        } else {
+                            // something went wrong, ignore and return default project
+                            return this.getDefaultProject();
+                        }
+                    }).catch(error => {
+                        console.error(error);
+                        return this.getDefaultProject();
+                    });
                 } else {
-                    return this.getDefaultProject();
+                    return project;
                 }
             });
         } else {
