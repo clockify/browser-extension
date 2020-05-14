@@ -7,7 +7,7 @@ setTimeout(() => {
             projectElements = document.getElementsByClassName('PotTokenizerPillBase-name'),
             project = projectElements && projectElements.length > 0 ?
                 projectElements[0].textContent : "";
-        link = clockifyButton.createButton(description, project, description);
+        link = clockifyButton.createButton(description, project);
         link.style.marginLeft = "10px";
         container.appendChild(link);
 
@@ -24,7 +24,7 @@ setTimeout(() => {
             projectElements = document.getElementsByClassName('PotTokenizerPillBase-name'),
             project = projectElements && projectElements.length > 0 ?
                 projectElements[0].textContent : "";
-        link = clockifyButton.createButton(description, project, description);
+        link = clockifyButton.createButton(description, project);
         link.style.marginLeft = "10px";
         container.appendChild(link);
 
