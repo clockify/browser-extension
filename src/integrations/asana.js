@@ -1,4 +1,4 @@
-setTimeout(() => {
+    setTimeout(() => {
     clockifyButton.render('.SingleTaskPane:not(.clockify)', {observe: true}, (elem) => {
         var link,
             container = $('.SingleTaskPaneToolbar-leftItems', elem),
@@ -47,7 +47,11 @@ setTimeout(() => {
       project = projectElements && projectElements.length > 0 ?
                 projectElements[0].textContent : "";
       let description = $('.simpleTextarea.AutogrowTextarea-input', elem).textContent.trim();
-        link = clockifyButton.createButton(description, project, maintask);
+      link = clockifyButton.createSmallButton({
+          description: description,
+          projectName: project,
+          taskName: maintask
+      });
       elem.parentNode.appendChild(link);
   });
 },100);
