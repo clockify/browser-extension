@@ -108,14 +108,23 @@ var clockifyButton = {
     },
 
     createSmallButton: (description, project) => {
-        const button = document.createElement('a');
-        let timeEntryOptions = {
-            description: description || "",
-            projectName: project || null
+        let timeEntryOptions;
+        if (typeof description === 'object') {
+            // mode: only one parameter that contains the options
+            timeEntryOptions = description;
+        } else {
+            // legacy mode: multiple parameters
+            timeEntryOptions = {
+                description: description || "",
+                projectName: project || null,
+                taskName: null,
+                billable: null
+            };
         }
-        let title = invokeIfFunction(description);
+
+        const button = document.createElement('a');
+        let title = invokeIfFunction(timeEntryOptions.description);
         let active = clockifyButton.inProgressDescription === title;
-        const projectName = !!project ? project : null;
         button.classList.add('small');
         setButtonProperties(button, title, active);
 
