@@ -108,14 +108,16 @@ var clockifyButton = {
     },
 
     createSmallButton: (description, project) => {
-        const button = document.createElement('a');
-        let timeEntryOptions = {
+        const timeEntryOptions = {
             description: description || "",
-            projectName: project || null
-        }
-        let title = invokeIfFunction(description);
+            projectName: project || null,
+            taskName: null,
+            billable: null
+        };
+
+        const button = document.createElement('a');
+        let title = invokeIfFunction(timeEntryOptions.description);
         let active = clockifyButton.inProgressDescription === title;
-        const projectName = !!project ? project : null;
         button.classList.add('small');
         setButtonProperties(button, title, active);
 
