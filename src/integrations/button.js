@@ -108,12 +108,19 @@ var clockifyButton = {
     },
 
     createSmallButton: (description, project) => {
-        const timeEntryOptions = {
-            description: description || "",
-            projectName: project || null,
-            taskName: null,
-            billable: null
-        };
+        let timeEntryOptions;
+        if (typeof description === 'object') {
+            // mode: only one parameter that contains the options
+            timeEntryOptions = description;
+        } else {
+            // legacy mode: multiple parameters
+            timeEntryOptions = {
+                description: description || "",
+                projectName: project || null,
+                taskName: null,
+                billable: null
+            };
+        }
 
         const button = document.createElement('a');
         let title = invokeIfFunction(timeEntryOptions.description);
