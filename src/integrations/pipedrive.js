@@ -33,7 +33,7 @@ clockifyButton.render('.cui4-modal__wrap .cui4-modal__header:not(.clockify)', {o
 // CONTACTS
 clockifyButton.render('.detailView .content .spacer:not(.clockify)', {observe: true}, function (elem) {
   var link, description;
-  description = $('h1 .editable').textContent;
+  description = document.title.replace('- contact details','');;
   link = clockifyButton.createButton(description);
   link.style.display = "block";
   link.style.paddingTop = "0";

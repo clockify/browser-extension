@@ -7,7 +7,11 @@ setTimeout(() => {
             projectElements = document.getElementsByClassName('PotTokenizerPillBase-name'),
             project = projectElements && projectElements.length > 0 ?
                 projectElements[0].textContent : "";
-        link = clockifyButton.createButton(description, project);
+        link = clockifyButton.createButton({
+            description: description,
+            projectName: project,
+            taskName: description
+        });
         link.style.marginLeft = "10px";
         container.appendChild(link);
 
@@ -24,7 +28,11 @@ setTimeout(() => {
             projectElements = document.getElementsByClassName('PotTokenizerPillBase-name'),
             project = projectElements && projectElements.length > 0 ?
                 projectElements[0].textContent : "";
-        link = clockifyButton.createButton(description, project);
+        link = clockifyButton.createButton({
+            description: description,
+            projectName: project,
+            taskName: description
+        });
         link.style.marginLeft = "10px";
         container.appendChild(link);
 
@@ -35,10 +43,11 @@ setTimeout(() => {
 setTimeout(() => {
   clockifyButton.render('.ItemRowTwoColumnStructure-left:not(.clockify)', {observe: true}, (elem) => {
       projectElements = document.getElementsByClassName('PotTokenizerPillBase-name'),
+      maintask = $('.SingleTaskTitleInput-taskName textarea') ?  $('.SingleTaskTitleInput-taskName textarea').textContent : "", 
       project = projectElements && projectElements.length > 0 ?
                 projectElements[0].textContent : "";
       let description = $('.simpleTextarea.AutogrowTextarea-input', elem).textContent.trim();
-      let link = clockifyButton.createSmallButton(description, project);
+        link = clockifyButton.createButton(description, project, maintask);
       elem.parentNode.appendChild(link);
   });
 },100);

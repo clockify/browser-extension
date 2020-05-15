@@ -735,7 +735,7 @@ class Settings extends React.Component {
                                      "settings__send-errors__checkbox--img" :
                                      "settings__send-errors__checkbox--img_hidden"}/>
                         </span>
-                        <span className="settings__send-errors__title">Create projects/tasks/tags if they're not existing</span>
+                        <span className="settings__send-errors__title">Integrations can create projects/tasks/tags</span>
                     </div>
                     <DarkModeComponent
                         changeSaved={this.showSuccessMessage.bind(this)}
