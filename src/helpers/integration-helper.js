@@ -107,17 +107,26 @@ async function createTask(token, projectId, taskName) {
     });
 
     return fetch(req)
-        .then(response => response.json());
+        .then(response => {
+            if (response.status === 201) {
+                return response.json();
+            } else {
+                // task creation failed
+                return null;
+            }
+        });
 }
 
 async function getOrCreateTask(token, project, taskName) {
     // try to find the appropriate task for this
-    const task = project.tasks.find(t => t.name === taskName);
+    // if project.tasks is not present, this most certainly means that this
+    // project was freshly created in which case there simply are no tasks
+    const task = (project.tasks || []).find(t => t.name === taskName);
 
     if (task) {
         return task;
-    } else {
-        return await createTask(token, project.id, taskName)
+    } else if (localStorageService.get('createObjects')) {
+        return await createTask(token, project.id, taskName);
     }
 }
 
@@ -135,10 +144,16 @@ async function getOrCreateTags(tagNames) {
         const t = existingTags.find(e => e.name === n);
         if (t) {
             tags.push(t);
-        } else {
-            const r = await tagService.createTag({ name: n });
-            if (r.status === 201) {
-                tags.push(r.data);
+        } else if (localStorageService.get('createObjects')) {
+            try {
+                const r = await tagService.createTag({ name: n });
+                if (r.status === 201) {
+                    tags.push(r.data);
+                }
+            }
+            catch (e) {
+                // request failed, probably because of wrong permissions; we just ignore this tag
+                console.error(e);
             }
         }
     }
@@ -149,8 +164,16 @@ async function getOrCreateTags(tagNames) {
 async function startTimeEntryRequestAndFetch (timeEntryUrl, token, options) {
     const headers =  new Headers(httpHeadersHelper.createHttpHeaders(token));
     const project = await projectHelpers.getProjectForButton(options.projectName);
-    const task = options.taskName ? await getOrCreateTask(token, project, options.taskName) : null;
-    const tags = options.tagNames ? await getOrCreateTags(options.tagNames) : [];
+
+    let task = null;
+    if (project && options.taskName) {
+        task = await getOrCreateTask(token, project, options.taskName);
+    }
+
+    let tags = [];
+    if (options.tagNames) {
+        tags = await getOrCreateTags(options.tagNames);
+    }
 
     let billable = options.billable;
     if (billable === undefined || billable === null) {

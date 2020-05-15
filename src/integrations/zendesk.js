@@ -2,14 +2,14 @@ clockifyButton.render('.pane_header:not(.clockify)', { observe: true }, function
   elem
 ) {
   let description;
-  const projectName = $('title').textContent.split(' - ').shift();
+  const projectName = $('title').textContent;
 
   const titleFunc = function () {
-    const titleElem = $('[data-test-id="header-tab-title"]');
+    const titleElem = $('.editable .ember-view input', elem);
     const ticketNum = location.href.match(/tickets\/(\d+)/);
 
     if (titleElem !== null) {
-      description = titleElem.textContent.trim();
+      description = titleElem.value.trim();
     }
 
     if (ticketNum) {
@@ -18,7 +18,7 @@ clockifyButton.render('.pane_header:not(.clockify)', { observe: true }, function
     return description;
   };
 
-  const link = clockifyButton.createButton(titleFunc, projectName);
+  const link = clockifyButton.createButton(titleFunc, projectName && projectName.split(' - ').shift());
 
   if (elem.querySelector('#clockifyButton')) {
     elem.removeChild(elem.querySelector('#clockifyButton'));

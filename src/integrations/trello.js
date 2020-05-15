@@ -26,8 +26,8 @@ setTimeout(() => {
         link.style.position = 'absolute';
         link.style.paddingTop = 0;
         link.style.paddingRight = 0;
-        link.style.right = '80px';
-        link.style.top = '6px';
+        link.style.right = '81px';
+        link.style.top = '8px';
         elem.appendChild(link);
     });
 }, 1000);
