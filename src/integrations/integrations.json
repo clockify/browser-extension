@@ -490,5 +490,11 @@
     "link": "*://to-do.live.com/*",
     "script": "microsoft-todo.js",
     "clone": false
+  },
+  "cerb.ai": {
+    "name": "Cerb",
+    "link": "*://*.cerb.ai/*",
+    "script": "cerb.js",
+    "clone": false
   }
 }
