@@ -28,7 +28,6 @@ clockifyButton.render('.issue-details .detail-page-description:not(.clockify)', 
         taskName: description,
         tagNames: tags
     });
-    inputForm.firstChild.setAttribute("class", "form-control");
     actionsElem.parentElement.insertBefore(inputForm, actionsElem);
 });
 

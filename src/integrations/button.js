@@ -168,6 +168,8 @@ var clockifyButton = {
     createInput: (timeEntryOptions) => {
         const form = document.createElement('form');
         const input = document.createElement('input');
+        input.classList.add("clockify-input");
+        input.classList.add("clockify-input-default");
         input.setAttribute("placeholder", "Format: 4d 5h 30m");
 
         form.appendChild(input);
@@ -178,6 +180,7 @@ var clockifyButton = {
                 const m = time.match(/^(\d+d)?\s*(\d+h)?\s*(\d+m)?$/);
                 if (m) {
                     input.readOnly = true;
+                    input.value = "Submitting...";
 
                     var totalMins = 8 * 60 * parseInt(m[1] || 0, 10) +
                         60 * parseInt(m[2] || 0, 10) +
@@ -188,37 +191,16 @@ var clockifyButton = {
                         totalMins: totalMins,
                         timeEntryOptions: timeEntryOptions,
                     }, (response) => {
+                        input.value = "";
                         if (!response || response.status !== 201) {
-                            input.style.background = '#ff0000';
-                            input.value = "Error: " + (response && response.code);
                             console.error(response);
-                
-                            setTimeout(() => {
-                                input.value = time;
-                                input.style.background = 'white';
-                                input.readOnly = false;
-                            }, 1000);
+                            inputMessage(input, "Error: " + (response && response.code), "error");
                         } else {
-                            input.style.background = '#00ff00';
-                            input.value = "YEY! Submission successful!";
-                
-                            setTimeout(() => {
-                                input.value = "";
-                                input.style.background = 'white';
-                                input.readOnly = false;
-                            }, 1000);
+                            inputMessage(input, "Submission successful!", "success");
                         }
                     });
                 } else {
-                    input.readOnly = true;
-                    input.style.background = '#ff0000';
-                    input.value = "Input format: 4d 3h 30m";
-        
-                    setTimeout(() => {
-                        input.value = time;
-                        input.style.background = 'white';
-                        input.readOnly = false;
-                    }, 1000);
+                    inputMessage(input, "Input format: 4d 3h 30m", "error");
                 }
             } catch (e) {
                 console.error(e);
@@ -264,6 +246,25 @@ function createTag(name, className, textContent) {
     }
 
     return tag;
+}
+
+function inputMessage(input, msg, type) {
+    input.readOnly = true;
+    const oldValue = input.value;
+    input.classList.remove("clockify-input-default");
+    input.classList.remove("clockify-input-error");
+    input.classList.remove("clockify-input-success");
+    input.classList.add("clockify-input-" + type);
+    input.value = msg;
+
+    setTimeout(() => {
+        input.value = oldValue;
+        input.classList.remove("clockify-input-default");
+        input.classList.remove("clockify-input-error");
+        input.classList.remove("clockify-input-success");
+        input.classList.add("clockify-input-default");
+        input.readOnly = false;
+    }, 1000);
 }
 
 function setButtonProperties(button, title, active) {
