@@ -90,7 +90,7 @@ var clockifyButton = {
                     timeEntryOptions: timeEntryOptions
                 }, (response) => {
                     if (response.status === 400) {
-                        alert("Can't start entry without project/task/description or tags. Please edit your time entry.");
+                        alert("Can't start entry without project/task/description or tags. Please edit your time entry. Please create your time entry using the dashboard or edit your workspace settings.");
                     } else {
                         active = true;
                         setButtonProperties(button, title, active);
@@ -148,7 +148,7 @@ var clockifyButton = {
                     timeEntryOptions: timeEntryOptions
                 }, (response) => {
                     if (response.status === 400) {
-                        alert("Can't start entry without project/task/description or tags. Please edit your time entry.");
+                        alert("Can't start entry without project/task/description or tags. Please edit your time entry. Please create your time entry using the dashboard or edit your workspace settings.");
                     } else {
                         active = true;
                         setButtonProperties(button, title, active);
