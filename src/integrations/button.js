@@ -74,7 +74,7 @@ var clockifyButton = {
             if (title && title === clockifyButton.inProgressDescription) {
                 aBrowser.runtime.sendMessage({eventName: 'endInProgress'}, (response) => {
                     if (response.status === 400) {
-                        alert("Can't end entry without project/task/description or tags.Please edit your time entry.");
+                        alert("Can't end entry without project/task/description or tags. Please edit your time entry.");
                     } else {
                         clockifyButton.inProgressDescription = null;
                         active = false;
@@ -90,7 +90,7 @@ var clockifyButton = {
                     timeEntryOptions: timeEntryOptions
                 }, (response) => {
                     if (response.status === 400) {
-                        alert("Can't end entry without project/task/description or tags.Please edit your time entry.");
+                        alert("Can't start entry without project/task/description or tags. Please edit your time entry.");
                     } else {
                         active = true;
                         setButtonProperties(button, title, active);
@@ -132,7 +132,7 @@ var clockifyButton = {
             if (clockifyButton.inProgressDescription === title) {
                 aBrowser.runtime.sendMessage({eventName: 'endInProgress'}, (response) => {
                     if (response.status === 400) {
-                        alert("Can't end entry without project/task/description or tags.Please edit your time entry.");
+                        alert("Can't end entry without project/task/description or tags. Please edit your time entry.");
                     } else {
                         clockifyButton.inProgressDescription = null;
                         active = false;
@@ -148,7 +148,7 @@ var clockifyButton = {
                     timeEntryOptions: timeEntryOptions
                 }, (response) => {
                     if (response.status === 400) {
-                        alert("Can't end entry without project/task/description or tags.Please edit your time entry.");
+                        alert("Can't start entry without project/task/description or tags. Please edit your time entry.");
                     } else {
                         active = true;
                         setButtonProperties(button, title, active);
