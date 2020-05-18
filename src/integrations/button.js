@@ -194,7 +194,13 @@ var clockifyButton = {
                         input.value = "";
                         if (!response || response.status !== 201) {
                             console.error(response);
-                            inputMessage(input, "Error: " + (response && response.code), "error");
+                            inputMessage(input, "Error: " + (response && response.status), "error");
+
+                            if (response && response.status === 400) {
+                                // project/task/etc. can be configured to be mandatory; this can result in a code 400 during
+                                // time entry creation
+                                alert("Can't log time without project/task/description or tags. Please create your time entry using the dashboard or edit your workspace settings.");
+                            }
                         } else {
                             inputMessage(input, "Submission successful!", "success");
                         }

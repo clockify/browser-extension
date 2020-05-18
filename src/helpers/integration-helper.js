@@ -193,8 +193,11 @@ async function startTimeEntryRequestAndFetch (timeEntryUrl, token, options) {
             taskId: task ? task.id : null
         })
     });
-        return fetch(timeEntryRequest)
-            .then(response => response.json());
+
+    return fetch(timeEntryRequest)
+        .then(response =>  {
+            return { status: response.status, data: response.json() };
+        });
 }
 
 export async function getDefaultProjectBackground() {

@@ -180,12 +180,12 @@ export class Extension {
     startTimer(request, sendResponse) {
         startTimer(request.timeEntryOptions)
             .then((response) => {
-                if (!response.message) {
+                if (response.status === 201) {
                     window.inProgress = true;
                     this.setIcon(getIconStatus().timeEntryStarted);
                     getBrowser().extension.getBackgroundPage().addPomodoroTimer();
-                    sendResponse({status: 200, data: response})
                 }
+                sendResponse(response);
             })
     }
 
@@ -195,14 +195,7 @@ export class Extension {
         request.timeEntryOptions.end = end;
 
         startTimer(request.timeEntryOptions)
-            .then((response) => {
-                if (!response.message) {
-                    sendResponse({ status: 201, data: response })
-                } else {
-                    response.status = response.code;
-                    sendResponse(response);
-                }
-            })
+            .then(sendResponse);
     }
 
     getEntryInProgressForBrowserIcon() {
