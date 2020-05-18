@@ -125,7 +125,7 @@ async function getOrCreateTask(token, project, taskName) {
 
     if (task) {
         return task;
-    } else if (localStorageService.get('createObjects')) {
+    } else if (JSON.parse(localStorageService.get('createObjects'), false)) {
         return await createTask(token, project.id, taskName);
     }
 }
@@ -144,7 +144,7 @@ async function getOrCreateTags(tagNames) {
         const t = existingTags.find(e => e.name === n);
         if (t) {
             tags.push(t);
-        } else if (localStorageService.get('createObjects')) {
+        } else if (JSON.parse(localStorageService.get('createObjects'), false)) {
             try {
                 const r = await tagService.createTag({ name: n });
                 if (r.status === 201) {

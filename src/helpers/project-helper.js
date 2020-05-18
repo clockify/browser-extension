@@ -154,7 +154,7 @@ export class ProjectHelper {
                     return project;
                 }
 
-                if (localStorageService.get('createObjects')) {
+                if (JSON.parse(localStorageService.get('createObjects'), false)) {
                     return projectService.createProject({
                         name: projectName,
                         color: "#03a9f4"
