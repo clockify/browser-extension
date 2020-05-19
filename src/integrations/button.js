@@ -50,7 +50,7 @@ var clockifyButton = {
 
         const button = document.createElement('a');
 
-        if (options.small) {
+        if (invokeIfFunction(options.small)) {
             button.classList.add('small');
         }
 
