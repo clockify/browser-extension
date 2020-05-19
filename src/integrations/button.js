@@ -60,7 +60,7 @@ var clockifyButton = {
         }
 
         const button = document.createElement('a');
-        let title = invokeIfFunction(timeEntryOptions.description);
+        const title = invokeIfFunction(timeEntryOptions.description);
         let active = title && title === clockifyButton.inProgressDescription;
 
         setButtonProperties(button, title, active);
@@ -70,7 +70,8 @@ var clockifyButton = {
         });
 
         button.onclick = () => {
-            title = invokeIfFunction(timeEntryOptions.description);
+            const timeEntryOptionsInvoked = objInvokeIfFunction(timeEntryOptions);
+            const title = timeEntryOptionsInvoked.description;
             if (title && title === clockifyButton.inProgressDescription) {
                 aBrowser.runtime.sendMessage({eventName: 'endInProgress'}, (response) => {
                     if (response.status === 400) {
@@ -87,7 +88,7 @@ var clockifyButton = {
             } else {
                 aBrowser.runtime.sendMessage({
                     eventName: 'startWithDescription',
-                    timeEntryOptions: timeEntryOptions
+                    timeEntryOptions: timeEntryOptionsInvoked
                 }, (response) => {
                     if (response.status === 400) {
                         alert("Can't end entry without project/task/description or tags.Please edit your time entry.");
@@ -129,6 +130,8 @@ var clockifyButton = {
         setButtonProperties(button, title, active);
 
         button.onclick = () => {
+            const timeEntryOptionsInvoked = objInvokeIfFunction(timeEntryOptions);
+            const title = timeEntryOptionsInvoked.description;
             if (clockifyButton.inProgressDescription === title) {
                 aBrowser.runtime.sendMessage({eventName: 'endInProgress'}, (response) => {
                     if (response.status === 400) {
@@ -145,7 +148,7 @@ var clockifyButton = {
             } else {
                 aBrowser.runtime.sendMessage({
                     eventName: 'startWithDescription',
-                    timeEntryOptions: timeEntryOptions
+                    timeEntryOptions: timeEntryOptionsInvoked
                 }, (response) => {
                     if (response.status === 400) {
                         alert("Can't end entry without project/task/description or tags.Please edit your time entry.");
@@ -187,6 +190,14 @@ function invokeIfFunction(trial) {
         return trial();
     }
     return trial;
+}
+
+function objInvokeIfFunction(obj) {
+    const result = {};
+    for (const key of Object.keys(obj)) {
+        result[key] = invokeIfFunction(obj[key]);
+    }
+    return result;
 }
 
 function createTag(name, className, textContent) {
