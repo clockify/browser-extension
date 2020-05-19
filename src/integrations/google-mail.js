@@ -1,6 +1,5 @@
-clockifyButton.render('.ha:not(.clockify)', {observe: true}, function (elem) {
+clockifyButton.render('div.nH.V8djrc.byY > div.nH > div.ha:not(.clockify)', {observe: true}, function (elem) {
     var link, description = $('h2', elem);
-
     if (!description) {
         return;
     }
