@@ -44,23 +44,17 @@ var clockifyButton = {
             renderer(element);
         }
     },
+
     createButton: (description, project, task) => {
-        let timeEntryOptions;
-        if (typeof description === 'object') {
-            // mode: only one parameter that contains the options
-            timeEntryOptions = description;
-        } else {
-            // legacy mode: multiple parameters
-            timeEntryOptions = {
-                description: description || "",
-                projectName: project || null,
-                taskName: task || null,
-                billable: null
-            };
-        }
+        const options = objectFromParams(description, project, task);
 
         const button = document.createElement('a');
-        const title = invokeIfFunction(timeEntryOptions.description);
+
+        if (options.small) {
+            button.classList.add('small');
+        }
+
+        const title = invokeIfFunction(options.description);
         let active = title && title === clockifyButton.inProgressDescription;
 
         setButtonProperties(button, title, active);
@@ -70,7 +64,7 @@ var clockifyButton = {
         });
 
         button.onclick = () => {
-            const timeEntryOptionsInvoked = objInvokeIfFunction(timeEntryOptions);
+            const timeEntryOptionsInvoked = objInvokeIfFunction(options);
             const title = timeEntryOptionsInvoked.description;
             if (title && title === clockifyButton.inProgressDescription) {
                 aBrowser.runtime.sendMessage({eventName: 'endInProgress'}, (response) => {
@@ -109,11 +103,27 @@ var clockifyButton = {
     },
 
     createSmallButton: (description, project) => {
-        const button = clockifyButton.createButton(description, project);
-        button.classList.add('small');
-        return button;
+        const options = objectFromParams(description, project);
+        options.small = true;
+
+        return clockifyButton.createButton(options);
     }
 };
+
+function objectFromParams(description, project, task) {
+    if (typeof description === 'object') {
+        // mode: only one parameter that contains the options
+        return description;
+    } else {
+        // legacy mode: multiple parameters
+        return {
+            description: description || "",
+            projectName: project || null,
+            taskName: task || null,
+            billable: null
+        };
+    }
+}
 
 function fetchEntryInProgress(callback) {
     aBrowser.runtime.sendMessage({eventName: "getEntryInProgress"}, (response) => {
