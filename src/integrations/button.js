@@ -109,62 +109,8 @@ var clockifyButton = {
     },
 
     createSmallButton: (description, project) => {
-        let timeEntryOptions;
-        if (typeof description === 'object') {
-            // mode: only one parameter that contains the options
-            timeEntryOptions = description;
-        } else {
-            // legacy mode: multiple parameters
-            timeEntryOptions = {
-                description: description || "",
-                projectName: project || null,
-                taskName: null,
-                billable: null
-            };
-        }
-
-        const button = document.createElement('a');
-        let title = invokeIfFunction(timeEntryOptions.description);
-        let active = clockifyButton.inProgressDescription === title;
+        const button = clockifyButton.createButton(description, project);
         button.classList.add('small');
-        setButtonProperties(button, title, active);
-
-        button.onclick = () => {
-            const timeEntryOptionsInvoked = objInvokeIfFunction(timeEntryOptions);
-            const title = timeEntryOptionsInvoked.description;
-            if (clockifyButton.inProgressDescription === title) {
-                aBrowser.runtime.sendMessage({eventName: 'endInProgress'}, (response) => {
-                    if (response.status === 400) {
-                        alert("Can't end entry without project/task/description or tags.Please edit your time entry.");
-                    } else {
-                        clockifyButton.inProgressDescription = null;
-                        active = false;
-                        setButtonProperties(button, title, active);
-                        aBrowser.storage.sync.set({
-                            timeEntryInProgress: null
-                        });
-                    }
-                });
-            } else {
-                aBrowser.runtime.sendMessage({
-                    eventName: 'startWithDescription',
-                    timeEntryOptions: timeEntryOptionsInvoked
-                }, (response) => {
-                    if (response.status === 400) {
-                        alert("Can't end entry without project/task/description or tags.Please edit your time entry.");
-                    } else {
-                        active = true;
-                        setButtonProperties(button, title, active);
-                        clockifyButton.inProgressDescription = title;
-                        aBrowser.storage.sync.set({
-                            timeEntryInProgress: response.data
-                        });
-                    }
-                });
-            }
-        };
-
-        clockifyButton.links.push(button);
         return button;
     }
 };
