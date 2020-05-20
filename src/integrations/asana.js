@@ -47,10 +47,11 @@ setTimeout(() => {
       project = projectElements && projectElements.length > 0 ?
                 projectElements[0].textContent : "";
       let description = $('.simpleTextarea.AutogrowTextarea-input', elem).textContent.trim();
-      link = clockifyButton.createSmallButton({
+      link = clockifyButton.createButton({
           description: description,
           projectName: project,
-          taskName: maintask
+          taskName: maintask,
+          small: true
       });
       elem.parentNode.appendChild(link);
   });
