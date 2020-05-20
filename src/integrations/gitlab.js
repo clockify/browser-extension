@@ -9,7 +9,7 @@ clockifyButton.render('.issue-details .detail-page-description:not(.clockify)', 
         description = numElem.textContent.split(" ").pop().trim() + " " + description;
     }
 
-    var tags = Array.from($$("div.labels .gl-label-text")).map(e => e.innerText);
+    var tags = () => Array.from($$("div.labels .gl-label-text")).map(e => e.innerText);
 
     link = clockifyButton.createButton({
         description: description,
