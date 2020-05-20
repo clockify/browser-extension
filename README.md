@@ -57,6 +57,6 @@ When the extension recognizes that you're on that url, it will load the necessar
 
 The extension can pick up (and create): description, project, task, and tag.
 
-If you need an example, you can see how [Asana](/src/integrations/asana.js) or [Gitlab](/src/integrations/gitlab.js) are implemented. For example, Asana implements both normal and small button, and Gitlab implements picking up projects, tasks, and tags.
+For example, see how [Asana](/src/integrations/asana.js)is implemented.
 
 Before sending us a pull request, make sure you test it in both Chrome and Firefox.
