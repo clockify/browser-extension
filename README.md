@@ -55,8 +55,8 @@ Add the url of the new tool in `/src/integrations/integrations.json`. Then, crea
 
 When the extension recognizes that you're on that url, it will load the necessary script. 
 
-If you need an example, you can see how [Trello](/src/integrations/trello.js) is implemented.
+The extension can pick up (and create): description, project, task, and tag.
 
-Use `createButton()` so both the icon and "Start timer" is displayed. If there's not enough space, you can use `createSmallButton` (so only the icon is displayed).
+For example, see how [Asana](/src/integrations/asana.js)is implemented.
 
 Before sending us a pull request, make sure you test it in both Chrome and Firefox.

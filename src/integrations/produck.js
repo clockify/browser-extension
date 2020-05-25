@@ -1,13 +1,13 @@
 // Issue details view
 clockifyButton.render('[data-toggl-issue] [data-toggl-sidebar]:not(.clockify)', {observe: true}, elem => {
   function getAlias() {
-    const aliasSelector = $('[data-toggl-issue] [data-toggl-alias]')
+    var aliasSelector = $('[data-toggl-issue] [data-toggl-alias]')
     if (!aliasSelector) return 'No Alias'
     return aliasSelector.getAttribute('data-toggl-alias')
   }
 
   function getTitle() {
-    const titleSelector = $('[data-toggl-issue] [data-toggl-title]')
+    var titleSelector = $('[data-toggl-issue] [data-toggl-title]')
     if (!titleSelector) return 'No Title'
     return titleSelector.getAttribute('data-toggl-title') || 'No Title'
   }
@@ -17,13 +17,15 @@ clockifyButton.render('[data-toggl-issue] [data-toggl-sidebar]:not(.clockify)', 
   }
 
   function getProjectName() {
-    const projectSelector = $('[data-toggl-issue] [data-toggl-project]')
+    var projectSelector = $('[data-toggl-issue] [data-toggl-project]')
     if (!projectSelector) return null
     return projectSelector.getAttribute('data-toggl-project')
   }
+  var description = getDescription();
+  var project = getProjectName();
 
-  const link = clockifyButton.createButton(getDescription, getProjectName())
-  const li = document.createElement('li')
+  var link = clockifyButton.createButton(description, project)
+  var li = document.createElement('li')
   li.classList.add('toggl-item')
   li.appendChild(link)
   elem.prepend(li)

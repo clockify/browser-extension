@@ -17,20 +17,14 @@ clockifyButton.render('#Pagearea:not(.clockify)', { observe: true }, (elem) => {
 
 // Freshdesk mint (late 2018)
 clockifyButton.render('.page-actions__left:not(.clockify)', { observe: true }, (elem) => {
-  const descriptionElem = $('.ticket-subject-heading');
+  var descriptionElem = $('.ticket-subject-heading');
 
   // if there's no description element it's overview page, don't show
   if (!descriptionElem) { return }
 
-  const descriptionSelector = () => {
-    const ticketNumber = $('.breadcrumb__item.active').textContent.trim();
-    const subject = $('.ticket-subject-heading').textContent.trim();
-    const fullcopy = "[#" + ticketNumber + "] " + subject;
+  var ticketNumber = $('.breadcrumb__item.active').textContent.trim(),
+  subject = $('.ticket-subject-heading').textContent.trim(),
 
-    return fullcopy;
-  };
-
-  const link = clockifyButton.createButton(descriptionSelector);
-
+  link = clockifyButton.createButton("[#" + ticketNumber + "] " + subject);
   elem.appendChild(link);
 });

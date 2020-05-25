@@ -1,50 +1,38 @@
-clockifyButton.render(
-  '.notion-page-controls:not(.clockify)',
-  { observe: true },
-  function (elem) {
-
-    if ($('#clockifyButton')) {
-      elem.removeChild($('#clockifyButton'));
-    }
-
-    var container = createTag('div', 'button-link notion-tb-wrapper');
-
-    var descriptionElem = () => {
-      return document.title;
-    };
-
-    var clockifyButtonLoc = $(
-      '.notion-page-controls > div'
-    );
-
-    var link = clockifyButton.createButton(descriptionElem);
-    link.style.cursor = 'pointer';
-
-    container.appendChild(link);
-    clockifyButtonLoc.parentNode.insertBefore(container, clockifyButtonLoc);
-  }
-);
-
-// Popup/dialog view
+// Selectors here are madness, it works for as of Dec 4th 2019
+// Button renders in popup/dialog view
 clockifyButton.render(
   '.notion-peek-renderer:not(.clockify)',
   { observe: true },
   function (elem) {
-    function getDescription () {
-      const descriptionElem = elem.querySelector('.notion-scroller .notion-selectable div[contenteditable="true"]');
-      return descriptionElem ? descriptionElem.textContent.trim() : '';
-    }
 
-    const link = clockifyButton.createButton(getDescription);
-    link.style.cursor = 'pointer';
+    var link = clockifyButton.createButton(elem.querySelector('.notion-scroller .notion-selectable div[contenteditable="true"]').textContent.trim());
+    // link.style.cursor = "pointer";
+    link.style.fontSize = "12px";
 
-    const wrapper = document.createElement('div');
+    var wrapper = document.createElement('div');
     wrapper.classList.add('clockify-button-notion-wrapper');
     wrapper.appendChild(link);
 
-    const root = elem.querySelector('div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(3)');
+    var root = elem.querySelector('div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(3)');
     if (root) {
-      root.prepend(wrapper);
+      root.appendChild(wrapper);
     }
+  }
+);
+
+// Button renders left of page title - hidden on popups with css
+clockifyButton.render(
+  '.notion-page-controls + div:not(.clockify)',
+  { observe: true },
+  function (elem) {
+    elem.style.position = 'relative';
+
+    var link = clockifyButton.createButton(elem.textContent.trim());
+        link.style.cursor = "pointer";
+        link.style.fontSize = "14px";
+        link.style.fontWeight = "400";
+        link.style.width = "134px";
+
+    elem.appendChild(link);
   }
 );
