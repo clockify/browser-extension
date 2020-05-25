@@ -109,7 +109,7 @@ var clockifyButton = {
         return clockifyButton.createButton(options);
     },
 
-    createInput: (timeEntryOptions) => {
+    createInput: (options) => {
         const form = document.createElement('form');
         const input = document.createElement('input');
         input.classList.add("clockify-input");
@@ -119,6 +119,7 @@ var clockifyButton = {
         form.appendChild(input);
 
         form.onsubmit = (a) => {
+            const timeEntryOptionsInvoked = objInvokeIfFunction(options);
             try {
                 const time = input.value;
                 const m = time.match(/^(\d+d)?\s*(\d+h)?\s*(\d+m)?$/);
@@ -133,7 +134,7 @@ var clockifyButton = {
                     aBrowser.runtime.sendMessage({
                         eventName: 'submitTime',
                         totalMins: totalMins,
-                        timeEntryOptions: timeEntryOptions,
+                        timeEntryOptions: timeEntryOptionsInvoked,
                     }, (response) => {
                         input.value = "";
                         if (!response || response.status !== 201) {
