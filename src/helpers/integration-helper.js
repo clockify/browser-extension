@@ -196,7 +196,9 @@ async function startTimeEntryRequestAndFetch (timeEntryUrl, token, options) {
 
     return fetch(timeEntryRequest)
         .then(response =>  {
-            return { status: response.status, data: response.json() };
+            return response.json().then(json => {
+                return { status: response.status, data: json };
+            });
         });
 }
 
