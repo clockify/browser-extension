@@ -125,7 +125,7 @@ async function getOrCreateTask(token, project, taskName) {
 
     if (task) {
         return task;
-    } else if (localStorageService.get('createObjects')) {
+    } else if (JSON.parse(localStorageService.get('createObjects', false))) {
         return await createTask(token, project.id, taskName);
     }
 }
@@ -144,7 +144,7 @@ async function getOrCreateTags(tagNames) {
         const t = existingTags.find(e => e.name === n);
         if (t) {
             tags.push(t);
-        } else if (localStorageService.get('createObjects')) {
+        } else if (JSON.parse(localStorageService.get('createObjects', false))) {
             try {
                 const r = await tagService.createTag({ name: n });
                 if (r.status === 201) {
@@ -184,7 +184,8 @@ async function startTimeEntryRequestAndFetch (timeEntryUrl, token, options) {
         method: 'POST',
         headers: headers,
         body: JSON.stringify({
-            start: new Date(),
+            start: options.start || new Date(),
+            end: options.end, // can be undefined
             description: options.description,
             billable: billable,
             projectId: project ? project.id : null,
@@ -192,8 +193,13 @@ async function startTimeEntryRequestAndFetch (timeEntryUrl, token, options) {
             taskId: task ? task.id : null
         })
     });
-        return fetch(timeEntryRequest)
-            .then(response => response.json());
+
+    return fetch(timeEntryRequest)
+        .then(response =>  {
+            return response.json().then(json => {
+                return { status: response.status, data: json };
+            });
+        });
 }
 
 export async function getDefaultProjectBackground() {

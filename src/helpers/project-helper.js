@@ -150,7 +150,11 @@ export class ProjectHelper {
                     project = response.data.filter(project => project.name === projectName)[0];
                 }
 
-                if (!project && localStorageService.get('createObjects')) {
+                if (project) {
+                    return project;
+                }
+
+                if (JSON.parse(localStorageService.get('createObjects', false))) {
                     return projectService.createProject({
                         name: projectName,
                         color: "#03a9f4"
@@ -166,7 +170,7 @@ export class ProjectHelper {
                         return this.getDefaultProject();
                     });
                 } else {
-                    return project;
+                    return this.getDefaultProject();
                 }
             });
         } else {

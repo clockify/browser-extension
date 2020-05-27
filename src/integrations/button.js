@@ -69,7 +69,7 @@ var clockifyButton = {
             if (title && title === clockifyButton.inProgressDescription) {
                 aBrowser.runtime.sendMessage({eventName: 'endInProgress'}, (response) => {
                     if (response.status === 400) {
-                        alert("Can't end entry without project/task/description or tags.Please edit your time entry.");
+                        alert("Can't end entry without project/task/description or tags. Please edit your time entry.");
                     } else {
                         clockifyButton.inProgressDescription = null;
                         active = false;
@@ -85,7 +85,7 @@ var clockifyButton = {
                     timeEntryOptions: timeEntryOptionsInvoked
                 }, (response) => {
                     if (response.status === 400) {
-                        alert("Can't end entry without project/task/description or tags.Please edit your time entry.");
+                        alert("Can't start entry without project/task/description or tags. Please edit your time entry. Please create your time entry using the dashboard or edit your workspace settings.");
                     } else {
                         active = true;
                         setButtonProperties(button, title, active);
@@ -107,6 +107,61 @@ var clockifyButton = {
         options.small = true;
 
         return clockifyButton.createButton(options);
+    },
+
+    createInput: (options) => {
+        const form = document.createElement('form');
+        const input = document.createElement('input');
+        input.classList.add("clockify-input");
+        input.classList.add("clockify-input-default");
+        input.setAttribute("placeholder", "Format: 4d 5h 30m");
+
+        form.appendChild(input);
+
+        form.onsubmit = (a) => {
+            const timeEntryOptionsInvoked = objInvokeIfFunction(options);
+            try {
+                const time = input.value;
+                const m = time.match(/^(\d+d)?\s*(\d+h)?\s*(\d+m)?$/);
+                if (m) {
+                    input.readOnly = true;
+                    input.value = "Submitting...";
+
+                    var totalMins = 8 * 60 * parseInt(m[1] || 0, 10) +
+                        60 * parseInt(m[2] || 0, 10) +
+                        parseInt(m[3] || 0, 10);
+                    
+                    aBrowser.runtime.sendMessage({
+                        eventName: 'submitTime',
+                        totalMins: totalMins,
+                        timeEntryOptions: timeEntryOptionsInvoked,
+                    }, (response) => {
+                        input.value = "";
+                        if (!response || response.status !== 201) {
+                            console.error(response);
+                            inputMessage(input, "Error: " + (response && response.status), "error");
+
+                            if (response && response.status === 400) {
+                                // project/task/etc. can be configured to be mandatory; this can result in a code 400 during
+                                // time entry creation
+                                alert("Can't log time without project/task/description or tags. Please create your time entry using the dashboard or edit your workspace settings.");
+                            }
+                        } else {
+                            inputMessage(input, "Submission successful!", "success");
+                        }
+                    });
+                } else {
+                    inputMessage(input, "Input format: 4d 3h 30m", "error");
+                }
+            } catch (e) {
+                console.error(e);
+            }
+
+            // don't reload the page
+            return false;
+        };
+
+        return form;
     }
 };
 
@@ -165,6 +220,25 @@ function createTag(name, className, textContent) {
     }
 
     return tag;
+}
+
+function inputMessage(input, msg, type) {
+    input.readOnly = true;
+    const oldValue = input.value;
+    input.classList.remove("clockify-input-default");
+    input.classList.remove("clockify-input-error");
+    input.classList.remove("clockify-input-success");
+    input.classList.add("clockify-input-" + type);
+    input.value = msg;
+
+    setTimeout(() => {
+        input.value = oldValue;
+        input.classList.remove("clockify-input-default");
+        input.classList.remove("clockify-input-error");
+        input.classList.remove("clockify-input-success");
+        input.classList.add("clockify-input-default");
+        input.readOnly = false;
+    }, 1000);
 }
 
 function setButtonProperties(button, title, active) {
