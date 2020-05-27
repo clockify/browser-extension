@@ -20,7 +20,7 @@
       "contentScripts/project-httpRequests-background.js"
     ]
   },
-  "version": "1.8.22",
+  "version": "1.8.23",
   "browser_action": {
     "default_popup": "index.html",
     "default_title": "Clockify"

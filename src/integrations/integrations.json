@@ -149,12 +149,6 @@
     "script": "google-mail.js",
     "clone": false
   },
-  "gqueues.com": {
-    "name": "GQueues",
-    "link": "*://*.gqueues.com/*",
-    "script": "gqueues.js",
-    "clone": false
-  },
   "helpscout.net": {
     "name": "Helpscout",
     "link": "*://*.helpscout.net/*",
@@ -183,12 +177,6 @@
     "name": "Liquidplanner",
     "link": "*://*.liquidplanner.com/*",
     "script": "liquidplanner.js",
-    "clone": false
-  },
-  "manageengine.com": {
-    "name": "ManageEngine",
-    "link": "*://*.manageengine.com/*",
-    "script": "manageengine.js",
     "clone": false
   },
   "mantishub.io": {
@@ -311,18 +299,6 @@
     "script": "redmine.js",
     "clone": false
   },
-  "rindle.com": {
-    "name": "Rindle",
-    "link": "*://*.rindle.com/*",
-    "script": "rindle.js",
-    "clone": false
-  },
-  "rollbar.com": {
-    "name": "Rollbar",
-    "link": "*://*.rollbar.com/*",
-    "script": "rollbar.js",
-    "clone": false
-  },
   "salesforce.com": {
     "name": "Salesforce",
     "link": "*://*.salesforce.com/*,*://*.my.salesforce.com/*, *://*.lightning.force.com/*",
@@ -339,18 +315,6 @@
     "name": "Scoro",
     "link": "*://*.scoro.com/*",
     "script": "scoro.js",
-    "clone": false
-  },
-  "sentry.io": {
-    "name": "Sentry",
-    "link": "*://*.sentry.io/*",
-    "script": "sentry.js",
-    "clone": false
-  },
-  "slack.com": {
-    "name": "Slack",
-    "link": "*://*.slack.com/*",
-    "script": "slack.js",
     "clone": false
   },
   "sprint.ly": {
@@ -377,7 +341,7 @@
     "script": "teamwork.js",
     "clone": true
   },
-  "company.teamwork.com": {
+  "teamwork.com": {
     "name": "Teamwork Projects",
     "link": "*://teamwork.*.com/*",
     "script": "teamwork.js",
@@ -412,12 +376,6 @@
     "link": "*://*.unfuddle.com/*",
     "script": "unfuddle.js",
     "clone": false
-  },
-  "unfuddle.io": {
-    "name": "Unfuddle",
-    "link": "*://*.unfuddle.io/*",
-    "script": "unfuddle.js",
-    "clone": true
   },
   "visualstudio.com": {
     "name": "VisualStudio",

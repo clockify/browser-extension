@@ -114,7 +114,7 @@ var clockifyButton = {
         const input = document.createElement('input');
         input.classList.add("clockify-input");
         input.classList.add("clockify-input-default");
-        input.setAttribute("placeholder", "Format: 4d 5h 30m");
+        input.setAttribute("placeholder", "Add time (1h 5m)");
 
         form.appendChild(input);
 
@@ -144,14 +144,14 @@ var clockifyButton = {
                             if (response && response.status === 400) {
                                 // project/task/etc. can be configured to be mandatory; this can result in a code 400 during
                                 // time entry creation
-                                alert("Can't log time without project/task/description or tags. Please create your time entry using the dashboard or edit your workspace settings.");
+                                alert("Can't log time without project/task/description or tags.");
                             }
                         } else {
-                            inputMessage(input, "Submission successful!", "success");
+                            inputMessage(input, "Time added!", "success");
                         }
                     });
                 } else {
-                    inputMessage(input, "Input format: 4d 3h 30m", "error");
+                    inputMessage(input, "Format: 1d 2h 30m", "error");
                 }
             } catch (e) {
                 console.error(e);
