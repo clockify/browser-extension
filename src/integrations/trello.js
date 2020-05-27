@@ -19,6 +19,11 @@ setTimeout(() => {
         const link = clockifyButton.createButton(cardId + desc, projectElem);
         htmlTag.appendChild(link);
         container.prepend(htmlTag);
+        $('.clockify-input').style.width = "100%";
+        $('.clockify-input').style.boxShadow = "none";
+        $('.clockify-input').style.border = "1px solid #eaecf0";
+        $('.clockify-input').style.backgroundColor = "#eaecf0";
+
     });
 
     /* Checklist buttons */

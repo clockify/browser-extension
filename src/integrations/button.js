@@ -114,7 +114,7 @@ var clockifyButton = {
         const input = document.createElement('input');
         input.classList.add("clockify-input");
         input.classList.add("clockify-input-default");
-        input.setAttribute("placeholder", "Add time (1h 5m)");
+        input.setAttribute("placeholder", "Add time (eg. 15m)");
 
         form.appendChild(input);
 
