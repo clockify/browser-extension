@@ -336,12 +336,6 @@
     "clone": false
   },
   "teamwork.com": {
-    "name": "Teamwork",
-    "link": "*://*.teamwork.com/*",
-    "script": "teamwork.js",
-    "clone": true
-  },
-  "teamwork.com": {
     "name": "Teamwork Projects",
     "link": "*://teamwork.*.com/*",
     "script": "teamwork.js",
