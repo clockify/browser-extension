@@ -4,6 +4,7 @@
             container = $('.SingleTaskPaneToolbar-leftItems', elem),
             description = $('.SingleTaskPane-titleRowInput > div > textarea', elem) ?
                 $('.SingleTaskPane-titleRowInput > div > textarea', elem).textContent : "",
+          tags = () => Array.from($$(".TaskTags-labeledRowStructure .PotTokenizerPillBase-name")).map(e => e.innerText),
             projectElements = document.getElementsByClassName('PotTokenizerPillBase-name'),
             project = projectElements && projectElements.length > 0 ?
                 projectElements[0].textContent : "";

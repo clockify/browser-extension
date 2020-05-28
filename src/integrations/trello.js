@@ -6,17 +6,16 @@ setTimeout(() => {
         const htmlTagInput = createTag('div', 'button-link');
         const projectElem = $('.board-header-btn-text', root).textContent.trim();
         const desc = $('div[class="window-title"] > h2', root).textContent.trim();
-        const cardId = "[" + document.URL.substr(21,8) + "] ";
         htmlTagInput.style.padding = "0px";
 
         const inputForm = clockifyButton.createInput({
-            description: cardId + desc,
+            description: desc,
             projectName: projectElem
         });
         htmlTagInput.appendChild(inputForm);
         container.prepend(htmlTagInput);
 
-        const link = clockifyButton.createButton(cardId + desc, projectElem);
+        const link = clockifyButton.createButton(desc, projectElem);
         htmlTag.appendChild(link);
         container.prepend(htmlTag);
         $('.clockify-input').style.width = "100%";
@@ -34,7 +33,7 @@ setTimeout(() => {
         const task = $('.checklist-item-details-text', elem).textContent;
 
         const link = clockifyButton.createButton({
-            description: cardId + task + " - " + desc,
+            description: task + " - " + desc,
             projectName: project,
             small: true
         });

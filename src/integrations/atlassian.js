@@ -50,16 +50,25 @@ clockifyButton.render(
         } else {
             project = '';
         }
+        tags = () => Array.from($$("a.iHqNYf")).map(e => e.innerText),
 
         link = clockifyButton.createButton({
             description: '[' + issueNumber + '] ' + desc,
             projectName: project,
-            taskName: issueNumber
+            taskName: issueNumber,
+            tagNames: tags
         });
-
+        inputForm = clockifyButton.createInput({
+            description: '[' + issueNumber + '] ' + desc,
+            projectName: project,
+            taskName: issueNumber,
+            tagNames: tags
+        });
         link.style.position = "relative";
-        link.style.padding = "2px 0 0 20px";
+        link.style.padding = "6px 0 0 20px";
         elem.appendChild(link);
+        elem.appendChild(inputForm);
+        $('.clockify-input').style.marginLeft = "10px";
     }
 );
 
@@ -68,9 +77,7 @@ clockifyButton.render(
     'div[id="jira-frontend"] > div > div > div > div:last-child:not(.clockify)',
     { observe: true },
     (elem) => {
-        if (!document.getElementById('clockifyButton-jiraIntegration')) {
-            elem.setAttribute('id', 'clockifyButton-jiraIntegration');
-        }
+
         const page = elem.closest('div[id="page"]');
         const container =
             $('div > div > div > div > div > div > div[id="jira-issue-header"] ' +
@@ -86,16 +93,28 @@ clockifyButton.render(
         } else {
             project = '';
         }
+        tags = () => Array.from($$("a.iHqNYf")).map(e => e.innerText);
 
         link = clockifyButton.createButton({
             description: '[' + issueNumber + '] ' + desc,
             projectName: project,
-            taskName: issueNumber
+            taskName: issueNumber,
+            tagNames: tags
         });
         link.style.position = "relative";
-        link.style.padding = "2px 0 0 20px";
+        link.style.padding = "6px 0 0 20px";
       
         container.appendChild(link);
+
+        inputForm = clockifyButton.createInput({
+            description: '[' + issueNumber + '] ' + desc,
+            projectName: project,
+            taskName: issueNumber,
+            tagNames: tags
+        });
+        container.appendChild(inputForm);
+        $('.clockify-input').style.marginLeft = "10px";
+
     }
 );
 
@@ -124,7 +143,7 @@ clockifyButton.render(
 
         const link = clockifyButton.createButton(issueNumber + ' ' + desc, project);
         link.style.position = "relative";
-        link.style.padding = "2px 0 0 20px";
+        link.style.padding = "6px 0 0 20px";
 
         container.appendChild(link);
     }
