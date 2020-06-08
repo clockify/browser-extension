@@ -275,14 +275,17 @@ class Login extends React.Component {
             return;
         }
 
-        const baseUrl = localStorageService.get('homeUrl');
+        let homeUrl = localStorageService.get('homeUrl');
+        if (localStorageService.get("subDomainName", null) != null) {
+            homeUrl = homeUrl.replace(`${localStorageService.get("subDomainName")}.`, "")
+        }
         let redirectUri = "";
 
         if (typeof chrome !== "undefined") {
             if (typeof browser !== "undefined") {
-                redirectUri = baseUrl + '/' + environment.redirectUriOauthFirefoxExtension;
+                redirectUri = homeUrl + '/' + environment.redirectUriOauthFirefoxExtension;
             } else {
-                redirectUri = baseUrl + '/' + environment.redirectUriOauthChromeExtension;
+                redirectUri = homeUrl + '/' + environment.redirectUriOauthChromeExtension;
             }
         }
 

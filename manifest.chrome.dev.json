@@ -54,16 +54,16 @@
   "permissions": [
     "background",
     "contextMenus",
-    "https://clockify.me/api/*",
+    "*://*.clockify.me/*",
     "storage",
     "tabs",
+    "*://*/",
     "webNavigation",
     "activeTab",
-    "<all_urls>",
     "identity",
-    "https://accounts.google.com/*",
     "idle",
     "notifications"
   ],
+  "optional_permissions": ["*://*/"],
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
 }
