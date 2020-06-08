@@ -29,7 +29,6 @@ var clockifyButton = {
                     });
 
                     if (!matches.length) {
-                        clockifyButton.renderTo(selector, renderer);
                         return;
                     }
                 });
