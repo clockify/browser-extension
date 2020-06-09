@@ -9,8 +9,8 @@ setTimeout(() => {
         taskName: task
     });
     link.style.display = "block";
-    link.style.paddingTop = "0";
-    link.style.paddingBottom = "0";
+    link.style.paddingTop = "10px";
+    link.style.paddingBottom = "10px";
     link.style.marginBottom = "10px";
     link.style.cursor = 'pointer';
     elem.appendChild(link);
