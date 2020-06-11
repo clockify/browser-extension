@@ -31,7 +31,7 @@ clockifyButton.render('.issue-details .detail-page-description:not(.clockify)', 
     actionsElem.parentElement.insertBefore(inputForm, actionsElem);
 });
 
-clockifyButton.render('.merge-request-details .detail-page-description:not(.clockify)', {observe: true}, (elem) => {
+clockifyButton.render('.merge-request-details.issuable-details > .detail-page-description:not(.clockify)', {observe: true}, (elem) => {
     var link, description,
         numElem = $(".identifier") || $(".breadcrumbs-list li:last-child .breadcrumbs-sub-title"),
         titleElem = $(".title", elem),
