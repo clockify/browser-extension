@@ -1,30 +1,49 @@
 clockifyButton.render(
-  'body.controller-issues.action-show h2:not(.clockify)',
-  {},
+  'body.controller-issues.action-show:not(.admin) #content > h2:not(.clockify)',
+  {observe: true},
   (elem) => {
     var link,
       description,
-      numElem = $('h2'),
+      numElem = $('#content > h2'),
       titleElem = $('.subject h3') || '',
-      projectElem = $('h1');
+      projectElem = $('.current-project'),
+      actionsElem = $("#content .contextual");
 
     if (!!$('.clockify-button')) {
       return;
     }
 
     if (!!titleElem) {
-      description = titleElem.textContent;
+      description = titleElem.textContent.trim();
     }
 
     if (numElem !== null) {
       if (!!description) {
         description = ' ' + description;
       }
-      description = numElem.textContent + description;
+      description = numElem.textContent.trim() + description;
     }
-      link = clockifyButton.createButton(description);
-      link.style.marginLeft = "10px";
 
-      $('h2').appendChild(link);
+    var tags = () => [];
+
+    link = clockifyButton.createButton({
+        description: description,
+        projectName: projectElem.textContent.trim(),
+        taskName: description,
+        tagNames: tags
+    });
+    link.style.marginRight = '15px';
+    link.style.padding = '0px';
+    link.style.paddingLeft = '20px';
+    actionsElem.appendChild(link);
+      
+    var inputForm = clockifyButton.createInput({
+        description: description,
+        projectName: projectElem.textContent.trim(),
+        taskName: description,
+        tagNames: tags
+    });
+    inputForm.style.display = 'inline';
+    actionsElem.appendChild(inputForm);
   }
 );
