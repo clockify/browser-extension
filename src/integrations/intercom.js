@@ -3,13 +3,16 @@ clockifyButton.render('.conversation__card__content-expanded__controls .inbox__c
     return;
   }
 
-  const root = elem.closest('.card.conversation__card');
   const descriptionSelector = () => {
-    const description = $('.inbox__card__header__title', root);
+    const description = $('.ember-view.attribute__label-wrapper.u__one-truncated-line.t__solo-link.t__h4');
     return description ? description.textContent.trim().replace(/ +/g, ' ') : '';
   };
+  const projectSelector = () => {
+    const project = $('div.layout__box.o__centers-vertically.o__flexes-to-1.inbox__user-profile__user-details-title > div > div.c__deemphasized-text > span > span > a > span');
+    return project ? project.textContent.trim().replace(/ +/g, ' ') : '';
+  };
 
-  const link = clockifyButton.createButton(descriptionSelector);
+  const link = clockifyButton.createButton(descriptionSelector, projectSelector);
   link.style.textDecoration = 'none';
   link.style.position = 'relative';
   link.style.top = '7px';
