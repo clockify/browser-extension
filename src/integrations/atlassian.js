@@ -166,7 +166,7 @@ clockifyButton.render(
         const root = $('div[id="ghx-detail-view"]');
         const container =
             $('div[id="jira-issue-header"] > div > div > div > div > div > div:first-child > div > div', elem);
-        const issueNumber = $('a > span > span', container.lastChild).textContent;
+        const issueNumber = $('div > div:last-child > div > div > a > span > span', container.lastChild).textContent;
         const desc = $('h1', root).textContent;
 
         // Try to find the project
