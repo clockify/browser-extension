@@ -1,10 +1,9 @@
-if (window.location.href.indexOf("/#/tasks/") !== -1) {
-  setTimeout(() => {
-    clockifyButton.render('.main-header__base:not(.clockify)', {observe: true}, function (elem) {
+clockifyButton.render('#TaskContent:not(.clockify)', {observe: true}, function (elem) {
+  setTimeout(function(){ 
       var link, description;
-      description = document.title;
       project = $(".w-header-titles__project-name a").textContent;
-      link = clockifyButton.createButton(description, project);
+      description = document.title;
+      link = clockifyButton.createButton($("div.w-task-row__name > span").innerText, project);
       link.style.display = "block";
       link.style.paddingTop = "0";
       link.style.paddingBottom = "0";
@@ -13,6 +12,5 @@ if (window.location.href.indexOf("/#/tasks/") !== -1) {
       link.style.top = '12px';
       link.style.left = "150px";
       elem.appendChild(link);
-    });
-  }, 1500);
-}
+  }, 500);
+});

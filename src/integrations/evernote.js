@@ -1,46 +1,22 @@
-/*jslint indent: 2 */
-/*global $: false, document: false, clockifyButton: false, createTag: false*/
-clockifyButton.render('#gwt-debug-NoteTitleView-textBox:not(.clockify)', {observe: true}, (elem) => {
-    var link,
-        descFunc,
-        container,
-        parent = $('#gwt-debug-NoteAttributesView-root > div > div:nth-child(2)', $('#gwt-debug-NoteAttributesView-root'));
+clockifyButton.render('#qa-NOTE_HEADER:not(.clockify)', { observe: true }, function (elem) {
+  if (elem.querySelector('#clockifyButton')) {
+    return;
+  }
 
+  const projectFunc = function () {
+    const projectElem = $('#qa-NOTE_PARENT_NOTEBOOK_BTN');
+    return projectElem ? projectElem.textContent : '';
+  };
 
-    descFunc = function () {
-        var desc = $('#gwt-debug-NoteTitleView-textBox');
-        return desc ? desc.value : "";
-    };
-    link = clockifyButton.createButton(descFunc);
+  const descriptionFunc = function () {
+    const descriptionElem = $('.qC87s8opH1X3hjuzPoKrl span span');
+    return descriptionElem ? descriptionElem.textContent.trim() : '';
+  };
 
-    container = createTag('div', 'clockify-wrapper evernote');
-    container.appendChild(link);
-    container.style.display = "inline-block";
-    container.style.marginTop = "5px";
-    container.style.minWidth = "100px";
+  const link = clockifyButton.createButton({
+    projectName: projectFunc,
+    description: descriptionFunc
+  });
 
-    parent.insertBefore(container, parent.firstChild);
-});
-
-// New UI
-clockifyButton.render('.COQHL4z_Ex89cLdhOUVJp:not(.clockify)', { observe: true }, (elem) => {
-    var link,
-        descFunc,
-        container,
-        parent = $('.COQHL4z_Ex89cLdhOUVJp');
-
-
-    descFunc = function () {
-        var desc = $('#qa-NOTE_EDITOR_TITLE');
-        return desc ? desc.value : "";
-    };
-
-    link = clockifyButton.createButton(descFunc);
-
-    container = createTag('div', 'clockify-wrapper evernote');
-    container.appendChild(link);
-    container.style.paddingBottom = "3px";
-
-
-    parent.insertBefore(container, parent.firstChild);
+  elem.querySelector('#qa-SHARE_BUTTON').parentNode.prepend(link);
 });
