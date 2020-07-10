@@ -448,5 +448,11 @@
     "link": "*://*.cerb.ai/*",
     "script": "cerb.js",
     "clone": false
+  },
+  "figma.com": {
+    "name": "Cerb",
+    "link": "*://*.figma.com/*",
+    "script": "figma.js",
+    "clone": false
   }
 }
