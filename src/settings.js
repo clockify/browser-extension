@@ -63,15 +63,13 @@ function createOriginList() {
 }
 
 function createOriginListForCustomDomain(data, key, option, origins) {
-    if (!data[key].clone) {
-        option = document.createElement('option');
-        option.id = 'origin';
-        option.value = key;
-        option.setAttribute('data-id', key);
-        option.textContent = data[key].name;
+    option = document.createElement('option');
+    option.id = 'origin';
+    option.value = key;
+    option.setAttribute('data-id', key);
+    option.textContent = data[key].name;
 
-        origins.appendChild(option);
-    }
+    origins.appendChild(option);
 }
 
 function initLoad() {
