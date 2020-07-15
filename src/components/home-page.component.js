@@ -82,6 +82,7 @@ class HomePage extends React.Component {
         this.webSocketMessagesHandler();
 
         if (isAppTypeExtension()) {
+            console.log("!!!!!!!!!!!!!!!!!!!!!!!!")
             this.enableAllIntegrationsButtonIfNoneIsEnabled();
             this.enableTimerShortcutForFirstTime();
             getBrowser().runtime.sendMessage({
@@ -674,7 +675,8 @@ class HomePage extends React.Component {
                         this.setClockifyOriginsToStorage(data, userId);
                     }
                 });
-            });
+            })
+            .catch(error => console.log(error));
     }
 
     setClockifyOriginsToStorage(clockifyOrigins, userId, permissionsFromStorage) {
