@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {getBrowser, isChrome} from "../helpers/browser-helper";
-import {isAppTypeDesktop, isAppTypeExtension, isAppTypeMobile} from "../helpers/app-types-helper";
+import {isAppTypeDesktop, isAppTypeExtension} from "../helpers/app-types-helper";
 import Header from "./header.component";
 import {UserService} from "../services/user-service";
 import {LocalStorageService} from "../services/localStorage-service";

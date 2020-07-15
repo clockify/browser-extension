@@ -141,11 +141,15 @@ class EditFormManual extends React.Component {
 
     editProject(project) {
         let timeEntry = this.state.timeEntry;
-        timeEntry.projectId =  project.id;
+        timeEntry.projectId =  project && project.id ? project.id : null;
+        timeEntry.billable = project.billable;
 
         this.setState({
             timeEntry: timeEntry
-        }, () => this.checkRequiredFields());
+        }, () => {
+            this.projectList.mapSelectedProject()
+            this.checkRequiredFields()
+        });
     }
 
     editTask(taskId, project) {
@@ -414,13 +418,12 @@ class EditFormManual extends React.Component {
                                 noTasks={false}
                                 workspaceSettings={this.props.workspaceSettings}
                                 isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}
-                                createProject={true}
                                 projectRequired={this.state.projectRequired}
                                 taskRequired={this.state.taskRequired}
                                 projectListOpened={this.projectListOpened.bind(this)}
                                 timeEntry={this.state.timeEntry}
-                                createProject={true}
                                 editForm={false}
+                                userSettings={this.props.userSettings}
                             />
                         </div>
                         <TagsList

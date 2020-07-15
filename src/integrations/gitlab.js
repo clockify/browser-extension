@@ -65,4 +65,3 @@ clockifyButton.render('.merge-request-details.issuable-details > .detail-page-de
     });
     actionsElem.parentElement.insertBefore(inputForm, actionsElem);
 });
-

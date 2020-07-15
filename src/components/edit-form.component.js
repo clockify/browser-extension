@@ -9,7 +9,7 @@ import HomePage from "./home-page.component";
 import {checkConnection} from "./check-connection";
 import {ProjectHelper} from "../helpers/project-helper";
 import {TimeEntryService} from "../services/timeEntry-service";
-import {isAppTypeExtension, isAppTypeMobile} from "../helpers/app-types-helper";
+import {isAppTypeExtension} from "../helpers/app-types-helper";
 import {getBrowser} from "../helpers/browser-helper";
 import DeleteEntryConfirmationComponent from "./delete-entry-confirmation.component";
 import Toaster from "./toaster-component";
@@ -63,27 +63,7 @@ class EditForm extends React.Component {
         });
 
         this.setTime();
-
-        if (isAppTypeMobile()) {
-            this.getEntryInProgressOnResume();
-        }
-
         this.mapTagsToTagIds();
-    }
-
-    getEntryInProgressOnResume() {
-        document.addEventListener("resume", () => {
-            timeEntryService.getEntryInProgress().then(response => {
-                let data = response.data;
-                if(data) {
-                    this.setState({
-                        timeEntry: data
-                    }, () => {
-                        this.setTime();
-                    });
-                }
-            });
-        });
     }
 
     setTime() {
@@ -290,7 +270,16 @@ class EditForm extends React.Component {
     editProject(project) {
         if(!project.id) {
             timeEntryService.removeProject(this.state.timeEntry.id)
-                .then((response) => this.checkRequiredFields())
+                .then((response) => {
+                    let entry = this.state.timeEntry
+                    entry.projectId = null
+                    this.setState({
+                        timeEntry: entry
+                    }, () => {
+                        this.checkRequiredFields()
+                        this.projectList.mapSelectedProject()
+                    })
+                })
                 .catch((error) => {
                 });
         } else {
@@ -298,7 +287,10 @@ class EditForm extends React.Component {
                 .then(response => {
                     this.setState({
                         timeEntry: response.data
-                    }, () => this.checkRequiredFields());
+                    }, () => {
+                        this.projectList.mapSelectedProject()
+                        this.checkRequiredFields()
+                    });
                 })
                 .catch((error) => {
                 });

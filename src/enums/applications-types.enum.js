@@ -1,4 +1,4 @@
-const appTypes = {'DESKTOP': 'desktop', 'EXTENSION': 'extension', 'MOBILE': 'mobile'};
+const appTypes = {'DESKTOP': 'desktop', 'EXTENSION': 'extension'};
 Object.freeze(appTypes);
 
 export function getAppTypes() {

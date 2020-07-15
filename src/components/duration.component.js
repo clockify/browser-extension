@@ -6,7 +6,6 @@ import {getAppTypes} from "../enums/applications-types.enum";
 import {add24hIfEndBeforeStart} from "../helpers/time.helper";
 import TimePicker from 'antd/lib/time-picker';
 import {HtmlStyleHelper} from "../helpers/html-style-helper";
-import {isAppTypeMobile} from "../helpers/app-types-helper";
 
 const htmlStyleHelpers = new HtmlStyleHelper();
 const dayInSeconds = 86400;
@@ -211,7 +210,6 @@ class Duration extends React.Component {
                                 format={this.state.timeFormat}
                                 size="small"
                                 use12Hours={this.props.timeFormat === 'HOUR12'}
-                                inputReadOnly={isAppTypeMobile()}
                                 onChange={this.selectStartTime.bind(this)}
                                 onOpenChange={this.openStartTimePicker.bind(this)}
                     />
@@ -221,34 +219,19 @@ class Duration extends React.Component {
                                 value={this.state.endTime}
                                 size="small"
                                 use12Hours={this.props.timeFormat === 'HOUR12'}
-                                inputReadOnly={isAppTypeMobile()}
                                 format={this.state.timeFormat}
                                 onChange={this.selectEndTime.bind(this)}
                                 onOpenChange={this.openEndTimePicker.bind(this)}
                     />
                     <span>
-                        {
-                            localStorage.getItem('appType') === getAppTypes().MOBILE ?
-                                <MyDatePicker
-                                    start={this.props.start}
-                                    end={this.props.end}
-                                    datePickerOpen={this.state.datePickerOpen}
-                                    openDatePicker={this.openDatePicker.bind(this)}
-                                    selectDate={this.selectDate.bind(this)}
-                                    cancelDate={this.cancelDate.bind(this)}
-                                    min={this.state.dayAfterLockedEntries}
-                                />:
-                                <DatePicker
-                                    selected={moment(this.props.start)}
-                                    onChange={this.selectDate.bind(this)}
-                                    customInput={<img src="./assets/images/calendar.png"/>}
-                                    withPortal
-                                    maxDate={!this.props.end ?
-                                        moment(this.props.start) : moment().add(10, 'years')}
-                                    minDate={moment(new Date(this.state.dayAfterLockedEntries))}
-                                />
-                        }
-
+                    <DatePicker
+                        selected={moment(this.props.start)}
+                        onChange={this.selectDate.bind(this)}
+                        customInput={<img src="./assets/images/calendar.png"/>}
+                        withPortal
+                        maxDate={!this.props.end ?
+                            moment(this.props.start) : moment().add(10, 'years')}
+                        minDate={moment(new Date(this.state.dayAfterLockedEntries))}/>
                     </span>
                     <span className="duration-divider"></span>
                     <input
@@ -265,7 +248,6 @@ class Duration extends React.Component {
                                     "Duration (HH:mm:ss)" : "Duration (h:mm)"}
                                 size="small"
                                 format={this.props.workspaceSettings.trackTimeDownToSecond ? "HH:mm:ss" : "H:mm"}
-                                inputReadOnly={isAppTypeMobile()}
                                 onChange={this.selectDuration.bind(this)}
                                 onOpenChange={this.openDurationPickerChange.bind(this)}
                     />

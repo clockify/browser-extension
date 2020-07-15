@@ -143,7 +143,7 @@ function messageHandler(event) {
             this.sendWebSocketEventToExtension(event.data);
             break;
     }
-}
+};
 
 function sendWebSocketEventToExtension(event) {
     aBrowser.runtime.sendMessage({eventName: event});
@@ -168,37 +168,33 @@ aBrowser.runtime.onMessage.addListener((request, sender, sendResponse) => {
             }
             break;
         case "getEntryInProgress":
-            if (
-                (!document.timeEntry || document.timeEntry === undefined) &&
-                    document.isFirstTimeSettingTimeEntry
-            ) {
-                document.isFirstTimeSettingTimeEntry = false;
-                this.getEntryInProgress().then(response => response.json()).then(data => {
-                    this.entryInProgressChangedEventHandler(data);
-                    sendResponse(document.timeEntry);
-                    aBrowser.browserAction.setIcon({
-                        path: iconPathStarted
+            aBrowser.storage.local.get(["timeEntryInProgress"], (result) => {
+                if (result.timeEntryInProgress == null && document.isFirstTimeSettingTimeEntry) {
+                    document.isFirstTimeSettingTimeEntry = false;
+                    this.getEntryInProgress().then(response => response.json()).then(data => {
+                        this.entryInProgressChangedEventHandler(data);
+                        sendResponse(data);
+                        aBrowser.browserAction.setIcon({
+                            path: iconPathStarted
+                        });
+                    }).catch(() => {
+                        this.entryInProgressChangedEventHandler(null);
+                        sendResponse(null);
+                        aBrowser.browserAction.setIcon({
+                            path: iconPathEnded
+                        });
                     });
-                }).catch(() => {
-                    this.entryInProgressChangedEventHandler(null);
-                    sendResponse(document.timeEntry);
-                    aBrowser.browserAction.setIcon({
-                        path: iconPathEnded
-                    });
-                });
-            } else {
-                sendResponse(document.timeEntry);
-            }
-            break;
+                } else {
+                    sendResponse(result.timeEntryInProgress);
+                }
+            })
     }
 });
 
 function entryInProgressChangedEventHandler(data) {
-    aBrowser.storage.sync.set({
+    aBrowser.storage.local.set({
         timeEntryInProgress: data
     });
-
-    document.timeEntry = data;
 }
 
 function getReconnectTimeout() {

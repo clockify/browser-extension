@@ -2,7 +2,6 @@ import * as React from 'react';
 import {TagService} from "../services/tag-service";
 import {SortHepler} from "../helpers/sort-helper";
 import {debounce} from "lodash";
-import {isAppTypeMobile} from "../helpers/app-types-helper";
 
 const tagService = new TagService();
 const sortHelpers = new SortHepler();
@@ -70,9 +69,7 @@ class TagsList extends React.Component {
             }, () => {
                 if (this.state.isOpen) {
                     this.props.tagListOpened(true);
-                    if (!isAppTypeMobile()) {
-                        document.getElementById('tag-filter').focus();
-                    }
+                    document.getElementById('tag-filter').focus();
                 }
             });
         }
@@ -120,7 +117,10 @@ class TagsList extends React.Component {
     openCreateTag() {
         this.setState({
             createFormOpened: true
-        }, () => this.closeTagsList());
+        }, () => {
+            this.closeTagsList();
+            this.createTagName.focus();
+        });
     }
 
     addTag() {
@@ -251,6 +251,7 @@ class TagsList extends React.Component {
                         </div>
                         <div className="tag-list__create-form--divider"></div>
                         <input
+                            ref={input => {this.createTagName = input;}}
                             className="tag-list__create-form--tag-name"
                             placeholder="Tag name"
                             value={this.state.tagName}

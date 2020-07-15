@@ -19,7 +19,9 @@ function addPomodoroTimer() {
 
     if (pomodoroForUser && pomodoroForUser.enabled) {
         this.getEntryInProgress().then(response => response.json()).then(data => {
-            document.timeEntry = data;
+            aBrowser.storage.local.set({
+                timeEntryInProgress: data
+            });
             const start = new Date(data.timeInterval.start);
             let diff;
 
@@ -229,10 +231,12 @@ function startBreak(description) {
             this.clearBreakNotification() : this.clearLongBreakNotification();
 
         if (response.status === 400) {
-            this.saveEntryOfflineAndStopItByDeletingIt(document.timeEntry, new Date(), isWebSocketHeader)
+            aBrowser.storage.local.get(["timeEntryInProgress"], (result) => {
+                this.saveEntryOfflineAndStopItByDeletingIt(result.timeEntryInProgress, new Date(), isWebSocketHeader)
                 .then(response => {
                     this.startBreakTimer(description, isWebSocketHeader);
-                });
+                });         
+            });
         } else {
             this.startBreakTimer(description, isWebSocketHeader);
         }
@@ -252,7 +256,9 @@ function startBreakTimer(description, isWebSocketHeader) {
     ).then(response => {
         if (response && response.id) {
             this.sendPomodoroEvent(response);
-            document.timeEntry = response;
+            aBrowser.storage.local.set({
+                timeEntryInProgress: response
+            });
             const userId = localStorage.getItem('userId');
             const pomodoroForUser = localStorage.getItem('permanent_pomodoro') ?
                 JSON.parse(localStorage.getItem('permanent_pomodoro'))
@@ -288,10 +294,13 @@ function stopTimerByPomodoro() {
         this.restartPomodoro();
 
         if(response.status === 400) {
-            this.saveEntryOfflineAndStopItByDeletingIt(document.timeEntry, new Date());
+            aBrowser.storage.local.get(["timeEntryInProgress"], (result) => {
+                this.saveEntryOfflineAndStopItByDeletingIt(result.timeEntryInProgress, new Date());
+            });
         }
-
-        document.timeEntry = null;
+        aBrowser.storage.local.set({
+            timeEntryInProgress: null
+        });
         this.entryInProgressChangedEventHandler(null);
         aBrowser.browserAction.setIcon({
             path: iconPathEnded
@@ -306,9 +315,10 @@ function startTimerByPomodoro() {
         this.clearNotification('breakOver');
 
         if (response.status === 400) {
-            this.saveEntryOfflineAndStopItByDeletingIt(document.timeEntry, new Date(), isWebSocketHeader)
-                .then(response => this.startNewEntryTimer(isWebSocketHeader));
-            return;
+            aBrowser.storage.local.get(["timeEntryInProgress"], (result) => {
+                this.saveEntryOfflineAndStopItByDeletingIt(result.timeEntryInProgress, new Date(), isWebSocketHeader)
+                    .then(response => this.startNewEntryTimer(isWebSocketHeader));
+            });
         } else {
             this.startNewEntryTimer(isWebSocketHeader);
         }
@@ -327,7 +337,9 @@ function startNewEntryTimer(isWebSocketHeader) {
         }
     ).then(response => {
         if (response && response.id) {
-            document.timeEntry = response;
+            aBrowser.storage.local.set({
+                timeEntryInProgress: response
+            });
             this.sendPomodoroEvent(response);
             const userId = localStorage.getItem('userId');
             const pomodoroForUser = localStorage.getItem('permanent_pomodoro') ?
@@ -358,8 +370,10 @@ function continueLastEntryByPomodoro() {
             this.clearNotification('breakOver');
             this.sendPomodoroEvent(null);
             if (response.status === 400) {
-                this.saveEntryOfflineAndStopItByDeletingIt(document.timeEntry, new Date(), isWebSocketHeader)
-                    .then(response => this.continueLastEntryTimer(entry, isWebSocketHeader));
+                aBrowser.storage.local.get(["timeEntryInProgress"], (result) => {
+                    this.saveEntryOfflineAndStopItByDeletingIt(result.timeEntryInProgress, new Date(), isWebSocketHeader)
+                        .then(response => this.continueLastEntryTimer(entry, isWebSocketHeader));
+                });
             } else {
                 this.continueLastEntryTimer(entry, isWebSocketHeader);
             }
@@ -379,7 +393,9 @@ function continueLastEntryTimer(entry, isWebSocketHeader) {
         }
     ).then(response => {
         if (response && response.id) {
-            document.timeEntry = response;
+            aBrowser.storage.local.set({
+                timeEntryInProgress: response
+            });
             this.sendPomodoroEvent(response);
             const userId = localStorage.getItem('userId');
             const pomodoroForUser = localStorage.getItem('permanent_pomodoro') ?

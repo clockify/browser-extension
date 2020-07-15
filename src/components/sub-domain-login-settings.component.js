@@ -39,6 +39,7 @@ class SubDomainLoginSettings extends React.Component {
                             )
                         } else {
                             settingsService.setSubDomainName(this.props.domainName);
+                            settingsService.setHomeUrl(`https://${this.props.domainName}.clockify.me`)
                             return <Login loginSettings={JSON.parse(result.text)}/>
                         }
                     }

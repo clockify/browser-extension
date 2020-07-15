@@ -1,7 +1,7 @@
 function startTimerWithDescription(info) {
     let token;
     let activeWorkspaceId;
-    aBrowser.storage.sync.get(['token', 'activeWorkspaceId'], function (result) {
+    aBrowser.storage.local.get(['token', 'activeWorkspaceId'], function (result) {
         token = result.token;
         activeWorkspaceId = result.activeWorkspaceId;
 
@@ -84,9 +84,6 @@ function startTimer(description, options) {
                     path: iconPathStarted
                 });
 
-                if (options.isWebSocketHeader) {
-                    document.timeEntry = data;
-                }
                 this.entryInProgressChangedEventHandler(data);
             }
             return data;
@@ -127,9 +124,6 @@ function deleteEntry(entryId, isWebSocketHeader) {
     });
 
     return fetch(deleteEntryRequest).then(() => {
-        if (isWebSocketHeader) {
-            document.timeEntry = null;
-        }
         this.entryInProgressChangedEventHandler(null);
     });
 
@@ -182,12 +176,6 @@ function endInProgressOnClosingBrowser() {
         }).catch(() => {});
     }
 }
-
-aBrowser.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request.eventName === 'getEntryInProgress') {
-        sendResponse(document.timeEntry);
-    }
-});
 
 function saveEntryOfflineAndStopItByDeletingIt(data, end, isWebSocketHeader) {
     const timeEntry = {

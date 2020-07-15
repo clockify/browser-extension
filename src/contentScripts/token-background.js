@@ -11,7 +11,7 @@ function getToken() {
 
         return this.refreshToken(refreshToken)
             .then(response => response.json()).then(data => {
-                aBrowser.storage.sync.set({
+                aBrowser.storage.local.set({
                     token: (data.token),
                     userId: (data.userId),
                     refreshToken: (data.refreshToken),

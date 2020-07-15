@@ -40,14 +40,14 @@ class PostAuth extends React.Component {
                                     <img src="./assets/images/circle_2.svg"
                                          className="pull-loading-img2"/>
                                 </div>
-                            )
+                        )
                         } else {
                             let userId = JSON.parse(result.text).id;
                             let userEmail = JSON.parse(result.text).email;
                             let token = JSON.parse(result.text).token;
                             let refreshToken = JSON.parse(result.text).refreshToken;
                             if (isAppTypeExtension()) {
-                                getBrowser().storage.sync.set({
+                                getBrowser().storage.local.set({
                                     token: (token),
                                     userId: (userId),
                                     refreshToken: (refreshToken),
@@ -70,8 +70,8 @@ class PostAuth extends React.Component {
                                     ({error, result, loading}) => {
                                         if (error) {
                                             return <Login info={error.response.body.message}
-                                                          logout={true}
-                                            />;
+                                                         logout={true}
+                                                    />;
                                         }
                                         if (loading) {
                                             return (
@@ -84,7 +84,7 @@ class PostAuth extends React.Component {
                                             )
                                         } else {
                                             if (isAppTypeExtension()) {
-                                                getBrowser().storage.sync.set({
+                                                getBrowser().storage.local.set({
                                                     activeWorkspaceId: JSON.parse(result.text).activeWorkspace
                                                 });
                                                 getBrowser().extension.getBackgroundPage().addPomodoroTimer();

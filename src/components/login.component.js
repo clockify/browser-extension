@@ -193,31 +193,6 @@ class Login extends React.Component {
         );
     }
 
-    googleLogin() {
-        window.plugins.googleplus.login(
-            {
-                'scopes':'',
-                'webClientId': environment.webClientId,
-                'offline': false
-            },
-            (user) => {
-                authService.loginWithGoogle('google', user.idToken, user.email, moment.tz.guess())
-                    .then((response) => {
-                        let data = response.data;
-                        localStorage.setItem('token', data.token);
-                        localStorage.setItem('refreshToken', data.refreshToken);
-                        localStorage.setItem('userId', data.id);
-                        localStorage.setItem('userEmail', data.email);
-                        localStorage.setItem('timeZone', moment.tz.guess());
-                        this.fetchUser(data.id);
-                    })
-            },
-            (msg) => {
-                alert('error: ' + msg);
-            }
-        )
-    }
-
     signup() {
         ReactDOM.render(<SignUp/>, document.getElementById('mount'));
     }
@@ -279,6 +254,7 @@ class Login extends React.Component {
         if (localStorageService.get("subDomainName", null) != null) {
             homeUrl = homeUrl.replace(`${localStorageService.get("subDomainName")}.`, "")
         }
+        
         let redirectUri = "";
 
         if (typeof chrome !== "undefined") {
@@ -324,7 +300,7 @@ class Login extends React.Component {
             if (!!code && !!stateFromResponse) {
                 authService.loginWithCode(code, stateFromResponse, nonce, redirectUrl)
                     .then(response => response.json()).then(data => {
-                    aBrowser.storage.sync.set({
+                    aBrowser.storage.local.set({
                         token: (data.token),
                         userId: (data.id),
                         refreshToken: (data.refreshToken),
@@ -336,7 +312,7 @@ class Login extends React.Component {
                     localStorage.setItem('userEmail', data.email);
 
                     this.fetchUser(data.id).then(data => {
-                        aBrowser.storage.sync.set({
+                        aBrowser.storage.local.set({
                             activeWorkspaceId: (data.activeWorkspace),
                             userSettings: (JSON.stringify(data.settings))
                         });
@@ -355,7 +331,7 @@ class Login extends React.Component {
             const GOOGLE_TOKEN_URL = 'https://www.googleapis.com/oauth2/v4/token';
             let body = {
                 code: responseCode,
-                client_id: environment.webClientId,
+                client_id: environment.desktopClientId,
                 redirect_uri: 'urn:ietf:wg:oauth:2.0:oob:auto',
                 grant_type: 'authorization_code'
             };
@@ -463,7 +439,7 @@ class Login extends React.Component {
             .then(response => {
                 let data = response.data;
                 if (isAppTypeExtension()) {
-                    getBrowser().storage.sync.set({
+                    getBrowser().storage.local.set({
                         activeWorkspaceId: (data.activeWorkspace),
                         userSettings: (JSON.stringify(data.settings))
                     });
@@ -476,10 +452,10 @@ class Login extends React.Component {
                 });
                 ReactDOM.render(<HomePage/>, document.getElementById('mount'));
             }).catch(error => {
-            this.setState({
-                isReady: false,
+                this.setState({
+                    isReady: false,
+                })
             })
-        })
     }
 
     logout() {
@@ -487,7 +463,7 @@ class Login extends React.Component {
             let timeEntriesOffline = localStorageService.get('timeEntriesOffline') ?
                 JSON.parse(localStorageService.get('timeEntriesOffline')) : [];
             if (isAppTypeExtension()) {
-                getBrowser().storage.sync.clear();
+                getBrowser().storage.local.clear();
                 getBrowser().runtime.sendMessage('closeOptionsPage');
             }
             if(localStorageService.get('selfHosted') &&
@@ -553,18 +529,17 @@ class Login extends React.Component {
                         "login-submit" : "disabled"}
                             onClick={this.loginWithCredentials}>Log in</button>
                     <button className={this.state.appType !== getAppTypes().EXTENSION &&
-                    !this.state.selfHosted ? "google-login" : "google-login-disabled"}
-                            onClick={this.state.appType === getAppTypes().MOBILE ?
-                                this.googleLogin.bind(this) : this.loginWithGoogle.bind(this)}>
+                                      !this.state.selfHosted ? "google-login" : "google-login-disabled"}
+                            onClick={this.loginWithGoogle.bind(this)}>
                         <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAARCAYAAADUryzEAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAIPSURBVHgBlVM/aBNhFH/vS5qmiz0XbXToBaQOor2znUQwZBCcUu1YEIugDkqrTiroKYjrqYM4BQfJoJQgimiHHhlEtJET3L1BtFTbntGSo6Tf8921F+9Sr9jfcHy/9733e//uQ+jA54KmZFPpMyDpGACpACJNQD/4/A5J3slZthP1xyiZKwxNsMUgAAUSgIhmU7Zu5i3b9bkIL74VDxqEYG4W7IOIJrtRFEOeDoILQ5eB4EbcE57y50WQBTEvgU5yfhVX8XSuVp9qV9R8Ceqvh/s+rv7MbluPdIDEeM6ataJ6X4t6P0mh77bq1VhL3ms4R43Mg8bjAZBuNyDh/j5r9hP8J3BlGma474JPvPc7nvVenS9FHQ4ZS5rYZC68Itgbkq7h+doGh5Qo8zy0hHhX8Nraq+TDAmwNil+Bh38FNmRCHmp8teifQ76E3iu4hwIuPPf64f7yoOs2Rd4er7pJKY/capT5zzzlnwnJEiRgylw+ALd/D0ODuhTMpsyk4MPG94EwOADRo6B6vTI6g+ubWLPjNFLryoexat3nWnlEEVkx0fPl2mSquScs36ld780HAlplREUQLIJqvH/0uP9FltwV2jKLJcgslNwVKfW3xnanvYEkkU6woNMzd/b4m4tH7bUk8VvUKycusfV8pxARuPwS70qvZUaHjEmZBiujOj+iPiK5E2TKtsee2P/y+wNydMMjOPbkvQAAAABJRU5ErkJggg=="
                              className="google-img"/>
                         Continue with Google</button>
                     <button className={this.state.appType === getAppTypes().EXTENSION &&
-                    ((!this.state.selfHosted &&
-                        !this.state.isSubDomain && isChrome()) ||
-                        ((this.state.selfHosted ||
-                            this.state.isSubDomain) && this.state.oAuthActive)) ?
-                        "login__oauth--button" : "disabled"}
+                                       ((!this.state.selfHosted &&
+                                           !this.state.isSubDomain && isChrome()) ||
+                                       ((this.state.selfHosted ||
+                                           this.state.isSubDomain) && this.state.oAuthActive)) ?
+                                      "login__oauth--button" : "disabled"}
                             type="button"
                             onClick={this.loginWithOAuth.bind(this)}>
                         <div className="login__oauth--button__img_and_text">
@@ -575,7 +550,8 @@ class Login extends React.Component {
                         </div>
                     </button>
                     <button className={(this.state.isSubDomain || this.state.selfHosted) &&
-                    this.state.saml2Active && isChrome() ? "login__saml2--button" : "disabled"}
+                                        this.state.saml2Active && isChrome() ?
+                                            "login__saml2--button" : "disabled"}
                             type="button"
                             onClick={this.loginWithSaml.bind(this)}>
                         <div className="login__oauth--button__img_and_text">
@@ -587,23 +563,23 @@ class Login extends React.Component {
                     </button>
                     <hr className="login__divider"/>
                     <div className={this.state.nativeLogin &&
-                    !this.state.ldapActive &&
-                    !this.state.oAuthForceSSO ?
-                        "new-account" : "disabled"}>
+                                    !this.state.ldapActive &&
+                                    !this.state.oAuthForceSSO ?
+                                        "new-account" : "disabled"}>
                         <p>New here?</p>
                         <a onClick={this.signup}>Create an account</a>
                     </div>
                     <hr className={!this.state.ldapActive && !this.state.oAuthForceSSO ?
                         "login__divider" : "disabled"}/>
                     <div className={!this.state.selfHosted && !this.state.isSubDomain &&
-                    this.state.appType  === getAppTypes().EXTENSION ?
+                        this.state.appType === getAppTypes().EXTENSION ?
                         "self-hosting-url" : "disabled"}>
                         <a onClick={this.enterBaseUrl}>Log in to custom domain</a>
                         <hr className="login__divider"/>
                         <a onClick={this.enterSubDomainName}>Log in to sub domain</a>
                     </div>
                     <div className={(this.state.selfHosted || this.state.isSubDomain) &&
-                    this.state.appType !== getAppTypes().MOBILE ? "cloud-version-url" : "disabled"}>
+                        this.state.appType === getAppTypes().EXTENSION ? "cloud-version-url" : "disabled"}>
                         <a onClick={this.backToCloudVersion.bind(this)}>Return to Clockify cloud</a>
                     </div>
                 </div>

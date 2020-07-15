@@ -132,7 +132,7 @@ function getLastUsedProjectFromTimeEntries() {
 
 function refreshTokenAndFetchUser(token) {
     this.refreshToken(token).then(response => response.json()).then(data => {
-        aBrowser.storage.sync.set({
+        aBrowser.storage.local.set({
             token: (data.token),
             userId: (data.id),
             refreshToken: (data.refreshToken),
@@ -144,7 +144,7 @@ function refreshTokenAndFetchUser(token) {
         localStorage.setItem('userEmail', data.email);
 
         fetchUser(data.id).then(data => {
-            aBrowser.storage.sync.set({
+            aBrowser.storage.local.set({
                 activeWorkspaceId: (data.activeWorkspace),
                 userSettings: (JSON.stringify(data.settings))
             });
@@ -158,7 +158,7 @@ function loginWithCodeAndFetchUser(code, stateFromUrl, nonce, redirectUri, sendR
     this.loginWithCode(code, stateFromUrl, nonce, redirectUri)
         .then(response => response.json())
         .then(data => {
-            aBrowser.storage.sync.set({
+            aBrowser.storage.local.set({
                 token: (data.token),
                 userId: (data.id),
                 refreshToken: (data.refreshToken),
@@ -170,7 +170,7 @@ function loginWithCodeAndFetchUser(code, stateFromUrl, nonce, redirectUri, sendR
             localStorage.setItem('userEmail', data.email);
 
             this.fetchUser(data.id).then(data => {
-                aBrowser.storage.sync.set({
+                aBrowser.storage.local.set({
                     activeWorkspaceId: (data.activeWorkspace),
                     userSettings: (JSON.stringify(data.settings))
                 });

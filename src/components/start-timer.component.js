@@ -10,13 +10,15 @@ import {Application} from "../application";
 import {ProjectHelper} from "../helpers/project-helper";
 import {TimeEntryService} from "../services/timeEntry-service";
 import {getKeyCodes} from "../enums/key-codes.enum";
-import {isAppTypeExtension, isAppTypeMobile} from "../helpers/app-types-helper";
+import {isAppTypeExtension} from "../helpers/app-types-helper";
 import {getBrowser} from "../helpers/browser-helper";
 import {LocalStorageService} from "../services/localStorage-service";
+import { ProjectService } from '../services/project-service';
 
 const projectHelpers = new ProjectHelper();
 const timeEntryService = new TimeEntryService();
 const localStorageService = new LocalStorageService();
+const projectService = new ProjectService()
 let interval;
 
 class StartTimer extends React.Component {
@@ -35,17 +37,6 @@ class StartTimer extends React.Component {
 
     componentDidMount() {
         this.getTimeEntryInProgress();
-
-        if (isAppTypeMobile()) {
-            this.getEntryInProgressOnResume();
-        }
-    }
-
-    getEntryInProgressOnResume() {
-        document.addEventListener("resume", () => {
-            clearInterval(interval);
-            this.getTimeEntryInProgress();
-        });
     }
 
     getTimeEntryInProgress() {
@@ -80,7 +71,6 @@ class StartTimer extends React.Component {
 
     setTimeEntryInProgress(timeEntry) {
         let inProgress = false;
-
         if (interval) {
             clearInterval(interval);
         }
@@ -89,8 +79,19 @@ class StartTimer extends React.Component {
             projectHelpers.getDefaultProject().then(defaultProject => {
                 if (defaultProject) {
                     if (timeEntry.projectId === null || timeEntry.projectId === "") {
-                        timeEntryService.updateProject(defaultProject.id, timeEntry.id);
-                        timeEntryService.updateBillable(defaultProject.billable, timeEntry.id);
+                        timeEntryService.updateProject(defaultProject.id, timeEntry.id)
+                            .then(() => timeEntryService.updateBillable(defaultProject.billable, timeEntry.id))
+                            .catch((error) => {
+                                if (error.response.data.code === 501) {
+                                    projectHelpers.setLastUsedProjectAsDefaultProject()
+                                    projectService.getLastUsedProject().then(project => {
+                                        if (project) {
+                                            timeEntryService.updateProject(project.id, timeEntry.id)
+                                            .then(() => timeEntryService.updateBillable(project.billable, timeEntry.id))
+                                        }
+                                    })
+                                }
+                            });
                     }
                 } else {
                     const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
@@ -114,6 +115,7 @@ class StartTimer extends React.Component {
                     }, 1000);
 
                     this.props.changeMode('timer');
+
                     this.props.setTimeEntryInProgress(timeEntry);
                 });
                 inProgress = true;
@@ -244,9 +246,11 @@ class StartTimer extends React.Component {
             localStorage.setItem('timeEntryInOffline', null);
 
             clearInterval(interval);
+            interval = null
             this.setState({
                 timeEntry: {},
-                time: moment().hour(0).minute(0).second(0).format('HH:mm:ss')
+                time: moment().hour(0).minute(0).second(0).format('HH:mm:ss'),
+                interval: ""
             });
             document.getElementById('description').value = '';
             this.props.setTimeEntryInProgress(null);
@@ -255,6 +259,7 @@ class StartTimer extends React.Component {
             timeEntryService.stopEntryInProgress(moment())
                 .then(() => {
                     clearInterval(interval);
+                    interval = null
                     this.setState({
                         timeEntry: {},
                         time: moment().hour(0).minute(0).second(0).format('HH:mm:ss')

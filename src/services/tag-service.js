@@ -13,7 +13,7 @@ export class TagService extends HttpWrapperService {
         const baseUrl = localStorageService.get('baseUrl');
         const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
         let getTagsUrl = `${baseUrl}/v1/workspaces/${activeWorkspaceId}/tags` +
-            `?page=${page}&pageSize${pageSize}`;
+            `?page=${page}&pageSize${pageSize}&archived=false`;
 
         if (!!filter) {
             getTagsUrl = getTagsUrl.concat(`&name=${filter}`);

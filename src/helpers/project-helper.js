@@ -49,6 +49,16 @@ export class ProjectHelper {
         });
     }
 
+    createMessageForNoTaskOrProject(projects, isSpecialFilter, filter) {
+        if (!isSpecialFilter || filter.length === 0 || projects.length > 0) return ""
+        
+        if (!filter.includes("@")) {
+            return "No matching tasks. Search projects with @project syntax"
+        } else {
+            return "No matching projects"
+        }
+    }
+
     getDefaultProject() {
         if (checkConnection()) {
             return Promise.resolve(null);
@@ -105,6 +115,48 @@ export class ProjectHelper {
         let defaultProjects = localStorageService.get(getDefaultProjectEnums().DEFAULT_PROJECTS);
 
         return defaultProjects ? JSON.parse(defaultProjects) : [];
+    }
+
+    setDefaultProject(defaultProject) {
+        const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
+        const defaultProjects = this.getDefaultProjectListFromStorage();
+        const defaultProjectForWorkspaceAndUser = this.getDefaultProjectOfWorkspaceForUser();
+        const userId = localStorageService.get('userId');
+
+        if (defaultProjectForWorkspaceAndUser) {
+            const index = defaultProjects.findIndex(
+                (defaultProject) => defaultProject.project.id === defaultProjectForWorkspaceAndUser.id);
+            defaultProjects[index].project = defaultProject;
+        } else {
+            defaultProjects.push({
+                workspaceId: activeWorkspaceId,
+                userId: userId,
+                project: defaultProject,
+                enabled: true
+            });
+        }
+
+        this.setDefaultProjectsToStorage(defaultProjects)
+    }
+
+    setLastUsedProjectAsDefaultProject() {
+        let lastUsedProject = {};
+        
+        lastUsedProject.id = getDefaultProjectEnums().LAST_USED_PROJECT;
+    
+        this.setDefaultProject(lastUsedProject)
+    }
+
+    getDefaultProjectOfWorkspaceForUser() {
+        const defaultProjects = this.getDefaultProjectListFromStorage();
+        const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
+        const userId = localStorageService.get('userId');
+
+        const defProject =
+            this.filterProjectsByWorkspaceAndUser(defaultProjects, activeWorkspaceId, userId);
+
+        return defProject && defProject.project && defProject.project.id ?
+            defProject.project : null;
     }
 
     removeDefaultProjectForWorkspaceAndUser(activeWorkspaceId, userId) {

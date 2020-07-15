@@ -1,21 +1,23 @@
-let idleDetectedIn;
+document.idleDetectedIn;
 const minuteInMilliseconds =  60000;
 const idleButtons = ['Discard idle time', 'Discard and continue'];
 const idleChangeStateListener = (callback) => {
     const idleDetectionByUser = this.getIdleDetectionByUser();
-    if (document.timeEntry) {
-        if (idleDetectionByUser && callback === 'idle') {
-            idleDetectedIn = (new Date() - parseInt(idleDetectionByUser.counter) * minuteInMilliseconds);
-            this.setTimeEntryToDetectedIdleTime(document.timeEntry.id);
-        } else if (
-            idleDetectedIn &&
-            parseInt(idleDetectedIn) > 0 &&
-            callback === 'active' &&
-            idleDetectionByUser.timeEntryId === document.timeEntry.id
-        ) {
-            this.createIdleNotification(document.timeEntry.description, idleDetectedIn);
+    aBrowser.storage.local.get(["timeEntryInProgress"], (result) => {
+        if (result.timeEntryInProgress) {
+            if (idleDetectionByUser && callback === 'idle') {
+                document.idleDetectedIn = (Date.now() - parseInt(idleDetectionByUser.counter) * minuteInMilliseconds);
+                this.setTimeEntryToDetectedIdleTime(result.timeEntryInProgress.id);
+            } else if (
+                document.idleDetectedIn &&
+                parseInt(document.idleDetectedIn) > 0 &&
+                callback === 'active' &&
+                idleDetectionByUser.timeEntryId === result.timeEntryInProgress.id
+            ) {
+                this.createIdleNotification(result.timeEntryInProgress.description, document.idleDetectedIn);
+            }
         }
-    }
+    });
 };
 
 this.setIdleDetectionOnBrowserStart();
@@ -24,14 +26,16 @@ aBrowser.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.eventName === 'idleDetection') {
         if (parseInt(request.counter) > 0) {
             aBrowser.idle.setDetectionInterval(parseInt(request.counter) * 60);
-
-            if (document.timeEntry) {
-                aBrowser.idle.onStateChanged.addListener(idleChangeStateListener);
-            } else {
-                if (idleChangeStateListener && aBrowser.idle.onStateChanged.hasListener(idleChangeStateListener)) {
-                    aBrowser.idle.onStateChanged.removeListener(idleChangeStateListener)
+            
+            aBrowser.storage.local.get(["timeEntryInProgress"], (result) => {
+                if (result.timeEntryInProgress) {
+                    aBrowser.idle.onStateChanged.addListener(idleChangeStateListener);
+                } else {
+                    if (idleChangeStateListener && aBrowser.idle.onStateChanged.hasListener(idleChangeStateListener)) {
+                        aBrowser.idle.onStateChanged.removeListener(idleChangeStateListener)
+                    }
                 }
-            }
+            });
         } else {
             if (idleChangeStateListener && aBrowser.idle.onStateChanged.hasListener(idleChangeStateListener)) {
                 aBrowser.idle.onStateChanged.removeListener(idleChangeStateListener);
@@ -66,13 +70,15 @@ function setIdleDetectionOnBrowserStart() {
     if (idleDetectionByUser && idleDetectionByUser.counter > 0) {
         aBrowser.idle.setDetectionInterval(parseInt(idleDetectionByUser.counter) * 60);
 
-        if (document.timeEntry) {
-            aBrowser.idle.onStateChanged.addListener(idleChangeStateListener);
-        } else {
-            if (idleChangeStateListener && aBrowser.idle.onStateChanged.hasListener(idleChangeStateListener)) {
-                aBrowser.idle.onStateChanged.removeListener(idleChangeStateListener);
+        aBrowser.storage.local.get(["timeEntryInProgress"], (result) => {
+            if (result.timeEntryInProgress) {
+                aBrowser.idle.onStateChanged.addListener(idleChangeStateListener);
+            } else {
+                if (idleChangeStateListener && aBrowser.idle.onStateChanged.hasListener(idleChangeStateListener)) {
+                    aBrowser.idle.onStateChanged.removeListener(idleChangeStateListener);
+                }
             }
-        }
+        });
     } else {
         if (idleChangeStateListener && aBrowser.idle.onStateChanged.hasListener(idleChangeStateListener)) {
             aBrowser.idle.onStateChanged.removeListener(idleChangeStateListener);
@@ -113,7 +119,7 @@ function createIdleNotification(description, idleDetectedIn) {
 }
 
 function getIdleDuration(idleDetectedIn) {
-    const currentTime = new Date();
+    const currentTime = Date.now();
     let idleDuration;
     let idleDurationHours = 0;
     let idleDurationMinutes = parseInt(((currentTime - idleDetectedIn) / minuteInMilliseconds)
@@ -155,11 +161,11 @@ function createIdleMessage(description, idleDuration) {
 
 function discardIdleTimeAndStopEntry() {
     this.getEntryInProgress().then(response => response.json()).then(data => {
-        this.endInProgress(new Date(idleDetectedIn)).then((response) => {
+        this.endInProgress(new Date(document.idleDetectedIn)).then((response) => {
             this.clearNotification('idleDetection');
 
             if (response.status == 400) {
-                this.saveEntryOfflineAndStopItByDeletingIt(data, idleDetectedIn);
+                this.saveEntryOfflineAndStopItByDeletingIt(data, document.idleDetectedIn);
             }
             this.entryInProgressChangedEventHandler(null);
         });
@@ -168,11 +174,11 @@ function discardIdleTimeAndStopEntry() {
 
 function discardIdleTimeAndContinueEntry() {
     this.getEntryInProgress().then(response => response.json()).then(data => {
-        this.endInProgress(new Date(idleDetectedIn)).then((response) => {
+        this.endInProgress(new Date(document.idleDetectedIn)).then((response) => {
             this.clearNotification('idleDetection');
 
             if (response.status == 400) {
-                this.saveEntryOfflineAndStopItByDeletingIt(data, idleDetectedIn);
+                this.saveEntryOfflineAndStopItByDeletingIt(data, document.idleDetectedIn);
             }
 
             this.startTimer(

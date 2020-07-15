@@ -25,7 +25,7 @@ export class Extension {
     }
 
     afterLoad() {
-        getBrowser().storage.sync.get(
+        getBrowser().storage.local.get(
             ['token', 'activeWorkspaceId', 'userId', 'userEmail',
                 'weekStart', 'timeZone', 'refreshToken', 'userSettings'], (result) => {
                 const mountHtmlElem = document.getElementById('mount');
@@ -150,6 +150,9 @@ export class Extension {
                 this.setIcon(getIconStatus().timeEntryEnded);
             }
             sendResponse({status: response.status});
+        })
+        .catch((error) => {
+            sendResponse(error)
         });
     }
 
@@ -160,6 +163,9 @@ export class Extension {
             } else {
                 return this.startTimer(request, sendResponse);
             }
+        })
+        .catch((error) => {
+            sendResponse(error)
         });
     }
 
@@ -186,6 +192,9 @@ export class Extension {
                     getBrowser().extension.getBackgroundPage().addPomodoroTimer();
                 }
                 sendResponse(response);
+            })
+            .catch((error) => {
+                sendResponse(error)
             })
     }
 
@@ -221,7 +230,7 @@ export class Extension {
     }
 
     saveOneToBrowserStorage(map) {
-        getBrowser().storage.sync.set(map);
+        getBrowser().storage.local.set(map);
     }
 
     saveOneToStorages(key, value) {
@@ -236,7 +245,7 @@ export class Extension {
     }
 
     saveAllToBrowserStorage(map) {
-        getBrowser().storage.sync.set(map);
+        getBrowser().storage.local.set(map);
     }
 
     saveAllToStorages(map) {
