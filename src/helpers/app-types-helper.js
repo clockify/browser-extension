@@ -20,28 +20,14 @@ export function determineAppType() {
 
         return getAppTypes().EXTENSION
     } catch (e) {
-        try {
-            changeTrayIcon(false);
-            localStorageService.set(
-                'appType',
-                getAppTypes().DESKTOP,
-                getLocalStorageEnums().PERMANENT_PREFIX
-            );
+        changeTrayIcon(false);
+        localStorageService.set(
+            'appType',
+            getAppTypes().DESKTOP,
+            getLocalStorageEnums().PERMANENT_PREFIX
+        );
 
-            return getAppTypes().DESKTOP
-        } catch (e) {
-            localStorageService.set(
-                'appType',
-                getAppTypes().MOBILE,
-                getLocalStorageEnums().PERMANENT_PREFIX
-            );
-
-            document.addEventListener('deviceready', () => {
-                checkConnection();
-            }, false);
-
-            return getAppTypes().MOBILE;
-        }
+        return getAppTypes().DESKTOP
     }
 }
 
@@ -51,9 +37,5 @@ export function isAppTypeExtension() {
 
 export function isAppTypeDesktop() {
     return localStorageService.get('appType') === getAppTypes().DESKTOP;
-}
-
-export function isAppTypeMobile() {
-    return localStorageService.get('appType') === getAppTypes().MOBILE;
 }
 

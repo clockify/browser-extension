@@ -70,8 +70,6 @@ class Header extends React.Component {
         }
     }
 
-
-
     goBack() {
         this.props.goBackTo();
     }
@@ -102,7 +100,7 @@ class Header extends React.Component {
                     <div>
                         <div onClick={this.handleRefresh.bind(this)}
                              title="Refresh"
-                             className={localStorageService.get('appType') !== getAppTypes().MOBILE && this.props.showSync ?
+                             className={this.props.showSync ?
                                  "header-sync" : "disabled"}>
                         </div>
                         <div className={this.props.showActions ? "actions" : "disabled"}

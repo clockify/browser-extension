@@ -6,11 +6,12 @@ import {debounce} from "lodash";
 import {LocalStorageService} from "../services/localStorage-service";
 import * as ReactDOM from "react-dom";
 import CreateProjectComponent from "./create-project.component";
-import {isAppTypeMobile} from "../helpers/app-types-helper";
+import { ProjectHelper } from '../helpers/project-helper';
 
 const projectService = new ProjectService();
 const localStorageService = new LocalStorageService();
 const pageSize = 50;
+const projectHelper = new ProjectHelper()
 
 class ProjectList extends React.Component {
 
@@ -31,7 +32,7 @@ class ProjectList extends React.Component {
                     tasks: [],
                     id: getDefaultProjectEnums().LAST_USED_PROJECT
                 }] :
-                !this.props.workspaceSettings.forceProjects ?
+                !this.props.workspaceSettings.forceProjects && this.props.selectedProject ?
                     [{name: 'No project', color: '#999999', tasks: []}] : [],
             page: 1,
             ready: false,
@@ -42,7 +43,8 @@ class ProjectList extends React.Component {
             isSpecialFilter: localStorageService.get('workspaceSettings') ?
                 JSON.parse(localStorageService.get('workspaceSettings')).projectPickerSpecialFilter : false,
             isEnabledCreateProject: false,
-            projectIdsWithPermissions: []
+            projectIdsWithPermissions: [],
+            specFilterNoTasksOrProject: ""
         };
         this.filterProjects = debounce(this.filterProjects, 500);
     }
@@ -67,10 +69,7 @@ class ProjectList extends React.Component {
     }
 
     isEnabledCreateProject() {
-        if (!this.props.createProject) {
-            return;
-        }
-
+        if (this.props.defaultProject) return
         this.setState({
             isEnabledCreateProject: !this.props.workspaceSettings.onlyAdminsCreateProject ||
                 this.props.isUserOwnerOrAdmin ? true : false
@@ -78,9 +77,9 @@ class ProjectList extends React.Component {
     }
 
     getProjects(page, pageSize) {
-        if (page === 0) {
+        if (page === 1) {
             this.setState({
-                projectList: !this.props.workspaceSettings.forceProjects ?
+                projectList: !this.props.workspaceSettings.forceProjects && this.props.selectedProject ?
                     [{name: 'No project', color: '#999999', tasks: []}] : []
             })
         }
@@ -88,13 +87,22 @@ class ProjectList extends React.Component {
             projectService.getProjectsWithFilter(this.state.filter, page, pageSize)
                 .then(response => {
                     this.setState({
-                        projectList: this.state.projectList.concat(response.data),
+                        projectList: 
+                            this.state.filter.length > 0 ? 
+                                this.state.projectList
+                                    .concat(response.data)
+                                    .filter(project => project.name !== "No project") :
+                                this.state.projectList.concat(response.data),
                         page: this.state.page + 1,
                         ready: true
                     }, () => {
                         this.setState({
                             clients: this.getClients(this.state.projectList),
-                            loadMore: response.data.length === pageSize ? true : false
+                            loadMore: response.data.length === pageSize ? true : false,
+                            specFilterNoTasksOrProject: 
+                                projectHelper.createMessageForNoTaskOrProject(
+                                    response.data, this.state.isSpecialFilter, this.state.filter
+                                )
                         });
 
                         if(!this.state.isOpen) {
@@ -122,8 +130,7 @@ class ProjectList extends React.Component {
             } :
             this.state.projectList.filter(p => p.id === this.props.selectedProject)[0];
 
-
-        if (this.props.selectedProject && selectedProject) {
+            if (this.props.selectedProject && selectedProject) {
             this.setState({
                 selectedProject: selectedProject
             }, () => {
@@ -186,17 +193,33 @@ class ProjectList extends React.Component {
 
     getClients(projects) {
         const clients = new Set(projects.filter(p => p.client).map(p => p.client.name))
-
-        return ['Without client', ...clients]
+        console.log()
+        if (projects && projects.length > 0) {
+            return ['Without client', ...clients]
+        } else {
+            return []
+        }
     }
 
     selectProject(project) {
         this.props.selectProject(project);
+        let projectList;
+        if (project.id && !this.props.forceProjects && !this.props.defaultProject) {
+            if (this.state.projectList.filter(project => project.name === "No project").length == 0) {
+                projectList = 
+                    [{name: 'No project', color: '#999999', tasks: []}, ...this.state.projectList]
+            } else {
+                projectList = this.state.projectList
+            }
+        } else {
+            projectList = this.state.projectList.filter(project => project.name !== "No project")
+        }
 
         this.setState({
                 selectedProject: project,
                 selectedTaskName: '',
-                isOpen: false
+                isOpen: false,
+                projectList: projectList
             }, () => this.setState({
                 title: this.createTitle()
             })
@@ -219,13 +242,15 @@ class ProjectList extends React.Component {
     openProjectDropdown() {
         if (!JSON.parse(localStorage.getItem('offline'))) {
             this.setState({
-                isOpen: true
+                isOpen: true,
+                page: 1
             }, () => {
-                if (!isAppTypeMobile()) {
-                    document.getElementById('project-filter').focus();
-                }
+                document.getElementById('project-filter').focus();
                 this.props.projectListOpened();
             });
+            if (this.state.projectList.filter(project => project.name !== "No project").length === 0) {
+                this.createProject()
+            }
         }
     }
 
@@ -233,8 +258,6 @@ class ProjectList extends React.Component {
         document.getElementById('project-dropdown').scroll(0, 0);
         this.setState({
             isOpen: false,
-            projectList: !this.props.workspaceSettings.forceProjects ?
-                [{name: 'No project', color: '#999999', tasks: []}] : [],
             page: 1,
             filter: ''
         }, () => {
@@ -245,7 +268,7 @@ class ProjectList extends React.Component {
 
     filterProjects() {
         this.setState({
-            projectList: !this.props.workspaceSettings.forceProjects ?
+            projectList: !this.props.workspaceSettings.forceProjects && this.props.selectedProject ?
                 [{name: 'No project', color: '#999999', tasks: []}] : [],
             filter: document.getElementById('project-filter').value.toLowerCase(),
             page: 1
@@ -293,7 +316,7 @@ class ProjectList extends React.Component {
 
     clearProjectFilter() {
         this.setState({
-            projectList: !this.props.workspaceSettings.forceProjects ?
+            projectList: !this.props.workspaceSettings.forceProjects && this.props.selectedProject && this.props.selectedProject.id ?
                 [{name: 'No project', color: '#999999', tasks: []}] : [],
             filter: '',
             page: 1
@@ -396,6 +419,9 @@ class ProjectList extends React.Component {
                                         )
                                     })
                                 }
+                                <div className={this.state.specFilterNoTasksOrProject.length > 0 ? "project-list__spec_filter_no_task_or_project" : "disabled"}>
+                                    <span>{this.state.specFilterNoTasksOrProject}</span>
+                                </div>
                                 <div className={this.state.loadMore ? "project-list-load" : "disabled"}
                                      onClick={this.loadMoreProjects.bind(this)}>Load more
                                 </div>

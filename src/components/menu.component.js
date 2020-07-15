@@ -73,8 +73,9 @@ class Menu extends React.Component {
         if (localStorage.getItem('appType') === getAppTypes().DESKTOP) {
             openExternal(`${environment.home}/dashboard`);
         } else {
-            const homeUrl = localStorageService.get('subDomainName') ?
-                localStorageService.get('subDomainName') + environment.home : environment.home;
+            const homeUrl = localStorageService.get('homeUrl') ?
+                localStorageService.get('homeUrl') : environment.home
+
             window.open(`${homeUrl}/dashboard`, '_blank');
         }
     }
@@ -96,7 +97,7 @@ class Menu extends React.Component {
             .then(response => {
                 localStorageService.set('activeWorkspaceId', workspaceId);
                 if (isAppTypeExtension()) {
-                    getBrowser().storage.sync.set({
+                    getBrowser().storage.local.set({
                         activeWorkspaceId: (workspaceId)
                     });
                 }
@@ -130,7 +131,7 @@ class Menu extends React.Component {
                         </a>
                         <a id="timer"
                            className={this.props.mode === 'timer' ?
-                               "dropdown-item active" : "dropdown-item"}
+                                   "dropdown-item active" : "dropdown-item"}
                            href="#"
                            onClick={this.changeModeToTimer.bind(this)}>
                             <span className="menu-timer-img"></span>

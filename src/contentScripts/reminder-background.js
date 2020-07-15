@@ -2,9 +2,12 @@ let reminderTimer;
 const reminderButtons = ['Start timer', 'Add missing time'];
 
 aBrowser.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request.eventName === 'reminder' && !document.timeEntry) {
-        this.addReminderTimer();
-    }
+    aBrowser.storage.local.get(["timeEntryInProgress"], (result) => {
+        if (request.eventName === 'reminder' && !result.timeEntryInProgress) {
+            this.addReminderTimer();
+        }
+    });
+    
 });
 
 function addReminderTimer() {
@@ -60,29 +63,31 @@ function parseTimesToDates(time) {
 function createReminderNotification(dateTo, minutes) {
     const currentTime = new Date().getTime();
 
-    if (currentTime > dateTo || document.timeEntry) {
-        this.removeReminderTimer();
-        return;
-    }
-
-    const buttonsForMessage = [
-        {title: reminderButtons[0]},
-        {title: reminderButtons[1]}
-    ];
-
-    const notificationOptions = {
-        type: "basic",
-        iconUrl: "./assets/icons/64x64.png",
-        title: "Reminder",
-        message: "Don't forget to track your time! (" + minutes + "m passed since the last activity)"
-    };
-
-    if (this.isChrome()) {
-        notificationOptions.buttons = buttonsForMessage;
-        notificationOptions.requireInteraction = true;
-    }
-
-    this.createNotification('reminder', notificationOptions);
+    aBrowser.storage.local.get(["timeEntryInProgress"], (result) => {
+        if (currentTime > dateTo || result.timeEntryInProgress) {
+            this.removeReminderTimer();
+            return;
+        } else {
+            const buttonsForMessage = [
+                {title: reminderButtons[0]},
+                {title: reminderButtons[1]}
+            ];
+        
+            const notificationOptions = {
+                type: "basic",
+                iconUrl: "./assets/icons/64x64.png",
+                title: "Reminder",
+                message: "Don't forget to track your time! (" + minutes + "m passed since the last activity)"
+            };
+        
+            if (this.isChrome()) {
+                notificationOptions.buttons = buttonsForMessage;
+                notificationOptions.requireInteraction = true;
+            }
+        
+            this.createNotification('reminder', notificationOptions);
+        }    
+    })
 }
 
 function addReminderTimerOnStartingBrowser() {

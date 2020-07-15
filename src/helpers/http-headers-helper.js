@@ -31,10 +31,6 @@ export class HttpHeadersHelper {
             }
         }
 
-        if (appType === 'mobile') {
-            appType += '-android';
-        }
-
         if (localStorageService.get('subDomainName')) {
             headers['sub-domain-name'] = localStorageService.get('subDomainName');
         }

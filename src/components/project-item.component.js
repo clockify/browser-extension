@@ -32,7 +32,7 @@ class ProjectItem extends React.Component {
     render(){
         return(
             <div>
-                <div className="project-item">
+                <div className="project-item" title={this.props.project.name}>
                     <span className="project-item-name">
                         <span style={{background: this.props.project.color}} className="dot-project-picker"></span>
                         <span onClick={!this.props.workspaceSettings.forceTasks ?

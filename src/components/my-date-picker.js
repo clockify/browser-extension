@@ -1,5 +1,4 @@
 import * as React from 'react';
-import DatePicker from 'react-mobile-datepicker';
 
 class MyDatePicker extends React.Component {
 

@@ -60,7 +60,7 @@ class SignUp extends React.Component {
                         .then(response => {
                             let data = response.data;
                             if (isAppTypeExtension()) {
-                                getBrowser().storage.sync.set({
+                                getBrowser().storage.local.set({
                                     token: (data.token),
                                     userId: (data.id),
                                     refreshToken: (data.refreshToken),
@@ -102,7 +102,7 @@ class SignUp extends React.Component {
                     JSON.stringify(data.settings));
 
                 if (isAppTypeExtension()) {
-                    getBrowser().storage.sync.set({
+                    getBrowser().storage.local.set({
                         activeWorkspaceId: (data.activeWorkspace),
                         userSettings: JSON.stringify(data.settings)
                     });

@@ -34,7 +34,7 @@ aBrowser.windows.onCreated.addListener((window) => {
                 this.addReminderTimerOnStartingBrowser();
                 this.startTimerOnStartingBrowser();
             });
-        this.connectWebSocket();
+            this.connectWebSocket();
     }
     windowIds = [...windowIds, window.id];
 });
@@ -83,76 +83,73 @@ aBrowser.contextMenus.create({
 aBrowser.commands.onCommand.addListener((command) => {
     const activeWorkspaceId = localStorage.getItem("activeWorkspaceId");
     const token = localStorage.getItem('token');
-
     const timerShortcutFromStorage = localStorage.getItem('permanent_timerShortcut');
     const userId = localStorage.getItem('userId');
-
     const isTimerShortcutOn = timerShortcutFromStorage && JSON.parse(timerShortcutFromStorage)
         .filter(timerShortcutByUser =>
             timerShortcutByUser.userId === userId && JSON.parse(timerShortcutByUser.enabled)).length > 0;
 
-    if (isTimerShortcutOn) {
-        if (isLoggedIn()) {
-            if (command === commands.startStop) {
-                getInProgress(activeWorkspaceId, token)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (!data.projectId) {
-                            this.getDefaultProject().then(defaultProject => {
-                                if (defaultProject) {
-                                    this.updateProject(defaultProject.id, data.id)
-                                        .then(response => response.json())
-                                        .then(data => {
-                                            this.endInProgress(new Date())
-                                                .then(response => {
-                                                    if (response.status === 400) {
-                                                        alert("You already have entry in progress which can't be saved" +
-                                                            " without project/task/description or tags. Please edit your time entry.");
-                                                    } else {
-                                                        window.inProgress = false;
-                                                        aBrowser.browserAction.setIcon({
-                                                            path: iconPathEnded
-                                                        });
-                                                        aBrowser.runtime.sendMessage({eventName: 'TIME_ENTRY_STOPPED'});
-                                                    }
+    if (!isTimerShortcutOn) return
+    if (isLoggedIn()) {
+        if (command !== commands.startStop) return
+        getInProgress(activeWorkspaceId, token)
+            .then(response => response.json())
+            .then(data => {
+                if (!data.projectId) {
+                    this.getDefaultProject().then(defaultProject => {
+                        if (defaultProject) {
+                            this.updateProject(defaultProject.id, data.id)
+                                .then(response => response.json())
+                                .then(data => {
+                                    this.endInProgress(new Date())
+                                        .then(response => {
+                                            if (response.status === 400) {
+                                                alert("You already have entry in progress which can't be saved" +
+                                                    " without project/task/description or tags. Please edit your time entry.");
+                                            } else {
+                                                window.inProgress = false;
+                                                aBrowser.browserAction.setIcon({
+                                                    path: iconPathEnded
                                                 });
+                                                aBrowser.runtime.sendMessage({eventName: 'TIME_ENTRY_STOPPED'});
+                                            }
                                         });
-                                }
-                            });
+                                });
                         }
-                        this.endInProgress(new Date())
-                            .then(response => {
-                                if (response.status === 400) {
-                                    alert("You already have entry in progress which can't be saved" +
-                                        " without project/task/description or tags. Please edit your time entry.");
-                                } else {
-                                    window.inProgress = false;
-                                    aBrowser.browserAction.setIcon({
-                                        path: iconPathEnded
-                                    });
-                                    aBrowser.runtime.sendMessage({eventName: 'TIME_ENTRY_STOPPED'});
-                                }
+                    });
+                }
+                this.endInProgress(new Date())
+                    .then(response => {
+                        if (response.status === 400) {
+                            alert("You already have entry in progress which can't be saved" +
+                                " without project/task/description or tags. Please edit your time entry.");
+                        } else {
+                            window.inProgress = false;
+                            aBrowser.browserAction.setIcon({
+                                path: iconPathEnded
                             });
-                    })
-                    .catch(error => {
-                        startTimerBackground(activeWorkspaceId, token, "");
-                    })
-            }
-        } else {
-            alert('You must log in to use keyboard shortcut');
-        }
+                            aBrowser.runtime.sendMessage({eventName: 'TIME_ENTRY_STOPPED'});
+                        }
+                    });
+            })
+            .catch(error => {
+                startTimerBackground(activeWorkspaceId, token, "");
+            })
+    } else {
+        alert('You must log in to use keyboard shortcut');
     }
 });
 
 aBrowser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+    if (tab.url.includes("clockify.me")) return
     aBrowser.storage.local.get('permissions', (result) => {
         let domain = extractDomain(tab.url, result.permissions);
 
-        if (tab.status === tabStatus.COMPLETE) {
+        if (changeInfo.status === "complete") {
             if (!tab.url.includes("chrome://") && isLoggedIn()) {
                 if (!!domain.file) {
                     aBrowser.tabs.insertCSS(tabId, {file: "integrations/style.css"});
-                    aBrowser.tabs.executeScript(tabId, {file: "integrations/button.js"}, () => {
+                    aBrowser.tabs.executeScript(tabId, {file: "integrations/button.js"}, (firstLoad) => {
                         loadScripts(tabId, domain.file);
                     });
                 }
@@ -248,8 +245,8 @@ function getOriginFileName(domain, permissionsFromStorage) {
 
         while (
             domain.length > 0 && enabledPermissions
-                .filter(enabledPermission => enabledPermission.domain === domain.join("."))
-                .length === 0
+                        .filter(enabledPermission => enabledPermission.domain === domain.join("."))
+                        .length === 0
             ) {
             domain.shift();
         }
@@ -257,8 +254,8 @@ function getOriginFileName(domain, permissionsFromStorage) {
 
         if (
             enabledPermissions
-                .filter(enabledPermission => enabledPermission.domain === domain)
-                .length === 0
+            .filter(enabledPermission => enabledPermission.domain === domain)
+            .length === 0
         ) {
             return null
         }
@@ -275,7 +272,7 @@ function isLoggedIn() {
 function startTimerWithDescription(info) {
     let token;
     let activeWorkspaceId;
-    aBrowser.storage.sync.get(['token', 'activeWorkspaceId'], function (result) {
+    aBrowser.storage.local.get(['token', 'activeWorkspaceId'], function (result) {
         token = result.token;
         activeWorkspaceId = result.activeWorkspaceId;
 
@@ -302,7 +299,7 @@ function startTimerWithDescription(info) {
 }
 
 function endInProgressAndStartNew(info) {
-    aBrowser.storage.sync.get(['token', 'activeWorkspaceId'], (result) => {
+    aBrowser.storage.local.get(['token', 'activeWorkspaceId'], (result) => {
         let token = result.token;
         let activeWorkspaceId = result.activeWorkspaceId;
         this.endInProgress(new Date())
@@ -352,7 +349,6 @@ function startTimerBackground(activeWorkspaceId, token, description) {
                     aBrowser.browserAction.setIcon({
                         path: iconPathStarted
                     });
-                    document.timeEntry = data;
                     this.entryInProgressChangedEventHandler(data);
                     aBrowser.runtime.sendMessage({eventName: 'TIME_ENTRY_STARTED'});
                 }
@@ -403,11 +399,18 @@ function saml2Login(request) {
     aBrowser.tabs.create(
         {url: aBrowser.runtime.getURL("saml2extension.html")},
         (tab) => {
-            const relayState = {
-                location: aBrowser.identity.getRedirectURL(),
-                organizationName: localStorage.getItem('sub-domain_subDomainName') ?
-                    localStorage.getItem('sub-domain_subDomainName') : null
-            };
+            const subDomainName = localStorage.getItem('sub-domain_subDomainName') ?
+                localStorage.getItem('sub-domain_subDomainName') : null;
+            let relayState;
+            if (subDomainName) {
+                relayState = JSON.stringify({
+                    location: aBrowser.identity.getRedirectURL(),
+                    organizationName: subDomainName
+                });
+            } else {
+                relayState = aBrowser.identity.getRedirectURL();
+            }
+
             let handler = (tabId, changeInfo) => {
                 if(tabId === tab.id && changeInfo.status === "complete"){
                     aBrowser.tabs.onUpdated.removeListener(handler);
@@ -416,7 +419,7 @@ function saml2Login(request) {
                         {
                             url: request.saml2Url,
                             SAMLRequest: request.saml2Request,
-                            RelayState: JSON.stringify(relayState)
+                            RelayState: relayState
                         }
                     );
                 }
@@ -427,10 +430,9 @@ function saml2Login(request) {
                 {
                     url: request.saml2Url,
                     SAMLRequest: request.saml2Request,
-                    RelayState: JSON.stringify(relayState)
+                    RelayState: relayState
                 }
             );
         }
     );
 }
-

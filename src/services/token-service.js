@@ -30,7 +30,7 @@ export class TokenService {
                 .then(response => {
                     let data = response.data;
                     if (isAppTypeExtension()) {
-                        getBrowser().storage.sync.set({
+                        getBrowser().storage.local.set({
                             token: (data.token),
                             userId: (data.userId),
                             refreshToken: (data.refreshToken),
@@ -75,6 +75,7 @@ export class TokenService {
     }
 
     logout() {
+        if (!document.getElementById('mount')) return
         ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
         ReactDOM.render(<Login logout={true}/>, document.getElementById('mount'));
     }

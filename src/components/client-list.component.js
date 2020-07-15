@@ -1,5 +1,4 @@
 import * as React from "react";
-import {isAppTypeMobile} from "../helpers/app-types-helper";
 import {ClientService} from "../services/client-service";
 import Toaster from "./create-project.component";
 
@@ -34,9 +33,7 @@ class ClientListComponent extends React.Component {
             this.setState({
                 isOpen: true
             }, () => {
-                if (!isAppTypeMobile()) {
-                    document.getElementById('client-filter').focus();
-                }
+                document.getElementById('client-filter').focus();
             });
         }
     }
@@ -104,6 +101,7 @@ class ClientListComponent extends React.Component {
             createFormOpened: true
         }, () => {
             this.closeClientList();
+            this.createClientName.focus();
         });
     }
 
@@ -208,6 +206,7 @@ class ClientListComponent extends React.Component {
                         </div>
                         <div className="client-list__create-form--divider"></div>
                         <input
+                            ref={input => {this.createClientName = input}}
                             className="client-list__create-form--client-name"
                             placeholder="Client name"
                             value={this.state.clientName}

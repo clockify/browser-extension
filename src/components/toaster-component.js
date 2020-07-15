@@ -19,6 +19,9 @@ class Toaster extends React.Component {
             case 'error':
                 this.showErrorToast(message, removeAfterSeconds);
                 break;
+            case 'info':
+                this.showInfoToast(message, removeAfterSeconds);
+                break;
         }
     }
 
@@ -40,6 +43,18 @@ class Toaster extends React.Component {
         counter++;
 
         this.createToastMessage(errorToastId, message, 'error');
+
+        if (removeAfterSeconds) {
+            this.autoRemoveToast(errorToastId, removeAfterSeconds);
+        }
+    }
+
+    showInfoToast(message, removeAfterSeconds) {
+        const errorToastId = 'infoToast' + counter;
+
+        counter++;
+
+        this.createToastMessage(errorToastId, message, 'info');
 
         if (removeAfterSeconds) {
             this.autoRemoveToast(errorToastId, removeAfterSeconds);

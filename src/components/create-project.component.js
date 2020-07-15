@@ -20,8 +20,13 @@ class CreateProjectComponent extends React.Component {
             projectName: "",
             client: null,
             selectedColor: null,
-            billable: false
+            billable: localStorage.getItem('workspaceSettings') ? JSON.parse(localStorage.getItem('workspaceSettings')).defaultBillableProjects : false,
+            public: localStorage.getItem('workspaceSettings') ? JSON.parse(localStorage.getItem('workspaceSettings')).isProjectPublicByDefault : false
         }
+    }
+
+    componentDidMount() {
+        this.projectName.focus();
     }
 
     selectClient(client) {
@@ -42,6 +47,12 @@ class CreateProjectComponent extends React.Component {
         })
     }
 
+    togglePublic() {
+        this.setState({
+            public: !this.state.public
+        })
+    }
+
     addProject() {
         let project = {};
         if (!this.state.projectName || !this.state.selectedColor) {
@@ -52,6 +63,7 @@ class CreateProjectComponent extends React.Component {
         project.clientId = this.state.client ? this.state.client.id : "";
         project.color = this.state.selectedColor;
         project.billable = this.state.billable;
+        project.isPublic = this.state.public;
 
         projectService.createProject(project).then(response => {
             let timeEntry = this.props.timeEntry;
@@ -113,11 +125,10 @@ class CreateProjectComponent extends React.Component {
                     goBackTo={this.cancel.bind(this)}
                 />
                 <Toaster
-                    ref={instance => {
-                        this.toaster = instance
-                    }}
+                    ref={instance => {this.toaster = instance}}
                 />
                 <input
+                    ref={input => {this.projectName = input}}
                     className="create-project__project-name"
                     placeholder="Project name"
                     value={this.state.projectName}
@@ -148,6 +159,20 @@ class CreateProjectComponent extends React.Component {
                                 </span>
                     <label onClick={this.toggleBillable.bind(this)}
                            className="create-project__billable-title">Billable</label>
+                </div>
+
+
+                <div className="create-project__public">
+                                <span className={this.state.public ?
+                                    "create-project__checkbox checked" : "create-project__checkbox"}
+                                      onClick={this.togglePublic.bind(this)}>
+                                    <img src="./assets/images/checked.png"
+                                         className={this.state.public ?
+                                             "create-project__public-img" :
+                                             "create-project__public-img-hidden"}/>
+                                </span>
+                    <label onClick={this.togglePublic.bind(this)}
+                           className="create-project__public-title">Public</label>
                 </div>
                 <div class="create-project__divider"></div>
                 <div className="create-project__actions">
