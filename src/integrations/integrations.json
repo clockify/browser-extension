@@ -149,6 +149,12 @@
     "link": "*://*.liquidplanner.com/*",
     "script": "liquidplanner.js"
   },
+  "manageengine.com": {
+    "name": "ManageEngine",
+    "link": "*://*.manageengine.com/*",
+    "script": "manageengine.js",
+    "clone": false
+  },
   "mantishub.io": {
     "name": "Mantishub.io",
     "link": "*://*.mantishub.io/*",
