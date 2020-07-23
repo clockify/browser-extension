@@ -1,54 +1,65 @@
-// project task list
-if ((window.location.href.indexOf("#project") !== -1)) {
-  setTimeout(() => {
-    clockifyButton.render('.task_list_item__content:not(.clockify)', {observe: true}, function (elem) {
+// projects
+clockifyButton.render('.project_editor_instance [data-action-hint="task-root"]:not(.clockify)', {observe: true}, function (elem) {
+  description = $('.markdown_content.task_content', elem).textContent;
+  project = $('.view_header__content h1').textContent;
+  link = clockifyButton.createButton({
+      description: description,
+      projectName: project,
+      small: true
+  });
+  link.style.paddingRight = "10px";
+  elem.prepend(link);
+});
 
-      description = $(".task_content span", elem).innerText;
-      project = $(".view_header h1 span").innerText;
+// // task modal
+clockifyButton.render('.reactist_modal_box.detail_modal:not(.clockify)', {observe: true}, function (elem) {
 
-      link = clockifyButton.createButton({
-          description: description,
-          projectName: project,
-          small: true
-      });
+  description = $(".markdown_content.task_content").innerText;
+  project = $(".item_detail_parent_name").innerText;
 
-      elem.appendChild(link);
-    });
-  },500);
-}
+  link = clockifyButton.createButton({
+      description: description,
+      projectName: project
+  });
+  link.style.padding = "20px 25px 0px";
+  elem.insertBefore(link, elem.firstChild);
+});
+
+// // filters
+clockifyButton.render('#agenda_view [data-action-hint="task-root"]:not(.clockify)', {observe: true}, function (elem) {
+  description = $('.markdown_content.task_content', elem).textContent;
+  project = $('.task_list_item__project', elem).textContent;
+  link = clockifyButton.createButton({
+      description: description,
+      projectName: project,
+      small: true
+  });
+  link.style.paddingRight = "10px";
+  elem.prepend(link);
+});
+
+// // calendar
+clockifyButton.render('.upcoming_view__list [data-action-hint="task-root"]:not(.clockify)', {observe: true}, function (elem) {
+  description = $('.markdown_content.task_content', elem).textContent;
+  project = $('.task_list_item__project', elem).textContent;
+  link = clockifyButton.createButton({
+      description: description,
+      projectName: project,
+      small: true
+  });
+  link.style.paddingRight = "10px";
+  elem.prepend(link);
+});
 
 // filters
-if ((window.location.href.indexOf("#agenda") !== -1)) {
-  setTimeout(() => {
-    clockifyButton.render('.task_list_item__content:not(.clockify)', {observe: true}, function (elem) {
-
-      description = $(".task_content span", elem).innerText;
-      project = $(".task_list_item__project span", elem).innerText;
-
-      link = clockifyButton.createButton({
-          description: description,
-          projectName: project,
-          small: true
-      });
-
-      elem.appendChild(link);
-    });
-  },500);
-}
-
-// task modal
-if ((window.location.href.indexOf("#task") !== -1)) {
-  setTimeout(() => {
-    clockifyButton.render('.item_detail:not(.clockify)', {observe: true}, function (elem) {
-
-      description = $(".task_content span", elem).innerText;
-      project = $(".item_detail_parent_name", elem).innerText;
-
-      link = clockifyButton.createButton({
-          description: description,
-          projectName: project
-      });
-      elem.insertBefore(link, elem.firstChild);
-    });
-  },500);
-}
+clockifyButton.render('.filter_view .task_list_item__body:not(.clockify)', {observe: true}, function (elem) {
+  description = $('.markdown_content.task_content', elem).textContent;
+  project = $('.task_list_item__project', elem).textContent;
+  link = clockifyButton.createButton({
+      description: description,
+      projectName: project,
+      small: true
+  });
+  link.style.paddingRight = "10px";
+  elem.prepend(link);
+});
