@@ -297,14 +297,14 @@ class EditForm extends React.Component {
         }
     }
 
-    editTask(taskId, project) {
-        if (!taskId) {
+    editTask(task, project) {
+        if (!task) {
             timeEntryService.removeTask(this.state.timeEntry.id)
                 .then(() => this.checkRequiredFields())
                 .catch(() => {
                 });
         } else {
-            timeEntryService.updateTask(taskId, project.id, this.state.timeEntry.id)
+            timeEntryService.updateTask(task.id, project.id, this.state.timeEntry.id)
                 .then(response => {
                     this.setState({
                         timeEntry: response.data
@@ -514,12 +514,12 @@ class EditForm extends React.Component {
                 projectRequired = true;
             }
 
-            if (workspaceSettings.forceTasks && !this.state.timeEntry.taskId && !checkConnection()) {
+            if (workspaceSettings.forceTasks && !this.state.timeEntry.task && !checkConnection()) {
                 taskRequired = true;
             }
 
             if (workspaceSettings.forceTags &&
-                (!this.state.timeEntry.tagIds || !this.state.timeEntry.tagIds.length > 0) && !checkConnection()) {
+                (!this.state.timeEntry.tags || !this.state.timeEntry.tags.length > 0) && !checkConnection()) {
                 tagsRequired = true;
             }
         }
@@ -649,7 +649,7 @@ class EditForm extends React.Component {
                                     this.projectList = instance;
                                 }}
                                 selectedProject={this.state.timeEntry.projectId}
-                                selectedTask={this.state.timeEntry.taskId}
+                                selectedTask={this.state.timeEntry.task ? this.state.timeEntry.task.id : null}
                                 selectProject={this.editProject.bind(this)}
                                 selectTask={this.editTask.bind(this)}
                                 noTask={false}

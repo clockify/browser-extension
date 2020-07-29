@@ -38,6 +38,26 @@
       }
     }
   }
+  &__public {
+    display: flex;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    margin-left: 20px;
+    align-items: center;
+    &-title {
+      margin-left: 10px;
+      color: $middle_light_text;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    &-img {
+      margin-top: 2px;
+      margin-left: 1px;
+      &-hidden {
+        visibility: hidden;
+      }
+    }
+  }
   &__checkbox {
     display: inline-block;
     width: 16px;

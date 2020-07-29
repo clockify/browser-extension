@@ -70,8 +70,8 @@ function startTimer(description, options) {
             description: description,
             billable: false,
             projectId: options && options.projectId ? options.projectId : null,
-            tagIds: options && options.tagIds ? options.tagIds : [],
-            taskId: options && options.taskId ? options.taskId : null
+            tagIds: options && options.tags ? options.tags.map(tag => tag.id): [],
+            taskId: options && options.task ? options.task.id : null
         })
     });
 
@@ -182,7 +182,7 @@ function saveEntryOfflineAndStopItByDeletingIt(data, end, isWebSocketHeader) {
         id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
         description: data.description,
         projectId: data.projectId,
-        taskId: data.taskId,
+        taskId: data.task ? data.task.id : null,
         billabe: data.billable,
         timeInterval: {
             start: data.timeInterval.start,

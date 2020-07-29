@@ -5,18 +5,6 @@ class TimeEntryList extends React.Component {
 
     constructor(props) {
         super(props);
-
-        this.state = {
-            projects: null,
-            tasks: null
-        }
-    }
-
-    componentDidMount(){
-        this.setState({
-            projects: this.props.projects,
-            tasks: this.props.tasks
-        });
     }
 
     playTimeEntry(timeEntry) {
@@ -48,8 +36,6 @@ class TimeEntryList extends React.Component {
                         <label>In the meantime, you can still track time, even if you're offline.</label>
                     </div>
             )
-        } else if(!this.state.tasks && !JSON.parse(localStorage.getItem('offline'))) {
-            return null;
         } else {
             return(
                 <div>
@@ -68,8 +54,8 @@ class TimeEntryList extends React.Component {
                                         return (
                                             <TimeEntry
                                                 timeEntry={timeEntry}
-                                                project={timeEntry.projectId ? this.props.projects.filter(p => p.id === timeEntry.projectId)[0] : null}
-                                                task={timeEntry.taskId ? this.props.tasks.filter(t => t.id === timeEntry.taskId)[0] : null}
+                                                project={timeEntry.project ? timeEntry.project : null}
+                                                task={timeEntry.task ? timeEntry.task : null}
                                                 playTimeEntry={this.playTimeEntry.bind(this)}
                                                 changeMode={this.changeMode.bind(this)}
                                                 timeFormat={this.props.timeFormat}

@@ -15,7 +15,7 @@ export class TimeEntryService extends HttpWrapperService {
         const baseUrl = localStorageService.get('baseUrl');
 
         const allTimeEntriesEndpoint =
-            `${baseUrl}/workspaces/${activeWorkspaceId}/timeEntries/user/${userId}?page=${page}&limit=10`;
+            `${baseUrl}/workspaces/${activeWorkspaceId}/timeEntries/user/${userId}/full?page=${page}&limit=10`;
 
         return super.get(allTimeEntriesEndpoint, addToken);
     }
