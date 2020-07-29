@@ -1,12 +1,12 @@
 .clockify-button-active, .clockify-button-inactive:hover {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   color: #03A9F4;
   cursor: pointer;
 }
 
 .clockify-button-inactive {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   color: #444444;
   cursor: pointer;
