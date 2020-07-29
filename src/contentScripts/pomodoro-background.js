@@ -386,9 +386,9 @@ function continueLastEntryTimer(entry, isWebSocketHeader) {
         entry.description,
         {
             projectId: entry.projectId,
-            taskId: entry.taskId,
+            taskId: entry.task ? entry.task.id : null,
             billable: entry.billable,
-            tagIds: entry.tagIds,
+            tagIds: entry.tags ? entry.tags.map(tag => tag.id) : [],
             isWebSocketHeader: isWebSocketHeader
         }
     ).then(response => {

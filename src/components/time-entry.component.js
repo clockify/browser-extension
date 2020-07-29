@@ -19,7 +19,7 @@ class TimeEntry extends React.Component {
     }
 
     goToEdit() {
-        if(!this.props.timeEntry.isLocked || this.props.isUserOwnerOrAdmin) {
+        if((!this.props.timeEntry.isLocked || this.props.isUserOwnerOrAdmin) && this.props.timeEntry.approvalRequestId == null) {
             ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
             if (checkConnection()) {
                 ReactDOM.render(<Login/>, document.getElementById('mount'));
@@ -78,7 +78,7 @@ class TimeEntry extends React.Component {
         if (this.props.project !== undefined && this.props.task !== undefined) {
             if (this.state.ready) {
                 return (
-                    <div className={this.props.timeEntry.isLocked && !this.props.isUserOwnerOrAdmin ? "time-entry-locked" : "time-entry"}
+                    <div className={((this.props.timeEntry.isLocked && !this.props.isUserOwnerOrAdmin) || this.props.timeEntry.approvalRequestId) ? "time-entry-locked" : "time-entry"}
                          title={this.state.title}>
                         <div className="time-entry-description" onClick={this.goToEdit.bind(this)}>
                             <div className={this.props.timeEntry.description ? "description" : "no-description"}>
@@ -98,11 +98,15 @@ class TimeEntry extends React.Component {
                         <div className="time-entry__right-side">
                             <div className="time-entry__right-side__tag_billable_and_lock"
                                  onClick={this.goToEdit.bind(this)}>
-                                <span className={this.props.timeEntry.tagIds && this.props.timeEntry.tagIds.length > 0 ?
+                                <span className={this.props.timeEntry.tags && this.props.timeEntry.tags.length > 0 ?
                                     "time-entry__right-side__tag" : "disabled"}></span>
                                 <span className={this.props.timeEntry.billable ?
                                     "time-entry__right-side__billable" : "disabled"}></span>
-                                <span className={this.props.timeEntry.isLocked && !this.props.isUserOwnerOrAdmin ?
+                                <span className={this.props.timeEntry.approvalRequestId ?
+                                    "time-entry__right-side__approved" : "disabled"}>
+                                    <img src="./assets/images/approved.png"/>
+                                </span>
+                                <span className={this.props.timeEntry.isLocked && !this.props.isUserOwnerOrAdmin && !this.props.timeEntry.approvalRequestId ?
                                     "time-entry__right-side__lock" : "disabled"}>
                                     <img src="./assets/images/lock-indicator.png"/>
                                 </span>

@@ -4,6 +4,8 @@ import {determineAppType} from "./helpers/app-types-helper";
 import {checkConnection} from "./components/check-connection";
 import * as moment from 'moment-timezone';
 import {LocalStorageService} from "./services/localStorage-service";
+import packageJson from '../package';
+import {getLocalStorageEnums} from "./enums/local-storage.enum";
 
 const localStorageService = new LocalStorageService();
 

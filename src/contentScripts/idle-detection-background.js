@@ -186,8 +186,8 @@ function discardIdleTimeAndContinueEntry() {
                 {
                     projectId: data.projectId,
                     billable: data.billable,
-                    taskId: data.taskId,
-                    tagIds: data.tagIds
+                    taskId: data.task ? data.task.id : null,
+                    tagIds: data.tags ? data.tags.map(tag => tag.id) : []
                 }
             )
         });

@@ -227,7 +227,7 @@ class ProjectList extends React.Component {
     }
 
     selectTask(task, project) {
-        this.props.selectTask(task.id, project);
+        this.props.selectTask(task, project);
 
         this.setState({
                 selectedProject: project,

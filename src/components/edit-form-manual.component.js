@@ -152,10 +152,10 @@ class EditFormManual extends React.Component {
         });
     }
 
-    editTask(taskId, project) {
+    editTask(task, project) {
         let timeEntry = this.state.timeEntry;
         timeEntry.projectId =  project.id;
-        timeEntry.taskId =  taskId;
+        timeEntry.task =  task;
 
         this.setState({
             timeEntry: timeEntry
@@ -222,12 +222,12 @@ class EditFormManual extends React.Component {
                 projectRequired = true;
             }
 
-            if (workspaceSettings.forceTasks && !this.state.timeEntry.taskId && !checkConnection()) {
+            if (workspaceSettings.forceTasks && !this.state.timeEntry.task && !checkConnection()) {
                 taskRequired = true;
             }
 
             if (workspaceSettings.forceTags &&
-                (!this.state.timeEntry.tagIds || !this.state.timeEntry.tagIds.length > 0) && !checkConnection()) {
+                (!this.state.timeEntry.tags || !this.state.timeEntry.tags.length > 0) && !checkConnection()) {
                 tagsRequired = true;
             }
         }
@@ -276,8 +276,8 @@ class EditFormManual extends React.Component {
                     this.state.timeEntry.timeInterval.start,
                     this.state.timeEntry.timeInterval.end,
                     this.state.timeEntry.projectId,
-                    this.state.timeEntry.taskId,
-                    this.state.timeEntry.tagIds,
+                    this.state.timeEntry.task ? this.state.timeEntry.task.id : null,
+                    this.state.timeEntry.tags ? this.state.timeEntry.tags.map(tag => tag.id) : [],
                     this.state.timeEntry.billable
                 ).then(response => {
                     let timeEntries = localStorage.getItem('timeEntriesOffline') ? JSON.parse(localStorage.getItem('timeEntriesOffline')) : [];
@@ -412,7 +412,7 @@ class EditFormManual extends React.Component {
                                     this.projectList = instance;
                                 }}
                                 selectedProject={this.state.timeEntry.projectId}
-                                selectedTask={this.state.timeEntry.taskId}
+                                selectedTask={this.state.timeEntry.task}
                                 selectProject={this.editProject.bind(this)}
                                 selectTask={this.editTask.bind(this)}
                                 noTasks={false}

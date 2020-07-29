@@ -260,7 +260,6 @@ class HomePage extends React.Component {
                             ready: true
                         });
                     });
-                    this.getAllProjects();
                 })
                 .catch((error) => {
                 });
@@ -395,7 +394,6 @@ class HomePage extends React.Component {
                             })
                         }
                     });
-                    this.getAllProjects();
                 })
                 .catch(() => {
                 });
@@ -449,8 +447,8 @@ class HomePage extends React.Component {
                     description: timeEntry.description,
                     timeInterval: {start: moment()},
                     projectId: timeEntry.projectId,
-                    taskId: timeEntry.taskId,
-                    tagIds: timeEntry.tagIds,
+                    taskId: timeEntry.task ? timeEntry.task.id : null,
+                    tagIds: timeEntry.tags ? timeEntry.tags.map(tag => tag.id) : [],
                     billable: timeEntry.billable
                 };
 
@@ -474,8 +472,8 @@ class HomePage extends React.Component {
                         moment(),
                         null,
                         timeEntry.projectId,
-                        timeEntry.taskId,
-                        timeEntry.tagIds,
+                        timeEntry.task ? timeEntry.task.id : null,
+                        timeEntry.tags ? timeEntry.tags.map(tag => tag.id) : [],
                         timeEntry.billable
                     ).then(response => {
                         let data = response.data;
@@ -509,7 +507,7 @@ class HomePage extends React.Component {
                                 goToEdit={this.goToEdit.bind(this)}/>,
                 document.getElementById('mount')
             );
-        } else if (this.state.workspaceSettings.forceTasks && !this.state.inProgress.taskId) {
+        } else if (this.state.workspaceSettings.forceTasks && !this.state.inProgress.task) {
             ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
             ReactDOM.render(
                 <RequiredFields field={"task"}
@@ -517,7 +515,7 @@ class HomePage extends React.Component {
                 document.getElementById('mount')
             );
         } else if (this.state.workspaceSettings.forceTags &&
-            (!this.state.timeEntry.tagIds || !this.state.timeEntry.tagIds.length > 0)) {
+            (!this.state.timeEntry.tags || !this.state.timeEntry.tags.length > 0)) {
             ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
             ReactDOM.render(
                 <RequiredFields field={"tags"}
@@ -565,8 +563,8 @@ class HomePage extends React.Component {
                     moment(),
                     null,
                     timeEntry.projectId,
-                    timeEntry.taskId,
-                    timeEntry.tagIds,
+                    timeEntry.task ? timeEntry.task.id : null,
+                    timeEntry.tags ? timeEntry.tags.map(tag => tag.id) : [],
                     timeEntry.billable
                 ).then(response => {
                     let data = response.data;
@@ -582,61 +580,7 @@ class HomePage extends React.Component {
         }
     }
 
-    getAllProjects() {
-        if (this.state.timeEntries.length === 0) {
-            return;
-        }
-        projectService.getAllProjects()
-            .then(response => {
-                let projects = response.data;
-                const projectIds = projects.map(project => project.id);
-                const missingProjectIds = this.state.timeEntries
-                    .filter(entry => entry.projectId && !projectIds.includes(entry.projectId))
-                    .map(entry => entry.projectId);
 
-                this.getMissingProject(missingProjectIds).then(response => {
-                    if (response.length > 0) {
-                        projects = [...projects, ...response];
-                    }
-
-                    this.setState({
-                        projects: projects
-                    }, () => {
-                        this.getAllTasks();
-                    })
-                });
-            })
-            .catch((error) => {
-            });
-    }
-
-    getMissingProject(projectIds) {
-        if (!projectIds || projectIds.length === 0) {
-            return Promise.resolve([]);
-        } else {
-            return projectService.getProjectsByIds(projectIds).then(response => response.data);
-        }
-    }
-
-    getAllTasks() {
-        let taskIds =
-            this.state.timeEntries
-                .filter(timeEntry => timeEntry.taskId)
-                .map(timeEntry => timeEntry.taskId);
-        let uniqueIds = taskIds.filter(function (id, pos) {
-            return taskIds.indexOf(id) === pos;
-        });
-
-        projectService.getAllTasks(uniqueIds)
-            .then(response => {
-                let data = response.data;
-                this.setState({
-                    tasks: data
-                })
-            })
-            .catch((error) => {
-            });
-    }
 
     handleRefresh() {
         if (!checkConnection()) {
@@ -760,8 +704,6 @@ class HomePage extends React.Component {
                         <TimeEntryList
                             timeEntries={this.state.timeEntries}
                             dates={this.state.dates}
-                            projects={this.state.projects}
-                            tasks={this.state.tasks}
                             selectTimeEntry={this.continueTimeEntry.bind(this)}
                             pullToRefresh={this.state.pullToRefresh}
                             handleRefresh={this.handleRefresh.bind(this)}
