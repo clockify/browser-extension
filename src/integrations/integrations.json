@@ -384,5 +384,10 @@
     "name": "Cerb",
     "link": "*://*.figma.com/*",
     "script": "figma.js"
+  },
+  "usepixie.net": {
+    "name": "Pixie",
+    "link": "*://*.usepixie.net/*",
+    "script": "usepixie.js"
   }
 }
