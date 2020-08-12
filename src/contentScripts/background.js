@@ -29,10 +29,18 @@ aBrowser.windows.onCreated.addListener((window) => {
     if (this.isLoggedIn() && windowIds.length === 0) {
         this.getEntryInProgress()
             .then(response => response.json())
-            .then(data => {})
-            .catch(() => {
+            .then(data => {
+                this.entryInProgressChangedEventHandler(data);
+                aBrowser.browserAction.setIcon({
+                    path: iconPathStarted
+                });
+            }).catch(() => {
                 this.addReminderTimerOnStartingBrowser();
                 this.startTimerOnStartingBrowser();
+                this.entryInProgressChangedEventHandler(null);
+                aBrowser.browserAction.setIcon({
+                    path: iconPathEnded
+                });
             });
             this.connectWebSocket();
     }

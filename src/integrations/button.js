@@ -35,7 +35,8 @@ var clockifyButton = {
             button.classList.add('small');
         }
         const title = invokeIfFunction(options.description);
-        fetchEntryInProgress(entry => {
+        aBrowser.storage.local.get(["timeEntryInProgress"], (result) => {
+            const entry = result.timeEntryInProgress;
             if (entry && entry.id) {
                 if (!!entry.description) {
                     clockifyButton.inProgressDescription = entry.description;
@@ -137,12 +138,6 @@ function objectFromParams(description, project, task) {
     }
 }
 
-function fetchEntryInProgress(callback) {
-    aBrowser.runtime.sendMessage({eventName: "getEntryInProgress"}, (response) => {
-        callback(response)
-    });
-}
-
 function $(s, elem) {
     elem = elem || document;
     return elem.querySelector(s);
@@ -204,8 +199,8 @@ function setButtonProperties(button, title, active) {
     }
     
     const span = document.createElement('span');
-
     button.title = title;
+    
     if (active) {
         button.classList.remove('clockify-button-inactive');
         button.classList.add('clockify-button-active');
@@ -310,7 +305,6 @@ function getActiveIcon() {
 function getInactiveIcon() {
     return '<svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="16" width="16"><path d="m 10.461549,5.5284395 3.642277,-3.6422765 1.040649,1.0406505 -3.642276,3.642309 z M 8.9656137,9.3008298 c -0.7154471,0 -1.300813,-0.5853659 -1.300813,-1.300813 0,-0.7154472 0.5853659,-1.300813 1.300813,-1.300813 0.7154472,0 1.3008133,0.5853658 1.3008133,1.300813 0,0.7154471 -0.5853661,1.300813 -1.3008133,1.300813 z m 6.2439023,3.7723572 -1.04065,1.04065 -3.642276,-3.642276 1.04065,-1.0407149 z" fill="#5A6B7B"></path><path d="m 9.0306543,13.593496 c 0.7154472,0 1.4308947,-0.130081 2.0813017,-0.390244 l 1.821138,1.821139 C 11.762362,15.674797 10.461549,16 9.095695,16 4.6729307,16 1.0956949,12.422765 1.0956949,8.0000004 1.0956949,3.5772361 4.6729307,3.65e-7 9.095695,3.65e-7 c 1.430895,0 2.731708,0.390243865 3.837399,0.975609665 L 11.176996,2.7317077 C 10.52659,2.4715451 9.8111421,2.3414637 9.095695,2.3414637 c -3.1219513,0 -5.593496,2.5365854 -5.593496,5.593496 -0.06504,3.1219513 2.4065041,5.6585363 5.5284553,5.6585363 z" fill="#5A6B7B"></path></svg>'
 }
-
 aBrowser.storage.onChanged.addListener((changes, area) => {
     const changedItems = Object.keys(changes);
 
@@ -328,6 +322,3 @@ aBrowser.storage.onChanged.addListener((changes, area) => {
         })
     }
 });
-
-
-

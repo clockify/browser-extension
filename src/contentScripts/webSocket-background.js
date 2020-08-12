@@ -11,7 +11,6 @@ const webSocketEventsEnums = {
 };
 Object.freeze(webSocketEventsEnums);
 
-document.isFirstTimeSettingTimeEntry = true;
 let connection;
 
 let onErrorReconnectTimeout;
@@ -167,27 +166,6 @@ aBrowser.runtime.onMessage.addListener((request, sender, sendResponse) => {
                 this.disconnectWebSocket();
             }
             break;
-        case "getEntryInProgress":
-            aBrowser.storage.local.get(["timeEntryInProgress"], (result) => {
-                if (result.timeEntryInProgress == null && document.isFirstTimeSettingTimeEntry) {
-                    document.isFirstTimeSettingTimeEntry = false;
-                    this.getEntryInProgress().then(response => response.json()).then(data => {
-                        this.entryInProgressChangedEventHandler(data);
-                        sendResponse(data);
-                        aBrowser.browserAction.setIcon({
-                            path: iconPathStarted
-                        });
-                    }).catch(() => {
-                        this.entryInProgressChangedEventHandler(null);
-                        sendResponse(null);
-                        aBrowser.browserAction.setIcon({
-                            path: iconPathEnded
-                        });
-                    });
-                } else {
-                    sendResponse(result.timeEntryInProgress);
-                }
-            })
     }
 });
 

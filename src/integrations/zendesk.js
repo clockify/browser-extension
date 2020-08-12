@@ -17,7 +17,6 @@ setTimeout(() => {
       return description;
     };
   
-    console.log("zendesk create button");
     const link = clockifyButton.createButton(titleFunc, projectName && projectName.split(' - ').shift());
   
     if (elem.querySelector('#clockifyButton')) {
