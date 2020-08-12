@@ -123,7 +123,6 @@ class DefaultProject extends React.Component {
     }
 
     render() {
-        console.log(this.state.defaultProjectForUserOnWorkspace)
         return (
             <div>
                 <div className="default-project"

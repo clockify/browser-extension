@@ -193,7 +193,6 @@ class ProjectList extends React.Component {
 
     getClients(projects) {
         const clients = new Set(projects.filter(p => p.client).map(p => p.client.name))
-        console.log()
         if (projects && projects.length > 0) {
             return ['Without client', ...clients]
         } else {

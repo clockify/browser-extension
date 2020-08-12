@@ -506,20 +506,30 @@ class EditForm extends React.Component {
 
         if (workspaceSettings) {
             if (workspaceSettings.forceDescription &&
-                (!this.state.timeEntry.description || this.state.timeEntry.description === "")) {
+                (!this.state.timeEntry.description || this.state.timeEntry.description === "")
+            ) {
                 descRequired = true;
             }
 
-            if (workspaceSettings.forceProjects && !this.state.timeEntry.projectId && !checkConnection()) {
+            if (workspaceSettings.forceProjects &&
+                !this.state.timeEntry.projectId &&
+                !checkConnection()
+            ) {
                 projectRequired = true;
             }
 
-            if (workspaceSettings.forceTasks && !this.state.timeEntry.task && !checkConnection()) {
+            if (
+                workspaceSettings.forceTasks &&
+                !this.state.timeEntry.task &&
+                !this.state.timeEntry.taskId &&
+                !checkConnection()
+            ) {
                 taskRequired = true;
             }
 
             if (workspaceSettings.forceTags &&
-                (!this.state.timeEntry.tags || !this.state.timeEntry.tags.length > 0) && !checkConnection()) {
+                (!this.state.timeEntry.tags || !this.state.timeEntry.tags.length > 0) &&
+                (!this.state.timeEntry.tagIds || !this.state.timeEntry.tagIds.length > 0) && !checkConnection()) {
                 tagsRequired = true;
             }
         }
