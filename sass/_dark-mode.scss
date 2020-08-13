@@ -305,6 +305,7 @@ body.dark {
   }
   .duration-divider {
     border-left: 1px dotted $bg-12;
+    background-color: $bg-12;
   }
   .project-item:hover{
     background-color: $bg-10;
@@ -327,6 +328,9 @@ body.dark {
     &-row:hover {
       background-color: $bg-10;
     }
+  }
+  .tag-list-selected-item {
+    color: $bg-03;
   }
   .projects-list__create-project,
   .tag-list__create-tag,

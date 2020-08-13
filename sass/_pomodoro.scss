@@ -34,13 +34,13 @@
   &__title {
     margin-left: 10px;
     font-size: 13px;
-    font-weight: bold;
+    font-weight: 400;
     color: $middle_light_text;
 
     &--shortcut {
       margin-left: 3px;
       font-size: 13px;
-      font-weight: bold;
+      font-weight: 400;
       color: $lighter_text;
     }
   }
@@ -83,7 +83,7 @@
 
       p {
         font-size: 13px;
-        font-weight: bold;
+        font-weight: 400;
         color: #666666;
       }
     }
