@@ -389,5 +389,10 @@
     "name": "Pixie",
     "link": "*://*.usepixie.net/*",
     "script": "usepixie.js"
+  },
+  "freshrelease.com": {
+    "name": "Freshrelease",
+    "link": "*://*.freshrelease.com/*",
+    "script": "freshrelease.js"
   }
 }
