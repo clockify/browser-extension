@@ -12,9 +12,8 @@ clockifyButton.render('.project_editor_instance [data-action-hint="task-root"]:n
 });
 
 // // task modal
-clockifyButton.render('.reactist_modal_box.detail_modal:not(.clockify)', {observe: true}, function (elem) {
-
-  description = $(".markdown_content.task_content").innerText;
+clockifyButton.render('.detail_modal:not(.clockify)', {observe: true}, function (elem) {
+  description = $(".item_detail .task_content").innerText;
   project = $(".item_detail_parent_name").innerText;
 
   link = clockifyButton.createButton({

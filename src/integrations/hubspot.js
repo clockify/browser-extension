@@ -1,21 +1,17 @@
 // Inbox
 clockifyButton.render('[data-test-id="sticky-subject-header"]:not(.clockify)', { observe: true }, elem => {
-
 setTimeout(function(){ 
-
-  const container = elem.parentElement;
   const subject = document.querySelector('[data-test-id="sticky-subject-header"]').textContent;
-  const sender = document.querySelector('.SenderHeaderContent__StyledFullSenderName-sc-18ouvmy-0').textContent; 
-  // const ticketId = window.location.href.split('/')[6].replace("#reply-editor", "");
-  // const contact = document.querySelector(".customer-data-sidebar--highlight .private-truncated-string__inner").textContent;
-  // const description = "[#" + ticketId + "] " + subject + " (" + contact  + ")";
+  const contact = document.querySelector('[data-test-id="known-contact-info-highlight"]').textContent;
+  const ticketId = window.location.href.split('/')[6].replace("#reply-editor", "");
+  const description = "[#" + ticketId + "] " + subject + " [" + contact + "]";
 
-  const link = clockifyButton.createButton(sender + ": " + subject);
+  const link = clockifyButton.createButton(description);
   link.style.position = 'absolute';
-  link.style.right = '0px';
-  link.style.top = '45px';
+  link.style.right = '10px';
+  link.style.top = '65px';
 
-  container.appendChild(link);
+  elem.appendChild(link);
   }, 500);
 });
 
