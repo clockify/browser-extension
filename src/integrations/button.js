@@ -1,10 +1,11 @@
 var aBrowser = chrome || browser;
 var clockifyButton = {
     links: [],
+    observer: null,
     inProgressDescription: "",
     render: (selector, opts, renderer, mutationSelector) => {
         if (opts.observe) {
-            const observer = new MutationObserver((mutations) => {
+            clockifyButton.observer = new MutationObserver((mutations) => {
                 if (mutationSelector) {
                     const matches = mutations.filter(function (mutation) {
                         return mutation.target.matches(mutationSelector);
@@ -15,16 +16,26 @@ var clockifyButton = {
                 }
                 clockifyButton.renderTo(selector, renderer);
             });
-            observer.observe(document, {childList: true, subtree: true});
+            clockifyButton.observer.observe(
+                document,
+                {childList: true, subtree: true}
+            );
         } else {
             clockifyButton.renderTo(selector, renderer);
         }
     },
     renderTo: (selector, renderer) => {
-        for (const element of document.querySelectorAll(selector)) {
-            element.classList.add('clockify');
-            renderer(element);
+        const elements = document.querySelectorAll(selector);
+        if (elements && elements.length > 0) {
+            for (let i = 0; i < elements.length; i++) {
+                elements[i].classList.add('clockify');
+                renderer(elements[i]);
+            }
         }
+    },
+
+    disconnectObserver: () => {
+        clockifyButton.observer.disconnect()
     },
 
     createButton: (description, project, task) => {
