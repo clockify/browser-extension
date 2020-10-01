@@ -1,11 +1,9 @@
 // Inbox emails
-clockifyButton.render('[aria-label="Content pane"] [role="heading"] span:not(.clockify)', { observe: true }, elem => {
-  const container = elem.parentElement;
-
+clockifyButton.render('[aria-label="Content pane"] [role="heading"]:not(.clockify)', { observe: true }, elem => {
   const link = clockifyButton.createButton(elem.textContent);
-  link.style.marginLeft = "10px";
+  link.style.paddingLeft = "5px";
 
-  container.appendChild(link);
+  elem.appendChild(link);
 });
 
 // Composing emails
@@ -16,7 +14,7 @@ clockifyButton.render('[aria-label="Command toolbar"] .ms-CommandBar-primaryComm
     const subject = () => document.querySelector('[aria-label="Add a subject"]').value;
 
     const link = clockifyButton.createButton(subject);
-    link.style.marginLeft = "10px";
+    link.style.paddingLeft = "5px";
 
     elem.appendChild(link);
   }

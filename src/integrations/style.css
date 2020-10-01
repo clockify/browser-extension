@@ -1,11 +1,13 @@
 .clockify-button-active, .clockify-button-inactive:hover {
   display: inline-flex;
+  font-size: 16px;
   align-items: center;
   color: #03A9F4;
   cursor: pointer;
 }
 
 .clockify-button-inactive {
+  font-size: 16px;
   display: inline-flex;
   align-items: center;
   color: #444444;
