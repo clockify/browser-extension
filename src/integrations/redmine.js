@@ -1,6 +1,6 @@
 clockifyButton.render(
   'body.controller-issues.action-show:not(.admin) #content > h2:not(.clockify)',
-  {observe: true},
+  {observe: false},
   (elem) => {
     var link,
       description,
