@@ -9,21 +9,6 @@
     "link": "app.asana.com",
     "script": "asana.js"
   },
-  "atlassian.com": {
-    "name": "Atlassian.com",
-    "link": "*://*.atlassian.com/*",
-    "script": "atlassian.js"
-  },
-  "atlassian.net": {
-    "name": "Atlassian.net",
-    "link": "*://*.atlassian.net/*",
-    "script": "atlassian.js"
-  },
-  "custom-atlassian.com": {
-    "name": "Custom Atlassian",
-    "link": "*://*.atlassian.com/*",
-    "script": "custom-atlassian.js"
-  },
   "axosoft.com": {
     "name": "Axosoft",
     "link": "axosoft.com/",
