@@ -15,7 +15,7 @@ export class TimeEntryService extends HttpWrapperService {
         const baseUrl = localStorageService.get('baseUrl');
 
         const allTimeEntriesEndpoint =
-            `${baseUrl}/workspaces/${activeWorkspaceId}/timeEntries/user/${userId}/full?page=${page}&limit=10`;
+            `${baseUrl}/workspaces/${activeWorkspaceId}/timeEntries/user/${userId}/full?page=${page}&limit=50`;
 
         return super.get(allTimeEntriesEndpoint, addToken);
     }
@@ -76,7 +76,7 @@ export class TimeEntryService extends HttpWrapperService {
         const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
         const baseUrl = localStorageService.get('baseUrl');
         const startEntryUrl =
-            `${baseUrl}/workspaces/${activeWorkspaceId}/timeEntries/`;
+            `${baseUrl}/workspaces/${activeWorkspaceId}/timeEntries/full`;
 
         const body = {
             projectId: projectId,
@@ -194,6 +194,7 @@ export class TimeEntryService extends HttpWrapperService {
     }
 
     createEntry(
+        workspaceId,
         description,
         start,
         end,
@@ -202,9 +203,14 @@ export class TimeEntryService extends HttpWrapperService {
         tagIds,
         billable
     ) {
-        const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
+        
+        // to prevent problem if user has offlineEtries after we deploy
+        // we can remove this later on
+        const activeWorkspaceId = localStorage.getItem('activeWorkspaceId');
+        const wsId = workspaceId ? workspaceId : activeWorkspaceId;
+
         const baseUrl = localStorageService.get('baseUrl');
-        const timeEntryUrl = `${baseUrl}/workspaces/${activeWorkspaceId}/timeEntries/`;
+        const timeEntryUrl = `${baseUrl}/workspaces/${wsId}/timeEntries/`;
 
         const body = {
             description: description,

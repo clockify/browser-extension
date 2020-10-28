@@ -1,10 +1,10 @@
 import * as React from 'react';
 import moment from 'moment';
 import DatePicker from 'react-datepicker';
-import MyDatePicker from "./my-date-picker";
 import {getAppTypes} from "../enums/applications-types.enum";
 import {add24hIfEndBeforeStart} from "../helpers/time.helper";
-import TimePicker from 'antd/lib/time-picker';
+import MyTimePicker from './my-time-picker.component'
+import MyDurationPicker from './my-duration-picker.component'
 import {HtmlStyleHelper} from "../helpers/html-style-helper";
 
 const htmlStyleHelpers = new HtmlStyleHelper();
@@ -17,7 +17,7 @@ class Duration extends React.Component {
         super(props);
 
         this.state = {
-            editDuration: false,
+            editDuration: true,
             datePickerOpen: false,
             timeFormat: this.props.timeFormat === 'HOUR12' ? 'h:mm A' : 'HH:mm',
             startTime: moment(this.props.timeEntry.timeInterval.start),
@@ -27,6 +27,12 @@ class Duration extends React.Component {
             endTimeChanged: false,
             startTimeChanged: false
         }
+
+        this.selectStartTime = this.selectStartTime.bind(this);
+        this.selectEndTime = this.selectEndTime.bind(this);
+        this.selectDuration = this.selectDuration.bind(this);
+        this.openDurationPickerChange = this.openDurationPickerChange.bind(this);
+        this.changeDuration = this.changeDuration.bind(this);
     }
 
     componentDidMount(){
@@ -56,7 +62,7 @@ class Duration extends React.Component {
             this.setState({
                 startTime: time,
                 startTimeChanged: true
-            });
+            }, () => this.changeStart(this.state.startTime) );
         }
     }
 
@@ -65,7 +71,7 @@ class Duration extends React.Component {
             this.setState({
                 endTime:time,
                 endTimeChanged: true
-            });
+            }, () => this.changeEnd(this.state.endTime));
         }
     }
 
@@ -126,7 +132,20 @@ class Duration extends React.Component {
         if (!!timeString) {
             this.setState({
                 selectedDuration: timeString
-            });
+            }, () => {
+                if (this.state.selectedDuration) {
+                    this.changeDuration(this.state.selectedDuration);
+    
+                    this.setState({
+                        selectedDuration: null
+                    });
+                }
+                setTimeout(() => {
+                    this.setState({
+                        editDuration: false
+                    });
+                }, 100);
+            })
         }
     }
 
@@ -181,48 +200,35 @@ class Duration extends React.Component {
         }
     }
 
-    openStartTimePicker(event) {
-        this.fadeBackgroundAroundTimePicker(event);
-        if (!event) {
-            if (this.state.startTime) {
-                this.changeStart(this.state.startTime);
-            }
-        }
-    }
-
-    openEndTimePicker(event) {
-        this.fadeBackgroundAroundTimePicker(event);
-        if (!event) {
-            if (this.state.endTime) {
-                this.changeEnd(this.state.endTime);
-            }
-        }
-    }
-
     render(){
         return (
             <div className="duration">
                 <div className="duration-time">
                     <label className={!this.props.end ? "duration-label" : "disabled"}>Start:</label>
-                    <TimePicker id="startTimePicker"
-                                value={this.state.startTime}
-                                className="duration-start"
-                                format={this.state.timeFormat}
-                                size="small"
-                                use12Hours={this.props.timeFormat === 'HOUR12'}
-                                onChange={this.selectStartTime.bind(this)}
-                                onOpenChange={this.openStartTimePicker.bind(this)}
-                    />
+                    <span className="ant-time-picker duration-start ant-time-picker-small">
+                        <MyTimePicker 
+                            id="startTimePicker"
+                            value={this.state.startTime}
+                            className="ant-time-picker-input"
+                            format={this.state.timeFormat}
+                            size="small"
+                            use12Hours={this.props.timeFormat === 'HOUR12'}
+                            onChange={this.selectStartTime}
+                        />
+                    </span>
                     <label className={this.props.end ? "duration-dash" : "disabled"}>-</label>
-                    <TimePicker id="endTimePicker"
-                                className={this.props.end ? "duration-end" : "disabled"}
-                                value={this.state.endTime}
-                                size="small"
-                                use12Hours={this.props.timeFormat === 'HOUR12'}
-                                format={this.state.timeFormat}
-                                onChange={this.selectEndTime.bind(this)}
-                                onOpenChange={this.openEndTimePicker.bind(this)}
-                    />
+                    <span className="ant-time-picker duration-end ant-time-picker-small">
+                        <MyTimePicker 
+                            id="endTimePicker"
+                            value={this.state.endTime}
+                            className={this.props.end ? "ant-time-picker-input" : "disabled"}
+                            isDisabled={!this.props.end}
+                            format={this.state.timeFormat}
+                            size="small"
+                            use12Hours={this.props.timeFormat === 'HOUR12'}
+                            onChange={this.selectEndTime}
+                        />
+                    </span>
                     <span>
                     <DatePicker
                         selected={moment(this.props.start)}
@@ -234,23 +240,18 @@ class Duration extends React.Component {
                         minDate={moment(new Date(this.state.dayAfterLockedEntries))}/>
                     </span>
                     <span className="duration-divider"></span>
-                    <input
-                        className={!this.state.editDuration ? "duration-duration" : "disabled"}
-                        title={"Please write duration in the 'hh:mm:ss' format."}
-                        value={this.props.time}
-                        id="duration"
-                        onClick={this.openPicker.bind(this)}
-                    />
-                    <TimePicker id="durationTimePicker"
-                                className={this.state.editDuration ? "duration-duration" : "disabled"}
-                                defaultOpenValue={moment(this.props.time, 'HH:mm:ss')}
-                                placeholder={this.props.workspaceSettings.trackTimeDownToSecond ?
-                                    "Duration (HH:mm:ss)" : "Duration (h:mm)"}
-                                size="small"
-                                format={this.props.workspaceSettings.trackTimeDownToSecond ? "HH:mm:ss" : "H:mm"}
-                                onChange={this.selectDuration.bind(this)}
-                                onOpenChange={this.openDurationPickerChange.bind(this)}
-                    />
+                    <span className="ant-time-picker-small">
+                        <MyDurationPicker id="durationTimePicker"
+                            className={"duration-duration"}
+                            isDisabled={!this.props.end}
+                            defaultOpenValue={moment(this.props.time, 'HH:mm:ss')}
+                            placeholder={this.props.workspaceSettings.trackTimeDownToSecond ?
+                                "Duration (HH:mm:ss)" : "Duration (h:mm)"}
+                            size="small"
+                            format={this.props.workspaceSettings.trackTimeDownToSecond ? "HH:mm:ss" : "H:mm"}
+                            onChange={this.selectDuration}
+                        />
+                    </span>
                 </div>
             </div>
         )

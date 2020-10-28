@@ -17,7 +17,6 @@ export class Application {
     }
 
     afterLoad() {
-        this.setWebSocketParamsToStorage();
         this.setBaseUrl();
         this.setHomeUrl();
         switch (this.appType) {
@@ -35,25 +34,19 @@ export class Application {
         }
     }
 
-    setWebSocketParamsToStorage() {
-        localStorageService.set(
-            "webSocketEndpoint",
-            environment.webSocket.endpoint,
-            getLocalStorageEnums().PERMANENT_PREFIX);
-        localStorageService.set(
-            "webSocketClientId",
-            environment.webSocket.clientId,
-            getLocalStorageEnums().PERMANENT_PREFIX);
-    }
-
     setBaseUrl() {
         const baseUrlFromStorage = settingsService.getBaseUrl();
         if (!baseUrlFromStorage) {
             settingsService.setBaseUrl(environment.endpoint);
             settingsService.setSelfHosted(false);
         } else {
-            const selfHostedActive = baseUrlFromStorage !== environment.endpoint;
-            settingsService.setSelfHosted(selfHostedActive);
+            if (baseUrlFromStorage.includes('api.clockify.me/api')) {
+                settingsService.setBaseUrl(environment.endpoint);
+                settingsService.setSelfHosted(false);
+            } else {
+                const selfHostedActive = baseUrlFromStorage !== environment.endpoint;
+                settingsService.setSelfHosted(selfHostedActive);
+            }
         }
     }
 

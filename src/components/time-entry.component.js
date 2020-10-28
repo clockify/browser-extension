@@ -11,11 +11,17 @@ class TimeEntry extends React.Component {
 
         this.state = {
             ready: false,
-            title: ''
+            title: '',
+            tagTitle: ''
         }
+        this.createTitle = this.createTitle.bind(this);
     }
 
     componentDidMount() {
+        const { project } = this.props;
+        if (project !== undefined && this.props.task !== undefined) {
+            this.createTitle();
+        }
     }
 
     goToEdit() {
@@ -36,12 +42,14 @@ class TimeEntry extends React.Component {
         }
     }
 
-    continueTimeEntry() {
+    continueTimeEntry(e) {
+        e.stopPropagation();
         this.props.playTimeEntry(this.props.timeEntry);
     }
 
     createTitle() {
         let title = "";
+        let tagTitle = "";
 
         if (this.props.timeEntry.description) {
             title = "Description: " + this.props.timeEntry.description;
@@ -61,8 +69,14 @@ class TimeEntry extends React.Component {
             }
         }
 
+        const {tags} = this.props.timeEntry;
+        if (tags.length > 0) {
+            tagTitle = (tags.length > 1 ? 'Tags:\n' : "Tag: ") + tags.map(tag=>tag.name).join('\n')    
+        }
+
         this.setState({
-            title: title
+            title: title,
+            tagTitle: tagTitle
         }, () => {
             this.setState({
                 ready: true
@@ -75,20 +89,24 @@ class TimeEntry extends React.Component {
     }
 
     render() {
-        if (this.props.project !== undefined && this.props.task !== undefined) {
+        const { timeEntry, project } = this.props;
+        if (project !== undefined && this.props.task !== undefined) {
             if (this.state.ready) {
                 return (
-                    <div className={((this.props.timeEntry.isLocked && !this.props.isUserOwnerOrAdmin) || this.props.timeEntry.approvalRequestId) ? "time-entry-locked" : "time-entry"}
-                         title={this.state.title}>
-                        <div className="time-entry-description" onClick={this.goToEdit.bind(this)}>
-                            <div className={this.props.timeEntry.description ? "description" : "no-description"}>
-                                {this.props.timeEntry.description ? this.props.timeEntry.description : "(no description)"}
+                    <div className={((timeEntry.isLocked && !this.props.isUserOwnerOrAdmin) || timeEntry.approvalRequestId) ? "time-entry-locked" : "time-entry"}
+                         title={this.state.title}
+                         key={timeEntry.id}
+                         onClick={this.goToEdit.bind(this)}
+                    >
+                        <div className="time-entry-description">
+                            <div className={timeEntry.description ? "description" : "no-description"}>
+                                {timeEntry.description ? timeEntry.description : "(no description)"}
                             </div>
-                            <div style={this.props.project ? {color: this.props.project.color} : {}}
-                                 className={this.props.project ? "time-entry-project" : "disabled"}>
+                            <div style={project ? {color: project.color} : {}}
+                                 className={project ? "time-entry-project" : "disabled"}>
                                 <div className="time-entry__project-wrapper">
-                                    <div style={this.props.project ? {background: this.props.project.color} : {}} className="dot"></div>
-                                    <span className="time-entry__project-name" >{this.props.project ? this.props.project.name : ""}</span>
+                                    <div style={project ? {background: project.color} : {}} className="dot"></div>
+                                    <span className="time-entry__project-name" >{project ? project.name : ""}</span>
                                 </div>
                                 <span className="time-entry__task-name">
                                     {this.props.task ? " - " + this.props.task.name : ""}
@@ -98,22 +116,22 @@ class TimeEntry extends React.Component {
                         <div className="time-entry__right-side">
                             <div className="time-entry__right-side__tag_billable_and_lock"
                                  onClick={this.goToEdit.bind(this)}>
-                                <span className={this.props.timeEntry.tags && this.props.timeEntry.tags.length > 0 ?
+                                <span title={this.state.tagTitle} className={timeEntry.tags && timeEntry.tags.length > 0 ?
                                     "time-entry__right-side__tag" : "disabled"}></span>
-                                <span className={this.props.timeEntry.billable ?
+                                <span className={timeEntry.billable ?
                                     "time-entry__right-side__billable" : "disabled"}></span>
-                                <span className={this.props.timeEntry.approvalRequestId ?
+                                <span className={timeEntry.approvalRequestId ?
                                     "time-entry__right-side__approved" : "disabled"}>
                                     <img src="./assets/images/approved.png"/>
                                 </span>
-                                <span className={this.props.timeEntry.isLocked && !this.props.isUserOwnerOrAdmin && !this.props.timeEntry.approvalRequestId ?
+                                <span className={timeEntry.isLocked && !this.props.isUserOwnerOrAdmin && !timeEntry.approvalRequestId ?
                                     "time-entry__right-side__lock" : "disabled"}>
                                     <img src="./assets/images/lock-indicator.png"/>
                                 </span>
                             </div>
                             <div className="time-entry__right-side__lock_and_play">
                                 <span className="time-entry__right-side--duration">
-                                    {this.props.timeEntry.duration}
+                                    {timeEntry.duration}
                                 </span>
                                 <span onClick={this.continueTimeEntry.bind(this)}
                                       className="time-entry-arrow">
@@ -124,7 +142,6 @@ class TimeEntry extends React.Component {
                     </div>
                 )
             } else {
-                this.createTitle();
                 return null;
             }
         } else {

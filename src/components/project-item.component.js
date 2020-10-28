@@ -8,6 +8,9 @@ class ProjectItem extends React.Component {
         this.state = {
             isTaskOpen: false
         }
+
+        this.chooseProject = this.chooseProject.bind(this);
+        this.openTasks = this.openTasks.bind(this);
     }
 
     componentDidMount(){
@@ -30,25 +33,33 @@ class ProjectItem extends React.Component {
     }
 
     render(){
+        const {project, noTasks} = this.props;
         return(
             <div>
-                <div className="project-item" title={this.props.project.name}>
+                <div className="project-item" title={project.name}>
                     <span className="project-item-name">
-                        <span style={{background: this.props.project.color}} className="dot-project-picker"></span>
-                        <span onClick={!this.props.workspaceSettings.forceTasks ?
-                            this.chooseProject.bind(this) : this.openTasks.bind(this)}
-                              className={!this.props.noTasks ? "project-name" : "disabled"}>
-                            {this.props.project.name}
+                        <span style={{background: project.color}} className="dot-project-picker"></span>
+                        <span 
+                            onClick={!this.props.workspaceSettings.forceTasks ?
+                                this.chooseProject : this.openTasks}
+                            className={!noTasks ? "project-name" : "disabled"}
+                            tabIndex={"0"} 
+                            onKeyDown={e => {if (e.key==='Enter') 
+                                !this.props.workspaceSettings.forceTasks ?
+                                this.chooseProject() : this.openTasks()
+                            }}
+                        >
+                            {project.name}
                         </span>
-                        <span onClick={this.chooseProject.bind(this)}
-                              className={this.props.noTasks ? "project-name" : "disabled"}>
-                            {this.props.project.name}
+                        <span onClick={this.chooseProject}
+                              className={noTasks ? "project-name" : "disabled"}>
+                            {project.name}
                         </span>
                     </span>
-                    <span className={this.props.project.tasks.length > 0 ? "" : "disabled"}
-                          onClick={this.openTasks.bind(this)}>
-                        <span className={this.props.noTasks ? "disabled" : "project-item-task"}>
-                            {this.props.project.tasks.length + "  Tasks"}
+                    <span className={project.tasks.length > 0 ? "" : "disabled"}
+                          onClick={this.openTasks}>
+                        <span className={noTasks ? "disabled" : "project-item-task"}>
+                            {project.tasks.length + "  Tasks"}
                             <img src="./assets/images/filter-arrow-down.png"
                                  className={this.state.isTaskOpen ? "tasks-arrow-down" : "disabled"}/>
                             <img src="./assets/images/filter-arrow-right.png"
@@ -56,10 +67,10 @@ class ProjectItem extends React.Component {
                         </span>
                     </span>
                 </div>
-                <div className={this.state.isTaskOpen && !this.props.noTasks ? "task-list" : "disabled"}>
-                    {this.props.project.tasks.map(task => {
+                <div className={this.state.isTaskOpen && !noTasks ? "task-list" : "disabled"}>
+                    {project.tasks.map(task => {
                         return(
-                            <div value={JSON.stringify(task)} onClick={this.chooseTask.bind(this)} className="task-item">
+                            <div key={task.id} value={JSON.stringify(task)} onClick={this.chooseTask.bind(this)} className="task-item">
                                 <span value={JSON.stringify(task)}>{task.name}</span>
                             </div>
                         )

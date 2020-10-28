@@ -14,37 +14,22 @@ export class ProjectHelper {
     constructor() {
     }
 
-    isDefaultProjectAvailableToUser(project) {
-        if (!project) {
-            return Promise.resolve(false);
-        }
-        const userId = localStorage.getItem('userId');
-        return workspaceService.getPermissionsForUser().then(workspacePermissions => {
-            if (project.archived) {
-                return false;
-            }
-
-            const filteredWorkspacePermissions = workspacePermissions.filter(permission =>
-                permission.name === getWorkspacePermissionsEnums().WORKSPACE_OWN ||
-                permission.name === getWorkspacePermissionsEnums().WORKSPACE_ADMIN
-            );
-            const projectMemberships = project.memberships.filter(membership =>
-                membership.membershipStatus === "ACTIVE" && membership.userId === userId);
-            if (filteredWorkspacePermissions.length > 0 ||
-                projectMemberships.length > 0 ||
-                project.public) {
-                return true;
-            }
-            return false;
-        });
-    }
-
-    getLastUsedProjectFromTimeEntries() {
+    async getLastUsedProjectFromTimeEntries() {
         return projectService.getLastUsedProject().then(response => {
             if (response.data.length > 0) {
                 return response.data[0];
             } else {
-                return Promise.resolve(null);
+                return null;
+            }
+        });
+    }
+
+    async getProjectsByIds(projectIds) {
+        return projectService.getProjectsByIds(projectIds).then(response => {
+            if (response.data.length > 0) {
+                return response.data[0];
+            } else {
+                return null;
             }
         });
     }
@@ -59,23 +44,23 @@ export class ProjectHelper {
         }
     }
 
-    getDefaultProject() {
+    async getDefaultProject() {
         if (checkConnection()) {
-            return Promise.resolve(null);
+            return null;
         }
         const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
         const userId = localStorageService.get('userId');
         const defaultProjects = this.getDefaultProjectListFromStorage();
 
         if (defaultProjects && defaultProjects.length === 0) {
-            return Promise.resolve(null);
+            return null;
         }
 
         const defaultProjectForWorkspaceAndUser =
             this.filterProjectsByWorkspaceAndUser(defaultProjects, activeWorkspaceId, userId);
 
         if (!defaultProjectForWorkspaceAndUser || !defaultProjectForWorkspaceAndUser.enabled) {
-            return Promise.resolve(null);
+            return null;
         }
 
         if (
@@ -85,11 +70,12 @@ export class ProjectHelper {
                 getDefaultProjectEnums().LAST_USED_PROJECT
         ) {
             return this.getLastUsedProjectFromTimeEntries();
+        } else {
+            const projectIds = [];
+            projectIds.push(defaultProjectForWorkspaceAndUser.project.id);
+            
+            return this.getProjectsByIds(projectIds)
         }
-
-        return this.isDefaultProjectAvailableToUser(defaultProjectForWorkspaceAndUser.project).then(available => {
-            return available ? defaultProjectForWorkspaceAndUser.project : null;
-        });
     }
 
     setDefaultProjectToEntryIfNotSet(timeEntry) {
@@ -100,7 +86,7 @@ export class ProjectHelper {
             });
         }
 
-        return Promise.resolve(timeEntry);
+        return timentry;
     }
 
     setDefaultProjectsToStorage(defaultProjects) {
@@ -228,5 +214,15 @@ export class ProjectHelper {
         } else {
             return this.getDefaultProject();
         }
+    }
+
+    isDefaultProjectEnabled() {
+        const defaultProjects = this.getDefaultProjectListFromStorage();
+        const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
+        const userId = localStorageService.get('userId');
+
+        const defProject =
+            this.filterProjectsByWorkspaceAndUser(defaultProjects, activeWorkspaceId, userId);
+        return defProject && defProject.enabled ? true : false
     }
 }

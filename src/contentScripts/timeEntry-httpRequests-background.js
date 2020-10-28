@@ -179,6 +179,7 @@ function endInProgressOnClosingBrowser() {
 
 function saveEntryOfflineAndStopItByDeletingIt(data, end, isWebSocketHeader) {
     const timeEntry = {
+        workspaceId: data.workspaceId,
         id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
         description: data.description,
         projectId: data.projectId,

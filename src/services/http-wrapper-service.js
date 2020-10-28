@@ -23,7 +23,7 @@ export class HttpWrapperService {
             });
         }
 
-        return httpService.get(url, headers);
+        return httpService.get(encodeURI(url), headers);
     }
 
     put(url, body, addToken) {
@@ -39,7 +39,7 @@ export class HttpWrapperService {
                 }
             });
         }
-        return httpService.put(url, body, headers);
+        return httpService.put(encodeURI(url), body, headers);
     }
 
     post(url, body, addToken) {
@@ -55,7 +55,7 @@ export class HttpWrapperService {
                 }
             });
         }
-        return httpService.post(url, body, headers);
+        return httpService.post(encodeURI(url), body, headers);
     }
 
     delete(url, addToken) {
@@ -72,6 +72,6 @@ export class HttpWrapperService {
             });
         }
 
-        return httpService.delete(url, headers);
+        return httpService.delete(encodeURI(url), headers);
     }
 }

@@ -1,9 +1,8 @@
 import * as React from "react";
-import ProjectList from "./project-list.component";
+import DefaultProjectList from "./default-project-list.component";
 import {getDefaultProjectEnums} from "../enums/default-project.enum";
 import {ProjectHelper} from "../helpers/project-helper";
 import {LocalStorageService} from "../services/localStorage-service";
-import {getLocalStorageEnums} from "../enums/local-storage.enum";
 
 const projectHelper = new ProjectHelper();
 const localStorageService = new LocalStorageService();
@@ -138,15 +137,13 @@ class DefaultProject extends React.Component {
                 </div>
                 <div id="defaultProject"
                      className="default-project__project-list expandContainer">
-                    <ProjectList
+                    <DefaultProjectList
                         ref={instance => {
                             this.projectList = instance
                         }}
                         selectedProject={this.state.defaultProjectEnabled && this.state.defaultProjectForUserOnWorkspace ?
                             this.state.defaultProjectForUserOnWorkspace.id : null}
                         selectProject={this.setDefaultProject.bind(this)}
-                        noTasks={true}
-                        defaultProject={true}
                         workspaceSettings={this.props.workspaceSettings}
                         projectListOpened={this.projectListOpened.bind(this)}
                     />

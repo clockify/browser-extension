@@ -21,13 +21,14 @@ class TagsList extends React.Component {
             isEnabledCreateTag: false,
             createFormOpened: false,
             tagName: "",
+            tagIds: this.props.tagIds ? this.props.tagIds : []
         };
 
         this.filterTags = debounce(this.filterTags, 500);
+        this.selectTag = this.selectTag.bind(this);
     }
 
     componentDidMount(){
-        this.getTags(this.state.page, pageSize);
         this.isEnabledCreateTag();
     }
 
@@ -64,6 +65,9 @@ class TagsList extends React.Component {
 
     toggleTagsList() {
         if(!JSON.parse(localStorage.getItem('offline'))) {
+            if (!this.state.isOpen && this.state.tagsList.length === 0) {
+                this.getTags(this.state.page, pageSize);
+            }
             this.setState({
                 isOpen: !this.state.isOpen
             }, () => {
@@ -104,7 +108,7 @@ class TagsList extends React.Component {
 
     selectTag(event) {
         let tag = JSON.parse(event.target.getAttribute('value'));
-        this.props.editTag(tag.id);
+        this.props.editTag(tag);
     }
 
     isEnabledCreateTag() {
@@ -133,7 +137,7 @@ class TagsList extends React.Component {
         tag.name = this.state.tagName;
 
         tagService.createTag(tag).then(response => {
-            this.props.editTag(response.data.id);
+            this.props.editTag(response.data);
 
             this.setState({
                 tagsList: this.state.tagsList.concat(response.data),
@@ -163,23 +167,32 @@ class TagsList extends React.Component {
     }
 
     render(){
+        const { tags } = this.props;
+
+        let title = '';
+        if (tags.length > 0) {
+            title = (tags.length > 1 ? 'Tags:\n' : "Tag: ") + tags.map(tag=>tag.name).join('\n')    
+        }
+
         return (
-            <div className="tag-list">
+            <div className="tag-list" title={title}>
                 <div className={JSON.parse(localStorage.getItem('offline')) ?
                     "tag-list-button-offline" : this.props.tagsRequired ?
                         "tag-list-button-required" : "tag-list-button"}
-                     onClick={this.toggleTagsList.bind(this)}>
-                    <span className={this.props.tagIds.length === 0 ? "tag-list-add" : "disabled"}>
+                     onClick={this.toggleTagsList.bind(this)}
+                     tabIndex={"0"} 
+                     onKeyDown={e => {if (e.key==='Enter') this.toggleTagsList()}}
+                >
+                    <span className={tags.length === 0 ? "tag-list-add" : "disabled"}>
                         {this.props.tagsRequired ? "Add tags (required)" : "Add tags"}
                     </span>
-                    <span className={this.props.tagIds.length > 0 ?
+                    <span className={tags.length > 0 ?
                         "tag-list-selected" : "disabled"}>
                     {
-                        this.state.tagsList
-                            .filter(tag => this.props.tagIds.indexOf(tag.id) > -1)
+                        tags
                             .map((tag, index, list) => {
                             return(
-                                <span className="tag-list-selected-item">
+                                <span key={tag.id} className="tag-list-selected-item">
                                     {tag.name}{index < list.length-1 ? ",": ""}
                                 </span>
                             )
@@ -208,10 +221,14 @@ class TagsList extends React.Component {
                                 this.state.tagsList.length > 0 ?
                                     this.state.tagsList.map(tag => {
                                         return(
-                                            <div onClick={this.selectTag.bind(this)}
-                                                 value={JSON.stringify(tag)}
-                                                 className="tag-list-item-row">
-                                            <span  value={JSON.stringify(tag)}
+                                            <div onClick={this.selectTag}
+                                                key={tag.id}
+                                                tabIndex={"0"}
+                                                onKeyDown={e => {if (e.key==='Enter') this.selectTag(e)}}
+                                                value={JSON.stringify(tag)}
+                                                className="tag-list-item-row"
+                                            >
+                                                <span  value={JSON.stringify(tag)}
                                                    className={this.props.tagIds.includes(tag.id) ?
                                                        "tag-list-checkbox checked" : "tag-list-checkbox"}>
                                                 <img src="./assets/images/checked.png"
