@@ -51,6 +51,12 @@
 .ant-time-picker-panel-input::-webkit-input-placeholder {
   color: #bfbfbf;
 }
+.ant-time-picker-panel-input:-moz-placeholder-shown {
+  text-overflow: ellipsis;
+}
+.ant-time-picker-panel-input:-ms-input-placeholder {
+  text-overflow: ellipsis;
+}
 .ant-time-picker-panel-input:placeholder-shown {
   text-overflow: ellipsis;
 }
@@ -130,6 +136,10 @@ li.ant-time-picker-panel-select-option-disabled {
 li.ant-time-picker-panel-select-option-disabled:hover {
   background: transparent;
   cursor: not-allowed;
+}
+li.ant-time-picker-panel-select-option-disabled:focus {
+  color: rgba(0, 0, 0, 0.25);
+  font-weight: inherit;
 }
 .ant-time-picker-panel-combobox {
   zoom: 1;
@@ -215,6 +225,12 @@ li.ant-time-picker-panel-select-option-disabled:hover {
 }
 .ant-time-picker-input::-webkit-input-placeholder {
   color: #bfbfbf;
+}
+.ant-time-picker-input:-moz-placeholder-shown {
+  text-overflow: ellipsis;
+}
+.ant-time-picker-input:-ms-input-placeholder {
+  text-overflow: ellipsis;
 }
 .ant-time-picker-input:placeholder-shown {
   text-overflow: ellipsis;

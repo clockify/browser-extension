@@ -42,7 +42,7 @@ class TimeEntryList extends React.Component {
                     {
                         this.props.dates.map((day) => {
                             return (
-                                <div className="time-entries-list">
+                                <div className="time-entries-list" key={day}>
                                     <div className="time-entries-list-time">
                                         <span className="time-entries-list-day">{day.split("-")[0]}</span>
                                         <div className="time-entries-total-and-time">
@@ -53,6 +53,7 @@ class TimeEntryList extends React.Component {
                                     {this.props.timeEntries.filter(timeEntry => timeEntry.start === day.split("-")[0]).map(timeEntry => {
                                         return (
                                             <TimeEntry
+                                                key={timeEntry.id}
                                                 timeEntry={timeEntry}
                                                 project={timeEntry.project ? timeEntry.project : null}
                                                 task={timeEntry.task ? timeEntry.task : null}

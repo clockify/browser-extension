@@ -30,7 +30,8 @@ class Header extends React.Component {
 
     openMenu() {
         this.setState({
-            menuOpen: true
+            menuOpen: true,
+            mode: localStorage.getItem('mode') ? localStorage.getItem('mode') : 'timer'
         })
     }
 

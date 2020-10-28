@@ -278,77 +278,6 @@ class Login extends React.Component {
         });
     }
 
-    oAuthLoginForDesktop(url, nonce) {
-        if (!isAppTypeDesktop()) {
-            return;
-        }
-        const redirectUrl = environment.redirectUriOauthDesktop;
-        url = url +
-            '&client_id=' + environment.desktopClientId +
-            '&redirect_uri=' + redirectUrl;
-
-        oAuthLoginDesktop(url).then((response_url) => {
-            const decodedUrl = decodeURIComponent(response_url.response);
-            const code = this.getParamFromUrl(decodedUrl, "code");
-            const stateFromResponse = this.getParamFromUrl(decodedUrl, "state");
-
-            if (stateFromResponse && this.isStateFromResponseSameWithSentState(stateFromResponse)) {
-                return;
-            }
-
-            localStorageService.removeItem('oAuthState');
-            if (!!code && !!stateFromResponse) {
-                authService.loginWithCode(code, stateFromResponse, nonce, redirectUrl)
-                    .then(response => response.json()).then(data => {
-                    aBrowser.storage.local.set({
-                        token: (data.token),
-                        userId: (data.id),
-                        refreshToken: (data.refreshToken),
-                        userEmail: (data.email)
-                    });
-                    localStorage.setItem('token', data.token);
-                    localStorage.setItem('refreshToken', data.refreshToken);
-                    localStorage.setItem('userId', data.id);
-                    localStorage.setItem('userEmail', data.email);
-
-                    this.fetchUser(data.id).then(data => {
-                        aBrowser.storage.local.set({
-                            activeWorkspaceId: (data.activeWorkspace),
-                            userSettings: (JSON.stringify(data.settings))
-                        });
-                        localStorage.setItem('activeWorkspaceId', data.activeWorkspace);
-                        localStorage.setItem('userSettings', JSON.stringify(data.settings));
-
-                    });
-                });
-            }
-        })
-    }
-
-    //Old version of google login - remove when 'oAuthLoginForDesktop' finished
-    loginWithGoogle() {
-        googleLogin().then((responseCode) => {
-            const GOOGLE_TOKEN_URL = 'https://www.googleapis.com/oauth2/v4/token';
-            let body = {
-                code: responseCode,
-                client_id: environment.desktopClientId,
-                redirect_uri: 'urn:ietf:wg:oauth:2.0:oob:auto',
-                grant_type: 'authorization_code'
-            };
-
-            axios.post(GOOGLE_TOKEN_URL, qs.stringify({
-                code: responseCode,
-                client_id: body.client_id,
-                redirect_uri: body.redirect_uri,
-                grant_type: body.grant_type
-            }),{
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                }}).then((responseToken) => {
-                this.getAuth(responseToken.data.access_token, responseToken.data.id_token);
-            })
-        })
-    }
 
     getAuth(accessToken, token) {
         const GOOGLE_PROFILE_URL = 'https://www.googleapis.com/userinfo/v2/me';
@@ -528,12 +457,6 @@ class Login extends React.Component {
                     <button className={this.state.nativeLogin || this.state.ldapConfiguration ?
                         "login-submit" : "disabled"}
                             onClick={this.loginWithCredentials}>Log in</button>
-                    <button className={this.state.appType !== getAppTypes().EXTENSION &&
-                                      !this.state.selfHosted ? "google-login" : "google-login-disabled"}
-                            onClick={this.loginWithGoogle.bind(this)}>
-                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAARCAYAAADUryzEAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAIPSURBVHgBlVM/aBNhFH/vS5qmiz0XbXToBaQOor2znUQwZBCcUu1YEIugDkqrTiroKYjrqYM4BQfJoJQgimiHHhlEtJET3L1BtFTbntGSo6Tf8921F+9Sr9jfcHy/9733e//uQ+jA54KmZFPpMyDpGACpACJNQD/4/A5J3slZthP1xyiZKwxNsMUgAAUSgIhmU7Zu5i3b9bkIL74VDxqEYG4W7IOIJrtRFEOeDoILQ5eB4EbcE57y50WQBTEvgU5yfhVX8XSuVp9qV9R8Ceqvh/s+rv7MbluPdIDEeM6ataJ6X4t6P0mh77bq1VhL3ms4R43Mg8bjAZBuNyDh/j5r9hP8J3BlGma474JPvPc7nvVenS9FHQ4ZS5rYZC68Itgbkq7h+doGh5Qo8zy0hHhX8Nraq+TDAmwNil+Bh38FNmRCHmp8teifQ76E3iu4hwIuPPf64f7yoOs2Rd4er7pJKY/capT5zzzlnwnJEiRgylw+ALd/D0ODuhTMpsyk4MPG94EwOADRo6B6vTI6g+ubWLPjNFLryoexat3nWnlEEVkx0fPl2mSquScs36ld780HAlplREUQLIJqvH/0uP9FltwV2jKLJcgslNwVKfW3xnanvYEkkU6woNMzd/b4m4tH7bUk8VvUKycusfV8pxARuPwS70qvZUaHjEmZBiujOj+iPiK5E2TKtsee2P/y+wNydMMjOPbkvQAAAABJRU5ErkJggg=="
-                             className="google-img"/>
-                        Continue with Google</button>
                     <button className={this.state.appType === getAppTypes().EXTENSION &&
                                        ((!this.state.selfHosted &&
                                            !this.state.isSubDomain && isChrome()) ||
@@ -572,7 +495,7 @@ class Login extends React.Component {
                     <hr className={!this.state.ldapActive && !this.state.oAuthForceSSO ?
                         "login__divider" : "disabled"}/>
                     <div className={!this.state.selfHosted && !this.state.isSubDomain &&
-                        this.state.appType === getAppTypes().EXTENSION ?
+                        this.state.appType === getAppTypes().EXTENSION && isChrome() ?
                         "self-hosting-url" : "disabled"}>
                         <a onClick={this.enterBaseUrl}>Log in to custom domain</a>
                         <hr className="login__divider"/>

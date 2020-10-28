@@ -17,6 +17,12 @@ class TimeEntryListNotsyncedComponent extends React.Component {
         this.formatDurationOnUnsyncedEntries();
     }
 
+    componentDidUpdate(prevProps, prevState) {
+        if (prevProps.timeEntries.length !== this.props.timeEntries.length) {
+            this.formatDurationOnUnsyncedEntries();
+        }
+    }
+
     handleRefresh() {
         this.props.handleRefresh();
     }
@@ -38,6 +44,7 @@ class TimeEntryListNotsyncedComponent extends React.Component {
             return;
         }
         const timeEntries = [];
+
         this.props.timeEntries.forEach(timeEntry => {
             if (!this.props.workspaceSettings.trackTimeDownToSecond) {
                 const diffInSeconds = moment(timeEntry.timeInterval.end)
@@ -70,6 +77,7 @@ class TimeEntryListNotsyncedComponent extends React.Component {
                         this.state.timeEntries && this.state.timeEntries.map(entry => {
                         return (
                             <div className="time-entry-not-synced"
+                                key={entry.id}
                                 value={JSON.stringify(entry)}
                                 onClick={this.syncEntry.bind(this)}
                                 title="Can't sync while the required field is empty.">

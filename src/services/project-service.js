@@ -74,14 +74,4 @@ export class ProjectService extends HttpWrapperService {
 
         return super.post(createProjectUrl, body, addToken);
     }
-
-    getProjectsPermissions(ids) {
-        const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
-        const userId = localStorageService.get('userId');
-        const baseUrl = localStorageService.get('baseUrl');
-        const projectPermissionsUrl = `${baseUrl}/workspaces/${activeWorkspaceId}/projects/users/${userId}/permissions`;
-        const body = {projectIds: ids};
-
-        return super.post(projectPermissionsUrl, body, addToken);
-    }
 }

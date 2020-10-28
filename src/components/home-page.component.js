@@ -24,6 +24,7 @@ import {LocalStorageService} from "../services/localStorage-service";
 import {getWorkspacePermissionsEnums} from "../enums/workspace-permissions.enum";
 import {getLocalStorageEnums} from "../enums/local-storage.enum";
 import {HtmlStyleHelper} from "../helpers/html-style-helper";
+import Toaster from "./toaster-component";
 
 const projectService = new ProjectService();
 const webSocketClient = new WebSocketClient();
@@ -98,7 +99,11 @@ class HomePage extends React.Component {
     getEntryFromPomodoroEvents() {
         getBrowser().runtime.onMessage.addListener((request, sender, sendResponse) => {
             if (request.eventName === 'pomodoroEvent') {
-                this.start.getTimeEntryInProgress();
+                if (request.timeEntry !== null) {
+                    this.start.getTimeEntryInProgress();
+                } else {
+                    this.getTimeEntries();
+                }    
             }
         });
     }
@@ -113,7 +118,7 @@ class HomePage extends React.Component {
                 isUserOwnerOrAdmin: isUserOwnerOrAdmin
             }, () => {
                 localStorageService.set('isUserOwnerOrAdmin', isUserOwnerOrAdmin);
-                this.handleRefresh();
+                this.reloadData();
             });
         });
     }
@@ -126,7 +131,9 @@ class HomePage extends React.Component {
         if (
             timerShortcutFromStorage.length === 0 ||
             (timerShortcutFromStorage.length > 0 &&
-                timerShortcutFromStorage.filter(timerShortcut => timerShortcut.userId === userId).length === 0)
+                timerShortcutFromStorage.filter(
+                    timerShortcut => timerShortcut && timerShortcut.userId === userId).length === 0
+                )
         ) {
             timerShortcutFromStorage.push({userId: userId, enabled: true});
 
@@ -192,6 +199,7 @@ class HomePage extends React.Component {
             let timeEntries = localStorage.getItem('timeEntriesOffline') ? JSON.parse(localStorage.getItem('timeEntriesOffline')) : [];
             timeEntries.map(entry => {
                 timeEntryService.createEntry(
+                    entry.workspaceId,
                     entry.description,
                     entry.timeInterval.start,
                     entry.timeInterval.end,
@@ -212,7 +220,6 @@ class HomePage extends React.Component {
             localStorage.setItem('timeEntryInOffline', null);
         }
     }
-
 
     handleBackButton() {
         if (!document.getElementById('description')) {
@@ -468,6 +475,7 @@ class HomePage extends React.Component {
                         this.getWorkspaceSettings();
                     });
                     timeEntryService.createEntry(
+                        timeEntry.workspaceId,
                         timeEntry.description,
                         moment(),
                         null,
@@ -559,6 +567,7 @@ class HomePage extends React.Component {
                 this.start.setTimeEntryInProgress(timeEntryOffline);
             } else {
                 timeEntryService.createEntry(
+                    timeEntry.workspaceId,
                     timeEntry.description,
                     moment(),
                     null,
@@ -579,12 +588,17 @@ class HomePage extends React.Component {
             }
         }
     }
-
-
-
+    
     handleRefresh() {
         if (!checkConnection()) {
             this.saveAllOfflineEntries();
+        }
+
+        this.reloadData()
+    }
+
+    reloadData() {
+        if (!checkConnection()) {
             this.setState({
                 pageCount: 0
             }, () => {
@@ -642,6 +656,10 @@ class HomePage extends React.Component {
         getBrowser().storage.local.set({permissions: permissionsForStorage});
     }
 
+    showMessage(message) {
+        this.toaster.toast('info', message, 2);
+    }
+
     componentWillUnmount() {
         getBrowser().runtime.onMessage.removeListener(websocketHandlerListener);
     }
@@ -650,6 +668,11 @@ class HomePage extends React.Component {
         if (!this.state.ready) {
             return null;
         } else {
+            const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
+            const timeEntriesOffline = localStorage.getItem('timeEntriesOffline') 
+                ? JSON.parse(localStorage.getItem('timeEntriesOffline'))
+                    .filter(timeEntry => !timeEntry.workspaceId || timeEntry.workspaceId === activeWorkspaceId)
+                : [];
             return (
                 <div className="home_page">
                     <div className="header_and_timer">
@@ -663,10 +686,14 @@ class HomePage extends React.Component {
                                 workspaceSettings={this.state.workspaceSettings}
                                 workspaceChanged={this.handleRefresh.bind(this)}
                         />
+                        <Toaster
+                            ref={instance => {this.toaster = instance}}
+                        />
                         <StartTimer
                             ref={instance => {
                                 this.start = instance;
                             }}
+                            message={this.showMessage.bind(this)}
                             mode={this.state.mode}
                             changeMode={this.changeMode.bind(this)}
                             endStarted={this.handleRefresh.bind(this)}
@@ -684,12 +711,11 @@ class HomePage extends React.Component {
                         <img src="./assets/images/circle_2.svg" className="pull-loading-img2"/>
                     </div>
                     <div className={this.state.ready &&
-                    !JSON.parse(localStorage.getItem('offline')) &&
-                    JSON.parse(localStorage.getItem('timeEntriesOffline')) &&
-                    JSON.parse(localStorage.getItem('timeEntriesOffline')).length > 0 ?
-                        "" : "disabled"}>
+                        !JSON.parse(localStorage.getItem('offline')) &&
+                        timeEntriesOffline &&
+                        timeEntriesOffline.length > 0 ? "" : "disabled"}>
                         <TimeEntryListNotSynced
-                            timeEntries={JSON.parse(localStorage.getItem('timeEntriesOffline'))}
+                            timeEntries={timeEntriesOffline}
                             pullToRefresh={this.state.pullToRefresh}
                             handleRefresh={this.handleRefresh.bind(this)}
                             workspaceSettings={this.state.workspaceSettings}

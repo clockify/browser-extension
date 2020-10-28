@@ -11,6 +11,8 @@ import {HtmlStyleHelper} from "../helpers/html-style-helper";
 import WorkspaceList from './workspace-list.component';
 import {LocalStorageService} from "../services/localStorage-service";
 import {UserService} from "../services/user-service";
+import WorkspaceChangeConfirmation from './workspace-change-confirmation.component'
+import {SettingsService} from "../services/settings-service";
 
 const tokenService = new TokenService();
 const webSocketClient = new WebSocketClient();
@@ -18,11 +20,25 @@ const environment = getEnv();
 const htmlStyleHelper = new HtmlStyleHelper();
 const localStorageService = new LocalStorageService();
 const userService = new UserService();
+const settingsService = new SettingsService();
 
 class Menu extends React.Component {
 
     constructor(props) {
         super(props);
+
+        this.state = {
+            workspaceChangeConfirmationIsOpen: false,
+            selectedWorkspaceId: null,
+            revert: false,
+            workspaceNameSelected: "",
+            subDomainName: ""
+        }
+
+        this.onSetWorkspace = this.onSetWorkspace.bind(this);
+        this.selectWorkspace = this.selectWorkspace.bind(this);
+        this.changeToSubdomainWorkspace = this.changeToSubdomainWorkspace.bind(this);
+        this.cancelSubdomainWorkspaceChange = this.cancelSubdomainWorkspaceChange.bind(this);
     }
 
     setActiveClassToActiveElement() {
@@ -92,25 +108,64 @@ class Menu extends React.Component {
         }
     }
 
-    selectWorkspace(workspaceId) {
+    onSetWorkspace(workspaceId) {
+    }
+
+    selectWorkspace(workspaceId, workspaceName) {
+        this.setState({
+            revert: false,
+            selectedWorkspaceId: workspaceId,
+            workspaceNameSelected: workspaceName
+        })
+
         userService.setDefaultWorkspace(workspaceId)
-            .then(response => {
-                localStorageService.set('activeWorkspaceId', workspaceId);
-                if (isAppTypeExtension()) {
-                    getBrowser().storage.local.set({
-                        activeWorkspaceId: (workspaceId)
-                    });
-                }
+        .then(response => {
+            const subDomainName = response.headers["sub-domain-name"];
+            if (subDomainName) {
                 this.setState({
-                    defaultProjectEnabled: false
+                    revert: false,
+                    workspaceChangeConfirmationIsOpen: true,
+                    subDomainName: subDomainName
+                })
+                return;
+            }
+            localStorageService.set('activeWorkspaceId', workspaceId);
+            if (isAppTypeExtension()) {
+                getBrowser().storage.local.set({
+                    activeWorkspaceId: (workspaceId)
                 });
-                if (isAppTypeExtension()) {
-                    getBrowser().extension.getBackgroundPage().restartPomodoro();
-                }
-                this.props.workspaceChanged();
-            })
-            .catch(() => {
+            }
+            this.setState({
+                defaultProjectEnabled: false
             });
+            if (isAppTypeExtension()) {
+                getBrowser().extension.getBackgroundPage().restartPomodoro();
+            }
+            this.props.workspaceChanged();
+        })
+        .catch(() => {
+        });
+
+
+
+    }
+
+    cancelSubdomainWorkspaceChange() {
+        this.setState({
+            revert: true,
+            workspaceChangeConfirmationIsOpen: false,
+            subDomainName: ''
+        })
+    }
+
+    changeToSubdomainWorkspace() {
+        this.setState({
+            revert: false,
+            workspaceChangeConfirmationIsOpen: false,
+        })
+
+        settingsService.setSubDomainName(this.state.subDomainName);
+        this.logout.bind(this)()
     }
 
     render() {
@@ -139,7 +194,9 @@ class Menu extends React.Component {
                         </a>
                         <div className="dropdown-divider"></div>
                         <WorkspaceList
-                            selectWorkspace={this.selectWorkspace.bind(this)}
+                            revert={this.state.revert}
+                            selectWorkspace={this.selectWorkspace}
+                            onSetWorkspace={this.onSetWorkspace}
                         />
                         <a onClick={this.openSettings.bind(this)}
                            className="dropdown-item"
@@ -166,6 +223,14 @@ class Menu extends React.Component {
                             </span>
                         </a>
                     </div>
+                
+                    { this.state.workspaceChangeConfirmationIsOpen && 
+                        <WorkspaceChangeConfirmation
+                            canceled= {this.cancelSubdomainWorkspaceChange}
+                            confirmed={this.changeToSubdomainWorkspace} 
+                        /> 
+                    }
+                    
                 </div>
             );
         } else {

@@ -31,32 +31,14 @@ class EditFormManual extends React.Component {
             projectRequired: false,
             taskRequired: false,
             tagsRequired: false,
-            askToDeleteEntry: false
+            askToDeleteEntry: false,
+            tags: this.props.timeEntry.tags ? this.props.timeEntry.tags : []
         }
     }
 
     componentDidMount(){
         let timeEntry = this.state.timeEntry;
-        projectHelpers.getDefaultProject().then(defaultProject => {
-            if (defaultProject) {
-                projectHelpers.setDefaultProjectToEntryIfNotSet(this.state.timeEntry)
-                    .then(timeEntry => {
-                        let entry = timeEntry;
-                        entry.billable = defaultProject.billable;
-                        this.setState({
-                            timeEntry: entry
-                        },() => {
-                            this.checkRequiredFields();
-                        });
-                    });
-            } else {
-                const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
-                const userId = localStorageService.get('userId');
-                projectHelpers.removeDefaultProjectForWorkspaceAndUser(activeWorkspaceId, userId);
-                this.checkRequiredFields();
-            }
-        });
-
+        this.checkForDefaultProject();
         timeEntry.timeInterval.duration =
             moment.duration(
                 moment(timeEntry.timeInterval.end).diff(moment(timeEntry.timeInterval.start))
@@ -64,8 +46,33 @@ class EditFormManual extends React.Component {
 
         this.setState({
             timeEntry: timeEntry
-        });
+        }, () => this.checkRequiredFields());
         this.setTime();
+    }
+
+    async checkForDefaultProject() {
+        if (!projectHelpers.isDefaultProjectEnabled()) return;
+        const defaultProject = await projectHelpers.getDefaultProject();
+        if (defaultProject && !defaultProject.archived) {
+            const entry = this.state.timeEntry;
+            if (!entry.projectId) {
+                entry.projectId = defaultProject.id
+            }
+            entry.billable = defaultProject.billable;
+            this.setState({
+                timeEntry: entry
+            }, this.checkRequiredFields());
+        } else {
+            this.checkRequiredFields();
+            const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
+            const userId = localStorageService.get('userId');
+            projectHelpers.removeDefaultProjectForWorkspaceAndUser(activeWorkspaceId, userId);
+            this.toaster.toast(
+                'info',
+                "Your default project is no longer available. You can set a new one in Settings.",
+                3
+            );
+        }
     }
 
     setTime() {
@@ -162,21 +169,24 @@ class EditFormManual extends React.Component {
         }, () => this.checkRequiredFields());
     }
 
-    editTags(tagId) {
+    editTags(tag) {
+        let tagIds = this.state.tags ? this.state.tags.map(it => it.id) : [];
+        let tagList = this.state.tags;
         let timeEntry = this.state.timeEntry;
 
-        let tagList = this.state.timeEntry.tagIds ? this.state.timeEntry.tagIds : [];
-
-        if(tagList.includes(tagId)) {
-            tagList.splice(tagList.indexOf(tagId), 1);
+        if(tagIds.includes(tag.id)) {
+            tagIds.splice(tagIds.indexOf(tag.id), 1);
+            tagList = tagList.filter(t => t.id !== tag.id)
         } else {
-            tagList.push(tagId);
+            tagIds.push(tag.id);
+            tagList.push(tag)
         }
 
-        timeEntry.tagIds = tagList;
+        timeEntry.tagIds = tagIds;
 
         this.setState({
-            timeEntry: timeEntry
+            timeEntry: timeEntry,
+            tags: tagList
         }, () => this.checkRequiredFields());
     }
 
@@ -264,6 +274,7 @@ class EditFormManual extends React.Component {
         }
         if(checkConnection()) {
             let timeEntry = {
+                workspaceId: this.state.timeEntry.workspaceId,
                 id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
                 description: this.state.timeEntry.description,
                 billable: this.state.timeEntry.billable,
@@ -284,12 +295,13 @@ class EditFormManual extends React.Component {
                 return;
             } else {
                 timeEntryService.createEntry(
+                    this.state.timeEntry.workspaceId,
                     this.state.timeEntry.description,
                     this.state.timeEntry.timeInterval.start,
                     this.state.timeEntry.timeInterval.end,
                     this.state.timeEntry.projectId,
                     this.state.timeEntry.task ? this.state.timeEntry.task.id : null,
-                    this.state.timeEntry.tags ? this.state.timeEntry.tags.map(tag => tag.id) : [],
+                    this.state.timeEntry.tagIds ? this.state.timeEntry.tagIds : [],
                     this.state.timeEntry.billable
                 ).then(response => {
                     let timeEntries = localStorage.getItem('timeEntriesOffline') ? JSON.parse(localStorage.getItem('timeEntriesOffline')) : [];
@@ -442,7 +454,8 @@ class EditFormManual extends React.Component {
                             ref={instance => {
                                 this.tagList = instance;
                             }}
-                            tagIds={this.state.timeEntry.tagIds ? this.state.timeEntry.tagIds : []}
+                            tags={this.state.tags ? this.state.tags : []}
+                            tagIds={this.state.timeEntry.tagIds ? this.state.tags.map(it => it.id) : []}
                             editTag={this.editTags.bind(this)}
                             tagsRequired={this.state.tagsRequired}
                             tagListOpened={this.tagListOpened.bind(this)}
@@ -455,7 +468,10 @@ class EditFormManual extends React.Component {
                             <div className="edit-form-buttons__billable">
                                 <span className={this.state.timeEntry.billable ?
                                     "edit-form-checkbox checked" : "edit-form-checkbox"}
-                                      onClick={this.editBillable.bind(this)}>
+                                    onClick={this.editBillable.bind(this)}
+                                    tabIndex={"0"} 
+                                    onKeyDown={e => {if (e.key==='Enter') this.editBillable()}}
+                                >
                                     <img src="./assets/images/checked.png"
                                          className={this.state.timeEntry.billable ?
                                              "edit-form-billable-img" : "edit-form-billable-img-hidden"}/>

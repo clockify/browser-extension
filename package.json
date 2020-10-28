@@ -1,7 +1,7 @@
 {
   "name": "Clockify",
-  "version": "1.8.44",
-  "description": "Clockify App 100% Free",
+  "version": "1.8.53",
+  "description": "Clockify App 100% Free Time Tracker",
   "main": "main.js",
   "productName": "Clockify",
   "homepage": "https://clockify.me/",
@@ -31,8 +31,6 @@
     "react-datepicker": "^1.8.0",
     "react-dom": "^16.5.2",
     "react-http-request": "^2.0.0",
-    "react-mobile-datepicker": "^3.0.12",
-    "react-pullable": "^1.0.3",
     "url-parse": "^1.4.3"
   },
   "devDependencies": {

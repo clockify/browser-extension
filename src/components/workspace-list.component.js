@@ -14,6 +14,7 @@ class WorkspaceList  extends React.Component {
             workspaces: [],
             isOpen: false,
             selectedWorkspace: null,
+            previousWorkspace: null,
             isSubDomain: !!localStorageService.get('subDomainName')
         }
     }
@@ -22,6 +23,23 @@ class WorkspaceList  extends React.Component {
         this.getWorkspaces();
     }
 
+    componentDidUpdate(prevProps, prevState) {
+        if (prevState.previousWorkspace) {
+            if (this.props.revert && 
+                this.props.revert != prevProps.revert && 
+                prevState.previousWorkspace.id != prevState.selectedWorkspace.id
+            ) {
+                this.setState({
+                    selectedWorkspace: prevState.previousWorkspace
+                }, () => {
+                    const {id, name} = this.state.selectedWorkspace
+                    this.props.selectWorkspace(id, name);
+                })
+            }
+        }
+    }
+        
+
     getWorkspaces() {
         workspaceService.getWorkspacesOfUser()
             .then(response => {
@@ -29,8 +47,10 @@ class WorkspaceList  extends React.Component {
                 let selectedWorkspace = data.filter(workspace => workspace.id === localStorage.getItem('activeWorkspaceId'))[0];
                 this.setState({
                     workspaces: data,
-                    selectedWorkspace: selectedWorkspace
+                    selectedWorkspace: selectedWorkspace,
+                    previousWorkspace: selectedWorkspace
                 })
+                this.props.onSetWorkspace(selectedWorkspace.id)
             })
             .catch(() => {
             });
@@ -55,12 +75,15 @@ class WorkspaceList  extends React.Component {
     selectWorkspace(event) {
         let workspace = JSON.parse(event.target.getAttribute('value'));
         this.setState({
+            previousWorkspace: this.state.selectedWorkspace,
             selectedWorkspace: workspace,
             isOpen: false
         }, () => {
-            this.props.selectWorkspace(workspace.id);
+            this.props.selectWorkspace(workspace.id, workspace.name);
         })
     }
+
+    
 
     render() {
         if(this.state.selectedWorkspace === null) {
@@ -81,7 +104,7 @@ class WorkspaceList  extends React.Component {
                     <div className={this.state.isOpen ? "workspace-list-dropdown" : "disabled"}>
                         {this.state.workspaces.map(workspace => {
                             return(
-                                <div className="workspace-list-item">
+                                <div key={workspace.id} className="workspace-list-item">
                                     <span className="workspace-list-item--name"
                                           value={JSON.stringify(workspace)}
                                           title={workspace.name}
