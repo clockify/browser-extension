@@ -15,7 +15,7 @@
                 container = $('.c-header > .c-header__section:nth-child(3)'),
                 plusBtn = $('.c-dropdown-container:nth-child(1)'),
                 taskName = $('.c-header__jobtitle').textContent.trim(),
-                clientName = $('#client-editor li.selected').textContent.trim();
+                clientName = $('.c-header--context__section--client').dataset.clientName;
     
             link = clockifyButton.createButton(
                 `${clientName} - ${taskName}`, // description
