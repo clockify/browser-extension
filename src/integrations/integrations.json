@@ -362,7 +362,7 @@
   "visualstudio.com": {
     "name": "VisualStudio",
     "link": "*://*.visualstudio.com/*",
-    "script": "visualstudio.js",
+    "script": "azure.js",
     "clone": false
   },
   "wekan.github.io": {
