@@ -19,7 +19,7 @@
   },
   "azure.com": {
     "name": "Azure",
-    "link": "*://*.azure.com/*",
+    "link": "*://*.azure.*/*",
     "script": "azure.js",
     "clone": false
   },
@@ -235,7 +235,7 @@
   },
   "outlook.live.com": {
     "name": "Outlook",
-    "link": "*://outlook.live.com/*",
+    "link": "*://outlook.*/*",
     "script": "outlook.js",
     "clone": false
   },
