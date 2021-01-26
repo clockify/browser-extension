@@ -458,5 +458,11 @@
     "name": "Freshrelease",
     "link": "*://*.freshrelease.com/*",
     "script": "freshrelease.js"
+  },
+  "groupnwork.com": {
+    "name": "Group&Work",
+    "link": "*://*.groupnwork.com/*",
+    "script": "groupnwork.js",
+    "clone": false
   }
 }
