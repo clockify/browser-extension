@@ -95,6 +95,12 @@
     "script": "flow.js",
     "clone": false
   },
+  "gitea.io": {
+    "name": "Gitea",
+    "link": "*://try.gitea.io/*",
+    "script": "gitea.js",
+    "clone": false
+  },
   "github.com": {
     "name": "Github",
     "link": "*://github.com/*",

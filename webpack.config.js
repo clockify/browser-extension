@@ -13,6 +13,7 @@ module.exports = env => { return {
         path: path.join(__dirname, `www/${env.TARGET}`),
         filename: '[name].bundle.js',
     },
+    mode: DEV ? 'development' : 'production',
     optimization: {
         minimize: DEV ? false : true,
         splitChunks: {
