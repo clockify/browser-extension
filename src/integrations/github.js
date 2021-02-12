@@ -7,11 +7,13 @@ clockifyButton.render('.gh-header-actions:not(.clockify)', {observe: true}, func
   link = clockifyButton.createButton({
       description: description,
       projectName: project,
+      taskName: description,
       tagNames: tags
   });
   inputForm = clockifyButton.createInput({
         description: description,
         projectName: project,
+        taskName: description,
         tagNames: tags
   });
 
