@@ -19,12 +19,14 @@ clockifyButton.render('.detail-title-wrapper:not(.clockify)', {observe: true}, (
 clockifyButton.render('.epic-row .name:not(.clockify)', {observe: true}, (elem) => {
 
     var link,
-        titleElem = $('a', elem),
+        refElem = $('a > span:nth-child(1)', elem),
+        titleElem = $('a > span:nth-child(2)', elem),
         projectElem = $('div.sticky-project-menu > tg-legacy-loader').shadowRoot.querySelector('span.project-name'),
+        taskName = refElem.textContent.trim() + ' ' + titleElem.textContent;
     link = clockifyButton.createButton({
-            description: titleElem,
+            description: taskName,
             projectName: projectElem.textContent.trim(),
-            taskName: titleElem,
+            taskName: taskName,
             small: true
         });
     link.style.marginRight = ".2em"
