@@ -15,10 +15,10 @@
 }
 
 .clockify-button-active-span{
-  margin-left: 5px
+  margin-left: 5px !important;
 }
 .clockify-button-inactive-span {
-  margin-left: 5px;
+  margin-left: 5px !important;
 }
 .clockify-input {
   border: 1px solid #c6d2d9;

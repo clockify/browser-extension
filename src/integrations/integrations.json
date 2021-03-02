@@ -89,6 +89,12 @@
     "script": "freshdesk.js",
     "clone": false
   },
+  "freshservice.com": {
+    "name": "Freshservice",
+    "link": "*://*.freshservice.com/*",
+    "script": "freshservice.js",
+    "clone": false
+  },
   "getflow.com": {
     "name": "Getflow",
     "link": "*://app.getflow.com/*",
