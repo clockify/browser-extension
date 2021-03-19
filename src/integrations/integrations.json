@@ -5,6 +5,12 @@
     "script": "airtable.js",
     "clone": false
   },
+  "ambra.app": {
+    "name": "Ambra",
+    "link": "*://ambra.app/*",
+    "script": "ambra.js",
+    "clone": false
+  },
   "asana.com": {
     "name": "Asana",
     "link": "app.asana.com",
