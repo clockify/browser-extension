@@ -8,6 +8,7 @@ clockifyButton.render('.task-container:not(.clockify)', { observe: true }, funct
   link.style.fontSize = 'inherit';
   link.style.fontFamily = 'inherit';
   link.style.color = 'inherit';
+  link.style.fontSize = 0;
 
   const taskOptionsElement = elem.querySelectorAll('.task-options')[0];
 
@@ -24,6 +25,7 @@ clockifyButton.render('.task-modal:not(.clockify)', { observe: true }, function 
   link.style.fontSize = 'inherit';
   link.style.fontFamily = 'inherit';
   link.style.color = 'inherit';
+  link.style.fontSize = 0;
 
   const taskOptionsElement = elem.querySelectorAll('.task-options')[0];
 
