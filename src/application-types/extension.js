@@ -124,7 +124,7 @@ export class Extension {
     }
 
     registerButtonHandlers() {
-        getBrowser().runtime.onMessage.addListener((request, sender, sendResponse) => {
+        const listener = (request, sender, sendResponse) => {
             switch (request.eventName) {
                 case 'endInProgress':
                     this.stopEntryInProgress(sendResponse);
@@ -137,7 +137,10 @@ export class Extension {
                     break;
             }
             return true;
-        });
+        };
+
+        getBrowser().runtime.onMessage.addListener(listener);
+        getBrowser().runtime.onMessageExternal.addListener(listener);
     }
 
     stopEntryInProgress(sendResponse) {
