@@ -15,7 +15,7 @@
     "name": "Asana",
     "link": "app.asana.com",
     "script": "asana.js",
-    "clone": false
+    "clone":false
   },
   "axosoft.com": {
     "name": "Axosoft",
