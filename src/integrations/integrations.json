@@ -7,7 +7,7 @@
   },
   "ambra.app": {
     "name": "Ambra",
-    "link": "*://ambra.app/*",
+    "link": "*://ambra.app/project/*",
     "script": "ambra.js",
     "clone": false
   },
@@ -15,7 +15,7 @@
     "name": "Asana",
     "link": "app.asana.com",
     "script": "asana.js",
-    "clone":false
+    "clone": false
   },
   "axosoft.com": {
     "name": "Axosoft",
