@@ -73,6 +73,44 @@
   color: white;
 }
 
+// background-color: $warning;
+
+.screenshot-notification {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 20px;
+  margin: 0px 5px;
+  background-color: white;
+
+  &__info_and_close_button {
+    display: flex;
+    justify-content: space-between;
+    color: $middle_light_text;
+  }
+
+  &__action_buttons {
+    display: flex;
+    flex-direction: row-reverse;
+
+    &--help {
+      cursor: pointer;
+      color: $blue;
+      margin-left: 5px;
+    }
+
+  }
+
+  &__info {
+    width: 90%;
+  }
+
+  &__close {
+    content: url("../assets/images/closeX.png");
+    width: 10px;
+    height: 10px;
+  }
+}
+
 .header-sync {
   display: inline-block;
   width: 20px;
@@ -86,4 +124,31 @@
     height: 18px;
     background-image: url("../assets/images/sync-hover.png");
   }
+}
+
+.debug-info-online {
+  background: green;
+}
+
+.debug-info-offline {
+  background: red;
+}
+
+.debug-info {
+  z-index: 9999999;
+  position: fixed;
+  left: 45px;
+  top: 120px;
+  width: 70%;
+  font: bold 1em sans-serif;
+  color: #FFF;
+  padding: 0.5em;
+}
+
+.debug-info-log {
+  height: 250px;
+  overflow-y: auto;
+  padding: 2.5em 0.5em 0.5em;
+  font: 1em sans-serif;
+  background: blue; 
 }

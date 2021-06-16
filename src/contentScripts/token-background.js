@@ -34,7 +34,7 @@ function getToken() {
 function refreshToken(token) {
     const endpoint = localStorage.getItem('permanent_baseUrl');
     const refreshTokenUrl = `${endpoint}/auth/token/refresh`;
-    const headers = new Headers(this.createHttpHeaders(token));
+    const headers = new Headers(createHttpHeaders(token));
 
     let refreshTokenRequest = new Request(refreshTokenUrl, {
         method: 'POST',

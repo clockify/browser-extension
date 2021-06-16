@@ -1,21 +1,49 @@
 // list new ui
 clockifyButton.render('.FastTaskItemComponent--fk-FastTaskItemComponent-MainContent:not(.clockify)', {observe: true}, (elem) => {
-    let project = $('.project_name').textContent.trim();
-    let description = $('.FastTaskItemComponent--fk-FastTaskItemComponent-ItemTitle', elem).textContent.trim();
-    let link = clockifyButton.createSmallButton(description, project);
-    link.style.paddingTop = "0px";
-    link.style.paddingRight = "10px";
-    elem.parentNode.prepend(link);
+    //let project = $('.project_name').textContent.trim();
+    let projectElem = $('.Header--fk-Header-ProjectName')
+    if (projectElem) {
+        let project = projectElem.textContent.trim();
+        let description = $('.FastTaskItemComponent--fk-FastTaskItemComponent-ItemTitle', elem).textContent.trim();
+        let link = clockifyButton.createSmallButton(description, project);
+        link.style.paddingTop = "0px";
+        link.style.paddingRight = "10px";
+        elem.parentNode.prepend(link);
+    }
+});
+
+// detail
+
+//clockifyButton.render('.ItemView--fk-Item-Title:not(.clockify)', {observe: true}, (elem) => {
+clockifyButton.render('.ItemBasicFields--fk-ItemBasicFields-Title-Wrap:not(.clockify)', {observe: true}, (elem) => {
+    let projectElem = $('.ItemViewHeader--fk-ItemViewHeader-Project-Name');
+    if (projectElem) {
+        let project = projectElem.textContent.trim();
+
+        // let description = $('.ItemView--fk-Item-Title').textContent.trim();
+        const descriptionElem = $('.ItemBasicFields--fk-ItemBasicFields-Title-Wrap');
+        const description = descriptionElem ? descriptionElem.textContent.trim() : "";
+
+        let link = clockifyButton.createSmallButton(description, project);
+        link.style.paddingTop = "8px";
+        link.style.paddingRight = "10px";
+        //elem.parentNode.prepend(link);
+        //elem.parentNode.insertBefore(link, elem);
+        elem.prepend(link);
+    }
 });
 
 // task view new ui
 clockifyButton.render('#mainItemWrap:not(.clockify)', {observe: true}, (elem) => {
-    let project = $('#project_name .project_name').textContent.trim();
-    let description = $('.ItemView--fk-Item-Title').textContent.trim();
-    let link = clockifyButton.createButton(description, project);
-    link.style.paddingTop = "10px";
-    link.style.paddingLeft = "20px";
-    elem.parentNode.prepend(link);
+    let projectElem = $('#project_name .project_name');
+    if (projectElem) {
+        let project = projectElem.textContent.trim();
+        let description = $('.ItemView--fk-Item-Title').textContent.trim();
+        let link = clockifyButton.createButton(description, project);
+        link.style.paddingTop = "10px";
+        link.style.paddingLeft = "20px";
+        elem.parentNode.prepend(link);
+    }
 });
 
 // OLD UI

@@ -1,24 +1,26 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
 .clockify-button-active, .clockify-button-inactive:hover {
   display: inline-flex;
-  font-size: 16px;
   align-items: center;
+  font-size: 14px;
   color: #03A9F4;
   cursor: pointer;
 }
 
 .clockify-button-inactive {
-  font-size: 16px;
   display: inline-flex;
   align-items: center;
+  font-size: 14px;
   color: #444444;
   cursor: pointer;
 }
 
 .clockify-button-active-span{
-  margin-left: 5px !important;
+  margin-left: 5px;
 }
 .clockify-button-inactive-span {
-  margin-left: 5px !important;
+  margin-left: 5px;
 }
 .clockify-input {
   border: 1px solid #c6d2d9;
@@ -29,10 +31,10 @@
 }
 
 .clockify-input:focus, .clockify-input:hover {
-    outline: none;
-    box-shadow: 0 0 4px rgba(0,0,0,.05);
-    border:1px solid #03A9F4 !important;
-    background-color: #fff !important;
+  outline: none;
+  box-shadow: 0 0 4px rgba(0,0,0,.05);
+  border:1px solid #03A9F4;
+  background-color: #fff ;
 }
 
 .clockify-input.clockify-input-default {
@@ -42,15 +44,15 @@
 }
 
 .clockify-input.clockify-input-success {
-  border-color: #CDE9CE !important;
-  color: #285B2A !important;
-  background-color: #DBEFDC !important;
+  border-color: #CDE9CE ;
+  color: #285B2A ;
+  background-color: #DBEFDC ;
 }
 
 .clockify-input.clockify-input-error {
-  border-color: #FCCAC7 !important;
-  color: #7F231C !important;
-  background-color: #FDD9D7 !important;
+  border-color: #FCCAC7 ;
+  color: #7F231C ;
+  background-color: #FDD9D7 ;
 }
 
 .backlog-table-body .user-story-name a.clockify-button-inactive{
@@ -59,4 +61,763 @@
 
 .backlog-table-body .user-story-name a.clockify-button-active{
   flex-grow: 0;
+}
+
+#divClockifyPopupDlg { /*div.clockify-popup-dlg*/
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  font-family: 'Roboto', sans-serif;
+  font-weight: normal;
+  position: fixed;
+  z-index: 999999;
+  display: block;
+  border-radius: 2px;
+  background-color: #eff4f7; /*rgba(3, 169, 244, 0.9);*/
+  right: 3vw;
+  top: 3vh;
+  width: 320px; /*30vw;*/
+  /*min-height: 430px;*/
+  /*height: 50vh;*/
+  filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.3));
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 0px 0 10px 0;
+}
+
+#divClockifyPopupDlg *, #divClockifyPopupDlg *::before, #divClockifyPopupDlg *::after {
+  box-sizing: inherit;
+  font-family: inherit;
+  font-weight: inherit;
+}
+
+#divClockifyPopupDlg > div {
+  width: 100%;
+  margin-top: 5px;
+}
+
+
+/* Drop Down */
+ul.clockify-drop-down {
+  font-size: 14px;
+  padding: 5px 0px 0px 0px;
+  list-style-type: none;
+}
+
+ul.clockify-drop-down > li {
+  line-height: 16px;
+}
+
+
+/* Project */
+ul.clockify-project-list {
+  font-size: 14px;
+  overflow-y: auto;
+  max-height: 293px;
+}
+
+li.clockify-project-item {
+  /*  line-height: 1.2rem;*/
+  display: flex;
+  align-items: center;
+  padding: 7px 0 7px 15px;
+}
+
+li.clockify-project-item-2 {
+  /* padding: 7px 0 8px 15px; */
+  padding-left: 10px;
+  overflow: hidden;
+}
+
+.clockify-project-name {
+  display: inline-block;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  font-size: 14px;
+  white-space: nowrap;
+  color: #333333;
+}
+
+
+.clockify-project-item:hover {
+  background-color: #E4EAEE;
+}
+
+
+.clockify-project-item > span:last-child {
+  margin-left: auto;
+  /* background-color: #E4EAEE; */
+  cursor: pointer;
+}
+
+.clockify-project-item-name {
+  display: flex;
+  align-items: center;
+  position: relative;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  font-size: 14px;
+  /*  line-height: 1.1rem;*/
+  white-space: nowrap;
+  color: #333333;
+  cursor: pointer;
+}
+
+
+
+/* Task */
+ul.clockify-task-list {
+  font-size: 14px;
+  text-align: left;
+  margin: 0 -5px 0 -10px;
+  /* list-style-type: disk; */
+}
+
+ul.clockify-task-list > li.clockify-task-item {
+/*  line-height: 1.14px;*/
+  padding: 7px 0 7px 20px;
+  background-color: #F2F6F8;
+  color: #333333;
+}
+
+ul.clockify-task-list > li.clockify-task-item:hover {
+  background-color: #E4EAEE;
+  cursor: pointer;
+}
+
+ul.clockify-task-list > li.clockify-task-item:first-child {
+  padding-top: 10px;
+}
+
+ul.clockify-task-list > li.clockify-task-item:last-child {
+  padding-bottom: 10px;
+}
+
+.dot {
+  padding: 2px;
+  border-radius: 50%;
+  display: inline-block;
+  width: 2px;
+  height: 2px;
+}
+
+.dot-project-picker {
+  position: relative;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 5px;
+  /*  top: -3px;*/
+}
+
+.ptr-element {
+  height: 0;
+}
+
+/* Project List */
+
+.clockify-span-arrow {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  padding: 10px 10px 10px 10px;
+}
+
+.clockify-project-list-arrow {
+  width: 10px;
+  height: 5px;
+}
+
+.clockify-project-list-button {
+  padding: 5px 0;
+  background: white;
+  border: 1px solid #C6D2D9;
+  border-radius: 2px;
+  cursor: pointer;
+  align-items: center;
+  display: flex;
+}
+
+.clockify-project-list-button-required {
+  padding: 5px 0;
+  background: white;
+  border: 1px solid #F44336;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.clockify-project-list__spec_filter_no_task_or_project {
+  margin-left: auto;
+  margin-right: auto;
+  width: 80%;
+  text-align: center;
+}
+
+.clockify-project-list-button-offline {
+  width: 100%;
+  height: 40px;
+  background: #C6D2D9;
+  margin: 10px 0;
+  border: 1px solid #C6D2D9;
+  border-radius: 2px;
+  cursor: not-allowed;
+}
+
+.clockify-project-list-name {
+  display: inline-block;
+  padding: 5px 10px;
+  width: 85%;
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #999999;
+}
+
+.clockify-project-list-dropdown {
+  position: absolute;
+  width: 100%;
+  left: 0;
+  top: 39px;
+  background: white;
+  z-index: 2;
+  box-shadow: 0 5px 7px #ccc;
+  font-size: 14px;
+  border-radius: 2px;
+}
+
+.clockify-drop-down-popup {
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  font-family: 'Roboto', sans-serif;
+  font-weight: normal;
+  position: absolute;
+  width: 300px; /* padding-left 320px padding-right*/
+  max-height: 350px;
+  left: 100;
+  top: 139px;
+  background: white;
+  z-index: 9999999;
+  box-shadow: 0 5px 7px #ccc;
+  font-size: 14px;
+  border-radius: 2px;
+  border: 1px solid silver;
+  text-align: center;
+}
+
+.clockify-drop-down-popup *, .clockify-drop-down-popup *::before, .clockify-drop-down-popup *::after {
+  box-sizing: inherit;
+  font-family: inherit;
+  font-weight: inherit;
+}
+
+.clockify-project-list-dropdown--content {
+  height: 269px;
+  overflow-y: auto;
+}
+
+
+.clockify-edit-form {
+  padding: 0px 10px;
+}
+
+.clockify-edit-form > div {
+  margin-top: 5px; 
+}
+
+
+.clockify-edit-form__project_list {
+  margin-bottom: 10px;
+}
+
+
+.clockify-edit-form-description{
+  width: 100%;
+  height: 100%;
+  border: none;
+  resize: none;
+  font-size: 14px;
+  outline: none;
+  color: #333333;
+  padding: 10px;
+}
+
+
+.clockify-stop-timer {
+  padding: 0px;
+  border-radius: 2px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.clockify-stop-timer > button {
+  margin-left: 20px;
+  border: 1px solid silver;
+  border-radius: 3px; 
+  padding: 2px;
+}
+
+
+.clockify-description-textarea {
+  margin-bottom: 0px;
+  border: 1px solid #C6D2D9;
+  background: white;
+  border-radius: 2px;
+  height: 65px;
+}
+
+.clockify-description-textarea.required {
+  border: 1px solid #F44336;
+}
+
+.clockify-edit-form-checkbox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  background: white;
+  border: 1px solid #C6D2D9;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.clockify-edit-form-buttons {
+  margin-top: 10px;
+}
+
+.clockify-edit-form-buttons__billable {
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.clockify-edit-form-billable-img {
+  margin-top: 3px;
+  margin-left: 1px;
+}
+
+.clockify-edit-form-billable-img-hidden {
+  margin-top: 3px;
+  margin-left: 1px;
+  visibility: hidden;
+}
+
+.clockify-edit-form-billable {
+  margin: 0;
+  margin-left: 10px;
+  color: #666666;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.clockify-edit-form-right-buttons {
+  margin-top: 10px;
+}
+
+.clockify-edit-form-right-buttons__back_and_delete {
+  margin-top: 20px;
+  justify-content: space-between;
+  text-align: center;
+}
+
+.clockify-edit-form-right-buttons__back {
+  color: #03A9F4;
+  cursor: pointer;
+}
+
+.clockify-edit-form-delete {
+  color: red;
+  cursor: pointer;
+}
+
+
+.clockify-edit-form-done {
+  width: 100%;
+  height: 40px;
+  border: none;
+  border-radius: 3px;
+  color: white;
+  background: #03A9F4;
+  cursor: pointer;
+}
+
+.clockify-edit-form-done-disabled {
+  width: 100%;
+  height: 40px;
+  border: none;
+  border-radius: 3px;
+  color: white;
+  background: #999999;
+}
+
+/* project */
+
+
+.clockify-project-list-client {
+  margin: 5px 8px 5px 12px;
+  padding: 10px 0 5px 0;
+  text-align: left;
+  border-top: 1px dotted #C6D2D9;
+  color: #999999;
+}
+
+.clockify-tasks-arrow-span {
+  display: flex;
+  align-items: center;
+  margin-left: 10px;
+  width: 12px;
+}
+
+.clockify-project-item-task {
+  margin-right: 5px;
+  color: #999999;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+}
+
+/* */
+
+.shake-heartache {
+  animation: kf_shake 0.5s 1 linear;
+  -webkit-animation: kf_shake 0.5s 1 linear;
+  -moz-animation: kf_shake 0.5s 1 linear;
+  -o-animation: kf_shake 0.5s 1 linear;
+}
+
+@keyframes kf_shake {
+  0% { -webkit-transform: translate(20px); }
+  20% { -webkit-transform: translate(-20px); }
+  40% { -webkit-transform: translate(10px); }
+  60% { -webkit-transform: translate(-10px); }
+  80% { -webkit-transform: translate(8px); }
+  100% { -webkit-transform: translate(0px); }
+}
+
+@-webkit-keyframes kf_shake {
+  0% { -webkit-transform: translate(00px); }
+  20% { -webkit-transform: translate(-00px); }
+  40% { -webkit-transform: translate(10px); }
+  60% { -webkit-transform: translate(-10px); }
+  80% { -webkit-transform: translate(8px); }
+  100% { -webkit-transform: translate(0px); }
+}
+
+@-moz-keyframes kf_shake {
+  0% { -moz-transform: translate(20px); }
+  20% { -moz-transform: translate(-20px); }
+  40% { -moz-transform: translate(10px); }
+  60% { -moz-transform: translate(-10px); }
+  80% { -moz-transform: translate(8px); }
+  100% { -moz-transform: translate(0px); }
+}
+@-o-keyframes kf_shake {
+  0% { -o-transform: translate(20px); }
+  20% { -o-transform: translate(-20px); }
+  40% { -o-transform: translate(10px); }
+  60% { -o-transform: translate(-10px); }
+  80% { -o-transform: translate(8px); }
+  100% { -o-origin-transform: translate(0px); }
+}
+
+.clockify-close-dlg {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+}
+
+.clockify-close-dlg-icon {
+  cursor: pointer;
+}
+
+.clockify-close-msg-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+}
+
+.clockify-msg {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  width: 90%;
+  padding: 3px;
+  cursor: pointer;
+  background-color: greenyellow;
+  border: 1px solid gray;
+  z-index: 99999;
+  font-size: 13px;
+}
+
+
+/* Tags */
+ul.clockify-tag-list {
+  font-size: 14px;
+  list-style-type: none;
+  overflow-y: auto;
+  max-height: 293px; /*30vh;*/
+}
+
+li.clockify-tag-item {
+  background: white;
+  border-bottom: 1px solid #fff;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333333;
+  z-index: 1;
+  transition: all 0.2s ease;
+}
+
+
+
+.clockify-tag-name {
+  display: inline-block;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  font-size: 14px;
+  line-height: 16px;
+  white-space: nowrap;
+  color: #333333;
+}
+
+
+.clockify-tag-item:hover {
+  background-color: #E4EAEE;
+}
+
+
+.clockify-tag-item > span:last-child {
+  margin-left: auto;
+  /* background-color: #E4EAEE; */
+  cursor: pointer;
+}
+
+.clockify-tag-tag-name {
+  display: inline-block;
+  position: relative;
+  top: 3px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  font-size: 14px;
+  line-height: 16px;
+  white-space: nowrap;
+  color: #333333;
+  cursor: pointer;
+}
+
+.dot-tag-picker {
+  position: relative;
+  width: 5px;
+  height: 5px;
+  border-radius: 5px;
+  display: inline-block;
+  margin-right: 5px;
+  top: -3px;
+}
+
+.clockify-tag-list-arrow {
+  width: 10px;
+  height: 5px;
+}
+
+.clockify-tag-list-button {
+  padding: 5px 0;
+  background: white;
+  border: 1px solid #C6D2D9;
+  border-radius: 2px;
+  cursor: pointer;
+  align-items: center;
+  display: flex;
+}
+
+.clockify-tag-list-button-required {
+  padding: 5px 0;
+  background: white;
+  border: 1px solid #F44336;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.clockify-tag-list-name {
+  display: inline-block;
+  padding: 5px 10px;
+  width: 85%;
+  font-size: 14px;
+  color: #999999;
+}
+
+.clockify-tag-list-dropdown {
+  position: absolute;
+  width: 100%;
+  left: 0;
+  top: 39px;
+  background: white;
+  z-index: 2;
+  box-shadow: 0 5px 7px #ccc;
+  font-size: 14px;
+  border-radius: 2px;
+}
+
+.clockify-tag-list-dropdown--content {
+  height: 269px;
+  overflow-y: auto;
+}
+
+.clockify-list-input {
+  background: white;
+  padding: 10px 10px 5px;
+}
+
+.clockify-list-input input {
+  padding-left: 10px !important;
+}
+
+.clockify-list-input input:focus {
+ outline: none;
+ box-shadow: none;
+ border-color: #03a9f4;
+}
+
+.clockify-list-input--border {
+  position: relative;
+}
+
+.clockify-list-input--border {
+  position: relative;
+}
+
+.clockify-list-filter {
+  width: 100%;
+  height: 40px;
+  padding: 10px;
+  border: 1px solid #C6D2D9;
+  border-radius: 2px;
+  margin: 0;
+}
+
+.clockify-list-filter__clear {
+  height: 12px;
+  width: 12px;
+  content: url("../assets/images/x.png");
+  cursor: pointer;
+}
+
+/***********/
+.clockify-tag-list-checked {
+  margin-top: 2px;
+  margin-left: 1px;
+}
+
+.clockify-tag-list-checked-hidden {
+  margin-top: 2px;
+  margin-left: 1px;
+  visibility: hidden;
+}
+
+.clockify-tag-list-checkbox {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 1px solid #C6D2D9;
+}
+
+.clockify-tag-list-item {
+  font-size: 14px;
+  margin-left: 10px;
+  color: #666666;
+}
+
+.clockify-tag-list-item-row {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 7px 15px;
+  cursor: pointer;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.clockify-tag-list-item-row:hover {
+  background-color: #E4EAEE;
+}
+
+.clockify-tag-list--not_tags {
+  margin-left: 10px;
+}
+
+.clockify-checked {
+  width: 18px;
+  height: 18px;
+  background: #03A9F4;
+  border: none;
+}
+
+.clockify-checked img {
+/*
+  margin-top: 3px;
+  margin-left: 2px;
+*/
+}
+
+
+.clockify-tag-list-selected {
+  display: inline-block;
+  max-width: 240px;
+  border-radius: 2px;
+  background-color: #e1f5fe;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.clockify-tag-list-selected-item {
+  display: inline-block;
+  padding: 5px 5px;
+  border-radius: 3px;
+  color: #02587f;
+}
+
+ul#ulClockifyProjectDropDown, #ulClockifyProjectDropDown ul, ul#ulClockifyTagDropDown {
+  display: block;
+  list-style-type: none;
+  margin-block-start: 0px;
+  margin-block-end: 0px;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+  padding-inline-start: 0px;
+}
+
+ul.clockify-drop-down-2,
+ul.clockify-project-list,
+ul.clockify-tag-list
+{
+  display: block;
+  list-style-type: none !important;
+  margin-block-start: 0px !important;
+  margin-block-end: 0px !important;
+  margin-inline-start: 0px !important;
+  margin-inline-end: 0px !important;
+  padding-inline-start: 0px !important;
+}
+
+.clockify-project-list-load-wrapper {
+  padding: 5px;
+}
+
+.clockify-list-load {
+  width: 100%;
+  height: 40px;
+  border: none;
+  border-radius: 3px;
+  color: white;
+  background: #03A9F4;
+  cursor: pointer;
 }

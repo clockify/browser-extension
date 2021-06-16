@@ -113,6 +113,12 @@
     "script": "gitea.js",
     "clone": false
   },
+  "groupnwork.com": {
+    "name": "Group&Work",
+    "link": "*://*.groupnwork.com/*",
+    "script": "groupnwork.js",
+    "clone": false
+  },
   "github.com": {
     "name": "Github",
     "link": "*://github.com/*",
@@ -305,12 +311,6 @@
     "script": "redmine.js",
     "clone": false
   },
-  "salesforce.com": {
-    "name": "Salesforce",
-    "link": "*://*.salesforce.com/*,*://*.my.salesforce.com/*, *://*.lightning.force.com/*",
-    "script": "salesforce.js",
-    "clone": false
-  },
   "lightning.force.com": {
     "name": "Salesforce Lightning",
     "link": "*://*.salesforce.com/*,*://*.my.salesforce.com/*, *://*.lightning.force.com/*",
@@ -461,7 +461,7 @@
     "script": "usepixie.js"
   },
   "figma.com": {
-    "name": "Cerb",
+    "name": "Figma",
     "link": "*://*.figma.com/*",
     "script": "figma.js",
     "clone": false
@@ -470,11 +470,5 @@
     "name": "Freshrelease",
     "link": "*://*.freshrelease.com/*",
     "script": "freshrelease.js"
-  },
-  "groupnwork.com": {
-    "name": "Group&Work",
-    "link": "*://*.groupnwork.com/*",
-    "script": "groupnwork.js",
-    "clone": false
   }
 }

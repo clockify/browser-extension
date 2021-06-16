@@ -1,7 +1,7 @@
 import * as React from 'react';
 import EditForm from './edit-form.component';
 import * as ReactDOM from 'react-dom';
-import {checkConnection} from "./check-connection";
+import {isOffline} from "./check-connection";
 import Login from "./login.component";
 
 class TimeEntry extends React.Component {
@@ -27,7 +27,7 @@ class TimeEntry extends React.Component {
     goToEdit() {
         if((!this.props.timeEntry.isLocked || this.props.isUserOwnerOrAdmin) && this.props.timeEntry.approvalRequestId == null) {
             ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
-            if (checkConnection()) {
+            if (isOffline()) {
                 ReactDOM.render(<Login/>, document.getElementById('mount'));
             }
             ReactDOM.render(
@@ -70,7 +70,7 @@ class TimeEntry extends React.Component {
         }
 
         const {tags} = this.props.timeEntry;
-        if (tags.length > 0) {
+        if (tags && tags.length > 0) {
             tagTitle = (tags.length > 1 ? 'Tags:\n' : "Tag: ") + tags.map(tag=>tag.name).join('\n')    
         }
 

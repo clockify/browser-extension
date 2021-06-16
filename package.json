@@ -1,16 +1,28 @@
 {
   "name": "Clockify",
-  "version": "1.8.53",
+  "version": "1.8.84",
   "description": "Clockify App 100% Free Time Tracker",
-  "main": "main.js",
+  "main": "./main.js",
   "productName": "Clockify",
   "homepage": "https://clockify.me/",
   "scripts": {
-    "clean.build.chrome.dev": "node tools/clean-build-script.js www/chrome.dev/",
-    "clean.build.firefox.dev": "node tools/clean-build-script.js www/firefox.dev/",
-    "compile.dev.chrome": "npm run clean.build.chrome.dev && compass compile -c config_chrome.dev.rb && webpack --env.TARGET=chrome.dev --watch",
-    "compile.dev.firefox": "npm run clean.build.firefox.dev && compass compile -c config_firefox.dev.rb && webpack --env.TARGET=firefox.dev --watch",
-    "copy.assets": "node tools/copy-assets-from-node-modules.js"
+    "clean.build.chrome": "node tools/clean-build-script.js chrome",
+    "clean.build.chrome.dev": "node tools/clean-build-script.js chrome.dev",
+    "clean.build.firefox": "node tools/clean-build-script.js firefox",
+    "clean.build.firefox.dev": "node tools/clean-build-script.js firefox.dev",
+    "clean.build.desktop": "node tools/clean-build-script.js dist",
+    "delete.integrations": "node tools/clean-build-script.js www/chrome/integrations",
+    "delete.contentScripts": "node tools/clean-build-script.js www/chrome/contentScripts",
+    "copy.assets": "node tools/copy-assets-from-node-modules.js",
+    "compile.dev.chrome.win": "npm run clean.build.chrome.dev && npm run copy.assets && compass compile -c config_chrome.dev.rb && set TARGET=chrome.dev&&webpack --watch",
+    "compile.dev.chrome": "npm run clean.build.chrome.dev && npm run copy.assets && compass compile -c config_chrome.dev.rb && TARGET='chrome.dev' webpack --watch",
+    "compile.dev.firefox.win": "npm run clean.build.firefox.dev && npm run copy.assets && compass compile -c config_firefox.dev.rb && set TARGET=firefox.dev&&webpack --watch",
+    "compile.dev.firefox": "npm run clean.build.firefox.dev && npm run copy.assets && compass compile -c config_firefox.dev.rb && TARGET='firefox.dev' webpack --watch",
+    "compile.prod.chrome": "npm run clean.build.chrome && npm run copy.assets && NODE_ENV=prod TARGET=chrome webpack && compass compile -c config_chrome.rb",
+    "compile.prod.firefox": "npm run clean.build.firefox && npm run copy.assets && NODE_ENV=prod TARGET=firefox webpack && compass compile -c config_firefox.rb",
+    "compile.stage.chrome": "npm run clean.build.chrome && npm run copy.assets && compass compile -c config_chrome.rb && NODE_ENV=stage TARGET=chrome webpack --watch",
+    "compile.stage.firefox": "npm run clean.build.firefox && npm run copy.assets && NODE_ENV=stage TARGET=firefox webpack && compass compile -c config_firefox.rb",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
@@ -19,7 +31,6 @@
     "axios": "^0.18.0",
     "child_process": "^1.0.2",
     "create-react-app": "^1.5.2",
-    "electron-updater": "^4.0.0",
     "express": "^4.15.3",
     "form-data": "^2.3.3",
     "jsonwebtoken": "^8.4.0",
@@ -45,7 +56,7 @@
     "rimraf": "^2.6.2",
     "webpack": "^4.14.0",
     "webpack-cli": "^3.0.8",
-    "webpack-dev-middleware": "^4.1.0",
+    "webpack-dev-middleware": "^4.3.0",
     "xml2js": "^0.4.19"
   }
 }

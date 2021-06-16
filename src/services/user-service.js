@@ -9,9 +9,9 @@ export class UserService extends HttpWrapperService {
         super();
     }
 
-    getUser(userId) {
+    getUser() {
         const baseUrl = localStorageService.get('baseUrl');
-        const userUrl = `${baseUrl}/users/${userId}`;
+        const userUrl = `${baseUrl}/v1/user`;
 
         return super.get(userUrl, addToken);
     }
@@ -25,4 +25,26 @@ export class UserService extends HttpWrapperService {
         return super.post(saveWorkspaceUrl, '', addToken);
 
     }
+
+    getNotifications(userId) {
+        const baseUrl = localStorageService.get('baseUrl');
+        const userUrl = `${baseUrl}/users/${userId}/notifications`;
+        return super.get(userUrl, addToken);
+    }
+
+    markAsRead(userId, notificationId) {
+        const baseUrl = localStorageService.get('baseUrl');
+        const userUrl = `${baseUrl}/users/${userId}/markAsRead`;
+        const body = {
+            notificationId
+        };
+        return super.put(userUrl, body, addToken);
+    }
+
+    getProjectPickerTaskFilter(userId) {
+        const baseUrl = localStorageService.get('baseUrl');
+        const userUrl = `${baseUrl}/users/${userId}`;
+        return super.get(userUrl, addToken);
+    }
+
 }

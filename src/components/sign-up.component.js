@@ -74,7 +74,7 @@ class SignUp extends React.Component {
                             localStorage.setItem('userEmail', data.email);
                             localStorage.setItem('token', data.token);
                             localStorage.setItem('refreshToken', data.refreshToken);
-                            this.fetchUser(data.id);
+                            this.fetchUser();
                         })
                         .catch(error => {
                             disabledSignup = false;
@@ -93,8 +93,8 @@ class SignUp extends React.Component {
         });
     }
 
-    fetchUser(userId) {
-        userService.getUser(userId)
+    fetchUser() {
+        userService.getUser()
             .then(response => {
                 let data = response.data;
                 localStorage.setItem('activeWorkspaceId', data.activeWorkspace);
@@ -139,7 +139,6 @@ class SignUp extends React.Component {
             <div>
                 <Header showActions={false}
                         showSync={false}
-                        mode={localStorage.getItem('mode')}
                 />
                 <div className={this.state.signupDisabledMessage ? "signup__disabled" : "disabled"}>
                     {this.state.signupDisabledMessage}

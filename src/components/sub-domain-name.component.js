@@ -2,7 +2,9 @@ import React from 'react';
 import * as ReactDOM from 'react-dom';
 import Header from './header.component';
 import Login from './login.component';
-import SubDomainLoginSettings from "./sub-domain-login-settings.component";
+import {SettingsService} from "../services/settings-service";
+
+const settingsService = new SettingsService();
 
 class SubDomainName extends React.Component {
     constructor(props) {
@@ -30,10 +32,9 @@ class SubDomainName extends React.Component {
 
     submitDomainName() {
         let domainName = document.getElementById('domainName').value;
-        ReactDOM.render(
-            <SubDomainLoginSettings domainName={domainName}/>,
-            document.getElementById("mount")
-        );
+        settingsService.setSubDomainName(domainName);
+        settingsService.setHomeUrl(`https://${domainName}.clockify.me`)
+        ReactDOM.render(<Login/>, document.getElementById('mount'))
     }
 
     cancel() {

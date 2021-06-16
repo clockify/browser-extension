@@ -6,8 +6,9 @@ import ProjectList from './project-list.component';
 import TagsList from './tags-list.component';
 import * as ReactDOM from 'react-dom';
 import HomePage from "./home-page.component";
-import {checkConnection} from "./check-connection";
+import {isOffline} from "./check-connection";
 import {ProjectHelper} from "../helpers/project-helper";
+import {TimeEntryHelper} from "../helpers/timeEntry-helper";
 import {TimeEntryService} from "../services/timeEntry-service";
 import {isAppTypeExtension} from "../helpers/app-types-helper";
 import {getBrowser} from "../helpers/browser-helper";
@@ -15,8 +16,10 @@ import DeleteEntryConfirmationComponent from "./delete-entry-confirmation.compon
 import Toaster from "./toaster-component";
 import {LocalStorageService} from "../services/localStorage-service";
 import EditDescription from './edit-description.component'
+import {DefaultProject} from '../helpers/storageUserWorkspace';
 
-const projectHelpers = new ProjectHelper();
+const projectHelper = new ProjectHelper();
+const timeEntryHelper = new TimeEntryHelper();
 const timeEntryService = new TimeEntryService();
 const localStorageService = new LocalStorageService();
 
@@ -27,8 +30,6 @@ class EditForm extends React.Component {
 
         this.state = {
             timeEntry: this.props.timeEntry,
-            time: moment().hour(0).minute(0).second(0).format('HH:mm:ss'),
-            interval: "",
             changeDescription: false,
             description: this.props.timeEntry.description,
             ready: false,
@@ -36,6 +37,7 @@ class EditForm extends React.Component {
             projectRequired: false,
             taskRequired: false,
             tagsRequired: false,
+            forceTasks: false,
             askToDeleteEntry: false,
             tags: this.props.timeEntry.tags ? this.props.timeEntry.tags : []
         };
@@ -43,68 +45,49 @@ class EditForm extends React.Component {
         this.setDescription = this.setDescription.bind(this);
         this.onSetDescription = this.onSetDescription.bind(this);
         this.editBillable = this.editBillable.bind(this);
-        this.checkRequiredFields = this.checkRequiredFields.bind(this)
+        this.checkRequiredFields = this.checkRequiredFields.bind(this);
+        this.notifyAboutError = this.notifyAboutError.bind(this);
+        this.editProject = this.editProject.bind(this);
+        this.editTask = this.editTask.bind(this);
     }
 
-    componentDidMount() {
-        this.checkForDefaultProject();
-        this.setTime();
-    }
-
-    async checkForDefaultProject() {
-        const entry = this.state.timeEntry;
-        if (!projectHelpers.isDefaultProjectEnabled()) {
-            this.setState({
-                timeEntry: entry
-            }, () => {
-                this.checkRequiredFields()
-            });
-            return; 
-        }
-        const defaultProject = await projectHelpers.getDefaultProject();
-            if (defaultProject && !defaultProject.archived) {
+    async componentDidMount() {
+        const { forceProjects, forceTasks } = this.props.workspaceSettings;
+        const {timeEntry} = this.state;
+        const {projectId, task} = timeEntry;
+        const taskId = task ? task.id : null;
+        if (!projectId || forceTasks && !taskId) {
+            const {projectDB, taskDB} = await this.checkDefaultProjectTask(forceTasks);
+            if (projectDB) {
+                const entry = await timeEntryHelper.updateProjectTask(timeEntry, projectDB, taskDB);
                 this.setState({
                     timeEntry: entry
                 }, () => {
                     this.checkRequiredFields()
-                });
-                if (!entry.projectId) {
-                    entry.projectId = defaultProject.id
-                    entry.billable = defaultProject.billable;
-                    this.editProject(defaultProject);
-                }
-            } else {
-                this.checkRequiredFields();
-                const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
-                const userId = localStorageService.get('userId');
-                projectHelpers.removeDefaultProjectForWorkspaceAndUser(activeWorkspaceId, userId);
-                this.toaster.toast(
-                    'info',
-                    "Your default project is no longer available. You can set a new one in Settings.",
-                    2
-                );
+                });            
             }
+            else {
+                this.checkRequiredFields()
+            }
+        }
+        else {
+            this.checkRequiredFields();
+        }
     }
 
-    setTime() {
-        clearInterval(this.state.interval);
-        if(!this.state.timeEntry.timeInterval.end) {
-            let currentPeriod = moment().diff(moment(this.state.timeEntry.timeInterval.start));
-            let interval = setInterval(() => {
-                currentPeriod = currentPeriod + 1000;
-                this.setState({
-                    time: duration(currentPeriod).format('HH:mm:ss', {trim: false})
-                })
-            }, 1000);
-            this.setState({
-                interval: interval
-            })
-        } else {
-            let currentPeriod = moment(this.state.timeEntry.timeInterval.end).diff(this.state.timeEntry.timeInterval.start);
-            this.setState({
-                time: duration(currentPeriod).format('HH:mm:ss', {trim: false})
-            })
+    async checkDefaultProjectTask(forceTasks) {
+        const { storage, defaultProject } = DefaultProject.getStorage();
+        if (defaultProject) {
+            const { projectDB, taskDB, msg, msgId } = await defaultProject.getProjectTaskFromDB(forceTasks);
+            console.log('checkDefaultProjectTask', { projectDB, taskDB, msg, msgId })
+            if (msg) {
+                setTimeout(() => {
+                    this.toaster.toast('info', msg, 5);
+                }, 2000)
+            }
+            return {projectDB, taskDB};
         }
+        return {projectDB: null, taskDB: null};
     }
 
     changeInterval(timeInterval) {
@@ -116,7 +99,6 @@ class EditForm extends React.Component {
                 this.setState({
                     timeEntry: timeEntry
                 }, () => {
-                    this.setTime();
                 })
             } else {
                 let timeEntries = localStorage.getItem('timeEntriesOffline') ? JSON.parse(localStorage.getItem('timeEntriesOffline')) : [];
@@ -126,7 +108,6 @@ class EditForm extends React.Component {
                         this.setState({
                             timeEntry: entry
                         }, () => {
-                            this.setTime();
                         })
                     }
                     return entry;
@@ -144,9 +125,10 @@ class EditForm extends React.Component {
                     this.setState({
                         timeEntry: data
                     }, () => {
-                        this.setTime();
                     });
-                }).catch((error) => {});
+                }).catch((error) => {
+                    this.notifyError(error)
+                });
             } else if (timeInterval.start && !timeInterval.end) {
                 timeEntryService.changeStart(
                     timeInterval.start,
@@ -156,7 +138,6 @@ class EditForm extends React.Component {
                     this.setState({
                         timeEntry: data
                     }, () => {
-                        this.setTime();
                         if (isAppTypeExtension()) {
                             getBrowser().extension.getBackgroundPage().addPomodoroTimer();
                         }
@@ -188,11 +169,6 @@ class EditForm extends React.Component {
                 this.setState({
                     timeEntry: timeEntry
                 }, () => {
-                    this.setTime();
-                    this.duration.setState({
-                        startTime: moment(timeEntry.timeInterval.start),
-                        endTime: moment(timeEntry.timeInterval.end)
-                    });
                 })
             } else {
                 let timeEntries = localStorage.getItem('timeEntriesOffline') ? JSON.parse(localStorage.getItem('timeEntriesOffline')) : [];
@@ -203,11 +179,6 @@ class EditForm extends React.Component {
                         this.setState({
                             timeEntry: entry
                         }, () => {
-                            this.setTime();
-                            this.duration.setState({
-                                startTime: moment(entry.timeInterval.start),
-                                endTime: moment(entry.timeInterval.end)
-                            });
                         })
                     }
                     return entry;
@@ -235,13 +206,10 @@ class EditForm extends React.Component {
                 this.setState({
                     timeEntry: data
                 }, () => {
-                    this.setTime();
-                    this.duration.setState({
-                        startTime: moment(data.timeInterval.start),
-                        endTime: moment(data.timeInterval.end)
-                    });
                 });
-            }).catch(() => {});
+            }).catch((error) => {
+                this.notifyError(error);
+            });
         }
     }
 
@@ -259,7 +227,7 @@ class EditForm extends React.Component {
                 localStorage.setItem('timeEntryInOffline', JSON.stringify(timeEntry));
                 this.setState({
                     timeEntry: timeEntry,
-                    description: timeEntry.description + descripton.endsWith(' ') ? ' ' : ''
+                    description: timeEntry.description + description.endsWith(' ') ? ' ' : ''
                 }, () => this.checkRequiredFields());
             } else {
                 let timeEntries = localStorage.getItem('timeEntriesOffline') ? JSON.parse(localStorage.getItem('timeEntriesOffline')) : [];
@@ -268,7 +236,7 @@ class EditForm extends React.Component {
                         entry.description = description.trim();
                         this.setState({
                             timeEntry: entry,
-                            description: entry.description + descripton.endsWith(' ') ? ' ' : ''
+                            description: entry.description + description.endsWith(' ') ? ' ' : ''
                         }, () => this.checkRequiredFields());
                     }
                     return entry;
@@ -292,7 +260,16 @@ class EditForm extends React.Component {
         }
     }
 
-    editProject(project) {
+    notifyError(error) {
+        if (error.request.status === 403) {
+            const response = JSON.parse(error.request.response)
+            if (response.code === 4030) {
+                this.notifyAboutError(response.message, 'info', 10)
+            } 
+        }
+    }
+
+    editProject(project, callbackDefaultTask) {
         if(!project.id) {
             timeEntryService.removeProject(this.state.timeEntry.id)
                 .then((response) => {
@@ -311,12 +288,18 @@ class EditForm extends React.Component {
             timeEntryService.updateProject(project.id, this.state.timeEntry.id)
                 .then(response => {
                     this.setState({
-                        timeEntry: response.data
+                        timeEntry: Object.assign(response.data, { project })
                     }, () => {
                         this.checkRequiredFields()
-                        this.projectList.mapSelectedProject()
-                    });
-            })
+                        this.projectList.mapSelectedProject();
+                        if (callbackDefaultTask) 
+                            callbackDefaultTask()
+                    })
+                })
+                .catch(error => {
+                    console.log('error', error);
+                    this.notifyError(error);
+                });
         }
     }
 
@@ -330,8 +313,11 @@ class EditForm extends React.Component {
             timeEntryService.updateTask(task.id, project.id, this.state.timeEntry.id)
                 .then(response => {
                     this.setState({
-                        timeEntry: response.data
-                    }, () => this.checkRequiredFields());
+                        timeEntry: Object.assign(response.data, { project, task }),
+                    }, () => {
+                        this.checkRequiredFields();
+                        this.projectList.mapSelectedTask(task.name)
+                    });
                 })
                 .catch(() => {
                 });
@@ -399,10 +385,7 @@ class EditForm extends React.Component {
     }
 
     deleteEntry() {
-        if (this.state.interval) {
-            clearInterval(this.state.interval);
-        }
-        if(checkConnection()) {
+        if(isOffline()) {
             let timeEntry = localStorage.getItem('timeEntryInOffline') ? JSON.parse(localStorage.getItem('timeEntryInOffline')) : null;
             if(timeEntry && timeEntry.id === this.state.timeEntry.id) {
                 localStorage.setItem('timeEntryInOffline', null);
@@ -419,8 +402,9 @@ class EditForm extends React.Component {
             timeEntryService.deleteTimeEntry(this.state.timeEntry.id)
                 .then(response => {
                     if (isAppTypeExtension()) {
-                        getBrowser().extension.getBackgroundPage().restartPomodoro();
-                        getBrowser().extension.getBackgroundPage().entryInProgressChangedEventHandler(null);
+                        const backgroundPage = getBrowser().extension.getBackgroundPage();
+                        backgroundPage.restartPomodoro();
+                        backgroundPage.setTimeEntryInProgress(null);
                     }
                     ReactDOM.render(<HomePage/>, document.getElementById('mount'));
                 })
@@ -500,7 +484,6 @@ class EditForm extends React.Component {
                     this.setState({
                         timeEntry: response.data
                     }, () => {
-                        this.setTime();
                     })
                 });
         }
@@ -522,6 +505,7 @@ class EditForm extends React.Component {
         let projectRequired = false;
         let taskRequired = false;
         let tagsRequired = false;
+        let forceTasks = false;
         let workspaceSettings;
 
         if (typeof this.props.workspaceSettings.forceDescription !== "undefined") {
@@ -540,32 +524,34 @@ class EditForm extends React.Component {
 
             if (workspaceSettings.forceProjects &&
                 !this.state.timeEntry.projectId &&
-                !checkConnection()
+                !isOffline()
             ) {
                 projectRequired = true;
             }
 
+            forceTasks = workspaceSettings.forceTasks;
             if (
                 workspaceSettings.forceTasks &&
                 !this.state.timeEntry.task &&
                 !this.state.timeEntry.taskId &&
-                !checkConnection()
+                !isOffline()
             ) {
                 taskRequired = true;
             }
 
             if (workspaceSettings.forceTags &&
                 (!this.state.timeEntry.tags || !this.state.timeEntry.tags.length > 0) &&
-                (!this.state.timeEntry.tagIds || !this.state.timeEntry.tagIds.length > 0) && !checkConnection()) {
+                (!this.state.timeEntry.tagIds || !this.state.timeEntry.tagIds.length > 0) && !isOffline()) {
                 tagsRequired = true;
             }
         }
 
         this.setState({
-            descRequired: descRequired,
-            projectRequired: projectRequired,
-            taskRequired: taskRequired,
-            tagsRequired: tagsRequired,
+            descRequired,
+            projectRequired,
+            taskRequired,
+            tagsRequired,
+            forceTasks,
             ready: true
         });
     }
@@ -581,14 +567,14 @@ class EditForm extends React.Component {
     closeOtherDropdowns(openedDropdown) {
         switch(openedDropdown) {
             case 'projectList':
-                this.tagList.setState({
-                    isOpen: false
-                });
+                if (this.tagList.isOpened()) {
+                    this.tagList.closeOpened();
+                }
                 break;
             case 'tagList':
-                this.projectList.setState({
-                    isOpen: false
-                });
+                if (this.projectList.isOpened()) {
+                    this.projectList.closeOpened();
+                }
                 break;
         }
     }
@@ -610,19 +596,20 @@ class EditForm extends React.Component {
         ReactDOM.render(<HomePage/>, document.getElementById('mount'));
     }
 
-    notifyAboutError(message) {
-        this.toaster.toast('error', message, 2);
+    notifyAboutError(message, type='error', n=2) {
+        this.toaster.toast(type, message, n);
     }
 
     render(){
         if(!this.state.ready) {
             return null;
         } else {
+            const {timeEntry} = this.state;
             return (
                 <div>
                     <Header
                         backButton={true}
-                        mode={localStorage.getItem('mode')}
+                        mode={localStorage.getItem('modeEnforced')}
                         disableManual={localStorage.getItem('inProgress')}
                         changeMode={this.changeMode.bind(this)}
                         workspaceSettings={JSON.parse(localStorage.getItem('workspaceSettings'))}
@@ -637,14 +624,11 @@ class EditForm extends React.Component {
                         ref={instance => {
                             this.duration = instance;
                         }}
-                        timeEntry={this.state.timeEntry}
-                        start={this.state.timeEntry.timeInterval.start}
-                        end={this.state.timeEntry.timeInterval.end}
-                        time={this.state.time}
+                        timeEntry={timeEntry}
                         timeFormat={this.props.timeFormat}
                         changeInterval={this.changeInterval.bind(this)}
                         changeDuration={this.changeDuration.bind(this)}
-                        changeDate={this.state.timeEntry.timeInterval.end ? this.changeDate.bind(this) : this.changeStartDate.bind(this)}
+                        changeDate={timeEntry.timeInterval.end ? this.changeDate.bind(this) : this.changeStartDate.bind(this)}
                         workspaceSettings={this.props.workspaceSettings}
                         isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}
                         userSettings={this.props.userSettings}
@@ -663,18 +647,19 @@ class EditForm extends React.Component {
                                 ref={instance => {
                                     this.projectList = instance;
                                 }}
-                                selectedProject={this.state.timeEntry.projectId}
-                                selectedTask={this.state.timeEntry.task ? this.state.timeEntry.task.id : null}
-                                selectProject={this.editProject.bind(this)}
-                                selectTask={this.editTask.bind(this)}
+                                timeEntry={timeEntry}
+                                selectedProject={timeEntry.project}
+                                selectedTask={timeEntry.task}
+                                selectProject={this.editProject}
+                                selectTask={this.editTask}
                                 noTask={false}
                                 workspaceSettings={this.props.workspaceSettings}
                                 isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}
                                 createProject={true}
                                 projectRequired={this.state.projectRequired}
                                 taskRequired={this.state.taskRequired}
+                                forceTasks={this.state.forceTasks}
                                 projectListOpened={this.projectListOpened.bind(this)}
-                                timeEntry={this.state.timeEntry}
                                 editForm={true}
                                 timeFormat={this.props.timeFormat}
                                 userSettings={this.props.userSettings}
@@ -692,18 +677,18 @@ class EditForm extends React.Component {
                             isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}
                             workspaceSettings={this.props.workspaceSettings}
                             editForm={true}
-                            errorMessage={this.notifyAboutError.bind(this)}
+                            errorMessage={this.notifyAboutError}
                         />
                         <div className="edit-form-buttons">
                             <div className="edit-form-buttons__billable">
-                                <span className={this.state.timeEntry.billable ?
+                                <span className={timeEntry.billable ?
                                     "edit-form-checkbox checked" : "edit-form-checkbox"}
                                     onClick={this.editBillable}
                                     tabIndex={"0"} 
                                     onKeyDown={e => {if (e.key==='Enter') this.editBillable()}}
                                 >
                                     <img src="./assets/images/checked.png"
-                                         className={this.state.timeEntry.billable ?
+                                         className={timeEntry.billable ?
                                              "edit-form-billable-img" :
                                              "edit-form-billable-img-hidden"
                                          }/>

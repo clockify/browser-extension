@@ -28,13 +28,15 @@ setTimeout(() => {
     /* Checklist buttons */
     clockifyButton.render('.checklist-item-details:not(.clockify)', {observe: true}, (elem) => {
         const root = $('div[id="trello-root"]');
-        const project= $('.board-header-btn > span').textContent.trim();
+        //const project= $('.board-header-btn > span').textContent.trim();
+        const projectElem = $('.board-header-btn-text', root); //.textContent.trim();
+
         const desc = $('div[class="window-title"] > h2', root).textContent;
         const task = $('.checklist-item-details-text', elem).textContent;
 
         const link = clockifyButton.createButton({
             description: task + " - " + desc,
-            projectName: project,
+            projectName: projectElem ? projectElem.textContent.trim() : null,
             small: true
         });
         link.classList.add('checklist-item-button');

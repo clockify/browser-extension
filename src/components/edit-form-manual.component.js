@@ -7,14 +7,17 @@ import ProjectList from './project-list.component';
 import TagsList from './tags-list.component';
 import * as ReactDOM from 'react-dom';
 import HomePage from './home-page.component';
-import {checkConnection} from "./check-connection";
+import {isOffline} from "./check-connection";
 import {ProjectHelper} from "../helpers/project-helper";
+import {TimeEntryHelper} from "../helpers/timeEntry-helper";
 import {TimeEntryService} from "../services/timeEntry-service";
 import DeleteEntryConfirmationComponent from "./delete-entry-confirmation.component";
 import {LocalStorageService} from "../services/localStorage-service";
 import Toaster from "./toaster-component";
+import {DefaultProject} from '../helpers/storageUserWorkspace';
 
-const projectHelpers = new ProjectHelper();
+const projectHelper = new ProjectHelper();
+const timeEntryHelper = new TimeEntryHelper();
 const timeEntryService = new TimeEntryService();
 const localStorageService = new LocalStorageService();
 
@@ -24,79 +27,70 @@ class EditFormManual extends React.Component {
         super(props);
         this.state = {
             timeEntry: this.props.timeEntry,
-            time: moment().hour(0).minute(0).second(0).format('HH:mm:ss'),
-            interval: '',
             ready: false,
             descRequired: false,
             projectRequired: false,
             taskRequired: false,
             tagsRequired: false,
+            forceTasks: false,
             askToDeleteEntry: false,
             tags: this.props.timeEntry.tags ? this.props.timeEntry.tags : []
         }
+
+        this.notifyAboutError = this.notifyAboutError.bind(this);
+        this.editProject = this.editProject.bind(this);
+        this.editTask = this.editTask.bind(this);
     }
 
-    componentDidMount(){
-        let timeEntry = this.state.timeEntry;
-        this.checkForDefaultProject();
+    async componentDidMount(){
+        const {timeEntry} = this.state;
         timeEntry.timeInterval.duration =
             moment.duration(
                 moment(timeEntry.timeInterval.end).diff(moment(timeEntry.timeInterval.start))
             );
-
-        this.setState({
-            timeEntry: timeEntry
-        }, () => this.checkRequiredFields());
-        this.setTime();
-    }
-
-    async checkForDefaultProject() {
-        if (!projectHelpers.isDefaultProjectEnabled()) return;
-        const defaultProject = await projectHelpers.getDefaultProject();
-        if (defaultProject && !defaultProject.archived) {
-            const entry = this.state.timeEntry;
-            if (!entry.projectId) {
-                entry.projectId = defaultProject.id
-            }
-            entry.billable = defaultProject.billable;
-            this.setState({
-                timeEntry: entry
-            }, this.checkRequiredFields());
-        } else {
-            this.checkRequiredFields();
-            const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
-            const userId = localStorageService.get('userId');
-            projectHelpers.removeDefaultProjectForWorkspaceAndUser(activeWorkspaceId, userId);
-            this.toaster.toast(
-                'info',
-                "Your default project is no longer available. You can set a new one in Settings.",
-                3
-            );
-        }
-    }
-
-    setTime() {
-        clearInterval(this.state.interval);
-        if(!this.state.timeEntry.timeInterval.end) {
-            let currentPeriod = moment().diff(moment(this.state.timeEntry.timeInterval.start));
-            let interval = setInterval(() => {
-                currentPeriod = currentPeriod + 1000;
+    
+        const { forceProjects, forceTasks } = this.props.workspaceSettings;
+        const {projectId, task} = timeEntry;
+        const taskId = task ? task.id : null;
+        if (!projectId || forceTasks && !taskId) {
+            const {projectDB, taskDB} = await this.checkDefaultProjectTask(forceTasks);
+            if (projectDB) {
                 this.setState({
-                    time: duration(currentPeriod).format('HH:mm:ss', {trim: false})
-                })
-            }, 1000);
-
-            this.setState({
-                interval: interval
-            })
-        } else {
-            let currentPeriod = moment(this.state.timeEntry.timeInterval.end).diff(this.state.timeEntry.timeInterval.start);
-
-            this.setState({
-                time: duration(currentPeriod).format('HH:mm:ss', {trim: false})
-            })
+                    timeEntry: Object.assign(timeEntry, { 
+                        projectId: projectDB.id,
+                        project: projectDB,
+                        task: taskDB,
+                        taskId: taskDB ? taskDB.id: null,
+                        billable: projectDB.billable
+                    })
+    
+                }, () => {
+                    this.checkRequiredFields()
+                });            
+            }
+            else {
+                this.checkRequiredFields()
+            }
+        }
+        else {
+            this.checkRequiredFields();
         }
     }
+
+    async checkDefaultProjectTask(forceTasks) {
+        const { storage, defaultProject } = DefaultProject.getStorage();
+        if (defaultProject) {
+            const { projectDB, taskDB, msg, msgId } = await defaultProject.getProjectTaskFromDB(forceTasks);
+            if (msg) {
+                setTimeout(() => {
+                    this.toaster.toast('info', msg, 5);
+                }, 2000)
+            }
+            return {projectDB, taskDB};
+        }
+        return {projectDB: null, taskDB: null};
+    }
+
 
     changeInterval(timeInterval) {
         let timeEntry = this.state.timeEntry;
@@ -105,7 +99,6 @@ class EditFormManual extends React.Component {
         this.setState({
             timeEntry: timeEntry
         }, () => {
-            this.setTime();
         });
 
     }
@@ -129,11 +122,6 @@ class EditFormManual extends React.Component {
         this.setState({
             timeEntry: timeEntry
         }, () => {
-            this.setTime();
-            this.duration.setState({
-                startTime:  timeEntry.timeInterval.start,
-                endTime: timeEntry.timeInterval.end
-            });
         });
     }
 
@@ -142,17 +130,17 @@ class EditFormManual extends React.Component {
         timeEntry.description =  event.target.value;
 
         this.setState({
-            timeEntry: timeEntry
+            timeEntry
         }, () => this.checkRequiredFields());
     }
 
     editProject(project) {
-        let timeEntry = this.state.timeEntry;
-        timeEntry.projectId =  project && project.id ? project.id : null;
-        timeEntry.billable = project.billable;
-
         this.setState({
-            timeEntry: timeEntry
+            timeEntry: Object.assign(this.state.timeEntry, { 
+                projectId: project && project.id ? project.id : null,
+                billable: project && project.billable ? project.billable : null,
+                project 
+            })
         }, () => {
             this.projectList.mapSelectedProject()
             this.checkRequiredFields()
@@ -160,14 +148,18 @@ class EditFormManual extends React.Component {
     }
 
     editTask(task, project) {
-        let timeEntry = this.state.timeEntry;
-        timeEntry.projectId =  project.id;
-        timeEntry.task =  task;
-
         this.setState({
-            timeEntry: timeEntry
-        }, () => this.checkRequiredFields());
+            timeEntry: Object.assign(this.state.timeEntry, { 
+                projectId: project.id, 
+                billable: project.billable,
+                project, 
+                task 
+            })
+        }, () => { 
+            this.checkRequiredFields() ;
+        });
     }
+
 
     editTags(tag) {
         let tagIds = this.state.tags ? this.state.tags.map(it => it.id) : [];
@@ -213,6 +205,7 @@ class EditFormManual extends React.Component {
         let projectRequired = false;
         let taskRequired = false;
         let tagsRequired = false;
+        let forceTasks = false;
         let workspaceSettings;
 
         if (typeof this.props.workspaceSettings.forceDescription !== "undefined") {
@@ -231,16 +224,17 @@ class EditFormManual extends React.Component {
             if (
                 workspaceSettings.forceProjects &&
                 !this.state.timeEntry.projectId &&
-                !checkConnection()
+                !isOffline()
             ) {
                 projectRequired = true;
             }
 
+            forceTasks = workspaceSettings.forceTasks;
             if (
                 workspaceSettings.forceTasks &&
                 !this.state.timeEntry.task &&
                 !this.state.timeEntry.taskId &&
-                !checkConnection()
+                !isOffline()
             ) {
                 taskRequired = true;
             }
@@ -248,17 +242,18 @@ class EditFormManual extends React.Component {
             if (workspaceSettings.forceTags &&
                 (!this.state.timeEntry.tags || !this.state.timeEntry.tags.length > 0) &&
                 (!this.state.timeEntry.tagIds || !this.state.timeEntry.tagIds.length > 0) &&
-                !checkConnection()
+                !isOffline()
             ) {
                 tagsRequired = true;
             }
         }
 
         this.setState({
-            descRequired: descRequired,
-            projectRequired: projectRequired,
-            taskRequired: taskRequired,
-            tagsRequired: tagsRequired,
+            descRequired,
+            projectRequired,
+            taskRequired,
+            tagsRequired,
+            forceTasks,
             ready: true
         });
     }
@@ -272,7 +267,7 @@ class EditFormManual extends React.Component {
         ) {
             return;
         }
-        if(checkConnection()) {
+        if(isOffline()) {
             let timeEntry = {
                 workspaceId: this.state.timeEntry.workspaceId,
                 id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
@@ -311,8 +306,14 @@ class EditFormManual extends React.Component {
                     localStorage.setItem('timeEntriesOffline', JSON.stringify(timeEntries));
                     ReactDOM.render(<HomePage/>, document.getElementById('mount'));
                 })
-                    .catch(() => {
-                    });
+                .catch(error => {
+                    if (error.request.status === 403) {
+                        const response = JSON.parse(error.request.response)
+                        if (response.code === 4030) {
+                            this.notifyAboutError(response.message, 'info', 10)
+                        } 
+                    }
+                });
             }
         }
     }
@@ -331,7 +332,6 @@ class EditFormManual extends React.Component {
         this.setState({
             timeEntry: timeEntry
         }, () => {
-            this.setTime();
         });
     }
 
@@ -379,19 +379,20 @@ class EditFormManual extends React.Component {
         ReactDOM.render(<HomePage/>, document.getElementById('mount'));
     }
 
-    notifyAboutError(message) {
-        this.toaster.toast('error', message, 2);
+    notifyAboutError(message, type='error', n=2) {
+        this.toaster.toast(type, message, n);
     }
 
     render(){
         if(!this.state.ready) {
             return null;
         } else {
+            const {timeEntry} = this.state;
             return(
                 <div>
                     <Header
                         backButton={true}
-                        mode={localStorage.getItem('mode')}
+                        mode={localStorage.getItem('modeEnforced')}
                         disableManual={localStorage.getItem('inProgress')}
                         disableAutomatic={false}
                         changeMode={this.changeMode.bind(this)}
@@ -407,10 +408,7 @@ class EditFormManual extends React.Component {
                         ref={instance => {
                             this.duration = instance;
                         }}
-                        timeEntry={this.state.timeEntry}
-                        start={this.state.timeEntry.timeInterval.start}
-                        end={this.state.timeEntry.timeInterval.end}
-                        time={this.state.time}
+                        timeEntry={timeEntry}
                         changeInterval={this.changeInterval.bind(this)}
                         changeDuration={this.changeDuration.bind(this)}
                         changeDate={this.changeDate.bind(this)}
@@ -426,7 +424,7 @@ class EditFormManual extends React.Component {
                                 placeholder={this.state.descRequired ? "Description (required)" : "Description"}
                                 className={"edit-form-description"}
                                 type="text"
-                                value={this.state.timeEntry.description}
+                                value={timeEntry.description}
                                 onChange={this.setDescription.bind(this)}
                             />
                         </div>
@@ -435,17 +433,18 @@ class EditFormManual extends React.Component {
                                 ref={instance => {
                                     this.projectList = instance;
                                 }}
-                                selectedProject={this.state.timeEntry.projectId}
-                                selectedTask={this.state.timeEntry.task}
-                                selectProject={this.editProject.bind(this)}
-                                selectTask={this.editTask.bind(this)}
+                                selectedProject={timeEntry.project}
+                                selectedTask={timeEntry.task}
+                                selectProject={this.editProject}
+                                selectTask={this.editTask}
                                 noTasks={false}
                                 workspaceSettings={this.props.workspaceSettings}
                                 isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}
                                 projectRequired={this.state.projectRequired}
                                 taskRequired={this.state.taskRequired}
+                                forceTasks={this.state.forceTasks}
                                 projectListOpened={this.projectListOpened.bind(this)}
-                                timeEntry={this.state.timeEntry}
+                                timeEntry={timeEntry}
                                 editForm={false}
                                 userSettings={this.props.userSettings}
                             />
@@ -455,25 +454,25 @@ class EditFormManual extends React.Component {
                                 this.tagList = instance;
                             }}
                             tags={this.state.tags ? this.state.tags : []}
-                            tagIds={this.state.timeEntry.tagIds ? this.state.tags.map(it => it.id) : []}
+                            tagIds={timeEntry.tagIds ? this.state.tags.map(it => it.id) : []}
                             editTag={this.editTags.bind(this)}
                             tagsRequired={this.state.tagsRequired}
                             tagListOpened={this.tagListOpened.bind(this)}
                             isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}
                             workspaceSettings={this.props.workspaceSettings}
                             editForm={false}
-                            errorMessage={this.notifyAboutError.bind(this)}
+                            errorMessage={this.notifyAboutError}
                         />
                         <div className="edit-form-buttons">
                             <div className="edit-form-buttons__billable">
-                                <span className={this.state.timeEntry.billable ?
+                                <span className={timeEntry.billable ?
                                     "edit-form-checkbox checked" : "edit-form-checkbox"}
                                     onClick={this.editBillable.bind(this)}
                                     tabIndex={"0"} 
                                     onKeyDown={e => {if (e.key==='Enter') this.editBillable()}}
                                 >
                                     <img src="./assets/images/checked.png"
-                                         className={this.state.timeEntry.billable ?
+                                         className={timeEntry.billable ?
                                              "edit-form-billable-img" : "edit-form-billable-img-hidden"}/>
                                 </span>
                                 <label onClick={this.editBillable.bind(this)}

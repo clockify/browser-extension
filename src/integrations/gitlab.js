@@ -46,6 +46,7 @@ clockifyButton.render('.merge-request-details.issuable-details > .detail-page-de
 
     var tags = Array.from($$("div.labels .gl-label-text")).map(e => e.innerText);
 
+
     link = clockifyButton.createButton({
         description: description,
         projectName: projectElem.textContent.trim(),

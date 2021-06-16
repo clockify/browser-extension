@@ -4,14 +4,22 @@ import {getBrowser} from "../helpers/browser-helper";
 import {getIconStatus} from "../enums/browser-icon-status-enum";
 import Login from "../components/login.component";
 import HomePage from "../components/home-page.component";
-import {getEntryInProgress, startTimer, stopInProgress} from "../helpers/integration-helper";
-import {checkConnection} from "../components/check-connection";
+import { getEntryInProgress, startTimer, stopInProgress,
+         getProjectTaskFromDB, 
+         getProjects, getProjectTasks,
+         getProjectsByIdsForIntegration,
+         getTags
+} from "../helpers/integration-helper";
+import {isOffline} from "../components/check-connection";
 import {LocalStorageService} from "../services/localStorage-service";
 import {UserService} from "../services/user-service";
 import {isAppTypeExtension} from "../helpers/app-types-helper";
+import {TimeEntryService} from "../services/timeEntry-service";
 
 const localStorageService = new LocalStorageService();
 const userService = new UserService();
+const timeEntryService = new TimeEntryService();
+
 
 export class Extension {
 
@@ -24,99 +32,69 @@ export class Extension {
         });
     }
 
+    
     afterLoad() {
-        getBrowser().storage.local.get(
-            ['token', 'activeWorkspaceId', 'userId', 'userEmail',
-                'weekStart', 'timeZone', 'refreshToken', 'userSettings'], (result) => {
-                const mountHtmlElem = document.getElementById('mount');
-                if (mountHtmlElem) {
-                    mountHtmlElem.style.width = '360px';
-                    mountHtmlElem.style.minHeight = '430px';
-                }
-
-                if (result.userId) {
-                    if (!JSON.parse(localStorageService.get('offline'))) {
-                        userService.getUser(result.userId)
-                            .then(response => {
-                                let data = response.data;
-                                localStorage.setItem('userEmail', data.email);
-                                localStorage.setItem('activeWorkspaceId', data.activeWorkspace);
-                                localStorage.setItem('userSettings', JSON.stringify(data.settings));
-                                if (mountHtmlElem) {
-                                    ReactDOM.render(<HomePage/>, mountHtmlElem);
-                                }
-                            }).catch(error => {
-                            if (mountHtmlElem) {
-                                ReactDOM.render(
-                                    <Login logout={true}/>,
-                                    mountHtmlElem
-                                );
-                            }
-                        });
-                    } else {
+        const token = localStorageService.get("token");
+        const mountHtmlElem = document.getElementById('mount');
+        if (mountHtmlElem) {
+            mountHtmlElem.style.width = '360px';
+            mountHtmlElem.style.minHeight = '430px';
+        }
+        if (token) {
+            if (!JSON.parse(localStorageService.get('offline'))) {
+                userService.getUser()
+                    .then(response => {
+                        let data = response.data;
+                        localStorage.setItem('userEmail', data.email);
+                        localStorage.setItem('userId', data.id);
+                        localStorage.setItem('activeWorkspaceId', data.activeWorkspace);
+                        localStorage.setItem('userSettings', JSON.stringify(data.settings));
                         if (mountHtmlElem) {
                             ReactDOM.render(<HomePage/>, mountHtmlElem);
                         }
-                    }
-                } else {
-                    this.setIcon(getIconStatus().timeEntryEnded);
-                    if (mountHtmlElem) {
-                        ReactDOM.render(
-                            <Login/>,
-                            mountHtmlElem
-                        );
-                    }
-                }
-            });
-        getBrowser().tabs.query({}, (tabs) => {
-            const baseUrl = localStorageService.get('baseUrl');
-            let clientUrl = this.setHomeUrlFromBaseUrl(baseUrl);
-            const clockifyTabs = tabs.filter(tab => tab.url && tab.url.includes(clientUrl));
-
-            if (!clockifyTabs.length) {
-                return;
-            }
-
-            getBrowser().tabs.sendMessage(clockifyTabs[0].id, {method: "getLocalStorage"}, (response) => {
-                const mountHtmlElem = document.getElementById('mount');
+                    }).catch(error => {
+                        if (mountHtmlElem) {
+                            if (localStorage.getItem('offline') === 'true') {
+                                ReactDOM.render(<HomePage/>, mountHtmlElem);
+                            }
+                            else {
+                                ReactDOM.render(<Login logout={true}/>, mountHtmlElem);
+                            }
+                        }
+                    });
+            } else {
                 if (mountHtmlElem) {
-                    mountHtmlElem.style.width = '360px';
-                    mountHtmlElem.style.minHeight = '430px';
+                    ReactDOM.render(<HomePage/>, mountHtmlElem);
                 }
-                if (response && response.token !== 'null' && response.userId) {
-                    const storageItems = {
-                        token: response.token,
-                        refreshToken: response.refreshToken,
-                        activeWorkspaceId: JSON.parse(response.activeWorkspace).id,
-                        userId: JSON.parse(response.user).id,
-                        weekStart: JSON.parse(response.user).settings.weekStart,
-                        timeZone: JSON.parse(response.user).settings.timeZone,
-                        userSettings: JSON.stringify(JSON.parse(response.user).settings),
-                        userEmail: response.userEmail
-                    };
+            }
+        } else {
+            this.setIcon(getIconStatus().timeEntryEnded);
+            if (mountHtmlElem) {
+                ReactDOM.render(
+                    <Login/>,
+                    mountHtmlElem
+                );
+            }
+        }
 
-                    this.saveAllToStorages(storageItems);
-                    if (mountHtmlElem) {
-                        ReactDOM.render(
-                            <HomePage/>,
-                            document.getElementById('mount')
-                        );
-                    }
-                }
-            });
-        });
-
-        this.registerButtonHandlers();
+        if (!isOffline())
+            this.registerButtonHandlers();
     }
 
+
     setHomeUrlFromBaseUrl(baseUrl) {
+        const subDomainName = localStorageService.get("subDomainName", null);
         let clientUrl = "";
         if (baseUrl.includes('api.clockify.me')) {
-            clientUrl = "clockify.me"
+            clientUrl = "clockify.me";
         } else {
             clientUrl = baseUrl.replace(/https?:\/\//, '').replace('/api', '');
         }
-        return clientUrl;
+
+        if (subDomainName !== null)
+            clientUrl = `${subDomainName}.${clientUrl}`;
+
+        return "/" + clientUrl;
     }
 
     loadFromStorage(key) {
@@ -134,6 +112,40 @@ export class Extension {
                     break;
                 case 'submitTime':
                     this.submitTime(request, sendResponse);
+                    break;
+                // popupDlg
+                case 'getDefaultProjectTask':
+                    this.getDefaultProjectTask(request, sendResponse);
+                    break;
+                case 'getProjects':
+                    this.getProjects(request, sendResponse);
+                    break;
+                case 'getProjectTasks':
+                    this.getProjectTasks(request, sendResponse);
+                    break;
+                case 'getProjectsByIds':
+                    this.getProjectsByIds(request, sendResponse);
+                    break;
+                case 'submitDescription':
+                    this.submitDescription(request, sendResponse);
+                    break;
+                case 'editProject':
+                    this.editProject(request, sendResponse);
+                    break;
+                case 'editTask':
+                    this.editTask(request, sendResponse);
+                    break;
+                case 'getTags':
+                    this.getTags(request, sendResponse);
+                    break;
+                case 'editTags':
+                    this.editTags(request, sendResponse);
+                    break;
+                case 'fetchEntryInProgress':
+                    this.fetchEntryInProgress(request, sendResponse);
+                    break;                    
+                case 'editBillable':
+                    this.editBillable(request, sendResponse);
                     break;
             }
             return true;
@@ -208,7 +220,7 @@ export class Extension {
     }
 
     getEntryInProgressForBrowserIcon() {
-        if (!checkConnection()) {
+        if (!isOffline()) {
             return getEntryInProgress().then((response) => {
                 if (response && response.id) {
                     window.inProgress = true;
@@ -251,6 +263,190 @@ export class Extension {
     saveAllToStorages(map) {
         this.saveAllToLocalStorage(map);
         this.saveAllToBrowserStorage(map);
+    }
+
+
+    async getDefaultProjectTask(request, sendResponse) {
+        getEntryInProgress()
+            .then(async response => {
+                if (response && response.id) {
+                    const {projectDB, taskDB, msg, msgId} = await getProjectTaskFromDB(request.options);
+                    sendResponse({projectDB, taskDB, msg, msgId});
+                }
+            })
+            .catch((error) => {
+                console.log('>>>>> error', error)
+                sendResponse({projectDB: null , taskDB: null, msg:error})
+            });
+    }
+
+    getProjects(request, sendResponse) {
+        getEntryInProgress().then((response) => {
+            if (response && response.id) {
+                return getProjects(request.options)
+                    .then((response) => {
+                        if (response.status === 201) {
+                        }
+                        sendResponse(response);
+                    })
+                    .catch((error) => {
+                        sendResponse(error)
+                    })
+            }
+        })
+        .catch((error) => {
+            sendResponse(error)
+        });
+    }
+    
+    getProjectTasks(request, sendResponse) {
+        getEntryInProgress().then((response) => {
+            if (response && response.id) {
+                return getProjectTasks(request.options)
+                    .then((response) => {
+                        if (response.status === 201) {
+                        }
+                        sendResponse(response);
+                    })
+                    .catch((error) => {
+                        sendResponse(error)
+                    })
+            }
+        })
+        .catch((error) => {
+            sendResponse(error)
+        });
+    }
+
+
+    getProjectsByIds(request, sendResponse) {
+        getEntryInProgress().then((response) => {
+            if (response && response.id) {
+                return getProjectsByIdsForIntegration(request.options)
+                    .then((response) => {
+                        if (response.status === 200) {
+                        }
+                        sendResponse(response);
+                    })
+                    .catch((error) => {
+                        console.log('salje error:', error)
+                        sendResponse(error)
+                    })
+            }
+        })
+        .catch((error) => {
+            sendResponse(error)
+        });
+    }
+
+    getTags(request, sendResponse) {
+        getEntryInProgress().then((response) => {
+            if (response && response.id) {
+                return getTags(request.options)
+                    .then((response) => {
+                        if (response.status === 201) {
+                        }
+                        sendResponse(response);
+                    })
+                    .catch((error) => {
+                        console.log('salje error:', error)
+                        sendResponse(error)
+                    })
+            }
+        })
+        .catch((error) => {
+            sendResponse(error)
+        });
+    }
+ 
+ 
+    // popupDlg
+    submitDescription(request, sendResponse) {
+        const { id, description } = request.timeEntryOptions;
+        return timeEntryService.setDescription(id, description.trim())
+            .then(response => {
+                sendResponse(response);
+            })
+            .catch(() => {
+            });
+    }
+
+    editProject(request, sendResponse) {
+        const { id, project} = request.timeEntryOptions;
+        if (!project.id) {
+            return timeEntryService.removeProject(id)
+                .then((response) => {
+                    sendResponse(response);
+                })
+                .catch((error) => {
+                });
+        } else {
+            return timeEntryService.updateProject(project.id, id)
+                .then(response => {
+                    sendResponse(response);
+                })
+                .catch((error) => {
+                    console.log(error)
+                    // this.notifyError(error);
+                });
+        }
+    }
+
+    editTask(request, sendResponse) {
+        const { id, project, task } = request.timeEntryOptions;
+        if (!task) {
+            return timeEntryService.removeTask(id)
+                .then(response => {
+                    sendResponse(response.data);
+                })
+                .catch(() => {
+                });
+        } else {
+            return timeEntryService.updateTask(task.id, project.id, id)
+                .then(response => {
+                    sendResponse(response.data);
+                })
+                .catch((error) => {
+                    console.log(error)
+                });
+        }
+    }
+
+    editTags(request, sendResponse) {
+        const { id, tagIds } = request.timeEntryOptions;
+        return timeEntryService.updateTags(tagIds, id)
+            .then(response => {
+                let data = response.data;
+                sendResponse({
+                    status: 200,
+                    timeEntry: data
+                });
+            })
+            .catch(() => {
+            })
+    }
+
+    fetchEntryInProgress(request, sendResponse) { // to get tag names
+        timeEntryService.getEntryInProgress().then((response) => {
+            sendResponse(response)
+        })
+        .catch((error) => {
+            sendResponse(error)
+        });
+    }    
+
+    editBillable(request, sendResponse) {
+        const { id, billable} = request.timeEntryOptions;
+        return timeEntryService.updateBillable(billable, id)
+            .then(response => {
+                let data = response.data;
+                sendResponse({
+                    status: 200,
+                    timeEntry: data
+                });
+            })
+            .catch(() => {
+            })
     }
 
 }

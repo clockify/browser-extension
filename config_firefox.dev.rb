@@ -3,9 +3,9 @@ require 'compass/import-once/activate'
 
 # Set this to the root of your project when deployed:
 http_path = "/"
-css_dir = "www/firefox.dev/styles"
+css_dir = "firefox.dev/styles"
 sass_dir = "sass"
-images_dir = "www/firefox.dev/assets/images"
+images_dir = "firefox.dev/assets/images"
 images_path = "assets/images"
 javascripts_dir = "javascripts"
 

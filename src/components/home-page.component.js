@@ -8,7 +8,7 @@ import 'moment-duration-format';
 import * as ReactDOM from 'react-dom';
 import EditForm from './edit-form.component';
 import RequiredFields from './required-fields.component';
-import {checkConnection} from "./check-connection";
+import {isOffline} from "./check-connection";
 import packageJson from '../../package';
 import 'babel-polyfill';
 import {getIconStatus} from "../enums/browser-icon-status-enum";
@@ -25,8 +25,14 @@ import {getWorkspacePermissionsEnums} from "../enums/workspace-permissions.enum"
 import {getLocalStorageEnums} from "../enums/local-storage.enum";
 import {HtmlStyleHelper} from "../helpers/html-style-helper";
 import Toaster from "./toaster-component";
+import {getManualTrackingModeEnums} from "../enums/manual-tracking-mode.enum";
+import {debounce} from "lodash";
+import Logger from './logger-component'
+import {UserService} from "../services/user-service";
 
 const projectService = new ProjectService();
+const userService = new UserService();
+
 const webSocketClient = new WebSocketClient();
 const localStorageService = new LocalStorageService();
 const messages = [
@@ -41,7 +47,25 @@ const messages = [
 const timeEntryService = new TimeEntryService();
 const workspaceService = new WorkspaceService();
 const htmlStyleHelper = new HtmlStyleHelper();
-let websocketHandlerListener;
+let websocketHandlerListener = null;
+
+let _webSocketConnectExtensionDone = false;
+let _webSocketConnectDesktopDone = false;
+
+let _checkOfflineMS = 5000; 
+let _timeoutCheckOffline = null;
+
+let _receiveOfflineEventsName;
+
+let _logLines = [];
+let _loggerInterval = null;
+const _withLogger = false;
+
+let _networkHandlerListener;
+const networkMessages = [
+    'STATUS_CHANGED_ONLINE',
+    'STATUS_CHANGED_OFFLINE',
+];
 
 class HomePage extends React.Component {
 
@@ -52,56 +76,268 @@ class HomePage extends React.Component {
             ready: false,
             selectedTimeEntry: {},
             timeEntries: [],
-            mode: localStorage.getItem('mode') ? localStorage.getItem('mode') : 'timer',
             dates: {},
             loadMore: true,
             pageCount: 0,
             inProgress: null,
             loading: false,
-            workspaceSettings: {},
+            workspaceSettings: { 
+                timeTrackingMode: getManualTrackingModeEnums().DEFAULT,
+            },
+            mode: localStorage.getItem('mode') ? localStorage.getItem('mode') : 'timer',
+            manualModeDisabled: false,
             pullToRefresh: false,
             projects: [],
             tasks: [],
             userSettings: JSON.parse(localStorage.getItem('userSettings')),
             durationMap: {},
             isUserOwnerOrAdmin: false,
+            isOffline: isOffline()
         };
+
 
         this.application = new Application(localStorageService.get('appType'));
 
+        this.initialJob = this.initialJob.bind(this);
         this.handleScroll = this.handleScroll.bind(this);
         this.loadMoreEntries = this.loadMoreEntries.bind(this);
+        this.getEntryFromPomodoroAndIdleEvents = this.getEntryFromPomodoroAndIdleEvents.bind(this);
+        this.saveAllOfflineEntries = this.saveAllOfflineEntries.bind(this);
+
+        this.connectionHandler = this.connectionHandler.bind(this);
+        this.handleRefresh = this.handleRefresh.bind(this);
+        this.checkOffline = this.checkOffline.bind(this);
+        this.checkReload = this.checkReload.bind(this);
+        this.reloadOnlineByEvent = debounce(this.reloadOnlineByEvent, 5000);
+        this.reloadOnlineByChecking = debounce(this.reloadOnlineByChecking, 3000);
+        this.reloadOffline = debounce(this.reloadOffline, 1000);
+
+        this.loggerRef = React.createRef();       
+        this.displayLog = this.displayLog.bind(this);
+        this.workspaceChanged = this.workspaceChanged.bind(this);
+
+
+        if (!isAppTypeExtension() && window.ipcRenderer) {
+            window.ipcRenderer.on('online-status-changed', (event, message) => { 
+                this.log("online-status-changed => " + message);
+                this.connectionHandler({type: message});
+            });
+        }        
+    }
+    
+    log(msg) {
+        if (_withLogger)
+            _logLines.push(msg);
+    }
+
+    displayLog() {
+        const len = _logLines.length;
+        if (this.loggerRef && this.loggerRef.current) {
+            for (var i=0; i < len; i++) {
+                const msg = _logLines.shift();
+                this.loggerRef.current.log(msg);
+            }
+        }
     }
 
     componentDidMount() {
+        this.log("componentDidMount");
         localStorage.setItem('appVersion', packageJson.version);
         document.addEventListener('backbutton', this.handleBackButton, false);
         document.addEventListener('scroll', this.handleScroll, false);
         htmlStyleHelper.addOrRemoveDarkModeClassOnBodyElement();
-        this.getWorkspaceSettings();
-        this.saveAllOfflineEntries();
-        this.webSocketMessagesHandler();
 
         if (isAppTypeExtension()) {
-            this.enableAllIntegrationsButtonIfNoneIsEnabled();
-            this.enableTimerShortcutForFirstTime();
-            getBrowser().runtime.sendMessage({
-                eventName: "webSocketConnect",
-            });
-            this.getEntryFromPomodoroEvents();
-        } else {
-            webSocketClient.connect();
+            _receiveOfflineEventsName = "receivingOfflineEvents";
         }
+        else {
+            _receiveOfflineEventsName = "receivingOfflineEventsDesktop";
+        }
+       
+        this.log(`receive Offline Events: ${localStorageService.get(_receiveOfflineEventsName, 'false')}`);
 
-        this.setIsUserOwnerOrAdmin();
+        this.getWorkspaceSettings()
+            .then(response => {
+                this.initialJob();
+            })
+            .catch(error => {
+                this.initialJob(); // offLine mode
+            });
+        
+        if (_withLogger)
+            _loggerInterval = setInterval(() => { this.displayLog() }, 3000);
+       
     }
 
-    getEntryFromPomodoroEvents() {
+    initialJob() {
+        if (localStorageService.get(_receiveOfflineEventsName, 'false') !== 'true') {
+            this.log('=> polling offline mode')
+            if (_timeoutCheckOffline)
+                clearTimeout(_timeoutCheckOffline);
+            _timeoutCheckOffline = setTimeout(() => this.checkOffline(), 3000);
+        }
+
+        if (!websocketHandlerListener)
+            this.webSocketMessagesHandler();
+
+        if (!_networkHandlerListener)
+            this.networkMessagesHandler();
+
+        if (isAppTypeExtension()) {
+            if (!_webSocketConnectExtensionDone) {
+                this.enableAllIntegrationsButtonIfNoneIsEnabled();
+                this.enableTimerShortcutForFirstTime();
+                if (!isOffline()) {
+                    getBrowser().runtime.sendMessage({
+                        eventName: "webSocketConnect",
+                    });
+                    _webSocketConnectExtensionDone = true;
+                }
+                this.getEntryFromPomodoroAndIdleEvents();
+            }
+        } else {
+            if (!isOffline()) {
+                if (!_webSocketConnectDesktopDone) {
+                    webSocketClient.connect();
+                    _webSocketConnectDesktopDone = true;
+                }
+            }
+        }
+
+        if (!isOffline()) {
+            this.setIsUserOwnerOrAdmin();
+        }
+        else {
+            this.handleRefresh();
+        }        
+    }
+
+    workspaceChanged() {
+        this.getWorkspaceSettings()
+            .then(response => {
+                this.handleRefresh();
+                if (this.header)
+                    this.header.checkScreenshotNotifications();
+            })
+            .catch(error => {
+            });
+    }
+
+    componentWillUnmount() {
+        this.log("componentWillUnmount");
+        if (_timeoutCheckOffline) {
+            clearTimeout(_timeoutCheckOffline);
+            _timeoutCheckOffline = null;
+        }
+
+        getBrowser().runtime.onMessage.removeListener(_networkHandlerListener);
+        _networkHandlerListener = null;
+
+        getBrowser().runtime.onMessage.removeListener(websocketHandlerListener);
+        websocketHandlerListener = null;
+
+        document.removeEventListener('scroll', this.handleScroll, false);
+        document.removeEventListener('backbutton', this.handleBackButton, false);
+
+        this.log("componentWillUnmount done");
+        if (_loggerInterval)
+            clearInterval(_loggerInterval);
+    }
+
+    reloadOnlineByEvent() {
+        this.getWorkspaceSettings()
+            .then(response => {
+                this.initialJob();
+            })
+            .catch(error => {
+            });        
+    }
+
+    reloadOnlineByChecking() {
+        this.getWorkspaceSettings()
+            .then(response => {
+                this.initialJob();
+            })
+            .catch(error => {
+            });        
+    }
+
+    reloadOffline() {
+        this.handleRefresh();
+    }
+
+    connectionHandler(event) {
+        if (_timeoutCheckOffline) {
+            clearTimeout(_timeoutCheckOffline);
+            _timeoutCheckOffline = null;
+        }
+        this.log(`handler event --------------> '${event.type}'`);
+        localStorageService.set(_receiveOfflineEventsName, 'true', getLocalStorageEnums().PERMANENT_PREFIX);
+        let isOff;
+        if (event.type === "online") {
+            localStorage.setItem('offline', 'false');
+            isOff = false;
+        } 
+        else {
+            localStorage.setItem('offline', 'true');
+            isOff = true;
+        }
+
+        if (isOff)
+            this.reloadOffline();
+        else
+            this.reloadOnlineByEvent();
+    }
+
+    checkOffline() {
+       // axios call, just to check if online/offline
+       // timeEntryService.getEntryInProgress()
+       timeEntryService.healthCheck()
+            .then(response => {
+                this.checkReload()
+            })
+            .catch(error => {
+                this.checkReload()
+            });
+    }
+
+    checkReload() {
+        const isOff = isOffline();
+        this.log('checkReload ' + (isOff ? 'offLine' : 'onLine'));
+
+        if (this.state.isOffline !== isOff) {
+            if (isOff) {
+                this.reloadOffline();
+                if (_timeoutCheckOffline)
+                    clearTimeout(_timeoutCheckOffline);
+                _timeoutCheckOffline = setTimeout(() => this.checkOffline(), _checkOfflineMS);       
+            }
+            else {
+                this.reloadOnlineByChecking();
+                if (_timeoutCheckOffline)
+                    clearTimeout(_timeoutCheckOffline);
+                _timeoutCheckOffline = setTimeout(() => this.checkOffline(), _checkOfflineMS);
+            }
+        }
+        else {
+            if (_timeoutCheckOffline)
+                clearTimeout(_timeoutCheckOffline);
+            _timeoutCheckOffline = setTimeout(() => this.checkOffline(), _checkOfflineMS);       
+        }
+    }
+
+
+    getEntryFromPomodoroAndIdleEvents() {
         getBrowser().runtime.onMessage.addListener((request, sender, sendResponse) => {
-            if (request.eventName === 'pomodoroEvent') {
+            if (request.eventName === 'pomodoroEvent' || request.eventName === 'idleEvent') {
                 if (request.timeEntry !== null) {
-                    this.start.getTimeEntryInProgress();
+                    if (this.start)
+                        this.start.getTimeEntryInProgress();
                 } else {
+                    if (request.eventName === 'idleEvent') {
+                        if (this.start)
+                            this.start.setTimeEntryInProgress(null);
+                    }
                     this.getTimeEntries();
                 }    
             }
@@ -109,18 +345,20 @@ class HomePage extends React.Component {
     }
 
     setIsUserOwnerOrAdmin() {
-        workspaceService.getPermissionsForUser().then(workspacePermissions => {
-            const isUserOwnerOrAdmin = workspacePermissions.filter(permission =>
-                permission.name === getWorkspacePermissionsEnums().WORKSPACE_OWN ||
-                permission.name === getWorkspacePermissionsEnums().WORKSPACE_ADMIN
-            ).length > 0;
-            this.setState({
-                isUserOwnerOrAdmin: isUserOwnerOrAdmin
-            }, () => {
-                localStorageService.set('isUserOwnerOrAdmin', isUserOwnerOrAdmin);
-                this.reloadData();
+        if (!isOffline()) {
+            workspaceService.getPermissionsForUser().then(workspacePermissions => {
+                const isUserOwnerOrAdmin = workspacePermissions.filter(permission =>
+                    permission.name === getWorkspacePermissionsEnums().WORKSPACE_OWN ||
+                    permission.name === getWorkspacePermissionsEnums().WORKSPACE_ADMIN
+                ).length > 0;
+                this.setState({
+                    isUserOwnerOrAdmin: isUserOwnerOrAdmin
+                }, () => {
+                    localStorageService.set('isUserOwnerOrAdmin', isUserOwnerOrAdmin);
+                    this.handleRefresh(true);
+                });
             });
-        });
+        }
     }
 
     enableTimerShortcutForFirstTime() {
@@ -154,6 +392,7 @@ class HomePage extends React.Component {
                 }, () => {
                     switch (request.eventName) {
                         case getWebSocketEventsEnums().TIME_ENTRY_STARTED:
+                            this.log('TIME_ENTRY_STARTED')
                             timeEntryService.getEntryInProgress()
                                 .then(response => {
                                     this.start.setTimeEntryInProgress(response.data[0]);
@@ -180,8 +419,8 @@ class HomePage extends React.Component {
                                 });
                             this.getTimeEntries();
                             break;
-                        case getWebSocketEventsEnums().WORKSPACE_SETTINGS_UPDATED:
-                            this.getWorkspaceSettings();
+                        case getWebSocketEventsEnums().WORKSPACE_SETTINGS_UPDATED: 
+                            this.workspaceChanged();
                             break;
                         case getWebSocketEventsEnums().CHANGED_ADMIN_PERMISSION:
                             this.setIsUserOwnerOrAdmin();
@@ -194,8 +433,28 @@ class HomePage extends React.Component {
         getBrowser().runtime.onMessage.addListener(websocketHandlerListener);
     }
 
+    networkMessagesHandler() {
+        _networkHandlerListener = (request, sender, sendResponse) => {
+            if (networkMessages.includes(request.eventName)) {
+                switch (request.eventName) {
+                    case 'STATUS_CHANGED_ONLINE':
+                        this.log('STATUS_CHANGED_ONLINE')
+                        this.connectionHandler({type: 'online'});
+                        break;
+                    case 'STATUS_CHANGED_OFFLINE':
+                        this.log('STATUS_CHANGED_OFFLINE')
+                        this.connectionHandler({type: 'offline'});
+                        break;
+                }
+            }
+        };
+
+        getBrowser().runtime.onMessage.addListener(_networkHandlerListener);
+    }
+
+
     saveAllOfflineEntries() {
-        if (!JSON.parse(localStorage.getItem('offline'))) {
+        if (!isOffline()) {
             let timeEntries = localStorage.getItem('timeEntriesOffline') ? JSON.parse(localStorage.getItem('timeEntriesOffline')) : [];
             timeEntries.map(entry => {
                 timeEntryService.createEntry(
@@ -214,8 +473,14 @@ class HomePage extends React.Component {
                     }
                     localStorage.setItem('timeEntriesOffline', JSON.stringify(timeEntries));
                 })
-                    .catch(error => {
-                    });
+                .catch(error => {
+                    if (error.request.status === 403) {
+                        const response = JSON.parse(error.request.response)
+                        if (response.code === 4030) {
+                            // setTimeout(() => this.showMessage.bind(this)(response.message, 10), 1000)
+                        } 
+                    }
+                });
             });
             localStorage.setItem('timeEntryInOffline', null);
         }
@@ -231,55 +496,65 @@ class HomePage extends React.Component {
     }
 
     getWorkspaceSettings() {
-        if (!JSON.parse(localStorage.getItem('offline'))) {
-            workspaceService.getWorkspaceSettings()
-                .then(response => {
-                    this.setState({
-                        workspaceSettings: response.data.workspaceSettings
-                    }, () => {
-                        localStorageService.set(
-                            "workspaceSettings",
-                            JSON.stringify(response.data.workspaceSettings)
-                        );
-                        this.getTimeEntries();
-                    });
-                })
-                .catch((error) => {
+        return workspaceService.getWorkspaceSettings()
+            .then(response => {
+                const { workspaceSettings } = response.data;
+                workspaceSettings.projectPickerSpecialFilter = this.state.userSettings.projectPickerTaskFilter;
+
+                if (!workspaceSettings.hasOwnProperty('timeTrackingMode')) {
+                    workspaceSettings.timeTrackingMode = getManualTrackingModeEnums().DEFAULT;
+                }
+
+                const manualModeDisabled = workspaceSettings.timeTrackingMode === getManualTrackingModeEnums().STOPWATCH_ONLY;
+                this.setState({
+                    workspaceSettings: workspaceSettings,
+                    manualModeDisabled: manualModeDisabled,
+                    mode: manualModeDisabled ? 'timer' : this.state.mode,
+                }, () => {
+                    localStorageService.set("modeEnforced", this.state.mode); // for usage in edit-forms
+                    localStorageService.set("manualModeDisabled", JSON.stringify(this.state.manualModeDisabled)); // for usage in header
+                    localStorageService.set("workspaceSettings",  JSON.stringify(workspaceSettings));
+                    return Promise.resolve(true);
                 });
-        } else {
-            this.getTimeEntries();
-        }
+                   
+            })
+            .catch((error) => {
+                this.log("getWorkspaceSettings() failure");
+                return Promise.reject(true);
+            });
     }
 
     getTimeEntries(reload) {
-        if (!JSON.parse(localStorage.getItem('offline'))) {
+        if (!isOffline()) { // shouldn't use this.state.isOffline here
+            this.log('service.getTimeEntries()');
             timeEntryService.getTimeEntries(reload ? 0 : this.state.pageCount)
                 .then(response => {
                     const timeEntries =
                         response.data.timeEntriesList.filter(entry => entry.timeInterval.end);
                     const durationMap = response.data.durationMap;
                     this.setState({
-                        timeEntries: []
-                    }, () => {
-                        this.setState({
-                            timeEntries: this.groupEntries(timeEntries, durationMap),
-                            durationMap: durationMap,
-                            ready: true
-                        });
+                        timeEntries: this.groupEntries(timeEntries, durationMap),
+                        durationMap: durationMap,
+                        ready: true,
+                        isOffline: false   // should set isOffline here
                     });
                 })
                 .catch((error) => {
+                    this.setState({
+                        isOffline: isOffline()
+                    });
                 });
         } else {
             this.setState({
                 timeEntries: localStorage.getItem('timeEntriesOffline') ?
                     this.groupEntries(JSON.parse(localStorage.getItem('timeEntriesOffline'))) : [],
-                ready: true
+                ready: true,
+                isOffline: true   // should set isOffline here
             })
         }
         if (reload || this.state.pageCount === 0) {
             htmlStyleHelper.scrollToTop();
-            ReactDOM.render(<HomePage/>, document.getElementById('mount'));
+            // ReactDOM.render(<HomePage/>, document.getElementById('mount'));
         }
     }
 
@@ -357,20 +632,14 @@ class HomePage extends React.Component {
     }
 
     handleScroll(event) {
-        if (event.srcElement.body.scrollTop < 20) {
-            this.setState({
-                pullToRefresh: false
-            });
-        } else {
-            this.setState({
-                pullToRefresh: true
-            })
+        if (!isOffline()) {
+            this.log('>>>>> handleScroll')
         }
 
         if (event.srcElement.body.scrollTop + window.innerHeight >
             event.srcElement.body.scrollHeight - 100 &&
             this.state.loadMore && !this.state.loading &&
-            !checkConnection()) {
+            !isOffline()) {
 
             this.loadMoreEntries();
         }
@@ -437,43 +706,50 @@ class HomePage extends React.Component {
             inProgress: inProgress
         }, () => {
             localStorage.setItem('inProgress', !!inProgress);
+            localStorage.setItem('timeEntryInProgress', JSON.stringify(inProgress));
         })
     }
 
     endStartedAndStart(timeEntry) {
-        if (checkConnection()) {
-            let timeEntry = localStorage.getItem('timeEntryInOffline') ? JSON.parse(localStorage.getItem('timeEntryInOffline')) : null;
-            let timeEntries = localStorage.getItem('timeEntriesOffline') ? JSON.parse(localStorage.getItem('timeEntriesOffline')) : [];
-            if (timeEntry) {
-                timeEntry.timeInterval.end = moment();
-                timeEntries.push(timeEntry);
-                localStorage.setItem('timeEntriesOffline', JSON.stringify(timeEntries));
+        if (isOffline()) {
 
-                let timeEntryNew = {
-                    id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
-                    description: timeEntry.description,
-                    timeInterval: {start: moment()},
-                    projectId: timeEntry.projectId,
-                    taskId: timeEntry.task ? timeEntry.task.id : null,
-                    tagIds: timeEntry.tags ? timeEntry.tags.map(tag => tag.id) : [],
-                    billable: timeEntry.billable
-                };
-
-                localStorage.setItem('timeEntryInOffline', JSON.stringify(timeEntryNew));
-                this.start.setTimeEntryInProgress(timeEntryNew);
+            if (localStorage.getItem('inProgress') && JSON.parse(localStorage.getItem('inProgress'))) {
+                this.start.setTimeEntryInProgress(null); 
             }
-        } else {
+
+            if (localStorage.getItem('timeEntryInOffline')) {
+                const entry = JSON.parse(localStorage.getItem('timeEntryInOffline'));
+                if (entry) {
+                    let timeEntries = localStorage.getItem('timeEntriesOffline') ? JSON.parse(localStorage.getItem('timeEntriesOffline')) : [];
+                    entry.timeInterval.end = moment();
+                    timeEntries.push(entry);
+                    localStorage.setItem('timeEntriesOffline', JSON.stringify(timeEntries));
+                }
+            }
+
+            let timeEntryNew = {
+                id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
+                description: timeEntry.description,
+                timeInterval: {start: moment()},
+                projectId: timeEntry.projectId,
+                taskId: timeEntry.task ? timeEntry.task.id : null,
+                tagIds: timeEntry.tags ? timeEntry.tags.map(tag => tag.id) : [],
+                billable: timeEntry.billable
+            };
+
+            localStorage.setItem('timeEntryInOffline', JSON.stringify(timeEntryNew));
+            this.start.setTimeEntryInProgress(timeEntryNew);
+            this.handleRefresh();
+        } 
+        else {
             timeEntryService.stopEntryInProgress(moment())
                 .then(() => {
                     if (isAppTypeExtension()) {
                         getBrowser().extension.getBackgroundPage().removeIdleListenerIfIdleIsEnabled();
-                        getBrowser().extension.getBackgroundPage().entryInProgressChangedEventHandler(null);
+                        getBrowser().extension.getBackgroundPage().setTimeEntryInProgress(null);
                     }
-                    this.setState({
-                        page: 0
-                    }, () => {
-                        this.getWorkspaceSettings();
-                    });
+                    this.getTimeEntries(); 
+                    
                     timeEntryService.createEntry(
                         timeEntry.workspaceId,
                         timeEntry.description,
@@ -488,7 +764,7 @@ class HomePage extends React.Component {
                         this.start.getTimeEntryInProgress();
                         if (isAppTypeExtension()) {
                             getBrowser().extension.getBackgroundPage().addIdleListenerIfIdleIsEnabled();
-                            getBrowser().extension.getBackgroundPage().entryInProgressChangedEventHandler(data);
+                            getBrowser().extension.getBackgroundPage().setTimeEntryInProgress(data);
                         }
                     }).catch(() => {});
                 })
@@ -498,13 +774,14 @@ class HomePage extends React.Component {
     }
 
     checkRequiredFields(timeEntry) {
-        if (checkConnection()) {
+        if (isOffline()) {
             this.endStartedAndStart(timeEntry);
         } else if (this.state.workspaceSettings.forceDescription &&
             (this.state.inProgress.description === "" || !this.state.inProgress.description)) {
             ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
             ReactDOM.render(
                 <RequiredFields field={"description"}
+                                mode={this.state.mode} 
                                 goToEdit={this.goToEdit.bind(this)}/>,
                 document.getElementById('mount')
             );
@@ -512,6 +789,7 @@ class HomePage extends React.Component {
             ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
             ReactDOM.render(
                 <RequiredFields field={"project"}
+                                mode={this.state.mode} 
                                 goToEdit={this.goToEdit.bind(this)}/>,
                 document.getElementById('mount')
             );
@@ -519,6 +797,7 @@ class HomePage extends React.Component {
             ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
             ReactDOM.render(
                 <RequiredFields field={"task"}
+                                mode={this.state.mode} 
                                 goToEdit={this.goToEdit.bind(this)}/>,
                 document.getElementById('mount')
             );
@@ -527,6 +806,7 @@ class HomePage extends React.Component {
             ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
             ReactDOM.render(
                 <RequiredFields field={"tags"}
+                                mode={this.state.mode} 
                                 goToEdit={this.goToEdit.bind(this)}/>,
                 document.getElementById('mount')
             );
@@ -552,7 +832,7 @@ class HomePage extends React.Component {
         if (this.state.inProgress) {
             this.checkRequiredFields(timeEntry);
         } else {
-            if (checkConnection()) {
+            if (isOffline()) {
                 let timeEntryOffline = {
                     id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
                     description: timeEntry.description,
@@ -581,7 +861,7 @@ class HomePage extends React.Component {
                     if (isAppTypeExtension()) {
                         getBrowser().extension.getBackgroundPage().addIdleListenerIfIdleIsEnabled();
                         getBrowser().extension.getBackgroundPage().addPomodoroTimer();
-                        getBrowser().extension.getBackgroundPage().entryInProgressChangedEventHandler(data);
+                        getBrowser().extension.getBackgroundPage().setTimeEntryInProgress(data);
                     }
                     this.application.setIcon(getIconStatus().timeEntryStarted);
                 }).catch(() => {});
@@ -589,102 +869,132 @@ class HomePage extends React.Component {
         }
     }
     
-    handleRefresh() {
-        if (!checkConnection()) {
-            this.saveAllOfflineEntries();
+    handleRefresh(check=false) {
+        if (check) {
+            timeEntryService.getEntryInProgress()
+                .then(response => {
+                    this.saveAllOfflineEntries();
+                    this.reloadData();
+                })
+                .catch(error => {
+                    this.reloadData();
+                });
         }
-
-        this.reloadData()
+        else {
+            if (!isOffline()) {
+                this.saveAllOfflineEntries();
+                this.reloadData();
+            }
+            else {
+                this.reloadData();
+            }
+        }
     }
 
-    reloadData() {
-        if (!checkConnection()) {
+    reloadData(reload=false) {
+        this.log('reloadData ' + (reload ? 'mount (why without unmount?)': ''));
+        if (!isOffline()) {
             this.setState({
                 pageCount: 0
             }, () => {
-                this.getWorkspaceSettings();
+                this.getTimeEntries(reload);
             });
             if (this.start) {
                 this.start.getTimeEntryInProgress();
             }
         } else {
-            this.getTimeEntries();
+            this.getTimeEntries(reload);
         }
     }
 
     enableAllIntegrationsButtonIfNoneIsEnabled() {
+        getBrowser().storage.local.get('permissions', (result) => {
+            const { permissions } = result;
+            const userId = localStorage.getItem('userId');
+
+            if (permissions && permissions.length > 0) {
+                const permissionForUser = permissions.filter(permission => permission.userId === userId);
+                if (permissionForUser.length > 0 && 
+                    permissionForUser[0].permissions.filter(p => !p.isCustom).length > 0) {
+                        return;
+                    }
+            }
+            this.setClockifyOriginsToStorage(userId);
+        });
+
+    }
+
+    setClockifyOriginsToStorage(userId) {
         fetch("integrations/integrations.json")
             .then(response => response.json())
-            .then(data => {
+            .then(clockifyOrigins => {
                 getBrowser().storage.local.get('permissions', (result) => {
-                    const userId = localStorage.getItem('userId');
-                    if (
-                        result.permissions && result.permissions.length > 0
-                    ) {
-                        if (
-                            result.permissions
-                                .filter(permission => permission.userId === userId).length > 0
-                        ) {
-                            return;
+                    const permissionsForStorage = result.permissions ? result.permissions : [];
+                    let arr = permissionsForStorage.filter(permission => permission.userId === userId);
+                    let permissionForUser;
+                    if (arr.length === 0) {
+                        permissionForUser = {
+                            userId,
+                            permissions: []
                         }
-                        this.setClockifyOriginsToStorage(data, userId, result.permissions);
-                    } else {
-                        this.setClockifyOriginsToStorage(data, userId);
+                        permissionsForStorage.push(permissionForUser);
                     }
+                    else {
+                        permissionForUser = arr[0];
+                    }
+
+                    for (let key in clockifyOrigins) {
+                        permissionForUser.permissions.push({
+                            domain: key,
+                            isEnabled: true,
+                            script: clockifyOrigins[key].script,
+                            name: clockifyOrigins[key].name,
+                            isCustom: false
+                        });
+                    }   
+                     
+                    getBrowser().storage.local.set({permissions: permissionsForStorage});
                 });
             });
     }
 
-    setClockifyOriginsToStorage(clockifyOrigins, userId, permissionsFromStorage) {
-        const permissionsForStorage = permissionsFromStorage ? permissionsFromStorage : [];
-        const permissions = [];
-        const permissionsByUser = {};
-
-        for (let key in clockifyOrigins) {
-            let permission = {};
-            permission['domain'] = key;
-            permission['isEnabled'] = true;
-            permission['script'] = clockifyOrigins[key].script;
-            permission['name'] = clockifyOrigins[key].name;
-            permission['isCustom'] = false;
-            permissions.push(permission);
-        }
-        permissionsByUser['permissions'] = permissions;
-        permissionsByUser['userId'] = userId;
-        permissionsForStorage.push(permissionsByUser);
-
-        getBrowser().storage.local.set({permissions: permissionsForStorage});
-    }
-
-    showMessage(message) {
-        this.toaster.toast('info', message, 2);
-    }
-
-    componentWillUnmount() {
-        getBrowser().runtime.onMessage.removeListener(websocketHandlerListener);
+    showMessage(message, n) {
+        this.toaster.toast('info', message, n||2);
     }
 
     render() {
         if (!this.state.ready) {
             return null;
         } else {
+            this.log("HomePage render")
             const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
             const timeEntriesOffline = localStorage.getItem('timeEntriesOffline') 
                 ? JSON.parse(localStorage.getItem('timeEntriesOffline'))
                     .filter(timeEntry => !timeEntry.workspaceId || timeEntry.workspaceId === activeWorkspaceId)
                 : [];
+            const { inProgress, isOffline, mode, 
+                    workspaceSettings, 
+                    timeEntries, 
+                    userSettings, 
+                    isUserOwnerOrAdmin, pullToRefresh, dates } = this.state;
             return (
                 <div className="home_page">
+                    {_withLogger &&
+                        <Logger ref={this.loggerRef} />
+                    }
                     <div className="header_and_timer">
-                        <Header showActions={true}
+                        <Header 
+                                ref={instance => {this.header = instance}}
+                                showActions={true}
                                 showSync={true}
                                 changeMode={this.changeMode.bind(this)}
-                                mode={this.state.mode}
-                                disableManual={!!this.state.inProgress}
+                                disableManual={!!inProgress}
                                 disableAutomatic={false}
-                                handleRefresh={this.handleRefresh.bind(this)}
-                                workspaceSettings={this.state.workspaceSettings}
-                                workspaceChanged={this.handleRefresh.bind(this)}
+                                handleRefresh={this.handleRefresh}
+                                workspaceSettings={workspaceSettings}
+                                isTrackerPage={true}
+                                workspaceChanged={this.workspaceChanged}
+                                isOffline={isOffline}
                         />
                         <Toaster
                             ref={instance => {this.toaster = instance}}
@@ -694,55 +1004,48 @@ class HomePage extends React.Component {
                                 this.start = instance;
                             }}
                             message={this.showMessage.bind(this)}
-                            mode={this.state.mode}
+                            mode={mode}
                             changeMode={this.changeMode.bind(this)}
-                            endStarted={this.handleRefresh.bind(this)}
+                            endStarted={this.handleRefresh}
                             setTimeEntryInProgress={this.inProgress.bind(this)}
-                            workspaceSettings={this.state.workspaceSettings}
-                            timeEntries={this.state.timeEntries}
-                            timeFormat={this.state.userSettings.timeFormat}
-                            isUserOwnerOrAdmin={this.state.isUserOwnerOrAdmin}
-                            userSettings={this.state.userSettings}
+                            workspaceSettings={workspaceSettings}
+                            timeEntries={timeEntries}
+                            timeFormat={userSettings.timeFormat}
+                            isUserOwnerOrAdmin={isUserOwnerOrAdmin}
+                            userSettings={userSettings}
+                            toaster= {this.toaster}
+                            log={this.log}
                         />
                     </div>
-                    <div
-                        className={this.state.timeEntries.length > 0 ? "pull-loading" : "disabled"}>
-                        <img src="./assets/images/circle_1.svg" className="pull-loading-img1"/>
-                        <img src="./assets/images/circle_2.svg" className="pull-loading-img2"/>
+                    <div className={!isOffline && 
+                                    timeEntriesOffline && 
+                                    timeEntriesOffline.length > 0 ? "" : "disabled"}>
+                        {!isOffline && 
+                            <TimeEntryListNotSynced
+                                timeEntries={timeEntriesOffline}
+                                pullToRefresh={pullToRefresh}
+                                handleRefresh={this.handleRefresh}
+                                workspaceSettings={workspaceSettings}
+                                timeFormat={userSettings.timeFormat}
+                                isUserOwnerOrAdmin={isUserOwnerOrAdmin}
+                                userSettings={userSettings}
+                            />
+                        }
                     </div>
-                    <div className={this.state.ready &&
-                        !JSON.parse(localStorage.getItem('offline')) &&
-                        timeEntriesOffline &&
-                        timeEntriesOffline.length > 0 ? "" : "disabled"}>
-                        <TimeEntryListNotSynced
-                            timeEntries={timeEntriesOffline}
-                            pullToRefresh={this.state.pullToRefresh}
-                            handleRefresh={this.handleRefresh.bind(this)}
-                            workspaceSettings={this.state.workspaceSettings}
-                            timeFormat={this.state.userSettings.timeFormat}
-                            isUserOwnerOrAdmin={this.state.isUserOwnerOrAdmin}
-                            userSettings={this.state.userSettings}
-                        />
-                    </div>
-                    <div className={this.state.ready ? (this.state.timeEntries.length === 0 ?
-                        "time-entry-list__offline" : "time-entry-list") :
-                        "disabled"}>
+                    <div className={(timeEntries.length===0 ? "time-entry-list__offline" : "time-entry-list")}>
                         <TimeEntryList
-                            timeEntries={this.state.timeEntries}
-                            dates={this.state.dates}
+                            timeEntries={timeEntries}
+                            dates={dates}
                             selectTimeEntry={this.continueTimeEntry.bind(this)}
-                            pullToRefresh={this.state.pullToRefresh}
-                            handleRefresh={this.handleRefresh.bind(this)}
+                            pullToRefresh={pullToRefresh}
+                            handleRefresh={this.handleRefresh}
                             changeMode={this.changeMode.bind(this)}
-                            timeFormat={this.state.userSettings.timeFormat}
-                            workspaceSettings={this.state.workspaceSettings}
-                            isUserOwnerOrAdmin={this.state.isUserOwnerOrAdmin}
-                            userSettings={this.state.userSettings}
+                            timeFormat={userSettings.timeFormat}
+                            workspaceSettings={workspaceSettings}
+                            isUserOwnerOrAdmin={isUserOwnerOrAdmin}
+                            userSettings={userSettings}
+                            isOffline={isOffline}
                         />
-                    </div>
-                    <div className={this.state.loading ? "pull-loading-entries" : "disabled"}>
-                        <img src="./assets/images/circle_1.svg" className="pull-loading-img1"/>
-                        <img src="./assets/images/circle_2.svg" className="pull-loading-img2"/>
                     </div>
                 </div>
             )

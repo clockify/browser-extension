@@ -20,7 +20,8 @@ class TimeEntryList extends React.Component {
     }
 
     render() {
-        if(this.props.timeEntries.length === 0 && !JSON.parse(localStorage.getItem('offline'))) {
+        const { isOffline } = this.props; // JSON.parse(localStorage.getItem('offline'));
+        if(this.props.timeEntries.length === 0 && !isOffline) {
             return (
                 <div className="no-entries">
                     <div className="no-entries-img"></div>
@@ -28,7 +29,7 @@ class TimeEntryList extends React.Component {
                     <label>It looks like you haven't tracked any time lately.</label>
                 </div>
             )
-        } else if(this.props.timeEntries.length === 0 && JSON.parse(localStorage.getItem('offline'))) {
+        } else if(this.props.timeEntries.length === 0 && isOffline) {
             return(
                     <div className="no-entries">
                         <div className="no-entries-img"></div>

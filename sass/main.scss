@@ -20,6 +20,7 @@
 @import "pomodoro";
 @import "dark-mode-settings";
 @import "delete-entry-confirmation-dialog";
+@import "workspace-change-confirmation-dialog";
 @import "default-project";
 @import "workspace-list";
 @import "toaster";
@@ -42,10 +43,9 @@ body {
   margin: 0px;
   overflow-y: overlay;
   overflow-x: hidden;
-  scrollbar-base-color: $blue;
 }
 * {
-  font-family: Roboto, Arial, sans-serif !important;
+  font-family: 'Roboto', Arial, sans-serif !important;
 }
 
 hr {
@@ -184,7 +184,7 @@ hr {
 
 .time-entry-list {
   position: relative;
-  top: -50px;
+  top: 15px;
 }
 
 .time-entry-list__offline {

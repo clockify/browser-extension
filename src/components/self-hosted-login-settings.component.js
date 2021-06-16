@@ -5,24 +5,21 @@ import {SettingsService} from "../services/settings-service";
 
 const settingsService = new SettingsService();
 
-class SelfHostedLoginSettings extends React.Component {
+class SelfHostedBootSettings extends React.Component {
 
     constructor(props) {
         super(props);
 
         this.state = {
             ready: false,
-            serverUrl: ""
+            homeUrl: ""
         }
     }
 
     componentDidMount() {
-        let url = this.props.url;
-        if (this.props.url.charAt(this.props.url.length -1) === "/") {
-            url = this.props.url.slice(0, this.props.url.length-1);
-        }
+        let url = this.props.url.replace(/(\/)+$/, "");
         this.setState({
-            serverUrl: url,
+            homeUrl: url,
             ready: true
         });
     }
@@ -31,7 +28,7 @@ class SelfHostedLoginSettings extends React.Component {
         if (this.state.ready) {
             return (
                 <Request
-                    url={`${this.state.serverUrl}/api/system-settings/login-settings`}
+                    url={`${this.state.homeUrl}/web/boot`}
                     method='get'
                     accept='application/json'
                     type="application/json"
@@ -51,14 +48,21 @@ class SelfHostedLoginSettings extends React.Component {
                                     </div>
                                 )
                             } else {
-                                let url = this.props.url;
-                                settingsService.setBaseUrl(url + '/api');
-                                settingsService.setHomeUrl(
-                                    url.replace('api.', '').replace('api', '')
-                                );
-                                settingsService.setSelfHosted(true);
-    
-                                return <Login loginSettings={JSON.parse(result.text)}/>
+                                let baseUrl;    
+                                try {
+                                    const data = JSON.parse(result.text);
+                                    if (data.endpoint.startsWith("/")) {
+                                        baseUrl = `${this.state.homeUrl}${data.endpoint}`;
+                                    } else {
+                                        baseUrl = data.endpoint;
+                                    }
+                                } catch (error) {
+                                    baseUrl = `${this.state.homeUrl}/api`
+                                }
+                                settingsService.setBaseUrl(baseUrl)
+                                settingsService.setHomeUrl(this.state.homeUrl);
+                                settingsService.setSelfHosted(true); 
+                                return <Login/>
                             }
                         }
                     }
@@ -69,4 +73,4 @@ class SelfHostedLoginSettings extends React.Component {
         }
     }
 }
-export default SelfHostedLoginSettings;
+export default SelfHostedBootSettings;

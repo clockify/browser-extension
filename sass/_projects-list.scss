@@ -54,6 +54,17 @@
   content: url("../assets/images/arrow-light-mode.png");
 }
 
+.project-list-arrow-up {
+  position: relative;
+  width: 10px;
+  height: 5px;
+  float: right;
+  padding-right: 15px;
+  top: 11px;
+  content: url("../assets/images/arrow-light-mode-up.png");
+}
+
+
 .project-list-dropdown {
   position: absolute;
   width: 100%;
@@ -200,4 +211,9 @@
     padding-bottom: 65px;
     width: 100%;
   }
+}
+
+.error {
+  color: red;
+  font-size: 14px;
 }

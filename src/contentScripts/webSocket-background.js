@@ -1,3 +1,5 @@
+// const aBrowser = chrome || browser
+
 const webSocketEventsEnums = {
     'TIME_ENTRY_STARTED': 'TIME_ENTRY_STARTED',
     'TIME_ENTRY_STOPPED': 'TIME_ENTRY_STOPPED',
@@ -84,26 +86,33 @@ function disconnectWebSocket() {
     }
 }
 
-function messageHandler(event) {
+async function messageHandler(event) {
     switch (event.data) {
-        case webSocketEventsEnums.TIME_ENTRY_STARTED:
-            this.getEntryInProgress().then(response => response.json()).then(data => {
-                this.entryInProgressChangedEventHandler(data);
+        case webSocketEventsEnums.TIME_ENTRY_STARTED: {
+            const { entry, error } = await TimeEntry.getEntryInProgress();
+            if (entry === null || error) {
+            }
+            else {
+                setTimeEntryInProgress(entry);
                 aBrowser.browserAction.setIcon({
                     path: iconPathStarted
                 });
-            }).catch();
+            }
+
             this.sendWebSocketEventToExtension(event.data);
             this.addIdleListenerIfIdleIsEnabled();
             this.removeReminderTimer();
             this.restartPomodoro();
             this.addPomodoroTimer();
             break;
+        }
+
         case webSocketEventsEnums.TIME_ENTRY_CREATED:
             this.sendWebSocketEventToExtension(event.data);
             break;
+
         case webSocketEventsEnums.TIME_ENTRY_STOPPED:
-            this.entryInProgressChangedEventHandler(null);
+            setTimeEntryInProgress(null);
             aBrowser.browserAction.setIcon({
                 path: iconPathEnded
             });
@@ -112,32 +121,44 @@ function messageHandler(event) {
             this.addReminderTimer();
             this.restartPomodoro();
             break;
-        case webSocketEventsEnums.TIME_ENTRY_UPDATED:
-            this.getEntryInProgress().then(response => response.json()).then(data => {
-                this.entryInProgressChangedEventHandler(data);
-            });
+
+        case webSocketEventsEnums.TIME_ENTRY_UPDATED: {
+            const { entry, error } = await TimeEntry.getEntryInProgress();
+            if (entry === null || error) {
+            }
+            else {
+                setTimeEntryInProgress(event.data);
+            }
             this.sendWebSocketEventToExtension(event.data);
             break;
-        case webSocketEventsEnums.TIME_ENTRY_DELETED:
-             this.getEntryInProgress().then(response => response.json()).then(data => {
-                 this.entryInProgressChangedEventHandler(data);
-                 aBrowser.browserAction.setIcon({
-                     path: iconPathStarted
-                 });
-             }).catch(() => {
-                 this.entryInProgressChangedEventHandler(null);
-                 aBrowser.browserAction.setIcon({
-                     path: iconPathEnded
-                 });
-                 this.removeIdleListenerIfIdleIsEnabled();
-                 this.addReminderTimer();
-                 this.restartPomodoro();
-             });
+        }
+
+        case webSocketEventsEnums.TIME_ENTRY_DELETED: {
+            const { entry, error } = await TimeEntry.getEntryInProgress();
+            if (entry === null || error) {
+                setTimeEntryInProgress(null);
+                aBrowser.browserAction.setIcon({
+                    path: iconPathEnded
+                });
+                this.removeIdleListenerIfIdleIsEnabled();
+                this.addReminderTimer();
+                this.restartPomodoro();
+            }
+            else {
+                setTimeEntryInProgress(entry);
+                aBrowser.browserAction.setIcon({
+                    path: iconPathStarted
+                });
+            }
             this.sendWebSocketEventToExtension(event.data);
-             break;
+            break;
+        }
+
         case webSocketEventsEnums.WORKSPACE_SETTINGS_UPDATED:
             this.sendWebSocketEventToExtension(event.data);
+            UserWorkspaceStorage.getSetWorkspaceSettings();
             break;
+
         case webSocketEventsEnums.CHANGED_ADMIN_PERMISSION:
             this.sendWebSocketEventToExtension(event.data);
             break;
@@ -169,11 +190,6 @@ aBrowser.runtime.onMessage.addListener((request, sender, sendResponse) => {
     }
 });
 
-function entryInProgressChangedEventHandler(data) {
-    aBrowser.storage.local.set({
-        timeEntryInProgress: data
-    });
-}
 
 function getReconnectTimeout() {
     const min = 5 * 1000;

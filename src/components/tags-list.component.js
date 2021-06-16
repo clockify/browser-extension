@@ -26,10 +26,21 @@ class TagsList extends React.Component {
 
         this.filterTags = debounce(this.filterTags, 500);
         this.selectTag = this.selectTag.bind(this);
+        this.toggleTagsList = this.toggleTagsList.bind(this);
     }
 
     componentDidMount(){
         this.isEnabledCreateTag();
+    }
+
+    isOpened() {
+        return this.state.isOpen;
+    }
+
+    closeOpened() {
+        this.setState({
+            isOpen: false
+        });
     }
 
     getTags(page, pageSize) {
@@ -39,11 +50,9 @@ class TagsList extends React.Component {
                     let data = response.data;
                     this.setState({
                         tagsList: sortHelpers.sortArrayByStringProperty(this.state.tagsList.concat(data), 'name'),
-                        page: this.state.page + 1
+                        page: this.state.page + 1,
+                        loadMore: data.length === pageSize ? true : false
                     }, () => {
-                        this.setState({
-                            loadMore: data.length === pageSize ? true : false
-                        });
                     });
                 })
                 .catch(() => {
@@ -63,7 +72,8 @@ class TagsList extends React.Component {
         })
     }
 
-    toggleTagsList() {
+    toggleTagsList(e) {
+        e.stopPropagation();
         if(!JSON.parse(localStorage.getItem('offline'))) {
             if (!this.state.isOpen && this.state.tagsList.length === 0) {
                 this.getTags(this.state.page, pageSize);
@@ -170,7 +180,7 @@ class TagsList extends React.Component {
         const { tags } = this.props;
 
         let title = '';
-        if (tags.length > 0) {
+        if (tags && tags.length > 0) {
             title = (tags.length > 1 ? 'Tags:\n' : "Tag: ") + tags.map(tag=>tag.name).join('\n')    
         }
 
@@ -179,9 +189,9 @@ class TagsList extends React.Component {
                 <div className={JSON.parse(localStorage.getItem('offline')) ?
                     "tag-list-button-offline" : this.props.tagsRequired ?
                         "tag-list-button-required" : "tag-list-button"}
-                     onClick={this.toggleTagsList.bind(this)}
+                     onClick={this.toggleTagsList}
                      tabIndex={"0"} 
-                     onKeyDown={e => {if (e.key==='Enter') this.toggleTagsList()}}
+                     onKeyDown={e => {if (e.key==='Enter') this.toggleTagsList(e)}}
                 >
                     <span className={tags.length === 0 ? "tag-list-add" : "disabled"}>
                         {this.props.tagsRequired ? "Add tags (required)" : "Add tags"}
@@ -199,7 +209,7 @@ class TagsList extends React.Component {
                         })
                     }
                     </span>
-                    <span className="tag-list-arrow"></span>
+                    <span className={this.state.isOpen ? 'tag-list-arrow-up' : 'tag-list-arrow'} ></span>
                 </div>
                 <div id="tagListDropdown"
                      className={this.state.isOpen ? "tag-list-dropdown" : "disabled"}>

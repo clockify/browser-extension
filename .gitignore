@@ -1,11 +1,23 @@
-### IntelliJ IDEA ###
-.idea
-*.iws
 *.iml
-*.ipr
-
-### Extension ignore ###
-www/
+.gradle
+Dockerfile
+.vscode/
+/local.properties
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+/.idea/
 .sass-cache/
+chrome.dev/
+firefox.dev/
+dist/
 node_modules/
+www/
+stylesheets/
 package-lock.json
+chrome/
+firefox/
+winehq.key

@@ -17,6 +17,7 @@ export class Application {
     }
 
     afterLoad() {
+        this.setWebSocketParamsToStorage();
         this.setBaseUrl();
         this.setHomeUrl();
         switch (this.appType) {
@@ -32,6 +33,17 @@ export class Application {
                 extension.setIcon(iconStatus);
                 break;
         }
+    }
+
+    setWebSocketParamsToStorage() {
+        localStorageService.set(
+            "webSocketEndpoint",
+            environment.webSocket.endpoint,
+            getLocalStorageEnums().PERMANENT_PREFIX);
+        localStorageService.set(
+            "webSocketClientId",
+            environment.webSocket.clientId,
+            getLocalStorageEnums().PERMANENT_PREFIX);
     }
 
     setBaseUrl() {

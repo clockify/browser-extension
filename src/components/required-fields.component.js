@@ -19,7 +19,7 @@ class RequiredFields extends React.Component {
             <div>
                 <Header
                     showActions={true}
-                    mode={localStorage.getItem('mode')}
+                    mode={this.props.mode}
                     disableManual={localStorage.getItem('inProgress')}
                     disableAutomatic={false}
                 />

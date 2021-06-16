@@ -2,7 +2,7 @@ import React from 'react';
 import * as ReactDOM from 'react-dom';
 import Header from './header.component';
 import Login from './login.component';
-import SelfHostedLoginSettings from "./self-hosted-login-settings.component";
+import SelfHostedBootSettings from "./self-hosted-login-settings.component";
 
 class SelfHostedUrl extends React.Component {
     constructor(props) {
@@ -31,7 +31,7 @@ class SelfHostedUrl extends React.Component {
     submitUrl() {
         let url = document.getElementById('selfHostedurl').value;
         ReactDOM.render(
-            <SelfHostedLoginSettings url={url}/>,
+            <SelfHostedBootSettings url={url}/>,
             document.getElementById("mount")
         );
     }
@@ -47,6 +47,8 @@ class SelfHostedUrl extends React.Component {
                 <form className="self-hosted-url">
                     <div>
                         <label className="self-hosted-url__server_url">Custom domain URL</label>
+                        <p className="self-hosted-url__server_url--info">Enter your Clockify domain.
+                           Your domain is the URL from which you access Clockify in the browser</p>
                         <input required = {true} id="selfHostedurl" placeholder="https://"/>
                     </div>
                 </form>

@@ -30,7 +30,18 @@ class PostAuth extends React.Component {
                 {
                     ({error, result, loading}) => {
                         if (error) {
-                            return <Login info={"Invalid username and/or password."} logout={true}/>;
+                            let msg = "Invalid username and/or password."
+                            const res = error.response;
+                            if (error.status === 404) {
+                                msg = res.body.message;
+                            }
+                            else  {
+                                // all other error types we handle generically
+                                if (res && res.body) {
+                                    msg = res.body.message;
+                                }                                
+                            }
+                            return <Login info={msg} logout={true}/>;
                         }
                         if (loading) {
                             return (

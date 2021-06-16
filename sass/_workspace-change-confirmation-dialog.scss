@@ -1,0 +1,56 @@
+.workspace-change-confirmation-dialog {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 283px;
+    height: 173px;
+    background: $input-background;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 2px;
+    text-align: center;
+    align-items: center;
+    z-index: 1062;
+
+    &-open {
+        background-color: rgba(0, 0, 0, 0.2); 
+        position: fixed;
+        width: 100vw;
+        height: 100vh;
+        left: 0;
+        top: 0;
+        z-index: 1062;
+    }
+
+    &__question {
+        margin: 0px 10px;
+        margin-top: 20px;
+        font-size: 14px;
+        line-height: 16px;
+        color: $middle_light_text;
+    }
+
+    &__confirmation_button {
+        margin-top: 20px;
+        margin-bottom: 20px;
+        padding-top: 12px;
+        width: 160px;
+        height: 28px;
+        border-radius: 2px;
+        background: $blue;
+        color: $input-background;
+        font-size: 14px;
+        line-height: 16px;
+        text-transform: uppercase;
+        cursor: pointer;
+    }
+
+    &__cancel { 
+        font-size: 14px;
+        line-height: 16px;
+        color: $blue;
+        cursor: pointer;
+    }
+}
