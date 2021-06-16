@@ -58,7 +58,7 @@ function createOriginList() {
                 createOriginListForCustomDomain(data, key, option, origins);
             }
             replaceContent('#settings__custom-domains__origins-container', origins);
-            restore_options();
+            setTimeout(() => restore_options(), 0)
         });
 }
 
@@ -75,8 +75,39 @@ function createOriginListForCustomDomain(data, key, option, origins) {
 }
 
 function initLoad() {
-    createOriginList();
-    showCustomDomains();
+
+    aBrowser.storage.local.get(['permissions'], (result) => {
+        let { permissions } = result;
+        if (!permissions) 
+            permissions = [];
+
+        let permissionsByUser = permissions.filter(permission => permission.userId === userId); // [0]
+        if (permissionsByUser.length > 0) {
+            createOriginList();
+            showCustomDomains();
+        }
+        else {
+            permissionsByUser = { userId, permissions: [] }
+            for (let key in clockifyOrigins) {
+                const clockifyOrigin = clockifyOrigins[key];
+                permissionsByUser.permissions.push({
+                    domain: key,
+                    isEnabled: true,
+                    script: clockifyOrigin.script,
+                    name: clockifyOrigin.name,
+                    isCustom: true
+                });
+            }
+            permissions.push(permissionsByUser);
+            aBrowser.storage.local.set({"permissions": permissions}, () => {
+                createOriginList();
+                showCustomDomains();   
+            });    
+        }
+
+    });
+
+
 }
 
 function restore_options() {
@@ -91,8 +122,10 @@ function restore_options() {
             const filteredPermissions = permissionsByUser.permissions
                     .filter(p => !p.isCustom && !p.script.includes("custom-"));
             for (let key in filteredPermissions) {
-                document.getElementById(filteredPermissions[key].domain).checked =
-                    filteredPermissions[key].isEnabled;
+                const el = document.getElementById(filteredPermissions[key].domain);
+                if (el) {  // we don't remove integration in storage, although we don't have it in integrations.json
+                    el.checked = filteredPermissions[key].isEnabled;
+                }
             }
         }
     });
@@ -112,8 +145,10 @@ function save_permissions() {
                 .filter(p => !p.isCustom && !p.script.includes("custom-"));
             for (let i in filteredPermissions) {
                 let permission = filteredPermissions[i];
-                permission['isEnabled'] =
-                    document.getElementById(filteredPermissions[i].domain).checked;
+                const el = document.getElementById(filteredPermissions[i].domain);
+                if (el) { // we don't remove integration in storage, although we don't have it in integrations.json
+                    permission['isEnabled'] = el.checked; 
+                }
             }
 
             aBrowser.storage.local.set({"permissions": permissionsForStorage});
@@ -271,7 +306,7 @@ function enableAllOrigins() {
         }
     }
 
-    save_permissions();
+    save_permissions();        
 }
 
 function disableAllOrigins() {

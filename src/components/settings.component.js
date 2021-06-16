@@ -12,6 +12,7 @@ import {getKeyCodes} from "../enums/key-codes.enum";
 import Pomodoro from "./pomodoro.component";
 import DarkModeComponent from "./dark-mode.component";
 import DefaultProject from "./default-project.component";
+
 import Toaster from "./toaster-component";
 import * as ReactDOM from "react-dom";
 import HomePage from "./home-page.component";
@@ -49,8 +50,11 @@ class Settings extends React.Component {
             reminderMinutesSinceLastEntry: 0,
             autoStartOnBrowserStart: false,
             autoStopOnBrowserClose: false,
+            showPostStartPopup: true,
             changeSaved: false
         };
+
+        this.pomodoroEnd = React.createRef();
     }
 
     componentDidMount(){
@@ -61,7 +65,16 @@ class Settings extends React.Component {
             this.isReminderOn();
             this.isAutoStartStopOn();
             this.isTimerShortcutOn();
+            this.isShowPostStartPopup();
         }
+
+        this.scrollIntoView = this.scrollIntoView.bind(this);
+    }
+
+    scrollIntoView() {
+        setTimeout(() => {
+            this.pomodoroEnd.current.scrollIntoView({ behavior: 'smooth' })
+        }, 200);
     }
 
     isIdleDetectionOn() {
@@ -91,6 +104,14 @@ class Settings extends React.Component {
                     150
                 );
             }
+        });
+    }
+
+    isShowPostStartPopup() {
+        const showPostStartPopup = JSON.parse(localStorageService.get('showPostStartPopup', 'true'));
+        this.setState({showPostStartPopup});
+        getBrowser().storage.local.set({
+            showPostStartPopup: (showPostStartPopup)
         });
     }
 
@@ -151,6 +172,8 @@ class Settings extends React.Component {
         });
     }
 
+    
+
     checkForRemindersDatesAndTimes() {
         const userId = localStorageService.get('userId');
         const reminderDatesAndTimesFromStorageForUser =
@@ -170,8 +193,7 @@ class Settings extends React.Component {
     }
 
     getUserSettings() {
-        const userId = localStorage.getItem('userId');
-        userService.getUser(userId)
+        userService.getUser()
             .then(response => {
                 let data = response.data;
                 this.setState({
@@ -179,6 +201,16 @@ class Settings extends React.Component {
                     userPicture: data.profilePicture
                 })
             })
+    }
+
+    toggleShowPostStartPopup() {
+        const showPostStartPopup = !this.state.showPostStartPopup;
+        this.setState({showPostStartPopup});
+        localStorageService.set('showPostStartPopup', showPostStartPopup.toString(), getLocalStorageEnums().PERMANENT_PREFIX);
+        getBrowser().storage.local.set({
+            showPostStartPopup: (showPostStartPopup)
+        });
+        this.showSuccessMessage();
     }
 
     toggleCreateObjects() {
@@ -572,13 +604,25 @@ class Settings extends React.Component {
     }
 
     changeReminderMinutesOnEnter(event) {
-        if (event.keyCode === getKeyCodes().enter) {
+        const { enter, minus } = getKeyCodes();
+        if (minus.includes(event.keyCode)) {
+            if (event.preventDefault) 
+                event.preventDefault();
+            return false;
+        }
+        else if (enter.includes(event.keyCode)) {
             this.changeReminderMinutes(event);
         }
     }
 
     changeIdleCounterOnEnter(event) {
-        if (event.keyCode === getKeyCodes().enter) {
+        const { enter, minus } = getKeyCodes();
+        if (minus.includes(event.keyCode)) {
+            if (event.preventDefault) 
+                event.preventDefault();
+            return false;
+        }
+        else if (enter.includes(event.keyCode)) {
             this.changeIdleCounter(event);
         }
     }
@@ -740,6 +784,20 @@ class Settings extends React.Component {
                     <DarkModeComponent
                         changeSaved={this.showSuccessMessage.bind(this)}
                     />
+
+                    <div className={isAppTypeExtension() ? "settings__send-errors" : "disabled"}
+                         onClick={this.toggleShowPostStartPopup.bind(this)}>
+                        <span className={this.state.showPostStartPopup ?
+                            "settings__send-errors__checkbox checked" : "settings__send-errors__checkbox"}>
+                            <img src="./assets/images/checked.png"
+                                 className={this.state.showPostStartPopup ?
+                                     "settings__send-errors__checkbox--img" :
+                                     "settings__send-errors__checkbox--img_hidden"}/>
+                        </span>
+                        <span className="settings__send-errors__title">Show post-start popup</span>
+                    </div>
+
+
                     <div className={isAppTypeExtension() && !this.state.isSelfHosted ?
                         "settings__send-errors" : "disabled"}
                          onClick={this.toggleTimerShortcut.bind(this)}>
@@ -800,7 +858,8 @@ class Settings extends React.Component {
                             {
                                 daysOfWeek.map(day => {
                                     return (
-                                        <div id={day.name}
+                                        <div id={day.name} 
+                                             key={day.name}
                                              className="settings__reminder__week__day"
                                              onClick={this.toggleDay.bind(this)}>
                                             <span className="settings__reminder__week__day--name">
@@ -867,8 +926,11 @@ class Settings extends React.Component {
                         </div>
                     </div>
                     <Pomodoro
+                        workspaceSettings={this.props.workspaceSettings}
                         changeSaved={this.showSuccessMessage.bind(this)}
+                        scrollIntoView = {this.scrollIntoView}
                     />
+                    <div ref={this.pomodoroEnd} />
                     { version}
                 </div>
             )

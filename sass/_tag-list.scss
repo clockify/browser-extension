@@ -37,6 +37,17 @@
     content: url("../assets/images/arrow-light-mode.png");
   }
 
+  &-arrow-up {
+    position: relative;
+    width: 10px;
+    height: 5px;
+    float: right;
+    padding-right: 15px;
+    top: 10px;
+    content: url("../assets/images/arrow-light-mode-up.png");
+  }
+
+
   &-add {
     display: inline-block;
     padding: 5px 10px;

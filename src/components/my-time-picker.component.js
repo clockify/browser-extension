@@ -59,7 +59,9 @@ class MyTimePicker extends React.Component {
 
     setFocus() {
         if (this.state.disableEdit)
-            return;
+          return;
+        if (this.props.editDisabled)
+          return;
         setTimeout(() => this.inputRef.current.select(), 0);
         this.setState({totalTime: this.state.totalTime.split(':').join('')})
     }
@@ -71,6 +73,9 @@ class MyTimePicker extends React.Component {
     }
     
     setTime() {
+      if (this.props.editDisabled)
+        return;
+
       let newInput = parseInput(this.state.totalTime.trim().replace(/ /g,''));
       if (!newInput || !this.state.totalTime.trim()) {
           // user enter invalid date
@@ -120,23 +125,25 @@ class MyTimePicker extends React.Component {
     }
     
     render(){
+        const className = `${this.props.className}${this.props.editDisabled ? ' disable-manual':''}` 
         return (
             <input
                 id={this.props.id}
                 ref={this.inputRef}
-                className={`${this.props.className}`}
+                className={className}
                 autoComplete="off"
                 type="text"
                 placeholder="Select time"
                 tabIndex={"0"}
                 spellCheck = "false"
                 disabled={false}
-                readOnly={false}
+                readOnly={this.props.editDisabled}
                 value={this.state.totalTime}
                 onChange={this.onChange}
                 onBlur={this.setTime}
                 onKeyUp={this.handleKeyUp}
                 onFocus={this.setFocus}
+                title={this.props.title}
             />
         )
     }

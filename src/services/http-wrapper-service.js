@@ -16,7 +16,19 @@ export class HttpWrapperService {
             return tokenService.getToken().then(token => {
                 if (token) {
                     headers['X-Auth-Token'] = '' + token;
-                    return httpService.get(url, headers);
+                    return httpService.get(url, headers)
+                        .then(response => {
+                            if (localStorage.getItem('offline') === 'true') {
+                                localStorage.setItem('offline', 'false');
+                            }
+                            return Promise.resolve(response);
+                        })
+                        .catch(error => {
+                            if (error && !error.response) {
+                                localStorage.setItem('offline', 'true');
+                            }
+                            return Promise.reject(error);
+                        })
                 } else {
                     tokenService.logout();
                 }

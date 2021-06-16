@@ -1,145 +1,210 @@
 import * as React from 'react';
 import ProjectItem from './project-item.component';
-import {getDefaultProjectEnums} from "../enums/default-project.enum";
 import {ProjectService} from "../services/project-service";
-import {debounce} from "lodash";
+import _, {debounce} from "lodash";
 import {LocalStorageService} from "../services/localStorage-service";
+import * as ReactDOM from "react-dom";
+import { ProjectHelper } from '../helpers/project-helper';
+import {getDefaultProjectEnums} from "../enums/default-project.enum";
+import {DefaultProject} from '../helpers/storageUserWorkspace';
 
 const projectService = new ProjectService();
 const localStorageService = new LocalStorageService();
 const pageSize = 50;
+const projectHelper = new ProjectHelper()
 
-class ProjectList extends React.Component {
+const _lastUsedProject =  {
+    id: getDefaultProjectEnums().LAST_USED_PROJECT,
+    name: 'Last used project',
+    color: '#999999',
+    tasks: []
+}
+
+class DefaultProjectList extends React.Component {
 
     constructor(props) {
         super(props);
 
+        const {forceProjects, forceTasks, projectPickerSpecialFilter} = this.props.workspaceSettings;
+        if (forceTasks && !_lastUsedProject.name.includes('task'))
+            _lastUsedProject.name += ' and task';
+
+        let {selectedProject} = this.props;
+        if (selectedProject && 
+            selectedProject.id === _lastUsedProject.id) {
+                selectedProject = _lastUsedProject;
+        }
+
         this.state = {
             isOpen: false,
-            selectedProject: {
-                name: "Select default project",
-                color: this.getColorForProject()
-            },
-            projectList:
-                [{
-                    name: 'Last used project',
-                    color: '#999999',
-                    tasks: [],
-                    id: getDefaultProjectEnums().LAST_USED_PROJECT
-                }],
+            selectedProject,
+            selectedTaskName: selectedProject && selectedProject.selectedTask 
+                ? selectedProject.selectedTask.name
+                : '',
+            projectList: [_lastUsedProject],
             page: 1,
-            ready: false,
             loadMore: true,
+            clients: ['Without client'],
             title: '',
-            filter: ''
+            filter: '',
+            specFilterNoTasksOrProject: "",
+            // project
+            forceProjects,
+            projectRequired: false,
+            projectArchived: false,
+            projectDoesNotExist: false,
+            // task
+            forceTasks,
+            taskDoesNotExist: false,
+            taskRequired: false,
+            taskDone: false,
+
+            isSpecialFilter: projectPickerSpecialFilter,
+            msg: null,
+            darkMode: this.DarkMode
         };
+        _lastUsedProject.color = this.getColorForProject(this.state.darkMode);
+
         this.filterProjects = debounce(this.filterProjects, 500);
+        this.openProjectDropdown = this.openProjectDropdown.bind(this);
+        this.checkDefaultProjectTask = this.checkDefaultProjectTask.bind(this);
+        this.clearProjectFilter = this.clearProjectFilter.bind(this);
     }
 
+    /*  selectedProject
+        1) null
+        2) { id: LAST_USED_PROJECT }
+        3) { id: 123, name: Kika }
+        4) { id: 123, name: Kika, selectedTask: { id: 567, name: Tarzan } }
+    */
+
     componentDidMount() {
-        this.getProjects(this.state.page, pageSize);
+        this.setState({
+            title: this.createTitle()
+        });
+        this.checkDefaultProjectTask();
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (prevProps.selectedProject !== this.props.selectedProject) {
+            this.setState({
+                selectedProject: this.props.selectedProject
+            }, () => {
+                this.checkDefaultProjectTask();
+            });
+        }
+    }
+
+    async checkDefaultProjectTask() {
+        const { isPomodoro } = this.props;
+        const { forceProjects, forceTasks, projectPickerSpecialFilter } = this.props.workspaceSettings;
+        const { storage, defaultProject } = DefaultProject.getStorage(isPomodoro);
+        if (!defaultProject)
+            return;
+        const { projectDB, taskDB, msg, msgId } = await defaultProject.getProjectTaskFromDB(forceTasks);
+
+        const projectDoesNotExist = forceProjects && msgId === 'projectDoesNotExist';
+        const projectArchived = forceProjects && msgId === 'projectArchived';
+        const projectRequired = projectDoesNotExist || projectArchived;
+        
+        const taskDoesNotExist = forceTasks && msgId === 'taskDoesNotExist';
+        const taskDone = forceTasks && msgId === 'taskDone';
+        const taskRequired = taskDoesNotExist || taskDone;
+
+        this.setState({
+            forceProjects,
+            projectDoesNotExist,
+            projectArchived,
+            projectRequired,
+            forceTasks,
+            taskDoesNotExist,
+            taskDone,
+            taskRequired,
+            projectPickerSpecialFilter,
+            msg,
+            selectedTaskName: taskDB ? taskDB.name : ''
+        }, () => {
+            title: this.createTitle()
+        });
+    }
+
+    isOpened() {
+        return this.state.isOpen;
+    }
+
+    closeOpened() {
+        this.setState({
+            isOpen: false
+        });
     }
 
     getProjects(page, pageSize) {
         if (page === 1) {
             this.setState({
-                projectList:[{
-                    id: getDefaultProjectEnums().LAST_USED_PROJECT,
-                    name: 'Last used project',
-                    color: '#999999',
-                    tasks: []
-                }]
+                projectList: [_lastUsedProject]
             })
         }
         if (!JSON.parse(localStorage.getItem('offline'))) {
-            projectService.getProjectsWithFilter(this.state.filter, page, pageSize)
+            const {filter, forceTasks, projectList, isSpecialFilter, page} = this.state;
+            projectService.getProjectsWithFilter(filter, page, pageSize)
                 .then(response => {
+                    const projects = forceTasks
+                        ? response.data.filter(project => project.taskCount > 0)
+                        : response.data;
                     this.setState({
-                        projectList: this.state.projectList.concat(response.data),
-                        page: this.state.page + 1,
-                        ready: true
+                        projectList: projectList.concat(projects),
+                        page: page + 1
                     }, () => {
-                        if(!this.state.isOpen) {
-                            this.mapSelectedProject();
-                        }
+                        const {filter, projectList} = this.state;
+                        this.setState({
+                            clients: this.getClients(projectList),
+                            loadMore: response.data.length === pageSize ? true : false,
+                            specFilterNoTasksOrProject: 
+                                projectHelper.createMessageForNoTaskOrProject(projects, isSpecialFilter, filter)
+                        });
                     });
                 })
                 .catch(() => {
                 });
-        } else {
-            this.setState({
-                ready: true
-            })
+        }
+        else {
         }
     }
 
-    mapSelectedProject() {
-        const selectedProject = this.props.selectedProject === 'lastUsedProject' ?
-            {
-                name: 'Last used project',
-                color: '#999999',
-                tasks: [],
-                id: getDefaultProjectEnums().LAST_USED_PROJECT
-            } :
-        this.state.projectList.filter(p => p.id === this.props.selectedProject)[0];
-
-        if (this.props.selectedProject && selectedProject) {
-            this.setState({
-                selectedProject: selectedProject
-            }, () => {
-                this.setState({
-                    title: this.createTitle()
-                });
-            })
+    getProjectTasks(projectId, filter, page) {
+        return projectService.getProjectTasksWithFilter(projectId, filter, page);
+    }
+  
+    getClients(projects) {
+        const clients = new Set(projects.filter(p => p.client).map(p => p.client.name))
+        if (projects && projects.length > 0) {
+            return ['Without client', ...clients]
         } else {
-            if (this.props.selectedProject) {
-                const projectIds = [];
-                projectIds.push(this.props.selectedProject);
-                projectService.getProjectsByIds(projectIds).then(response => {
-                    if (response.data.length > 0 && !response.data[0].archived) {
-                        this.setState({
-                            selectedProject: response.data[0]
-                        }, () => {
-                            this.setState({
-                                title: this.createTitle()
-                            });
-                        });
-                    }
-                });
-            } else {
-                this.setState({
-                    selectedProject: {
-                        name: 'Select default project',
-                        color: this.getColorForProject()
-                    }
-                }, () => {
-                    this.setState({
-                        title: this.createTitle()
-                    });
-                });
-            }
+            return []
         }
     }
 
     selectProject(project) {
         this.props.selectProject(project);
-
-        this.setState({
-                selectedProject: project,
-                isOpen: false
-            }, () => this.setState({
-                title: this.createTitle()
-            })
-        );
+        this.setState({ isOpen: false });
     }
 
-    openProjectDropdown() {
+    selectTask(task, project) {
+        this.selectProject(Object.assign(project, { selectedTask: task }));
+    }
+
+    openProjectDropdown(e) {
+        e.stopPropagation();
         if (!JSON.parse(localStorage.getItem('offline'))) {
             this.setState({
                 isOpen: true,
-                page: 1
+                filter: '',
+                page: 1,
+                projectList: [_lastUsedProject]
             }, () => {
+                document.getElementById('project-filter').value = null;
                 document.getElementById('project-filter').focus();
+                this.getProjects(this.state.page, pageSize, this.state.isEnabledCreateProject);
                 this.props.projectListOpened();
             });
         }
@@ -149,22 +214,14 @@ class ProjectList extends React.Component {
         document.getElementById('project-dropdown').scroll(0, 0);
         this.setState({
             isOpen: false,
-            page: 1,
             filter: ''
         }, () => {
-            document.getElementById('project-filter').value = "";
-            this.getProjects(this.state.page, pageSize);
         });
     }
 
     filterProjects() {
         this.setState({
-            projectList: [{
-                name: 'Last used project',
-                color: '#999999',
-                tasks: [],
-                id: getDefaultProjectEnums().LAST_USED_PROJECT
-            }],
+            projectList: [_lastUsedProject],           
             filter: document.getElementById('project-filter').value.toLowerCase(),
             page: 1
         }, () => {
@@ -176,24 +233,29 @@ class ProjectList extends React.Component {
         this.getProjects(this.state.page, pageSize);
     }
 
+
     createTitle() {
+        const {selectedProject, selectedTaskName} = this.state;
         let title = 'Select default project';
-        if (this.state.selectedProject && this.state.selectedProject.id) {
-            title = 'Project: ' + this.state.selectedProject.name;
+        if (selectedProject && selectedProject.id) {
+            title = 'Project: ' + selectedProject.name;
+
+            if (selectedTaskName) {
+                title = title + '\nTask: ' + selectedTaskName;
+            }
+
+            if (selectedProject.client && selectedProject.client.name) {
+                title = title + '\nClient: ' + selectedProject.client.name;
+            }
         }
 
         return title;
     }
 
+
     clearProjectFilter() {
         this.setState({
-            projectList:
-            [{
-                name: 'Last used project',
-                color: '#999999',
-                tasks: [],
-                id: getDefaultProjectEnums().LAST_USED_PROJECT
-            }],
+            projectList: [_lastUsedProject],            
             filter: '',
             page: 1
         }, () => {
@@ -202,77 +264,128 @@ class ProjectList extends React.Component {
         });
     }
 
-    getColorForProject() {
-        const userId = localStorageService.get('userId');
-        const darkModeFromStorage = localStorageService.get('darkMode') ?
-            JSON.parse(localStorageService.get('darkMode')) : [];
-
-        if (darkModeFromStorage.length > 0 &&
-            darkModeFromStorage.filter(darkMode => darkMode.userId === userId && darkMode.enabled).length > 0
-        ) {
-            return '#90A4AE';
-        } else {
-            return '#999999';
-        }
+    getColorForProject(darkMode) {
+        return darkMode ? '#90A4AE' : '#999999';
     }
 
+    get DarkMode() {
+        const userId = localStorageService.get('userId');
+        const str = localStorageService.get('darkMode');
+        const darkModeFromStorage = str ? JSON.parse(str) : [];
+        return darkModeFromStorage
+                .find(darkMode => darkMode.userId === userId && darkMode.enabled);
+    }
+
+
     render() {
-        if (!this.state.ready) {
-            return null;
-        } else {
-            return (
-                <div className="projects-list"
-                     title={this.state.title}>
-                    <div onClick={this.openProjectDropdown.bind(this)}
-                         className={JSON.parse(localStorage.getItem('offline')) ?
-                             "project-list-button-offline" : "project-list-button"}>
-                        <span style={{color: this.state.selectedProject ? this.state.selectedProject.color : "#999999"}}
-                              className="project-list-name">
-                            {this.state.selectedProject ? this.state.selectedProject.name : "Select default project"}
+        const { 
+            selectedProject, selectedTaskName, isOpen, 
+            specFilterNoTasksOrProject, loadMore, title,
+            projectRequired, projectDoesNotExist, projectArchived, 
+            taskRequired, taskDoesNotExist, taskDone
+        } = this.state;
+
+        const isLastUsed = selectedProject && selectedProject.id === _lastUsedProject.id;
+
+        const className = JSON.parse(localStorage.getItem('offline'))
+                ? "project-list-button-offline"
+                : projectRequired || taskRequired
+                    ? "project-list-button-required"
+                    : "project-list-button";
+
+        return (
+            <div className="projects-list" title={title}>
+                <div 
+                    onClick={this.openProjectDropdown}
+                    tabIndex={"0"} 
+                    onKeyDown={e => {if (e.key==='Enter') this.openProjectDropdown(e)}}
+                    className={className}>
+                    <span style={{color: selectedProject ? selectedProject.color : "#999999"}}
+                            className="project-list-name">
+                        {selectedProject ? selectedProject.name : "Add project"}
+                        <span className={isLastUsed || selectedTaskName === "" ? "disabled" : ""}>
+                            {" : " + selectedTaskName}
                         </span>
-                            <span className="project-list-arrow">
-                        </span>
-                    </div>
-                    <div className={this.state.isOpen ? "project-list-open" : "disabled"}>
-                        <div onClick={this.closeProjectList.bind(this)} className="invisible"></div>
-                        <div className="project-list-dropdown"
-                             id="project-dropdown">
-                            <div className="project-list-dropdown--content">
-                                <div className="project-list-input">
-                                    <div className="project-list-input--border">
-                                        <input
-                                            placeholder={"Filter projects"}
-                                            className="project-list-filter"
-                                            onChange={this.filterProjects.bind(this)}
-                                            id="project-filter"
-                                        />
-                                        <span className={!!this.state.filter ? "project-list-filter__clear" : "disabled"}
-                                              onClick={this.clearProjectFilter.bind(this)}></span>
-                                    </div>
+                    </span>
+                    <span className={isOpen ? 'project-list-arrow-up' : 'project-list-arrow'} >
+                    </span>
+                </div>
+                {projectDoesNotExist &&
+                    <div className='error'>Project doesn't exist</div>
+                }
+                {projectArchived &&
+                    <div className='error'>Project is archived</div>
+                }
+                {taskDoesNotExist && 
+                    <div className='error'>Can't save without task</div>
+                }
+                {taskDone &&
+                    <div className='error'>Task "{selectedTaskName}" is Done!</div>
+                }
+
+                {isOpen &&
+                    <div className="project-list-open">
+                    <div onClick={this.closeProjectList.bind(this)} className="invisible"></div>
+                    <div className="project-list-dropdown" id="project-dropdown">
+                        <div className="project-list-dropdown--content">
+                            <div className="project-list-input">
+                                <div className="project-list-input--border">
+                                    <input
+                                        placeholder={
+                                            this.state.isSpecialFilter ?
+                                                "Filter task @project or client" : "Filter projects"
+                                        }
+                                        className="project-list-filter"
+                                        onChange={this.filterProjects.bind(this)}
+                                        id="project-filter"
+                                    />
+                                    <span className={!!this.state.filter ? "project-list-filter__clear" : "disabled"}
+                                            onClick={this.clearProjectFilter}></span>
                                 </div>
-                                {
-                                    this.state.projectList.map(project => {
-                                        return (
-                                            <ProjectItem
-                                                project={project}
-                                                noTasks={true}
-                                                selectProject={this.selectProject.bind(this)}
-                                                workspaceSettings={this.props.workspaceSettings}
-                                                isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}
-                                            />
-                                        )
-                                    })
-                                }
-                                <div className={this.state.loadMore ? "project-list-load" : "disabled"}
-                                     onClick={this.loadMoreProjects.bind(this)}>Load more
-                                </div>
+                            </div>
+                            {
+                                this.state.clients.map(client => {
+                                    return (
+                                        <div key={client}>
+                                            <div className="project-list-client">{client}</div>
+                                            {
+                                                this.state.projectList
+                                                    .filter(project =>
+                                                        (project.client && project.client.name === client) ||
+                                                        (!project.client && client === 'Without client'))
+                                                    .map(project => {
+                                                        return (
+                                                            <ProjectItem
+                                                                key={project.id}
+                                                                project={project}
+                                                                noTasks={this.props.noTasks}
+                                                                selectProject={this.selectProject.bind(this)}
+                                                                selectTask={this.selectTask.bind(this)}
+                                                                workspaceSettings={this.props.workspaceSettings}
+                                                                isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}
+                                                                getProjectTasks={this.getProjectTasks}
+                                                                isLastUsedProject={project.id === getDefaultProjectEnums().LAST_USED_PROJECT}
+                                                            />
+                                                        )
+                                                    })
+                                            }
+                                        </div>
+                                    )
+                                })
+                            }
+                            <div className={specFilterNoTasksOrProject.length > 0 ? "project-list__spec_filter_no_task_or_project" : "disabled"}>
+                                <span>{specFilterNoTasksOrProject}</span>
+                            </div>
+                            <div className={loadMore ? "project-list-load" : "disabled"}
+                                    onClick={this.loadMoreProjects.bind(this)}>Load more
                             </div>
                         </div>
                     </div>
                 </div>
-            )
-        }
+                }
+                </div>
+        )
     }
 }
 
-export default ProjectList;
+export default DefaultProjectList;

@@ -17,7 +17,7 @@ class CreateProjectComponent extends React.Component {
         super(props);
 
         this.state = {
-            projectName: "",
+            projectName: props.projectName,
             client: null,
             selectedColor: null,
             billable: localStorage.getItem('workspaceSettings') ? JSON.parse(localStorage.getItem('workspaceSettings')).defaultBillableProjects : false,
@@ -54,24 +54,33 @@ class CreateProjectComponent extends React.Component {
     }
 
     addProject() {
-        let project = {};
-        if (!this.state.projectName || !this.state.selectedColor) {
+        const {projectName, client, selectedColor, billable} = this.state;
+        
+        if (!projectName || !selectedColor) {
             this.toaster.toast('error', 'Name and color are required', 2);
             return;
         }
-        project.name = this.state.projectName;
-        project.clientId = this.state.client ? this.state.client.id : "";
-        project.color = this.state.selectedColor;
-        project.billable = this.state.billable;
-        project.isPublic = this.state.public;
 
-        projectService.createProject(project).then(response => {
-            let timeEntry = this.props.timeEntry;
-            timeEntry.projectId = response.data.id;
-            this.goBackToEdit(timeEntry);
-        }).catch(error => {
-            this.toaster.toast('error', error.response.data.message, 2);
-        });
+        const project = {
+            name: projectName,
+            clientId: client ? client.id : "",
+            color: selectedColor,
+            billable,
+            isPublic: this.state.public
+        }
+
+        projectService.createProject(project)
+            .then(response => {
+                const timeEntry = Object.assign(this.props.timeEntry, {
+                    projectId: response.data.id,
+                    billable,
+                    project
+                });
+                this.goBackToEdit(timeEntry);
+            })
+            .catch(error => {
+                this.toaster.toast('error', error.response.data.message, 2);
+            });
     }
 
     handleChange(event) {

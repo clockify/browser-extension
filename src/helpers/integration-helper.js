@@ -7,7 +7,7 @@ import {HttpHeadersHelper} from "./http-headers-helper";
 
 const localStorageService = new LocalStorageService();
 const tokenService = new TokenService();
-const projectHelpers = new ProjectHelper();
+const projectHelper = new ProjectHelper();
 const tagService = new TagService();
 const httpHeadersHelper = new HttpHeadersHelper();
 
@@ -48,8 +48,7 @@ export function stopInProgress() {
 export function startTimer(timeEntryOptions) {
     const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
     const baseUrl = localStorageService.get('baseUrl');
-    let timeEntryUrl =
-        `${baseUrl}/workspaces/${activeWorkspaceId}/timeEntries/`;
+    let timeEntryUrl = `${baseUrl}/workspaces/${activeWorkspaceId}/timeEntries/`;
 
     return tokenService.getToken().then(token => {
         if (token) {
@@ -90,6 +89,7 @@ function createStopInProgressUrlAndFetch (endInProgressUrl, token) {
         .then(response => response);
 }
 
+
 async function createTask(token, projectId, taskName) {
     const headers =  new Headers(httpHeadersHelper.createHttpHeaders(token));
 
@@ -121,27 +121,47 @@ async function getOrCreateTask(token, project, taskName) {
     // try to find the appropriate task for this
     // if project.tasks is not present, this most certainly means that this
     // project was freshly created in which case there simply are no tasks
-    const task = (project.tasks || []).find(t => t.name === taskName);
+    let task = (project.tasks || []).find(t => t.name === taskName);
+    if (!task) {
+        task = await projectHelper.getTaskOfProject({ 
+                    projectId: project.id,
+                    taskName: encodeURIComponent(taskName) 
+                })
+                .then(response => {
+                    return response.data.taskList.length > 0 ? response.data.taskList[0] : null;
+                })
+                .catch(() => {
+                    return null;
+                });
+    }
 
     if (task) {
         return task;
-    } else if (JSON.parse(localStorageService.get('createObjects', false))) {
+    } 
+    else if (JSON.parse(localStorageService.get('createObjects', false))) {
         return await createTask(token, project.id, taskName);
     }
 }
 
 async function getOrCreateTags(tagNames) {
-    const existingTagsResponse = await tagService.getAllTagsWithFilter(1, 100);
-
-    if (existingTagsResponse.status !== 200) {
-        return [];
+    const pageSize = 50;
+    let allTags = [];
+    for (var page=1; page < 20; page++) {
+        const response = await tagService.getAllTagsWithFilter(page, pageSize);
+        if (response.status !== 200) {
+            break; //return [];
+        }
+        const pageTags = response.data;
+        allTags = allTags.concat(pageTags);
+        if (pageTags.length < pageSize)
+            break;
     }
+
     
-    const existingTags = existingTagsResponse.data;
     const tags = [];
 
     for (const n of tagNames) {
-        const t = existingTags.find(e => e.name === n);
+        const t = allTags.find(e => e.name.toUpperCase() === n.toUpperCase());
         if (t) {
             tags.push(t);
         } else if (JSON.parse(localStorageService.get('createObjects', false))) {
@@ -162,13 +182,40 @@ async function getOrCreateTags(tagNames) {
 }
 
 async function startTimeEntryRequestAndFetch (timeEntryUrl, token, options) {
-    const headers =  new Headers(httpHeadersHelper.createHttpHeaders(token));
-    const project = await projectHelpers.getProjectForButton(options.projectName);
+    const headers = new Headers(httpHeadersHelper.createHttpHeaders(token));
+    let {
+        projectDB, taskDB, msg,
+        found, created, onlyAdminsCanCreateProjects, takenFromDefaultProjectTask
+    } = await projectHelper.getProjectForButton(options.projectName);
+
+    let message = msg ? msg : ''; 
+    if (onlyAdminsCanCreateProjects) {
+        message += "Only Admins can create projects.";
+    }
 
     let task = null;
-    if (project && options.taskName) {
-        task = await getOrCreateTask(token, project, options.taskName);
+    if (takenFromDefaultProjectTask) {
+        task = taskDB;
     }
+    else {
+        const str = localStorageService.get('workspaceSettings');
+        const workspaceSettings = str ? JSON.parse(str) : {};
+        const { forceTasks } = workspaceSettings;
+        if (projectDB) {
+            if (found || created) {
+                if (options.taskName) {
+                    const taskName = options.taskName.trim().replace(/\s+/g, ' '); // /\s\s+/g
+                    task = await getOrCreateTask(token, projectDB, taskName);
+                }
+            }
+            if (forceTasks && !task) {
+                const { projectDB: p, taskDB: t } = await projectHelper.checkDefaultProjectTask(forceTasks);
+                projectDB = p;
+                task = t;
+            }
+        }  
+    }
+
 
     let tags = [];
     if (options.tagNames) {
@@ -177,7 +224,7 @@ async function startTimeEntryRequestAndFetch (timeEntryUrl, token, options) {
 
     let billable = options.billable;
     if (billable === undefined || billable === null) {
-        billable = project ? project.billable : false;
+        billable = projectDB ? projectDB.billable : false;
     }
 
     const timeEntryRequest = new Request(timeEntryUrl, {
@@ -187,21 +234,57 @@ async function startTimeEntryRequestAndFetch (timeEntryUrl, token, options) {
             start: options.start || new Date(),
             end: options.end, // can be undefined
             description: options.description,
-            billable: billable,
-            projectId: project ? project.id : null,
-            tagIds: tags.map(e => e.id),
-            taskId: task ? task.id : null
+            billable,
+            projectId: projectDB ? projectDB.id : null,
+            taskId: task ? task.id : null,
+            tagIds: tags.map(e => e.id)
         })
     });
 
     return fetch(timeEntryRequest)
         .then(response =>  {
             return response.json().then(json => {
-                return { status: response.status, data: json };
+                if (!!message)
+                    json = Object.assign(json, {message})
+                return { 
+                    status: response.status,
+                    data: (task ? Object.assign(json, { task: task }) : json)
+                };
             });
         });
 }
 
-export async function getDefaultProjectBackground() {
-    return await projectHelpers.getProjectForButton('');
+export async function getProjects(options) {
+    return await projectHelper.getProjects(options);
 }
+
+export async function getProjectTasks(options) {
+    return await projectHelper.getProjectTasks(options);
+}
+
+export async function getProjectsByIdsForIntegration(options) {
+    return await projectHelper.getProjectsByIdsForIntegration(options);
+}
+
+export async function getProjectTaskFromDB() {
+    const str = localStorageService.get('workspaceSettings');
+    const workspaceSettings = str ? JSON.parse(str) : {};
+    const { forceTasks } = workspaceSettings;
+    const { storage, defaultProject } = DefaultProject.getStorage();
+    return await defaultProject.getProjectTaskFromDB(forceTasks);
+}
+
+
+export async function getTags({ filter, page, pageSize}) {
+    return await tagService.getAllTagsWithFilter(page, pageSize, filter)
+        .then(response => {
+            let data = response.data;
+            return Promise.resolve({
+                status: 201,
+                data
+            })                    
+        })
+        .catch(() => {
+        });
+}
+

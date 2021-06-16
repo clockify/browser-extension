@@ -1,118 +1,78 @@
 import * as React from "react";
 import DefaultProjectList from "./default-project-list.component";
 import {getDefaultProjectEnums} from "../enums/default-project.enum";
-import {ProjectHelper} from "../helpers/project-helper";
-import {LocalStorageService} from "../services/localStorage-service";
 
-const projectHelper = new ProjectHelper();
-const localStorageService = new LocalStorageService();
+import {DefaultProject} from '../helpers/storageUserWorkspace';
 
-class DefaultProject extends React.Component {
-
+class DefaultProjectComponent extends React.Component {
     constructor(props) {
         super(props);
 
+        const { storage, defaultProject } = DefaultProject.getStorage();
         this.state = {
-            defaultProjectEnabled: false,
-            defaultProjectForUserOnWorkspace: projectHelper.getDefaultProjectOfWorkspaceForUser()
+            defaultProjectEnabled: defaultProject ? defaultProject.enabled : false,
+            selectedProject: defaultProject ? defaultProject.project : null
         };
     }
 
     componentDidMount() {
-        this.isDefaultProjectEnabled();
-        this.getDefaultProjectOfWorkspaceForUser();
+        this.onMountOrUpdate();
     }
 
-    isDefaultProjectEnabled() {
-        const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
-        const userId = localStorageService.get('userId');
-        let defaultProjectsFromStorage = projectHelper.getDefaultProjectListFromStorage();
-        const defProjectByUserAndActiveWorkspaceId =
-            projectHelper.filterProjectsByWorkspaceAndUser(defaultProjectsFromStorage, activeWorkspaceId, userId);
-
-        if (!defProjectByUserAndActiveWorkspaceId) {
-            return;
+    onMountOrUpdate() {
+        const elem = document.getElementById('defaultProject');
+        if (this.state.defaultProjectEnabled) {
+            elem.style.padding = "10px 20px";
+            elem.style.maxHeight = '360px';
+        }  
+        else {
+            elem.style.padding = '0 20px';
+            elem.style.maxHeight = "0";
         }
+    }
 
-        this.setState({
-            defaultProjectEnabled: defProjectByUserAndActiveWorkspaceId.enabled
-        }, () => {
-            setTimeout(() => {
-                if (defProjectByUserAndActiveWorkspaceId.enabled) {
-                    document.getElementById('defaultProject').style.padding = "20px 20px";
-                    document.getElementById('defaultProject').style.maxHeight = '360px';
-                }
-            },220);
-        });
+    componentDidUpdate(prevProps, prevState) {
+        if (prevState.defaultProjectEnabled !== this.state.defaultProjectEnabled) {
+            const { storage, defaultProject } = DefaultProject.getStorage();
+            this.setState({
+                defaultProjectEnabled: defaultProject ? defaultProject.enabled : false,
+                selectedProject: defaultProject ? defaultProject.project : null
+            }, () => {
+                this.onMountOrUpdate();
+            });
+        }
     }
 
     toggleDefaultProjectEnabled() {
-        const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
-        const userId = localStorageService.get('userId');
-        let defaultProjectsFromStorage = projectHelper.getDefaultProjectListFromStorage();
-        const defProjectByUserAndActiveWorkspaceId =
-            projectHelper.filterProjectsByWorkspaceAndUser(defaultProjectsFromStorage, activeWorkspaceId, userId);
-        const defaultProjectElem = document.getElementById('defaultProject');
-
-        if (!defProjectByUserAndActiveWorkspaceId) {
-            this.setInitialDefaultProject(activeWorkspaceId, userId, defaultProjectsFromStorage);
-            defaultProjectElem.style.padding = "20px 20px";
-            defaultProjectElem.style.maxHeight = '360px';
-        } else {
-            defaultProjectsFromStorage = defaultProjectsFromStorage.map(defProject => {
-                if (defProject.userId === userId && defProject.workspaceId === activeWorkspaceId) {
-                    defProject.enabled = !this.state.defaultProjectEnabled;
-
-                    if (defProject.enabled) {
-                        defaultProjectElem.style.padding = "20px 20px";
-                        defaultProjectElem.style.maxHeight = '360px';
-                    } else {
-                        defaultProjectElem.style.padding = '0 20px';
-                        defaultProjectElem.style.maxHeight = "0";
-                    }
-                }
-
-                return defProject;
-            });
-
-            projectHelper.setDefaultProjectsToStorage(defaultProjectsFromStorage);
+        let { storage, defaultProject } = DefaultProject.getStorage();
+        if (!defaultProject) {
+            defaultProject = storage.setInitialDefaultProject();
+        } 
+        else {
+            storage.toggleEnabledOfDefaultProject();
         }
 
         this.setState({
             defaultProjectEnabled: !this.state.defaultProjectEnabled,
-            defaultProjectForUserOnWorkspace: projectHelper.getDefaultProjectOfWorkspaceForUser()
+            selectedProject: defaultProject ? defaultProject.project : null
         }, () => {
-            this.projectList.setState({
-                isOpen: false
-            });
-            this.projectList.mapSelectedProject()
+            this.projectList.closeOpened();
+            this.props.changeSaved();
         });
-        this.props.changeSaved();
     }
 
-    setInitialDefaultProject(activeWorkspaceId, userId, defaultProjects) {
-        let initialProject = {};
-        initialProject.id = getDefaultProjectEnums().LAST_USED_PROJECT;
-        const createdDefaultProject = {
-            workspaceId: activeWorkspaceId,
-            userId: userId,
-            project: initialProject,
-            enabled: true
-        };
 
-        defaultProjects.push(createdDefaultProject);
-        projectHelper.setDefaultProjectsToStorage(defaultProjects);
-    }
+    setDefaultProject(project) {
+        const { storage } = DefaultProject.getStorage();
+        storage.setDefaultProject(project);
 
-    setDefaultProject(defaultProject) {
-        projectHelper.setDefaultProject(defaultProject)
-        this.props.changeSaved();
-    }
-
-    getDefaultProjectOfWorkspaceForUser() {
         this.setState({
-            defaultProjectForUserOnWorkspace: projectHelper.getDefaultProjectOfWorkspaceForUser()
-        })
+            selectedProject: project
+        }, () => {
+            this.onMountOrUpdate();
+        });
+
+        this.props.changeSaved();
     }
 
     projectListOpened() {
@@ -122,30 +82,36 @@ class DefaultProject extends React.Component {
     }
 
     render() {
+        const { defaultProjectEnabled, selectedProject } = this.state;
+        const {forceProjects, forceTasks} = this.props.workspaceSettings;
+        const name = forceTasks ? 'Default project and task' : 'Default project';
+
         return (
             <div>
                 <div className="default-project"
                      onClick={this.toggleDefaultProjectEnabled.bind(this)}>
-                    <span className={this.state.defaultProjectEnabled ?
+                    <span className={defaultProjectEnabled ?
                         "default-project-checkbox checked" : "default-project-checkbox"}>
                         <img src="./assets/images/checked.png"
-                             className={this.state.defaultProjectEnabled ?
+                             className={defaultProjectEnabled ?
                                  "default-project-checkbox--img" :
                                  "default-project-checkbox--img_hidden"}/>
                     </span>
-                    <span className="default-project-title">Default project</span>
+                    <span className="default-project-title">{name}</span>
                 </div>
                 <div id="defaultProject"
-                     className="default-project__project-list expandContainer">
+                    className="default-project__project-list expandContainer">
                     <DefaultProjectList
                         ref={instance => {
                             this.projectList = instance
                         }}
-                        selectedProject={this.state.defaultProjectEnabled && this.state.defaultProjectForUserOnWorkspace ?
-                            this.state.defaultProjectForUserOnWorkspace.id : null}
+                        selectedProject={selectedProject}
                         selectProject={this.setDefaultProject.bind(this)}
                         workspaceSettings={this.props.workspaceSettings}
                         projectListOpened={this.projectListOpened.bind(this)}
+                        isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}
+                        noTask={false}
+                        isPomodoro={false}
                     />
                 </div>
             </div>
@@ -153,4 +119,4 @@ class DefaultProject extends React.Component {
     }
 }
 
-export default DefaultProject;
+export default DefaultProjectComponent;

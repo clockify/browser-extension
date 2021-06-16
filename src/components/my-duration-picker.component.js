@@ -27,10 +27,11 @@ class MyDurationPicker extends React.Component {
       const {defaultOpenValue, format} = this.props;
 
       let timeEntryDurationInput;
-      if(!defaultOpenValue || defaultOpenValue === '00:00:00' || defaultOpenValue === '0:00') {
+      if (!defaultOpenValue || defaultOpenValue === '00:00:00' || defaultOpenValue === '0:00') {
         timeEntryDurationInput = props.defaultOpenValue;
-      } else {
-        timeEntryDurationInput = parseTimeEntryDuration(defaultOpenValue.format(format), format);
+      } 
+      else {
+        timeEntryDurationInput = parseTimeEntryDuration(defaultOpenValue.format(format, {trim: false}), format);
       }
 
       this.setState({
@@ -50,11 +51,15 @@ class MyDurationPicker extends React.Component {
     }
 
     onChange(e) {
-      this.setState({ timeEntryDurationInput : e.target.value })
+      this.setState({ 
+        timeEntryDurationInput : e.target.value 
+      })
     }
 
     setFocus(e) {
         if (this.state.disableEdit)
+          return;
+        if (this.props.editDisabled)
           return;
         this.inputRef.current.select()
     }
@@ -66,6 +71,8 @@ class MyDurationPicker extends React.Component {
     }
     
     setDuration() {
+      if (this.props.editDisabled)
+        return;
       let timeEntryDurationInput = this.state.timeEntryDurationInput.trim();
       const newDuration = parseTimeEntryDuration(timeEntryDurationInput, this.props.format);
       const isValidDuration = !!newDuration;
@@ -82,25 +89,27 @@ class MyDurationPicker extends React.Component {
     }
     
     render(){
+
+        const className = `${this.props.className}${this.props.editDisabled ? ' disable-manual':''}` 
         return (
             <input
                 id={this.props.id}
                 ref={this.inputRef}
-                className={this.props.className}
+                className={className}
                 autoComplete="off"
                 type="text"
                 placeholder="Select time"
                 tabIndex={"0"}
                 spellCheck = "false"
                 disabled={this.props.isDisabled}
-                readOnly={false}
+                readOnly={this.props.editDisabled}
                 value={this.state.timeEntryDurationInput}
                 onChange={this.onChange}
                 onBlur={this.setDuration}
                 onKeyUp={this.handleKeyUp}
                 onFocus={this.setFocus}
                 placement="left"
-                title={`Please write duration in the '${this.props.format}' format.`}
+                title={this.props.title ? this.props.title : `Please write duration in the '${this.props.format}' format.`}
             />
         )
     }

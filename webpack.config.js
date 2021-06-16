@@ -1,24 +1,24 @@
 const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const webpack = require('webpack');
-const serviceVersion = require("./package.json").version;
 
-const DEV = !process.env.NODE_ENV || process.env.NODE_ENV !== 'prod';
+let DEV = !process.env.NODE_ENV || process.env.NODE_ENV !== 'prod' || process.env.TARGET === 'www/chrome';
+let targetForManifest =
+    process.env.TARGET === 'www/chrome' ? 'chrome' : process.env.TARGET;
 
-module.exports = env => { return {
+module.exports = {
     entry: [
         'babel-polyfill', './src/main.js'
     ],
     output: {
-        path: path.join(__dirname, `www/${env.TARGET}`),
+        path: path.join(__dirname, `${process.env.TARGET}`),
         filename: '[name].bundle.js',
     },
-    mode: DEV ? 'development' : 'production',
     optimization: {
         minimize: DEV ? false : true,
         splitChunks: {
-            chunks: "all",
-            automaticNameDelimiter: "."
+            chunks: 'all',
+            automaticNameDelimiter: '.',
         }
     },
     module: {
@@ -45,12 +45,11 @@ module.exports = env => { return {
             {from: './assets', to: './assets'},
             {from: './styles', to: './styles'},
             {from: `./index.html`, to: './'},
-            {from: `./manifest.${env.TARGET}.json`, to: `./manifest.json`},
+            {from: `./manifest.${targetForManifest}.json`, to: `./manifest.json`},
             {from: './src/contentScripts', to: './contentScripts'},
             {from: './src/integrations', to: './integrations'},
             {from: './src/settings.html', to: './'},
             {from: './src/settings.js', to: './'}
-        ]),
-        new webpack.DefinePlugin({'serviceVersion': JSON.stringify(serviceVersion)})
+        ])
     ]
-}; };
+};

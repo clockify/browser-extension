@@ -72,17 +72,24 @@ export class TimeEntryService extends HttpWrapperService {
         return super.get(entryInProgressUrl, addToken);
     }
 
-    startNewEntry(projectId, description, billable, start) {
+    healthCheck() {
+        const baseUrl = localStorageService.get('baseUrl');
+        const entryInProgressUrl = `${baseUrl}/health`;
+        return super.get(entryInProgressUrl, addToken);
+    }
+
+    startNewEntry(projectId, description, billable, start, taskId=null) {
         const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
         const baseUrl = localStorageService.get('baseUrl');
         const startEntryUrl =
             `${baseUrl}/workspaces/${activeWorkspaceId}/timeEntries/full`;
 
         const body = {
-            projectId: projectId,
-            description: description,
-            start: start,
-            billable: billable
+            projectId,
+            taskId,
+            description,
+            start,
+            billable
         };
 
         return super.post(startEntryUrl, body, addToken);
@@ -93,7 +100,6 @@ export class TimeEntryService extends HttpWrapperService {
         const baseUrl = localStorageService.get('baseUrl');
         const stopEntryUrl =
             `${baseUrl}/workspaces/${activeWorkspaceId}/timeEntries/endStarted`;
-
         const body = {
             end: end
         };
@@ -203,13 +209,17 @@ export class TimeEntryService extends HttpWrapperService {
         tagIds,
         billable
     ) {
-        
-        // to prevent problem if user has offlineEtries after we deploy
-        // we can remove this later on
         const activeWorkspaceId = localStorage.getItem('activeWorkspaceId');
         const wsId = workspaceId ? workspaceId : activeWorkspaceId;
 
-        const baseUrl = localStorageService.get('baseUrl');
+        let baseUrl = localStorageService.get('baseUrl');
+        /*
+        if (baseUrl.includes('.api.')) {
+            // https://global.api.clockify.me
+            // https://global.clockify.me/api
+            baseUrl = baseUrl.replace('.api', '') + '/api';
+        }
+        */
         const timeEntryUrl = `${baseUrl}/workspaces/${wsId}/timeEntries/`;
 
         const body = {

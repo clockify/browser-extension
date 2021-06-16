@@ -1,0 +1,68 @@
+[
+    {
+        "workspaceId": "5f86ae37ad83f9564546c76b",
+        "userId": "5f6db3a18a0a732a56922031",
+        "project": {
+            "id": "602e9324a9972f2734c01c36",
+            "name": "00 - Zumbari",
+            "hourlyRate": {
+                "amount": 0,
+                "currency": "USD"
+            },
+            "costRate": null,
+            "clientId": "",
+            "client": {
+                "id": "",
+                "name": "",
+                "address": null,
+                "workspaceId": "5f86ae37ad83f9564546c76b",
+                "archived": false
+            },
+            "workspaceId": "5f86ae37ad83f9564546c76b",
+            "billable": true,
+            "memberships": [],
+            "color": "#8BC34A",
+            "estimate": {
+                "estimate": "PT0S",
+                "type": "AUTO"
+            },
+            "archived": false,
+            "tasks": [],
+            "taskCount": 5,
+            "note": "",
+            "timeEstimate": {
+                "estimate": "PT0S",
+                "type": "AUTO",
+                "resetOption": null,
+                "active": false
+            },
+            "budgetEstimate": null,
+            "duration": "PT0S",
+            "budget": 0,
+            "progress": null,
+            "public": true,
+            "favorite": false,
+            "template": false
+        },
+        "enabled": true
+    },
+    {
+        "workspaceId": "5f6db3a18a0a732a56922032",
+        "userId": "5f6db3a18a0a732a56922031",
+        "project": {
+            "id": "lastUsedProject",
+            "name": "Last used project",
+            "color": "#999999",
+            "tasks": []
+        },
+        "enabled": true
+    },
+    {
+        "workspaceId": "606d5d170c72297630f92a46",
+        "userId": "5f6db3a18a0a732a56922031",
+        "project": {
+            "id": "lastUsedProject"
+        },
+        "enabled": true
+    }
+]

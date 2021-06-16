@@ -28,7 +28,7 @@ clockifyButton.render(
 
     link = clockifyButton.createButton({
         description: description,
-        projectName: projectElem.textContent.trim(),
+        projectName: projectElem ? projectElem.textContent.trim() : "",
         taskName: description,
         tagNames: tags
     });
@@ -39,7 +39,7 @@ clockifyButton.render(
       
     var inputForm = clockifyButton.createInput({
         description: description,
-        projectName: projectElem.textContent.trim(),
+        projectName: projectElem ? projectElem.textContent.trim() : "",
         taskName: description,
         tagNames: tags
     });

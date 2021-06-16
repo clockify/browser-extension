@@ -1,6 +1,6 @@
 import {getAppTypes} from "../enums/applications-types.enum";
 import {getBrowser} from "./browser-helper";
-import {checkConnection} from "../components/check-connection";
+import {isOffline} from "../components/check-connection";
 import {iconInactivePath} from "../../assets/assets";
 import {LocalStorageService} from "../services/localStorage-service";
 import {getLocalStorageEnums} from "../enums/local-storage.enum";

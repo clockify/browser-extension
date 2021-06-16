@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import Settings from './settings.component';
 import {TokenService} from "../services/token-service";
-import {getBrowser} from "../helpers/browser-helper";
+import {getBrowser, isChrome} from "../helpers/browser-helper";
 import {isAppTypeExtension} from "../helpers/app-types-helper";
 import {WebSocketClient} from "../web-socket/web-socket-client";
 import {getAppTypes} from "../enums/applications-types.enum";
@@ -13,6 +13,7 @@ import {LocalStorageService} from "../services/localStorage-service";
 import {UserService} from "../services/user-service";
 import WorkspaceChangeConfirmation from './workspace-change-confirmation.component'
 import {SettingsService} from "../services/settings-service";
+import {getManualTrackingModeEnums} from "../enums/manual-tracking-mode.enum";
 
 const tokenService = new TokenService();
 const webSocketClient = new WebSocketClient();
@@ -32,13 +33,14 @@ class Menu extends React.Component {
             selectedWorkspaceId: null,
             revert: false,
             workspaceNameSelected: "",
-            subDomainName: ""
+            subDomainName: "",
         }
 
         this.onSetWorkspace = this.onSetWorkspace.bind(this);
         this.selectWorkspace = this.selectWorkspace.bind(this);
         this.changeToSubdomainWorkspace = this.changeToSubdomainWorkspace.bind(this);
         this.cancelSubdomainWorkspaceChange = this.cancelSubdomainWorkspaceChange.bind(this);
+        this.changeModeToManual = this.changeModeToManual.bind(this);
     }
 
     setActiveClassToActiveElement() {
@@ -52,14 +54,16 @@ class Menu extends React.Component {
     }
 
     changeModeToManual() {
-        if (this.props.mode === 'manual') return;
+        if (this.props.mode === 'manual' || this.props.manualModeDisabled)
+            return;
         if(!JSON.parse(this.props.disableManual)) {
             this.props.changeModeToManual();
         }
     }
 
     changeModeToTimer() {
-        if (this.props.mode === 'timer') return;
+        if (this.props.mode === 'timer')
+            return;
         if(!JSON.parse(this.props.disableAutomatic)) {
             this.props.changeModeToTimer();
         }
@@ -83,6 +87,8 @@ class Menu extends React.Component {
         this.disconnectWebSocket();
         htmlStyleHelper.removeDarkModeClassFromBodyElement();
         tokenService.logout();
+        if (!isChrome())
+            localStorageService.removeItem('subDomainName');        
     }
 
     openWebDashboard() {
@@ -112,6 +118,9 @@ class Menu extends React.Component {
     }
 
     selectWorkspace(workspaceId, workspaceName) {
+
+        this.props.beforeWorkspaceChange();
+
         this.setState({
             revert: false,
             selectedWorkspaceId: workspaceId,
@@ -119,35 +128,33 @@ class Menu extends React.Component {
         })
 
         userService.setDefaultWorkspace(workspaceId)
-        .then(response => {
-            const subDomainName = response.headers["sub-domain-name"];
-            if (subDomainName) {
+            .then(response => {
+                const subDomainName = response.headers["sub-domain-name"];
+                if (subDomainName) {
+                    this.setState({
+                        revert: false,
+                        workspaceChangeConfirmationIsOpen: true,
+                        subDomainName: subDomainName
+                    })
+                    return;
+                }
+                localStorageService.set('activeWorkspaceId', workspaceId);
+                if (isAppTypeExtension()) {
+                    getBrowser().storage.local.set({
+                        activeWorkspaceId: (workspaceId)
+                    });
+                }
                 this.setState({
-                    revert: false,
-                    workspaceChangeConfirmationIsOpen: true,
-                    subDomainName: subDomainName
-                })
-                return;
-            }
-            localStorageService.set('activeWorkspaceId', workspaceId);
-            if (isAppTypeExtension()) {
-                getBrowser().storage.local.set({
-                    activeWorkspaceId: (workspaceId)
+                    defaultProjectEnabled: false
                 });
-            }
-            this.setState({
-                defaultProjectEnabled: false
+                if (isAppTypeExtension()) {
+                    getBrowser().extension.getBackgroundPage().restartPomodoro();
+                }
+
+                this.props.workspaceChanged();
+            })
+            .catch(() => {
             });
-            if (isAppTypeExtension()) {
-                getBrowser().extension.getBackgroundPage().restartPomodoro();
-            }
-            this.props.workspaceChanged();
-        })
-        .catch(() => {
-        });
-
-
-
     }
 
     cancelSubdomainWorkspaceChange() {
@@ -169,6 +176,8 @@ class Menu extends React.Component {
     }
 
     render() {
+        const title = this.props.disableManual ? "You have time entry in progress!" :
+                        this.props.manualModeDisabled ? "Manual tracking mode is disabled!" : "";
         if (this.props.isOpen) {
             return (
                 <div title="">
@@ -176,11 +185,13 @@ class Menu extends React.Component {
                     <div className="dropdown-menu">
                         <div className="dropdown-header">Entry mode</div>
                         <a id="manual"
-                           className={JSON.parse(this.props.disableManual) ?
+                           className={JSON.parse(this.props.disableManual) || this.props.manualModeDisabled ?
                                "dropdown-item disable-manual" : this.props.mode === "manual" ?
                                    "dropdown-item active" : "dropdown-item"}
                            href="#"
-                           onClick={this.changeModeToManual.bind(this)}>
+                           onClick={this.changeModeToManual}
+                           title={title}
+                        >
                             <span className="menu-manual-img"></span>
                             <span className={JSON.parse(this.props.disableManual) ? "disable-manual" : ""}>Manual</span>
                         </a>
@@ -228,6 +239,8 @@ class Menu extends React.Component {
                         <WorkspaceChangeConfirmation
                             canceled= {this.cancelSubdomainWorkspaceChange}
                             confirmed={this.changeToSubdomainWorkspace} 
+                            workspaceName={this.state.workspaceNameSelected}
+                            isChrome={isChrome()}
                         /> 
                     }
                     

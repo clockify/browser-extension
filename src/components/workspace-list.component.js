@@ -99,7 +99,7 @@ class WorkspaceList  extends React.Component {
                               title={this.state.selectedWorkspace.name}>
                             {this.state.selectedWorkspace.name}
                         </span>
-                        <span className="tag-list-arrow"></span>
+                        <span className={this.state.isOpen ? 'tag-list-arrow-up' : 'tag-list-arrow'} ></span>
                     </div>
                     <div className={this.state.isOpen ? "workspace-list-dropdown" : "disabled"}>
                         {this.state.workspaces.map(workspace => {

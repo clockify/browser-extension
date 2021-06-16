@@ -4,18 +4,21 @@ import {parseTimeEntryDuration} from './duration-input-converter';
 import EditForm from './edit-form.component';
 import * as ReactDOM from 'react-dom';
 import EditFormManual from './edit-form-manual.component';
-import {checkConnection} from "./check-connection";
+import {isOffline} from "./check-connection";
 import {getIconStatus} from "../enums/browser-icon-status-enum";
 import {Application} from "../application";
 import {ProjectHelper} from "../helpers/project-helper";
+import {TimeEntryHelper} from "../helpers/timeEntry-helper";
 import {TimeEntryService} from "../services/timeEntry-service";
 import {getKeyCodes} from "../enums/key-codes.enum";
 import {isAppTypeExtension} from "../helpers/app-types-helper";
 import {getBrowser} from "../helpers/browser-helper";
 import {LocalStorageService} from "../services/localStorage-service";
 import { ProjectService } from '../services/project-service';
+import {DefaultProject} from '../helpers/storageUserWorkspace';
 
-const projectHelpers = new ProjectHelper();
+const projectHelper = new ProjectHelper();
+const timeEntryHelper = new TimeEntryHelper();
 const timeEntryService = new TimeEntryService();
 const localStorageService = new LocalStorageService();
 const projectService = new ProjectService()
@@ -30,18 +33,24 @@ class StartTimer extends React.Component {
             time: moment().hour(0).minute(0).second(0).format('HH:mm:ss'),
             interval: "",
             mode: this.props.mode,
-            ready: false,
-            stopDisabled: false
+            stopDisabled: false,
         };
         this.application = new Application(localStorageService.get('appType'));
+        this.startNewEntry = this.startNewEntry.bind(this);
     }
 
-    componentDidMount() {
+    async componentDidMount() {
         this.getTimeEntryInProgress();
+    }  
+
+    componentWillUnmount() {
+        if (interval) {
+            clearInterval(interval);
+        }
     }
 
     getTimeEntryInProgress() {
-        if(checkConnection()) {
+        if (isOffline()) {
             this.setState({
                 timeEntry: localStorage.getItem('timeEntryInOffline') && JSON.parse(localStorage.getItem('timeEntryInOffline')) ? JSON.parse(localStorage.getItem('timeEntryInOffline')) : {}
             }, () => {
@@ -59,12 +68,12 @@ class StartTimer extends React.Component {
                 }
             })
         } else {
-            timeEntryService.getEntryInProgress().then(response => {
-                let timeEntry = response.data[0];
-
-                this.setTimeEntryInProgress(timeEntry);
+            timeEntryService.getEntryInProgress()
+                .then(response => {
+                    let timeEntry = response.data[0];
+                    this.setTimeEntryInProgress(timeEntry);
                 })
-                .catch(() => {
+                .catch((error) => {
                     this.application.setIcon(getIconStatus().timeEntryEnded);
                 })
         }
@@ -75,28 +84,37 @@ class StartTimer extends React.Component {
         if (interval) {
             clearInterval(interval);
         }
-        if(timeEntry) {
+        if (timeEntry) {
             this.setState({
-                timeEntry: timeEntry
+                timeEntry
             }, () => {
-                let currentPeriod = moment().diff(moment(this.state.timeEntry.timeInterval.start));
+                let currentPeriod = moment().diff(moment(timeEntry.timeInterval.start));
                 interval = setInterval(() => {
                     currentPeriod = currentPeriod + 1000;
                     this.setState({
                         time: duration(currentPeriod).format('HH:mm:ss', {trim: false})
                     })
                 }, 1000);
-
                 this.props.changeMode('timer');
-
                 this.props.setTimeEntryInProgress(timeEntry);
             });
             inProgress = true;
             this.application.setIcon(
                 inProgress ? getIconStatus().timeEntryStarted : getIconStatus().timeEntryEnded
             );
-            this.checkForDefaultProject(timeEntry);
-        } else {
+            const { forceProjects, forceTasks } = this.props.workspaceSettings;
+            const taskId = timeEntry.task ? timeEntry.task.id : timeEntry.taskId;
+            if (!timeEntry.projectId || forceTasks && !taskId) {
+                const {projectDB, taskDB} = await this.checkDefaultProjectTask(forceTasks);
+                if (projectDB) {
+                    const entry = await timeEntryHelper.updateProjectTask(timeEntry, projectDB, taskDB);
+                    this.setState({
+                        timeEntry: entry
+                    })
+                }
+            }
+        } 
+        else {
             this.setState({
                 timeEntry: {},
                 time: moment().hour(0).minute(0).second(0).format('HH:mm:ss')
@@ -108,38 +126,19 @@ class StartTimer extends React.Component {
         }
     }
 
-    async checkForDefaultProject(timeEntry) {
-        if (!projectHelpers.isDefaultProjectEnabled()) {
-            return; 
-        }
-
-        const defaultProject = await projectHelpers.getDefaultProject()
-        if (defaultProject && !defaultProject.archived) {
-            if (timeEntry.projectId === null || timeEntry.projectId === "") {
-                timeEntryService.updateProject(defaultProject.id, timeEntry.id)
-                    .then(() => {
-                        const entry = this.state.timeEntry;
-                        entry.project = defaultProject;
-                        this.setState({
-                            timeEntry: entry
-                        })
-                        timeEntryService.updateBillable(defaultProject.billable, timeEntry.id)
-                    })
+    async checkDefaultProjectTask(forceTasks) {
+        const { storage, defaultProject } = DefaultProject.getStorage();
+        if (defaultProject) {
+            const { projectDB, taskDB, msg, msgId } = await defaultProject.getProjectTaskFromDB(forceTasks);
+            if (msg) {
+                this.props.toaster.toast('info', msg, 5);
             }
-        } else {
-            const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
-            const userId = localStorageService.get('userId');
-            this.props.message("Your default project is no longer available. You can set a new one in Settings.");
-            projectHelpers.removeDefaultProjectForWorkspaceAndUser(activeWorkspaceId, userId);
-
-            this.setState({
-                ready: true
-            });
+            return {projectDB, taskDB};
         }
+        return {projectDB: null, taskDB: null};
     }
 
     setDescription(event) {
-
         let timeEntry = {
             description: event.target.value
         };
@@ -148,7 +147,7 @@ class StartTimer extends React.Component {
             timeEntry: timeEntry
         })
     }
-
+   
     setDuration(event) {
         let duration = parseTimeEntryDuration(event.target.value);
 
@@ -171,11 +170,11 @@ class StartTimer extends React.Component {
         });
     }
 
-    startNewEntry() {
+    async startNewEntry() {
         if (interval) {
             clearInterval(interval);
         }
-        if(checkConnection()) {
+        if (isOffline()) {
             this.setState({
                 timeEntry: {
                     id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
@@ -191,12 +190,30 @@ class StartTimer extends React.Component {
                 this.props.setTimeEntryInProgress(this.state.timeEntry);
                 this.goToEdit();
             });
-        } else {
+        } 
+        else {
+            const { timeEntry } = this.state;
+            let projectId = timeEntry.projectId;
+            let taskId = timeEntry.task ? timeEntry.task.id : null;
+            let billable = timeEntry.billable
+
+            const { forceProjects, forceTasks } = this.props.workspaceSettings;
+            if (!projectId || forceTasks && !taskId) {
+                const {projectDB, taskDB} = await this.checkDefaultProjectTask(forceTasks);
+                if (projectDB) {
+                    projectId = projectDB.id;
+                    if (taskDB) {
+                        taskId = taskDB.id;
+                    }
+                    billable = projectDB.billable;
+                }
+            }
             timeEntryService.startNewEntry(
-                this.state.timeEntry.projectId,
-                this.state.timeEntry.description,
-                this.state.timeEntry.billable,
-                moment()
+                projectId,
+                timeEntry.description,
+                billable,
+                moment(),
+                taskId
             ).then(response => {
                 let data = response.data;
                 this.setState({
@@ -210,7 +227,7 @@ class StartTimer extends React.Component {
                         backgroundPage.addIdleListenerIfIdleIsEnabled();
                         backgroundPage.removeReminderTimer();
                         backgroundPage.addPomodoroTimer();
-                        backgroundPage.entryInProgressChangedEventHandler(data);
+                        backgroundPage.setTimeEntryInProgress(data);
                     }
                     this.goToEdit();
                 });
@@ -221,19 +238,36 @@ class StartTimer extends React.Component {
     }
 
     checkRequiredFields() {
-        if (this.state.stopDisabled) return
+        if (this.state.stopDisabled)
+            return;
+
+        if (isOffline()) {
+            let timeEntryOffline = localStorage.getItem('timeEntryInOffline') ? JSON.parse(localStorage.getItem('timeEntryInOffline')) : null;
+            if (!timeEntryOffline) {
+                // user tries to Stop TimeEntry which has been started onLine
+                if (localStorage.getItem('inProgress') && JSON.parse(localStorage.getItem('inProgress'))) {
+                    this.setTimeEntryInProgress(null);
+                }
+                return;
+            }
+        }
+
         this.setState({
             stopDisabled: true
         })
-        if(JSON.parse(localStorage.getItem('offline'))) {
+
+        const { forceDescription, forceProjects, forceTasks, forceTags} = this.props.workspaceSettings;
+        const { description, project, task, tags } = this.state.timeEntry;
+
+        if (isOffline()) {
             this.stopEntryInProgress();
-        } else if(this.props.workspaceSettings.forceDescription && (this.state.timeEntry.description === "" || !this.state.timeEntry.description)) {
+        } else if(forceDescription && (description === "" || !description)) {
             this.goToEdit();
-        } else if(this.props.workspaceSettings.forceProjects && !this.state.timeEntry.project) {
+        } else if(forceProjects && !project) {
             this.goToEdit();
-        } else if(this.props.workspaceSettings.forceTasks && !this.state.timeEntry.task) {
+        } else if(forceTasks && !task) {
             this.goToEdit();
-        }else if(this.props.workspaceSettings.forceTags && (!this.state.timeEntry.tags || !this.state.timeEntry.tags.length > 0)) {
+        }else if(forceTags && (!tags || !tags.length > 0)) {
             this.goToEdit();
         } else {
             this.stopEntryInProgress();
@@ -241,9 +275,11 @@ class StartTimer extends React.Component {
     }
 
     stopEntryInProgress() {
-        if(checkConnection()) {
-            const timeEntriesOffline = localStorage.getItem('timeEntriesOffline') ? JSON.parse(localStorage.getItem('timeEntriesOffline')) : [];
+        if (isOffline()) {
             let timeEntryOffline = localStorage.getItem('timeEntryInOffline') ? JSON.parse(localStorage.getItem('timeEntryInOffline')) : null;
+            if (!timeEntryOffline) 
+                return;
+            const timeEntriesOffline = localStorage.getItem('timeEntriesOffline') ? JSON.parse(localStorage.getItem('timeEntriesOffline')) : [];
             timeEntryOffline.timeInterval.end = moment();
             timeEntryOffline.timeInterval.duration = duration(moment().diff(timeEntryOffline.timeInterval.start));
             timeEntriesOffline.push(timeEntryOffline);
@@ -280,11 +316,12 @@ class StartTimer extends React.Component {
                         backgroundPage.removeIdleListenerIfIdleIsEnabled();
                         backgroundPage.addReminderTimer();
                         backgroundPage.removeAllPomodoroTimers();
-                        backgroundPage.entryInProgressChangedEventHandler(null);
+                        backgroundPage.setTimeEntryInProgress(null);
                     }
                     this.application.setIcon(getIconStatus().timeEntryEnded);
                 })
                 .catch(() => {
+                    this.props.log('timeEntryService.stopEntryInProgress error')
                 });
         }
     }
@@ -315,12 +352,13 @@ class StartTimer extends React.Component {
                 const entry = {workspaceId: activeWorkspaceId, timeInterval: {start: moment(), end: moment()}};
                 ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
                 ReactDOM.render(
-                    <EditFormManual changeMode={this.changeMode.bind(this)}
-                                    workspaceSettings={this.props.workspaceSettings}
-                                    timeEntry={entry}
-                                    timeFormat={this.props.timeFormat}
-                                    isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}
-                                    userSettings={this.props.userSettings}
+                    <EditFormManual 
+                        changeMode={this.changeMode.bind(this)}
+                        workspaceSettings={this.props.workspaceSettings}
+                        timeEntry={entry}
+                        timeFormat={this.props.timeFormat}
+                        isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}
+                        userSettings={this.props.userSettings}
                     />, document.getElementById('mount')
                 );
             })
@@ -330,28 +368,26 @@ class StartTimer extends React.Component {
                 entry.workspaceId = activeWorkspaceId;
             ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
             ReactDOM.render(
-                <EditFormManual changeMode={this.changeMode.bind(this)}
-                                workspaceSettings={this.props.workspaceSettings}
-                                timeEntry={entry}
-                                timeFormat={this.props.timeFormat}
-                                isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}
-                                userSettings={this.props.userSettings}
+                <EditFormManual
+                    changeMode={this.changeMode.bind(this)}
+                    workspaceSettings={this.props.workspaceSettings}
+                    timeEntry={entry}
+                    timeFormat={this.props.timeFormat}
+                    isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}
+                    userSettings={this.props.userSettings}
                 />, document.getElementById('mount'));
         }
     }
 
     onKey(event) {
-        switch (event.keyCode) {
-            case getKeyCodes().enter:
-                if (event.target.id === 'description') {
-                    this.startNewEntry();
-                    break;
-                }
-
-                if (event.target.id === 'duration') {
-                    this.goToEditManual();
-                    break;
-                }
+        const { enter, minus } = getKeyCodes();
+        if (enter.includes(event.keyCode)) {
+            if (event.target.id === 'description') {
+                this.startNewEntry();
+            }
+            else if (event.target.id === 'duration') {
+                this.goToEditManual();
+            }
         }
     }
 
@@ -394,7 +430,7 @@ class StartTimer extends React.Component {
                    </span>
                    <button className={!this.state.timeEntry.id && this.props.mode === 'timer' ?
                                         "start-timer_button-start" : "disabled"}
-                           onClick={this.startNewEntry.bind(this)}>
+                           onClick={this.startNewEntry}>
                         <span>START</span>
                    </button>
                    <button className={this.state.timeEntry.id && this.props.mode === 'timer' ?

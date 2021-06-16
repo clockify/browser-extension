@@ -6,7 +6,10 @@ class ProjectItem extends React.Component {
         super(props);
 
         this.state = {
-            isTaskOpen: false
+            isTaskOpen: false,
+            taskCount: props.project.taskCount,
+            tasks: [],
+            taskList: props.project.tasks ? [...props.project.tasks] : [],
         }
 
         this.chooseProject = this.chooseProject.bind(this);
@@ -18,9 +21,33 @@ class ProjectItem extends React.Component {
 
     openTasks(e) {
         e.preventDefault();
-        this.setState({
-            isTaskOpen: !this.state.isTaskOpen
-        })
+
+        if (this.state.tasks.length === 0) {
+            if (this.state.taskList.length > 0) {
+                this.setState({
+                    tasks: [...this.state.taskList],
+                    isTaskOpen: !this.state.isTaskOpen
+                });
+            }
+            else {
+                if (!JSON.parse(localStorage.getItem('offline'))) {
+                    this.props.getProjectTasks(this.props.project.id, '', 1)
+                        .then(response => {
+                            this.setState({
+                                tasks: response.data,
+                                isTaskOpen: !this.state.isTaskOpen
+                            });
+                        })
+                        .catch(() => {
+                        });
+                }
+            }
+        }
+        else {
+            this.setState({
+                isTaskOpen: !this.state.isTaskOpen
+            })
+        }            
     }
 
     chooseProject() {
@@ -34,32 +61,32 @@ class ProjectItem extends React.Component {
 
     render(){
         const {project, noTasks} = this.props;
+        const forceTasksButNotLastUsedProject = 
+                this.props.workspaceSettings.forceTasks  && !this.props.isLastUsedProject
         return(
             <div>
                 <div className="project-item" title={project.name}>
-                    <span className="project-item-name">
+                    <span className="project-item-name"
+                        onClick={forceTasksButNotLastUsedProject ? this.openTasks : this.chooseProject}>
                         <span style={{background: project.color}} className="dot-project-picker"></span>
                         <span 
-                            onClick={!this.props.workspaceSettings.forceTasks ?
-                                this.chooseProject : this.openTasks}
                             className={!noTasks ? "project-name" : "disabled"}
                             tabIndex={"0"} 
-                            onKeyDown={e => {if (e.key==='Enter') 
-                                !this.props.workspaceSettings.forceTasks ?
-                                this.chooseProject() : this.openTasks()
+                            onKeyDown={e => {if (e.key==='Enter') forceTasksButNotLastUsedProject
+                                    ? this.openTasks()
+                                    : this.chooseProject()
                             }}
                         >
                             {project.name}
                         </span>
-                        <span onClick={this.chooseProject}
-                              className={noTasks ? "project-name" : "disabled"}>
+                        <span className={noTasks ? "project-name" : "disabled"}>
                             {project.name}
                         </span>
                     </span>
-                    <span className={project.tasks.length > 0 ? "" : "disabled"}
+                    <span className={this.state.taskCount > 0 ? "" : "disabled"}
                           onClick={this.openTasks}>
                         <span className={noTasks ? "disabled" : "project-item-task"}>
-                            {project.tasks.length + "  Tasks"}
+                            {this.state.taskCount + "  Tasks"}
                             <img src="./assets/images/filter-arrow-down.png"
                                  className={this.state.isTaskOpen ? "tasks-arrow-down" : "disabled"}/>
                             <img src="./assets/images/filter-arrow-right.png"
@@ -68,7 +95,7 @@ class ProjectItem extends React.Component {
                     </span>
                 </div>
                 <div className={this.state.isTaskOpen && !noTasks ? "task-list" : "disabled"}>
-                    {project.tasks.map(task => {
+                    {this.state.tasks.map(task => {
                         return(
                             <div key={task.id} value={JSON.stringify(task)} onClick={this.chooseTask.bind(this)} className="task-item">
                                 <span value={JSON.stringify(task)}>{task.name}</span>
@@ -77,8 +104,6 @@ class ProjectItem extends React.Component {
                     })}
                 </div>
             </div>
-
-
         )
     }
 }

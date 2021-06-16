@@ -7,16 +7,21 @@
     "scripts": [
       "main.bundle.js",
       "vendors.main.bundle.js",
-      "contentScripts/helper-background.js",
+      "contentScripts/defaultProject.js",
+      "contentScripts/userWorkspaceStorage.js",
+      "contentScripts/service-background.js",
+      "contentScripts/user-service-background.js",
+      "contentScripts/task-service-background.js",
+      "contentScripts/project-service-background.js",
+      "contentScripts/tag-service-background.js",
+      "contentScripts/timeEntry.js",
       "contentScripts/background.js",
       "contentScripts/webSocket-background.js",
-      "contentScripts/timeEntry-httpRequests-background.js",
       "contentScripts/token-background.js",
       "contentScripts/idle-detection-background.js",
       "contentScripts/notification-background.js",
       "contentScripts/reminder-background.js",
-      "contentScripts/pomodoro-background.js",
-      "contentScripts/project-httpRequests-background.js"
+      "contentScripts/pomodoro-background.js"
     ]
   },
   "applications": {
@@ -25,19 +30,11 @@
       "strict_min_version": "57.0a1"
     }
   },
-  "version": "1.8.53",
+  "version": "1.8.84",
   "browser_action": {
     "default_popup": "index.html",
     "default_title": "Clockify"
   },
-  "content_scripts": [
-    {
-      "js": ["contentScripts/contentScript.js"],
-      "matches":[
-        "https://clockify.me/*"
-      ]
-    }
-  ],
   "options_ui": {
     "page": "settings.html",
     "open_in_tab": true
@@ -55,6 +52,9 @@
     "48":"assets/images/logo-48.png",
     "128":"assets/images/logo-128.png"
   },
+  "web_accessible_resources" : [
+    "assets/images/*.png"
+  ],   
   "permissions": [
     "background",
     "contextMenus",
@@ -66,8 +66,10 @@
     "activeTab",
     "identity",
     "idle",
-    "notifications"
+    "notifications",
+    "*://developer.mozilla.org/*",
+    "webRequest"
   ],
   "optional_permissions": ["*://*/"],
-  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
+  "content_security_policy": "script-src 'self'; object-src 'self'"
 }

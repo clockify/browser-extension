@@ -25,7 +25,6 @@ export class WorkspaceService extends HttpWrapperService {
         const baseUrl = localStorageService.get('baseUrl');
         const workspaceSettingsUrl =
             `${baseUrl}/workspaces/${activeWorkspaceId}`;
-
         return super.get(workspaceSettingsUrl, addToken);
     }
 

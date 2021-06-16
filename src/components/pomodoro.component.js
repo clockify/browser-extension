@@ -6,6 +6,7 @@ import {getKeyCodes} from '../enums/key-codes.enum';
 import Switch from 'antd/lib/switch'
 import {getBrowser} from "../helpers/browser-helper";
 import {HtmlStyleHelper} from "../helpers/html-style-helper";
+import DefaultPomodoroBreakProject from "./default-pomodoro-break-project.component";
 
 const localStorageService = new LocalStorageService();
 const htmlStyleHelper = new HtmlStyleHelper();
@@ -16,40 +17,87 @@ class Pomodoro extends React.Component {
 
         this.state = {
             enabled: false,
-            timerInterval: null,
-            shortBreak: null,
-            longBreak: null,
+            timerInterval: '', // null,
+            shortBreak: '', // null,
+            longBreak: '', // null,
             breakCounter: 0,
             isSoundNotification: false,
             isAutomaticStartStop: false,
-            isLongBreakEnabled: false
+            isLongBreakEnabled: false,
+            isDefaultProjectEnabled: false,
+            defaultProjectForUserOnWorkspace: ""
         };
+
+        this.resizeHeight = this.resizeHeight.bind(this);
     }
 
     componentDidMount() {
         this.isPomodoroOn();
     }
 
-    isPomodoroOn() {
-        const userId = localStorageService.get('userId');
-        const pomodoroFromStorageForUser = localStorageService.get('pomodoro') &&
-            JSON.parse(localStorageService.get('pomodoro'))
-                .filter(pomodoro => pomodoro.userId === userId).length > 0 ?
-            JSON.parse(localStorageService.get('pomodoro'))
-                .filter(pomodoro => pomodoro.userId === userId)[0] : null;
-
-        if (!pomodoroFromStorageForUser) {
-            return;
+    componentDidUpdate(prevProps, prevState) {
+        if (this.state.isDefaultProjectEnabled !== prevState.isDefaultProjectEnabled) {
+            if (this.state.enabled) {
+                this.resizeHeight();
+            }
         }
+    }
+
+    resizeHeight(scrollToBottom) {
+        setTimeout(() => {
+            const pomodoroElem = document.getElementById('pomodoro');
+            if (this.state.enabled) {
+                pomodoroElem.style.maxHeight = pomodoroElem.scrollHeight + 'px';
+            } else {
+                //pomodoroElem.style.maxHeight = '0';
+            }
+
+            if (scrollToBottom) {
+                this.props.scrollIntoView();
+            }
+        }, 250);
+    }
+
+    get pomodoroStorage() {
+        const userId = localStorageService.get('userId');
+        const strPomodoro = localStorageService.get('pomodoro');
+        const pomodoroStorage = strPomodoro ? JSON.parse(strPomodoro) : [];
+        return { 
+            pomodoroForUser: pomodoroStorage.find(pomodoro => pomodoro.userId === userId),
+            pomodoroStorage
+        }
+    }
+
+    store(pomodoroStorage) {
+        localStorageService
+            .set('pomodoro', JSON.stringify(pomodoroStorage), getLocalStorageEnums().PERMANENT_PREFIX);
+    }
+
+    isPomodoroOn() {
+        const { pomodoroForUser }  = this.pomodoroStorage;
+        if (!pomodoroForUser)
+            return;
+
+        const { enabled,
+                timerInterval,
+                shortBreak, 
+                longBreak, 
+                isLongBreakEnabled, 
+                breakCounter,
+                isSoundNotification, 
+                isAutomaticStartStop, 
+                isDefaultProjectEnabled } = pomodoroForUser;
+
         this.setState({
-            enabled: pomodoroFromStorageForUser.enabled,
-            timerInterval: pomodoroFromStorageForUser.timerInterval,
-            shortBreak: pomodoroFromStorageForUser.shortBreak,
-            longBreak: pomodoroFromStorageForUser.longBreak,
-            isLongBreakEnabled: pomodoroFromStorageForUser.isLongBreakEnabled,
-            breakCounter: pomodoroFromStorageForUser.breakCounter,
-            isSoundNotification: pomodoroFromStorageForUser.isSoundNotification,
-            isAutomaticStartStop: pomodoroFromStorageForUser.isAutomaticStartStop
+            enabled,
+            timerInterval,
+            shortBreak,
+            longBreak,
+            isLongBreakEnabled,
+            breakCounter,
+            isSoundNotification,
+            isAutomaticStartStop,
+            isDefaultProjectEnabled
         }, () => {
             if (this.state.enabled) {
                 setTimeout(() => {
@@ -62,39 +110,21 @@ class Pomodoro extends React.Component {
                 }, 150);
             }
             const elementsIds = ['longBreak', 'breakCounter'];
-            htmlStyleHelper.enableDisableElements(pomodoroFromStorageForUser.isLongBreakEnabled, elementsIds);
+            htmlStyleHelper.enableDisableElements(pomodoroForUser.isLongBreakEnabled, elementsIds);
         });
     }
 
     togglePomodoro() {
-        const userId = localStorageService.get('userId');
-        let pomodoroFromStorage = localStorageService.get('pomodoro') ?
-            JSON.parse(localStorageService.get('pomodoro')) : [];
+        let { pomodoroForUser, pomodoroStorage }  = this.pomodoroStorage;
         let isEnabled;
-        const pomodoroForCurrentUser = pomodoroFromStorage &&
-            pomodoroFromStorage.filter(pomodoro => pomodoro.userId === userId).length > 0 ?
-                pomodoroFromStorage.filter(pomodoro => pomodoro.userId === userId)[0] : null;
-
+        
         const pomodoroElem = document.getElementById('pomodoro');
         const elementsIds = ['longBreak', 'breakCounter'];
+        const userId = localStorageService.get('userId');
 
-        if (!pomodoroForCurrentUser) {
-            pomodoroFromStorage = [
-                ...pomodoroFromStorage,
-                {
-                    userId: userId,
-                    enabled: true,
-                    timerInterval: 5,
-                    shortBreak: 5,
-                    longBreak: 15,
-                    isLongBreakEnabled: false,
-                    breakCounter: 3,
-                    isSoundNotification: false,
-                    isAutomaticStartStop: false
-                }
-            ];
-
-            this.setState({
+        if (!pomodoroForUser) {
+            const obj = {
+                userId,
                 enabled: true,
                 timerInterval: 5,
                 shortBreak: 5,
@@ -102,51 +132,52 @@ class Pomodoro extends React.Component {
                 isLongBreakEnabled: false,
                 breakCounter: 3,
                 isSoundNotification: false,
-                isAutomaticStartStop: false
+                isAutomaticStartStop: false,
+                isDefaultProjectEnabled: false
+            }
+
+            pomodoroStorage = [obj];
+
+            const { enabled, timerInterval, shortBreak, 
+                    longBreak, isLongBreakEnabled,
+                    breakCounter, isSoundNotification, isAutomaticStartStop, 
+                    isDefaultProjectEnabled } = obj;
+
+            this.setState({
+                enabled,
+                timerInterval,
+                shortBreak,
+                longBreak,
+                isLongBreakEnabled,
+                breakCounter,
+                isSoundNotification,
+                isAutomaticStartStop,
+                isDefaultProjectEnabled
             }, () => {
                 htmlStyleHelper.enableDisableElements(false, elementsIds);
                 pomodoroElem.style.maxHeight = pomodoroElem.scrollHeight + 'px'
             });
 
             isEnabled = true;
-        } else {
+        } 
+        else {
             if (this.state.enabled) {
-                pomodoroFromStorage = pomodoroFromStorage.map(pomodoro => {
-                    if (pomodoro.userId === userId) {
-                        pomodoro.enabled = false;
-                        htmlStyleHelper.enableDisableElements(pomodoro.isLongBreakEnabled, elementsIds);
-                    }
-
-                    return pomodoro;
-                });
+                pomodoroForUser.enabled = false;
                 this.setState({
                     enabled: false
                 }, () => pomodoroElem.style.maxHeight = '0');
-
                 isEnabled = false;
-            } else {
-                pomodoroFromStorage = pomodoroFromStorage.map(pomodoro => {
-                    if (pomodoro.userId === userId) {
-                        pomodoro.enabled = true;
-                        htmlStyleHelper.enableDisableElements(pomodoro.isLongBreakEnabled, elementsIds);
-                    }
-
-                    return pomodoro;
-                });
-
+            }
+            else {
+                pomodoroForUser.enabled = true;
                 this.setState({
                     enabled: true
                 }, () => pomodoroElem.style.maxHeight = pomodoroElem.scrollHeight + 'px');
-
                 isEnabled = true;
             }
         }
         this.props.changeSaved();
-        localStorageService.set(
-            'pomodoro',
-            JSON.stringify(pomodoroFromStorage),
-            getLocalStorageEnums().PERMANENT_PREFIX
-        );
+        this.store(pomodoroStorage)
 
         if (isAppTypeExtension()) {
             if (isEnabled) {
@@ -170,25 +201,16 @@ class Pomodoro extends React.Component {
         if (value === 0) {
             value = 1;
         }
-
-        const userId = localStorageService.get('userId');
-        const pomodoroToSaveInStorage =
-            JSON.parse(localStorageService.get('pomodoro')).map(pomodoro => {
-                if (pomodoro.userId === userId) {
-                    pomodoro[event.target.id] = value ? value : pomodoro[event.target.id];
-
-                    const obj = {};
-                    obj[event.target.id] = pomodoro[event.target.id];
-                    this.setState(obj);
-                }
-                return pomodoro;
-            });
-
-        localStorageService.set(
-            'pomodoro',
-            JSON.stringify(pomodoroToSaveInStorage),
-            getLocalStorageEnums().PERMANENT_PREFIX
-        );
+        const { pomodoroForUser, pomodoroStorage } = this.pomodoroStorage;
+        const { id } = event.target;
+        if (pomodoroForUser) {
+            pomodoroForUser[id] = value ? value : pomodoroForUser[id];
+            const obj = {
+                [id]: pomodoroForUser[id]
+            };
+            this.setState(obj);
+        }
+        this.store(pomodoroStorage);
         this.props.changeSaved();
         if (isAppTypeExtension()) {
             getBrowser().extension.getBackgroundPage().addPomodoroTimer();
@@ -196,32 +218,28 @@ class Pomodoro extends React.Component {
     }
 
     changePomodoroPropertyOnEnter(event) {
-        if (event.keyCode === getKeyCodes().enter) {
+        const { enter,  minus } = getKeyCodes();
+        if (minus.includes(event.keyCode)) {
+            if (event.preventDefault) 
+                event.preventDefault();
+            return false;
+        }
+        else if (enter.includes(event.keyCode)) {
             this.changePomodoroProperty(event);
         }
     }
 
     changePomodoroPropertyState(event) {
-        const obj = {};
-        obj[event.target.id] = event.target.value;
-        this.setState(obj);
+        const { id, value } = event.target;
+        this.setState({
+            [id]: value 
+        });
     }
 
     changeIsSoundNotification(event) {
-        const userId = localStorageService.get('userId');
-        const pomodoroToSaveInStorage =
-            JSON.parse(localStorageService.get('pomodoro')).map(pomodoro => {
-                if (pomodoro.userId === userId) {
-                    pomodoro.isSoundNotification = event;
-                }
-                return pomodoro;
-            });
-
-        localStorageService.set(
-            'pomodoro',
-            JSON.stringify(pomodoroToSaveInStorage),
-            getLocalStorageEnums().PERMANENT_PREFIX
-        );
+        const { pomodoroForUser, pomodoroStorage } = this.pomodoroStorage;
+        pomodoroForUser.isSoundNotification = event;
+        this.store(pomodoroStorage);
         this.props.changeSaved();
         this.setState({
             isSoundNotification: event
@@ -229,43 +247,30 @@ class Pomodoro extends React.Component {
     }
 
     changeIsAutomaticStartStop(event) {
-        const userId = localStorageService.get('userId');
-        const pomodoroToSaveInStorage =
-            JSON.parse(localStorageService.get('pomodoro')).map(pomodoro => {
-                if (pomodoro.userId === userId) {
-                    pomodoro.isAutomaticStartStop = event;
-                }
-                return pomodoro;
-            });
-
-        localStorageService.set(
-            'pomodoro',
-            JSON.stringify(pomodoroToSaveInStorage),
-            getLocalStorageEnums().PERMANENT_PREFIX
-        );
+        const { pomodoroForUser, pomodoroStorage } = this.pomodoroStorage;
+        pomodoroForUser.isAutomaticStartStop = event;
+        this.store(pomodoroStorage);
         this.props.changeSaved();
         this.setState({
             isAutomaticStartStop: event
         });
     }
 
-    toggleLongBreakEnabled(event) {
-        const userId = localStorageService.get('userId');
-        const pomodoroToSaveInStorage =
-            JSON.parse(localStorageService.get('pomodoro')).map(pomodoro => {
-                if (pomodoro.userId === userId) {
-                    pomodoro.isLongBreakEnabled = event;
-                }
-                return pomodoro;
-            });
-
-        localStorageService.set(
-            'pomodoro',
-            JSON.stringify(pomodoroToSaveInStorage),
-            getLocalStorageEnums().PERMANENT_PREFIX
-        );
+    changeIsDefaultProjectEnabled(event) {
+        const { pomodoroForUser, pomodoroStorage } = this.pomodoroStorage;
+        pomodoroForUser.isDefaultProjectEnabled = event;
+        this.store(pomodoroStorage);
         this.props.changeSaved();
+        this.setState({
+            isDefaultProjectEnabled: event
+        });
+    }    
 
+    toggleLongBreakEnabled(event) {
+        const { pomodoroForUser, pomodoroStorage } = this.pomodoroStorage;
+        pomodoroForUser.isLongBreakEnabled = event;
+        this.store(pomodoroStorage);
+        this.props.changeSaved();
         this.setState({
             isLongBreakEnabled: event
         }, () => {
@@ -275,6 +280,8 @@ class Pomodoro extends React.Component {
     }
 
     render() {
+        const {forceProjects, forceTasks} = this.props.workspaceSettings;
+        const name = `Default break project ${forceTasks?' and task':''}`;
         return(
             <div>
                 <div className={isAppTypeExtension() ? "pomodoro" : "disabled"}
@@ -353,6 +360,20 @@ class Pomodoro extends React.Component {
                                     checked={this.state.isAutomaticStartStop}
                                     onChange={this.changeIsAutomaticStartStop.bind(this)}/>
                         </div>
+                        <div className="pomodoro__border"></div>
+                        <div className="pomodoro__box__content">
+                            <p>{name}</p>
+                            <Switch className="pomodoro__switch"
+                                    checked={this.state.isDefaultProjectEnabled}
+                                    onChange={this.changeIsDefaultProjectEnabled.bind(this)}/>
+                        </div>
+                        {this.state.isDefaultProjectEnabled && 
+                            <DefaultPomodoroBreakProject
+                                workspaceSettings={this.props.workspaceSettings}
+                                changeSaved={this.props.changeSaved}
+                                resizeHeight={this.resizeHeight}
+                            />
+                        }
                     </div>
                 </div>
             </div>

@@ -14,7 +14,8 @@ const idleChangeStateListener = (callback) => {
                 callback === 'active' &&
                 idleDetectionByUser.timeEntryId === result.timeEntryInProgress.id
             ) {
-                this.createIdleNotification(result.timeEntryInProgress.description, document.idleDetectedIn);
+                const timeEntryInProgress = JSON.parse(localStorage.getItem('timeEntryInProgress'));
+                this.createIdleNotification(timeEntryInProgress, document.idleDetectedIn);
             }
         }
     });
@@ -95,7 +96,27 @@ function getIdleDetectionByUser() {
         null;
 }
 
-function createIdleNotification(description, idleDetectedIn) {
+function createIdleNotification(timeEntryInProgress, idleDetectedIn) {
+    const { projectId, project, task, description } = timeEntryInProgress;
+    let msg = '(no description)';
+    if (description) {
+        msg = description;
+        if (projectId) {
+            msg += " - " + project.name; 
+            if (task) {
+                msg += ":" + task.name;
+            }
+        }
+    }
+    else {
+        if (projectId) {
+            msg = project.name; 
+            if (task) {
+                msg += ":" + task.name;
+            }
+        }
+    }
+
     const idleDuration = this.getIdleDuration(idleDetectedIn);
     const buttonsForMessage = [
         {title: idleButtons[0]},
@@ -106,7 +127,7 @@ function createIdleNotification(description, idleDetectedIn) {
         type: "basic",
         iconUrl: "./assets/icons/64x64.png",
         title: "Idle time detected",
-        message: this.createIdleMessage(description, idleDuration)
+        message: this.createIdleMessage(msg, idleDuration)
     };
 
     if (this.isChrome()) {
@@ -159,39 +180,63 @@ function createIdleMessage(description, idleDuration) {
     return message;
 }
 
-function discardIdleTimeAndStopEntry() {
-    this.getEntryInProgress().then(response => response.json()).then(data => {
-        this.endInProgress(new Date(document.idleDetectedIn)).then((response) => {
-            this.clearNotification('idleDetection');
+async function discardIdleTimeAndStopEntry() {
+    const { entry, error } = await TimeEntry.getEntryInProgress();
+    if (error) {
+    }
+    else if (entry) {
+        const { error } = await TimeEntry.endInProgress(entry, new Date(document.idleDetectedIn));
+        this.clearNotification('idleDetection');
 
-            if (response.status == 400) {
-                this.saveEntryOfflineAndStopItByDeletingIt(data, document.idleDetectedIn);
-            }
-            this.entryInProgressChangedEventHandler(null);
-        });
-    });
+        if (error && error.status == 400) {
+            await TimeEntry.saveEntryOfflineAndStopItByDeletingIt(entry, document.idleDetectedIn);
+        }
+
+        aBrowser.runtime.sendMessage({
+            eventName: "idleEvent",
+            timeEntry: null
+        });            
+        setTimeEntryInProgress(null);
+    }
 }
 
-function discardIdleTimeAndContinueEntry() {
-    this.getEntryInProgress().then(response => response.json()).then(data => {
-        this.endInProgress(new Date(document.idleDetectedIn)).then((response) => {
-            this.clearNotification('idleDetection');
+async function discardIdleTimeAndContinueEntry() {
+    const { entry, error } = await TimeEntry.getEntryInProgress();
+    if (error) {
+    }
+    else if (entry) {
+        const { error } = await TimeEntry.endInProgress(entry, new Date(document.idleDetectedIn));
+        this.clearNotification('idleDetection');
 
-            if (response.status == 400) {
-                this.saveEntryOfflineAndStopItByDeletingIt(data, document.idleDetectedIn);
-            }
+        if (error && error.status == 400) {
+            await TimeEntry.saveEntryOfflineAndStopItByDeletingIt(entry, document.idleDetectedIn);
+        }
 
-            this.startTimer(
-                data.description,
-                {
-                    projectId: data.projectId,
-                    billable: data.billable,
-                    taskId: data.task ? data.task.id : null,
-                    tagIds: data.tags ? data.tags.map(tag => tag.id) : []
-                }
-            )
+        setTimeEntryInProgress(null);
+        aBrowser.runtime.sendMessage({
+            eventName: "idleEvent",
+            timeEntry: null
         });
-    });
+
+        if (error && error.status == 400) {
+            return;
+        }
+
+        aBrowser.runtime.sendMessage({
+            eventName: "idleEvent",
+            timeEntry: {} // just to call this.start.getTimeEntryInProgress()
+        });
+
+        TimeEntry.startTimer(
+            entry.description,
+            {
+                projectId: entry.projectId,
+                billable: entry.billable,
+                task: entry.taskId ? { id: entry.taskId } : null,
+                tags: entry.tagIds ? entry.tagIds.map(tagId => ({id: tagId})) : null,
+            }
+        )
+    }
 }
 
 function setTimeEntryToDetectedIdleTime(timeEntryId) {

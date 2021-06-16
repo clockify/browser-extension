@@ -1,3 +1,17 @@
+// LEADS
+clockifyButton.render('[data-testid="SidebarLeadTitle"]:not(.clockify)', {observe: true}, function (elem) {
+  var link, description;
+  description = $('.EditFieldstyles__ComponentReadWrapper-lwe1gw-0', elem).textContent;
+  link = clockifyButton.createButton(description);
+  link.style.display = "block";
+  link.style.paddingTop = "0";
+  link.style.paddingBottom = "0";
+  link.style.marginBottom = "10px";
+  link.style.marginTop = "10px";
+  link.style.cursor = 'pointer';
+  elem.appendChild(link);
+});
+
 // DEALS
 clockifyButton.render('.actionsContent:not(.clockify)', {observe: true}, function (elem) {
   var link, description;

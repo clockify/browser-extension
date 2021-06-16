@@ -18,34 +18,43 @@ export class ProjectService extends HttpWrapperService {
         const body = {
             ids: projectIds
         };
-
         return super.post(projectUrl, body, addToken);
     }
 
-    getAllProjects() {
-        const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
-        const baseUrl = localStorageService.get('baseUrl');
-        const getAllProjectsUrl = `${baseUrl}/workspaces/${activeWorkspaceId}/projects/`;
+    // getAllProjects() {
+    //     const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
+    //     const baseUrl = localStorageService.get('baseUrl');
+    //     const getAllProjectsUrl = `${baseUrl}/workspaces/${activeWorkspaceId}/projects/`;
 
-        return super.get(getAllProjectsUrl, addToken);
-    }
+    //     return super.get(getAllProjectsUrl, addToken);
+    // }
 
     getProjects(page, pageSize) {
         const filter = '';
-
         return this.getProjectsWithFilter(filter, page, pageSize);
     }
 
     getProjectsWithFilter(filter, page, pageSize) {
+        const filterTrimmedEncoded = encodeURIComponent(filter.trim())
         const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
         const userId = localStorageService.get('userId');
         const baseUrl = localStorageService.get('baseUrl');
-        const projectUrl =
-            `${baseUrl}/workspaces/${activeWorkspaceId}/projects/user/${userId}/` +
-            `filter?page=${page}&search=${filter}&pageSize${pageSize}`;
+        const projectUrl = `${baseUrl}/workspaces/${activeWorkspaceId}/project-picker/` +
+             `projects?page=${page}&search=${filterTrimmedEncoded}`;  // &favorites
 
         return super.get(projectUrl, addToken);
     }
+
+    getProjectTasksWithFilter(projectId, filter, page) {
+        const filterTrimmedEncoded = encodeURIComponent(filter.trim())
+        const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
+        const userId = localStorageService.get('userId');
+        const baseUrl = localStorageService.get('baseUrl');
+        const projectUrl = `${baseUrl}/workspaces/${activeWorkspaceId}/project-picker/` +
+            `projects/${projectId}/tasks?page=${page}&search=${filterTrimmedEncoded}`;  // &favorites
+        return super.get(projectUrl, addToken);
+    }
+
 
     getAllTasks(taskIds) {
         const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
@@ -58,12 +67,18 @@ export class ProjectService extends HttpWrapperService {
         return super.post(getAllTasksUrl, body, addToken);
     }
 
-    getLastUsedProject() {
+    getLastUsedProject(forceTasks) {
         const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
         const baseUrl = localStorageService.get('baseUrl');
-        const getLastUsedUrl = `${baseUrl}/workspaces/${activeWorkspaceId}/projects/last-used`;
+        const url = `${baseUrl}/workspaces/${activeWorkspaceId}/projects/lastUsed?type=PROJECT${forceTasks?'_AND_TASK':''}`;
+        return super.get(url, addToken);
+    }
 
-        return super.get(getLastUsedUrl, addToken);
+    getTaskOfProject(projectId, taskName) {
+        const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
+        const baseUrl = localStorageService.get('baseUrl');
+        const url = `${baseUrl}/v1/workspaces/${activeWorkspaceId}/projects/${projectId}/tasks?name=${taskName}&strict-name-search=true`;
+        return super.get(url, addToken);
     }
 
     createProject(project) {

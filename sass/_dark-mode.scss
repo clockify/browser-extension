@@ -191,7 +191,7 @@ body.dark {
   .settings__auto_start_on_browser_start__title,
   .settings__auto_stop_on_browser_close__title,
   .pomodoro__title {
-    color: $bg-04;
+    color: $bg-02;
   }
   .workspace-list-selection {
     background: $bg-10;
@@ -289,6 +289,12 @@ body.dark {
     width: 10px;
     height: 5px;
     content: url("../assets/images/arrow-dark-mode.png");
+  }
+  .project-list-arrow-up,
+  .tag-list-arrow-up {
+    width: 10px;
+    height: 5px;
+    content: url("../assets/images/arrow-dark-mode-up.png");
   }
   .dropdown-item:hover {
     background: $bg-10;
@@ -425,5 +431,9 @@ body.dark {
   }
   .app-version {
     color: $bg-03;
+  }
+  .error {
+    color: red;
+    font-size: 14px;
   }
 }
