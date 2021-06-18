@@ -15,7 +15,7 @@
     "name": "Asana",
     "link": "app.asana.com",
     "script": "asana.js",
-    "clone":false
+    "clone": false
   },
   "axosoft.com": {
     "name": "Axosoft",
@@ -165,6 +165,12 @@
     "name": "Helprace",
     "link": "*://*.helprace.com/*",
     "script": "helprace.js",
+    "clone": false
+  },
+  "hillia.app": {
+    "name": "Hillia",
+    "link": "*://hillia.app/*",
+    "script": "hillia.js",
     "clone": false
   },
   "app.hubspot.com": {
