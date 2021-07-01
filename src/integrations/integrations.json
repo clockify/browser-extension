@@ -7,7 +7,7 @@
   },
   "ambra.app": {
     "name": "Ambra",
-    "link": "*://ambra.app/*",
+    "link": "*://ambra.app/project/*",
     "script": "ambra.js",
     "clone": false
   },
