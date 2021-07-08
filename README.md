@@ -3,6 +3,7 @@
 Insert Clockify's "Start timer" button to any web page. 
 
 [About Clockify →](https://clockify.me)
+
 [List of integrations →](https://clockify.me/integrations)
 
 ## Add your own integration
