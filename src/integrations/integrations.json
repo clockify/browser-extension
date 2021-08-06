@@ -239,6 +239,12 @@
     "script": "youtrack.js",
     "clone": false
   },
+  "myfocusspace.com": {
+    "name": "MyFocusSpace",
+    "link": "*://*.myfocusspace.com/*",
+    "script": "myfocusspace.js",
+    "clone": false
+  },
   "notion.so": {
     "name": "Notion",
     "link": "*://*.notion.so/*",
