@@ -17,9 +17,9 @@
     }
 
     function getClientName() {
-        if ($('#client-editor .selectr-selected .selectr-label') != null) {
+        if ($('#client-editor .has-selected .px-select-label') != null) {
             // task html
-            return $('#client-editor .selectr-selected .selectr-label').textContent.trim();
+            return $('#client-editor .has-selected .px-select-label').textContent.trim();
         }
         else if ($('.c-header--context__section--client .client-name p') != null) {
             // task vuejs component
@@ -31,7 +31,7 @@
     }
 
     function taskElementsReady() {
-        var clientLoaded = ($('#client-editor .selectr-selected .selectr-label') != null || $('.c-header--context__section--client .client-name p') != null);
+        var clientLoaded = ($('#client-editor .has-selected .px-select-label') != null || $('.c-header--context__section--client .client-name p') != null);
         var taskLoaded = ($('.c-header__jobtitle') != null || $(".editable-task-container input") != null);
 
         return clientLoaded && taskLoaded;
