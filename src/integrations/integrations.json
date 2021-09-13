@@ -482,5 +482,10 @@
     "name": "Freshrelease",
     "link": "*://*.freshrelease.com/*",
     "script": "freshrelease.js"
+  },
+  "desk.zoho.com": {
+    "name": "Zoho Desk",
+    "link": "*://desk.zoho.com/*",
+    "script": "zohodesk.js"
   }
 }
