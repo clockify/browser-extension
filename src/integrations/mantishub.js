@@ -1,12 +1,16 @@
 clockifyButton.render(
   '.page-content .widget-toolbox .pull-left:not(.clockify)',
-  { observe: true },
+  { observe: false },
   (elem) => {
     var link,
       description = document.querySelector('td.bug-summary').textContent,
       project = document.querySelector('td.bug-project').textContent;
 
-      link = clockifyButton.createButton(description);
+      link = clockifyButton.createButton({
+        description: description,
+        projectName: project,
+        taskName: description
+      });
       link.style.position = "relative";
       link.style.top = "5px";
       link.style.left = "5px";
