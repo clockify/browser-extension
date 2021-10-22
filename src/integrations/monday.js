@@ -18,12 +18,13 @@ clockifyButton.render('.flexible-header:not(.clockify)', { observe: true }, func
     }
 });
 
-clockifyButton.render('.pulse-page-header-component .pulse-page-name-wrapper:not(.clockify)', {observe: true}, function (elem) {
+// Pulse from "my work" board
+clockifyButton.render('.pulse-page-header-component .pulse-page-name-wrapper:not(.clockify)', { observe: true }, function (elem) {
     const descriptionElem = () => $(".ds-text-component > span", elem);
     const description = () => descriptionElem() ? descriptionElem().textContent : "";
-    const projectElem = $("#board-header > div.board-header-content-wrapper > div.board-header-main > div.board-header-top > div.board-header-left");
-    const project = projectElem ? projectElem.textContent : "";
-    link = clockifyButton.createButton(description, project);
+    const projectElem = $("div.pulse-page-header-component > div.link-to-pulse > .open-pulse-in-board-link");
+    var projectRefs = GetProjectAndTask(projectElem);
+    link = clockifyButton.createButton(description, projectRefs.project, projectRefs.task);
     link.style.position = "absolute";
     link.style.top = "5px";
     link.style.left = "60px";
