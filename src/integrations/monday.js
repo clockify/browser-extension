@@ -1,15 +1,16 @@
-clockifyButton.render('.flexible-header:not(.clockify)', {observe: true}, function (elem) {
+// Pulse from standard board
+clockifyButton.render('.flexible-header:not(.clockify)', { observe: true }, function (elem) {
     let projectElem = $("#board-header > div.board-header-content-wrapper > div.board-header-main > div.board-header-top > div.board-header-left > div > div.ds-editable-component > div > span");
     if (!projectElem) {
         projectElem = $(".current-board-component div.board-name");       
     }
 
-    const project = projectElem ? projectElem.textContent : "";
+    var projectRefs = GetProjectAndTask(projectElem);
     const descriptionElem = $(".title-editable", elem);
     
     if (descriptionElem) {
         const description = () => descriptionElem ? descriptionElem.textContent : "";
-        link = clockifyButton.createButton(description, project);
+        link = clockifyButton.createButton(description, projectRefs.project, projectRefs.task);
         link.style.position = "absolute";
         link.style.top = "5px";
         link.style.right = "5px";
@@ -42,3 +43,14 @@ clockifyButton.render('#pulse-card-dialog-component:not(.clockify)', {observe: t
     elem.appendChild(link);
 });
 
+function GetProjectAndTask(projectElem) {
+    var projName = projectElem ? projectElem.textContent : "";
+    var taskName = "";
+
+    if (typeof projName == "string" && projName.indexOf(":") > -1) {
+        var pNames = projName.split(":");
+        projName = pNames[0];
+        taskName = pNames[1];
+    }
+    return { project: projName, task: taskName };
+}
