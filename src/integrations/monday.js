@@ -1,3 +1,17 @@
+var style = document.createElement('style');
+style.innerHTML = `
+  #divClockifyPopupDlg.clockify-popup-dlg{
+    z-index: 100000000;
+  }
+#divClockifyTagDropDownPopup{
+    z-index: 100000000;
+  }
+#divClockifyProjectDropDownPopup{
+    z-index: 100000000;
+}
+  `;
+document.head.appendChild(style);
+
 // Pulse from standard board
 clockifyButton.render('.flexible-header:not(.clockify)', { observe: true }, function (elem) {
     let projectElem = $("#board-header > div.board-header-content-wrapper > div.board-header-main > div.board-header-top > div.board-header-left > div > div.ds-editable-component > div > span");
@@ -18,7 +32,7 @@ clockifyButton.render('.flexible-header:not(.clockify)', { observe: true }, func
     }
 });
 
-// Pulse from "my work" board
+// Pulse from "my word" board
 clockifyButton.render('.pulse-page-header-component .pulse-page-name-wrapper:not(.clockify)', { observe: true }, function (elem) {
     const descriptionElem = () => $(".ds-text-component > span", elem);
     const description = () => descriptionElem() ? descriptionElem().textContent : "";
@@ -32,7 +46,7 @@ clockifyButton.render('.pulse-page-header-component .pulse-page-name-wrapper:not
 });
 
 // Pulse from kanban board
-clockifyButton.render('#pulse-card-dialog-component:not(.clockify)', {observe: true}, function (elem) {
+clockifyButton.render('#pulse-card-dialog-component:not(.clockify)', { observe: true }, function (elem) {
     const descriptionElem = () => $(".pulse-card-header .ds-text-component > span", elem);  //
     const description = () => descriptionElem() ? descriptionElem().textContent : "";
     const projectElem = $("#pulse-card-dialog-scrollable-wrapper > div.pulse-card-header > div.pulse-data > div.link-to-pulse > .open-pulse-in-board-link");
