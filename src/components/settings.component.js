@@ -63,8 +63,8 @@ class Settings extends React.Component {
 
         if (isAppTypeExtension()) {
             this.isIdleDetectionOn();
+            this.isReminderOn();
             this.isContextMenuOn();
-            this.isTimerShortcutOn();
             this.isAutoStartStopOn();
             this.isTimerShortcutOn();
             this.isShowPostStartPopup();
