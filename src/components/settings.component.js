@@ -48,6 +48,7 @@ class Settings extends React.Component {
             reminderFromTime: null,
             reminderToTime: null,
             reminderMinutesSinceLastEntry: 0,
+            contextMenu: true,
             autoStartOnBrowserStart: false,
             autoStopOnBrowserClose: false,
             showPostStartPopup: true,
@@ -62,7 +63,8 @@ class Settings extends React.Component {
 
         if (isAppTypeExtension()) {
             this.isIdleDetectionOn();
-            this.isReminderOn();
+            this.isContextMenuOn();
+            this.isTimerShortcutOn();
             this.isAutoStartStopOn();
             this.isTimerShortcutOn();
             this.isShowPostStartPopup();
@@ -155,6 +157,14 @@ class Settings extends React.Component {
         });
 
         setTimeout(() => this.checkForRemindersDatesAndTimes(), 200);
+    }
+
+    isContextMenuOn() {
+        const contextMenu = JSON.parse(localStorageService.get('contextMenu', 'true'));
+        this.setState({ contextMenu });
+        getBrowser().storage.local.set({
+            contextMenu: (contextMenu)
+        });
     }
 
     isAutoStartStopOn() {
@@ -495,6 +505,16 @@ class Settings extends React.Component {
         this.setState({
             reminderMinutesSinceLastEntry: event.target.value
         });
+    }
+
+    toggleContextMenu() {
+        const contextMenu = !this.state.contextMenu;
+        this.setState({ contextMenu });
+        localStorageService.set('contextMenu', contextMenu.toString(), getLocalStorageEnums().PERMANENT_PREFIX);
+        getBrowser().storage.local.set({
+            contextMenu: (contextMenu)
+        });
+        this.showSuccessMessage();
     }
 
     toggleDay(event) {
@@ -851,6 +871,17 @@ class Settings extends React.Component {
                                      "settings__reminder__section__checkbox--img_hidden"}/>
                         </span>
                         <span className="settings__send-errors__title">Remind me to track time</span>
+                    </div>
+                    <div className={isAppTypeExtension() ? "settings__context_menu__section" : "enabled"}
+                        onClick={this.toggleContextMenu.bind(this)}>
+                        <span className={this.state.contextMenu ?
+                            "settings__context_menu__section__checkbox checked" : "settings__context_menu__section__checkbox"}>
+                            <img src="./assets/images/checked.png"
+                                className={this.state.contextMenu ?
+                                    "settings__context_menu__section__checkbox--img" :
+                                    "settings__context_menu__section__checkbox--img_hidden"} />
+                        </span>
+                        <span className="settings__send-errors__title">Enable context menu</span>
                     </div>
                     <div id="reminder"
                          className="settings__reminder expandContainer">
