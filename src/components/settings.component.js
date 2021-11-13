@@ -48,7 +48,7 @@ class Settings extends React.Component {
             reminderFromTime: null,
             reminderToTime: null,
             reminderMinutesSinceLastEntry: 0,
-            contextMenu: true,
+            contextMenuEnabled: true,
             autoStartOnBrowserStart: false,
             autoStopOnBrowserClose: false,
             showPostStartPopup: true,
@@ -160,11 +160,8 @@ class Settings extends React.Component {
     }
 
     isContextMenuOn() {
-        const contextMenu = JSON.parse(localStorageService.get('contextMenu', 'true'));
-        this.setState({ contextMenu });
-        getBrowser().storage.local.set({
-            contextMenu: (contextMenu)
-        });
+        const contextMenuEnabled = JSON.parse(localStorageService.get('contextMenuEnabled', 'true'));
+        this.setState({ contextMenuEnabled });
     }
 
     isAutoStartStopOn() {
@@ -508,13 +505,24 @@ class Settings extends React.Component {
     }
 
     toggleContextMenu() {
-        const contextMenu = !this.state.contextMenu;
-        this.setState({ contextMenu });
-        localStorageService.set('contextMenu', contextMenu.toString(), getLocalStorageEnums().PERMANENT_PREFIX);
-        getBrowser().storage.local.set({
-            contextMenu: (contextMenu)
-        });
+        const contextMenuEnabled = !this.state.contextMenuEnabled;
+        this.setState({ contextMenuEnabled });
+        localStorageService.set(
+            'contextMenuEnabled',
+            JSON.stringify(contextMenuEnabled),
+            getLocalStorageEnums().PERMANENT_PREFIX
+        );
+        this.sendToggleContextMenuRequest(contextMenuEnabled);
         this.showSuccessMessage();
+    }
+
+    sendToggleContextMenuRequest(iscontextMenuEnabled) {
+        if (isAppTypeExtension()) {
+            getBrowser().runtime.sendMessage({
+                eventName: "contextMenuEnabledToggle",
+                enabled: iscontextMenuEnabled
+            });
+        }
     }
 
     toggleDay(event) {
@@ -874,10 +882,10 @@ class Settings extends React.Component {
                     </div>
                     <div className={isAppTypeExtension() ? "settings__context_menu__section" : "enabled"}
                         onClick={this.toggleContextMenu.bind(this)}>
-                        <span className={this.state.contextMenu ?
+                        <span className={this.state.contextMenuEnabled ?
                             "settings__context_menu__section__checkbox checked" : "settings__context_menu__section__checkbox"}>
                             <img src="./assets/images/checked.png"
-                                className={this.state.contextMenu ?
+                                className={this.state.contextMenuEnabled ?
                                     "settings__context_menu__section__checkbox--img" :
                                     "settings__context_menu__section__checkbox--img_hidden"} />
                         </span>

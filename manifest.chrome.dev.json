@@ -19,6 +19,7 @@
       "contentScripts/webSocket-background.js",
       "contentScripts/token-background.js",
       "contentScripts/idle-detection-background.js",
+      "contentScripts/context-menu.background.js",
       "contentScripts/notification-background.js",
       "contentScripts/reminder-background.js",
       "contentScripts/pomodoro-background.js"
