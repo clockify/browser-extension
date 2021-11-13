@@ -170,17 +170,17 @@ fetch("integrations/integrations.json")
 // call it
 UserWorkspaceStorage.getSetWorkspaceSettings();
 
-aBrowser.contextMenus.removeAll();
-aBrowser.contextMenus.create({
-    "title": "Start timer with description '%s'",
-    "contexts": ["selection"],
-    "onclick": (info) => TimeEntry.startTimerWithDescription(info)
-});
-aBrowser.contextMenus.create({
-    "title": "Start timer",
-    "contexts": ["page"],
-    "onclick": (info) => TimeEntry.startTimerWithDescription(info)
-});
+// aBrowser.contextMenus.removeAll();
+// aBrowser.contextMenus.create({
+//     "title": "Start timer with description '%s'",
+//     "contexts": ["selection"],
+//     "onclick": (info) => TimeEntry.startTimerWithDescription(info)
+// });
+// aBrowser.contextMenus.create({
+//     "title": "Start timer",
+//     "contexts": ["page"],
+//     "onclick": (info) => TimeEntry.startTimerWithDescription(info)
+// });
 
 
 
