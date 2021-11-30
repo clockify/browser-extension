@@ -1,20 +1,30 @@
+_clockifyWithoutClient = 'WITHOUT-CLIENT';
+
+_clockifyNoProjectObj = { 
+    id: 'no-project',
+    name: 'No project',
+    client: { 
+        name: 'NO-PROJECT'
+    },
+    color: '#999999', 
+    tasks: []
+}
+
 var ClockifyProjectList = class {
 
-    constructor(editForm, timeEntryInProgress) {
+    constructor(editForm, timeEntry) {
         this.editForm = editForm;
         this.elem = null;
         this.divDropDownPopup = null;
-        this.taskGetOrCreated = timeEntryInProgress.task;  // usually timeEntryInProgress doesn't contain task
         this.state = {
             isOpen: false,
             page: 1,
             pageSize: 50, // service returns 50
-            projectList:!this.wsSettings.forceProjects && editForm.SelectedProject ?
-                    [{name: 'No project', id: 'no-project', color: '#999999', tasks: []}] : [],
+            projectList: this.initialProjectList,
             filter: '',
             ready: false,
             loadMore: true,
-            clients: ['Without client'],
+            clientProjects: {},
             title: '',
             Items: {},
             selectedProject: {
@@ -24,9 +34,17 @@ var ClockifyProjectList = class {
             selectedTaskName: '',
             isSpecialFilter: editForm.wsSettings.projectPickerSpecialFilter,
             isEnabledCreateProject: false,
-            specFilterNoTasksOrProject: ""
+            specFilterNoTasksOrProject: "",
+            cleanOnClose: false
         }
         this.filterProjects = this.filterProjects.bind(this);
+    }
+
+    get initialProjectList() {
+        const { SelectedProject } = this.editForm;
+        return !this.wsSettings.forceProjects && SelectedProject && SelectedProject.id !== 'no-project' && SelectedProject.id !== null
+            ? [_clockifyNoProjectObj]
+            : []
     }
 
 
@@ -127,10 +145,10 @@ var ClockifyProjectList = class {
 
     onClickedProjectDropDown(el) {
         switch(el.id) {
-            case 'imgClockifyTasksArrow': 
-            case 'clockifyProjectItemTask': {
+            case 'imgClockifyTasksArrow': {
+            //case 'clockifyProjectItemTask': {
                     let li = el.parentNode;
-                    while (li && li.nodeName !== 'LI') {
+                    while (li && (li.nodeName !== 'LI' || !li.id))  {
                         li = li.parentNode;
                     }
                     const id = li.id.replace("li_", "");
@@ -140,7 +158,7 @@ var ClockifyProjectList = class {
 
             case 'clockifyProjectItemName': {
                     let li = el.parentNode;
-                    while (li && li.nodeName !== 'LI') {
+                    while (li && (li.nodeName !== 'LI' || !li.id)) {
                         li = li.parentNode;
                     }
                     const id = li.id.replace("li_", "");
@@ -156,11 +174,28 @@ var ClockifyProjectList = class {
             case 'clockifyLoadMoreProjects': 
                 this.loadMoreProjects();
                 break;
+
+
+            case 'clockifyFavoriteStar': {
+                    let li = el.parentNode; 
+                    while (li && li.nodeName !== 'UL') {// jump over inner UL/LI
+                        li = li.parentNode;
+                    }
+                    while (li && li.nodeName !== 'LI') {
+                        li = li.parentNode;
+                    }
+                    const id = li.id.replace("li_", "");
+                    this.toggleFavorite(id);
+                }
+                break;               
             
             default:
                 if (el.nodeName === 'LI' && el.id.startsWith('task_li_')) {
                     const id = el.id.replace("task_li_", "");
-                    this.chooseTask(el);
+                    if (id.endsWith('load_more'))
+                        this.loadMoreTasks(el);
+                    else 
+                        this.chooseTask(el);
                 }
                 break;
         }
@@ -178,6 +213,7 @@ var ClockifyProjectList = class {
         
         const divProject = document.createElement('div');
         divProject.setAttribute("id", 'divClockifyProjectDropDown');
+        divProject.setAttribute('class', 'clockify-form-div');
         divProject.innerHTML = 
             "<ul class='clockify-drop-down'>" + 
                 `<li id='liClockifyProjectDropDownHeader'>${this.HeaderContent}</li>` +
@@ -201,8 +237,7 @@ var ClockifyProjectList = class {
 
     open() {
         aBrowser.storage.local.get(["timeEntryInProgress"], (result) => {
-            if (_clockifyTagList)
-                _clockifyTagList.close(true);
+            _clockifyPopupDlg.closeAllDropDowns();
             
             const neverOpened = !this.divDropDownPopup;
             if (neverOpened) {
@@ -223,6 +258,18 @@ var ClockifyProjectList = class {
             this.setState({ 
                 isOpen: true 
             });
+
+            if (this.state.cleanOnClose) {
+                this.setState({ 
+                    cleanOnClose: false,
+                    page: 1,
+                    clientProjects: {}
+                });
+                const ul = this.getDropDownPopupElem('#ulClockifyProjectDropDown');
+                ul.scroll(0, 0);   
+                this.getProjects();
+            }
+    
             // this.props.projectListOpened();
         });
     }
@@ -232,10 +279,15 @@ var ClockifyProjectList = class {
             return;
         this.setState({ 
             isOpen: false
-        });
+        }, false);
         this.getElem('#imgClockifyDropDown').src = aBrowser.runtime.getURL('assets/images/arrow-light-mode.png');
-        if (this.divDropDownPopup)
+        if (this.divDropDownPopup) {
             this.divDropDownPopup.style.display = 'none';
+        }
+
+        if (this.state.cleanOnClose) {
+            this.clean();
+        }
     }
 
     destroy() {
@@ -246,7 +298,6 @@ var ClockifyProjectList = class {
 
             document.body.removeChild(this.divDropDownPopup);
             this.divDropDownPopup = null;
-
         }
         this.elem = null;
         // todo remove click listeners
@@ -254,22 +305,28 @@ var ClockifyProjectList = class {
     }
    
     getProjects() {
-        if (this.state.page === 1) {
+        const { page, filter, pageSize } = this.state;
+        if (page === 1) {
             this.setState({
-                projectList: !this.wsSettings.forceProjects && this.editForm.SelectedProject ?
-                    [{name: 'No project', id: 'no-project', color: '#999999', tasks: []}] : []
+                projectList: this.initialProjectList
             })
-        }        
+        }    
         aBrowser.runtime.sendMessage({
             eventName: 'getProjects',
             options: { 
-                filter: this.state.filter, 
-                page: this.state.page, 
-                pageSize: this.state.pageSize
+                filter, 
+                page, 
+                pageSize,
+                forceTasks: this.editForm.isForceTasks,
+                alreadyIds: this.state.projectList.map(p => p.id)
             }
         }, (response) => {
             if (!response) {
                 alert("You must be logged in to start time entry (projectList).");
+                return;
+            }
+            else if (typeof response === 'string') {
+                alert(response);
                 return;
             }
             if (response.status === 400) {
@@ -277,41 +334,78 @@ var ClockifyProjectList = class {
                 // alert("Can't start entry without project/task/description or tags. Please edit your time entry. Please create your time entry using the dashboard or edit your workspace settings.");
             } else {
                 const items = response.data ? response.data.projectList : [];
-                const projectList = this.state.projectList
-                        .concat(this.editForm.isForceTasks
-                            ? items.filter(item => item.taskCount > 0)
-                            : items);
+                const projectList = this.state.projectList.concat(items);                
                 this.setState({
                     projectList: this.state.filter.length > 0 
-                        ? projectList.filter(project => project.name !== "No project")
-                        : projectList,
+                        ? projectList.filter(project => project.id !== "no-project")
+                        : projectList.length > 0 
+                            ? projectList 
+                            : this.wsSettings.forceProjects
+                                ? []
+                                : [_clockifyNoProjectObj],
                     page: this.state.page + 1,
                     ready: true
                 })
 
                 this.setState({
-                    clients: this.getClients(this.state.projectList),
-                    loadMore: items.length ===  this.state.pageSize ? true : false,
+                    clientProjects: this.getClients(this.state.projectList),
+                    loadMore: items.length >= this.state.pageSize ? true : false,
                     specFilterNoTasksOrProject: 
                         this.createMessageForNoTaskOrProject(
                             response.data, this.state.isSpecialFilter, this.state.filter
                         )
                 });
                 //if(!this.state.isOpen) {
-                    this.mapSelectedProject();
+                    /* this.mapSelectedProject(); */
                 //}                
                 this.setState({}, true); // redraw
             }
         });
     }
+
+    groupByClientName(objectArray) {
+        return objectArray.reduce((acc, p) => {
+            const key = p.client && !!p.client.name
+                ? p.client.name
+                : _clockifyWithoutClient;
+            if (!acc[key]) {
+                acc[key] = [];
+            }
+            // Add object to list for given key's value
+            acc[key].push(p);
+            return acc;
+        }, {});
+    }
+
+    groupByClientName(objectArray) {
+        return objectArray.reduce((acc, p) => {
+            const key = p.client && !!p.client.name
+                ? p.client.name
+                : 'WITHOUT-CLIENT';
+            if (!acc[key]) {
+                acc[key] = [];
+            }
+            // Add object to list for given key's value
+            acc[key].push(p);
+            return acc;
+        }, {});
+    }
+
     
     getClients(projects) {
-        const clients = new Set(projects.filter(p => p.client).map(p => p.client.name))
-        if (projects && projects.length > 0) {
-            return ['Without client', ...clients]
-        } else {
-            return []
+        const projectFavorites = this.editForm.isProjectFavorites;
+        if (projectFavorites) {
+            const clientProjects = this.groupByClientName(projects.filter(p => !p.favorite));
+            const favorites = projects.filter(p => p.favorite);
+            if (favorites.length > 0) {
+                clientProjects['FAVORITES'] = favorites;
+            }
+            return clientProjects;
         }
+        else {
+            const clientProjects = this.groupByClientName(projects);
+            return clientProjects;   
+        }        
     }
 
 
@@ -338,67 +432,62 @@ var ClockifyProjectList = class {
         this.getProjects();
     }
 
-    mapSelectedProject() {
-        const { SelectedProjectId, SelectedTaskId } = this.editForm;
+    get projectFromList() {
+        const { SelectedProjectId } = this.editForm;
+        return this.state.projectList.find(p => p.id === SelectedProjectId);
+    }
 
-        const selectedProject = 
-            this.state.projectList.filter(p => p.id === SelectedProjectId)[0];
+
+    mapSelectedProject() {
+        const { SelectedProjectId, SelectedTaskId, SelectedTask: selectedTask } = this.editForm;
+
+        const selectedProject = this.state.projectList.find(p => p.id === SelectedProjectId);
+
         if (SelectedProjectId && selectedProject) {
             this.setState({
-                selectedProject: selectedProject
+                selectedProject
             })
-            this.setState({
-                title: this.createTitle()
-            });
-
-            const selectedTask = this.state.selectedProject.tasks ?
-                this.state.selectedProject.tasks.filter(
-                    t => t.id === SelectedTaskId)[0] : null;
             if (SelectedTaskId && selectedTask) {
                 this.setState({
                     selectedTaskName: selectedTask.name
                 })
-                this.setState({
-                    title: this.createTitle()
-                });
             }
-        } else {
-            if (SelectedProjectId) {
+            this.setState({
+                title: this.createTitle()
+            });
+        } 
+        else {
+            if (SelectedProjectId && SelectedProjectId !== 'no-project') {
                 const projectIds = [];
                 projectIds.push(SelectedProjectId);
+                const taskIds = SelectedTaskId ? [SelectedTaskId] : null;
                 aBrowser.runtime.sendMessage({
                     eventName: 'getProjectsByIds',
                     options: { 
                         projectIds,
-                        taskIds: SelectedTaskId ? [SelectedTaskId] : null
+                        taskIds
                     }
                 }, (response) => {
-                    if (response.data && response.data.length > 0 && !response.data[0].archived) {
+                    if (!response || typeof response === 'string') {
+                        alert(response??'Error')
+                        return;
+                    }
+                    const projectDB = response.data && response.data.length > 0 ? response.data[0] : null;
+                    if (projectDB && !projectDB.archived) {  // archived should have alerady been checked 
                         this.setState({
-                            selectedProject: response.data[0]
+                            selectedProject: projectDB,
+                            selectedTaskName: ''
                         });
-                        this.setState({
-                            title: this.createTitle()
-                        });
-                        const selectedTask = this.state.selectedProject.tasks ?
-                            this.state.selectedProject.tasks.filter(
-                                t => t.id === SelectedTaskId)[0] : null;
+                        const {tasks}  = projectDB; // this.state.selectedProject;
+                        const selectedTask = tasks ? tasks.find(t => t.id === SelectedTaskId) : null;
                         if (selectedTask) {
                             this.setState({
                                 selectedTaskName: selectedTask.name
                             });
-                            this.setState({
-                                title: this.createTitle()
-                            });
                         }
-                        else if (this.taskGetOrCreated) {  // (SL)
-                            this.setState({
-                                selectedTaskName: this.taskGetOrCreated.name
-                            });
-                            this.setState({
-                                title: this.createTitle()
-                            });
-                        }
+                        this.setState({
+                            title: this.createTitle()
+                        });
                     }
                     this.setState({}, true); // force redraw, getProjectsByIds is async
                 });
@@ -484,7 +573,6 @@ var ClockifyProjectList = class {
                         ` placeholder="${this.wsSettings.projectPickerSpecialFilter ? 'Filter task @project or client' : 'Filter projects'}"` + 
                             " class='clockify-list-filter' style='padding: 3px 0px'/>" + 
                     (!!this.state.filter ? "<span class='clockify-list-filter__clear' />" : "") + 
-                    //onClick={this.clearProjectFilter.bind(this)}></span>
                 "</div>" + 
             "</div>" +
             "<ul id='ulClockifyProjectDropDown' class='clockify-project-list'>" +
@@ -502,21 +590,72 @@ var ClockifyProjectList = class {
         e.stopPropagation();
     }
 
+	getStar(a) {
+		const s = a 
+			? a.classList.contains('clockify-active')
+				? 'active'
+				: 'normal'
+			: 'hover';
+		return `url(${aBrowser.runtime.getURL(`assets/images/ui-icons/favorites-${s}.svg`)})`
+	}
+
     renderContent() {
+        const { clientProjects } = this.state;
+        const sortedClients = Object.keys(clientProjects).sort();
+        const projectFavorites = this.editForm.isProjectFavorites;
         let str = "";
-        this.state.clients.map(client => {
-            str += '<li><ul class="clockify-drop-down-2">' + 
-                        `<li class="clockify-project-list-client">${client}</li>`;
+
+        if (clientProjects['NO-PROJECT'] && clientProjects['NO-PROJECT'].length > 0) {
+            str += '<li><ul class="clockify-drop-down-2">';
             const arr = [];
-            this.state.projectList
-                .filter(project =>
-                    (project.client && project.client.name === client) ||
-                        (!project.client && client === 'Without client'))
-                    .map(project => {
-                        const Item = new ClockifyProjectItem(project);
-                        this.state.Items[project.id] = Item;
-                        arr.push(Item.render());
-                     })
+            clientProjects['NO-PROJECT']              
+                .map(project => {
+                    const Item = new ClockifyProjectItem(project, projectFavorites);
+                    this.state.Items[project.id] = Item;
+                    arr.push(Item.render());
+                })
+            str += arr.join('');
+            str += '</ul></li>';
+        }
+
+        if (clientProjects['FAVORITES'] && clientProjects['FAVORITES'].length > 0) {
+            str += '<li><ul class="clockify-drop-down-2">' + 
+                        `<li class="clockify-project-list-client"><i>FAVORITES</i></li>`;
+            const arr = [];
+            clientProjects['FAVORITES']              
+                .map(project => {
+                    const Item = new ClockifyProjectItem(project, projectFavorites);
+                    this.state.Items[project.id] = Item;
+                    arr.push(Item.render());
+                })
+            str += arr.join('');
+            str += '</ul></li>';
+        }
+
+        if (clientProjects['WITHOUT-CLIENT'] && clientProjects['WITHOUT-CLIENT'].length > 0) {
+            str += '<li><ul class="clockify-drop-down-2">' + 
+                        `<li class="clockify-project-list-client"><i>Without client</i></li>`;
+            const arr = [];
+            clientProjects['WITHOUT-CLIENT']              
+                .map(project => {
+                    const Item = new ClockifyProjectItem(project, projectFavorites);
+                    this.state.Items[project.id] = Item;
+                    arr.push(Item.render());
+                })
+            str += arr.join('');
+            str += '</ul></li>';
+        }
+
+        sortedClients.filter(client => !['FAVORITES', 'NO-PROJECT', 'WITHOUT-CLIENT'].includes(client)).map(client => {
+            str += '<li><ul class="clockify-drop-down-2">' + 
+                        `<li class="clockify-project-list-client"><i>${client}</i></li>`;
+            const arr = [];
+            clientProjects[client]              
+                .map(project => {
+                    const Item = new ClockifyProjectItem(project, projectFavorites);
+                    this.state.Items[project.id] = Item;
+                    arr.push(Item.render());
+                })
             str += arr.join('');
             str += '</ul></li>';
         })
@@ -525,7 +664,24 @@ var ClockifyProjectList = class {
             str += "<button class='clockify-list-load' id='clockifyLoadMoreProjects'>Load more</button>";
         }
         
-        this.getDropDownPopupElem('#ulClockifyProjectDropDown').innerHTML = str;
+		const ul = this.getDropDownPopupElem('#ulClockifyProjectDropDown');
+        ul.innerHTML = str;
+        if (projectFavorites) {
+            setTimeout(() => {
+                Array.from($$("a.clockify-dropdown-star", ul)).map(a => {
+                    // no-project has no star
+                    if (a) {
+                        a.style.backgroundImage = this.getStar(a);                   
+                        a.addEventListener('mouseenter', e => {
+                            a.style.backgroundImage = this.getStar(null);
+                        });
+                        a.addEventListener('mouseleave', e => {
+                            a.style.backgroundImage = this.getStar(a);
+                        });
+                    }   
+                }); 
+            });
+        }
     }
 
 
@@ -539,10 +695,22 @@ var ClockifyProjectList = class {
         this.state.Items[id].toggle();
     }
 
+    toggleFavorite(id) {
+        this.state.Items[id].toggleFavorite(id);
+        this.setState({cleanOnClose: true}, false);
+    }
+
+    onUpdateFavorite(id, favorite) {
+        this.state.projectList.map(p => {
+            if (p.id === id)
+                p.favorite = favorite;
+        })
+    }
+
     closeAll() {
         const Items = this.state.Items;
-        Object.keys(Items).forEach(key => { 
-            if (Items[key].state.isOpen) 
+        Object.keys(Items).forEach(key => {
+            if (Items[key] && Items[key].state.isOpen) 
                 Items[key].close();
         });
     }
@@ -551,8 +719,10 @@ var ClockifyProjectList = class {
     clean() {
         const Items = this.state.Items;
         Object.keys(Items).forEach(key => {
-            Items[key].clean();
-            Items[key] = null;
+            if (Items[key]) {
+                Items[key].clean();
+                Items[key] = null;
+            }
         });
         if (this.dropDownPopupElem)  // ever dropped
             this.getElem('#ulClockifyProjectDropDown').innerHTML = "";
@@ -560,65 +730,84 @@ var ClockifyProjectList = class {
 
     chooseTask(el) {  // e
         //const el = e.target;
+        const itemId = el.id.replace("task_li_", "")
         const li = el.parentNode.parentNode.previousSibling;
         const id = li.id.replace("li_", "");
         const projectItem = this.state.Items[id];
         const taskList = projectItem.state.taskList;
-        const taskItem = taskList.state.Items[el.id.replace("task_li_", "")]
+        const taskItem = taskList.state.Items[itemId]
         // e.stopPropagation();
-        this.selectTask(taskItem.props, projectItem.props);
+        this.selectTask(taskItem.props, projectItem.project);
     }  
+
+
+    loadMoreTasks(el) {
+        //const el = e.target;
+        const itemId = el.id.replace("task_li_", "").replace("_load_more", "")
+        const li = el.parentNode.parentNode.previousSibling;
+        const id = li.id.replace("li_", "");
+        const projectItem = this.state.Items[id];
+        // e.stopPropagation();
+        el.style.display = 'none';
+        projectItem.loadProjectTasks(true);
+    }
 
     selectTask(task, project) {
         this.editForm.editTask(task, project)
             .then(timeEntry => {
+                //this.redrawHeader();
+                this.setState({
+                    selectedProject: project,
+                    selectedTaskName: task.name, //task.props.name,
+                    isOpen: false
+                });
+                this.setState({
+                    title: this.createTitle()
+                });
+                this.mapSelectedProject();
                 this.redrawHeader();
+                this.close();
+                this.setState({cleanOnClose: true}, false);         
             }
         );
-        this.setState({
-            selectedProject: project,
-            selectedTaskName: task.name, //task.props.name,
-            isOpen: false
-        });
-        this.setState({
-            title: this.createTitle()
-        });
-        this.mapSelectedProject();
-        this.redrawHeader();
-        this.close();
+        
     }
 
     selectProject(project) {
-        this.editForm.editProject({id: project.id === 'no-project' ? null : project.id})
+        this.editForm.editProject({
+                id: project.id === 'no-project' ? null : project.id, 
+                name: project.name
+            })
             .then(timeEntry => {
+                //this.mapSelectedProject();
+                //this.redrawHeader();
+                let projectList; // = this.state.projectList;
+                if (project.id && !this.wsSettings.forceProjects) {
+                    if (this.state.projectList.find(project => project.id === "no-project")) {
+                        projectList = [_clockifyNoProjectObj, ...this.state.projectList]
+                    } else {
+                        projectList = this.state.projectList
+                    }
+                } else {
+                    projectList = this.state.projectList.filter(project => project.id !== "no-project")
+                }
+                this.setState({
+                    selectedProject: project,
+                    selectedTaskName: '',
+                    isOpen: false,
+                    projectList
+                });
+                this.setState({
+                    title: this.createTitle()
+                });
                 this.mapSelectedProject();
                 this.redrawHeader();
+                this.close();        
+
+                //if (project.id === 'no-project')
+                    this.setState({cleanOnClose: true}, false);
             }
         );
-        let projectList;
-        if (project.id && !this.wsSettings.forceProjects) {
-            if (this.state.projectList.filter(project => project.name === "No project").length == 0) {
-                projectList = 
-                    [{name: 'No project', id: 'no-project', color: '#999999', tasks: []}, ...this.state.projectList]
-            } else {
-                projectList = this.state.projectList
-            }
-        } else {
-            projectList = this.state.projectList.filter(project => project.name !== "No project")
-        }
-
-        this.setState({
-            selectedProject: project,
-            selectedTaskName: '',
-            isOpen: false,
-            projectList: projectList
-        });
-        this.setState({
-            title: this.createTitle()
-        });
-        this.mapSelectedProject();
-        this.redrawHeader();
-        this.close();        
     }
 
 

@@ -36,10 +36,12 @@ export class Application {
     }
 
     setWebSocketParamsToStorage() {
-        localStorageService.set(
-            "webSocketEndpoint",
-            environment.webSocket.endpoint,
-            getLocalStorageEnums().PERMANENT_PREFIX);
+        if (!localStorageService.get("webSocketEndpoint")) {
+            localStorageService.set(
+                "webSocketEndpoint",
+                environment.webSocket.endpoint,
+                getLocalStorageEnums().PERMANENT_PREFIX);
+        }
         localStorageService.set(
             "webSocketClientId",
             environment.webSocket.clientId,

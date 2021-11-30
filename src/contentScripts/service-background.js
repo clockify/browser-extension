@@ -1,5 +1,4 @@
 function isNavigatorOffline() {
-    //return !navigator.onLine;
     if (localStorage.getItem('offline'))
         return JSON.parse(localStorage.getItem('offline'));
     else
@@ -52,7 +51,7 @@ function errorObj(status, message) {
     }
 }
 
-class Service {
+class ClockifyService {
 
     constructor() {
     }
@@ -95,12 +94,34 @@ class Service {
         return JSON.parse(str);
     }
 
-    static async apiCall(endpoint, method='GET', body=null)
+    static setOnline() {
+        const storageOffline = localStorage.getItem('offline');
+        if (!storageOffline || storageOffline === 'true') {
+            localStorage.setItem('offline', 'false');
+        }
+    }   
+
+    static setOffline() {
+        const storageOffline = localStorage.getItem('offline');
+        if (!storageOffline || storageOffline === 'false') {
+            localStorage.setItem('offline', 'true');
+        }
+    }   
+
+
+    static async apiCall(endpoint, method='GET', body=null, withNoToken=false)
     {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            console.log('token is missing');
-            return errorObj('0', 'token is missing')
+        let token;
+        // TREBA LI SVAKI apiCall da ima TOKEN
+        if (withNoToken) {
+            token = null;
+        }
+        else {
+            token = await TokenService.getToken();
+            if (!token) {
+                console.log('token is missing');
+                return errorObj('0', 'token is missing')
+            }
         }
 
         const headers = new Headers(createHttpHeaders(token));
@@ -109,13 +130,20 @@ class Service {
                     method,
                     headers,
                     body: body ? JSON.stringify(body) : null
-                })
-    
+                })  
+
 
         // TODO Take care request failed, probably because of wrong permissions
-
         return await fetch(request)
             .then(async response => {
+                if (response.type === 'error') {
+                    this.setOffline();
+                    // return Network errors
+                }
+                else {
+                    this.setOnline();
+                }
+
                 switch(response.status)  {
                     case 400:
                     case 501:
@@ -126,6 +154,8 @@ class Service {
                         return errorObj(response.status, 'Unauthenticated');
                     case 404:
                         return errorObj(response.status, 'Not found');
+                    case 405:
+                        return errorObj(response.status, 'Method not allowed');
                     case 401:
                         return errorObj(response.status, 'Forbidden');
                     default:
@@ -142,14 +172,21 @@ class Service {
                     return { data, error: null, status: response.status };
                 } 
                 else {
-                    console.log('client response.status',response.text())
                     const errorMessage = await response.text()
                     return errorObj(response.status, errorMessage);
                 }
             })
             .catch(error => {
-                console.error('There has been a problem with your fetch operation:', error);
+                // TODO
+                // this.setOffline();
+                console.error('There has been a problem with your fetch operation: ', error); // error.message
             });
+    }
+
+    static async healthCheck() {
+        const endPoint = `${this.apiEndpoint}/health`;
+        const { error } = await this.apiCall(endPoint);
+        return !error;
     }
 
 }

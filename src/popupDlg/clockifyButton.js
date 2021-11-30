@@ -54,7 +54,6 @@ var clockifyButton = {
     createButton: (description, project, task, canClose) => {
         const options = objectFromParams(description, project, task);
         const button = document.createElement('a');
-
         if (invokeIfFunction(options.small)) {
             button.classList.add('small');
         }
@@ -124,17 +123,30 @@ var clockifyButton = {
                     
                     aBrowser.runtime.sendMessage({
                         eventName: 'submitTime',
-                        totalMins: totalMins,
-                        timeEntryOptions: timeEntryOptionsInvoked,
+                        options: {
+                            totalMins,
+                            timeEntryOptions: timeEntryOptionsInvoked
+                        }
                     }, (response) => {
                         input.value = "";
-                        if (!response || response.status !== 201) {
-                            inputMessage(input, "Error: " + (response && response.status), "error");
-
-                            if (response && response.status === 400) {
+                        if (!response) {
+                            inputMessage(input, "Error: " + (response??''), "error");
+                        }
+                        else if (typeof response === "string") {
+                            alert(response)
+                            //inputMessage(input, "Error: " + (response??''), "error");
+                        }
+                        else if (response.status !== 201) {
+                            inputMessage(input, "Error: " + (response.status), "error");
+                            if (response.status === 400) {
                                 // project/task/etc. can be configured to be mandatory; this can result in a code 400 during
                                 // time entry creation
-                                alert("Can't log time without project/task/description or tags.");
+                                if (response.endInProgressStatus) {
+                                    alert("You already have entry in progress\nwithout project/task/description or tags.\nPlease edit your time entry.");
+                                }
+                                else {
+                                    alert("Can't create Time Entry without project/task/description or tags.");
+                                }
                             }
                         } else {
                             inputMessage(input, "Time added!", "success");
@@ -292,130 +304,189 @@ function setClockifyButtonLinks(button) {
 }
 
 function buttonClicked(button, options) {
-    if (_waitingForResponse)
+    if (_waitingForResponse) {
         return;
+    }
 
     const timeEntryOptionsInvoked = objInvokeIfFunction(options);
     const title = timeEntryOptionsInvoked.description;
-    if (title && title === clockifyButton.inProgressDescription) {
-        _waitingForResponse = true;
-        aBrowser.runtime.sendMessage({eventName: 'endInProgress'}, (response) => {
-            if (!response) {
-                _waitingForResponse = false;
-                alert("You must be logged in to stop time entry (endInProgress).");
-                this.hideClockifyButtonLinks()
-                return;
-            }
-            if (response.status === 400) {
-                //const msg = "Can't end entry without project, task, description or tags. Please edit your time entry.";
-                const msg = "Can't end entry. Please enter required fields in your time entry.";
-                if (_clockifyShowPostStartPopup) {
-                    // TODO do we have const timeEntryInProgress = reponse.data; 
-                    aBrowser.storage.local.get(["timeEntryInProgress"], (result) => {
-                        const {timeEntryInProgress} = result;
-                        if (timeEntryInProgress) {
-                            if (!_clockifyPopupDlg) {
-                                OpenPostStartPopupDlg(timeEntryInProgress, msg);
-                            }
-                        }
-                        else {
-                            alert('Please, enter required fields and end current Entry!')
-                        }
-                        _waitingForResponse = false;
-                    });
-                }
-                else {
+
+    _waitingForResponse = true;
+    try {
+        if (title && title === clockifyButton.inProgressDescription) {
+            aBrowser.runtime.sendMessage({
+                eventName: 'endInProgress'
+            }, (response) => {
+                if (!response) {
                     _waitingForResponse = false;
-                    alert(msg);
+                    alert("You must be logged in to stop time entry (endInProgress).");
+                    // this.hideClockifyButtonLinks();
+                    return;
                 }
-            } else {
-                clockifyButton.inProgressDescription = null;
-                active = false;
-                setButtonProperties(button, title, active);
-                aBrowser.storage.local.set({
-                    timeEntryInProgress: null
-                });
-                _waitingForResponse = false;
-            }
-        });
-    } else {
-        if (timeEntryOptionsInvoked.description === "") {
-            alert("Please enter the Description.");
-            _waitingForResponse = false; // ?
-            return;
-        }
-        _waitingForResponse = true;
-        aBrowser.runtime.sendMessage({
-            eventName: 'startWithDescription',
-            timeEntryOptions: timeEntryOptionsInvoked
-        }, (response) => {
-            if (!response) {
-                _waitingForResponse = false;
-                alert("You must be logged in to start time entry. (startWithDescription)");
-                this.hideClockifyButtonLinks()
-                return;
-            }
-            if (response.status === 400) {
-                if (_clockifyShowPostStartPopup) {
-                    const msg = "Please, first complete your current Entry!<br/>Enter required fields or optionally edit your workspace settings.";
-                    aBrowser.storage.local.get(["timeEntryInProgress"], (result) => {
-                        const {timeEntryInProgress} = result;
-                        if (timeEntryInProgress) {
-                            if (!_clockifyPopupDlg) {
-                                OpenPostStartPopupDlg(timeEntryInProgress, msg);
-                            }
-                        }
-                        else {
-                            alert(msg.replaceAll('<br/>', '\n'));
-                        }
-                        _waitingForResponse = false;
-                    });
-                }
-                else {
-                    // const msg = "Can't start entry without project, task, description or tags. Please edit your time entry. Please create your time entry using the dashboard or edit your workspace settings.";
-                    msg = "Can't start entry without project, task, description or tags. Please edit your time entry. Please create your time entry using the dashboard or edit your workspace settings.";
-                    alert(msg);
+                else if (typeof response === 'string') {
+                    //alert("ClockifyService is temporarily unavailable.");
                     _waitingForResponse = false;
+                    alert(response);
+                    return;
                 }
-            } 
-            else {
-                let doNow = true;
-                active = true;
-                setButtonProperties(button, title, active);
-                clockifyButton.inProgressDescription = title;
-                const entry = response.data;
-                const {tagNames} = timeEntryOptionsInvoked;
-                if (tagNames && tagNames.length > 0 && entry.tagIds.length > 0) {
-                    if (entry.tagIds.length === tagNames.length) {
-                        entry.tags = [];
-                        for (var i=0; i < tagNames.length; i++) {
-                            entry.tags.push({ 
-                                id: entry.tagIds[i],
-                                name: tagNames[i] 
-                            })
-                        }
-                    }
-                    else {
-                        doNow = false;
+                if (response.status === 400) {
+                    //const msg = "Can't end entry without project, task, description or tags. Please edit your time entry.";
+                    const msg = "Can't end entry. Please enter required fields in your time entry.";
+                    if (_clockifyShowPostStartPopup) {
+                        // aBrowser.storage.local.get(["timeEntryInProgress"], (result) => {
+                        //     const {timeEntryInProgress} = result;
+                        //     if (timeEntryInProgress) {
+                        //         if (!_clockifyPopupDlg) {
+                        //             OpenPostStartPopupDlg(timeEntryInProgress, msg);
+                        //         } 
+                        //         else {
+                        //             alert(msg)
+                        //         }
+                        //     }
+                        //     else {
+                        //         alert('Please, enter required fields and end current Entry!')
+                        //     }
+                        //     _waitingForResponse = false;
+                        // });
+
                         aBrowser.runtime.sendMessage({
-                            eventName: 'fetchEntryInProgress'
+                            eventName: 'fetchEntryInProgress'  
                         }, (response) => {
                             if (!response) {
-                                alert("You must be logged in to start time entry (tagList).");
+                                alert("Tag list problem");
+                                _waitingForResponse = false;
                                 return;
                             }
+                            if (typeof response === 'string') {
+                                alert(response);
+                                _waitingForResponse = false;
+                                return;
+                            }
+                            const { status, entry: hydratedEntry } = response;
+                            //entry.tags = [...hydratedEntry.tags]
+                            aBrowser.storage.local.set({
+                                timeEntryInProgress: hydratedEntry
+                            });
+                            if (hydratedEntry) {
+                                if (!_clockifyPopupDlg) {
+                                    OpenPostStartPopupDlg(hydratedEntry, msg);
+                                } 
+                                else {
+                                    alert(msg)
+                                }
+                            }
+                            else {
+                                alert('Please, enter required fields and end current Entry!')
+                            }                           
                             _waitingForResponse = false;
-                            doTheJob(response.data[0])
                         });
                     }
-                }
-
-                if (doNow) {
+                    else {
+                        _waitingForResponse = false;
+                        alert(msg);
+                    }
+                } else {
+                    clockifyButton.inProgressDescription = null;
+                    active = false;
+                    setButtonProperties(button, title, active);
+                    aBrowser.storage.local.set({
+                        timeEntryInProgress: null
+                    });
                     _waitingForResponse = false;
-                    doTheJob(response.data)
                 }
+            });    
+        } 
+        else {
+            if (timeEntryOptionsInvoked.description === "") {
+                alert("Please enter the Description.");
+                _waitingForResponse = false; // ?
+                return;
             }
-        });
+            aBrowser.runtime.sendMessage({
+                eventName: 'startWithDescription',
+                timeEntryOptions: timeEntryOptionsInvoked
+            }, (response) => {
+                if (!response) {
+                    _waitingForResponse = false;
+                    alert("You must be logged in to start time entry. (startWithDescription)");
+                    // this.hideClockifyButtonLinks();
+                    return;
+                }
+                else if (typeof response === 'string') {
+                    _waitingForResponse = false;
+                    alert(response);
+                    return;
+                }
+                if (response.status === 400) {
+                    if (_clockifyShowPostStartPopup) {
+                        const msg = "Please, first complete your current Entry!<br/>Enter required fields or optionally edit your workspace settings.";
+                        aBrowser.storage.local.get(["timeEntryInProgress"], (result) => {
+                            const {timeEntryInProgress} = result;
+                            if (timeEntryInProgress) {
+                                if (!_clockifyPopupDlg) {
+                                    OpenPostStartPopupDlg(timeEntryInProgress, msg);
+                                }
+                            }
+                            else {
+                                alert(msg.replaceAll('<br/>', '\n'));
+                            }
+                            _waitingForResponse = false;
+                        });
+                    }
+                    else {
+                        // const msg = "Can't start entry without project, task, description or tags. Please edit your time entry. Please create your time entry using the dashboard or edit your workspace settings.";
+                        msg = "Can't start entry without project, task, description or tags. Please edit your time entry. Please create your time entry using the dashboard or edit your workspace settings.";
+                        alert(msg);
+                        _waitingForResponse = false;
+                    }
+                } 
+                else {
+                    let doNow = true;
+                    active = true;
+                    setButtonProperties(button, title, active);
+                    clockifyButton.inProgressDescription = title;
+                    const entry = response.data;
+                    const {tagNames} = timeEntryOptionsInvoked;
+                    if (tagNames && tagNames.length > 0 && entry.tagIds.length > 0) {
+                        doNow = false;
+                        aBrowser.runtime.sendMessage({
+                            eventName: 'fetchEntryInProgress'  
+                        }, (response) => {
+                            if (!response) {
+                                alert("Tag list problem");
+                                _waitingForResponse = false;
+                                return;
+                            }
+                            if (typeof response === 'string') {
+                                alert(response);
+                                _waitingForResponse = false;
+                                return;
+                            }
+                            const { status, entry: hydratedEntry } = response;
+                            entry.tags = [...hydratedEntry.tags]
+                            doTheJob(entry) // hydrated
+                            _waitingForResponse = false;
+                        });
+                    }                    
+    
+                    if (doNow) {
+                        _waitingForResponse = false;
+                        doTheJob(entry)
+                    }
+                }
+            });
+        }
+    }
+    catch(error) {
+        if (error.toString().toLowerCase().includes("extension context invalidated")) {
+            alert('Extension has been reloaded.\nPlease refresh the page!')
+        }
+        else {
+            alert('Extension context invalidated.\nPlease refresh the page!')
+        }
+    }
+    finally{
+        _waitingForResponse = false;
     }
 }
 
@@ -424,20 +495,54 @@ function doTheJob(entry) {
         timeEntryInProgress: entry
     });
     if (_clockifyShowPostStartPopup)
-        OpenPostStartPopupDlg(entry);
+        OpenPostStartPopupDlg(entry);   
 }
 
-function OpenPostStartPopupDlg(timeEntryInProgress, msg) {
-    if (timeEntryInProgress) {
-        if (timeEntryInProgress.message)
-            alert(timeEntryInProgress.message)
+
+function OpenPostStartPopupDlg(timeEntry, msg) {
+    if (timeEntry) {
+        if (timeEntry.message)
+            alert(timeEntry.message)
         _clockifyPopupDlg = new ClockifyPopupDlg();
-        document.body.appendChild(_clockifyPopupDlg.create(timeEntryInProgress, msg));
+        aBrowser.storage.local.get(['userRoles'], (result) => {
+             _clockifyPopupDlg.userRoles = result.userRoles;
+             // console.log('OpenPostStartPopupDlg result.userRoles', result.userRoles, new Date().toISOString())
+        })
+
+        _clockifyPopupDlg.wsCustomFields = [];     
+        if (ClockifyEditForm.userHasCustomFieldsFeature) {
+            aBrowser.runtime.sendMessage({
+                eventName: 'getWSCustomField',
+                options: {}
+            }, (response) => {
+                if (response) {
+                    const { data, status } = response;
+                    if (status !== 200) {
+                        if (status === 403) {
+                            alert('Your Workspace is not authorized for Custom Fields')
+                        }
+                    } 
+                    else {
+                        _clockifyPopupDlg.wsCustomFields = data;
+                        _clockifyPopupDlg.injectLinkModal();
+                    }
+                }
+                document.body.appendChild(_clockifyPopupDlg.create(timeEntry, msg));
+            });           
+        }
+        else {
+            document.body.appendChild(_clockifyPopupDlg.create(timeEntry, msg));
+        }
+        
+        //window.addEventListener('keydown', clockifyKeydowns, true);
         window.addEventListener('click', clockifyClicks, true);
         window.addEventListener('change', clockifyChanges, true);
         document.addEventListener('click', clockifyRemovePopupDlg, true);
         window.addEventListener('resize', clockifyTrackResize, true);
         window.addEventListener('scroll', clockifyTrackScroll, true);
+
+        //document.addEventListener('selectionchange', clockifySelectionChange, true);
+        //document.addEventListener('mouseup', clockifyMouseUp, true);
     }    
 }
 
@@ -449,7 +554,13 @@ function clockifyClicks(e) {
     if (divPopupDlg.contains(e.target)) {
         _clockifyPopupDlg.onClicked(e.target);
         e.stopPropagation();
-        e.preventDefault();
+        if (e.target && (e.target.tagName === "A" ||
+                         e.target.id.startsWith('switchbox') ||
+                         e.target.id.startsWith('txtCustomField') )) {
+        }
+        else {
+            e.preventDefault();
+        }
     }
     else {
         const div = document.getElementById('divClockifyProjectDropDownPopup');
@@ -465,6 +576,21 @@ function clockifyClicks(e) {
                 e.stopPropagation();
                 e.preventDefault();
             }
+            else {
+                const div = document.getElementById('divClockifyLinkModal');
+                if (div && div.style.display !== 'none') {
+                    _clockifyPopupDlg.onClickedLinkModal(div, e.target);
+                    e.stopPropagation();
+                    e.preventDefault();
+                }
+                else {
+                    // custom fields popups
+                    if (_clockifyPopupDlg.onClickedCFPopup(e.target)) {
+                        e.stopPropagation();
+                        e.preventDefault();
+                    }
+                }
+            }
         }
     }
 }
@@ -477,6 +603,32 @@ function clockifyChanges(e) {
         e.preventDefault();
     }
 }
+
+
+// function clockifyKeydowns(e) {
+//     const divPopupDlg = document.getElementById('divClockifyPopupDlg');
+//     if (divPopupDlg && divPopupDlg.contains(e.target)) {
+//         //_clockifyPopupDlg.onKeydown(e.target);
+//         alert(e.keyCode)
+//         e.stopPropagation();
+//         e.preventDefault();
+//     }
+// }
+
+
+/*
+function clockifySelectionChange(e) {
+    console.log('clockifySelectionChange', e)
+}
+function clockifyMouseUp(e) {
+    console.log('clockifyMouseUp', e)
+    //if (e.target.id !== 'clockifyTextareaDescription') {
+        e.stopPropagation();
+        e.preventDefault();
+    //}
+}
+*/
+
 
 
 function clockifyRemovePopupDlg(e) {
@@ -501,6 +653,9 @@ function clockifyDestroyPopupDlg() {
         _clockifyPopupDlg.destroy();
         document.body.removeChild(divPopupDlg);
         document.removeEventListener('click', clockifyRemovePopupDlg, true);
+        //document.removeEventListener('selectionchange', clockifySelectionChange, true);
+        //document.removeEventListener('mouseup', clockifyMouseUp, true);
+        
         _clockifyPopupDlg = null;
     }
 }
@@ -514,6 +669,7 @@ function clockifyTrackScroll() {
     if (_clockifyPopupDlg)
         clockifyRepositionDropDown();
 }
+
 
 function clockifyMouseWheel(e) {
     e.stopPropagation();
@@ -529,10 +685,13 @@ function clockifyRepositionDropDown() {
         if (divPopup) {
             _clockifyTagList.repositionDropDown();
         }
+        else {
+            // custom fields popups
+            if (_clockifyPopupDlg.repositionDropDownCF()) {
+            }
+        }        
     }
 }
-
-
 
 function getActiveIcon() {
     return '<svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="16" width="16"><path d="m 10.461549,5.5284395 3.642277,-3.6422765 1.040649,1.0406505 -3.642276,3.642309 z M 8.9656137,9.3008298 c -0.7154471,0 -1.300813,-0.5853659 -1.300813,-1.300813 0,-0.7154472 0.5853659,-1.300813 1.300813,-1.300813 0.7154472,0 1.3008133,0.5853658 1.3008133,1.300813 0,0.7154471 -0.5853661,1.300813 -1.3008133,1.300813 z m 6.2439023,3.7723572 -1.04065,1.04065 -3.642276,-3.642276 1.04065,-1.0407149 z" fill="#03A9F4"></path><path d="m 9.0306543,13.593496 c 0.7154472,0 1.4308947,-0.130081 2.0813017,-0.390244 l 1.821138,1.821139 C 11.762362,15.674797 10.461549,16 9.095695,16 4.6729307,16 1.0956949,12.422765 1.0956949,8.0000004 1.0956949,3.5772361 4.6729307,3.65e-7 9.095695,3.65e-7 c 1.430895,0 2.731708,0.390243865 3.837399,0.975609665 L 11.176996,2.7317077 C 10.52659,2.4715451 9.8111421,2.3414637 9.095695,2.3414637 c -3.1219513,0 -5.593496,2.5365854 -5.593496,5.593496 -0.06504,3.1219513 2.4065041,5.6585363 5.5284553,5.6585363 z" fill="#03A9F4"></path></svg>'
@@ -544,29 +703,30 @@ function getInactiveIcon() {
 
 aBrowser.storage.onChanged.addListener((changes, area) => {
     const changedItems = Object.keys(changes);
-
-    if (changedItems.filter(item => item === 'timeEntryInProgress').length > 0) {
+    if (changedItems.find(item => item === 'timeEntryInProgress')) {       
         aBrowser.storage.local.get(["timeEntryInProgress"], (result) => {
-            const {timeEntryInProgress} = result;           
+            const {timeEntryInProgress} = result;
             this.updateButtonState(timeEntryInProgress);
         });
     }
 
-    if (changedItems.filter(item => item === 'token').length > 0) {
+    if (changedItems.find(item => item === 'token')) {
         aBrowser.storage.local.get(["token"], (result) => {
             if (!result.token) {
                 this.hideClockifyButtonLinks()
             }
+            else {
+            }
         })
     }
 
-    if (changedItems.filter(item => item === 'showPostStartPopup').length > 0) {
+    if (changedItems.find(item => item === 'showPostStartPopup')) {
         aBrowser.storage.local.get(["showPostStartPopup"], (result) => {
             _clockifyShowPostStartPopup = result.showPostStartPopup;
         })
     }
 
-    if (changedItems.filter(item => item === 'wsSettings').length > 0) {
+    if (changedItems.find(item => item === 'wsSettings')) {
         if (_clockifyShowPostStartPopup) {
             aBrowser.storage.local.get(["wsSettings"], (result) => {
                 ClockifyEditForm.prototype.wsSettings = result.wsSettings;
@@ -575,3 +735,4 @@ aBrowser.storage.onChanged.addListener((changes, area) => {
     }
 
 });
+

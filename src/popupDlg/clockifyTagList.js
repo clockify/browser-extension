@@ -106,7 +106,7 @@ var ClockifyTagList = class {
             .map((tag, index, list) => {
                 const name = this.encoded(tag.name);
                 title += name + "\n";
-                return "<span className='clockify-tag-list-selected-item' style='padding: 5px 5px'>" +
+                return "<span class='clockify-tag-list-selected-item'>" +
                             name + (index < list.length-1 ? ", ": "") +
                         "</span>"
             });
@@ -115,8 +115,8 @@ var ClockifyTagList = class {
             "<div style='display:flex; align-items: center;' tabIndex=0" + 
                 ` class='${isOffline ? "clockify-tag-list-button-offline" : this.editForm.isTagRequired ?
                         "clockify-tag-list-button-required" : "clockify-tag-list-button"}' title="${title}">` +
-                `<span style='color: #999999'` +
-                    " class='clockify-tag-list-name' style='overflow:hidden;text-overflow:ellipsis;white-space:nowrap'>" + 
+                `<span` +
+                    " class='clockify-tag-list-name'>" + 
                     (arr.length === 0
                         ? "<span class='clockify-tag-list-add'>" + 
                             (this.editForm.isTagRequired ? "Add tags (required)" : "Add tags") +
@@ -124,7 +124,6 @@ var ClockifyTagList = class {
                         : "<span class='clockify-tag-list-selected'>" +
                             arr.join('') + 
                         "</span>" ) +
-                    // "<input id='inputClockifyTagTask' class='clockify-tag-list-name' type='text'/>" +
                 "</span>" +
                 "<span class='clockify-span-arrow' id='imgClockifyDropDownTagsSPAN'>" +
                     `<img id='imgClockifyDropDownTags' src='${aBrowser.runtime.getURL(img)}'` + 
@@ -146,6 +145,7 @@ var ClockifyTagList = class {
         
         const divTag = document.createElement('div');
         divTag.setAttribute("id", 'divClockifyTagDropDown');
+        divTag.setAttribute('class', 'clockify-form-div');
         divTag.innerHTML = 
             "<ul class='clockify-drop-down'>" + 
                 `<li id='liClockifyTagDropDownHeader'>${this.HeaderContent}</li>` +
@@ -207,8 +207,7 @@ var ClockifyTagList = class {
 
     open() {
         aBrowser.storage.local.get(["timeEntryInProgress"], (result) => {
-            if (_clockifyProjectList)
-                _clockifyProjectList.close(true);
+            _clockifyPopupDlg.closeAllDropDowns();
 
             const neverOpened = !this.divDropDownPopup;
             if (neverOpened) {
@@ -271,25 +270,29 @@ var ClockifyTagList = class {
             }
         }, (response) => {
             if (!response) {
-                alert("You must be logged in to start time entry (tagList).");
+                alert("You must be logged in to start time entry (tagList)");
+                return;
+            }
+            else if (typeof response === 'string') {
+                alert(response);
                 return;
             }
             if (response.status === 400) {
                 // openPostStartPopup("Can't start entry without tag/task/description or tags. Please edit your time entry. Please create your time entry using the dashboard or edit your workspace settings.")
                 // alert("Can't start entry without tag/task/description or tags. Please edit your time entry. Please create your time entry using the dashboard or edit your workspace settings.");
             } else {
-                const items = response.data ? response.data : []
+                const pageTags = response.pageTags ? response.pageTags : []
                 /*
                  ne mora svaki setState redraw
                 */
 
                 this.setState({
-                    tagList: sortArrayByStringProperty(this.state.tagList.concat(items), 'name'),
+                    tagList: sortArrayByStringProperty(this.state.tagList.concat(pageTags), 'name'),
                     page: this.state.page + 1,
                     ready: true
                 });
                 this.setState({
-                    loadMore: items.length === this.state.pageSize ? true : false
+                    loadMore: pageTags.length === this.state.pageSize ? true : false
                 });
                 this.setState({}, true); // redraw
             }
@@ -387,7 +390,7 @@ var ClockifyTagList = class {
 
     selectTag(tag) {
         this.editForm.editTags(tag)
-            .then(({timeEntry, tagList}) => {
+            .then(({entry, tagList}) => {
                 this.setState({tagList});
                 this.redrawHeader();
             }

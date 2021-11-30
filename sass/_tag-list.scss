@@ -1,66 +1,116 @@
 .tag-list {
+
+  box-sizing: border-box;
   position: relative;
+  width: 100%;
+
+  &-name {
+    display: inline-block !important;
+    padding: 0px 5px !important;
+    width: 85% !important;
+    font-size: 14px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;    
+  }
 
   &-button {
-    padding: 6px 0;
+    // padding: 6px 0;
+    padding: 0px 6px;
     background: white;
     border: 1px solid $border;
     border-radius: 2px;
     cursor: pointer;
     box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    height: 38px;
 
     &-required {
-      padding: 5px 0;
+      //padding: 5px 0;
+      padding: 0px 6px;
       background: white;
       border: 1px solid $red;
       border-radius: 2px;
       cursor: pointer;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      height: 38px;
     }
 
     &-offline {
       width: 100%;
-      height: 40px;
-      background: $disabled;
+      height: 38px;
+      // height: 40px;
+      background: disabled;
       border: 1px solid $border;
       border-radius: 2px;
       cursor: not-allowed;
+      box-sizing: border-box;
+      padding: 0px 6px;
+      display: flex;
+      align-items: center;
     }
+
+    &-disabled {
+      width: 100%;
+      // height: 40px;
+      height: 38px;
+      background: #eff4f7;
+      border: 1px solid $border;
+      border-radius: 2px;
+      cursor: not-allowed;
+      padding: 0px 6px;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      }    
   }
 
   &-arrow {
-    position: relative;
+    // position: relative;
     width: 10px;
     height: 5px;
-    float: right;
-    padding-right: 15px;
-    top: 10px;
+    // float: right;
+    // padding-right: 15px;
+    // top: 10px;
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    padding: 0px 10px 0px 10px;    
     content: url("../assets/images/arrow-light-mode.png");
   }
 
   &-arrow-up {
-    position: relative;
+    // position: relative;
     width: 10px;
     height: 5px;
-    float: right;
-    padding-right: 15px;
-    top: 10px;
+    // float: right;
+    // padding-right: 15px;
+    // top: 10px;
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    // padding: 10px 10px 10px 10px;    
+    padding: 0px 10px 0px 10px;    
     content: url("../assets/images/arrow-light-mode-up.png");
   }
 
 
   &-add {
     display: inline-block;
-    padding: 5px 10px;
+    padding: 5px 10px 5px 0px;
     font-size: 14px;
     color: $lighter_text;
   }
-
+ 
   &-selected {
     display: inline-block;
     max-width: 260px;
-    margin-left: 10px;
+    //margin-left: 10px;
     border-radius: 2px;
-    background-color: $tags;
+    // background-color: $tags;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -69,7 +119,14 @@
       display: inline-block;
       padding: 5px 5px;
       border-radius: 3px;
-      color: $blue_tag;
+      // color: $blue_tag;
+      font-size: 14px;
+      font-weight: 400;
+      color: #333;
+    }
+
+    &-item:first-child {
+      padding-left: 0px !important;
     }
   }
   &-input {
@@ -263,4 +320,23 @@
       cursor: pointer;
     }
   }
+
+  // .tag-list-button {
+  //   padding: 5px 0 !important;
+  //   background: white !important;
+  //   border: 0px solid #C6D2D9 !important;
+  //   border-radius: 2px !important;
+  //   cursor: pointer !important;
+  //   align-items: center !important;
+  //   display: flex !important;
+
+  //   &-disabled {
+  //     background: #eff4f7 !important;
+  //     border: 1px solid #C6D2D9 !important; 
+  //     cursor: default !important;
+  //   }
+  // }
+ 
 }
+
+

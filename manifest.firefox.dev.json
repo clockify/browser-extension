@@ -10,15 +10,18 @@
       "contentScripts/defaultProject.js",
       "contentScripts/userWorkspaceStorage.js",
       "contentScripts/service-background.js",
+      "contentScripts/token-service-background.js",
       "contentScripts/user-service-background.js",
+      "contentScripts/integration-background.js",
       "contentScripts/task-service-background.js",
       "contentScripts/project-service-background.js",
       "contentScripts/tag-service-background.js",
+      "contentScripts/custom-field-service-background.js",
       "contentScripts/timeEntry.js",
       "contentScripts/background.js",
       "contentScripts/webSocket-background.js",
-      "contentScripts/token-background.js",
       "contentScripts/idle-detection-background.js",
+      "contentScripts/context-menu.background.js",
       "contentScripts/notification-background.js",
       "contentScripts/reminder-background.js",
       "contentScripts/pomodoro-background.js"
@@ -30,7 +33,7 @@
       "strict_min_version": "57.0a1"
     }
   },
-  "version": "1.8.84",
+  "version": "1.9.4",
   "browser_action": {
     "default_popup": "index.html",
     "default_title": "Clockify"
@@ -53,7 +56,8 @@
     "128":"assets/images/logo-128.png"
   },
   "web_accessible_resources" : [
-    "assets/images/*.png"
+    "assets/images/*.png",
+	 "assets/images/ui-icons/*.svg"
   ],   
   "permissions": [
     "background",
@@ -62,7 +66,6 @@
     "*://*/",
     "storage",
     "tabs",
-    "webNavigation",
     "activeTab",
     "identity",
     "idle",

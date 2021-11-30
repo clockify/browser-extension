@@ -90,28 +90,34 @@ aBrowser.runtime.onMessageExternal.addListener(async (request, sender, sendRespo
         return;
     }
     _messageExternal_busy = true;
-    switch (request.eventName) {
-        case 'startNewEntry': {
-            TimeEntry.startNewEntryExternal(request.data)
-                .then(res => {
-                    sendResponse(res)
-                })
-        }
-        break;
+    try {
+        switch (request.eventName) {
+            case 'startNewEntry': {
+                TimeEntry.startNewEntryExternal(request.data)
+                    .then(res => {
+                        sendResponse(res)
+                        _messageExternal_busy = false;
+                    })
+            }
+            break;
 
-        case 'endInProgress': {
-            TimeEntry.endInProgressExternal()
-                .then(res => {
-                    const { entry, error } = res;
-                    sendResponse({entry, message: error ? error.message : 'Time entry stopped!'})
-                })            
+            case 'endInProgress': {
+                TimeEntry.endInProgressExternal()
+                    .then(res => {
+                        const { entry, error } = res;
+                        sendResponse({entry, message: error ? error.message : 'Time entry stopped!'})
+                        _messageExternal_busy = false;
+                    })            
+            }
+            break;
+            
+            default:
+                sendResponse({entry: null, message: 'Unknown: '+ request.eventName});
         }
-        break;
-        
-        default:
-            sendResponse({entry: null, message: 'Unknown: '+ request.eventName});
     }
-    _messageExternal_busy = false;
+    finally {
+        //_messageExternal_busy = false;
+    }
     return true;
 });
 
@@ -126,7 +132,7 @@ aBrowser.windows.getAll({ populate: true, windowTypes: ["normal"] },
 
 
 aBrowser.windows.onCreated.addListener(async (window) => {
-    if (this.isLoggedIn() && windowIds.length === 0) {
+    if (TokenService.isLoggedIn && windowIds.length === 0) {
         const { entry, error } = await TimeEntry.getEntryInProgress();
         if (entry === null || error) {
             this.addReminderTimerOnStartingBrowser();
@@ -160,27 +166,64 @@ aBrowser.windows.onRemoved.addListener((window) => {
     }
 });
 
-fetch("integrations/integrations.json")
-    .then(response => response.json())
-    .then(data => {
-        window.ClockifyOrigins = data;
-    });
 
+function setClockifyOriginsToStorage() {
+    fetch("integrations/integrations.json")
+        .then(response => response.json())
+        .then(clockifyOrigins => {
+            window.ClockifyOrigins = clockifyOrigins;
+            const userId = localStorage.getItem('userId');
+            if (userId) {
+                aBrowser.storage.local.get('permissions', (result) => {
+                    const permissionsForStorage = result.permissions ? result.permissions : [];
+                    let arr = permissionsForStorage.filter(permission => permission.userId === userId);
+                    let permissionForUser;
+                    if (arr.length === 0) {
+                        permissionForUser = {
+                            userId,
+                            permissions: []
+                        }
+                        permissionsForStorage.push(permissionForUser);
+                        for (let key in clockifyOrigins) {
+                            permissionForUser.permissions.push({
+                                domain: key,
+                                isEnabled: true,
+                                script: clockifyOrigins[key].script,
+                                name: clockifyOrigins[key].name,
+                                isCustom: false
+                            });
+                        }   
+                        aBrowser.storage.local.set({permissions: permissionsForStorage});
+                    }
+                })
+            }
+        });
+}
+
+// call it
+setClockifyOriginsToStorage();
 
 // call it
 UserWorkspaceStorage.getSetWorkspaceSettings();
 
-aBrowser.contextMenus.removeAll();
-aBrowser.contextMenus.create({
-    "title": "Start timer with description '%s'",
-    "contexts": ["selection"],
-    "onclick": (info) => TimeEntry.startTimerWithDescription(info)
-});
-aBrowser.contextMenus.create({
-    "title": "Start timer",
-    "contexts": ["page"],
-    "onclick": (info) => TimeEntry.startTimerWithDescription(info)
-});
+UserService.getSetUserRoles();
+
+setTimeout(() => {
+    backgroundWebSocketConnect();
+}, 1000);
+
+
+// aBrowser.contextMenus.removeAll();
+// aBrowser.contextMenus.create({
+//     "title": "Start timer with description '%s'",
+//     "contexts": ["selection"],
+//     "onclick": (info) => TimeEntry.startTimerWithDescription(info)
+// });
+// aBrowser.contextMenus.create({
+//     "title": "Start timer",
+//     "contexts": ["page"],
+//     "onclick": (info) => TimeEntry.startTimerWithDescription(info)
+// });
 
 
 
@@ -197,7 +240,7 @@ aBrowser.commands.onCommand.addListener(async (command) => {
         return
     if (command !== commands.startStop)
         return
-    if (!isLoggedIn()) {
+    if (!TokenService.isLoggedIn) {
         alert('You must log in to use keyboard shortcut (backgorund)');
         return
     }
@@ -216,6 +259,8 @@ aBrowser.commands.onCommand.addListener(async (command) => {
  
 });
 
+const chromeExtensionID = 'pmjeegjhjdlccodhacdgbgfagbpmccpe';
+const firefoxExtensionID = '{1262fc44-5ec9-4088-a7a7-4cd42f3f548d}';
 
 aBrowser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     if (tab.url.includes("clockify.me"))
@@ -223,14 +268,15 @@ aBrowser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     if (changeInfo.status === "complete") {
         aBrowser.storage.local.get('permissions', (result) => {
             let domain = extractDomain(tab.url, result.permissions);
-            if (!tab.url.includes("chrome://") && isLoggedIn()) {
+            if (!tab.url.includes("chrome://") && TokenService.isLoggedIn) {
                 if (!!domain.file) {
                     aBrowser.tabs.insertCSS(tabId, {file: "integrations/style.css"});
-                    aBrowser.tabs.executeScript(tabId, {file: "integrations/clockifyDebounce.js"});
+                    aBrowser.tabs.executeScript(tabId, {file: "popupDlg/clockifyDebounce.js"});
 
                     const wsSettings = localStorage.getItem("workspaceSettings");
                     if (wsSettings) {
                         const workspaceSettings = JSON.parse(wsSettings);
+                        // console.log('execut workspaceSettings', workspaceSettings)
                         let showPostStartPopup = true;
                         aBrowser.storage.local.get('showPostStartPopup', (result) => {
                             if (typeof result.showPostStartPopup !== 'undefined') {
@@ -239,34 +285,49 @@ aBrowser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
                         });
 
                         if (showPostStartPopup) {
-                            aBrowser.tabs.executeScript(tabId, {file: "integrations/clockifyTagItem.js"});
-                            aBrowser.tabs.executeScript(tabId, {file: "integrations/clockifyTagList.js"});
-                            aBrowser.tabs.executeScript(tabId, {file: "integrations/clockifyProjectTaskList.js"});
-                            aBrowser.tabs.executeScript(tabId, {file: "integrations/clockifyProjectItem.js"});
-                            aBrowser.tabs.executeScript(tabId, {file: "integrations/clockifyProjectList.js"}, (firstLoad) => {
-                                aBrowser.tabs.executeScript(tabId, {file: "integrations/clockifyPopupDlg.js"}, (firstLoad) => {
+                            aBrowser.tabs.executeScript(tabId, {file: "popupDlg/clockifyCustomField.js"});
+                            aBrowser.tabs.executeScript(tabId, {file: "popupDlg/clockifySingleItem.js"});
+                            aBrowser.tabs.executeScript(tabId, {file: "popupDlg/clockifyMultipleItem.js"});
+                            aBrowser.tabs.executeScript(tabId, {file: "popupDlg/clockifyTagItem.js"});
+                            aBrowser.tabs.executeScript(tabId, {file: "popupDlg/clockifyTagList.js"});
+                            aBrowser.tabs.executeScript(tabId, {file: "popupDlg/clockifyProjectTaskList.js"});
+                            aBrowser.tabs.executeScript(tabId, {file: "popupDlg/clockifyProjectItem.js"});
+                            aBrowser.tabs.executeScript(tabId, {file: "popupDlg/clockifyProjectList.js"}, (firstLoad) => {
+                                aBrowser.tabs.executeScript(tabId, {file: "popupDlg/clockifyCustomFieldDropSingle.js"});
+                                aBrowser.tabs.executeScript(tabId, {file: "popupDlg/clockifyCustomFieldDropMultiple.js"});
+                                aBrowser.tabs.executeScript(tabId, {file: "popupDlg/clockifyPopupEditForm.js"}, (firstLoad) => {
+                                aBrowser.tabs.executeScript(tabId, {file: "popupDlg/clockifyPopupDlg.js"}, (firstLoad) => {
                                     aBrowser.tabs.executeScript(
-                                        tabId, { 
-                                            code: `_clockifyShowPostStartPopup = ${showPostStartPopup}`
-                                        }
+                                            tabId, { 
+                                                code: `_clockifyShowPostStartPopup = ${showPostStartPopup}`
+                                            }
                                     );   
+
                                     aBrowser.tabs.executeScript(
-                                        tabId, { 
-                                            code: `ClockifyEditForm.prototype.wsSettings = {
-                                                forceDescription: ${workspaceSettings.forceDescription},
-                                                forceProjects: ${workspaceSettings.forceProjects},
-                                                forceTasks: ${workspaceSettings.forceTasks},
-                                                forceTags: ${workspaceSettings.forceTags},
-                                                projectPickerSpecialFilter: ${workspaceSettings.projectPickerSpecialFilter}
-                                            }`
-                                        });
+                                            tabId, { 
+                                                code: `ClockifyEditForm.prototype.wsSettings = {
+                                                    forceDescription: ${workspaceSettings.forceDescription},
+                                                    forceProjects: ${workspaceSettings.forceProjects},
+                                                    forceTasks: ${workspaceSettings.forceTasks},
+                                                    forceTags: ${workspaceSettings.forceTags},
+                                                    projectPickerSpecialFilter: ${workspaceSettings.projectPickerSpecialFilter},
+                                                    projectFavorites: ${workspaceSettings.projectFavorites},
+                                                    activeBillableHours: ${workspaceSettings.activeBillableHours},
+                                                    onlyAdminsCanChangeBillableStatus: ${workspaceSettings.onlyAdminsCanChangeBillableStatus},
+                                                    features: ${JSON.stringify(workspaceSettings.features)}
+                                                }`
+                                            });
                                 });
-                            });
+                                });
+                        });
                         }
                     }                    
 
-                    aBrowser.tabs.executeScript(tabId, {file: "integrations/clockifyButton.js"}, (firstLoad) => {
+                    aBrowser.tabs.executeScript(tabId, {file: "popupDlg/clockifyButton.js"}, (firstLoad) => {
                         loadScripts(tabId, domain.file);
+                        setTimeout(() => {
+                            backgroundWebSocketConnect();
+                        }, 1000)
                     });
                 }
             } 
@@ -306,19 +367,19 @@ function extractDomain(url, permissions) {
     };
 }
 
-function extractAndSaveToken(url) {
+async function extractAndSaveToken(url) {
     const [token, refreshToken] = url.split("?")[1]
         .replace('accessToken=','')
         .replace('refreshToken=','')
         .split('&');
-        aBrowser.storage.local.set({
-            token: (token),
-            refreshToken: (refreshToken)
-        });
-        localStorage.setItem('token', token);
-        localStorage.setItem('refreshToken', refreshToken);
-        
-        UserService.getAndStoreUser();
+    aBrowser.storage.local.set({
+        token: (token),
+        refreshToken: (refreshToken)
+    });
+    localStorage.setItem('token', token);
+    localStorage.setItem('refreshToken', refreshToken);
+    await UserService.getAndStoreUser();
+    setClockifyOriginsToStorage();
 }
 
 
@@ -345,7 +406,6 @@ function getParamFromUrl(params, paramName) {
 
 function getOriginFileName(domain, permissionsFromStorage) {
     const userId = localStorage.getItem('userId');
-
     if (!permissionsFromStorage) {
         return null;
     }
@@ -387,10 +447,6 @@ function getOriginFileName(domain, permissionsFromStorage) {
         .filter(enabledPermission => enabledPermission.domain === domain)[0].script;
 }
 
-function isLoggedIn() {
-    return localStorage.getItem('token') !== null && localStorage.getItem('token') !== undefined;
-}
-
 
 
 window.addEventListener("online",  () => {
@@ -401,9 +457,152 @@ window.addEventListener("offline", () => {
     aBrowser.runtime.sendMessage({eventName: 'STATUS_CHANGED_OFFLINE'});
 });
 
+/*
+    TODO List
+    - implement getToken inside of fetch:get like in token-service.js (like we did in HttpWrapperService.get)
+*/ 
+
+aBrowser.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    switch (request.eventName) {
+        case 'takeTimeEntryInProgress':
+            return ClockifyIntegration.takeTimeEntryInProgress(sendResponse);
+
+        case 'endInProgress':
+            return ClockifyIntegration.stopEntryInProgress(sendResponse);
+
+        case 'startWithDescription':
+            return ClockifyIntegration.startWithDescription(request, sendResponse);
+
+        case 'getProjectsByIds':
+            return ClockifyIntegration.getProjectsByIds(request, sendResponse); 
+            
+        case 'getDefaultProjectTask':
+            return ClockifyIntegration.getDefaultProjectTask(sendResponse); 
+    
+        case 'getProjects':
+            return ClockifyIntegration.getProjects(request, sendResponse); 
+
+        case 'getProjectTasks':
+            return ClockifyIntegration.getProjectTasks(request, sendResponse); 
+
+        case 'submitDescription':
+            return ClockifyIntegration.submitDescription(request, sendResponse); 
+
+        case 'editProject':
+            return ClockifyIntegration.editProject(request, sendResponse); 
+
+        case 'editTask':
+            return ClockifyIntegration.editTask(request, sendResponse); 
+ 
+        case 'getTags':
+            return ClockifyIntegration.getTags(request, sendResponse); 
+ 
+        case 'editTags':
+            return ClockifyIntegration.editTags(request, sendResponse); 
+            
+        case 'fetchEntryInProgress':
+            return ClockifyIntegration.fetchEntryInProgress(sendResponse); 
+
+        case 'removeProjectAsFavorite':
+            return ClockifyIntegration.removeProjectAsFavorite(request, sendResponse); 
+
+        case 'makeProjectFavorite':
+            return ClockifyIntegration.makeProjectFavorite(request, sendResponse); 
+        
+        case 'editBillable':
+            return ClockifyIntegration.editBillable(request, sendResponse);
+
+        case 'submitTime':
+            return ClockifyIntegration.submitTime(request, sendResponse);
+
+        case 'getWSCustomField':
+            return ClockifyIntegration.getWSCustomField(request, sendResponse); 
+
+        case 'getUserRoles':
+            return ClockifyIntegration.getUserRoles(request, sendResponse); 
+
+        case 'submitCustomField':
+            return ClockifyIntegration.submitCustomField(request, sendResponse); 
+
+        default:
+            return false;
+    }
+    return true; // keep port open for async
+});
+
+
+
+function startWithDescription(request) {
+    return new Promise(async resolve => {
+        const { entry, error } = await TimeEntry.getEntryInProgress();
+        if (error) {
+            resolve({ status: err.status})
+            return;
+        }
+
+        if (entry) {
+            const { error } = await TimeEntry.endInProgress();
+            if (error) {
+                resolve({ status: error.status})
+                return;
+            }
+        }
+        
+        const { timeEntryOptions } = request;
+        const {entry: ent, error: err} = await TimeEntry.startTimer(timeEntryOptions.description, timeEntryOptions);
+        if (err) {
+            resolve({ status: err.status });
+            return;
+        }
+        if (ent.status === 201) {
+            // proveri afterStartTimer
+            window.inProgress = true;
+            aBrowser.browserAction.setIcon({
+                path: iconPathStarted
+            });
+            addPomodoroTimer();
+        }   
+        // { 
+        //     status: response.status,
+        //     data: (task ? Object.assign(json, { task: task }) : json)
+        // }
+        resolve({ status: ent.status, data: ent });
+    });
+}
+
+
+
+
+// async function takeTimeEntryInProgress() {
+//     if (TokenService.isLoggedIn) {
+//         const { entry, error } = await TimeEntry.getEntryInProgress();
+//         if (entry === null || error) {
+//             setTimeEntryInProgress(null);
+//             aBrowser.browserAction.setIcon({
+//                 path: iconPathEnded
+//             });
+//         }
+//         else {
+//             setTimeEntryInProgress(entry);
+//             aBrowser.browserAction.setIcon({
+//                 path: iconPathStarted
+//             });
+//         }
+//     }
+// }
+
+setTimeout(async () => {
+    await ClockifyIntegration.takeTimeEntryInProgress(() => {});
+}, 1000);
+
+
 
 // setTimeout(async () => {
 //     const { entry, error } = await TimeEntry.getEntryInProgress();
+//     aBrowser.storage.local.get(["timeEntryInProgress"], (result) => {
+//         const {timeEntryInProgress} = result;           
+//         console.log('aBrowser.storage.local.get(["timeEntryInProgress"]', timeEntryInProgress);
+//     });
 //     if (error) {
 //         console.log('EntryInProgress error:', error)
 //     }

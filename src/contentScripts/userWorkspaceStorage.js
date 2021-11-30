@@ -53,7 +53,7 @@ class UserWorkspaceStorage {
 
     static async getProjectPickerTaskFilter() {
         let endPoint = `${this.apiEndpoint}/v1/user`;
-        const { data, error, status } = await Service.apiCall(endPoint);
+        const { data, error, status } = await ClockifyService.apiCall(endPoint);
         if (data) {
             return data.settings.projectPickerTaskFilter;
         }
@@ -63,16 +63,21 @@ class UserWorkspaceStorage {
 
     static async getSetWorkspaceSettings() {
         let endPoint = `${this.apiEndpoint}/workspaces/${this.workspaceId}`;
-        const { data, error, status } = await Service.apiCall(endPoint);
+        const { data, error, status } = await ClockifyService.apiCall(endPoint);
         if (data) {
-            const { workspaceSettings } = data;
+            const { workspaceSettings, features } = data;
+            console.log({ workspaceSettings, features })
             workspaceSettings.projectPickerSpecialFilter = await UserWorkspaceStorage.getProjectPickerTaskFilter();
+            workspaceSettings.features = { 
+                customFields: features.some(feature => feature === "CUSTOM_FIELDS")
+            }
             localStorage.setItem('workspaceSettings', JSON.stringify(workspaceSettings));
             const { forceDescription,
                     forceProjects,
                     forceTasks,
                     forceTags,
-                    projectPickerSpecialFilter
+                    projectPickerSpecialFilter,
+                    projectFavorites
             } = workspaceSettings;
             aBrowser.storage.local.set({
                 wsSettings: {
@@ -80,7 +85,11 @@ class UserWorkspaceStorage {
                     forceProjects,
                     forceTasks,
                     forceTags,
-                    projectPickerSpecialFilter
+                    projectPickerSpecialFilter,
+                    projectFavorites,
+                    features: { 
+                        customFields: features.some(feature => feature === "CUSTOM_FIELDS")
+                    }
                 }
             });
         }

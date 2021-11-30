@@ -1,7 +1,17 @@
-class ProjectService extends Service {
+class ProjectService extends ClockifyService {
 
     constructor() {
     }
+
+    static get wsSettings() {
+        const wsSettings = localStorage.getItem("workspaceSettings");
+        return wsSettings ? JSON.parse(wsSettings) : null;
+    }
+
+    static get projectFavorites() {
+        return this.wsSettings ? this.wsSettings.projectFavorites : true;
+    }
+
 
     static get urlProjects() {
         return `${this.apiEndpoint}/workspaces/${this.workspaceId}/projects`;
@@ -61,7 +71,7 @@ class ProjectService extends Service {
         } else {
             projectFilter = projectName;
         }
-        const { projects, error } = await this.getProjectsWithFilter(projectFilter, page, pageSize);
+        const { projects, error } = await this.getProjectWithFilter(projectFilter, page, pageSize);
         if (error) {
             return { projectDB: null, error };
         }
@@ -98,10 +108,9 @@ class ProjectService extends Service {
         return { projectDB, taskDB, msg, msgId, projectArchived, onlyAdminsCanCreateProjects };
     }
 
-    static async getProjectsWithFilter(filter, page, pageSize) {
+    static async getProjectWithFilter(filter, page, pageSize) {
         const filterTrimmedEncoded = encodeURIComponent(filter.trim())
-        const endPoint = `${this.apiEndpoint}/workspaces/${this.workspaceId}/project-picker/` +
-             `projects?page=${page}&search=${filterTrimmedEncoded}`;  // &favorites
+        const endPoint = `${this.apiEndpoint}/workspaces/${this.workspaceId}/project-picker/projects?page=${page}&search=${filterTrimmedEncoded}`;  // &favorites
         const { data: projects, error } = await this.apiCall(endPoint);
         return { projects, error };
     }
@@ -126,16 +135,127 @@ class ProjectService extends Service {
             };
     }
 
-    static async getProjectsByIds(projectIds) {
+    static async getProjectsByIds(projectIds, taskIds) {
         const endPoint = `${this.urlProjects}/ids`;
         const body = { ids: projectIds };
         const { data: projects, error, status } = await this.apiCall(endPoint, 'POST', body);
-        if (status === 200 && projects.length > 0)
-            return projects[0];
-        else
-            return null; //Promise.reject(data);
+        if (error) {
+            return { error }
+        }
+        if (status === 200 && projects.length > 0) {
+            const projectDB = projects[0];
+            if (taskIds) {
+                const { tasks, error: err, status: st } = await this.getAllTasks(taskIds);
+                if (err) {
+                }
+                else {
+                    projectDB.tasks = [tasks[0]]
+                }
+            }
+            return { projectDB, error, status };
+        }
+        else {
+            return { projectDB: null, error, status};
+        }
     }
 
-   
+    static async getAllTasks(taskIds) {
+        const endPoint = `${this.urlProjects}/taskIds`;
+        const body = {
+            ids: taskIds
+        };
+        const { data: tasks, error, status } = await this.apiCall(endPoint, 'POST', body);
+        return { tasks, error, status };
+    }
+
+    
+    static async getProjectsWithFilter(filter, page, pageSize, forceTasks=false, alreadyIds=[]) {
+        const filterTrimmedEncoded = encodeURIComponent(filter.trim())
+        //const projectUrl = `${this.apiEndpoint}/workspaces/${this.workspaceId}/project-picker/projects?search=${filterTrimmedEncoded}`;  // &favorites
+        const projectUrlFavs = `${this.apiEndpoint}/workspaces/${this.workspaceId}/project-picker/projects?search=${filterTrimmedEncoded}`;
+        const projectUrlNonFavs = `${this.apiEndpoint}/workspaces/${this.workspaceId}/project-picker/projects?favorites=false&clientId=&excludedTasks=&search=${filterTrimmedEncoded}&userId=`;
+        if (this.projectFavorites) {
+            const { data, error } = await this.dopuniFavs(alreadyIds, projectUrlFavs, [], 1, pageSize, forceTasks) // always go page:1
+            if (error) {
+                return { data, error }
+            }
+
+            if (data.length >= pageSize) {
+                return {data};
+            }
+            // alreadyIds.concat(data.map(p => p.id)
+            return await this.dopuniNonFavorites(alreadyIds, projectUrlNonFavs, data, page, pageSize, forceTasks) // always go page:1
+        }
+        else {
+            return await this.dopuniPage(alreadyIds, projectUrlNonFavs, [], page, pageSize, forceTasks) // always go page:1
+        }
+    }  
+
+    static async dopuniFavs(alreadyIds, projectUrl, data, page, pageSize, forceTasks) {
+        let endPoint = `${projectUrl}&page=${page}&pageSize=${pageSize}&favorites=true`;  // 
+        const { data: projects, error } = await this.apiCall(endPoint);
+        if (error)
+            return { data: projects, error };
+
+        projects.forEach(project => {
+            if (!alreadyIds.includes(project.id) &&
+                data.length < pageSize &&
+                (!forceTasks || project.taskCount > 0)) 
+                    data.push(project);
+        });
+        return { data, error };
+    }
+
+    static async dopuniNonFavorites(alreadyIds, projectUrl, data, page, pageSize, forceTasks) {
+        let endPoint = `${projectUrl}&pageSize=${pageSize}&page=${page}`;  // &favorites=false
+        const { data:projects, error } = await this.apiCall(endPoint);
+        if (error)
+            return { data: projects, error };
+        projects.forEach(project => {
+            if (!project.favorite &&
+                !alreadyIds.includes(project.id) &&
+                data.length < pageSize &&
+                (!forceTasks || project.taskCount > 0)) 
+                data.push(project);
+        });
+        if (projects.length < pageSize || data.length >= pageSize) {
+            return { data, error };
+        }
+        return await this.dopuniNonFavorites(alreadyIds, projectUrl, data, page+1, pageSize, forceTasks);
+    }
+
+    static async dopuniPage(alreadyIds, projectUrl, data, page, pageSize, forceTasks) {
+        let endPoint = `${projectUrl}&page=${page}`;  // &favorites=false
+        const { data:projects, error } = await this.apiCall(endPoint);
+        if (error)
+            return { data: projects, error };
+        projects.forEach(project => {
+            if (!alreadyIds.includes(project.id) &&
+                data.length < pageSize &&
+                (!forceTasks || project.taskCount > 0)) 
+                data.push(project);
+        });
+        if (projects.length < pageSize || data.length >= pageSize) {
+            return { data, error };
+        }
+        return await this.dopuniPage(alreadyIds, projectUrl, data, page+1, pageSize, forceTasks)
+    }
+
+    static async getProjectTasksWithFilter(projectId, filter, page) {
+        const filterTrimmedEncoded = encodeURIComponent(filter.trim())
+        const endPoint = `${this.apiEndpoint}/workspaces/${this.workspaceId}/project-picker/projects/${projectId}/tasks?page=${page}&search=${filterTrimmedEncoded}`;  // &favorites
+        return await this.apiCall(endPoint);
+    }
+
+    static async makeProjectFavorite(projectId) {
+        const endPoint = `${this.apiEndpoint}/workspaces/${this.workspaceId}/users/${this.userId}/projects/favorites/${projectId}`;
+        const body = {};
+        return await this.apiCall(endPoint, 'POST', body);
+    }
+
+    static async removeProjectAsFavorite(projectId) {
+        const endPoint = `${this.apiEndpoint}/workspaces/${this.workspaceId}/users/${this.userId}/projects/favorites/projects/${projectId}`;
+        return await this.apiCall(endPoint, 'DELETE');
+    }
 
 }

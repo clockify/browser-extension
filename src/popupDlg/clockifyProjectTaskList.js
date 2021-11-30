@@ -28,14 +28,21 @@ var ClockifyTaskList = class {
             li2: null,
             items: [], //props.tasks,
             taskCount: props.taskCount,
-            Items: {}
+            Items: {},
+            loadMore: false,
+            renderFrom: 0
         }
+        this.pageSize = 50;
     }
 
+
     setItems(li2, tasks) {
+        const {items} = this.state;
         this.setState({
             li2, 
-            items: tasks
+            renderFrom: items.length,
+            items: items.concat(tasks),
+            loadMore: tasks.length >= this.pageSize ? true : false
         });
     }
 
@@ -56,12 +63,20 @@ var ClockifyTaskList = class {
         if (this.state.items) {
             const ul = $('ul.clockify-task-list', this.state.li2);
             if (ul) {
-                const arr = this.state.items.map(item => {
+                const arr = [];
+                const { items } = this.state;
+                for (var i=this.state.renderFrom; i < items.length; i++) {
+                    const item = items[i];
                     const Item = new ClockifyTaskItem(item);
                     this.state.Items[item.id] = Item;
-                    return Item.render()
-                })
-                ul.innerHTML = arr.join('');
+                    arr.push(Item.render());
+                }
+                let str = arr.join('')
+
+                if (this.state.loadMore) {
+                    str += `<li id='task_li_load_more'><button class='clockify-list-load-tasks'>Load more</button></li>`
+                }
+                ul.innerHTML += str;
             }
         }
     }

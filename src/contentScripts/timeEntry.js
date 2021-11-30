@@ -1,4 +1,4 @@
-class TimeEntry extends Service {
+class TimeEntry extends ClockifyService {
 
     constructor() {
     }
@@ -10,14 +10,41 @@ class TimeEntry extends Service {
         return `${this.apiEndpoint}/workspaces/${this.workspaceId}/timeEntries`;
     }
 
-    static async getEntryInProgress() {
+    static async healthCheck() {
+        const baseUrl = localStorageService.get('baseUrl');
         const endPoint = `${this.urlTimeEntries}/inProgress`;
-        const { data: entry, error } = await this.apiCall(endPoint);
-        if (error) { // entry instanceof Error) {
-            console.error('oh no, failed', error);
-        }
-        return { entry, error }
+        const entryInProgressUrl = `${baseUrl}/health`;
+        return super.get(entryInProgressUrl, addToken);
     }
+
+    static async getEntryInProgress(hydrated=false) {
+        //const endPoint = `${this.urlTimeEntries}/inProgress`;
+        const endPoint = `${this.apiEndpoint}/v1/workspaces/${this.workspaceId}/user/${this.userId}/time-entries?in-progress=true${hydrated?'&hydrated=true':''}`;
+        const { data, error, status } = await this.apiCall(endPoint);
+        if (error) { // entry instanceof Error) {
+            console.log('oh no, failed', error.message);
+        }
+        return { entry: data && data.length > 0 ? data[0] : null, error }
+    }
+
+    static async takeTimeEntryInProgress() {
+        if (TokenService.isLoggedIn) {
+            const { entry, error } = await this.getEntryInProgress();
+            if (entry === null || error) {
+                setTimeEntryInProgress(null);
+                aBrowser.browserAction.setIcon({
+                    path: iconPathEnded
+                });
+            }
+            else {
+                setTimeEntryInProgress(entry);
+                aBrowser.browserAction.setIcon({
+                    path: iconPathStarted
+                });
+            }
+        }
+    }
+
     
     static async getLastEntry() {
         const endPoint = `${this.apiEndpoint}/v1/workspaces/${this.workspaceId}/user/${this.userId}/time-entries?page-size=2`;
@@ -52,13 +79,14 @@ class TimeEntry extends Service {
         if (error) {
             console.error('oh no, failed', error);
             if (error.status === 400) {
-                console.log('endInProgress ' + error.message)
+                console.log('endInProgress error', error)
             }
         }
         else {
             aBrowser.browserAction.setIcon({ path: iconPathEnded });
             setTimeEntryInProgress(null);
-            aBrowser.runtime.sendMessage({eventName: 'TIME_ENTRY_STOPPED'});
+            // Treba li nam ovo ???
+            //aBrowser.runtime.sendMessage({eventName: 'TIME_ENTRY_STOPPED'});
         }
         return { entry, error }
     }
@@ -74,7 +102,6 @@ class TimeEntry extends Service {
 
     static async startTimerWithDescription(info) {
         const decription = info && info.selectionText ? info.selectionText : '';
-        console.log(this)
         const { entry, error } = await this.getEntryInProgress();
         if (entry) {
             const { error } = await this.endInProgress(entry);
@@ -96,12 +123,12 @@ class TimeEntry extends Service {
     static async startTimer(
         description, 
         options = { 
-            projectId: null, task: null, billable: false, tags: []
+            projectId: null, task: null, billable: false, tags: [], start: null, end: null, isSubmitTime: false
         },
         isPomodoro=false)
     {
         const { forceProjects, forceTasks } = this.forces;
-        let { projectId, task, billable, tags} = options;
+        let { projectId, task, billable, tags, start, end, isSubmitTime } = options;
         if (!isPomodoro) {
             if (!projectId || forceTasks && !task) {
                 const { projectDB, taskDB, msg, msgId } = await DefaultProject.getProjectTaskFromDB();
@@ -122,28 +149,33 @@ class TimeEntry extends Service {
         }
         const endPoint = `${this.urlTimeEntries}/`;
         const body = { 
-            start: new Date(),
+            start: start??new Date(),
+            end: end??null,
             description,
             billable,
             projectId,
             tagIds: tags ? tags.map(tag => tag.id): [],
             taskId: task ? task.id : null
         }
-        const { data: entry, error } = await this.apiCall(endPoint, 'POST', body);
+        // console.log('StartTimer body', body)
+        const { data: entry, error, status } = await this.apiCall(endPoint, 'POST', body);
         if (error) {
             console.error('oh no, failed', error);
         }
-        else if (entry && !entry.message) {
+        else if (entry && !entry.message && !isSubmitTime) {
             window.inProgress = true;
             aBrowser.browserAction.setIcon({
                 path: iconPathStarted
             });
             setTimeEntryInProgress(entry);
+            // Proveri, Da li ovo treba ako smo kreirali TimeEntry  ???
+            /*
             aBrowser.runtime.sendMessage({eventName: 'TIME_ENTRY_STARTED'}); // ?
+            */
             afterStartTimer(); // idle, pomodoro ...
         }
 
-        return { entry, error }
+        return { entry, error, status }
     }
 
 
@@ -207,7 +239,7 @@ class TimeEntry extends Service {
                 console.error('oh no, failed', error);
                 return null;
             }
-            this.updateBillable(entry, projectDB.billable); // no need for await
+            this.updateBillable(entry.id, projectDB.billable); // no need for await
             return Object.assign(entry, { 
                         billable: projectDB.billable,
                         project: entry.project ? entry.project : projectDB,
@@ -224,7 +256,7 @@ class TimeEntry extends Service {
                 console.error('oh no, failed', error);
                 return null;
             }
-            this.updateBillable(entry, projectDB.billable); // no need for await
+            this.updateBillable(entry.id, projectDB.billable); // no need for await
             return Object.assign(entry, { 
                 project: entry.project ? entry.project : projectDB,
                 billable: projectDB.billable 
@@ -233,16 +265,16 @@ class TimeEntry extends Service {
     }
 
     
-    static async updateBillable(timeEntry, billable) {
-        const endPoint = `${this.urlTimeEntries}/${timeEntry.id}/billable`;
+    static async updateBillable(id, billable) {
+        const endPoint = `${this.urlTimeEntries}/${id}/billable`;
         const body = {
             billable
         };
-        const { data: entry, error } = await this.apiCall(endPoint, 'PUT', body);
+        const { data: entry, error, status } = await this.apiCall(endPoint, 'PUT', body);
         if (error) {
             console.error('oh no, failed', error);
         }
-        return {entry, error}
+        return {entry, error, status}
     }
 
     static async deleteEntry(entryId, isWebSocketHeader) {
@@ -257,7 +289,7 @@ class TimeEntry extends Service {
     static async saveEntryOfflineAndStopItByDeletingIt(entry, end, isWebSocketHeader) {
         const timeEntry = {
             workspaceId: entry.workspaceId,
-            id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
+            id: offlineStorage.timeEntryIdTemp,
             description: entry.description,
             projectId: entry.projectId,
             taskId: entry.task ? entry.task.id : null,
@@ -277,12 +309,6 @@ class TimeEntry extends Service {
         return {timeEntry, timeEntry}
     }
 
-    static async healthCheck() {
-        const endPoint = `${this.apiEndpoint}/health`;
-        const { data, error } = await this.apiCall(endPoint);
-        return !error;
-    }
-
     static async (request) {
         getEntryInProgress().then((response) => {
             if (response && response.id) {
@@ -296,6 +322,101 @@ class TimeEntry extends Service {
         });
     }
 
+    static async setDescription(entryId, description) {
+        const endPoint = `${this.urlTimeEntries}/${entryId}/description`;
+        const body = {
+            description
+        };
+        return await this.apiCall(endPoint, 'PUT', body);
+    }
+
+    static async updateProject(entryId, projectId) {
+        const endPoint = `${this.urlTimeEntries}/${entryId}/project`;
+        const body = {
+            projectId
+        };
+        return await this.apiCall(endPoint, 'PUT', body);
+    }
+
+    static async removeProject(entryId) {
+        const endPoint = `${this.urlTimeEntries}/${entryId}/project/remove`;
+        return await this.apiCall(endPoint, 'DELETE');
+    }
+
+
+    static async updateTask(taskId, projectId, entryId) {
+        const endPoint = `${this.urlTimeEntries}/${entryId}/projectAndTask`;
+        const body = {
+            projectId,
+            taskId
+        };       
+        return await this.apiCall(endPoint, 'PUT', body);
+    }
+
+    static async removeTask(entryId) {
+        const endPoint = `${this.urlTimeEntries}/${entryId}/task/remove`;
+        return await this.apiCall(endPoint, 'DELETE');
+    }
+
+    static async updateTags(tagList, entryId) {
+        const endPoint = `${this.urlTimeEntries}/${entryId}/tags`;
+        const body = {
+            tagIds: tagList
+        };
+        return await this.apiCall(endPoint, 'PUT', body);
+    }
+
+
+    static async integrationStartTimerWithDescription(description, timeEntryOptions) {
+        let { projectName, taskName, tagNames, billable, start=null, end=null, isSubmitTime=false } = timeEntryOptions;
+        let project = {id: null, name: projectName};
+        let task = {id: null, name: taskName??null};
+        const { forceDescription, forceProjects, forceTasks, forceTags } = this.forces;
+
+        if (!!project.name) {
+            let { projectDB, taskDB, message } = 
+                await ProjectService.getOrCreateProjectAndTask(project.name, task);
+            if (projectDB) {
+                project = projectDB;
+            }
+            else {
+                if ((forceProjects || forceTasks && !taskDB) && !this.createObjects) {
+                    message += "\n Integrations can't create projects/tasks. "
+                }
+            }
+            task = taskDB;
+
+            if (!billable) {
+                billable = projectDB ? projectDB.billable : false;
+            }
+        }    
+        
+        let tags = null;
+        if (tagNames && tagNames.length > 0) {
+            const { tagovi, message: msg } = await TagService.getOrCreateTags(tagNames.map(tagName=>tagName.trim()));
+            if (tagovi)
+                tags = tagovi;
+            if (msg)
+                console.log('TagService', msg);
+        }  
+        else if (forceTags) {
+            console.log("Tags are required!")
+        }
+
+        return await this.startTimer(
+            description,
+            { 
+                projectId: project.id,
+                task,
+                billable,
+                tags,
+                start,
+                end,
+                isSubmitTime
+            },
+        );
+    }
+
     /////////////////////////////////////////////////
     // for external extensions
 
@@ -307,7 +428,6 @@ class TimeEntry extends Service {
             tags: tagNames=[]
         } = request;
 
-        console.log({request})
         const { forceDescription, forceProjects, forceTasks, forceTags } = this.forces;
         
         if (forceDescription && !request.hasOwnProperty('description')) {

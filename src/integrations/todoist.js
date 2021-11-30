@@ -18,12 +18,12 @@ clockifyButton.render('.project_editor_instance [data-action-hint="task-root"]:n
 
 // // task modal
 clockifyButton.render('.detail_modal:not(.clockify)', {observe: true}, function (elem) {
-  description = $(".item_detail .task_content").innerText;
-  project = $(".item_detail_parent_name").innerText;
+  description = () => $(".item_detail .task_content").innerText;
+  project = () => $(".item_detail_parent_name").innerText;
   var tags = () => Array.from($$(".item_overview_sub > a", elem)).map(e => e.innerText);
 
   link = clockifyButton.createButton({
-      description: description,
+      description,
       projectName: project,
       tagNames: tags
   });

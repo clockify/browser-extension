@@ -2,10 +2,14 @@
 getProject = () =>  {
     //project = $('.TaskProjects .TokenizerPillBase-name').textContent,
     //let project = $('div.FullWidthPageStructureWithDetailsOverlay-detailsOverlay li.TaskProjectToken.TaskProjects-project');
-    let project = $('div.FullWidthPageStructureWithDetailsOverlay-detailsOverlay .TaskProjects .TokenizerPillBase-name');
+    let project = $('div.SingleTaskPaneSpreadsheet .TaskProjects .TokenizerPillBase-name');
     if (!project) { 
-        // project = $('h1.TopbarPageHeaderStructure-title')
-        project = $('div.FullWidthPageStructureWithDetailsOverlay-detailsOverlay .TaskAncestry-ancestorProjects');
+        project = $('div.FullWidthPageStructureWithDetailsOverlay-detailsOverlay .TaskProjects .TokenizerPillBase-name');
+        if (!project)
+            project = $('div.SingleTaskPaneSpreadsheet .TaskAncestry-ancestorProjects');
+        if (!project)
+            // project = $('h1.TopbarPageHeaderStructure-title')
+            project = $('div.FullWidthPageStructureWithDetailsOverlay-detailsOverlay .TaskAncestry-ancestorProjects');
         if (!project)
             project = $('div.Pane.Inbox-pane.Inbox-detailsPane .TokenizerPillBase-name');
     }
@@ -34,7 +38,7 @@ setTimeout(() => {
                     ////: taskSelector 
                     ////    ? taskSelector.textContent :
                     ////    "",
-                project = getProject(),
+                project = getProject()
                 link = clockifyButton.createButton({
                     description,
                     projectName: project ? project.textContent : null,

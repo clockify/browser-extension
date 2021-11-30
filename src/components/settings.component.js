@@ -48,6 +48,7 @@ class Settings extends React.Component {
             reminderFromTime: null,
             reminderToTime: null,
             reminderMinutesSinceLastEntry: 0,
+            contextMenuEnabled: true,
             autoStartOnBrowserStart: false,
             autoStopOnBrowserClose: false,
             showPostStartPopup: true,
@@ -65,6 +66,7 @@ class Settings extends React.Component {
             this.isReminderOn();
             this.isAutoStartStopOn();
             this.isTimerShortcutOn();
+            this.isContextMenuOn();
             this.isShowPostStartPopup();
         }
 
@@ -124,6 +126,11 @@ class Settings extends React.Component {
                 .filter(timerShortcutByUser =>
                     timerShortcutByUser.userId === userId && JSON.parse(timerShortcutByUser.enabled)).length > 0
         });
+    }
+
+    isContextMenuOn() {
+        const contextMenuEnabled = JSON.parse(localStorageService.get('contextMenuEnabled', 'true'));
+        this.setState({ contextMenuEnabled });
     }
 
     isReminderOn() {
@@ -496,6 +503,27 @@ class Settings extends React.Component {
             reminderMinutesSinceLastEntry: event.target.value
         });
     }
+
+    toggleContextMenu() {
+        const contextMenuEnabled = !this.state.contextMenuEnabled;
+        this.setState({ contextMenuEnabled });
+        localStorageService.set(
+            'contextMenuEnabled',
+            JSON.stringify(contextMenuEnabled),
+            getLocalStorageEnums().PERMANENT_PREFIX
+        );
+        this.sendToggleContextMenuRequest(contextMenuEnabled);
+        this.showSuccessMessage();
+    }
+
+    sendToggleContextMenuRequest(iscontextMenuEnabled) {
+        if (isAppTypeExtension()) {
+            getBrowser().runtime.sendMessage({
+                eventName: "contextMenuEnabledToggle",
+                enabled: iscontextMenuEnabled
+            });
+        }
+    }    
 
     toggleDay(event) {
         const day = daysOfWeek.filter(day => day.name === event.target.firstChild.textContent)[0];
@@ -902,6 +930,17 @@ class Settings extends React.Component {
                             <p>minutes since last entry</p>
                         </div>
                     </div>
+                    <div className={isAppTypeExtension() ? "settings__context_menu__section" : "enabled"}
+                        onClick={this.toggleContextMenu.bind(this)}>
+                        <span className={this.state.contextMenuEnabled ?
+                            "settings__context_menu__section__checkbox checked" : "settings__context_menu__section__checkbox"}>
+                            <img src="./assets/images/checked.png"
+                                className={this.state.contextMenuEnabled ?
+                                    "settings__context_menu__section__checkbox--img" :
+                                    "settings__context_menu__section__checkbox--img_hidden"} />
+                        </span>
+                        <span className="settings__send-errors__title">Enable context menu</span>
+                    </div>                         
                     <div className={isAppTypeExtension() ? "settings__idle-detection expandTrigger" : "disabled"}
                          onClick={this.toggleIdleDetection.bind(this)}>
                         <span className={this.state.idleDetection ?

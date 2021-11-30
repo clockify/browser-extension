@@ -37,6 +37,30 @@ clockifyButton.render(
   }
 );
 
+// lite view for single issues
+// $('h1[data-test="ticket-summary"]')
+clockifyButton.render(
+  'div[data-test="issue-container"] summary > h1:not(.clockify)',
+  { observe: true },
+  function (elem) {
+
+    const summary = () => {
+      return $('div[data-test="issue-container"] summary > h1');
+    }
+
+    const issueId = () => {
+      return $('div[data-test="issue-container"] a[data-test="ring-link"]').textContent;
+    }
+
+    const desc = () => {
+      // console.log('id', summary(), issueId())
+      return issueId() + ' ' + summary().textContent.trim()
+    }
+    const link = clockifyButton.createButton(desc, issueId().split('-')[0]);
+    elem.parentElement.appendChild(link);
+  }
+);
+
 // Agile board
 clockifyButton.render('.yt-agile-card:not(.clockify)', { observe: true }, function (
   elem

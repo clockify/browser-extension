@@ -108,6 +108,7 @@ body.dark {
   .settings__auto_start_on_browser_start__checkbox,
   .settings__auto_stop_on_browser_close__checkbox,
   .settings__reminder__section__checkbox,
+  .settings__context_menu__section__checkbox,
   .settings__idle-detection__checkbox,
   .pomodoro__checkbox,
   .create-project__checkbox {
@@ -316,6 +317,9 @@ body.dark {
   .project-item:hover{
     background-color: $bg-10;
   }
+  li.project-item-name {
+    color: white;
+  }
   .project-list-name {
     color: $bg-04;
   }
@@ -423,9 +427,9 @@ body.dark {
       }
     }
   }
-  .tag-list-selected {
-    background-color: $bg-12;
-  }
+  // .tag-list-selected {
+  //   background-color: $bg-12;
+  // }
   .tag-list-item--comma {
     color: white;
   }

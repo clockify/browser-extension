@@ -48,6 +48,7 @@ module.exports = {
             {from: `./manifest.${targetForManifest}.json`, to: `./manifest.json`},
             {from: './src/contentScripts', to: './contentScripts'},
             {from: './src/integrations', to: './integrations'},
+            {from: './src/popupDlg', to: './popupDlg'},
             {from: './src/settings.html', to: './'},
             {from: './src/settings.js', to: './'}
         ])

@@ -1,19 +1,29 @@
+$spacer: 1rem !default;
+
 .project-list-button {
-  padding: 6px 0;
+  //padding: 6px 0;
   background: white;
   border: 1px solid $border;
   border-radius: 2px;
   cursor: pointer;
   align-items: center;
   box-sizing: border-box;
-
+  display: flex;
+  align-items: center;
+  height: 38px;
+  
   &-required {
-    padding: 5px 0;
+    //padding: 5px 0;
+    padding: 0px 6px;
     background: white;
     border: 1px solid $red;
     border-radius: 2px;
     cursor: pointer;
-  }
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    height: 38px;
+}
 }
 
 .project-list__spec_filter_no_task_or_project {
@@ -26,41 +36,58 @@
 .project-list-button-offline {
   width: 100%;
   height: 40px;
-  background: $disabled;
+  background: #eff4f7;
   margin: 10px 0;
   border: 1px solid $border;
   border-radius: 2px;
   cursor: not-allowed;
+  padding: 0px 6px;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
 }
+
 
 .project-list-name {
   display: inline-block;
-  padding: 5px 10px;
+  //padding: 5px 10px;
+  padding: 0px 7px !important;
   width: 85%;
   font-size: 14px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: $lighter_text;
+  color: #333; //  $lighter_text;
 }
 
+
+
+
 .project-list-arrow {
-  position: relative;
+  //position: relative;
   width: 10px;
   height: 5px;
-  float: right;
-  padding-right: 15px;
-  top: 11px;
+  //float: right;
+  //padding-right: 15px;
+  //top: 11px;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  padding: 0px 10px 0px 10px;    
   content: url("../assets/images/arrow-light-mode.png");
 }
 
 .project-list-arrow-up {
-  position: relative;
+  //position: relative;
   width: 10px;
   height: 5px;
-  float: right;
-  padding-right: 15px;
-  top: 11px;
+  //float: right;
+  //padding-right: 15px;
+  //top: 11px;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  padding: 0px 10px 0px 10px;  
   content: url("../assets/images/arrow-light-mode-up.png");
 }
 
@@ -110,38 +137,45 @@
 
 .tasks-arrow-down {
   content: url("../assets/images/filter-arrow-down.png");
-  margin-left: 10px;
+  margin-left: 5px;
 }
 
 .tasks-arrow-right {
   content: url("../assets/images/filter-arrow-right.png");
   position: relative;
   top: 2px;
-  margin-left: 10px;
+  margin-left: 5px;
 }
 
-.project-item {
-  padding: 7px 0 8px 15px;
+ul.project-item {
+  padding: 7px 5px 8px 10px;
   cursor: pointer;
   font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin: 0;
+
+  list-style-type: none;
+  border-top: 1px dotted $border;
 
   &:hover {
     background-color: $entries_header;
   }
 }
 
-.project-item-task {
+li.project-item-dot {
+  flex: 0 0 5px;
+  width: 5px;
+  height: 5px;
+  border-radius: 5px;
+  display: inline-block;
   margin-right: 5px;
-  float: right;
-  color: $lighter_text;
-  font-size: 13px;
 }
 
-.project-name {
+li.project-item-name {
   display: inline-block;
-  position: relative;
-  top: 3px;
-  width: 190px;
+  flex: 1 1 auto;
   text-overflow: ellipsis;
   overflow: hidden;
   font-size: 14px;
@@ -149,6 +183,17 @@
   white-space: nowrap;
   color: $dark_text;
 }
+
+li.project-item-tasks {
+  color: $lighter_text;
+  font-size: 13px;
+  flex: 0 0 90px;
+}
+
+li.project-item-favorite {
+  flex: 0 0 20px;
+}
+
 
 .task-item {
   padding: 7px 0 7px 25px;
@@ -177,7 +222,8 @@
 .project-list-client {
   margin: 10px;
   padding-top: 5px;
-  border-top: 1px dotted $border;
+  //border-top: 1px dotted $border;
+  font-size: 14px;
   color: $lighter_text;
 }
 .projects-list {
@@ -216,4 +262,18 @@
 .error {
   color: red;
   font-size: 14px;
+}
+
+
+.cl-dropdown-star {
+  width: 16px;
+  height: 16px;
+  margin: 5px 3px 0px 5px;
+  background: url(../assets/images/ui-icons/favorites-normal.svg);
+  &:hover {
+    background: url(../assets/images/ui-icons/favorites-hover.svg);
+  }
+  &.cl-active {
+    background: url(../assets/images/ui-icons/favorites-active.svg);
+  }
 }

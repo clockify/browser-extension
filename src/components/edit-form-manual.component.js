@@ -8,15 +8,16 @@ import TagsList from './tags-list.component';
 import * as ReactDOM from 'react-dom';
 import HomePage from './home-page.component';
 import {isOffline} from "./check-connection";
-import {ProjectHelper} from "../helpers/project-helper";
 import {TimeEntryHelper} from "../helpers/timeEntry-helper";
 import {TimeEntryService} from "../services/timeEntry-service";
 import DeleteEntryConfirmationComponent from "./delete-entry-confirmation.component";
 import {LocalStorageService} from "../services/localStorage-service";
 import Toaster from "./toaster-component";
 import {DefaultProject} from '../helpers/storageUserWorkspace';
+import { CustomFieldsContainer } from './customFields/customFields-Container';
+import {getBrowser} from "../helpers/browser-helper";
+import { offlineStorage, getWSCustomFields } from '../helpers/offlineStorage';
 
-const projectHelper = new ProjectHelper();
 const timeEntryHelper = new TimeEntryHelper();
 const timeEntryService = new TimeEntryService();
 const localStorageService = new LocalStorageService();
@@ -25,6 +26,7 @@ class EditFormManual extends React.Component {
 
     constructor(props) {
         super(props);
+
         this.state = {
             timeEntry: this.props.timeEntry,
             ready: false,
@@ -34,36 +36,68 @@ class EditFormManual extends React.Component {
             tagsRequired: false,
             forceTasks: false,
             askToDeleteEntry: false,
-            tags: this.props.timeEntry.tags ? this.props.timeEntry.tags : []
+            tags: this.props.timeEntry.tags ? this.props.timeEntry.tags : [],
+            redrawCustomFields: 0,
+            closeOpenedCounter: 0,
+            isUserOwnerOrAdmin: offlineStorage.isUserOwnerOrAdmin
         }
 
         this.notifyAboutError = this.notifyAboutError.bind(this);
         this.editProject = this.editProject.bind(this);
         this.editTask = this.editTask.bind(this);
+        this.onChangeProjectRedrawCustomFields = this.onChangeProjectRedrawCustomFields.bind(this);
+        this.updateCustomFields = this.updateCustomFields.bind(this);
+        this.closeOtherDropdowns = this.closeOtherDropdowns.bind(this);
     }
 
     async componentDidMount(){
         const {timeEntry} = this.state;
+        // react anti pattern
         timeEntry.timeInterval.duration =
             moment.duration(
                 moment(timeEntry.timeInterval.end).diff(moment(timeEntry.timeInterval.start))
             );
-    
-        const { forceProjects, forceTasks } = this.props.workspaceSettings;
+
+        if (offlineStorage.userHasCustomFieldsFeature) {
+            if (!isOffline()) {
+                const { data, msg } = await getWSCustomFields();
+                if (data)
+                    offlineStorage.wsCustomFields = data;
+                else
+                    alert(msg);
+            }
+
+
+            if (!timeEntry.customFieldValues || this.props.afterCreateProject)
+                timeEntry.customFieldValues = offlineStorage.customFieldValues; // generate from wsCustomFields
+        }
+        
+        if (isOffline()) {
+            if (offlineStorage.timeEntryInOffline) {
+                console.log('ne bi smeo  offlineStorage.timeEntryInOffline', offlineStorage.timeEntryInOffline);
+            }
+            // offlineStorage.timeEntryInOffline = timeEntry;
+        }
+
+        const { forceProjects, forceTasks  } = this.props.workspaceSettings;
         const {projectId, task} = timeEntry;
         const taskId = task ? task.id : null;
+        // if (forceProjects && (!projectId || forceTasks && !taskId)) {
         if (!projectId || forceTasks && !taskId) {
             const {projectDB, taskDB} = await this.checkDefaultProjectTask(forceTasks);
             if (projectDB) {
+                const entry = Object.assign(timeEntry, { 
+                    projectId: projectDB.id,
+                    project: projectDB,
+                    task: taskDB,
+                    taskId: taskDB ? taskDB.id: null,
+                    billable: projectDB.billable
+                });
+                // if (isOffline()) {
+                //     offlineStorage.timeEntryInOffline = entry;
+                // }
                 this.setState({
-                    timeEntry: Object.assign(timeEntry, { 
-                        projectId: projectDB.id,
-                        project: projectDB,
-                        task: taskDB,
-                        taskId: taskDB ? taskDB.id: null,
-                        billable: projectDB.billable
-                    })
-    
+                    timeEntry: entry
                 }, () => {
                     this.checkRequiredFields()
                 });            
@@ -73,9 +107,51 @@ class EditFormManual extends React.Component {
             }
         }
         else {
-            this.checkRequiredFields();
+            this.setState({
+                timeEntry
+            }, () => {
+                this.checkRequiredFields()
+            });
         }
     }
+
+    updateCustomFields(customFields) {
+        if (isOffline()) {
+            //let timeEntry = offlineStorage.timeEntryInOffline;
+            let {timeEntry} = this.state;
+            if (timeEntry.customFieldValues) {
+                offlineStorage.updateCustomFieldValues(timeEntry, customFields);
+            }
+            else {
+                console.log('Da li je moguce da timeEntryInOffline nema customFieldValues', timeEntry)
+            }
+            this.setState({
+                timeEntry
+            }, () => this.checkRequiredFields());
+        } 
+        else {
+            const { timeEntry } = this.state;
+            if (timeEntry) {
+                offlineStorage.updateCustomFieldValues(timeEntry, customFields);
+                this.setState({
+                    timeEntry
+                }, () => this.checkRequiredFields());
+            }            
+        }
+    }
+
+    onChangeProjectRedrawCustomFields() {
+        const { redrawCustomFields } = this.state;
+        //const { customFieldValues } = timeEntry;
+        if (isOffline()) {
+        }
+        else {           
+            this.setState({
+                redrawCustomFields: redrawCustomFields + 1
+            });
+        }
+    }
+
 
     async checkDefaultProjectTask(forceTasks) {
         const { storage, defaultProject } = DefaultProject.getStorage();
@@ -135,16 +211,54 @@ class EditFormManual extends React.Component {
     }
 
     editProject(project) {
-        this.setState({
-            timeEntry: Object.assign(this.state.timeEntry, { 
-                projectId: project && project.id ? project.id : null,
-                billable: project && project.billable ? project.billable : null,
-                project 
-            })
-        }, () => {
-            this.projectList.mapSelectedProject()
-            this.checkRequiredFields()
-        });
+        const projectId = project && project.id && project.id !== 'no-project' ? project.id : null;
+
+        if (isOffline()) {
+            let timeEntry = offlineStorage.timeEntryInOffline;
+            if (timeEntry && timeEntry.id === this.state.timeEntry.id) {
+                timeEntry.projectId = projectId;
+                timeEntry.project = project;
+                timeEntry.billable = project && project.billable ? project.billable : null;
+                offlineStorage.timeEntryInOffline = timeEntry;
+                this.setState({
+                    timeEntry
+                }, () => {
+                    this.projectList.mapSelectedProject()
+                    this.checkRequiredFields()
+                })
+            } 
+            else {
+                let timeEntries = offlineStorage.timeEntriesOffline;
+                timeEntries.map(timeEntry => {
+                    if (timeEntry.id === this.state.timeEntry.id) {
+                        timeEntry.projectId = projectId;
+                        timeEntry.project = project;
+                        timeEntry.billable = project && project.billable ? project.billable : null;
+                        this.setState({
+                            timeEntry
+                        }, () => {
+                            this.projectList.mapSelectedProject()
+                            this.checkRequiredFields()
+                        })
+                    }
+                    return timeEntry;
+                });
+                offlineStorage.timeEntriesOffline = timeEntries;
+            }
+        }
+        else {
+            this.setState({
+                timeEntry: Object.assign(this.state.timeEntry, { 
+                    projectId,
+                    billable: project && project.billable ? project.billable : null,
+                    project 
+                })
+            }, () => {
+                this.projectList.mapSelectedProject()
+                this.checkRequiredFields()
+            });            
+        }
+
     }
 
     editTask(task, project) {
@@ -193,11 +307,11 @@ class EditFormManual extends React.Component {
 
     deleteEntry() {
         ReactDOM.render(<HomePage/>, document.getElementById('mount'));
-        let timeEntries = localStorage.getItem('timeEntriesOffline') ? JSON.parse(localStorage.getItem('timeEntriesOffline')) : [];
+        let timeEntries = offlineStorage.timeEntriesOffline;
         if(timeEntries.findIndex(entryOffline => entryOffline.id === this.state.timeEntry.id) > -1) {
             timeEntries.splice( timeEntries.findIndex(entry => entry.id === this.state.timeEntry.id), 1);
         }
-        localStorage.setItem('timeEntriesOffline', JSON.stringify(timeEntries));
+        offlineStorage.timeEntriesOffline = timeEntries;
     }
 
     checkRequiredFields() {
@@ -267,43 +381,72 @@ class EditFormManual extends React.Component {
         ) {
             return;
         }
-        if(isOffline()) {
-            let timeEntry = {
-                workspaceId: this.state.timeEntry.workspaceId,
-                id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
-                description: this.state.timeEntry.description,
-                billable: this.state.timeEntry.billable,
-                projectId: this.state.timeEntry.projectId,
-                timeInterval: {
-                    start: this.state.timeEntry.timeInterval.start,
-                    end: this.state.timeEntry.timeInterval.end,
-                    duration: duration(moment(this.state.timeEntry.timeInterval.end).diff(moment(this.state.timeEntry.timeInterval.start)))
-                }
-            };
 
-            let timeEntries = localStorage.getItem('timeEntriesOffline') ? JSON.parse(localStorage.getItem('timeEntriesOffline')) : [];
+        if (isOffline()) {
+            const { workspaceId,
+                description,
+                timeInterval,
+                projectId,
+                task,
+                tagIds,
+                billable,
+                customFieldValues } = this.state.timeEntry;
+            let timeEntry = {
+                workspaceId,
+                id: offlineStorage.timeEntryIdTemp,
+                description,
+                billable,
+                projectId,
+                timeInterval: {
+                    start: timeInterval.start,
+                    end: timeInterval.end,
+                    duration: duration(moment(timeInterval.end).diff(moment(timeInterval.start)))
+                },
+                customFieldValues: customFieldValues ? customFieldValues : null
+            };
+            let timeEntries = offlineStorage.timeEntriesOffline;
             timeEntries.push(timeEntry);
-            localStorage.setItem('timeEntriesOffline', JSON.stringify(timeEntries));
+            offlineStorage.timeEntriesOffline = timeEntries;
             ReactDOM.render(<HomePage/>, document.getElementById('mount'));
-        } else {
+        }
+        else {
             if (this.state.descRequired || this.state.projectRequired || this.state.taskRequired || this.state.tagsRequired) {
                 return;
             } else {
+                const { timeEntry } = this.state;
+                const { workspaceId,
+                    description,
+                    timeInterval,
+                    projectId,
+                    task,
+                    tagIds,
+                    billable,
+                    customFieldValues } = timeEntry;
+
+                const cfs = customFieldValues && customFieldValues.length > 0
+                                ? customFieldValues.map(({customFieldId, value}) => ({ 
+                                    customFieldId,
+                                    sourceType: 'TIMEENTRY',
+                                    value
+                                }))
+                                : null;
+                console.log
                 timeEntryService.createEntry(
-                    this.state.timeEntry.workspaceId,
-                    this.state.timeEntry.description,
-                    this.state.timeEntry.timeInterval.start,
-                    this.state.timeEntry.timeInterval.end,
-                    this.state.timeEntry.projectId,
-                    this.state.timeEntry.task ? this.state.timeEntry.task.id : null,
-                    this.state.timeEntry.tagIds ? this.state.timeEntry.tagIds : [],
-                    this.state.timeEntry.billable
+                    workspaceId,
+                    description,
+                    timeInterval.start,
+                    timeInterval.end,
+                    projectId,
+                    task ? task.id : null,
+                    tagIds ? tagIds : [],
+                    billable,
+                    cfs
                 ).then(response => {
-                    let timeEntries = localStorage.getItem('timeEntriesOffline') ? JSON.parse(localStorage.getItem('timeEntriesOffline')) : [];
+                    let timeEntries = offlineStorage.timeEntriesOffline;
                     if(timeEntries.findIndex(entryOffline => entryOffline.id === this.state.timeEntry.id) > -1) {
                         timeEntries.splice( timeEntries.findIndex(entry => entry.id === this.state.timeEntry.id), 1);
                     }
-                    localStorage.setItem('timeEntriesOffline', JSON.stringify(timeEntries));
+                    offlineStorage.timeEntriesOffline = timeEntries;
                     ReactDOM.render(<HomePage/>, document.getElementById('mount'));
                 })
                 .catch(error => {
@@ -360,17 +503,20 @@ class EditFormManual extends React.Component {
     }
 
     closeOtherDropdowns(openedDropdown) {
-        switch(openedDropdown) {
-            case 'projectList':
-                this.tagList.setState({
-                    isOpen: false
-                });
-                break;
-            case 'tagList':
-                this.projectList.setState({
-                    isOpen: false
-                });
-                break;
+        if (openedDropdown === 'projectList' || openedDropdown === 'customField') {
+            if (this.tagList.isOpened())
+                this.tagList.closeOpened();
+        }
+
+        if (openedDropdown === 'tagList' || openedDropdown === 'customField') {
+            if (this.projectList.isOpened())
+                this.projectList.closeOpened();
+        }
+
+        if (openedDropdown !== 'customField') {
+            this.setState({
+                closeOpenedCounter: this.state.closeOpenedCounter + 1
+            });
         }
     }
 
@@ -387,7 +533,8 @@ class EditFormManual extends React.Component {
         if(!this.state.ready) {
             return null;
         } else {
-            const {timeEntry} = this.state;
+            const { timeEntry, redrawCustomFields, closeOpenedCounter } = this.state;
+            //const hideBillable = offlineStorage.onlyAdminsCanChangeBillableStatus && !offlineStorage.isUserOwnerOrAdmin;
             return(
                 <div>
                     <Header
@@ -413,7 +560,7 @@ class EditFormManual extends React.Component {
                         changeDuration={this.changeDuration.bind(this)}
                         changeDate={this.changeDate.bind(this)}
                         timeFormat={this.props.timeFormat}
-                        isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}
+                        isUserOwnerOrAdmin={this.state.isUserOwnerOrAdmin}
                         workspaceSettings={this.props.workspaceSettings}
                         userSettings={this.props.userSettings}
                     />
@@ -439,7 +586,7 @@ class EditFormManual extends React.Component {
                                 selectTask={this.editTask}
                                 noTasks={false}
                                 workspaceSettings={this.props.workspaceSettings}
-                                isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}
+                                isUserOwnerOrAdmin={this.state.isUserOwnerOrAdmin}
                                 projectRequired={this.state.projectRequired}
                                 taskRequired={this.state.taskRequired}
                                 forceTasks={this.state.forceTasks}
@@ -447,6 +594,7 @@ class EditFormManual extends React.Component {
                                 timeEntry={timeEntry}
                                 editForm={false}
                                 userSettings={this.props.userSettings}
+                                onChangeProjectRedrawCustomFields={this.onChangeProjectRedrawCustomFields}
                             />
                         </div>
                         <TagsList
@@ -458,13 +606,13 @@ class EditFormManual extends React.Component {
                             editTag={this.editTags.bind(this)}
                             tagsRequired={this.state.tagsRequired}
                             tagListOpened={this.tagListOpened.bind(this)}
-                            isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}
+                            isUserOwnerOrAdmin={this.state.isUserOwnerOrAdmin}
                             workspaceSettings={this.props.workspaceSettings}
                             editForm={false}
                             errorMessage={this.notifyAboutError}
                         />
                         <div className="edit-form-buttons">
-                            <div className="edit-form-buttons__billable">
+                            <div className={`edit-form-buttons__billable ${offlineStorage.hideBillable?'disabled':''}`}>
                                 <span className={timeEntry.billable ?
                                     "edit-form-checkbox checked" : "edit-form-checkbox"}
                                     onClick={this.editBillable.bind(this)}
@@ -478,7 +626,18 @@ class EditFormManual extends React.Component {
                                 <label onClick={this.editBillable.bind(this)}
                                        className="edit-form-billable">Billable</label>
                             </div>
-                            <hr/>
+                            { offlineStorage.userHasCustomFieldsFeature &&
+                                <CustomFieldsContainer
+                                    key="customFieldsContainer"
+                                    timeEntry={timeEntry}
+                                    isUserOwnerOrAdmin={this.state.isUserOwnerOrAdmin}
+                                    redrawCustomFields={redrawCustomFields}
+                                    closeOpenedCounter={closeOpenedCounter}
+                                    closeOtherDropdowns={this.closeOtherDropdowns}
+                                    manualMode={true}
+                                    updateCustomFields={this.updateCustomFields}
+                                />
+                            }                            
                             <div className="edit-form-right-buttons">
                                 <button onClick={this.done.bind(this)}
                                         className={
