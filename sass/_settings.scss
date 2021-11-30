@@ -319,6 +319,39 @@
     }
   }
 
+  &__context_menu {
+    background-color: $entries_header;
+
+    &__section {
+      display: flex;
+      margin: 20px 20px 5px 20px;
+      align-items: center;
+
+      &__checkbox {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border: 1px solid $border;
+        position: relative;
+        cursor: pointer;
+        background: white;
+
+        &--img {
+          content: url("../assets/images/checked.png");
+          margin-top: 3px;
+          margin-bottom: 2px;
+        }
+
+        &--img_hidden {
+          content: url("../assets/images/checked.png");
+          margin-top: 3px;
+          margin-bottom: 2px;
+          visibility: hidden;
+        }
+      }
+    }
+  }  
+
   &__auto_start_on_browser_start {
     diplay: flex;
     margin: 20px 20px 10px 20px;

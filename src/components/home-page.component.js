@@ -19,7 +19,7 @@ import {ProjectService} from "../services/project-service";
 import {getBrowser} from "../helpers/browser-helper";
 import {isAppTypeExtension} from "../helpers/app-types-helper";
 import {getWebSocketEventsEnums} from "../enums/web-socket-events.enum";
-import {WebSocketClient} from "../web-socket/web-socket-client";
+//import {WebSocketClient} from "../web-socket/web-socket-client";
 import {LocalStorageService} from "../services/localStorage-service";
 import {getWorkspacePermissionsEnums} from "../enums/workspace-permissions.enum";
 import {getLocalStorageEnums} from "../enums/local-storage.enum";
@@ -29,11 +29,12 @@ import {getManualTrackingModeEnums} from "../enums/manual-tracking-mode.enum";
 import {debounce} from "lodash";
 import Logger from './logger-component'
 import {UserService} from "../services/user-service";
+import {offlineStorage} from '../helpers/offlineStorage';
 
 const projectService = new ProjectService();
 const userService = new UserService();
 
-const webSocketClient = new WebSocketClient();
+//const webSocketClient = new WebSocketClient();
 const localStorageService = new LocalStorageService();
 const messages = [
     'TIME_ENTRY_STARTED',
@@ -50,7 +51,6 @@ const htmlStyleHelper = new HtmlStyleHelper();
 let websocketHandlerListener = null;
 
 let _webSocketConnectExtensionDone = false;
-let _webSocketConnectDesktopDone = false;
 
 let _checkOfflineMS = 5000; 
 let _timeoutCheckOffline = null;
@@ -83,7 +83,10 @@ class HomePage extends React.Component {
             loading: false,
             workspaceSettings: { 
                 timeTrackingMode: getManualTrackingModeEnums().DEFAULT,
+                projectPickerSpecialFilter : false,
+                forceProjects: false
             },
+            features: [],
             mode: localStorage.getItem('mode') ? localStorage.getItem('mode') : 'timer',
             manualModeDisabled: false,
             pullToRefresh: false,
@@ -94,7 +97,6 @@ class HomePage extends React.Component {
             isUserOwnerOrAdmin: false,
             isOffline: isOffline()
         };
-
 
         this.application = new Application(localStorageService.get('appType'));
 
@@ -115,7 +117,9 @@ class HomePage extends React.Component {
         this.loggerRef = React.createRef();       
         this.displayLog = this.displayLog.bind(this);
         this.workspaceChanged = this.workspaceChanged.bind(this);
+        this.changeMode = this.changeMode.bind(this);
 
+        offlineStorage.load();
 
         if (!isAppTypeExtension() && window.ipcRenderer) {
             window.ipcRenderer.on('online-status-changed', (event, message) => { 
@@ -189,20 +193,13 @@ class HomePage extends React.Component {
                 this.enableTimerShortcutForFirstTime();
                 if (!isOffline()) {
                     getBrowser().runtime.sendMessage({
-                        eventName: "webSocketConnect",
+                        eventName: 'webSocketConnect'
                     });
                     _webSocketConnectExtensionDone = true;
                 }
                 this.getEntryFromPomodoroAndIdleEvents();
             }
-        } else {
-            if (!isOffline()) {
-                if (!_webSocketConnectDesktopDone) {
-                    webSocketClient.connect();
-                    _webSocketConnectDesktopDone = true;
-                }
-            }
-        }
+        } 
 
         if (!isOffline()) {
             this.setIsUserOwnerOrAdmin();
@@ -291,7 +288,6 @@ class HomePage extends React.Component {
 
     checkOffline() {
        // axios call, just to check if online/offline
-       // timeEntryService.getEntryInProgress()
        timeEntryService.healthCheck()
             .then(response => {
                 this.checkReload()
@@ -347,12 +343,13 @@ class HomePage extends React.Component {
     setIsUserOwnerOrAdmin() {
         if (!isOffline()) {
             workspaceService.getPermissionsForUser().then(workspacePermissions => {
+                // console.log('workspacePermissions', workspacePermissions)
                 const isUserOwnerOrAdmin = workspacePermissions.filter(permission =>
                     permission.name === getWorkspacePermissionsEnums().WORKSPACE_OWN ||
                     permission.name === getWorkspacePermissionsEnums().WORKSPACE_ADMIN
                 ).length > 0;
                 this.setState({
-                    isUserOwnerOrAdmin: isUserOwnerOrAdmin
+                    isUserOwnerOrAdmin
                 }, () => {
                     localStorageService.set('isUserOwnerOrAdmin', isUserOwnerOrAdmin);
                     this.handleRefresh(true);
@@ -452,26 +449,31 @@ class HomePage extends React.Component {
         getBrowser().runtime.onMessage.addListener(_networkHandlerListener);
     }
 
-
     saveAllOfflineEntries() {
         if (!isOffline()) {
-            let timeEntries = localStorage.getItem('timeEntriesOffline') ? JSON.parse(localStorage.getItem('timeEntriesOffline')) : [];
+            let timeEntries = offlineStorage.timeEntriesOffline;
             timeEntries.map(entry => {
+                const customFields = entry.customFieldsValues.map(cf => ({
+                    customFieldId: cf.customFieldId, //wsCustomField.id, 
+                    sourceType: 'TIMEENTRY',
+                    value: cf.value
+                }))
                 timeEntryService.createEntry(
                     entry.workspaceId,
                     entry.description,
                     entry.timeInterval.start,
                     entry.timeInterval.end,
-                    null,
-                    null,
-                    [],
-                    entry.billable
+                    entry.projectId,  // null
+                    entry.taskId, // null
+                    entry.tagIds || [],
+                    entry.billable,
+                    customFields
                 ).then(response => {
-                    let timeEntries = localStorage.getItem('timeEntriesOffline') ? JSON.parse(localStorage.getItem('timeEntriesOffline')) : [];
+                    let timeEntries = offlineStorage.timeEntriesOffline;
                     if (timeEntries.findIndex(entryOffline => entryOffline.id === entry.id) > -1) {
                         timeEntries.splice(timeEntries.findIndex(entryOffline => entryOffline.id === entry.id), 1);
                     }
-                    localStorage.setItem('timeEntriesOffline', JSON.stringify(timeEntries));
+                    offlineStorage.timeEntriesOffline = timeEntries;
                 })
                 .catch(error => {
                     if (error.request.status === 403) {
@@ -482,7 +484,7 @@ class HomePage extends React.Component {
                     }
                 });
             });
-            localStorage.setItem('timeEntryInOffline', null);
+            offlineStorage.timeEntryInOffline = null;
         }
     }
 
@@ -496,24 +498,53 @@ class HomePage extends React.Component {
     }
 
     getWorkspaceSettings() {
+        const userId = localStorage.getItem('userId');
+        const activeWorkspaceId = localStorageService.get('activeWorkspaceId')
+        if (!isOffline()) {
+            userService.getUserRoles(activeWorkspaceId, userId)
+                .then(response => {
+                    if (response && response.data && response.data.userRoles) {
+                        const { userRoles } = response.data;
+                        // console.log('getUserRoles', userRoles)
+                        getBrowser().storage.local.set({
+                            userRoles
+                        });
+                    }
+                    else {
+                        console.log('getUserRoles problem')
+                    }
+                })
+                .catch((error) => {
+                    console.log("getUserRoles() failure");
+                });
+        }
+
         return workspaceService.getWorkspaceSettings()
             .then(response => {
-                const { workspaceSettings } = response.data;
+                let { workspaceSettings, features } = response.data;
+                //console.log('workspaceSettings, features', { workspaceSettings, features })
                 workspaceSettings.projectPickerSpecialFilter = this.state.userSettings.projectPickerTaskFilter;
-
                 if (!workspaceSettings.hasOwnProperty('timeTrackingMode')) {
                     workspaceSettings.timeTrackingMode = getManualTrackingModeEnums().DEFAULT;
                 }
-
                 const manualModeDisabled = workspaceSettings.timeTrackingMode === getManualTrackingModeEnums().STOPWATCH_ONLY;
                 this.setState({
-                    workspaceSettings: workspaceSettings,
-                    manualModeDisabled: manualModeDisabled,
+                    workspaceSettings,
+                    features,
+                    manualModeDisabled,
                     mode: manualModeDisabled ? 'timer' : this.state.mode,
                 }, () => {
-                    localStorageService.set("modeEnforced", this.state.mode); // for usage in edit-forms
-                    localStorageService.set("manualModeDisabled", JSON.stringify(this.state.manualModeDisabled)); // for usage in header
+                    localStorageService.set('modeEnforced', this.state.mode); // for usage in edit-forms
+                    localStorageService.set('manualModeDisabled', JSON.stringify(this.state.manualModeDisabled)); // for usage in header
+                    workspaceSettings = Object.assign(workspaceSettings, { 
+                        features: { 
+                            customFields: features.some(feature => feature === "CUSTOM_FIELDS")
+                        }
+                    });
                     localStorageService.set("workspaceSettings",  JSON.stringify(workspaceSettings));
+                    offlineStorage.userHasCustomFieldsFeature = workspaceSettings.features.customFields;
+                    offlineStorage.activeBillableHours = workspaceSettings.activeBillableHours;
+                    offlineStorage.onlyAdminsCanChangeBillableStatus = workspaceSettings.onlyAdminsCanChangeBillableStatus;
                     return Promise.resolve(true);
                 });
                    
@@ -546,8 +577,9 @@ class HomePage extends React.Component {
                 });
         } else {
             this.setState({
-                timeEntries: localStorage.getItem('timeEntriesOffline') ?
-                    this.groupEntries(JSON.parse(localStorage.getItem('timeEntriesOffline'))) : [],
+                timeEntries: offlineStorage.timeEntriesOffline.length > 0 ?
+                    this.groupEntries(offlineStorage.timeEntriesOffline)
+                    : [],
                 ready: true,
                 isOffline: true   // should set isOffline here
             })
@@ -697,6 +729,7 @@ class HomePage extends React.Component {
         this.setState({
             mode: mode
         }, () => {
+            // console.log('!!!!! menjam mode in home', mode)
             localStorage.setItem('mode', mode);
         })
     }
@@ -717,27 +750,28 @@ class HomePage extends React.Component {
                 this.start.setTimeEntryInProgress(null); 
             }
 
-            if (localStorage.getItem('timeEntryInOffline')) {
-                const entry = JSON.parse(localStorage.getItem('timeEntryInOffline'));
+            if (offlineStorage.timeEntryInOffline) {
+                const entry = offlineStorage.timeEntryInOffline;
                 if (entry) {
-                    let timeEntries = localStorage.getItem('timeEntriesOffline') ? JSON.parse(localStorage.getItem('timeEntriesOffline')) : [];
+                    let timeEntries = this.timeEntriesOffline;
                     entry.timeInterval.end = moment();
                     timeEntries.push(entry);
-                    localStorage.setItem('timeEntriesOffline', JSON.stringify(timeEntries));
+                    offlineStorage.timeEntriesOffline = timeEntries;
                 }
             }
 
             let timeEntryNew = {
-                id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
+                id: offlineStorage.timeEntryIdTemp,
                 description: timeEntry.description,
                 timeInterval: {start: moment()},
                 projectId: timeEntry.projectId,
                 taskId: timeEntry.task ? timeEntry.task.id : null,
                 tagIds: timeEntry.tags ? timeEntry.tags.map(tag => tag.id) : [],
-                billable: timeEntry.billable
+                billable: timeEntry.billable,
+                customFieldValues: offlineStorage.customFieldValues // generated from wsCustomFields
             };
 
-            localStorage.setItem('timeEntryInOffline', JSON.stringify(timeEntryNew));
+            offlineStorage.timeEntryInOffline = timeEntryNew;
             this.start.setTimeEntryInProgress(timeEntryNew);
             this.handleRefresh();
         } 
@@ -774,43 +808,50 @@ class HomePage extends React.Component {
     }
 
     checkRequiredFields(timeEntry) {
+        const {forceProjects, forceTasks, forceTags, forceDescription} = this.state.workspaceSettings;
+        const {mode, inProgress} = this.state;
         if (isOffline()) {
             this.endStartedAndStart(timeEntry);
-        } else if (this.state.workspaceSettings.forceDescription &&
-            (this.state.inProgress.description === "" || !this.state.inProgress.description)) {
+        } 
+        else if (forceDescription &&
+            (inProgress.description === "" || !inProgress.description)) {
             ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
             ReactDOM.render(
                 <RequiredFields field={"description"}
-                                mode={this.state.mode} 
+                                mode={mode} 
                                 goToEdit={this.goToEdit.bind(this)}/>,
                 document.getElementById('mount')
             );
-        } else if (this.state.workspaceSettings.forceProjects && !this.state.inProgress.projectId) {
+        }
+        else if (forceProjects && !inProgress.projectId) {
             ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
             ReactDOM.render(
                 <RequiredFields field={"project"}
-                                mode={this.state.mode} 
+                                mode={mode} 
                                 goToEdit={this.goToEdit.bind(this)}/>,
                 document.getElementById('mount')
             );
-        } else if (this.state.workspaceSettings.forceTasks && !this.state.inProgress.task) {
+        }
+        else if (forceTasks && !inProgress.task) {
             ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
             ReactDOM.render(
                 <RequiredFields field={"task"}
-                                mode={this.state.mode} 
+                                mode={mode} 
                                 goToEdit={this.goToEdit.bind(this)}/>,
                 document.getElementById('mount')
             );
-        } else if (this.state.workspaceSettings.forceTags &&
+        }
+        else if (forceTags &&
             (!this.state.timeEntry.tags || !this.state.timeEntry.tags.length > 0)) {
             ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
             ReactDOM.render(
                 <RequiredFields field={"tags"}
-                                mode={this.state.mode} 
+                                mode={mode} 
                                 goToEdit={this.goToEdit.bind(this)}/>,
                 document.getElementById('mount')
             );
-        } else {
+        }
+        else {
             this.endStartedAndStart(timeEntry);
         }
     }
@@ -818,12 +859,11 @@ class HomePage extends React.Component {
     goToEdit() {
         ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
         ReactDOM.render(
-            <EditForm changeMode={this.changeMode.bind(this)}
+            <EditForm changeMode={this.changeMode}
                       timeEntry={this.state.inProgress}
                       workspaceSettings={this.state.workspaceSettings}
                       timeFormat={this.state.userSettings.timeFormat}
                       userSettings={this.state.userSettings}
-                      isUserOwnerOrAdmin={this.state.isUserOwnerOrAdmin}
             />, document.getElementById('mount')
         );
     }
@@ -834,16 +874,17 @@ class HomePage extends React.Component {
         } else {
             if (isOffline()) {
                 let timeEntryOffline = {
-                    id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
+                    id: offlineStorage.timeEntryIdTemp,
                     description: timeEntry.description,
                     timeInterval: {
                         start: moment()
                     },
                     billable: timeEntry.billable,
+                    customFieldValues: offlineStorage.customFieldValues, // generated from wsCustomFields
                     loadMore: false
                 };
 
-                localStorage.setItem('timeEntryInOffline', JSON.stringify(timeEntryOffline));
+                offlineStorage.timeEntryInOffline = timeEntryOffline;
                 this.start.setTimeEntryInProgress(timeEntryOffline);
             } else {
                 timeEntryService.createEntry(
@@ -854,7 +895,8 @@ class HomePage extends React.Component {
                     timeEntry.projectId,
                     timeEntry.task ? timeEntry.task.id : null,
                     timeEntry.tags ? timeEntry.tags.map(tag => tag.id) : [],
-                    timeEntry.billable
+                    timeEntry.billable,
+                    offlineStorage.customFieldValues // generated from wsCustomFields
                 ).then(response => {
                     let data = response.data;
                     this.start.getTimeEntryInProgress();
@@ -968,12 +1010,11 @@ class HomePage extends React.Component {
         } else {
             this.log("HomePage render")
             const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
-            const timeEntriesOffline = localStorage.getItem('timeEntriesOffline') 
-                ? JSON.parse(localStorage.getItem('timeEntriesOffline'))
-                    .filter(timeEntry => !timeEntry.workspaceId || timeEntry.workspaceId === activeWorkspaceId)
-                : [];
+            const timeEntriesOffline = offlineStorage.timeEntriesOffline
+                    .filter(timeEntry => !timeEntry.workspaceId || timeEntry.workspaceId === activeWorkspaceId);
             const { inProgress, isOffline, mode, 
-                    workspaceSettings, 
+                    workspaceSettings,
+                    features,
                     timeEntries, 
                     userSettings, 
                     isUserOwnerOrAdmin, pullToRefresh, dates } = this.state;
@@ -987,7 +1028,7 @@ class HomePage extends React.Component {
                                 ref={instance => {this.header = instance}}
                                 showActions={true}
                                 showSync={true}
-                                changeMode={this.changeMode.bind(this)}
+                                changeMode={this.changeMode}
                                 disableManual={!!inProgress}
                                 disableAutomatic={false}
                                 handleRefresh={this.handleRefresh}
@@ -1005,13 +1046,13 @@ class HomePage extends React.Component {
                             }}
                             message={this.showMessage.bind(this)}
                             mode={mode}
-                            changeMode={this.changeMode.bind(this)}
+                            changeMode={this.changeMode}
                             endStarted={this.handleRefresh}
                             setTimeEntryInProgress={this.inProgress.bind(this)}
                             workspaceSettings={workspaceSettings}
+                            features={features}
                             timeEntries={timeEntries}
                             timeFormat={userSettings.timeFormat}
-                            isUserOwnerOrAdmin={isUserOwnerOrAdmin}
                             userSettings={userSettings}
                             toaster= {this.toaster}
                             log={this.log}
@@ -1026,9 +1067,10 @@ class HomePage extends React.Component {
                                 pullToRefresh={pullToRefresh}
                                 handleRefresh={this.handleRefresh}
                                 workspaceSettings={workspaceSettings}
+                                features={features}
                                 timeFormat={userSettings.timeFormat}
-                                isUserOwnerOrAdmin={isUserOwnerOrAdmin}
                                 userSettings={userSettings}
+                                isUserOwnerOrAdmin={this.state.isUserOwnerOrAdmin}
                             />
                         }
                     </div>
@@ -1039,12 +1081,13 @@ class HomePage extends React.Component {
                             selectTimeEntry={this.continueTimeEntry.bind(this)}
                             pullToRefresh={pullToRefresh}
                             handleRefresh={this.handleRefresh}
-                            changeMode={this.changeMode.bind(this)}
+                            changeMode={this.changeMode}
                             timeFormat={userSettings.timeFormat}
                             workspaceSettings={workspaceSettings}
-                            isUserOwnerOrAdmin={isUserOwnerOrAdmin}
+                            features={features}
                             userSettings={userSettings}
                             isOffline={isOffline}
+                            isUserOwnerOrAdmin={this.state.isUserOwnerOrAdmin}
                         />
                     </div>
                 </div>

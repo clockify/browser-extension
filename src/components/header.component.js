@@ -24,6 +24,10 @@ class Header extends React.Component {
     constructor(props) {
         super(props);
 
+        // console.log('headrr mode', localStorage.getItem('mode'))
+        // console.log('headrr localStorage.getItem(manualModeDisabled)', localStorage.getItem('manualModeDisabled'))
+        // console.log('headrr localStorage.getItem(modeEnforced)', localStorage.getItem('modeEnforced'))
+
         this.state = {
             menuOpen: false,
             mode: localStorage.getItem('modeEnforced') ? localStorage.getItem('modeEnforced') : localStorage.getItem('mode'),

@@ -11,6 +11,7 @@
 @import "edit-form";
 @import "projects-list";
 @import "tag-list";
+@import "custom-fields";
 @import "settings";
 @import "required-fields";
 @import "datepicker";
@@ -43,6 +44,7 @@ body {
   margin: 0px;
   overflow-y: overlay;
   overflow-x: hidden;
+  user-select: none;
 }
 * {
   font-family: 'Roboto', Arial, sans-serif !important;
@@ -84,15 +86,15 @@ hr {
   height: 2px;
 }
 
-.dot-project-picker {
-  position: relative;
-  width: 5px;
-  height: 5px;
-  border-radius: 5px;
-  display: inline-block;
-  margin-right: 5px;
-  top: -3px;
-}
+// .dot-project-picker {
+//   position: relative;
+//   width: 5px;
+//   height: 5px;
+//   border-radius: 5px;
+//   display: inline-block;
+//   margin-right: 5px;
+//   //top: -3px;
+// }
 
 .ptr-element {
   height: 0;

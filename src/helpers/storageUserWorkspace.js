@@ -98,7 +98,6 @@ export class DefaultProject {
     async getLastUsedProjectFromTimeEntries(forceTasks) {
         return projectService.getLastUsedProject(forceTasks)
             .then(response => {
-                console.log('response.data', response.data)
                 if (response.data) {
                     const {data} = response;
                     return forceTasks

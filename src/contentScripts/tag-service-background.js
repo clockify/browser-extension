@@ -1,4 +1,4 @@
-class TagService extends Service {
+class TagService extends ClockifyService {
 
     constructor() {
     }

@@ -1,6 +1,6 @@
 {
   "name": "Clockify",
-  "version": "1.8.84",
+  "version": "1.9.4",
   "description": "Clockify App 100% Free Time Tracker",
   "main": "./main.js",
   "productName": "Clockify",
@@ -10,7 +10,6 @@
     "clean.build.chrome.dev": "node tools/clean-build-script.js chrome.dev",
     "clean.build.firefox": "node tools/clean-build-script.js firefox",
     "clean.build.firefox.dev": "node tools/clean-build-script.js firefox.dev",
-    "clean.build.desktop": "node tools/clean-build-script.js dist",
     "delete.integrations": "node tools/clean-build-script.js www/chrome/integrations",
     "delete.contentScripts": "node tools/clean-build-script.js www/chrome/contentScripts",
     "copy.assets": "node tools/copy-assets-from-node-modules.js",

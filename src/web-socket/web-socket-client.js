@@ -14,7 +14,7 @@ export class WebSocketClient {
         this.connectionId =
             `/${environment.webSocket.clientId}/` +
             `${localStorage.getItem('userEmail')}/` +
-            `${Math.random().toString(36).substring(2, 10)}`;
+            `${Math.random().toString(36).substring(2, 10)}/extension`;
         if (this.connection) {
             return;
         }

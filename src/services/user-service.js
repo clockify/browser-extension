@@ -16,6 +16,11 @@ export class UserService extends HttpWrapperService {
         return super.get(userUrl, addToken);
     }
 
+    getBoot() {
+        const homeUrl = localStorageService.get('homeUrl');
+        return super.get(`${homeUrl}/web/boot`, addToken);
+    }
+
     setDefaultWorkspace(workspaceId) {
         const userId = localStorageService.get('userId');
         const baseUrl = localStorageService.get('baseUrl');
@@ -45,6 +50,12 @@ export class UserService extends HttpWrapperService {
         const baseUrl = localStorageService.get('baseUrl');
         const userUrl = `${baseUrl}/users/${userId}`;
         return super.get(userUrl, addToken);
+    }
+
+    getUserRoles(workspaceId, userId) {
+        const baseUrl = localStorageService.get('baseUrl');
+        const url = `${baseUrl}/workspaces/${workspaceId}/users/${userId}/roles`;
+        return super.get(url, addToken);
     }
 
 }

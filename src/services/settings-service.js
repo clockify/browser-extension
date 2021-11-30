@@ -18,6 +18,10 @@ export class SettingsService extends HttpWrapperService {
         return localStorageService.get('baseUrl');
     }
 
+    setWebSocketUrl(endPoint) {
+        localStorageService.set("webSocketEndpoint", endPoint, getLocalStorageEnums().PERMANENT_PREFIX);
+    }
+
     setSelfHosted(value) {
         localStorageService.set('selfHosted', value, getLocalStorageEnums().SELF_HOSTED_PREFIX);
     }

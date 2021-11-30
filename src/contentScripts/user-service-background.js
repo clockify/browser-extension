@@ -1,4 +1,4 @@
-class UserService extends Service {
+class UserService extends ClockifyService {
 
     constructor() {
     }
@@ -22,6 +22,28 @@ class UserService extends Service {
             localStorage.setItem('userSettings', JSON.stringify(settings));
 
             UserWorkspaceStorage.getSetWorkspaceSettings();
+            UserService.getSetUserRoles();
+        }
+    }
+
+    static async getUserRoles() {
+        const endPoint = `${this.apiEndpoint}/workspaces/${this.workspaceId}/users/${this.userId}/roles`;
+        return await this.apiCall(endPoint);
+    }
+
+    static async getSetUserRoles() {
+        // aBrowser.storage.local.set({
+        //     userRoles: []
+        // });
+        const { data, error, status } = await UserService.getUserRoles();
+        if (data) {
+            const { userRoles } = data;
+            aBrowser.storage.local.set({
+                userRoles
+            });
+        }
+        else {
+            console.log('getSetUserRoles failure')
         }
     }
 

@@ -78,7 +78,6 @@ class DefaultProject {
                 taskDB: null 
             };
         }
-        
         const { projectDB, taskDB, msg, msgId } = await defaultProject._getProjectTaskFromDB();
         // let us try to notify here
         if (msg && TimeEntry.doAlert) {
@@ -100,7 +99,8 @@ class DefaultProject {
             return ProjectService.getLastUsedProjectFromTimeEntries(forceTasks);
         } 
         else {
-            const projectDB = await ProjectService.getProjectsByIds([id]);
+            const taskIds = selectedTask ? [selectedTask.id] : null;
+            const { projectDB } = await ProjectService.getProjectsByIds([id], taskIds);
             let taskDB = null;
             if (projectDB) {
                 if (!projectDB.archived && selectedTask && forceTasks) {

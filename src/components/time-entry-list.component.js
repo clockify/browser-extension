@@ -62,6 +62,7 @@ class TimeEntryList extends React.Component {
                                                 changeMode={this.changeMode.bind(this)}
                                                 timeFormat={this.props.timeFormat}
                                                 workspaceSettings={this.props.workspaceSettings}
+                                                features={this.props.features}
                                                 isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}
                                                 userSettings={this.props.userSettings}
                                             />

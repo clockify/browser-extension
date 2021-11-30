@@ -100,21 +100,25 @@ class CreateProjectComponent extends React.Component {
             }
             ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
             ReactDOM.render(
-                <EditForm timeEntry={timeEntry}
-                          workspaceSettings={this.props.workspaceSettings}
-                          timeFormat={this.props.timeFormat}
-                          isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}
-                          userSettings={this.props.userSettings}/>,
+                <EditForm
+                    timeEntry={timeEntry}
+                    workspaceSettings={this.props.workspaceSettings}
+                    timeFormat={this.props.timeFormat}
+                    userSettings={this.props.userSettings}
+                    afterCreateProject={true}
+                />,
                 document.getElementById('mount')
             );
         } else {
             ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
             ReactDOM.render(
-                <EditFormManual timeEntry={timeEntry}
-                          workspaceSettings={this.props.workspaceSettings}
-                          timeFormat={this.props.timeFormat}
-                          isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}
-                          userSettings={this.props.userSettings}/>,
+                <EditFormManual
+                    timeEntry={timeEntry}
+                    workspaceSettings={this.props.workspaceSettings}
+                    timeFormat={this.props.timeFormat}
+                    userSettings={this.props.userSettings}
+                    afterCreateProject={true}
+                />,
                 document.getElementById('mount')
             );
         }

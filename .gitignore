@@ -11,8 +11,12 @@ Dockerfile
 /.idea/assetWizardSettings.xml
 /.idea/
 .sass-cache/
+chrome/
 chrome.dev/
+chrome.dev.zip
+firefox/
 firefox.dev/
+firefox.dev.zip
 dist/
 node_modules/
 www/

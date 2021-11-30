@@ -10,21 +10,24 @@
       "contentScripts/defaultProject.js",
       "contentScripts/userWorkspaceStorage.js",
       "contentScripts/service-background.js",
+      "contentScripts/token-service-background.js",
       "contentScripts/user-service-background.js",
+      "contentScripts/integration-background.js",
       "contentScripts/task-service-background.js",
       "contentScripts/project-service-background.js",
       "contentScripts/tag-service-background.js",
+      "contentScripts/custom-field-service-background.js",
       "contentScripts/timeEntry.js",
       "contentScripts/background.js",
       "contentScripts/webSocket-background.js",
-      "contentScripts/token-background.js",
       "contentScripts/idle-detection-background.js",
+      "contentScripts/context-menu.background.js",
       "contentScripts/notification-background.js",
       "contentScripts/reminder-background.js",
       "contentScripts/pomodoro-background.js"
     ]
   },
-  "version": "1.8.84",
+  "version": "1.9.4",
   "browser_action": {
     "default_popup": "index.html",
     "default_title": "Clockify"
@@ -44,7 +47,8 @@
     "128":"assets/images/logo-128.png"
   },
   "web_accessible_resources" : [
-    "assets/images/*.png"
+    "assets/images/*.png",
+    "assets/images/ui-icons/*.svg"
   ],
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnGPvcU+dm/buLXvICzoohIQrifJQyUq2CggI7hK8rfl/lowHVpMWKGep83DoKtoc9b7ITmuFbdfJAvYzewKoGu2wJWM9rUH1mZaUtcqwOLxRvYQpiJzr+EXzUU3foFaqf//KNjsmWkV8hy0Uw6Hd0fB24kWdnlbIWE13YeCHifgH5gHJbNzBw6SEOWg5EAt986El6+xFhjtL40HdJwZ2gRJvSvM1qSr3HAIQBb5P/fJeOkBYSnt8+XkbvlWgxWANiWmBco+Zj4sUBmuRUOapVhajRaiGXU/fA5jCnE3Q6QJAv2W7piDJIYTWpvpPsTfZxmgc0TBGF7uvpeJsJmqFmQIDAQAB",
   "permissions": [
@@ -54,12 +58,10 @@
     "storage",
     "tabs",
     "*://*/",
-    "webNavigation",
     "activeTab",
     "identity",
     "idle",
-    "notifications",
-    "webRequest"
+    "notifications"
   ],
   "content_security_policy": "script-src 'self'; object-src 'self'",
   "externally_connectable": {

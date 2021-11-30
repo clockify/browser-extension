@@ -74,8 +74,8 @@ export class TimeEntryService extends HttpWrapperService {
 
     healthCheck() {
         const baseUrl = localStorageService.get('baseUrl');
-        const entryInProgressUrl = `${baseUrl}/health`;
-        return super.get(entryInProgressUrl, addToken);
+        const url = `${baseUrl}/health`;
+        return super.get(url, addToken);
     }
 
     startNewEntry(projectId, description, billable, start, taskId=null) {
@@ -207,7 +207,8 @@ export class TimeEntryService extends HttpWrapperService {
         projectId,
         taskId,
         tagIds,
-        billable
+        billable,
+        customFields
     ) {
         const activeWorkspaceId = localStorage.getItem('activeWorkspaceId');
         const wsId = workspaceId ? workspaceId : activeWorkspaceId;
@@ -223,14 +224,17 @@ export class TimeEntryService extends HttpWrapperService {
         const timeEntryUrl = `${baseUrl}/workspaces/${wsId}/timeEntries/`;
 
         const body = {
-            description: description,
-            start: start,
-            end: end,
-            projectId: projectId,
-            taskId: taskId,
-            tagIds: tagIds,
-            billable: billable
+            description,
+            start,
+            end,
+            projectId,
+            taskId,
+            tagIds,
+            billable,
         };
+
+        if (customFields)
+            body.customFields = customFields;
 
         return super.post(timeEntryUrl, body, addToken);
     }

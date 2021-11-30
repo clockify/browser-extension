@@ -70,7 +70,6 @@ export class TokenService {
         }
         const decodedToken = jwt.decode(token, {complete: true});
         const timeNow = new Date();
-
         return decodedToken.payload.exp > timeNow / 1000;
     }
 

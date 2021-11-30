@@ -56,7 +56,24 @@ class SelfHostedBootSettings extends React.Component {
                                     } else {
                                         baseUrl = data.endpoint;
                                     }
-                                } catch (error) {
+                                    
+                                    if (data.synchronization && data.synchronization.websockets) {
+                                        const { websockets } = data.synchronization;
+                                        let webSocketEndPoint;
+                                        if (websockets.apps && websockets.apps.extension) {
+                                            webSocketEndPoint = websockets.apps.extension.endpoint;
+                                        }
+                                        else {
+                                            webSocketEndPoint = websockets.endpoint;
+                                        }
+                                        if (webSocketEndPoint.startsWith("/")) {
+                                            //webSocketEndPoint = `${this.state.homeUrl}${webSocketEndPoint}`;
+                                            webSocketEndPoint = `${data.frontendUrl.replace(/\/$/, "")}${webSocketEndPoint}`;
+                                        }
+                                        settingsService.setWebSocketUrl(webSocketEndPoint);
+                                    } 
+                                }
+                                catch (error) {
                                     baseUrl = `${this.state.homeUrl}/api`
                                 }
                                 settingsService.setBaseUrl(baseUrl)

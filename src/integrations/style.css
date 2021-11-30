@@ -64,26 +64,27 @@
 }
 
 #divClockifyPopupDlg { /*div.clockify-popup-dlg*/
-  box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  font-family: 'Roboto', sans-serif;
-  font-weight: normal;
-  position: fixed;
-  z-index: 999999;
-  display: block;
-  border-radius: 2px;
-  background-color: #eff4f7; /*rgba(3, 169, 244, 0.9);*/
-  right: 3vw;
-  top: 3vh;
-  width: 320px; /*30vw;*/
+  box-sizing: border-box !important;
+  -webkit-box-sizing: border-box !important;
+  font-family: 'Roboto', sans-serif !important;
+  font-weight: normal !important;
+  position: fixed !important;
+  z-index: 9999999999 !important;
+  display: block !important;
+  border-radius: 2px !important;
+  background-color: #eff4f7 !important; /*rgba(3, 169, 244, 0.9);*/
+  right: 3vw !important;
+  top: 3vh !important;
+  width: 320px !important; /*30vw;*/
   /*min-height: 430px;*/
   /*height: 50vh;*/
-  filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.3));
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  padding: 0px 0 10px 0;
+  filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.3)) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-start !important;
+  align-items: center !important;
+  padding: 0px 0 10px 0 !important;
+  user-select: none !important;
 }
 
 #divClockifyPopupDlg *, #divClockifyPopupDlg *::before, #divClockifyPopupDlg *::after {
@@ -93,15 +94,15 @@
 }
 
 #divClockifyPopupDlg > div {
-  width: 100%;
-  margin-top: 5px;
+  width: 100% !important;
+  margin-top: 5px !important;
 }
 
 
 /* Drop Down */
 ul.clockify-drop-down {
   font-size: 14px;
-  padding: 5px 0px 0px 0px;
+  padding: 0px 0px 0px 0px;
   list-style-type: none;
 }
 
@@ -115,14 +116,14 @@ ul.clockify-project-list {
   font-size: 14px;
   overflow-y: auto;
   max-height: 293px;
+  user-select: none !important;
 }
 
-li.clockify-project-item {
-  /*  line-height: 1.2rem;*/
+/* li.clockify-project-item {
   display: flex;
   align-items: center;
   padding: 7px 0 7px 15px;
-}
+} */
 
 li.clockify-project-item-2 {
   /* padding: 7px 0 8px 15px; */
@@ -130,7 +131,9 @@ li.clockify-project-item-2 {
   overflow: hidden;
 }
 
-.clockify-project-name {
+  /*  line-height: 1.1rem;*/
+
+/* .clockify-project-name {
   display: inline-block;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -139,15 +142,12 @@ li.clockify-project-item-2 {
   color: #333333;
 }
 
-
 .clockify-project-item:hover {
   background-color: #E4EAEE;
 }
 
-
 .clockify-project-item > span:last-child {
   margin-left: auto;
-  /* background-color: #E4EAEE; */
   cursor: pointer;
 }
 
@@ -158,13 +158,70 @@ li.clockify-project-item-2 {
   text-overflow: ellipsis;
   overflow: hidden;
   font-size: 14px;
-  /*  line-height: 1.1rem;*/
   white-space: nowrap;
   color: #333333;
   cursor: pointer;
+} */
+
+/* NOVO, TREBA DODATI clockify_ ispred */
+
+.clockify-dropdown-star {
+  width: 16px;
+  height: 16px;
+  margin: 5px 3px 0px 5px;
 }
 
+ul.clockify-project-item {
+  padding: 7px 5px 8px 10px !important;
+  cursor: pointer !important;
+  font-size: 16px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  margin: 0 !important;
+  list-style-type: none !important;
+  border-top: 1px dotted #C6D2D9 !important;
+}
 
+ul.clockify-project-item:hover {
+  background-color: #E4EAEE;
+}
+
+li.clockify-project-item-dot {
+  flex: 0 0 5px !important;
+  width: 5px !important;
+  height: 5px !important;
+  border-radius: 5px !important;
+  display: inline-block !important;
+  margin-right: 5px !important;
+}
+
+li.clockify-project-item-name {
+  display: inline-block !important;
+  flex: 1 1 auto !important;
+  text-align: start !important;
+  text-overflow: ellipsis !important;
+  overflow: hidden !important;
+  font-size: 14px !important;
+  line-height: 16px !important;
+  white-space: nowrap !important;
+  color: #333333 !important;
+}
+
+li.clockify-project-item-tasks {
+  color: #999999 !important;
+  font-size: 14px !important;
+  width: 80px !important;
+  /*border: 1px solid navy !important; */
+  padding: 3px !important; 
+  display: flex !important; 
+  align-items: center !important;
+  justify-content: flex-end !important;
+}
+
+li.clockify-project-item-favorite {
+  flex: 0 0 20px !important;
+}
 
 /* Task */
 ul.clockify-task-list {
@@ -226,26 +283,26 @@ ul.clockify-task-list > li.clockify-task-item:last-child {
 }
 
 .clockify-project-list-arrow {
-  width: 10px;
-  height: 5px;
+  width: 10px !important;
+  height: 5px !important;
 }
 
 .clockify-project-list-button {
-  padding: 5px 0;
-  background: white;
-  border: 1px solid #C6D2D9;
-  border-radius: 2px;
-  cursor: pointer;
-  align-items: center;
-  display: flex;
+  padding: 5px 0 !important;
+  background: white !important;
+  border: 1px solid #C6D2D9 !important;
+  border-radius: 2px !important;
+  cursor: pointer !important;
+  align-items: center !important;
+  display: flex !important;
 }
 
 .clockify-project-list-button-required {
-  padding: 5px 0;
-  background: white;
-  border: 1px solid #F44336;
-  border-radius: 2px;
-  cursor: pointer;
+  padding: 5px 0 !important;
+  background: white !important;
+  border: 1px solid #F44336 !important;
+  border-radius: 2px !important;
+  cursor: pointer !important;
 }
 
 .clockify-project-list__spec_filter_no_task_or_project {
@@ -273,7 +330,7 @@ ul.clockify-task-list > li.clockify-task-item:last-child {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: #999999;
+  color: #333;
 }
 
 .clockify-project-list-dropdown {
@@ -299,7 +356,7 @@ ul.clockify-task-list > li.clockify-task-item:last-child {
   left: 100;
   top: 139px;
   background: white;
-  z-index: 9999999;
+  z-index: 9999999999;
   box-shadow: 0 5px 7px #ccc;
   font-size: 14px;
   border-radius: 2px;
@@ -332,18 +389,19 @@ ul.clockify-task-list > li.clockify-task-item:last-child {
   margin-bottom: 10px;
 }
 
-
+/* textarea */
 .clockify-edit-form-description{
-  width: 100%;
-  height: 100%;
-  border: none;
-  resize: none;
-  font-size: 14px;
-  outline: none;
-  color: #333333;
-  padding: 10px;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 65px !important;
+  border: none !important;
+  resize: none !important;
+  font-size: 14px !important;
+  outline: none !important;
+  color: #333333 !important;
+  padding: 10px !important;
+  background-color: white !important;
 }
-
 
 .clockify-stop-timer {
   padding: 0px;
@@ -363,15 +421,187 @@ ul.clockify-task-list > li.clockify-task-item:last-child {
 
 
 .clockify-description-textarea {
-  margin-bottom: 0px;
-  border: 1px solid #C6D2D9;
-  background: white;
-  border-radius: 2px;
-  height: 65px;
+  margin-bottom: 0px !important;
+  border: 1px solid #C6D2D9 !important;
+  background-color: white !important;
+  border-radius: 2px !important;
+  height: 65px !important;
 }
 
 .clockify-description-textarea.required {
   border: 1px solid #F44336;
+}
+
+.clockify-form-div {
+  margin-top: 8px !important;
+}
+
+/* --------------------
+   Custom Fields 
+-------------------- */
+
+div.clockify-div-custom-fields {
+  border: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+div.clockify-custom-field {
+  padding: 0px !important; 
+  border: 0px solid #C6D2D9 !important; 
+  border-image-width: 0 !important;
+  background-color: white !important;
+  margin: 8px 0px 0px 0px !important;
+  height: 34px !important;
+}
+
+div.clockify-custom-field-disabled {
+  padding: 0px !important; 
+  border: 1px solid #C6D2D9 !important; 
+  border-image-width: 0 !important;
+  background-color: white !important;
+  margin: 8px 0px 0px 0px !important;
+  height: 36px !important;
+}
+
+div.clockify-custom-field-ta {
+  padding: 0px !important; 
+  border: 0px solid #C6D2D9 !important; 
+  border-image-width: 0 !important;
+  background-color: white !important;
+  margin: 8px 0px 0px 0px !important;
+  height: 45px !important;
+}
+
+div.clockify-custom-field-ta-disabled {
+  padding: 0px !important; 
+  border: 1px solid #C6D2D9 !important; 
+  border-image-width: 0 !important;
+  background-color: white !important;
+  margin: 8px 0px 0px 0px !important;
+  height: 45px !important;
+  background: #eff4f7 !important;
+}
+
+div.clockify-custom-field-inner {
+  padding: 0px 7px !important;
+  display: flex !important;
+  align-items: center !important;
+  background-color: white !important;
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  border: 0 !important;
+}
+
+div.clockify-custom-field-inner-disabled {
+  padding: 0px 5px !important;
+  display: flex !important;
+  align-items: center !important;
+  background-color: #eff4f7 !important;
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  border: 1px solid #C6D2D9 !important; 
+}
+
+div.clockify-custom-field-inner-checkbox {
+  padding: 0px !important;
+  display: flex !important;
+  align-items: center !important;
+  background-color: #eff4f7 !important;
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  border: 0 !important;
+}
+
+div.clockify-custom-field-inner-checkbox-disabled {
+  padding: 0px !important;
+  display: flex !important;
+  align-items: center !important;
+  background-color: #eff4f7 !important;
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  border: 1px solid #C6D2D9 !important; 
+}
+
+
+
+textarea.custom-field-text {
+  width: 100% !important;
+  /* height: 100% !important; */
+  height: 45px !important;
+  min-height: 45px !important;
+  border: 0 !important;
+  margin: 0 !important;
+  resize: none !important;
+  font-size: 14px !important;
+  outline: none !important;
+  color: #333333 !important;
+  padding: 5px !important;
+  word-wrap: break-word !important;
+  background-color: white !important;
+  border-image-width: 0 !important;
+}
+
+textarea.custom-field-text-disabled {
+  pointer-events: none;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 65px !important;
+  border: 1px solid #C6D2D9 !important; 
+  margin: 0 !important;
+  resize: none !important;
+  font-size: 14px !important;
+  outline: none !important;
+  color: #333333 !important;
+  padding: 10px !important;
+  height: 65px !important;
+  word-wrap: break-word !important;
+  background-color: #eff4f7 !important;
+  border-image-width: 0 !important;
+}
+
+
+
+input.custom-field-number {
+  border: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  padding: 5px 8px !important;
+  margin: 0 !important;
+  background-color: white !important;
+  line-height: 20px !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+input.custom-field-number-disabled {
+  border: 1px solid #C6D2D9 !important; 
+  width: 95% !important;
+  height: 100% !important;
+  padding: 5px 8px !important;
+  margin: 0 !important;
+  background-color: #eff4f7 !important;
+  line-height: 20px !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+
+.custom-field-link {
+  border: 0 !important;
+  width: 100% !important;
+}
+
+span.custom-field-link-label {
+  padding: 5px !important;
+  line-height: 21px !important;
+  font-size: 14px !important;
+  font-weight: 400px !important;
+  margin: 0 !important;
 }
 
 .clockify-edit-form-checkbox {
@@ -380,7 +610,7 @@ ul.clockify-task-list > li.clockify-task-item:last-child {
   justify-content: center;
   width: 16px;
   height: 16px;
-  background: white;
+  background-color: white;
   border: 1px solid #C6D2D9;
   border-radius: 2px;
   cursor: pointer;
@@ -391,14 +621,15 @@ ul.clockify-task-list > li.clockify-task-item:last-child {
 }
 
 .clockify-edit-form-buttons__billable {
+  margin-top: 5px;
   margin-bottom: 10px;
-  display: flex;
-  align-items: center;
+  display: flex !important;
+  align-items: center !important;
 }
 
 .clockify-edit-form-billable-img {
-  margin-top: 3px;
-  margin-left: 1px;
+  margin-top: 3px !important;
+  margin-left: 1px !important;
 }
 
 .clockify-edit-form-billable-img-hidden {
@@ -409,7 +640,7 @@ ul.clockify-task-list > li.clockify-task-item:last-child {
 
 .clockify-edit-form-billable {
   margin: 0;
-  margin-left: 10px;
+  padding-left: 6px;  /* margin-left: 10px */
   color: #666666;
   font-size: 12px;
   cursor: pointer;
@@ -452,7 +683,7 @@ ul.clockify-task-list > li.clockify-task-item:last-child {
   border: none;
   border-radius: 3px;
   color: white;
-  background: #999999;
+  background-color: #999999;
 }
 
 /* project */
@@ -473,13 +704,24 @@ ul.clockify-task-list > li.clockify-task-item:last-child {
   width: 12px;
 }
 
-.clockify-project-item-task {
+.clockify-tasks-arrow.clockify-down {
+  mmmargin-left: 5px !important;
+  padding: 4px 3px 4px 4px !important;
+}
+
+.clockify-tasks-arrow.clockify-right {
+  mmmargin-left: 5px !important;
+  padding: 4px 3px 4px 6px !important;
+}
+
+
+/* .clockify-project-item-task {
   margin-right: 5px;
   color: #999999;
   font-size: 13px;
   display: flex;
   align-items: center;
-}
+} */
 
 /* */
 
@@ -628,29 +870,46 @@ li.clockify-tag-item {
 }
 
 .clockify-tag-list-button {
-  padding: 5px 0;
-  background: white;
-  border: 1px solid #C6D2D9;
-  border-radius: 2px;
-  cursor: pointer;
-  align-items: center;
-  display: flex;
+  padding: 5px 0 !important;
+  background: white !important;
+  border: 0px solid #C6D2D9 !important;
+  border-radius: 2px !important;
+  cursor: pointer !important;
+  align-items: center !important;
+  display: flex !important;
 }
 
+.clockify-tag-list-button-disabled {
+  padding: 5px 0 !important;
+  background: #eff4f7 !important;
+  border: 1px solid #C6D2D9 !important; 
+  border-radius: 2px !important;
+  cursor: default !important;
+  align-items: center !important;
+  display: flex !important;
+}
+
+
 .clockify-tag-list-button-required {
-  padding: 5px 0;
-  background: white;
-  border: 1px solid #F44336;
-  border-radius: 2px;
-  cursor: pointer;
+  padding: 5px 0 !important;
+  background: white !important;
+  border: 1px solid #F44336 !important;
+  border-radius: 2px !important;
+  cursor: pointer !important;
 }
 
 .clockify-tag-list-name {
-  display: inline-block;
-  padding: 5px 10px;
-  width: 85%;
-  font-size: 14px;
-  color: #999999;
+  display: inline-block !important;
+  padding: 0px 7px !important;
+  width: 85% !important;
+  font-size: 14px !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.clockify-tag-list-add {
+  color: #999999 !important;
 }
 
 .clockify-tag-list-dropdown {
@@ -694,19 +953,21 @@ li.clockify-tag-item {
 }
 
 .clockify-list-filter {
-  width: 100%;
-  height: 40px;
-  padding: 10px;
-  border: 1px solid #C6D2D9;
-  border-radius: 2px;
-  margin: 0;
+  width: 100% !important;
+  height: 40px !important;
+  padding: 10px !important;
+  border: 1px solid #C6D2D9 !important;
+  border-radius: 2px !important;
+  margin: 0 !important;
+  background-color: white !important;
+  color: rgb(51, 51, 51) !important;
 }
 
 .clockify-list-filter__clear {
-  height: 12px;
-  width: 12px;
-  content: url("../assets/images/x.png");
-  cursor: pointer;
+  height: 12px !important;
+  width: 12px !important;
+  content: url("../assets/images/x.png") !important;
+  cursor: pointer !important;
 }
 
 /***********/
@@ -738,7 +999,7 @@ li.clockify-tag-item {
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  padding: 7px 15px;
+  padding: 6px 15px;
   cursor: pointer;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -760,29 +1021,34 @@ li.clockify-tag-item {
   border: none;
 }
 
-.clockify-checked img {
 /*
+.clockify-checked img {
   margin-top: 3px;
   margin-left: 2px;
-*/
 }
-
+*/
 
 .clockify-tag-list-selected {
-  display: inline-block;
-  max-width: 240px;
-  border-radius: 2px;
-  background-color: #e1f5fe;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  display: inline-block !important;
+  max-width: 240px !important;
+  border-radius: 2px !important;
+  /* background-color: #e1f5fe; */
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  /* color: #02587f !important; */
+  color: rgb(51, 51, 51) !important;
 }
 
 .clockify-tag-list-selected-item {
-  display: inline-block;
-  padding: 5px 5px;
-  border-radius: 3px;
-  color: #02587f;
+  display: inline-block !important;
+  padding: 5px 5px !important;
+  border-radius: 3px !important;
+  /* color: #02587f; */
+}
+
+span.clockify-tag-list-selected > span.clockify-tag-list-selected-item:first-child {
+  padding-left: 0px !important;
 }
 
 ul#ulClockifyProjectDropDown, #ulClockifyProjectDropDown ul, ul#ulClockifyTagDropDown {
@@ -820,4 +1086,351 @@ ul.clockify-tag-list
   color: white;
   background: #03A9F4;
   cursor: pointer;
+}
+
+.clockify-list-load-tasks {
+  width: 100% !important;
+  height: 30px !important;
+  border: none !important;
+  border-radius: 3px !important;
+  color: white !important;
+  background: #03A9F4 !important;
+  cursor: pointer !important;
+  text-align: center !important;
+}
+
+
+
+textarea {
+  box-sizing: border-box;
+  resize: none;
+}
+
+/**
+ * Switchbox
+ **/
+ .clockify-switch {
+  position: relative !important;
+  display: flex !important; /*inline-block;*/
+  align-items: center;
+  width: 280px !important;
+  height: 22px !important;
+  margin: 0 !important;
+}
+
+input.clockify-switch-input { 
+  opacity: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.clockify-switch-slider {
+  position: absolute !important;
+  cursor: pointer !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  background-color: #fff !important;
+  border: 1px solid rgb(198, 210, 217);
+  -webkit-transition: .4s !important;
+  transition: .4s !important;
+  width: 39px !important;
+}
+
+.clockify-switch-slider:before {
+  position: absolute !important;
+  content: "" !important;
+  height: 15px !important;
+  width: 15px !important;
+  left: 4px !important;
+  bottom: 3px !important;
+  background-color: #333 !important;
+  -webkit-transition: .4s !important;
+  transition: .4s !important;
+}
+
+input.clockify-switch-input:checked + .clockify-switch-slider {
+  background-color: #2196F3 !important;
+}
+
+input.clockify-switch-input:focus + .clockify-switch-slider {
+  box-shadow: 0 0 1px #2196F3 !important;
+}
+
+input.clockify-switch-input:checked + .clockify-switch-slider:before {
+  -webkit-transform: translateX(15px) !important;
+  -ms-transform: translateX(15px) !important;
+  transform: translateX(15px) !important;
+  background-color: #fff !important;
+}
+
+/* Rounded sliders */
+.clockify-switch-slider.clockify-switch-round {
+  border-radius: 22px !important;
+}
+
+.clockify-switch-slider.clockify-switch-round:before {
+  border-radius: 50% !important;
+}
+
+span.clockify-switch-label {
+  cursor: pointer !important;
+  color:#333 !important;
+  font-size:14px !important;
+  white-space:nowrap !important;
+  margin: 0px 0px 0px 50px !important;
+  width: 220px !important;
+  text-overflow: ellipsis !important;
+  overflow: hidden !important;
+}
+
+
+
+/**
+ * High contrast mode styles
+ */
+
+
+
+.cl-cut-text-wrapper {
+  flex: 1;
+  min-width: 0;
+}
+
+.cl-cut-text {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.cl-cut-text-wrap {
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+
+/**********************************************
+  .custom-control
+***********************************************/
+
+.cf-container {
+  display: block !important;
+  position: relative !important;
+  padding-left: 35px !important;
+  /* margin-bottom: 5px !important; */
+  line-height: 21px !important; /* slavko added */
+  cursor: pointer !important;
+  font-size: 14px !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+  margin: 0 !important;
+}
+
+/* Hide the browser's default radio button */
+.cf-container input {
+  position: absolute !important;
+  opacity: 0 !important;
+  cursor: pointer !important;
+}
+
+/* Create a custom radio button */
+.checkmark {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  height: 21px !important;
+  width: 21px !important;
+  /* background-color: #eee; */
+  border: 1px solid gray !important;
+  border-radius: 50% !important;
+}
+
+/* On mouse-over, add a grey background color */
+.cf-container:hover input ~ .checkmark {
+  background-color: #ccc !important;
+}
+
+/* When the radio button is checked, add a blue background */
+.cf-container input:checked ~ .checkmark {
+  background-color: #2196F3 !important;
+}
+
+/* Create the indicator (the dot/circle - hidden when not checked) */
+.checkmark:after {
+  content: "" !important;
+  position: absolute !important;
+  display: none !important;
+}
+
+/* Show the indicator (dot/circle) when checked */
+.cf-container input:checked ~ .checkmark:after {
+  display: block !important;
+}
+
+/* Style the indicator (dot/circle) */
+.cf-container .checkmark:after {
+ 	top: 5px !important;
+	left: 6px !important;
+	width: 8px !important;
+	height: 8px !important;
+	border-radius: 50% !important;
+	background: white !important;
+}
+
+/* The Modal (background) */
+.clockify-modal {
+  box-sizing: border-box !important;
+  -webkit-box-sizing: border-box !important;
+  font-family: 'Roboto', sans-serif !important;
+  font-weight: normal !important;
+  display: none; /* Hidden by default */
+  position: fixed !important; /* Stay in place */
+  z-index: 9999999999 !important; /* Sit on top */
+  padding-top: 150px !important; /* Location of the box */
+  left: 0 !important;
+  top: 0 !important;
+  width: 100% !important; /* Full width */
+  height: 100% !important; /* Full height */
+  overflow: auto !important; /* Enable scroll if needed */
+  background-color: rgb(0,0,0) !important; /* Fallback color */
+  background-color: rgba(0,0,0,0.4) !important; /* Black w/ opacity */
+}
+
+/* Modal Content */
+.clockify-modal-content {
+  background-color: #fefefe !important;
+  margin: auto !important;
+  padding: 10px !important;
+  border: 2px solid #888 !important;
+  border-radius: 2px !important;
+  width: 50% !important;
+}
+
+
+/* The Close Button */
+.clockify-close {
+  color: #aaaaaa !important;
+  float: right !important;
+  font-size: 28px !important;
+  font-weight: bold !important;
+  background-color: #fff !important;
+}
+
+.cl-close {
+  background-color: #fff !important;
+  border: 0 !important;
+}
+
+.clockify-close:hover,
+.clockify-close:focus {
+  color: #000 !important;
+  text-decoration: none !important;
+  cursor: pointer !important;
+}
+
+.cl-form-control {
+  margin: 0 !important;
+}
+
+.clockify-link-input {
+  display: block !important;
+  flex: 1;
+  margin: 0 !important;
+  height: 35px !important;
+  padding: 7px !important;
+  font-size: 14px !important;
+  font-weight: 400 !important;
+  line-height: 21px !important;
+  color: #333 !important;
+  background-color: #fff !important;
+  background-clip: padding-box !important;
+  border: 1px solid #c6d2d9 !important;
+  border-radius: 1px !important;
+  transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out !important;
+  box-shadow: none !important;
+}
+
+.clockify-link-input-modal {
+  display: block !important;
+  flex: 1;
+  margin: 0px 0px 0px 10px !important;
+  height: 40px !important;
+  padding: 7px !important;
+  font-size: 14px !important;
+  font-weight: 400 !important;
+  line-height: 21px !important;
+  color: #333 !important;
+  background-color: #fff !important;
+  background-clip: padding-box !important;
+  border: 1px solid #c6d2d9 !important;
+  border-radius: 1px !important;
+  transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out !important;
+  box-shadow: none !important;
+}
+
+
+.modal-content {
+  position: relative !important;
+  display: flex!important;
+  flex-direction: column!important;
+  width: 100%!important;
+  pointer-events: auto!important;
+  background-color: #fff!important;
+  background-clip: padding-box!important;
+  outline: 0!important;
+}
+
+.cl-modal-header {
+  align-items: center !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  padding: 10px 15px 15px 15px !important;
+  border-bottom: 1px solid #c6d2d9 !important;
+  border-top-left-radius: 2px !important;
+  border-top-right-radius: 2px !important;
+}
+
+.cl-modal-title {
+  font-size: 24px !important;
+  font-weight: 400px !important;
+  line-height: 36px !important;
+  color: rgb(102, 102, 102) !important;
+  margin: 0 !important;
+}
+
+.cl-modal-body {
+  position: relative !important;
+  /* flex: 1 1 auto !important; */
+  display: flex !important;
+  justify-content: flex-end !important;
+  padding: 21px !important;
+  align-items: center !important; 
+}
+
+.cl-modal-footer {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  padding: 20px !important;
+  border-top: 1px solid #c6d2d9 !important;
+  border-bottom-right-radius: 2px !important;
+  border-bottom-left-radius: 2px !important;
+}
+
+.clockify-cancel {
+  color: #2196F3 !important;
+}
+
+.clockify-save {
+  color: white;
+  background-color: #2196F3 !important;
+  margin-left: 20px;
+  padding: 10px;
+}
+
+a.clockify-cancel, a.clockify-save {
+  cursor: pointer !important;
 }

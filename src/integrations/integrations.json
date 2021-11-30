@@ -71,6 +71,12 @@
     "script": "clubhouse.js",
     "clone": false
   },
+  "shortcut.com": {
+    "name": "Shortcut",
+    "link": "*://app.shortcut.com/*",
+    "script": "clubhouse.js",
+    "clone": false
+  },  
   "coda.io": {
     "name": "Coda",
     "link": "*://*.coda.io/*",
@@ -173,7 +179,7 @@
     "script": "hillia.js",
     "clone": false
   },
-  "app.hubspot.com": {
+  "hubspot.com": {
     "name": "Hubspot",
     "link": "*://app.hubspot.com/*",
     "script": "hubspot.js",

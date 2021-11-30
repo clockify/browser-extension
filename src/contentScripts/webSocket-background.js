@@ -14,27 +14,21 @@ const webSocketEventsEnums = {
 Object.freeze(webSocketEventsEnums);
 
 let connection;
-
-let onErrorReconnectTimeout;
-let onCloseReconnectTimeout;
+let reconnectIntervalId;
 
 function connectWebSocket() {
-    if (JSON.parse(localStorage.getItem('selfhosted_selfHosted'))) {
-        return;
-    }
-
     const webSocketClientId = localStorage.getItem('permanent_webSocketClientId');
     const userEmail = localStorage.getItem('userEmail');
     const webSocketEndpoint = localStorage.getItem("permanent_webSocketEndpoint");
-
-
+    
     if (!webSocketClientId || !userEmail || !webSocketEndpoint || connection) {
         return;
     }
+    const appName = `extension-${isChrome()?'chrome':'firefox'}`;
 
     const connectionId = `/${webSocketClientId}/` +
         `${localStorage.getItem('userEmail')}/` +
-        `${Math.random().toString(36).substring(2, 10)}`;
+        `${Math.random().toString(36).substring(2, 10)}/${appName}`;
 
     connection = new WebSocket(
         `${webSocketEndpoint}${connectionId}`
@@ -42,7 +36,11 @@ function connectWebSocket() {
 
     connection.onopen = (event) => {
         if (event.type === 'open') {
-            this.getToken().then(token => {
+            if (reconnectIntervalId) {
+                clearInterval(reconnectIntervalId);
+                reconnectIntervalId = null;
+            }            
+            TokenService.getToken().then(token => {
                 if (!!token) {
                     this.authenticate(token);
                     localStorage.setItem('wsConnectionId', connectionId);
@@ -52,17 +50,20 @@ function connectWebSocket() {
     };
 
     connection.onclose = (event) => {
-        if (onErrorReconnectTimeout) {
-            clearTimeout(onErrorReconnectTimeout);
-        }
+        if (reconnectIntervalId) {
+            clearInterval(reconnectIntervalId);
+            reconnectIntervalId = null;
+        }     
 
         if (event.code === 4000) {
             connection = null;
             return;
         }
 
-        onCloseReconnectTimeout =
-            setTimeout(() => this.connectWebSocket(document.token), getReconnectTimeout());
+        // onCloseReconnectTimeout = setTimeout(() => this.connectWebSocket(document.token), getReconnectTimeout());
+        reconnectIntervalId = setInterval(() => {
+            this.connectWebSocket(document.token);
+        }, 5000); //getReconnectTimeout());
     };
 
 
@@ -71,11 +72,8 @@ function connectWebSocket() {
     };
 
     connection.onerror = (error) => {
-        if (onCloseReconnectTimeout) {
-            clearTimeout(onCloseReconnectTimeout);
-        }
-        onErrorReconnectTimeout =
-            setTimeout(() => this.connectWebSocket(document.token), getReconnectTimeout());
+        //onErrorReconnectTimeout = setTimeout(() => this.connectWebSocket(document.token), getReconnectTimeout());
+        connection.close();
     }
 }
 
@@ -157,10 +155,13 @@ async function messageHandler(event) {
         case webSocketEventsEnums.WORKSPACE_SETTINGS_UPDATED:
             this.sendWebSocketEventToExtension(event.data);
             UserWorkspaceStorage.getSetWorkspaceSettings();
+            UserService.getSetUserRoles();
             break;
 
         case webSocketEventsEnums.CHANGED_ADMIN_PERMISSION:
             this.sendWebSocketEventToExtension(event.data);
+            UserWorkspaceStorage.getSetWorkspaceSettings();
+            UserService.getSetUserRoles();
             break;
     }
 };
@@ -177,18 +178,24 @@ function authenticate(token) {
 
 aBrowser.runtime.onMessage.addListener((request, sender, sendResponse) => {
     switch (request.eventName) {
-        case "webSocketConnect":
+        case 'webSocketConnect':
             if (!connection) {
                 this.connectWebSocket();
             }
             break;
-        case "webSocketDisconnect":
+        case 'webSocketDisconnect':
             if (connection) {
                 this.disconnectWebSocket();
             }
             break;
     }
 });
+
+function backgroundWebSocketConnect() {
+    if (!connection) {
+        this.connectWebSocket();
+    }
+}
 
 
 function getReconnectTimeout() {

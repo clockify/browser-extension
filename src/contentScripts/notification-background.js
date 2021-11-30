@@ -9,7 +9,7 @@ const buttonClickedListener = (notificationId, buttonIndex) => {
             break;
         case 'reminder':
             if (reminderButtons[buttonIndex] === 'Start timer') {
-                this.startTimer('');
+                TimeEntry.startTimer('');
                 this.removeReminderTimer();
             } else {
                 aBrowser.tabs.create({'url': 'https://clockify.me/tracker?mode=manual'});

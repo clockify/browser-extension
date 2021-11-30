@@ -368,11 +368,13 @@ class Pomodoro extends React.Component {
                                     onChange={this.changeIsDefaultProjectEnabled.bind(this)}/>
                         </div>
                         {this.state.isDefaultProjectEnabled && 
-                            <DefaultPomodoroBreakProject
-                                workspaceSettings={this.props.workspaceSettings}
-                                changeSaved={this.props.changeSaved}
-                                resizeHeight={this.resizeHeight}
-                            />
+                            <div style={{ width: '360px' }}>
+                                <DefaultPomodoroBreakProject
+                                    workspaceSettings={this.props.workspaceSettings}
+                                    changeSaved={this.props.changeSaved}
+                                    resizeHeight={this.resizeHeight}
+                                />
+                            </div>
                         }
                     </div>
                 </div>

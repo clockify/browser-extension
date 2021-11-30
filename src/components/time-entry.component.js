@@ -3,6 +3,7 @@ import EditForm from './edit-form.component';
 import * as ReactDOM from 'react-dom';
 import {isOffline} from "./check-connection";
 import Login from "./login.component";
+import {offlineStorage} from '../helpers/offlineStorage';
 
 class TimeEntry extends React.Component {
 
@@ -35,7 +36,6 @@ class TimeEntry extends React.Component {
                           timeEntry={this.props.timeEntry}
                           workspaceSettings={this.props.workspaceSettings}
                           timeFormat={this.props.timeFormat}
-                          isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}
                           userSettings={this.props.userSettings}
                 />, document.getElementById('mount')
             );
@@ -89,6 +89,11 @@ class TimeEntry extends React.Component {
     }
 
     render() {
+        //const hideBillable = offlineStorage.onlyAdminsCanChangeBillableStatus && !offlineStorage.isUserOwnerOrAdmin;
+        //console.log('offlineStorage.onlyAdminsCanChangeBillableStatus', offlineStorage.onlyAdminsCanChangeBillableStatus)
+        //console.log('offlineStorage.activeBillableHours', offlineStorage.activeBillableHours)
+        //console.log('offlineStorage.isUserOwnerOrAdmin', offlineStorage.isUserOwnerOrAdmin)
+        console.log('offlineStorage.hideBillable', offlineStorage.hideBillable)
         const { timeEntry, project } = this.props;
         if (project !== undefined && this.props.task !== undefined) {
             if (this.state.ready) {
@@ -118,8 +123,9 @@ class TimeEntry extends React.Component {
                                  onClick={this.goToEdit.bind(this)}>
                                 <span title={this.state.tagTitle} className={timeEntry.tags && timeEntry.tags.length > 0 ?
                                     "time-entry__right-side__tag" : "disabled"}></span>
-                                <span className={timeEntry.billable ?
-                                    "time-entry__right-side__billable" : "disabled"}></span>
+                                <span className={timeEntry.billable && !offlineStorage.hideBillable
+                                     ? "time-entry__right-side__billable"
+                                     : "disabled"}></span>
                                 <span className={timeEntry.approvalRequestId ?
                                     "time-entry__right-side__approved" : "disabled"}>
                                     <img src="./assets/images/approved.png"/>

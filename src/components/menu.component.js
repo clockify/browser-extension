@@ -4,7 +4,7 @@ import Settings from './settings.component';
 import {TokenService} from "../services/token-service";
 import {getBrowser, isChrome} from "../helpers/browser-helper";
 import {isAppTypeExtension} from "../helpers/app-types-helper";
-import {WebSocketClient} from "../web-socket/web-socket-client";
+//import {WebSocketClient} from "../web-socket/web-socket-client";
 import {getAppTypes} from "../enums/applications-types.enum";
 import {getEnv} from "../environment";
 import {HtmlStyleHelper} from "../helpers/html-style-helper";
@@ -16,7 +16,7 @@ import {SettingsService} from "../services/settings-service";
 import {getManualTrackingModeEnums} from "../enums/manual-tracking-mode.enum";
 
 const tokenService = new TokenService();
-const webSocketClient = new WebSocketClient();
+//const webSocketClient = new WebSocketClient();
 const environment = getEnv();
 const htmlStyleHelper = new HtmlStyleHelper();
 const localStorageService = new LocalStorageService();
@@ -106,11 +106,12 @@ class Menu extends React.Component {
         if (!JSON.parse(localStorage.getItem('selfHosted_selfHosted'))) {
             if (isAppTypeExtension()) {
                 getBrowser().runtime.sendMessage({
-                    eventName: "webSocketDisconnect"
+                    eventName: 'webSocketDisconnect'
                 });
-            } else {
-                webSocketClient.disconnect();
-            }
+            } 
+            // else {
+            //     webSocketClient.disconnect();
+            // }
         }
     }
 
