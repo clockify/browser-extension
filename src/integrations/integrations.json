@@ -137,6 +137,12 @@
     "script": "gitlab.js",
     "clone": false
   },
+  "linear.app": {
+    "name": "Linear",
+    "link": "*://*.linear.app/*",
+    "script": "linear.js",
+    "clone": false
+  },
   "calendar.google.com": {
     "name": "Google calendar",
     "link": "*://calendar.google.com/*",
