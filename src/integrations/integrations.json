@@ -76,7 +76,7 @@
     "link": "*://app.shortcut.com/*",
     "script": "clubhouse.js",
     "clone": false
-  },  
+  },
   "coda.io": {
     "name": "Coda",
     "link": "*://*.coda.io/*",
@@ -500,6 +500,11 @@
     "name": "Freshrelease",
     "link": "*://*.freshrelease.com/*",
     "script": "freshrelease.js"
+  },
+  "frontapp.com": {
+    "name": "Front",
+    "link": "*://*.frontapp.com/*",
+    "script": "front.js"
   },
   "desk.zoho.com": {
     "name": "Zoho Desk",
