@@ -44,6 +44,7 @@
     "react-datepicker": "^4.6.0",
     "react-dom": "^16.5.2",
     "react-http-request": "^2.0.0",
+    "react-onclickoutside": "^6.12.1",
     "react-popper": "^2.2.5",
     "url-parse": "^1.4.3"
   },

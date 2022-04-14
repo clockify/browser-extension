@@ -1,15 +1,19 @@
-import * as stage from "./environment.stage";
-import * as prod from "./environment.prod";
-import * as dev from "./environment.dev";
+
+const environmentDev = {
+    production: true,
+    endpoint: 'https://global.api.clockify.me',
+    home: 'https://app.clockify.me',
+    signUp: 'https://app.clockify.me/signup',
+    resetPassword: 'https://app.clockify.me/reset-password',
+    startButton:'START',
+    stopButton:'STOP',
+    terms: 'https://app.clockify.me/terms',
+    webSocket: {
+        endpoint: 'wss://stomp.clockify.me',
+        clientId: 'clockify'
+    }
+};
 
 export function getEnv() {
-    if (process.env.NODE_ENV === 'prod') {
-        return prod.getEnv();
-    }
-
-    if (process.env.NODE_ENV === 'stage') {
-        return stage.getEnv();
-    }
-    return dev.getEnv();
+    return environmentDev;
 }
-
