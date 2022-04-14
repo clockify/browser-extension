@@ -1,4 +1,5 @@
 import * as React from "react";
+import locales from "../helpers/locales";
 
 class DeleteEntryConfirmationComponent extends React.Component {
 
@@ -22,12 +23,12 @@ class DeleteEntryConfirmationComponent extends React.Component {
                 <div className="delete-entry-confirmation-dialog-open">
                     <div className="delete-entry-confirmation-dialog">
                         <span className="delete-entry-confirmation-dialog__question">
-                            Are you sure you want to delete entry?
+                            {locales.ARE_YOU_SURE_DELETE}
                         </span>
                         <span onClick={this.confirm.bind(this)}
-                              className="delete-entry-confirmation-dialog__confirmation_button">Delete</span>
+                              className="delete-entry-confirmation-dialog__confirmation_button">{locales.DELETE}</span>
                         <span onClick={this.cancel.bind(this)}
-                              className="delete-entry-confirmation-dialog__cancel">Cancel</span>
+                              className="delete-entry-confirmation-dialog__cancel">{locales.CANCEL}</span>
                     </div>
                 </div>
             );

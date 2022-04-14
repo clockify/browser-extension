@@ -4,6 +4,7 @@ import * as ReactDOM from 'react-dom';
 import {isOffline} from "./check-connection";
 import Login from "./login.component";
 import {offlineStorage} from '../helpers/offlineStorage';
+import locales from "../helpers/locales";
 
 class TimeEntry extends React.Component {
 
@@ -16,6 +17,20 @@ class TimeEntry extends React.Component {
             tagTitle: ''
         }
         this.createTitle = this.createTitle.bind(this);
+        this.setAsyncStateItems = this.setAsyncStateItems.bind(this);
+    }
+
+    async setAsyncStateItems() {
+        const hideBillable = await offlineStorage.getHideBillable();
+        if(hideBillable !== this.state.hideBillable){
+            this.setState({
+                hideBillable
+            });
+        }
+    }
+
+    componentDidUpdate() {
+        this.setAsyncStateItems();
     }
 
     componentDidMount() {
@@ -25,10 +40,10 @@ class TimeEntry extends React.Component {
         }
     }
 
-    goToEdit() {
+    async goToEdit() {
         if((!this.props.timeEntry.isLocked || this.props.isUserOwnerOrAdmin) && this.props.timeEntry.approvalRequestId == null) {
             ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
-            if (isOffline()) {
+            if (await isOffline()) {
                 ReactDOM.render(<Login/>, document.getElementById('mount'));
             }
             ReactDOM.render(
@@ -52,26 +67,26 @@ class TimeEntry extends React.Component {
         let tagTitle = "";
 
         if (this.props.timeEntry.description) {
-            title = "Description: " + this.props.timeEntry.description;
+            title = locales.DESCRIPTION_LABEL + ": " + this.props.timeEntry.description;
         }
 
         if (this.props.project) {
             if (this.props.project.name) {
-                title = title + "\nProject: " + this.props.project.name;
+                title = title + (title ? "\n" : "" + `${locales.PROJECT}: `) + this.props.project.name;
             }
 
             if (this.props.task && this.props.task.name) {
-                title = title + "\nTask: " + this.props.task.name;
+                title = title + `\n${locales.TASK}: ` + this.props.task.name;
             }
 
-            if (this.props.project.client && this.props.project.client.name) {
-                title = title + "\nClient: " + this.props.project.client.name;
+            if (this.props.project.clientName) {
+                title = title + `\n${locales.CLIENT}: ` + this.props.project.clientName;
             }
         }
 
         const {tags} = this.props.timeEntry;
         if (tags && tags.length > 0) {
-            tagTitle = (tags.length > 1 ? 'Tags:\n' : "Tag: ") + tags.map(tag=>tag.name).join('\n')    
+            tagTitle = (tags.length > 1 ? `${locales.TAGS}:\n` : `${locales.TAG}: `) + tags.map(tag=>tag.name).join('\n')    
         }
 
         this.setState({
@@ -89,11 +104,6 @@ class TimeEntry extends React.Component {
     }
 
     render() {
-        //const hideBillable = offlineStorage.onlyAdminsCanChangeBillableStatus && !offlineStorage.isUserOwnerOrAdmin;
-        //console.log('offlineStorage.onlyAdminsCanChangeBillableStatus', offlineStorage.onlyAdminsCanChangeBillableStatus)
-        //console.log('offlineStorage.activeBillableHours', offlineStorage.activeBillableHours)
-        //console.log('offlineStorage.isUserOwnerOrAdmin', offlineStorage.isUserOwnerOrAdmin)
-        console.log('offlineStorage.hideBillable', offlineStorage.hideBillable)
         const { timeEntry, project } = this.props;
         if (project !== undefined && this.props.task !== undefined) {
             if (this.state.ready) {
@@ -104,17 +114,17 @@ class TimeEntry extends React.Component {
                          onClick={this.goToEdit.bind(this)}
                     >
                         <div className="time-entry-description">
-                            <div className={timeEntry.description ? "description" : "no-description"}>
-                                {timeEntry.description ? timeEntry.description : "(no description)"}
+                            <div className={timeEntry.description ? "description" : locales.NO_DESCRIPTION}>
+                                {timeEntry.description ? timeEntry.description : locales.NO_DESCRIPTION}
                             </div>
                             <div style={project ? {color: project.color} : {}}
                                  className={project ? "time-entry-project" : "disabled"}>
                                 <div className="time-entry__project-wrapper">
                                     <div style={project ? {background: project.color} : {}} className="dot"></div>
-                                    <span className="time-entry__project-name" >{project ? project.name : ""}</span>
+                                    <span className="time-entry__project-name" >{project ? project.name : ""}{this.props.task ? ": " + this.props.task.name : ""}</span>
                                 </div>
-                                <span className="time-entry__task-name">
-                                    {this.props.task ? " - " + this.props.task.name : ""}
+                                <span className="time-entry__client-name">
+                                    {project && project.clientName ? " - " + project.clientName : ""}    
                                 </span>
                             </div>
                         </div>
@@ -123,7 +133,7 @@ class TimeEntry extends React.Component {
                                  onClick={this.goToEdit.bind(this)}>
                                 <span title={this.state.tagTitle} className={timeEntry.tags && timeEntry.tags.length > 0 ?
                                     "time-entry__right-side__tag" : "disabled"}></span>
-                                <span className={timeEntry.billable && !offlineStorage.hideBillable
+                                <span className={timeEntry.billable && !this.state.hideBillable
                                      ? "time-entry__right-side__billable"
                                      : "disabled"}></span>
                                 <span className={timeEntry.approvalRequestId ?

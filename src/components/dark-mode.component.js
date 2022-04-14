@@ -2,6 +2,7 @@ import * as React from "react";
 import {LocalStorageService} from "../services/localStorage-service";
 import {getLocalStorageEnums} from "../enums/local-storage.enum";
 import {HtmlStyleHelper} from "../helpers/html-style-helper";
+import locales from "../helpers/locales";
 
 const localStorageService = new LocalStorageService();
 const htmlStyleHelper = new HtmlStyleHelper();
@@ -20,12 +21,13 @@ class DarkModeComponent extends React.Component {
         this.isDarkModeOn();
     }
 
-    isDarkModeOn() {
-        const userId = localStorageService.get('userId');
-        const darkModeFromStorageForUser = localStorageService.get('darkMode') &&
-        JSON.parse(localStorageService.get('darkMode'))
+    async isDarkModeOn() {
+        const userId = await localStorageService.get('userId');
+        const darkMode = await localStorageService.get('darkMode');
+        const darkModeFromStorageForUser = darkMode &&
+        JSON.parse(darkMode)
             .filter(darkMode => darkMode.userId === userId).length > 0 ?
-            JSON.parse(localStorageService.get('darkMode'))
+            JSON.parse(darkMode)
                 .filter(darkMode => darkMode.userId === userId)[0] : null;
 
         if (!darkModeFromStorageForUser) {
@@ -37,10 +39,11 @@ class DarkModeComponent extends React.Component {
         });
     }
 
-    toggleDarkMode() {
-        const userId = localStorageService.get('userId');
-        let darkModeFromStorage = localStorageService.get('darkMode') ?
-            JSON.parse(localStorageService.get('darkMode')) : [];
+    async toggleDarkMode() {
+        const userId = await localStorageService.get('userId');
+        const darkMode = await localStorageService.get('darkMode');
+        let darkModeFromStorage = darkMode ?
+            JSON.parse(darkMode) : [];
         let isEnabled;
         const darkModeForCurrentUser = darkModeFromStorage.length > 0 &&
             darkModeFromStorage.filter(darkMode => darkMode.userId === userId).length > 0 ?
@@ -91,7 +94,7 @@ class DarkModeComponent extends React.Component {
                              "dark-mode__checkbox--img" :
                              "dark-mode__checkbox--img_hidden"}/>
                 </div>
-                <span className="dark-mode__title">Enable dark mode</span>
+                <span className="dark-mode__title">{locales.ENABLE_DARK_MODE}</span>
             </div>
         )
     }

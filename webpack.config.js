@@ -50,7 +50,17 @@ module.exports = {
             {from: './src/integrations', to: './integrations'},
             {from: './src/popupDlg', to: './popupDlg'},
             {from: './src/settings.html', to: './'},
-            {from: './src/settings.js', to: './'}
+            {from: './src/settings.js', to: './'},
+            {from: './_locales', to: './_locales'},
+            {from: './src/helpers/locales.js',  to: './contentScripts/clockifyLocales.js',
+                transform(content) {
+                    return content
+                        .toString()
+                        .replace('var locales', 'var clockifyLocales')
+                        .replace('export default locales;', "");
+                },
+            },
+            {from: './sw.js', to: './'}
         ])
     ]
 };

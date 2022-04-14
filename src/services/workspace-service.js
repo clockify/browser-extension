@@ -9,10 +9,10 @@ export class WorkspaceService extends HttpWrapperService {
         super();
     }
 
-    getPermissionsForUser() {
-        const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
-        const userId = localStorageService.get('userId');
-        const baseUrl = localStorageService.get('baseUrl');
+    async getPermissionsForUser() {
+        const activeWorkspaceId = await localStorageService.get('activeWorkspaceId');
+        const userId = await localStorageService.get('userId');
+        const baseUrl = await localStorageService.get('baseUrl');
         const workspacePermissionsUrl =
             `${baseUrl}/workspaces/${activeWorkspaceId}/users/${userId}/permissions`;
 
@@ -20,16 +20,16 @@ export class WorkspaceService extends HttpWrapperService {
             .then(response => response.data);
     }
 
-    getWorkspaceSettings() {
-        const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
-        const baseUrl = localStorageService.get('baseUrl');
+    async getWorkspaceSettings() {
+        const activeWorkspaceId = await localStorageService.get('activeWorkspaceId');
+        const baseUrl = await localStorageService.get('baseUrl');
         const workspaceSettingsUrl =
             `${baseUrl}/workspaces/${activeWorkspaceId}`;
         return super.get(workspaceSettingsUrl, addToken);
     }
 
-    getWorkspacesOfUser() {
-        const baseUrl = localStorageService.get('baseUrl');
+    async getWorkspacesOfUser() {
+        const baseUrl = await localStorageService.get('baseUrl');
         const workspacesUrl = `${baseUrl}/workspaces/`;
 
         return super.get(workspacesUrl, addToken);

@@ -2,6 +2,7 @@ import {getDefaultProjectEnums} from "../enums/default-project.enum";
 import {LocalStorageService} from "../services/localStorage-service";
 import {ProjectService} from "../services/project-service";
 import {isOffline} from "../components/check-connection";
+import locales from "../helpers/locales";
 
 const localStorageService = new LocalStorageService();
 const projectService = new ProjectService();
@@ -17,11 +18,17 @@ export class DefaultProject {
         this.enabled = defaultProject.enabled; 
     }
     
-    static getStorage(isPomodoro=false) {
+    static async getStorage(isPomodoro=false) {
         const storageName = isPomodoro
                 ? getDefaultProjectEnums().POMODORO_BREAK_DEFAULT_PROJECTS
                 : getDefaultProjectEnums().DEFAULT_PROJECTS;
-        const storage = new StorageUserWorkspace(storageName);
+        
+        const isPermanent = true;
+        const workspaceId = await localStorageService.get('activeWorkspaceId');
+        const userId = await localStorageService.get('userId');
+        const str = await localStorageService.get(`${isPermanent ? 'permanent_' : ''}${storageName}`);
+
+        const storage = new StorageUserWorkspace(storageName, {workspaceId, userId, str}, isPermanent);
         const defaultProject = storage.defaultProject;
         return { storage, defaultProject };
     }
@@ -42,7 +49,7 @@ export class DefaultProject {
             const projectDB = await this.getProjectsByIds([id]);
             let taskDB = null;
             if (projectDB) {
-                if (!projectDB.archived && selectedTask && forceTasks) {
+                if (!projectDB.archived && selectedTask) {
                     taskDB = await this.getTask(selectedTask.id);
                     if (taskDB) {
                         taskDB.isDone = taskDB.status === 'DONE'
@@ -54,7 +61,7 @@ export class DefaultProject {
     }
 
     async getProjectTaskFromDB(forceTasks) {
-        if (isOffline())
+        if (await isOffline())
             return {projectDB: null, taskDB: null, msg: null, msgId: null};
         let msg = null;
         let msgId = null;
@@ -65,7 +72,7 @@ export class DefaultProject {
             if (projectDB) {
                 if (projectDB.archived) {
                     // storage.removeDefaultProject();
-                    msg = `Your default project is archived. You can set a new one in Settings.`;
+                    msg = `${locales.DEFAULT_PROJECT_ARCHIVED}. ${locales.YOU_CAN_SET_A_NEW_ONE_IN_SETTINGS}.`;
                     msgId = 'projectArchived';
                     projectDB = null;
                 }
@@ -74,12 +81,12 @@ export class DefaultProject {
                         if (taskDB) {
                             if (taskDB.isDone) {
                                 taskDB = null;
-                                msg = `Your default task is Done, no longer available. You can set a new one in Settings.`;
+                                msg = `${locales.DEFAULT_TASK_DONE}. ${locales.YOU_CAN_SET_A_NEW_ONE_IN_SETTINGS}.`;
                                 msgId = 'taskDone';
                             }
                         }
                         else {
-                            msg = `Default task doesn't exist. You can set a new one in Settings.`;
+                            msg = `${locales.DEFAULT_TASK_DOES_NOT_EXIST}. ${locales.YOU_CAN_SET_A_NEW_ONE_IN_SETTINGS}.`;
                             msgId = 'taskDoesNotExist';
                         }
                     }
@@ -88,7 +95,7 @@ export class DefaultProject {
             }
             else {
                 // storage.removeDefaultProject();
-                msg = `Your default project is no longer available. You can set a new one in Settings.`;
+                msg = `${locales.DEFAULT_PROJECT_NOT_AVAILABLE} ${locales.YOU_CAN_SET_A_NEW_ONE_IN_SETTINGS}`;
                 msgId = "projectDoesNotExist";
             }
         }
@@ -144,15 +151,19 @@ export class DefaultProject {
 
 export class StorageUserWorkspace {
 
-    constructor(storageName=getDefaultProjectEnums().DEFAULT_PROJECTS, isPermanent=true) 
+    constructor(storageName=getDefaultProjectEnums().DEFAULT_PROJECTS, storageItems, isPermanent=true) 
     {
         this.storageName = storageName;
         this.isPermanent = isPermanent;
 
-        this.workspaceId = localStorageService.get('activeWorkspaceId');
-        this.userId = localStorageService.get('userId');
+        this.workspaceId = storageItems.workspaceId;
+        this.userId = storageItems.userId;
+        const str = storageItems.str;
 
-        const str = localStorageService.get(`${isPermanent ? 'permanent_' : ''}${storageName}`);
+        // this.workspaceId = await localStorageService.get('activeWorkspaceId');
+        // this.userId = await localStorageService.get('userId');
+
+        // const str = await localStorageService.get(`${isPermanent ? 'permanent_' : ''}${storageName}`);
         let storage = str ? JSON.parse(str) : {};
         if (Array.isArray(storage)) {
             const obj = {};
@@ -216,7 +227,7 @@ export class StorageUserWorkspace {
         workspace.defaultProject = {
             project: {
                 id: getDefaultProjectEnums().LAST_USED_PROJECT,
-                name: 'Last used project'
+                name: locales.LAST_USED_PROJECT
             },
             enabled: true
         }

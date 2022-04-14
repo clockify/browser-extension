@@ -9,9 +9,9 @@ export class TagService extends HttpWrapperService {
         super();
     }
 
-    getAllTagsWithFilter(page, pageSize, filter) {
-        const baseUrl = localStorageService.get('baseUrl');
-        const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
+    async getAllTagsWithFilter(page, pageSize, filter) {
+        const baseUrl = await localStorageService.get('baseUrl');
+        const activeWorkspaceId = await localStorageService.get('activeWorkspaceId');
         let getTagsUrl = `${baseUrl}/v1/workspaces/${activeWorkspaceId}/tags` +
             `?page=${page}&pagesize=${pageSize}&archived=false`;
         if (!!filter) {
@@ -20,9 +20,9 @@ export class TagService extends HttpWrapperService {
         return super.get(getTagsUrl, addToken);
     }
 
-    createTag(tag) {
-        const baseUrl = localStorageService.get('baseUrl');
-        const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
+    async createTag(tag) {
+        const baseUrl = await localStorageService.get('baseUrl');
+        const activeWorkspaceId = await localStorageService.get('activeWorkspaceId');
         const createTagUrl = `${baseUrl}/v1/workspaces/${activeWorkspaceId}/tags`;
 
         const body = tag;

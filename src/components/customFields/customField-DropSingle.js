@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import useCustomField from './useCustomField';
 import debounce from 'lodash/debounce';
 import {isOffline} from "../check-connection";
+import locales from "../../helpers/locales";
 
 const CustomFieldDropSingle = ({ cf, closeOther, updateValue }) => {
     
@@ -14,7 +15,7 @@ const CustomFieldDropSingle = ({ cf, closeOther, updateValue }) => {
 
     const newList = (val) => {
         const items = allowedValues.map((name, id) => ({ id, name, isChecked: val === name }) );
-        items.unshift({ id: -1, name: 'None', isChecked: val === null});
+        items.unshift({ id: -1, name: locales.NONE, isChecked: val === null});
         return items;
     }
 
@@ -33,9 +34,10 @@ const CustomFieldDropSingle = ({ cf, closeOther, updateValue }) => {
 
     const tagsRequired = false;
 
-    const handleChangeDelayed = useRef(debounce(val => {
+    const handleChangeDelayed = useRef(debounce(async val => {
         updateValue(id, val);
-        if (!(manualMode || isOffline())) {
+        const isOff = await isOffline();
+        if (!(manualMode || isOff)) {
             storeValue(val);
         }
     }, 0));
@@ -70,6 +72,8 @@ const CustomFieldDropSingle = ({ cf, closeOther, updateValue }) => {
         const arr = [...name].map(c => _encode_chars[c] ? _encode_chars[c] : c)
         return arr.join('')
     }
+
+    const noMatcingItems = locales.NO_MATCHING('items');
 
     let naslov = name + ":" + (value === null ? "" : value)
     return (
@@ -130,7 +134,7 @@ const CustomFieldDropSingle = ({ cf, closeOther, updateValue }) => {
                                             </label>
                                         </div>
                                     )
-                                }) : <span className="tag-list--not_tags">No matching items</span>
+                                }) : <span className="tag-list--not_tags">{noMatcingItems}</span>
                             }
                         </div>
                     </div>

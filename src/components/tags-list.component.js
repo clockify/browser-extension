@@ -2,6 +2,7 @@ import * as React from 'react';
 import {TagService} from "../services/tag-service";
 import {SortHepler} from "../helpers/sort-helper";
 import {debounce} from "lodash";
+import locales from "../helpers/locales";
 
 const tagService = new TagService();
 const sortHelpers = new SortHepler();
@@ -21,16 +22,26 @@ class TagsList extends React.Component {
             isEnabledCreateTag: false,
             createFormOpened: false,
             tagName: "",
-            tagIds: this.props.tagIds ? this.props.tagIds : []
+            tagIds: this.props.tagIds ? this.props.tagIds : [],
+            isOffline: null
         };
 
         this.filterTags = debounce(this.filterTags, 500);
         this.selectTag = this.selectTag.bind(this);
         this.toggleTagsList = this.toggleTagsList.bind(this);
+        this.setAsyncStateItems = this.setAsyncStateItems.bind(this);
+    }
+
+    async setAsyncStateItems() {
+        const isOffline = await localStorage.getItem('offline');
+        this.setState({
+            isOffline: JSON.parse(isOffline)
+        });
     }
 
     componentDidMount(){
         this.isEnabledCreateTag();
+        this.setAsyncStateItems();
     }
 
     isOpened() {
@@ -43,8 +54,9 @@ class TagsList extends React.Component {
         });
     }
 
-    getTags(page, pageSize) {
-        if(!JSON.parse(localStorage.getItem('offline'))) {
+    async getTags(page, pageSize) {
+        const offline = await localStorage.getItem('offline');
+        if(!JSON.parse(offline)) {
             tagService.getAllTagsWithFilter(page, pageSize, this.state.filter)
                 .then(response => {
                     let data = response.data;
@@ -72,9 +84,10 @@ class TagsList extends React.Component {
         })
     }
 
-    toggleTagsList(e) {
+    async toggleTagsList(e) {
         e.stopPropagation();
-        if(!JSON.parse(localStorage.getItem('offline'))) {
+        const offline = await localStorage.getItem('offline');
+        if(!JSON.parse(offline)) {
             if (!this.state.isOpen && this.state.tagsList.length === 0) {
                 this.getTags(this.state.page, pageSize);
             }
@@ -141,7 +154,7 @@ class TagsList extends React.Component {
         let tag = {};
 
         if (!this.state.tagName) {
-            this.props.errorMessage('Name is required.');
+            this.props.errorMessage(locales.NAME_IS_REQUIRED);
             return;
         }
         tag.name = this.state.tagName;
@@ -177,16 +190,18 @@ class TagsList extends React.Component {
     }
 
     render(){
+        const noMatcingTags = locales.NO_MATCHING('tags');
+
         const { tags } = this.props;
 
         let title = '';
         if (tags && tags.length > 0) {
-            title = (tags.length > 1 ? 'Tags:\n' : "Tag: ") + tags.map(tag=>tag.name).join('\n')    
+            title = (tags.length > 1 ? `${locales.TAGS}:\n` : `${locales.TAG}: `) + tags.map(tag=>tag.name).join('\n')    
         }
 
         return (
             <div className="tag-list" title={title}>
-                <div className={JSON.parse(localStorage.getItem('offline')) ?
+                <div className={this.state.isOffline ?
                     "tag-list-button-offline" : this.props.tagsRequired ?
                         "tag-list-button-required" : "tag-list-button"}
                      onClick={this.toggleTagsList}
@@ -194,7 +209,7 @@ class TagsList extends React.Component {
                      onKeyDown={e => {if (e.key==='Enter') this.toggleTagsList(e)}}
                 >
                     <span className={tags.length === 0 ? "tag-list-add" : "disabled"}>
-                        {this.props.tagsRequired ? "Add tags (required)" : "Add tags"}
+                        {this.props.tagsRequired ? `${locales.ADD_TAGS} ${locales.REQUIRED_LABEL}` : locales.ADD_TAGS}
                     </span>
                     <span className={tags.length > 0 ?
                         "tag-list-selected" : "disabled"}>
@@ -217,7 +232,7 @@ class TagsList extends React.Component {
                         <div className="tag-list-input">
                             <div className="tag-list-input--border">
                                 <input
-                                    placeholder={"Filter tags"}
+                                    placeholder={locales.FIND_TAGS}
                                     className="tag-list-filter"
                                     onChange={this.filterTags.bind(this)}
                                     id="tag-filter"
@@ -250,11 +265,11 @@ class TagsList extends React.Component {
                                             </span>
                                             </div>
                                         )
-                                    }) : <span className="tag-list--not_tags">No matching tags</span>
+                                    }) : <span className="tag-list--not_tags">{noMatcingTags}</span>
                             }
                         </div>
                         <div className={this.state.loadMore ? "tag-list-load" : "disabled"}
-                             onClick={this.loadMoreTags.bind(this)}>Load more
+                             onClick={this.loadMoreTags.bind(this)}>{locales.LOAD_MORE}
                         </div>
                         <div className={this.state.isEnabledCreateTag ?
                             "tag-list__bottom-padding" : "disabled"}>
@@ -263,7 +278,7 @@ class TagsList extends React.Component {
                             "tag-list__create-tag" : "disabled"}>
                             <span className="tag-list__create-tag--icon"></span>
                             <span onClick={this.openCreateTag.bind(this)}
-                                  className="tag-list__create-tag--text">Create new tag</span>
+                                  className="tag-list__create-tag--text">{locales.CREATE_NEW_TAG}</span>
                         </div>
                     </div>
                 </div>
@@ -271,7 +286,7 @@ class TagsList extends React.Component {
                     <div className="tag-list__create-form">
                         <div className="tag-list__create-form__title-and-close">
                             <div className="tag-list__create-form--title">
-                                Create new tag
+                                {locales.CREATE_NEW_TAG}
                             </div>
                             <span onClick={this.cancel.bind(this)}
                                   className="tag-list__create-form__close"></span>
@@ -280,14 +295,14 @@ class TagsList extends React.Component {
                         <input
                             ref={input => {this.createTagName = input;}}
                             className="tag-list__create-form--tag-name"
-                            placeholder="Tag name"
+                            placeholder={locales.TAG_NAME}
                             value={this.state.tagName}
                             onChange={this.handleChange.bind(this)}>
                         </input>
                         <div onClick={this.addTag.bind(this)}
-                             className="tag-list__create-form--confirmation_button">Add</div>
+                             className="tag-list__create-form--confirmation_button">{locales.ADD}</div>
                         <span onClick={this.cancel.bind(this)}
-                              className="tag-list__create-form--cancel">Cancel</span>
+                              className="tag-list__create-form--cancel">{locales.CANCEL}</span>
                     </div>
                 </div>
             </div>

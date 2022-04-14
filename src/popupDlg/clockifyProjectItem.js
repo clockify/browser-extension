@@ -64,7 +64,7 @@ var ClockifyProjectItem = class {
             }
         }, (response) => {
             if (!response) {
-                alert("You must be logged in to start time entry (projectList Favorites).");
+                alert(clockifyLocales.YOU_MUST_BE_LOGGED_IN_TO_START);
                 return;
             }
             this.setState({
@@ -85,7 +85,7 @@ var ClockifyProjectItem = class {
             }
         }, (response) => {
             if (!response) {
-                alert("You must be logged in to start time entry. (projectList)");
+                alert(clockifyLocales.YOU_MUST_BE_LOGGED_IN_TO_START);
                 return;
             }
             else if (typeof response === 'string') {
@@ -117,7 +117,7 @@ var ClockifyProjectItem = class {
     get itemTasks() {
         const { taskCount, isOpen } = this.state;
         return taskCount > 0 
-            ? `<span id='imgClockifyTasksArrow'>${taskCount + ' tasks'}</span>` +
+            ? `<span id='imgClockifyTasksArrow'>${clockifyLocales.TASKS_NUMBER(taskCount)}</span>` +
               "<img id='imgClockifyTasksArrow'" +
                     ` class='clockify-tasks-arrow ${isOpen?'clockify-down':'clockify-right'}'` + 
                     ` src='${aBrowser.runtime.getURL(`assets/images/filter-arrow-${isOpen?'down':'right'}.png`)}'` +
@@ -131,11 +131,11 @@ var ClockifyProjectItem = class {
         let clientName = "";
         if (projectFavorites && favorite) {
             if (client && client.name) {
-                title += '\n Client: ' + client.name;
+                title += `\n ${clockifyLocales.GLOBAL__CLIENT_LABEL}: ` + client.name;
                 clientName = '<i> - ' + client.name + '</i>';
             }
             else {
-                title += '\n Without client';
+                title += `\n ${clockifyLocales.WITHOUT_CLIENT}`;
             }
         }        
         let str =
@@ -144,9 +144,9 @@ var ClockifyProjectItem = class {
                 <li class='clockify-project-item-name' id='clockifyProjectItemName' tabIndex='0' title="${title}">
                     ${name} ${clientName}
                 </li>
-                <li class='clockify-project-item-tasks' title='Expand'>${this.itemTasks}</li>
+                <li class='clockify-project-item-tasks' title=${clockifyLocales.EXPAND}>${this.itemTasks}</li>
                 ${projectFavorites 
-                    ? `<li class='clockify-project-item-favorite' title='Favorite'>
+                    ? `<li class='clockify-project-item-favorite' title=${clockifyLocales.FAVORITE}>
                         ${ projectId !== 'no-project' ?
                             `<a id='clockifyFavoriteStar'
                                 class="clockify-dropdown-star ${favorite?'clockify-active':'clockify-normal'}" 

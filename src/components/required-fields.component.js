@@ -5,9 +5,18 @@ class RequiredFields extends React.Component {
 
     constructor(props) {
         super(props);
+        this.state = {
+            inProgress: null
+        };
     }
 
-    componentDidMount(){
+    async componentDidUpdate(){
+        const inProgress = await localStorage.getItem('inProgress');
+        if(inProgress !== this.state.inProgress){
+            this.setState({
+                inProgress
+            });
+        }
     }
 
     goToEdit() {
@@ -20,7 +29,7 @@ class RequiredFields extends React.Component {
                 <Header
                     showActions={true}
                     mode={this.props.mode}
-                    disableManual={localStorage.getItem('inProgress')}
+                    disableManual={this.state.inProgress}
                     disableAutomatic={false}
                 />
                 <div className="required-fields">

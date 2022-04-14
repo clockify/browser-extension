@@ -4,14 +4,13 @@ import * as ReactDOM from 'react-dom';
 import Header from './header.component';
 import SignUp from './sign-up.component';
 import packageJson from '../../package';
-import {getAppTypes} from "../enums/applications-types.enum";
-import {determineAppType, isAppTypeDesktop, isAppTypeExtension} from "../helpers/app-types-helper";
 import SelfHostedUrl from "./self-hosted-url.component";
 import {LocalStorageService} from "../services/localStorage-service";
 import {getLocalStorageEnums} from "../enums/local-storage.enum";
 import {getBrowser, isChrome} from "../helpers/browser-helper";
 import {HtmlStyleHelper} from "../helpers/html-style-helper";
 import SubDomainName from "./sub-domain-name.component";
+import locales from "../helpers/locales";
 
 const environment = getEnv();
 const localStorageService = new LocalStorageService();
@@ -28,55 +27,74 @@ class Login extends React.Component {
             isReady: false,
             email: '',
             password: '',
-            appType: getAppTypes().EXTENSION,
             activeWorkspace: null,
             offline: false,
-            selfHosted: JSON.parse(localStorageService.get('selfHosted', false)),
+            selfHosted: null,
             nativeLogin: true,
             loginLogoUrl: '',
-            isSubDomain: !!localStorageService.get('subDomainName')
+            isSubDomain: null
         };
 
         this.onChange = this.onChange.bind(this);
         this.forgotPassword = this.forgotPassword.bind(this);
         this.openLoginPage = this.openLoginPage.bind(this);
+        this.setAsyncStateItems = this.setAsyncStateItems.bind(this);
     }
 
     componentDidMount() {
         this.removeDarkMode();
         this.setAppVersionToStorage();
-        this.setAppType();
+        // this.setAppType();
+        this.setAsyncStateItems();
 
         if (this.props.logout) {
             this.logout();
         }
     }
 
+    async setAsyncStateItems() {
+        const selfHosted = JSON.parse(await localStorageService.get('selfHosted', false));
+        const isSubDomain = !!(await localStorageService.get('subDomainName'));
+        this.setState({
+            selfHosted,
+            isSubDomain
+        });
+    }
+
     clearAllActiveTimers() {
-        const backgroundPage = getBrowser().extension.getBackgroundPage();
-        backgroundPage.removeIdleListenerIfIdleIsEnabled();
-        backgroundPage.removeAllPomodoroTimers();
-        backgroundPage.removeReminderTimer();
+        // const backgroundPage = getBrowser().extension.getBackgroundPage();
+        // backgroundPage.removeIdleListenerIfIdleIsEnabled();
+        // backgroundPage.removeAllPomodoroTimers();
+        // backgroundPage.removeReminderTimer();
+        getBrowser().runtime.sendMessage({
+            eventName: 'removeIdleListenerIfIdleIsEnabled'
+        });
+        getBrowser().runtime.sendMessage({
+            eventName: 'removeAllPomodoroTimers'
+        });
+        getBrowser().runtime.sendMessage({
+            eventName: 'removeReminderTimer'
+        });
     };
 
     removeDarkMode() {
         htmlStyleHelper.removeDarkModeClassFromBodyElement();
     }
 
-    setAppType() {
-        const storageAppType = localStorage.getItem('appType');
-        let appType;
+    // setAppType() {
+    //     const storageAppType = localStorage.getItem('appType');
+    //     let appType;
 
-        if (!storageAppType || storageAppType === '') {
-            appType = determineAppType();
-        } else {
-            appType = storageAppType;
-        }
+    //     if (!storageAppType || storageAppType === '') {
+    //         appType = determineAppType();
+    //     } else {
+    //         appType = storageAppType;
+    //     }
 
-        this.setState({
-            appType: appType
-        });
-    }
+    //     this.setState({
+    //         appType: appType
+    //     });
+    // }
 
     setAppVersionToStorage() {
         localStorageService.set('appVersion', packageJson.version);
@@ -92,13 +110,19 @@ class Login extends React.Component {
         window.open(`${environment.resetPassword}`, '_blank');
     }
 
-    openLoginPage() {
-        const homeUrl = localStorageService.get('homeUrl');
+    async openLoginPage() {
+        const homeUrl = await localStorageService.get('homeUrl');
         let redirectNumb = mozzilaRedirectNumb;
         if (isChrome()) {
             redirectNumb = chromeRedirectNumb;
         }
-        window.open(`${homeUrl}/redirect/${redirectNumb}`, '_blank');
+        if(isChrome()){
+            window.open(`${homeUrl}/redirect/${redirectNumb}`, '_blank');
+        }else{
+            browser.tabs.create({
+                url:`${homeUrl}/redirect/${redirectNumb}`
+              });
+        }
         window.close();
     }
 
@@ -128,17 +152,22 @@ class Login extends React.Component {
         });
     }
 
-    logout() {
-        if(localStorageService.get('offline') && !JSON.parse(localStorageService.get('offline'))) {
-            let timeEntriesOffline = localStorageService.get('timeEntriesOffline') ?
-                JSON.parse(localStorageService.get('timeEntriesOffline')) : [];
-            if (isAppTypeExtension()) {
-                this.clearPermissions();
-                getBrowser().runtime.sendMessage('closeOptionsPage');
-            }
-            localStorageService.clear();
+    async logout() {
+        const isOffline = await localStorageService.get('offline');
+        if(isOffline && !JSON.parse(isOffline)) {
+            let timeEntriesOffline  = await localStorageService.get('timeEntriesOffline');
+            timeEntriesOffline = timeEntriesOffline ?
+                JSON.parse(timeEntriesOffline) : [];
+
+            this.clearPermissions();
+            getBrowser().runtime.sendMessage('closeOptionsPage');
+            
+            localStorageService.clearByPrefixes([getLocalStorageEnums().PERMANENT_PREFIX, getLocalStorageEnums().SELF_HOSTED_PREFIX, getLocalStorageEnums().SUB_DOMAIN_PREFIX], true);
             localStorageService.set('timeEntriesOffline', JSON.stringify(timeEntriesOffline));
         }
+        getBrowser().runtime.sendMessage({
+            eventName: "removeBadge"
+        });
     }
 
     clearPermissions() {
@@ -160,7 +189,7 @@ class Login extends React.Component {
                 }
             });
 
-            getBrowser().storage.local.clear();
+            localStorageService.removeItem('permissions');
             if (newPermissions.length > 0)
                 getBrowser().storage.local.set({"permissions": newPermissions});
         });
@@ -172,20 +201,20 @@ class Login extends React.Component {
                 <Header showActions={false}/>
                 <div className="login">
                     <button className="login-submit"
-                            onClick={this.openLoginPage}>Log in</button>
+                            onClick={this.openLoginPage}>{locales.LOG_IN}</button>
                     <hr className="login__divider"/>
                     <div className="new-account">
-                        <p>New here?</p>
-                        <a onClick={this.signup}>Create an account</a>
+                        <p>{locales.NEW_HERE}?</p>
+                        <a onClick={this.signup}>{locales.CREATE_AN_ACCOUNT}</a>
                     </div>
                     <div className={!this.state.selfHosted && !this.state.isSubDomain ?
                         "self-hosting-url" : "disabled"}>
-                        <a onClick={this.enterBaseUrl}>Log in to custom domain</a>
+                        <a onClick={this.enterBaseUrl}>{locales.LOGIN_TO_CUSTOM_DOMAIN}</a>
                         <hr className="login__divider"/>
-                        <a onClick={this.enterSubDomainName}>Log in to sub domain</a>
+                        <a onClick={this.enterSubDomainName}>{locales.LOGIN_TO_SUB_DOMAIN}</a>
                     </div>
                     <div className={this.state.selfHosted || this.state.isSubDomain ? "cloud-version-url" : "disabled"}>
-                        <a onClick={this.backToCloudVersion.bind(this)}>Return to Clockify cloud</a>
+                        <a onClick={this.backToCloudVersion.bind(this)}>{locales.RETURN_TO_CLOCKIFY_CLOUD}</a>
                     </div>
                 </div>
             </div>

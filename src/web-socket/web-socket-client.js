@@ -10,10 +10,10 @@ export class WebSocketClient {
         this.connection = "";
     }
 
-    connect() {
+    async connect() {
         this.connectionId =
             `/${environment.webSocket.clientId}/` +
-            `${localStorage.getItem('userEmail')}/` +
+            `${await localStorage.getItem('userEmail')}/` +
             `${Math.random().toString(36).substring(2, 10)}/extension`;
         if (this.connection) {
             return;

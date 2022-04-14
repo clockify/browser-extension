@@ -1,5 +1,5 @@
 // Inbox emails
-clockifyButton.render('[aria-label="Content pane"] [role="heading"]:not(.clockify)', { observe: true }, elem => {
+clockifyButton.render('[aria-label="Reading Pane"] [role="heading"]:not(.clockify)', { observe: true }, elem => {
   const link = clockifyButton.createButton(elem.textContent);
   link.style.paddingLeft = "5px";
 

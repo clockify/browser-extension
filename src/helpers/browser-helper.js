@@ -3,7 +3,17 @@ let customBrowser;
 export function getBrowser() {
     if (typeof chrome !== "undefined") {
         if (typeof browser !== "undefined") {
-            return browser;
+            return Object.assign(browser, {
+                action: browser.browserAction, 
+                scripting: {
+                    executeScript: ({target, files}, cb) => {
+                        browser.tabs.executeScript(target.tabId, {file: files[0]}, cb);
+                    },
+                    insertCSS: ({target, files}) => {
+                        browser.tabs.insertCSS(target.tabId, {file: files[0]});
+                    }
+                }
+            });
         } else {
             return chrome;
         }

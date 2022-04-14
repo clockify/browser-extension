@@ -7,7 +7,7 @@ export class HttpHeadersHelper {
 
     constructor(){}
 
-    createHttpHeaders(token) {
+    async createHttpHeaders(token) {
         let headers = {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
@@ -17,25 +17,28 @@ export class HttpHeadersHelper {
             headers['X-Auth-Token'] = token;
         }
 
-        if (localStorageService.get('wsConnectionId')) {
-            headers['socket-connection-id'] = localStorageService.get('wsConnectionId');
+        const wsConnectionId = await localStorageService.get('wsConnectionId');
+        const subDomainName = await localStorageService.get('subDomainName');
+
+        if (wsConnectionId) {
+            headers['socket-connection-id'] = wsConnectionId;
+        }
+        let appType = 'extension';
+        if (isChrome()) {
+            appType += '-chrome';
+        } else {
+            appType += '-firefox';
         }
 
-        let appType = localStorageService.get('appType');
-
-        if (appType === 'extension') {
-            if (isChrome()) {
-                appType += '-chrome';
-            } else {
-                appType += '-firefox';
-            }
-        }
-
-        if (localStorageService.get('subDomainName')) {
-            headers['sub-domain-name'] = localStorageService.get('subDomainName');
+        if (subDomainName) {
+            headers['sub-domain-name'] = subDomainName;
         }
 
         headers['App-Name'] = appType;
+        const lang = localStorageService.get('lang');
+        if(lang){
+            headers['accept-language'] = lang;
+        }
 
         return headers;
     }

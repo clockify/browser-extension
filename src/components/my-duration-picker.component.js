@@ -1,6 +1,6 @@
 import * as React from 'react';
-import moment, {utc} from 'moment';
 import {parseTimeEntryDuration} from './time-input-parser'
+import locales from "../helpers/locales";
 
 class MyDurationPicker extends React.Component {
 
@@ -98,7 +98,7 @@ class MyDurationPicker extends React.Component {
                 className={className}
                 autoComplete="off"
                 type="text"
-                placeholder="Select time"
+                placeholder={locales.SELECT}
                 tabIndex={"0"}
                 spellCheck = "false"
                 disabled={this.props.isDisabled}
@@ -109,7 +109,7 @@ class MyDurationPicker extends React.Component {
                 onKeyUp={this.handleKeyUp}
                 onFocus={this.setFocus}
                 placement="left"
-                title={this.props.title ? this.props.title : `Please write duration in the '${this.props.format}' format.`}
+                title={this.props.title ? this.props.title : `${locales.DURATION_FORMAT}: '${this.props.format}'.`}
             />
         )
     }

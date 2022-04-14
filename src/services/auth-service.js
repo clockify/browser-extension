@@ -8,10 +8,10 @@ export class AuthService {
 
     constructor() { }
 
-    signup(email, password, timeZone) {
-        const baseUrl = localStorageService.get('baseUrl');
+    async signup(email, password, timeZone) {
+        const baseUrl = await localStorageService.get('baseUrl');
         const signupUrl = `${baseUrl}/auth/`;
-        const subDomainName = localStorageService.get('subDomainName', null);
+        const subDomainName = await localStorageService.get('subDomainName', null);
         const body = {
             key: email,
             secret: password,

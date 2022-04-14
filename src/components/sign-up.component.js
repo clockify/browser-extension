@@ -6,9 +6,9 @@ import {getEnv} from '../environment';
 import * as moment from 'moment-timezone';
 import {AuthService} from "../services/auth-service";
 import {UserService} from "../services/user-service";
-import {isAppTypeExtension} from "../helpers/app-types-helper";
 import {getBrowser} from "../helpers/browser-helper";
 import Login from "./login.component";
+import locales from '../helpers/locales';
 
 const environment = getEnv();
 
@@ -59,17 +59,17 @@ class SignUp extends React.Component {
                     authService.signup(this.state.email, this.state.password, moment.tz.guess())
                         .then(response => {
                             let data = response.data;
-                            if (isAppTypeExtension()) {
-                                getBrowser().storage.local.set({
-                                    token: (data.token),
-                                    userId: (data.id),
-                                    refreshToken: (data.refreshToken),
-                                    userEmail: (data.email)
-                                });
-                                this.setState({
-                                    signupDisabledMessage: null
-                                })
-                            }
+                            
+                            getBrowser().storage.local.set({
+                                token: (data.token),
+                                userId: (data.id),
+                                refreshToken: (data.refreshToken),
+                                userEmail: (data.email)
+                            });
+                            this.setState({
+                                signupDisabledMessage: null
+                            })
+                            
                             localStorage.setItem('userId', data.id);
                             localStorage.setItem('userEmail', data.email);
                             localStorage.setItem('token', data.token);
@@ -101,12 +101,10 @@ class SignUp extends React.Component {
                 localStorage.setItem("userSettings",
                     JSON.stringify(data.settings));
 
-                if (isAppTypeExtension()) {
-                    getBrowser().storage.local.set({
-                        activeWorkspaceId: (data.activeWorkspace),
-                        userSettings: JSON.stringify(data.settings)
-                    });
-                }
+                getBrowser().storage.local.set({
+                    activeWorkspaceId: (data.activeWorkspace),
+                    userSettings: JSON.stringify(data.settings)
+                });
                 disabledSignup = false;
                 ReactDOM.render(<HomePage/>, document.getElementById('mount'));
             }).catch(error => {
@@ -144,23 +142,23 @@ class SignUp extends React.Component {
                     {this.state.signupDisabledMessage}
                 </div>
                 <div className="signup-title_and_text">
-                    <p className="signup-title">Get started with Clockify</p>
-                    <p className="signup-text">Create a free account to start tracking time and supercharge your productivity</p>
+                    <p className="signup-title">{locales.SIGNUP_TITLE}</p>
+                    <p className="signup-text">{locales.CREATE_ACCOUNT_EXPLANATION}</p>
                 </div>
                 <div className="signup-form">
                     <div className="signup-form--email">
                         <input className="signup-input" required = {true} name="email" type="email"
-                               id="email" placeholder="E-mail" value={this.state.email} onChange={this.onChange}/>
-                        <label className={this.state.emailAlert ? "signup-alert" : "disabled"}>Email address in invalid format.</label>
-                        <label className={this.state.emailExists ? "signup-alert" : "disabled"}>Email address is already in use or not valid!</label>
+                               id="email" placeholder={locales.EMAIL} value={this.state.email} onChange={this.onChange}/>
+                        <label className={this.state.emailAlert ? "signup-alert" : "disabled"}>{locales.INVALID_EMAIL}</label>
+                        <label className={this.state.emailExists ? "signup-alert" : "disabled"}>{locales.INVALID_EMAIL}</label>
                     </div>
                     <div className="signup-form--password">
                         <input className="signup-input" required = {true} name="password" type="password" id="password"
-                               placeholder="Password" value={this.state.password} onChange={this.onChange}/>
-                        <label className={this.state.passwordAlert ? "signup-alert" : "disabled"}>Password must have at least 6 characters.</label>
+                               placeholder={locales.PASSWORD} value={this.state.password} onChange={this.onChange}/>
+                        <label className={this.state.passwordAlert ? "signup-alert" : "disabled"}>{locales.PASSWORD_MIN_LENGTH_ERROR_MSG(6)}</label>
                     </div>
                     <div>
-                        <button onClick={this.signup.bind(this)} className="signup-button">SIGN UP</button>
+                        <button onClick={this.signup.bind(this)} className="signup-button">{locales.SIGNUP}</button>
                     </div>
                     <div className="signup-terms_and_alert">
                         <div className="signup-terms">
@@ -171,17 +169,17 @@ class SignUp extends React.Component {
                              className={this.state.termsOfUse ?
                                  "signup-checked-img" : "signup-checked-img-hidden"}/>
                         </span>
-                            <span className="signup-terms--agree">I agree to
-                            <a onClick={this.termsOfUse.bind(this)}>terms of use</a>
+                            <span className="signup-terms--agree">{locales.AGREE_LABEL}
+                            <a onClick={this.termsOfUse.bind(this)}>{locales.TOS}</a>
                         </span>
                         </div>
-                        <label className={this.state.termsAlert ? "signup-alert" : "disabled"}>You must accept the terms of service</label>
+                        <label className={this.state.termsAlert ? "signup-alert" : "disabled"}>{locales.TOS_ACCEPT_ERROR}</label>
                     </div>
                 </div>
                 <div className="signup--divider"></div>
                 <div className="signup--login-url">
-                    <p>Already have an account
-                        <a onClick={this.backToLogin.bind(this)}>Log in</a>
+                    <p>{locales.ALREADY_HAVE_AN_ACCOUNT}
+                        <a onClick={this.backToLogin.bind(this)}>{locales.LOG_IN}</a>
                     </p>
                 </div>
             </div>

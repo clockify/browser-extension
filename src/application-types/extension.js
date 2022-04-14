@@ -8,6 +8,7 @@ import {isOffline} from "../components/check-connection";
 import {LocalStorageService} from "../services/localStorage-service";
 import {getLocalStorageEnums} from "../enums/local-storage.enum";
 import {UserService} from "../services/user-service";
+import locales from "../helpers/locales";
 
 const localStorageService = new LocalStorageService();
 const userService = new UserService();
@@ -18,31 +19,39 @@ export class Extension {
         const iconPathStarted = '../assets/images/logo-16.png';
         const iconPathEnded = '../assets/images/logo-16-gray.png';
 
-        getBrowser().browserAction.setIcon({
+        getBrowser().action.setIcon({
             path: getIconStatus().timeEntryStarted === iconStatus ? iconPathStarted : iconPathEnded
         });
     }
 
     
-    afterLoad() {
-        const token = localStorageService.get("token");
+    async afterLoad() {
+        const token = await localStorageService.get("token");
+        const isOffline = await localStorageService.get("offline");
         const mountHtmlElem = document.getElementById('mount');
         if (mountHtmlElem) {
             mountHtmlElem.style.width = '360px';
             mountHtmlElem.style.minHeight = '430px';
         }
+        
         if (token) {
-            if (!JSON.parse(localStorageService.get('offline'))) {
+            if (!JSON.parse(isOffline)) {
                 userService.getUser()
-                    .then(response => {
+                    .then(async (response) => {
                         let data = response.data;
                         localStorage.setItem('userEmail', data.email);
                         localStorage.setItem('userId', data.id);
                         localStorage.setItem('activeWorkspaceId', data.activeWorkspace);
                         localStorage.setItem('userSettings', JSON.stringify(data.settings));
+                        const lang = data.settings.lang ? data.settings.lang.toLowerCase() : null;
+                        locales.onProfileLangChange(lang);
+                        getBrowser().runtime.sendMessage({
+                            eventName: "pomodoroTimer"
+                        });
                         userService.getBoot()
                             .then(response => {
                                 const { data } = response;
+                                const { selfHosted } = data;
                                 if (data.synchronization && data.synchronization.websockets) {
                                     const { websockets } = data.synchronization;
                                     let endPoint;
@@ -70,9 +79,10 @@ export class Extension {
                                 }
                             })
                     })
-                    .catch(error => {
+                    .catch(async (error) => {
                         if (mountHtmlElem) {
-                            if (localStorage.getItem('offline') === 'true') {
+                            const isOffline = await localStorage.getItem('offline');
+                            if (isOffline === 'true') {
                                 ReactDOM.render(<HomePage/>, mountHtmlElem);
                             }
                             else {
@@ -100,24 +110,24 @@ export class Extension {
     }
 
 
-    setHomeUrlFromBaseUrl(baseUrl) {
-        const subDomainName = localStorageService.get("subDomainName", null);
-        let clientUrl = "";
-        if (baseUrl.includes('api.clockify.me')) {
-            clientUrl = "clockify.me";
-        } else {
-            clientUrl = baseUrl.replace(/https?:\/\//, '').replace('/api', '');
-        }
+    // async setHomeUrlFromBaseUrl(baseUrl) {
+    //     const subDomainName = await localStorageService.get("subDomainName", null);
+    //     let clientUrl = "";
+    //     if (baseUrl.includes('api.clockify.me')) {
+    //         clientUrl = "clockify.me";
+    //     } else {
+    //         clientUrl = baseUrl.replace(/https?:\/\//, '').replace('/api', '');
+    //     }
 
-        if (subDomainName !== null)
-            clientUrl = `${subDomainName}.${clientUrl}`;
+    //     if (subDomainName !== null)
+    //         clientUrl = `${subDomainName}.${clientUrl}`;
 
-        return "/" + clientUrl;
-    }
+    //     return "/" + clientUrl;
+    // }
 
-    loadFromStorage(key) {
-        return localStorageService.get(key);
-    }
+    // async loadFromStorage(key) {
+    //     return await localStorageService.get(key);
+    // }
 
     // registerButtonHandlers() {
     //     getBrowser().runtime.onMessage.addListener((request, sender, sendResponse) => {

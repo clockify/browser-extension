@@ -3,7 +3,7 @@ import {getBrowser} from '../../helpers/browser-helper'
 
 // Hook
 const useCustomField = (cf) => {
-  
+    
     const { wsCustomField, timeEntryId, value: initialValue, index, isUserOwnerOrAdmin, redrawCounter, manualMode } = cf;
     const [value, setVal] = useState(initialValue);
 

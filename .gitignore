@@ -1,5 +1,6 @@
 *.iml
 .gradle
+.DS_Store
 Dockerfile
 .vscode/
 /local.properties

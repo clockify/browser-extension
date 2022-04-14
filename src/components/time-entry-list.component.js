@@ -1,5 +1,7 @@
+import moment from 'moment';
 import * as React from 'react';
 import TimeEntry from './time-entry.component';
+import locales from "../helpers/locales";
 
 class TimeEntryList extends React.Component {
 
@@ -20,21 +22,21 @@ class TimeEntryList extends React.Component {
     }
 
     render() {
-        const { isOffline } = this.props; // JSON.parse(localStorage.getItem('offline'));
+        const { isOffline } = this.props;
         if(this.props.timeEntries.length === 0 && !isOffline) {
             return (
                 <div className="no-entries">
                     <div className="no-entries-img"></div>
-                    <span>No recent entries to show</span>
-                    <label>It looks like you haven't tracked any time lately.</label>
+                    <span>{locales.NO_RECENT_ENTRIES_TO_SHOW}</span>
+                    <label>{locales.YOU_HAVE_NOT_TRACKED}.</label>
                 </div>
             )
         } else if(this.props.timeEntries.length === 0 && isOffline) {
             return(
                     <div className="no-entries">
                         <div className="no-entries-img"></div>
-                        <span>Get online to see your entries.</span>
-                        <label>In the meantime, you can still track time, even if you're offline.</label>
+                        <span>{locales.GET_ONLINE}.</span>
+                        <label>{locales.YOU_CAN_STILL_TRACK_TIME}.</label>
                     </div>
             )
         } else {
@@ -42,16 +44,28 @@ class TimeEntryList extends React.Component {
                 <div>
                     {
                         this.props.dates.map((day) => {
+                            const parts = day.split("-");
+                            const lastPart = parts.pop();
+                            const firstPart = parts.join('-');
                             return (
                                 <div className="time-entries-list" key={day}>
                                     <div className="time-entries-list-time">
-                                        <span className="time-entries-list-day">{day.split("-")[0]}</span>
+                                        <span className="time-entries-list-day">{firstPart}</span>
                                         <div className="time-entries-total-and-time">
-                                            <span className="time-entries-list-total">Total:</span>
-                                            <span className="time-entries-list-total-time">{day.split("-")[1]}</span>
+                                            <span className="time-entries-list-total">{locales.TOTAL}</span>
+                                            <span className="time-entries-list-total-time">{lastPart}</span>
                                         </div>
                                     </div>
-                                    {this.props.timeEntries.filter(timeEntry => timeEntry.start === day.split("-")[0]).map(timeEntry => {
+                                    {this.props.timeEntries.filter(timeEntry => timeEntry.start === firstPart)
+                                    .sort((a, b) => {
+                                        const aMoment = moment(a.timeInterval.end);
+                                        const bMoment = moment(b.timeInterval.end);
+                                        const aSeconds = aMoment.hours() * 3600 + aMoment.minutes() * 60 + aMoment.seconds();
+                                        const bSeconds = bMoment.hours() * 3600 + bMoment.minutes() * 60 + bMoment.seconds();
+
+                                        return bSeconds - aSeconds;
+                                    })
+                                    .map(timeEntry => {
                                         return (
                                             <TimeEntry
                                                 key={timeEntry.id}

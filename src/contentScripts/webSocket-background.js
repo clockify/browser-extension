@@ -9,17 +9,18 @@ const webSocketEventsEnums = {
     'NEW_NOTIFICATIONS': 'NEW_NOTIFICATIONS',
     'TIME_TRACKING_SETTINGS_UPDATED': 'TIME_TRACKING_SETTINGS_UPDATED',
     'WORKSPACE_SETTINGS_UPDATED': 'WORKSPACE_SETTINGS_UPDATED',
-    'CHANGED_ADMIN_PERMISSION': 'CHANGED_ADMIN_PERMISSION'
+    'CHANGED_ADMIN_PERMISSION': 'CHANGED_ADMIN_PERMISSION',
+    'PROFILE_UPDATED': 'PROFILE_UPDATED'
 };
 Object.freeze(webSocketEventsEnums);
 
 let connection;
 let reconnectIntervalId;
 
-function connectWebSocket() {
-    const webSocketClientId = localStorage.getItem('permanent_webSocketClientId');
-    const userEmail = localStorage.getItem('userEmail');
-    const webSocketEndpoint = localStorage.getItem("permanent_webSocketEndpoint");
+async function connectWebSocket() {
+    const webSocketClientId = await localStorage.getItem('permanent_webSocketClientId');
+    const userEmail = await localStorage.getItem('userEmail');
+    const webSocketEndpoint = await localStorage.getItem("permanent_webSocketEndpoint");
     
     if (!webSocketClientId || !userEmail || !webSocketEndpoint || connection) {
         return;
@@ -27,7 +28,7 @@ function connectWebSocket() {
     const appName = `extension-${isChrome()?'chrome':'firefox'}`;
 
     const connectionId = `/${webSocketClientId}/` +
-        `${localStorage.getItem('userEmail')}/` +
+        `${userEmail}/` +
         `${Math.random().toString(36).substring(2, 10)}/${appName}`;
 
     connection = new WebSocket(
@@ -40,10 +41,10 @@ function connectWebSocket() {
                 clearInterval(reconnectIntervalId);
                 reconnectIntervalId = null;
             }            
-            TokenService.getToken().then(token => {
+            TokenService.getToken().then(async (token) => {
                 if (!!token) {
                     this.authenticate(token);
-                    localStorage.setItem('wsConnectionId', connectionId);
+                    await localStorage.setItem('wsConnectionId', connectionId);
                 }
             });
         }
@@ -62,7 +63,11 @@ function connectWebSocket() {
 
         // onCloseReconnectTimeout = setTimeout(() => this.connectWebSocket(document.token), getReconnectTimeout());
         reconnectIntervalId = setInterval(() => {
-            this.connectWebSocket(document.token);
+            TokenService.getToken().then(async (token) => {
+                if (!!token) {      
+                    this.connectWebSocket(token);
+                }
+            });
         }, 5000); //getReconnectTimeout());
     };
 
@@ -86,13 +91,21 @@ function disconnectWebSocket() {
 
 async function messageHandler(event) {
     switch (event.data) {
+        
+        case webSocketEventsEnums.PROFILE_UPDATED: {
+            console.log('>>>')
+            console.log('>>> profile updated')
+            console.log('>>>')
+            break;
+        }
+
         case webSocketEventsEnums.TIME_ENTRY_STARTED: {
             const { entry, error } = await TimeEntry.getEntryInProgress();
             if (entry === null || error) {
             }
             else {
                 setTimeEntryInProgress(entry);
-                aBrowser.browserAction.setIcon({
+                aBrowser.action.setIcon({
                     path: iconPathStarted
                 });
             }
@@ -111,13 +124,14 @@ async function messageHandler(event) {
 
         case webSocketEventsEnums.TIME_ENTRY_STOPPED:
             setTimeEntryInProgress(null);
-            aBrowser.browserAction.setIcon({
+            aBrowser.action.setIcon({
                 path: iconPathEnded
             });
             this.sendWebSocketEventToExtension(event.data);
             this.removeIdleListenerIfIdleIsEnabled();
             this.addReminderTimer();
             this.restartPomodoro();
+            this.resetBadge();
             break;
 
         case webSocketEventsEnums.TIME_ENTRY_UPDATED: {
@@ -135,7 +149,7 @@ async function messageHandler(event) {
             const { entry, error } = await TimeEntry.getEntryInProgress();
             if (entry === null || error) {
                 setTimeEntryInProgress(null);
-                aBrowser.browserAction.setIcon({
+                aBrowser.action.setIcon({
                     path: iconPathEnded
                 });
                 this.removeIdleListenerIfIdleIsEnabled();
@@ -144,7 +158,7 @@ async function messageHandler(event) {
             }
             else {
                 setTimeEntryInProgress(entry);
-                aBrowser.browserAction.setIcon({
+                aBrowser.action.setIcon({
                     path: iconPathStarted
                 });
             }

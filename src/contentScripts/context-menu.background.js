@@ -1,6 +1,10 @@
+
 aBrowser.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.eventName === 'contextMenuEnabledToggle') {
         toggleBrowserContextMenu(request.enabled)
+    }
+    else if(request.eventName === 'updateContexMenu'){
+        setContextMenuOnBrowserStart();
     }
 });
 
@@ -9,22 +13,34 @@ function toggleBrowserContextMenu(isContextMenuEnabled) {
     aBrowser.contextMenus.removeAll();
     if (isContextMenuEnabled) {
         aBrowser.contextMenus.create({
-            "title": "Start timer with description '%s'",
-            "contexts": ["selection"],
-            "onclick": (info) => TimeEntry.startTimerWithDescription(info)
+            "id": "startTimerWithDescriptionCM",
+            "title": clockifyLocales.START_TIMER_WITH_DESCRIPTION + " '%s'",
+            "contexts": ["selection"]
         });
         aBrowser.contextMenus.create({
-            "title": "Start timer",
-            "contexts": ["page"],
-            "onclick": (info) => TimeEntry.startTimerWithDescription(info)
+            "id": "startTimerCM",
+            "title": clockifyLocales.START_TIMER,
+            "contexts": ["page"]
+        });
+
+        aBrowser.contextMenus.onClicked.addListener(function(info, tab) {
+            switch (info.menuItemId) {
+                case "startTimerWithDescriptionCM":
+                case "startTimerCM":
+                    TimeEntry.startTimerWithDescription(info)
+                    break;
+                default:
+                    break;
+            }
         });
     }
 
 }
 
 
-function setContextMenuOnBrowserStart() {
-    let isContextMenuEnabled =  JSON.parse(localStorage.getItem("permanent_contextMenuEnabled"));
+async function setContextMenuOnBrowserStart() {
+    const iscmEnabled = await localStorage.getItem("permanent_contextMenuEnabled");
+    let isContextMenuEnabled =  JSON.parse(iscmEnabled);
     if (typeof isContextMenuEnabled !== "boolean") {
         isContextMenuEnabled = true
     }

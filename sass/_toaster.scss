@@ -19,7 +19,6 @@
     position: relative;
     bottom: 15px;
     left: 0;
-    animation: toaster-fadein 0.5s ease, toaster-fadeout 0.5s cubic-bezier(1, -.5, 0, 1) 1.5s;
   }
   &--container_success {
     background-color: $green;

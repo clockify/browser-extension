@@ -1,10 +1,10 @@
 {
   "name": "Clockify",
-  "version": "1.9.4",
+  "version": "2.1.1",
   "description": "Clockify App 100% Free Time Tracker",
   "main": "./main.js",
   "productName": "Clockify",
-  "homepage": "https://clockify.me/",
+  "homepage": "https://app.clockify.me/",
   "scripts": {
     "clean.build.chrome": "node tools/clean-build-script.js chrome",
     "clean.build.chrome.dev": "node tools/clean-build-script.js chrome.dev",
@@ -21,15 +21,18 @@
     "compile.prod.firefox": "npm run clean.build.firefox && npm run copy.assets && NODE_ENV=prod TARGET=firefox webpack && compass compile -c config_firefox.rb",
     "compile.stage.chrome": "npm run clean.build.chrome && npm run copy.assets && compass compile -c config_chrome.rb && NODE_ENV=stage TARGET=chrome webpack --watch",
     "compile.stage.firefox": "npm run clean.build.firefox && npm run copy.assets && NODE_ENV=stage TARGET=firefox webpack && compass compile -c config_firefox.rb",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "generate.locale": "node tools/generate-locale.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@popperjs/core": "^2.11.0",
     "antd": "^3.18.2",
     "axios": "^0.18.0",
     "child_process": "^1.0.2",
     "create-react-app": "^1.5.2",
+    "date-fns": "^2.28.0",
     "express": "^4.15.3",
     "form-data": "^2.3.3",
     "jsonwebtoken": "^8.4.0",
@@ -38,9 +41,10 @@
     "moment-duration-format": "^2.2.2",
     "moment-timezone": "^0.5.21",
     "react": "^16.5.2",
-    "react-datepicker": "^1.8.0",
+    "react-datepicker": "^4.6.0",
     "react-dom": "^16.5.2",
     "react-http-request": "^2.0.0",
+    "react-popper": "^2.2.5",
     "url-parse": "^1.4.3"
   },
   "devDependencies": {

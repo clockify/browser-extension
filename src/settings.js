@@ -1,17 +1,16 @@
 const aBrowser = chrome || browser;
 let clockifyOrigins = [];
-const userId = localStorage.getItem('userId');
 
 document.addEventListener('DOMContentLoaded', initLoad);
 document.getElementById('settings__permissions-container')
     .addEventListener('click', (e) => {
         if (e.target.tagName === "INPUT" && e.target.type === "checkbox") {
-            this.save_permissions();
+            save_permissions();
         }
 });
 
 aBrowser.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request === 'closeOptionsPage') {
+    if (request.eventName === 'closeOptionsPage') {
         window.close();
     }
 });
@@ -20,11 +19,11 @@ const integrationsTab = document.getElementById('integrationsTab');
 integrationsTab.className += " active";
 
 document.getElementById('enable-all')
-    .addEventListener('click', this.enableAllOrigins);
+    .addEventListener('click', enableAllOrigins);
 document.getElementById('disable-all')
-    .addEventListener('click', this.disableAllOrigins);
+    .addEventListener('click', disableAllOrigins);
 document.getElementById('permission-filter')
-    .addEventListener('keyup', this.filterPermissions);
+    .addEventListener('keyup', filterPermissions);
 document.getElementById('add-custom-domain')
     .addEventListener('click', addCustomDomain);
 document.querySelector('#settings__custom-domains__custom-perm-container')
@@ -76,7 +75,38 @@ function createOriginListForCustomDomain(data, key, option, origins) {
 
 function initLoad() {
 
-    aBrowser.storage.local.get(['permissions'], (result) => {
+    aBrowser.storage.local.get('locale_messages', result => {
+        self._clockifyMessages = result.locale_messages || {};
+        const localesScript = document.createElement('script');
+        localesScript.src = 'contentScripts/clockifyLocales.js';
+        document.body.appendChild(localesScript);
+        localesScript.onload = () => {
+            integrationsTab.innerText = clockifyLocales.INTEGRATIONS;
+    
+            document.getElementById('h11').innerText = `Clockify - ${clockifyLocales.INTEGRATIONS}`;
+            document.getElementById('h21').innerText = clockifyLocales.ENABLE_INTEGRATIONS;
+            document.getElementById('p11').innerText = clockifyLocales.ENABLE_TOOLS + "\n" + clockifyLocales.ENABLE_ALL_INTEGRATIONS;
+    
+            document.getElementById('enable-all').innerText = clockifyLocales.ENABLE_ALL;
+            document.getElementById('disable-all').innerText = clockifyLocales.DISABLE_ALL;
+    
+            document.getElementById('custom-domains').innerText = clockifyLocales.CUSTOM_DOMAINS;
+    
+            document.getElementById('tool-hosted').innerText = 
+                        clockifyLocales.HOSTED_ON_CUSTOM_DOMAIN + 
+                "\n" +  clockifyLocales.ENTER_DOMAIN_NAME +
+                "\n" +  clockifyLocales.PORTS_NOT_SUPPORTED;
+    
+            
+            document.getElementById('add-custom-domain').innerText = clockifyLocales.ADD;
+            document.getElementById('custom-domain-url').placeholder = clockifyLocales.CUSTOM_DOMAINS + " url";
+
+        };
+
+    })
+
+    aBrowser.storage.local.get(['permissions', 'userId'], (result) => {
+        const { userId } = result;
         let { permissions } = result;
         if (!permissions) 
             permissions = [];
@@ -111,7 +141,8 @@ function initLoad() {
 }
 
 function restore_options() {
-    aBrowser.storage.local.get(['permissions'], (result) => {
+    aBrowser.storage.local.get(['permissions', 'userId'], (result) => {
+        const { userId } = result;
         if (result && result.permissions && result.permissions.length > 0) {
             const permissionsByUser =
                 result.permissions.filter(permission => permission.userId === userId)[0];
@@ -132,7 +163,8 @@ function restore_options() {
 }
 
 function save_permissions() {
-    aBrowser.storage.local.get(['permissions'], (result) => {
+    aBrowser.storage.local.get(['permissions', 'userId'], (result) => {
+        const { userId } = result;
         if (result && result.permissions && result.permissions.length > 0) {
             const permissionsForStorage = result.permissions;
             const permissionsByUser =
@@ -157,7 +189,8 @@ function save_permissions() {
 }
 
 function addCustomDomain() {
-    aBrowser.storage.local.get(['permissions'], (result) => {
+    aBrowser.storage.local.get(['permissions', 'userId'], (result) => {
+        const { userId } = result;
         let customDomain =
             extractCustomDomain(document.getElementById('custom-domain-url').value);
         const selectedOrigin = document.querySelector('#origins').value;
@@ -196,7 +229,8 @@ function showCustomDomains() {
     customDomainsHtml.id = 'custom-permissions-list';
     customDomainsHtml.className = 'settings__custom-domains__custom-origin-list';
 
-    aBrowser.storage.local.get(['permissions'], (result) => {
+    aBrowser.storage.local.get(['permissions', 'userId'], (result) => {
+       const { userId } = result;
        result.permissions
             .filter(permissionByUser => permissionByUser.userId === userId)[0].permissions
             .filter(permission => permission.isCustom)
@@ -245,7 +279,8 @@ function removeCustomDomain(e) {
         parent = e.target.parentNode;
         domain = parent.querySelector('strong').textContent;
 
-        aBrowser.storage.local.get(['permissions'], (result) => {
+        aBrowser.storage.local.get(['permissions', 'userId'], (result) => {
+            const { userId } = result;
             const permissionsForStorage = result.permissions;
             const permissionsByUser = result.permissions
                 .filter(permissionByUser => permissionByUser.userId === userId)[0].permissions;
@@ -358,7 +393,8 @@ function openTab(event) {
 }
 
 function addIntegrationsInPermissionsIfNewIntegrationsExist(origins) {
-    aBrowser.storage.local.get(['permissions'], (result) => {
+    aBrowser.storage.local.get(['permissions', 'userId'], (result) => {
+        const { userId } = result;
         let permissionsForStorage = result.permissions;
         const permissionsByUser = permissionsForStorage
             .filter(permissionByUser => permissionByUser.userId === userId)[0];

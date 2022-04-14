@@ -3,7 +3,6 @@ import Request from 'react-http-request';
 import Login from './login.component';
 import HomePage from './home-page.component';
 import {getBrowser} from "../helpers/browser-helper";
-import {isAppTypeExtension} from "../helpers/app-types-helper";
 import {LocalStorageService} from "../services/localStorage-service";
 
 const localStorageService = new LocalStorageService();
@@ -12,11 +11,25 @@ class PostAuth extends React.Component {
 
     constructor(props) {
         super(props);
+        this.state = {
+            baseUrl: null,
+            subDomainName: null
+        };
+    }
+
+    async componentDidUpdate() {
+        const baseUrl = await localStorageService.get("baseUrl");
+        const subDomainName = await localStorageService.get('subDomainName');
+        if(baseUrl !== this.state.baseUrl || subDomainName !== this.state.subDomainName){
+            this.setState({
+                baseUrl,
+                subDomainName
+            });
+        }
     }
 
     render() {
-        const baseUrl = localStorageService.get("baseUrl");
-        const subDomainName = localStorageService.get('subDomainName');
+        const { baseUrl, subDomainName } = this.state;
         return (
             <Request
                 url={`${baseUrl}/auth/token`}
@@ -57,14 +70,14 @@ class PostAuth extends React.Component {
                             let userEmail = JSON.parse(result.text).email;
                             let token = JSON.parse(result.text).token;
                             let refreshToken = JSON.parse(result.text).refreshToken;
-                            if (isAppTypeExtension()) {
-                                getBrowser().storage.local.set({
-                                    token: (token),
-                                    userId: (userId),
-                                    refreshToken: (refreshToken),
-                                    userEmail: (userEmail)
-                                });
-                            }
+                            
+                            getBrowser().storage.local.set({
+                                token: (token),
+                                userId: (userId),
+                                refreshToken: (refreshToken),
+                                userEmail: (userEmail)
+                            });
+                            
                             localStorage.setItem("userId", userId);
                             localStorage.setItem("userEmail", userEmail);
                             localStorage.setItem("token", token);
@@ -94,12 +107,15 @@ class PostAuth extends React.Component {
                                                 </div>
                                             )
                                         } else {
-                                            if (isAppTypeExtension()) {
-                                                getBrowser().storage.local.set({
-                                                    activeWorkspaceId: JSON.parse(result.text).activeWorkspace
-                                                });
-                                                getBrowser().extension.getBackgroundPage().addPomodoroTimer();
-                                            }
+                                            
+                                            getBrowser().storage.local.set({
+                                                activeWorkspaceId: JSON.parse(result.text).activeWorkspace
+                                            });
+                                            // getBrowser().extension.getBackgroundPage().addPomodoroTimer();
+                                            getBrowser().runtime.sendMessage({
+                                                eventName: 'pomodoroTimer'
+                                            });
+                                            
                                             localStorage.setItem("activeWorkspaceId",
                                                 JSON.parse(result.text).activeWorkspace);
                                             localStorage.setItem("userSettings",

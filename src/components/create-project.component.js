@@ -8,6 +8,7 @@ import * as ReactDOM from "react-dom";
 import EditForm from "./edit-form.component";
 import EditFormManual from "./edit-form-manual.component";
 import {TimeEntryService} from "../services/timeEntry-service";
+import locales from "../helpers/locales";
 
 const projectService = new ProjectService();
 const timeEntryService = new TimeEntryService();
@@ -20,13 +21,25 @@ class CreateProjectComponent extends React.Component {
             projectName: props.projectName,
             client: null,
             selectedColor: null,
-            billable: localStorage.getItem('workspaceSettings') ? JSON.parse(localStorage.getItem('workspaceSettings')).defaultBillableProjects : false,
-            public: localStorage.getItem('workspaceSettings') ? JSON.parse(localStorage.getItem('workspaceSettings')).isProjectPublicByDefault : false
+            billable: false,
+            public: false
         }
+        this.setAsyncStateItems = this.setAsyncStateItems.bind(this);
+    }
+
+    async setAsyncStateItems() {
+        const wsSettings = await localStorage.getItem('workspaceSettings');
+        const billable = wsSettings ? JSON.parse(wsSettings).defaultBillableProjects : false;
+        const isProjectPublicByDefault = wsSettings ? JSON.parse(wsSettings).isProjectPublicByDefault : false;
+        this.setState({
+            billable,
+            public: isProjectPublicByDefault
+        });
     }
 
     componentDidMount() {
         this.projectName.focus();
+        this.setAsyncStateItems();
     }
 
     selectClient(client) {
@@ -57,7 +70,12 @@ class CreateProjectComponent extends React.Component {
         const {projectName, client, selectedColor, billable} = this.state;
         
         if (!projectName || !selectedColor) {
-            this.toaster.toast('error', 'Name and color are required', 2);
+            this.toaster.toast('error', locales.NAME_AND_COLOR_ARE_REQUIRED, 2);
+            return;
+        }
+
+        if (projectName.length < 2 || projectName.length > 250) {
+            this.toaster.toast('error', locales.PROJECT_NAME_LENGTH_ERROR, 2);
             return;
         }
 
@@ -74,12 +92,14 @@ class CreateProjectComponent extends React.Component {
                 const timeEntry = Object.assign(this.props.timeEntry, {
                     projectId: response.data.id,
                     billable,
-                    project
+                    project,
+                    taskId: null,
+                    task: null
                 });
                 this.goBackToEdit(timeEntry);
             })
             .catch(error => {
-                this.toaster.toast('error', error.response.data.message, 2);
+                this.toaster.toast('error', locales.replaceLabels(error.response.data.message), 2);
             });
     }
 
@@ -125,7 +145,7 @@ class CreateProjectComponent extends React.Component {
     }
 
     notifyAboutError(message) {
-        this.toaster.toast('error', message, 2);
+        this.toaster.toast('error', locales.replaceLabels(message), 2);
     }
 
 
@@ -143,7 +163,7 @@ class CreateProjectComponent extends React.Component {
                 <input
                     ref={input => {this.projectName = input}}
                     className="create-project__project-name"
-                    placeholder="Project name"
+                    placeholder={locales.PROJECT_NAME}
                     value={this.state.projectName}
                     onChange={this.handleChange.bind(this)}>
                 </input>
@@ -171,7 +191,7 @@ class CreateProjectComponent extends React.Component {
                                              "create-project__billable-img-hidden"}/>
                                 </span>
                     <label onClick={this.toggleBillable.bind(this)}
-                           className="create-project__billable-title">Billable</label>
+                           className="create-project__billable-title">{locales.BILLABLE_LABEL}</label>
                 </div>
 
 
@@ -185,15 +205,15 @@ class CreateProjectComponent extends React.Component {
                                              "create-project__public-img-hidden"}/>
                                 </span>
                     <label onClick={this.togglePublic.bind(this)}
-                           className="create-project__public-title">Public</label>
+                           className="create-project__public-title">{locales.PUBLIC}</label>
                 </div>
-                <div class="create-project__divider"></div>
+                <div className="create-project__divider"></div>
                 <div className="create-project__actions">
                     <span
                         onClick={this.addProject.bind(this)}
-                        className="create-project__add-button">Add project</span>
+                        className="create-project__add-button">{locales.CREATE_NEW_PROJECT}</span>
                     <span onClick={this.cancel.bind(this)}
-                          className="create-project__cancel">Cancel</span>
+                          className="create-project__cancel">{locales.CANCEL}</span>
                 </div>
             </div>
         )

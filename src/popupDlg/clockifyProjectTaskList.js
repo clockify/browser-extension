@@ -74,7 +74,7 @@ var ClockifyTaskList = class {
                 let str = arr.join('')
 
                 if (this.state.loadMore) {
-                    str += `<li id='task_li_load_more'><button class='clockify-list-load-tasks'>Load more</button></li>`
+                    str += `<li id='task_li_load_more'><button class='clockify-list-load-tasks'>${clockifyLocales.LOAD_MORE}</button></li>`
                 }
                 ul.innerHTML += str;
             }

@@ -13,9 +13,10 @@ const CustomFieldText = ({cf, updateValue}) => {
         ] = useCustomField(cf);
     //}, [cf]);
 
-    const handleChangeDelayed = useRef(debounce(val => {
-        updateValue(id, val);
-        if (!(manualMode || isOffline())) {
+    const handleChangeDelayed = useRef(debounce(async val => {
+        // updateValue(id, val);
+        const isOff = await isOffline();
+        if (!(manualMode || isOff)) {
             storeValue(val);
         }
     }, manualMode ? 1000 : 1000));
@@ -23,6 +24,7 @@ const CustomFieldText = ({cf, updateValue}) => {
     const handleChange = (e) => {
         const val = e.target.value;
         setValue(val);
+        updateValue(id, val);
         handleChangeDelayed.current(val);
     };
 

@@ -76,7 +76,7 @@
     "link": "*://app.shortcut.com/*",
     "script": "clubhouse.js",
     "clone": false
-  },
+  },  
   "coda.io": {
     "name": "Coda",
     "link": "*://*.coda.io/*",
@@ -113,6 +113,12 @@
     "script": "freshservice.js",
     "clone": false
   },
+  "frontapp.com": {
+    "name": "Front",
+    "link": "*://*.frontapp.com/*",
+    "script": "front.js",
+    "clone": false
+  },
   "getflow.com": {
     "name": "Getflow",
     "link": "*://app.getflow.com/*",
@@ -141,12 +147,6 @@
     "name": "Gitlab",
     "link": "*://*.gitlab.com/*",
     "script": "gitlab.js",
-    "clone": false
-  },
-  "linear.app": {
-    "name": "Linear",
-    "link": "*://*.linear.app/*",
-    "script": "linear.js",
     "clone": false
   },
   "calendar.google.com": {
@@ -201,6 +201,12 @@
     "name": "Husky Marketing Planner",
     "link": "*://*.huskymarketingplanner.com/*",
     "script": "husky-marketing-planner.js",
+    "clone": false
+  },
+  "linear.app": {
+    "name": "Linear",
+    "link": "*://*.linear.app/*",
+    "script": "linear.js",
     "clone": false
   },
   "liquidplanner.com": {
@@ -329,6 +335,12 @@
     "script": "pipedrive.js",
     "clone": false
   },
+  "plaky.com": {
+    "name": "Plaky",
+    "link": "*://*.plaky.com/*",
+    "script": "plaky.js",
+    "clone": false
+  },
   "redbooth.com": {
     "name": "Redbooth",
     "link": "*://*.redbooth.com/*",
@@ -345,7 +357,7 @@
     "name": "Salesforce Lightning",
     "link": "*://*.salesforce.com/*,*://*.my.salesforce.com/*, *://*.lightning.force.com/*",
     "script": "salesforce.js",
-    "clone": true
+    "clone": false
   },
   "scoro.com": {
     "name": "Scoro",
@@ -487,7 +499,7 @@
   },
   "usepixie.net": {
     "name": "Pixie",
-    "link": "*://*.usepixie.net/*",
+    "link": "*://*.usepixie.net/*, *://*.pureworkflow.io/*", 
     "script": "usepixie.js"
   },
   "figma.com": {
@@ -500,11 +512,6 @@
     "name": "Freshrelease",
     "link": "*://*.freshrelease.com/*",
     "script": "freshrelease.js"
-  },
-  "frontapp.com": {
-    "name": "Front",
-    "link": "*://*.frontapp.com/*",
-    "script": "front.js"
   },
   "desk.zoho.com": {
     "name": "Zoho Desk",

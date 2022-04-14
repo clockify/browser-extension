@@ -2,11 +2,11 @@
 getProject = () =>  {
     //project = $('.TaskProjects .TokenizerPillBase-name').textContent,
     //let project = $('div.FullWidthPageStructureWithDetailsOverlay-detailsOverlay li.TaskProjectToken.TaskProjects-project');
-    let project = $('div.SingleTaskPaneSpreadsheet .TaskProjects .TokenizerPillBase-name');
+    let project = $('.SingleTaskPaneSpreadsheet .TaskProjects .TokenizerPillBase-name');
     if (!project) { 
         project = $('div.FullWidthPageStructureWithDetailsOverlay-detailsOverlay .TaskProjects .TokenizerPillBase-name');
         if (!project)
-            project = $('div.SingleTaskPaneSpreadsheet .TaskAncestry-ancestorProjects');
+            project = $('.SingleTaskPaneSpreadsheet .TaskAncestry-ancestorProjects');
         if (!project)
             // project = $('h1.TopbarPageHeaderStructure-title')
             project = $('div.FullWidthPageStructureWithDetailsOverlay-detailsOverlay .TaskAncestry-ancestorProjects');
@@ -38,14 +38,33 @@ setTimeout(() => {
                     ////: taskSelector 
                     ////    ? taskSelector.textContent :
                     ////    "",
+                const tags = () => Array.from($$("div.TaskTagTokenPills span.TokenizerPillBase-name", elem)).map(e => e.innerText)
                 project = getProject()
                 link = clockifyButton.createButton({
                     description,
                     projectName: project ? project.textContent : null,
-                    taskName 
+                    taskName,
+                    tagNames: tags
                 });
             link.style.marginLeft = "10px";
             container.appendChild(link);
+
+            const htmlTagInput = createTag('div', 'button-link');
+            const inputForm = clockifyButton.createInput({
+                description,
+                projectName: project ? project.textContent : null,
+                taskName,
+                tagNames: tags
+            });
+            htmlTagInput.append(inputForm);
+            container.appendChild(htmlTagInput);
+            $('.clockify-input').style.width = "100%";
+            $('.clockify-input').style.boxShadow = "none";
+            $('.clockify-input').style.border = "1px solid #eaecf0";
+            $('.clockify-input').style.marginLeft = "10px";
+            $('.clockify-input').style.padding = "0 8px";
+            $('.clockify-input').style.fontSize = "12px";
+            $('.clockify-input').style.borderRadius = "5px";
         }
     );
 },500);
@@ -64,11 +83,13 @@ setTimeout(() => {
                 subTaskName = subTask ? subTask.textContent : null,
                 maintask = maintaskSelector ? maintaskSelector.textContent : "",
                 project = getProject(),
+                tags = () => Array.from($$("div.TaskTagTokenPills span.TokenizerPillBase-name", $('.SingleTaskPaneSpreadsheet'))).map(e => e.innerText),
                 description = () => $('.simpleTextarea.AutogrowTextarea-input', elem).textContent.trim(),
                 link = clockifyButton.createButton({
                     description,
                     projectName: project ? project.textContent : null,
                     taskName: () => subTaskName ?? maintask, // subTaskName ? subTaskName + " / " + maintask : maintask,
+                    tagNames: tags,
                     small: true
                 });
             elem.parentNode.appendChild(link);

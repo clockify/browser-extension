@@ -1,6 +1,7 @@
-function isNavigatorOffline() {
-    if (localStorage.getItem('offline'))
-        return JSON.parse(localStorage.getItem('offline'));
+async function isNavigatorOffline() {
+    const offline = await localStorage.getItem('offline');
+    if (offline)
+        return JSON.parse(offline);
     else
         return true;
 }
@@ -18,7 +19,7 @@ function isChrome() {
 }
 
 
-function createHttpHeaders(token) {
+async function createHttpHeaders(token) {
     let headers = {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
@@ -27,15 +28,21 @@ function createHttpHeaders(token) {
     if (token) {
         headers['X-Auth-Token'] = token;
     }
-
-    if (localStorage.getItem('wsConnectionId')) {
-        headers['socket-connection-id'] = localStorage.getItem('wsConnectionId');
+    const wsConnectionId = await localStorage.getItem('wsConnectionId');
+    if (wsConnectionId) {
+        headers['socket-connection-id'] = wsConnectionId;
     }
 
     headers['App-Name'] = 'extension-' + isChrome() ? 'chrome' : 'firefox';
 
-    if (localStorage.getItem('sub-domain_subDomainName')) {
-        headers['sub-domain-name'] = localStorage.getItem('sub-domain_subDomainName');
+    const subDomainName = await localStorage.getItem('sub-domain_subDomainName');
+    if (subDomainName) {
+        headers['sub-domain-name'] = subDomainName;
+    }
+
+    const lang = await localStorage.getItem('lang');
+    if(lang){
+        headers['accept-language'] = lang;
     }
 
     return headers;
@@ -68,8 +75,8 @@ class ClockifyService {
         return localStorage.getItem('permanent_baseUrl');
     }
 
-    static get forces() {
-        const ws = localStorage.getItem('workspaceSettings');
+    static async getForces() {
+        const ws = await localStorage.getItem('workspaceSettings');
         const wsSettings = ws ? JSON.parse(ws) : {
             forceDescription: false,
             forceProjects: false,
@@ -87,22 +94,22 @@ class ClockifyService {
         }
     }
 
-    static get createObjects() {
-        const str = localStorage.getItem('permanent_createObjects');
+    static async getCreateObjects() {
+        const str = await localStorage.getItem('permanent_createObjects');
         if (!str)
             return false;
         return JSON.parse(str);
     }
 
-    static setOnline() {
-        const storageOffline = localStorage.getItem('offline');
+    static async  setOnline() {
+        const storageOffline = await localStorage.getItem('offline');
         if (!storageOffline || storageOffline === 'true') {
             localStorage.setItem('offline', 'false');
         }
     }   
 
-    static setOffline() {
-        const storageOffline = localStorage.getItem('offline');
+    static async setOffline() {
+        const storageOffline = await localStorage.getItem('offline');
         if (!storageOffline || storageOffline === 'false') {
             localStorage.setItem('offline', 'true');
         }
@@ -124,7 +131,9 @@ class ClockifyService {
             }
         }
 
-        const headers = new Headers(createHttpHeaders(token));
+        const hdrs =  await createHttpHeaders(token);
+
+        const headers = new Headers(hdrs);
     
         const request = new Request(endpoint, {
                     method,
@@ -147,7 +156,7 @@ class ClockifyService {
                 switch(response.status)  {
                     case 400:
                     case 501:
-                        return errorObj(400, "You already have entry in progress which can't be saved without project/task/description or tags. Please edit your time entry.");
+                        return errorObj(400, `${clockifyLocales.YOU_ALREADY_HAVE_ENTRY_WITHOUT}. ${clockifyLocales.PLEASE_EDIT_YOUR_TIME_ENTRY}.`);
                     case 403:
                         // logout()
                         // window.location.assign(window.location)
@@ -184,7 +193,8 @@ class ClockifyService {
     }
 
     static async healthCheck() {
-        const endPoint = `${this.apiEndpoint}/health`;
+        const apiEndpoint = await this.apiEndpoint;
+        const endPoint = `${apiEndpoint}/health`;
         const { error } = await this.apiCall(endPoint);
         return !error;
     }

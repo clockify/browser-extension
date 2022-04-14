@@ -1,0 +1,556 @@
+
+  #divClockifyProjectDropDownPopup, #divClockifyTagDropDownPopup, #divCustomField_1Popup, .clockify-tag-item, #divCustomField_3Popup{
+    border: none !important;
+  }
+  
+  #divClockifyPopupDlg {
+    background-color: #37474F !important; 
+  }
+  
+  #divClockifyPopupDlg .header_and_timer {
+    background-color: #37474F !important;
+  }
+  
+  #divClockifyPopupDlg .clockify-start-timer {
+    background-color: #1D272C !important;
+    border: 1px solid #12191D !important;
+  }
+  
+  #divClockifyPopupDlg .clockify-start-timer_description_grey {
+    color: #90A4AE !important;
+  }
+  
+  #divClockifyPopupDlg .start-timer_description {
+    color: #E4EAEE !important;
+  }
+  
+  #divClockifyPopupDlg .clockify-start-timer_description-input {
+    background-color: #1D272C !important;
+    color: #E4EAEE !important;
+  }
+  
+  #divClockifyPopupDlg .clockify-start-timer_description-input::placeholder {
+    color: #90A4AE !important;
+  }
+  
+  #divClockifyPopupDlg .clockify-dropdown-menu {
+    background-color: #12191D !important;
+    box-shadow: none !important;
+  }
+  
+  #divClockifyPopupDlg .clockify-dropdown-header, #divClockifyPopupDlg .clockify-dropdown-item {
+    color: #90A4AE !important;
+  }
+  
+  #divClockifyPopupDlg .clockify-dropdown-divider {
+    border-bottom: 1px dotted #263238 !important;
+  }
+  
+  #divClockifyPopupDlg .rectangle {
+    background-color: #12191D !important;
+    box-shadow: none !important;
+  }
+  
+  #divClockifyPopupDlg .clockify-time-entries-list {
+    border: 1px solid #12191D !important;
+  }
+  
+  #divClockifyPopupDlg .clockify-time-entries-list-time {
+    background-color: #12191D !important;
+    border-bottom: 1px solid #12191D !important;
+  }
+  
+  #divClockifyPopupDlg .clockify-time-entries-list-total, #divClockifyPopupDlg .clockify-time-entries-list-day {
+    color: #90A4AE !important;
+  }
+  
+  #divClockifyPopupDlg .clockify-time-entries-list-total-time {
+    color: #C6D2D9 !important;
+  }
+  
+  #divClockifyPopupDlg .clockify-time-entry, #divClockifyPopupDlg .clockify-time-entry-locked {
+    background-color: #1D272C !important;
+    border: 1px solid #12191D !important;
+  }
+  
+  #divClockifyPopupDlg .clockify-description {
+    color: #E4EAEE !important;
+  }
+  
+  #divClockifyPopupDlg .clockify-time-entry__task-name,  #divClockifyPopupDlg .clockify-time-entry__client-name, #divClockifyPopupDlg .clockify-time-entry__right-side--duration {
+    color: #C6D2D9 !important;
+  }
+  
+  #divClockifyPopupDlg .clockify-no-description {
+    color: #90A4AE !important;
+  }
+  
+  #divClockifyPopupDlg .clockify-dropdown-item:hover {
+    background: #263238 !important;
+  }
+  
+  #divClockifyPopupDlg .clockify-duration, #divClockifyPopupDlg .clockify-description-textarea {
+    border: 1px solid #12191D !important;
+    background-color: #263238 !important;
+  }
+  
+  #divClockifyPopupDlg .clockify-ant-time-picker-input {
+    background-color: #263238 !important;
+    color: #C6D2D9 !important;
+  }
+  
+  #divClockifyPopupDlg .clockify-duration-duration {
+    background-color: #263238 !important;
+    color: #C6D2D9 !important;
+  }
+  
+  #divClockifyPopupDlg .clockify-duration-label {
+    color: #90A4AE !important;
+  }
+  
+  #divClockifyPopupDlg .clockify-edit-form-description {
+    background-color: #263238 !important;
+    color: #C6D2D9 !important;
+  }
+  
+  #divClockifyPopupDlg .clockify-edit-form-description::placeholder {
+    color: #90A4AE !important;
+  }
+  
+  #divClockifyPopupDlg textarea.custom-field-text {
+    color: #C6D2D9 !important;
+    border: 1px solid #12191D !important;
+    background-color: #263238 !important;
+  }
+
+  #divClockifyPopupDlg .custom-field-number-disabled, #divClockifyPopupDlg .clockify-link-input-disabled, #divClockifyPopupDlg .custom-field-text-disabled {
+    border: 1px solid #12191D !important;
+    background-color: #36464f !important;
+    cursor: not-allowed;
+    color: #90A4AE !important;
+  }
+
+  #divClockifyPopupDlg .custom-field-number-disabled::placeholder, #divClockifyPopupDlg .custom-field-text-disabled::placeholder, #divClockifyPopupDlg .clockify-link-input-disabled::placeholder {
+    color: #90A4AE !important;
+  }
+
+  #divClockifyPopupDlg .clockify-tag-list-button-disabled {
+    background-color: initial !important;
+    border: 1px solid #12191D !important;
+  }
+
+  #divClockifyPopupDlg .clockify-tag-list-button-disabled .clockify-tag-list-selected,
+   #divClockifyPopupDlg .clockify-tag-list-button-disabled .clockify-tag-list-add{
+    color: #90A4AE !important;
+  }
+  
+  #divClockifyPopupDlg textarea.custom-field-text::placeholder {
+    color: #C6D2D9 !important;
+  }
+  
+  #divClockifyPopupDlg .clockify-switch-label {
+    color: #8fa2ad !important;
+  }
+  
+  #divClockifyPopupDlg .clockify-custom-field-inner {
+    background: transparent !important;
+  }
+  
+  #divClockifyPopupDlg .clockify-custom-field-inner-checkbox {
+    background-color: #36464f !important;
+  }
+  
+  .clockify-tag-list-item-row {
+    color: white !important;
+    background: #12191D !important;
+  }
+  
+  #divClockifyPopupDlg .clockify-custom-fields {
+    background-color: #36464f !important;
+  }
+  
+  #divClockifyPopupDlg .clockify-custom-field {
+    background-color: transparent !important;
+  }
+  
+  #divClockifyPopupDlg .clockify-custom-field input {
+    background-color: #263238 !important;
+    color: white !important;
+    border: 0 !important;
+    outline: none !important;
+  }
+  
+  #divClockifyPopupDlg .clockify-custom-field input::placeholder {
+    color: #C6D2D9 !important;
+  }
+  
+  #divClockifyPopupDlg .clockify-description-textarea-required,
+  #divClockifyPopupDlg .clockify-project-list-button-required,
+  #divClockifyPopupDlg .clockify-tag-list-button-required {
+    background-color: #263238 !important;
+  }
+  
+  #divClockifyPopupDlg .clockify-project-list-button,
+  #divClockifyPopupDlg .clockify-tag-list-button,
+  #divClockifyPopupDlg .clockify-edit-form-checkbox,
+  .clockify-tag-list-checkbox,
+  #divClockifyPopupDlg .default-project-checkbox,
+  #divClockifyPopupDlg .clockify-pomodoro__checkbox,
+  #divClockifyPopupDlg .clockify-create-project__checkbox {
+    background-color: #263238 !important;
+    border: 1px solid #12191D !important;
+  }
+  
+  #divClockifyPopupDlg .clockify-edit-form-checkbox.clockify-checked,
+  .clockify-tag-list-checkbox.clockify-checked {
+    background: #03A9F4 !important;
+  }
+  
+  #divClockifyPopupDlg .clockify-clockify-tag-list-add, #divClockifyPopupDlg .clockify-edit-form-billable {
+    color: #90A4AE !important;
+  }
+  
+  #divClockifyPopupDlg .checked {
+    width: 18px !important;
+    height: 18px !important;
+    background: #03A9F4 !important;
+    border: none !important;
+  }
+  
+  #divClockifyPopupDlg .checked img {
+    margin-top: 3px !important;
+    margin-left: 2px !important;
+  }
+  
+  #divClockifyPopupDlg .clockify-delete-entry-confirmation-dialog {
+    background-color: #263238 !important;
+  }
+  
+  #divClockifyPopupDlg .clockify-delete-entry-confirmation-dialog-open {
+    background-color: rgba(0, 0, 0, 0.8) !important;
+  }
+  
+  #divClockifyPopupDlg .clockify-delete-entry-confirmation-dialog__question {
+    color: #90A4AE !important;
+  }
+  
+  .clockify-project-list-dropdown, .clockify-tag-list-dropdown, .clockify-drop-down-popup {
+    background: #12191D !important;
+    box-shadow: none !important;
+    border: none;
+  }
+  
+  .clockify-list-input, .clockify-tag-list-input {
+    background: #12191D !important;
+  }
+  
+  .clockify-list-input input, .clockify-tag-list-input input {
+    background: #263238 !important;
+    border: 1px solid #12191D !important;
+    color: #90A4AE !important;
+  }
+  
+  .clockify-list-input input::placeholder, .clockify-tag-list-input input::placeholder {
+    color: #90A4AE !important;
+  }
+  
+  .clockify-project-list-client {
+    color: #90A4AE !important;
+    border-top: 1px dotted #263238 !important;
+  }
+  
+  #divClockifyPopupDlg .clockify-tag-list-item, #divClockifyPopupDlg .clockify-tag-list-load {
+    color: #90A4AE !important;
+  }
+  
+  #divClockifyPopupDlg hr {
+    border-bottom: 1px dotted #12191D !important;
+  }
+  
+  #divClockifyPopupDlg .time-entries-list-not-synced {
+    border: 1px solid #12191D !important;
+    border-radius: 2px !important;
+  }
+  
+  #divClockifyPopupDlg .time-entry-not-synced {
+    background: #263238 !important;
+    border-bottom: 1px solid #12191D !important;
+  }
+  
+  #divClockifyPopupDlg .time-entry-not-synced span {
+    color: #90A4AE !important;
+  }
+  
+  
+  #divClockifyPopupDlg .workspace-list-title,
+  #divClockifyPopupDlg .default-project-title,
+  #divClockifyPopupDlg .dark-mode__title,
+  #divClockifyPopupDlg .clockify-pomodoro__title {
+    color: #E4EAEE !important;
+  }
+  
+  #divClockifyPopupDlg .workspace-list-selection {
+    background: #263238 !important;
+    border: 1px solid #12191D !important;
+  }
+  
+  #divClockifyPopupDlg .workspace-list-default {
+    color: #90A4AE !important;
+  }
+  
+  #divClockifyPopupDlg .day-active {
+    background: #03A9F4 !important;
+    border: 1px solid #03A9F4 !important;
+  }
+  
+  #divClockifyPopupDlg .day-active span {
+    color: #FFFFFF !important;
+  }
+  
+  #divClockifyPopupDlg .clockify-pomodoro__content {
+    background: #12191D !important;
+  }
+  
+  #divClockifyPopupDlg .clockify-pomodoro__border {
+    border-bottom: 1px solid #263238 !important;
+  }
+  
+  #divClockifyPopupDlg .clockify-pomodoro__switch {
+    background-color: #263238 !important;
+    border: 1px solid #12191D !important;
+  }
+  
+  #divClockifyPopupDlg .clockify-pomodoro__switch::after {
+    background-color: #90A4AE !important;
+  }
+  
+  #divClockifyPopupDlg .ant-switch-checked {
+    background-color: #03A9F4 !important;
+  }
+  
+  #divClockifyPopupDlg .ant-switch-checked::after {
+    background-color: #FFFFFF !important;
+  }
+  
+  #divClockifyPopupDlg .clockify-pomodoro__box__content p {
+    color: #90A4AE !important;
+  }
+  
+  #divClockifyPopupDlg .clockify-pomodoro__box__content input {
+    background: #263238 !important;
+    border: 1px solid #12191D !important;
+    color: #E4EAEE !important;
+  }
+  
+  #divClockifyPopupDlg .default-project__project-list {
+    background: #12191D !important;
+  }
+  
+  #divClockifyPopupDlg .dropdown-item:hover {
+    background: #263238 !important;
+  }
+  
+  #divClockifyPopupDlg .workspace-list-item:hover {
+    background-color: #263238 !important;
+  }
+  
+  #divClockifyPopupDlg .workspace-list-dropdown {
+    background: #12191D !important;
+    box-shadow: 0 5px 7px #000 !important;
+  }
+  
+  #divClockifyPopupDlg .workspace-list-item--name {
+    color: #90A4AE !important;
+  }
+  
+  #divClockifyPopupDlg .duration-divider {
+    border-left: 1px dotted #12191D !important;
+    background-color: #12191D !important;
+  }
+  
+  .clockify-project-item:hover {
+    background-color: #263238 !important;
+  }
+  
+  li.clockify-project-item-name {
+    color: white !important;
+  }
+  
+  #divClockifyPopupDlg .clockify-project-list-name {
+    color: #90A4AE;
+  }
+  
+  #divClockifyPopupDlg .project-name {
+    color: #90A4AE !important;
+  }
+  
+  .clockify-task-item {
+    color: #90A4AE !important;
+    background-color: #12191D !important;
+  }
+  
+  .clockify-task-item:hover {
+    background-color: #263238 !important;
+  }
+  
+  .clockify-tag-list-item {
+    color: #90A4AE !important;
+  }
+  
+  .clockify-tag-list-item-row:hover {
+    background-color: #263238 !important;
+  }
+  
+  .clockify-tag-list-selected-item, .clockify-tag-list-selected {
+    color: #C6D2D9 !important;
+  }
+  
+  #divClockifyPopupDlg .projects-list__create-project,
+  #divClockifyPopupDlg .clockify-tag-list__create-tag,
+  #divClockifyPopupDlg .client-list__create-client,
+  #divClockifyPopupDlg .client-list-dropdown {
+    background-color: #12191D !important;
+    box-shadow: none !important;
+  }
+  
+  #divClockifyPopupDlg .create-project__project-name {
+    border: 1px solid #12191D !important;
+    background-color: #263238 !important;
+    color: #C6D2D9 !important;
+  }
+  
+  #divClockifyPopupDlg .create-project__project-name::placeholder {
+    color: #90A4AE !important;
+  }
+  
+  #divClockifyPopupDlg .color-picker__title,
+  #divClockifyPopupDlg .create-project__billable-title {
+    color: #90A4AE !important;
+  }
+  
+  #divClockifyPopupDlg .create-project__divider {
+    border-bottom: 1px dotted #12191D !important;
+  }
+  
+  #divClockifyPopupDlg .client-list-button {
+    border: 1px solid #12191D !important;
+    background-color: #263238 !important;
+  }
+  
+  #divClockifyPopupDlg .client-list-name {
+    color: #90A4AE !important;
+  }
+  
+  #divClockifyPopupDlg .client-list-input {
+    background: #12191D !important;
+  }
+  
+  #divClockifyPopupDlg .client-list-filter {
+    background-color: #263238 !important;
+    border: none !important;
+  }
+  
+  #divClockifyPopupDlg .client-list-filter::placeholder {
+    color: #C6D2D9 !important;
+  }
+  
+  #divClockifyPopupDlg .client-list-client {
+    color: #90A4AE !important;
+  }
+  
+  #divClockifyPopupDlg .client-list__create-form {
+    background-color: #37474F !important;
+  }
+  
+  #divClockifyPopupDlg .client-list__create-form--open {
+    background-color: rgba(0, 0, 0, 0.5) !important;
+  }
+  
+  #divClockifyPopupDlg .client-list__create-form--divider {
+    border-bottom: 1px dotted #12191D !important;
+  }
+  
+  #divClockifyPopupDlg .client-list__create-form--title {
+    color: #C6D2D9 !important;
+  }
+  
+  #divClockifyPopupDlg .client-list__create-form--client-name {
+    border: 1px solid #12191D !important;
+    background-color: #263238 !important;
+    color: #C6D2D9 !important;
+  }
+  
+  #divClockifyPopupDlg .client-list__create-form--client-name::placeholder {
+    color: #90A4AE !important;
+  }
+  
+  #divClockifyPopupDlg .clockify-tag-list__create-form {
+    background-color: #37474F !important;
+  }
+  
+  .clockify-tag-list__create-form--open {
+    background-color: rgba(0, 0, 0, 0.5) !important;
+  }
+  
+  .clockify-tag-list__create-form--divider {
+    border-bottom: 1px dotted #12191D !important;
+  }
+  
+  .clockify-tag-list__create-form--title {
+    color: #C6D2D9 !important;
+  }
+  
+  .clockify-tag-list__create-form--tag-name {
+    border: 1px solid #12191D !important;
+    background-color: #263238 !important;
+    color: #C6D2D9 !important;
+  }
+  
+  .clockify-tag-list__create-form--tag-name::placeholder {
+    color: #90A4AE !important;
+  }
+  
+  .clockify-modal-content {
+    background-color: #37474F !important;
+    border: none !important;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25) !important;
+  }
+  
+  .clockify-modal-content .cl-modal-title, .clockify-modal-content .custom-field-link-label {
+    color: #C6D2D9 !important;
+  }
+  
+  .clockify-modal-content .custom-field-link {
+    background-color: #263238 !important;
+    color: #C6D2D9 !important;
+  }
+  
+  .clockify-modal-content .cl-close {
+    background: none !important;
+  }
+  
+  .clockify-modal-content .cl-close .clockify-close {
+    background: none !important;
+  }
+  
+  .clockify-modal-content .cl-modal-header {
+    border-bottom: 1px dotted #12191D !important;
+  }
+  
+  .clockify-modal-content .cl-modal-footer {
+    border-top: 1px dotted #12191D !important;
+  }
+  
+  .clockify-tag-list-item--comma {
+    color: white !important;
+  }
+  
+  #divClockifyPopupDlg .error {
+    color: red !important;
+    font-size: 14px !important;
+  }
+
+  .clockify-switch-slider{
+      border-color: #12191D;
+  }
+  

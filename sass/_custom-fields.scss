@@ -11,14 +11,12 @@
   padding: 0px !important; 
   border-image-width: 0 !important;
   border: 0px solid #C6D2D9 !important; 
-  background-color: white !important;
   margin: 8px 0px 0px 0px !important;
   height: 38px !important;
   &-disabled {
     box-sizing: border-box;
     padding: 0px !important; 
     border-image-width: 0 !important;
-    border: 1px solid #C6D2D9 !important; 
     background-color: #eff4f7 !important;  
     margin: 8px 0px 0px 0px !important;
     height: 38px !important;
@@ -42,7 +40,6 @@ div.custom-field-ta {
     border-image-width: 0 !important;
     margin: 8px 0px 0px 0px !important;
     height: 45px !important;
-    border: 1px solid #C6D2D9 !important; 
     background-color: #eff4f7 !important;  
   }
 }
@@ -53,7 +50,6 @@ div.custom-field-inner {
   padding: 0px 7px !important;
   display: flex !important;
   align-items: center !important;
-  background-color: #eff4f7 !important;
   width: 100% !important;
   height: 100% !important;
   margin: 0 !important;
@@ -65,9 +61,7 @@ div.custom-field-inner {
     align-items: center !important;
     width: 100% !important;
     height: 100% !important;
-    margin: 0 !important;  
-    border: 1px solid #9ea2a5 !important; 
-    background-color: #eff4f7 !important;  
+    margin: 0 !important;
   }
 }
 
@@ -83,14 +77,15 @@ div.custom-field-inner-checkbox {
   border: 0px solid #C6D2D9 !important;
   &-disabled {
     box-sizing: border-box;
-    padding: 0px 7px !important;
     display: flex !important;
     align-items: center !important;
     width: 100% !important;
     height: 100% !important;
-    margin: 0 !important;  
-    border: 1px solid #9ea2a5 !important; 
+    margin: 0 !important; 
     background-color: #eff4f7 !important;  
+    .clockify-switch-label{
+      color: #9c9c9c !important;
+    }
   }
 }
 
@@ -100,15 +95,15 @@ textarea.custom-field-text {
   width: 100% !important;
   height: 45px !important;
   min-height: 45px !important;
-  border: 0 !important;
+  border: 1px solid #C6D2D9;
   margin: 0 !important;
   resize: none !important;
   font-size: 14px !important;
   outline: none !important;
-  color: #333333 !important;
+  color: #333333;
   padding: 5px 10px !important;
   word-wrap: break-word !important;
-  background-color: white !important;
+  background-color: white;
   border-image-width: 0 !important;
 
   &-disabled {
@@ -121,11 +116,13 @@ textarea.custom-field-text {
     resize: none !important;
     font-size: 14px !important;
     outline: none !important;
-    color: #333333 !important;
-    padding: 10px !important;
+    color: #333333;
+    padding: 5px 10px !important;
     word-wrap: break-word !important;    
-    border: 1px solid #C6D2D9 !important; 
-    background-color: #eff4f7 !important;
+    border: 1px solid #C6D2D9;
+    &::placeholder{
+      color: #9c9c9c !important;
+    }
   }
 }
 
@@ -171,7 +168,6 @@ div.custom-field-link-label {
   margin: 0 !important;
   // overflow: hidden !important;
   // text-overflow: ellipsis;
-  width: 100% !important;
 }
 
 /**********************************************
@@ -204,7 +200,6 @@ div.custom-field-link-label {
 
 .clockify-switch-label {
   box-sizing: border-box;
-  cursor:pointer !important;
   color:#333 !important;
   font-size:14px !important;
   white-space:nowrap !important;
@@ -281,34 +276,31 @@ div.custom-field-link-label {
 /* Modal Content */
 .clockify-modal-content {
   box-sizing: border-box;
-  background-color: #fefefe !important;
+  background-color: #fefefe;
   margin: auto !important;
-  padding: 10px !important;
-  border: 2px solid #888 !important;
-  border-radius: 2px !important;
+  border-radius: 2px;
   width: 84% !important;
 }
 
 
 /* The Close Button */
 .clockify-close {
-  color: #aaaaaa !important;
   float: right !important;
-  font-size: 28px !important;
-  font-weight: bold !important;
-  background-color: #fff !important;
+  background: url('/assets/images/closeX.svg') no-repeat;
+  width: 20px; 
+  height: 20px;
+  cursor: pointer;
+  opacity: .5;
+  background-size: contain;
 }
 
 .cl-close {
-  background-color: #fff !important;
+  background-color: #fff;
   border: 0 !important;
 }
 
-.clockify-close:hover,
-.clockify-close:focus {
-  color: #000 !important;
-  text-decoration: none !important;
-  cursor: pointer !important;
+.clockify-close:hover {
+  opacity: .75;
 }
 
 .cl-form-control {
@@ -379,11 +371,11 @@ input.clockify-link-input-modal {
   font-size: 14px !important;
   font-weight: 400 !important;
   line-height: 21px !important;
-  color: #333 !important;
-  background-color: #fff !important;
+  color: #333;
+  background-color: #fff;
   background-clip: padding-box !important;
   border: 1px solid #c6d2d9 !important;
-  border-radius: 1px !important;
+  border-radius: 2px;
   transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out !important;
   box-shadow: none !important;
 }
@@ -405,17 +397,17 @@ input.clockify-link-input-modal {
   align-items: center !important;
   display: flex !important;
   justify-content: space-between !important;
-  padding: 10px 15px 15px 15px !important;
-  border-bottom: 1px solid #c6d2d9 !important;
+  padding: 20px !important;
+  border-bottom: 1px solid #c6d2d9;
   border-top-left-radius: 2px !important;
   border-top-right-radius: 2px !important;
 }
 
 .cl-modal-title {
   font-size: 24px !important;
-  font-weight: 400px !important;
+  font-weight: 100 !important;
   line-height: 36px !important;
-  color: rgb(102, 102, 102) !important;
+  color: rgb(102, 102, 102);
   margin: 0 !important;
 }
 
@@ -423,7 +415,6 @@ input.clockify-link-input-modal {
   position: relative !important;
   /* flex: 1 1 auto !important; */
   display: flex !important;
-  flex-direction: column;
   // justify-content: flex-end !important;
   padding: 21px !important;
   align-items: center !important; 
@@ -434,24 +425,34 @@ input.clockify-link-input-modal {
   align-items: center !important;
   justify-content: flex-end !important;
   padding: 20px !important;
-  border-top: 1px solid #c6d2d9 !important;
+  border-top: 1px solid #c6d2d9;
   border-bottom-right-radius: 2px !important;
   border-bottom-left-radius: 2px !important;
 }
 
 .clockify-cancel {
   color: #2196F3 !important;
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 .clockify-save {
   color: white;
   background-color: #2196F3 !important;
-  margin-left: 20px;
+  margin-left: 30px;
   padding: 10px;
+  min-width: 67px;
+  text-align: center;
+  border-radius: 2px;
+  &--disabled{
+    opacity: .65;
+    cursor: default !important;
+  }
 }
 
 a.clockify-cancel, a.clockify-save {
-  cursor: pointer !important;
+  cursor: pointer;
 }
 
 

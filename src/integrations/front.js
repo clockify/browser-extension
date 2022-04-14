@@ -9,7 +9,7 @@ clockifyButton.render('.conversationTopbar__StyledConversationTopbar-sc-denlcl-0
         const container = $('.conversationTopbar__StyledContentDiv-sc-denlcl-1');
         const description = taskName;
 
-        link = clockifyButton.createButton({
+        const link = clockifyButton.createButton({
             description,
             projectName: null,
             taskName

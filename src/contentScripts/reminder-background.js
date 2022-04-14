@@ -1,27 +1,44 @@
 let reminderTimer;
-const reminderButtons = ['Start timer', 'Add missing time'];
+// const reminderButtons = [clockifyLocales.START_TIMER, clockifyLocales.ADD_MISSING_TIME];
+
+aBrowser.alarms.onAlarm.addListener(async (alarm) => {
+    if(alarm.name === 'createReminderNotification'){
+        const userId = await localStorage.getItem('userId');
+        const permReminderDandT = await localStorage.getItem('permanent_reminderDatesAndTimes');
+        const reminderByUserFromStorage =
+            JSON.parse(permReminderDandT)
+                .filter(reminderDatesAndTime => reminderDatesAndTime.userId === userId)[0];
+        const dateTo = this.parseTimesToDates(reminderByUserFromStorage.timeTo);
+        createReminderNotification(dateTo, reminderByUserFromStorage.minutesSinceLastEntry);
+    }
+});
 
 aBrowser.runtime.onMessage.addListener((request, sender, sendResponse) => {
     aBrowser.storage.local.get(["timeEntryInProgress"], (result) => {
         if (request.eventName === 'reminder' && !result.timeEntryInProgress) {
-            this.addReminderTimer();
+            addReminderTimer();
         }
     });
+
+    if(request.eventName === 'removeReminderTimer'){
+        removeReminderTimer();
+    }
     
 });
 
-function addReminderTimer() {
-    const userId = localStorage.getItem('userId');
-    const reminderEnabledForUser = localStorage.getItem('permanent_reminders') ?
-        JSON.parse(localStorage.getItem('permanent_reminders')).filter(reminder => reminder.userId === userId)[0] :
+async function addReminderTimer() {
+    const userId = await localStorage.getItem('userId');
+    const permReminder = await localStorage.getItem('permanent_reminders');
+    const reminderEnabledForUser = permReminder ?
+        JSON.parse(permReminder).filter(reminder => reminder.userId === userId)[0] :
         null;
 
     if (!reminderEnabledForUser || !reminderEnabledForUser.enabled) {
         return;
     }
-
+    const permReminderDandT = await localStorage.getItem('permanent_reminderDatesAndTimes');
     const reminderByUserFromStorage =
-        JSON.parse(localStorage.getItem('permanent_reminderDatesAndTimes'))
+        JSON.parse(permReminderDandT)
             .filter(reminderDatesAndTime => reminderDatesAndTime.userId === userId)[0];
     const currentDate = new Date();
     const dateFrom = this.parseTimesToDates(reminderByUserFromStorage.timeFrom);
@@ -33,15 +50,18 @@ function addReminderTimer() {
         currentDate.getTime() < dateTo &&
         reminderByUserFromStorage.dates.includes(currentDate.getDay())
     ) {
-        reminderTimer = setTimeout(
-            () => this.createReminderNotification(dateTo, reminderByUserFromStorage.minutesSinceLastEntry),
-            reminderByUserFromStorage.minutesSinceLastEntry * 60 * 1000);
+        aBrowser.alarms.create('createReminderNotification', {delayInMinutes: reminderByUserFromStorage.minutesSinceLastEntry});
+        
+        // reminderTimer = setTimeout(
+        //     () => this.createReminderNotification(dateTo, reminderByUserFromStorage.minutesSinceLastEntry),
+        //     reminderByUserFromStorage.minutesSinceLastEntry * 60 * 1000);
     }
 }
 
 function removeReminderTimer() {
     if (reminderTimer) {
-        clearTimeout(reminderTimer);
+        // clearTimeout(reminderTimer);
+        aBrowser.alarms.clear('createReminderNotification');
     }
     this.clearNotification('reminder');
 }
@@ -69,15 +89,16 @@ function createReminderNotification(dateTo, minutes) {
             return;
         } else {
             const buttonsForMessage = [
-                {title: reminderButtons[0]},
-                {title: reminderButtons[1]}
+                {title: clockifyLocales.START_TIMER},
+                {title: clockifyLocales.ADD_MISSING_TIME}
             ];
         
             const notificationOptions = {
                 type: "basic",
                 iconUrl: "./assets/icons/64x64.png",
-                title: "Reminder",
-                message: "Don't forget to track your time! (" + minutes + "m passed since the last activity)"
+                title: clockifyLocales.REMINDER,
+                // message: "Don't forget to track your time! (" + minutes + "m passed since the last activity)"
+                message: clockifyLocales.REMINDER_MESSAGE(minutes)
             };
         
             if (this.isChrome()) {

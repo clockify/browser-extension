@@ -30,7 +30,7 @@ class Toaster extends React.Component {
 
         counter++;
 
-        this.createToastMessage(successToastId, message, 'success');
+        this.createToastMessage(successToastId, message, 'success', removeAfterSeconds);
 
         if (removeAfterSeconds) {
             this.autoRemoveToast(successToastId, removeAfterSeconds);
@@ -42,7 +42,7 @@ class Toaster extends React.Component {
 
         counter++;
 
-        this.createToastMessage(errorToastId, message, 'error');
+        this.createToastMessage(errorToastId, message, 'error', removeAfterSeconds);
 
         if (removeAfterSeconds) {
             this.autoRemoveToast(errorToastId, removeAfterSeconds);
@@ -54,17 +54,18 @@ class Toaster extends React.Component {
 
         counter++;
 
-        this.createToastMessage(errorToastId, message, 'info');
+        this.createToastMessage(errorToastId, message, 'info', removeAfterSeconds);
 
         if (removeAfterSeconds) {
             this.autoRemoveToast(errorToastId, removeAfterSeconds);
         }
     }
 
-    createToastMessage(successToastId, message, type) {
+    createToastMessage(successToastId, message, type, delay = 1.5) {
         const toastMessageContainer = document.createElement('div');
         toastMessageContainer.setAttribute('id', successToastId);
         toastMessageContainer.setAttribute('class', 'toaster__message--container_' + type);
+        toastMessageContainer.style.animation = `toaster-fadein 0.5s ease, toaster-fadeout 0.5s cubic-bezier(1, -.5, 0, 1) ${delay-0.5}s`;
 
         const toastMessageContent = document.createElement('span');
         toastMessageContent.setAttribute('class', 'toaster__message--content');

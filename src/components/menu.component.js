@@ -3,9 +3,6 @@ import * as ReactDOM from 'react-dom';
 import Settings from './settings.component';
 import {TokenService} from "../services/token-service";
 import {getBrowser, isChrome} from "../helpers/browser-helper";
-import {isAppTypeExtension} from "../helpers/app-types-helper";
-//import {WebSocketClient} from "../web-socket/web-socket-client";
-import {getAppTypes} from "../enums/applications-types.enum";
 import {getEnv} from "../environment";
 import {HtmlStyleHelper} from "../helpers/html-style-helper";
 import WorkspaceList from './workspace-list.component';
@@ -13,7 +10,8 @@ import {LocalStorageService} from "../services/localStorage-service";
 import {UserService} from "../services/user-service";
 import WorkspaceChangeConfirmation from './workspace-change-confirmation.component'
 import {SettingsService} from "../services/settings-service";
-import {getManualTrackingModeEnums} from "../enums/manual-tracking-mode.enum";
+import locales from '../helpers/locales';
+import WsChange2FAPopupComponent from "../components/ws-change-2fa-popup.component";
 
 const tokenService = new TokenService();
 //const webSocketClient = new WebSocketClient();
@@ -34,6 +32,8 @@ class Menu extends React.Component {
             revert: false,
             workspaceNameSelected: "",
             subDomainName: "",
+            isOffline: null,
+            show2FAPopup: false
         }
 
         this.onSetWorkspace = this.onSetWorkspace.bind(this);
@@ -69,8 +69,8 @@ class Menu extends React.Component {
         }
     }
 
-    openSettings() {
-        if(!JSON.parse(localStorage.getItem('offline'))) {
+    async openSettings() {
+        if(!JSON.parse(await localStorage.getItem('offline'))) {
             ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
             ReactDOM.render(
                 <Settings workspaceSettings={this.props.workspaceSettings}/>,
@@ -91,27 +91,22 @@ class Menu extends React.Component {
             localStorageService.removeItem('subDomainName');        
     }
 
-    openWebDashboard() {
-        if (localStorage.getItem('appType') === getAppTypes().DESKTOP) {
-            openExternal(`${environment.home}/dashboard`);
-        } else {
-            const homeUrl = localStorageService.get('homeUrl') ?
-                localStorageService.get('homeUrl') : environment.home
-
-            window.open(`${homeUrl}/dashboard`, '_blank');
+    async openWebDashboard() {
+        const homeUrl = await localStorageService.get('homeUrl') || environment.home
+        window.open(`${homeUrl}/dashboard`, '_blank');   
+        if(!isChrome()){
+            browser.tabs.create({
+                url:`${homeUrl}/dashboard`
+              });
         }
     }
 
-    disconnectWebSocket() {
-        if (!JSON.parse(localStorage.getItem('selfHosted_selfHosted'))) {
-            if (isAppTypeExtension()) {
-                getBrowser().runtime.sendMessage({
-                    eventName: 'webSocketDisconnect'
-                });
-            } 
-            // else {
-            //     webSocketClient.disconnect();
-            // }
+    async disconnectWebSocket() {
+        const selfHosted = await localStorage.getItem('selfhosted_selfHosted');
+        if (!JSON.parse(selfHosted)) {
+            getBrowser().runtime.sendMessage({
+                eventName: 'webSocketDisconnect'
+            });
         }
     }
 
@@ -140,21 +135,29 @@ class Menu extends React.Component {
                     return;
                 }
                 localStorageService.set('activeWorkspaceId', workspaceId);
-                if (isAppTypeExtension()) {
-                    getBrowser().storage.local.set({
-                        activeWorkspaceId: (workspaceId)
-                    });
-                }
+                
+                getBrowser().storage.local.set({
+                    activeWorkspaceId: (workspaceId)
+                });
+                
                 this.setState({
                     defaultProjectEnabled: false
                 });
-                if (isAppTypeExtension()) {
-                    getBrowser().extension.getBackgroundPage().restartPomodoro();
-                }
+                
+                // getBrowser().extension.getBackgroundPage().restartPomodoro();
+                getBrowser().runtime.sendMessage({
+                    eventName: 'restartPomodoro'
+                });
 
                 this.props.workspaceChanged();
             })
-            .catch(() => {
+            .catch((error) => {
+                console.log(error.response.data.code);
+                if(error.response.data.code === 1013){
+                    this.setState({
+                        show2FAPopup: true
+                    });
+                }
             });
     }
 
@@ -176,15 +179,24 @@ class Menu extends React.Component {
         this.logout.bind(this)()
     }
 
+    async componentDidUpdate() {
+        const isOffline = JSON.parse(await localStorage.getItem('offline'));
+        if(this.state.isOffline !== isOffline) {
+            this.setState({
+                isOffline
+            });
+        }
+    }
+
     render() {
         const title = this.props.disableManual ? "You have time entry in progress!" :
-                        this.props.manualModeDisabled ? "Manual tracking mode is disabled!" : "";
+                        this.props.manualModeDisabled ? locales.DISABLED_MANUAL_MODE : "";
         if (this.props.isOpen) {
             return (
                 <div title="">
                     <div className="rectangle"></div>
                     <div className="dropdown-menu">
-                        <div className="dropdown-header">Entry mode</div>
+                        <div className="dropdown-header">{locales.ENTRY_MODE}</div>
                         <a id="manual"
                            className={JSON.parse(this.props.disableManual) || this.props.manualModeDisabled ?
                                "dropdown-item disable-manual" : this.props.mode === "manual" ?
@@ -194,7 +206,7 @@ class Menu extends React.Component {
                            title={title}
                         >
                             <span className="menu-manual-img"></span>
-                            <span className={JSON.parse(this.props.disableManual) ? "disable-manual" : ""}>Manual</span>
+                            <span className={JSON.parse(this.props.disableManual) ? "disable-manual" : ""}>{locales.MANUAL}</span>
                         </a>
                         <a id="timer"
                            className={this.props.mode === 'timer' ?
@@ -202,7 +214,7 @@ class Menu extends React.Component {
                            href="#"
                            onClick={this.changeModeToTimer.bind(this)}>
                             <span className="menu-timer-img"></span>
-                            <span>Timer</span>
+                            <span>{locales.TIMER}</span>
                         </a>
                         <div className="dropdown-divider"></div>
                         <WorkspaceList
@@ -213,25 +225,25 @@ class Menu extends React.Component {
                         <a onClick={this.openSettings.bind(this)}
                            className="dropdown-item"
                            href="#">
-                            <span>Settings</span>
+                            <span>{locales.SETTINGS}</span>
                         </a>
                         <a onClick={this.openUrlPermissions.bind(this)}
-                           className={isAppTypeExtension() ? "dropdown-item" : "disabled"} href="#">
-                            <span className={JSON.parse(localStorage.getItem('offline')) ? "disable-manual" : ""}>
-                                Integrations
+                           className="dropdown-item" href="#">
+                            <span className={this.state.isOffline ? "disable-manual" : ""}>
+                            {locales.INTEGRATIONS}
                             </span>
                         </a>
                         <a onClick={this.openWebDashboard.bind(this)}
                            className="dropdown-item" href="#">
-                            <span className={JSON.parse(localStorage.getItem('offline')) ? "disable-manual" : ""}>
-                                Dashboard
+                            <span className={this.state.isOffline ? "disable-manual" : ""}>
+                            {locales.DASHBOARD}
                             </span>
                             <span className="menu-img-right"></span>
                         </a>
                         <a onClick={this.logout.bind(this)}
                            className="dropdown-item" href="#">
-                            <span className={JSON.parse(localStorage.getItem('offline')) ? "disable-manual" : ""}>
-                                Log out
+                            <span className={this.state.isOffline ? "disable-manual" : ""}>
+                                {locales.LOG_OUT}
                             </span>
                         </a>
                     </div>
@@ -243,6 +255,13 @@ class Menu extends React.Component {
                             workspaceName={this.state.workspaceNameSelected}
                             isChrome={isChrome()}
                         /> 
+                    }
+
+                    {   this.state.show2FAPopup && 
+                        <WsChange2FAPopupComponent 
+                            cancel={() => this.setState({show2FAPopup: false})} 
+                            workspaceName={this.state.workspaceNameSelected}
+                        />
                     }
                     
                 </div>

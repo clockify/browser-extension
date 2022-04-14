@@ -1,4 +1,5 @@
 import * as React from "react";
+import locales from "../helpers/locales";
 
 class WorkspaceChangeConfirmation extends React.Component {
 
@@ -23,7 +24,7 @@ class WorkspaceChangeConfirmation extends React.Component {
             txt = `To access ${this.props.workspaceName} workspace, you will have to log in again ?`
         } else {
             txt = 'Workspaces on SubDomain are supported only in the Chrome extension.';
-            cancelMsg = 'OK';
+            cancelMsg = locales.OK_BTN;
         }
 
         return (

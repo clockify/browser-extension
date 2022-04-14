@@ -1,10 +1,10 @@
-export function isOffline() {
+export async function isOffline() {
 
     // if (localStorage.getItem('offlineForTest')) {
     //     return JSON.parse(localStorage.getItem('offlineForTest'))
     // }
 
-    if (localStorage.getItem('offline') === 'true')
+    if (await localStorage.getItem('offline') === 'true')
         return true;
     else
         return false;

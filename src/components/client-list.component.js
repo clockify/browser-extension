@@ -1,6 +1,6 @@
 import * as React from "react";
 import {ClientService} from "../services/client-service";
-import Toaster from "./create-project.component";
+import locales from "../helpers/locales";
 
 const pageSize = 50;
 const clientService = new ClientService();
@@ -11,7 +11,7 @@ class ClientListComponent extends React.Component {
 
         this.state = {
             selectedClient : {
-                name: "Select client"
+                name: locales.SELECT_CLIENT
             },
             isOpen: false,
             page: 1,
@@ -20,16 +20,26 @@ class ClientListComponent extends React.Component {
             ready: false,
             loadMore: false,
             createFormOpened: false,
-            clientName: ""
+            clientName: "",
+            isOffline: null
         }
+        this.setAsyncStateItems = this.setAsyncStateItems.bind(this);
+    }
+
+    async setAsyncStateItems() {
+        const isOffline = await localStorage.getItem('offline');
+        this.setState({
+            isOffline
+        });
     }
 
     componentDidMount() {
         this.getClients(this.state.page);
+        this.setAsyncStateItems();
     }
 
-    openClientDropdown() {
-        if (!JSON.parse(localStorage.getItem('offline'))) {
+    async openClientDropdown() {
+        if (!JSON.parse(await localStorage.getItem('offline'))) {
             this.setState({
                 isOpen: true
             }, () => {
@@ -114,7 +124,7 @@ class ClientListComponent extends React.Component {
     addClient() {
         let client = {};
         if (!this.state.clientName) {
-            this.props.errorMessage('Name is required.');
+            this.props.errorMessage(locales.NAME_IS_REQUIRED);
             return;
         }
         client.name = this.state.clientName;
@@ -147,7 +157,7 @@ class ClientListComponent extends React.Component {
         return (
             <div>
                 <div onClick={this.openClientDropdown.bind(this)}
-                     className={JSON.parse(localStorage.getItem('offline')) ?
+                     className={JSON.parse(this.state.isOffline) ?
                          "client-list-button-offline" : "client-list-button"}>
                     <span className="client-list-name">
                         {this.state.selectedClient.name}
@@ -163,7 +173,7 @@ class ClientListComponent extends React.Component {
                             <div className="client-list-input">
                                 <div className="client-list-input--border">
                                     <input
-                                        placeholder="Filter clients"
+                                        placeholder={locales.FILTER_NAME(locales.CLIENTS.toLowerCase())}
                                         className="client-list-filter"
                                         onChange={this.filterClients.bind(this)}
                                         id="client-filter"
@@ -175,7 +185,7 @@ class ClientListComponent extends React.Component {
                             {
                                 this.state.clientList.map(client => {
                                     return (
-                                        <div>
+                                        <div key={client.name}>
                                             <div className="client-list-client"
                                                  onClick={this.selectClient.bind(this)}
                                                  value={JSON.stringify(client)}>{client.name}</div>
@@ -184,13 +194,13 @@ class ClientListComponent extends React.Component {
                                 })
                             }
                             <div className={this.state.loadMore ? "client-list-load" : "disabled"}
-                                 onClick={this.loadMoreClients.bind(this)}>Load more
+                                 onClick={this.loadMoreClients.bind(this)}>{locales.LOAD_MORE}
                             </div>
                             <div className="client-list__bottom-padding"></div>
                             <div className="client-list__create-client"
                                  onClick={this.openCreateClient.bind(this)}>
                                 <span className="client-list__create-client--icon"></span>
-                                <span className="client-list__create-client--text">Create new client</span>
+                                <span className="client-list__create-client--text">{locales.CREATE_NEW_CLIENT}</span>
                             </div>
                         </div>
                     </div>
@@ -199,7 +209,7 @@ class ClientListComponent extends React.Component {
                     <div className="client-list__create-form">
                         <div className="client-list__create-form__title-and-close">
                             <div className="client-list__create-form--title">
-                                Create new client
+                            {locales.CREATE_NEW_CLIENT}
                             </div>
                             <span onClick={this.cancel.bind(this)}
                                   className="client-list__create-form__close"></span>
@@ -208,14 +218,14 @@ class ClientListComponent extends React.Component {
                         <input
                             ref={input => {this.createClientName = input}}
                             className="client-list__create-form--client-name"
-                            placeholder="Client name"
+                            placeholder={locales.CLIENT_NAME}
                             value={this.state.clientName}
                             onChange={this.handleChange.bind(this)}>
                         </input>
                         <div onClick={this.addClient.bind(this)}
-                              className="client-list__create-form--confirmation_button">Add</div>
+                              className="client-list__create-form--confirmation_button">{locales.ADD}</div>
                         <span onClick={this.cancel.bind(this)}
-                              className="client-list__create-form--cancel">Cancel</span>
+                              className="client-list__create-form--cancel">{locales.CANCEL}</span>
                     </div>
                 </div>
             </div>

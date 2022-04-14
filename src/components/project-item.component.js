@@ -1,4 +1,5 @@
 import * as React from 'react';
+import locales from '../helpers/locales';
 
 const pageSize = 50;
 
@@ -45,7 +46,7 @@ class ProjectItem extends React.Component {
             });
     }
 
-    openTasks(e) {
+    async openTasks(e) {
         e.preventDefault();
 
         if (this.state.tasks.length === 0) {
@@ -56,7 +57,7 @@ class ProjectItem extends React.Component {
                 });
             }
             else {
-                if (!JSON.parse(localStorage.getItem('offline'))) {
+                if (!JSON.parse(await localStorage.getItem('offline'))) {
                     this.getMyTasks()
                 }
             }
@@ -102,7 +103,8 @@ class ProjectItem extends React.Component {
         const {project, noTasks} = this.props;
         const { taskCount, isTaskOpen, favorite, client, projectFavorites } = this.state;
         let name = project.name;
-        let title = project.name;
+        let locale = project.getLocale && project.getLocale();
+        let title = locale || project.name;
         let clientName = "";
         if (projectFavorites && favorite) {
             if (client && client.name) {
@@ -110,11 +112,12 @@ class ProjectItem extends React.Component {
                 title += '\n Client: ' + client.name;
             }
             else {
-                title += '\n Without client';
+                title += `\n ${locales.WITHOUT_CLIENT}`;
             }
         }
         const forceTasksButNotLastUsedProject = 
                 this.props.workspaceSettings.forceTasks  && !this.props.isLastUsedProject
+
         return(
             <div>
                 <ul className="project-item" title={title}>
@@ -129,27 +132,26 @@ class ProjectItem extends React.Component {
                             : this.chooseProject()
                         }}
                     >
-                        {name} <i>{clientName}</i>
+                        {locale || name} <i>{clientName}</i>
                     </li>
-                    { !noTasks &&
-                        <li className="project-item-tasks" onClick={this.openTasks} title='Expand'>
-                            { taskCount > 0 && 
+                    
+                    { !noTasks && taskCount === 0 && !this.props.disableCreateTask &&
+                        <span className="project-item-create-task" onClick={() => this.props.openCreateTaskModal(project)}>{locales.CREATE_TASK}</span>
+                    }
+                    { !noTasks && taskCount > 0 &&
+                        <li className="project-item-tasks" onClick={this.openTasks} title={locales.EXPAND}>
                                 <span style={{float: 'right', paddingRight: '5px'}}>
-                                    {taskCount + ' Tasks'}
+                                    {locales.TASKS_NUMBER(taskCount)}
                                     { isTaskOpen 
                                         ? <img src="./assets/images/filter-arrow-down.png" className="tasks-arrow-down" />
                                         : <img src="./assets/images/filter-arrow-right.png" className="tasks-arrow-right" />
                                     }
                                 </span>
-                            }
-                            { taskCount === 0 && 
-                                <span>
-                                </span>
-                            }
                         </li>
+                        
                     }
                     {projectFavorites &&
-                        <li className='project-item-favorite' title='Favorite'>
+                        <li className='project-item-favorite' title={locales.FAVORITE}>
                             { project.id !== 'no-project' &&
                                 <a style={{display: 'inline-block'}}
                                     className={`cl-dropdown-star ${favorite ? 'cl-active' : ''}`} onClick={this.toggleFavorite}>
@@ -168,7 +170,13 @@ class ProjectItem extends React.Component {
                     })}
                     { this.state.loadMore &&
                         <div key='load-more' className="project-list-load task-item" style={{marginTop:'0px'}} onClick={this.getMyTasks}>
-                            Load more
+                            {locales.LOAD_MORE}
+                        </div>
+                    }
+                    { !this.props.disableCreateTask && 
+                        <div className="projects-list__create-task" onClick={() => this.props.openCreateTaskModal(project)}>
+                            <span className="projects-list__create-task--icon"></span>
+                            <span className="projects-list__create-task--text">{locales.CREATE_NEW_TASK}</span>
                         </div>
                     }
                 </div>

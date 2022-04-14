@@ -2,6 +2,7 @@ $spacer: 1rem !default;
 
 .project-list-button {
   //padding: 6px 0;
+  padding-right: 6px;
   background: white;
   border: 1px solid $border;
   border-radius: 2px;
@@ -60,7 +61,10 @@ $spacer: 1rem !default;
   color: #333; //  $lighter_text;
 }
 
-
+span.project-list-name-client {
+  color: #999;
+  text-overflow: ellipsis;
+}
 
 
 .project-list-arrow {
@@ -175,7 +179,7 @@ li.project-item-dot {
 
 li.project-item-name {
   display: inline-block;
-  flex: 1 1 auto;
+  flex: 1 1;
   text-overflow: ellipsis;
   overflow: hidden;
   font-size: 14px;
@@ -194,6 +198,15 @@ li.project-item-favorite {
   flex: 0 0 20px;
 }
 
+.project-item-create-task{
+  color: #03a9f4;
+  cursor: pointer;
+  font-size: 14px;
+  margin-right: 10px;
+  &:hover{
+    text-decoration: underline;
+  }
+}
 
 .task-item {
   padding: 7px 0 7px 25px;
@@ -229,7 +242,7 @@ li.project-item-favorite {
 .projects-list {
   position: relative;
 
-  &__create-project {
+  &__create-project, &__create-task {
     position: absolute;
     display: flex;
     align-items: center;
@@ -254,7 +267,13 @@ li.project-item-favorite {
     }
   }
   &__bottom-padding {
-    padding-bottom: 65px;
+    padding-bottom: 39px;
+    width: 100%;
+  }
+  &__create-task{
+    box-sizing: border-box;
+    position: relative;
+    padding-left: 10px;
     width: 100%;
   }
 }

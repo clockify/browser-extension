@@ -100,7 +100,7 @@ var ClockifyTagList = class {
 
         const { tags } = this.editForm.state;
 
-        let title = (tags.length > 1 ? 'Tags:\n' : "Tag: ");
+        let title = (tags.length > 1 ? `${clockifyLocales.TAGS}:\n` : `${clockifyLocales.TAG}: `);
 
         const arr = tags
             .map((tag, index, list) => {
@@ -119,7 +119,7 @@ var ClockifyTagList = class {
                     " class='clockify-tag-list-name'>" + 
                     (arr.length === 0
                         ? "<span class='clockify-tag-list-add'>" + 
-                            (this.editForm.isTagRequired ? "Add tags (required)" : "Add tags") +
+                            (this.editForm.isTagRequired ? `${clockifyLocales.ADD_TAGS} (required)` : clockifyLocales.ADD_TAGS) +
                         "</span>"
                         : "<span class='clockify-tag-list-selected'>" +
                             arr.join('') + 
@@ -270,7 +270,7 @@ var ClockifyTagList = class {
             }
         }, (response) => {
             if (!response) {
-                alert("You must be logged in to start time entry (tagList)");
+                alert(clockifyLocales.YOU_MUST_BE_LOGGED_IN_TO_START);
                 return;
             }
             else if (typeof response === 'string') {
@@ -319,7 +319,7 @@ var ClockifyTagList = class {
             "<div class='clockify-list-input'>" + 
                 "<div class='clockify-list-input--border'>" + 
                     "<input id='inputClockifyTagFilter' type='text'" +
-                        ` placeholder="Filter tags"` + 
+                        ` placeholder="${clockifyLocales.FIND_TAGS}"` + 
                             " class='clockify-list-filter' style='padding: 3px 0px' />" + 
                     (!!this.state.filter ? "<span class='clockify-list-filter__clear' />" : "") + 
                     //onClick={this.clearTagFilter.bind(this)}></span>
@@ -352,7 +352,7 @@ var ClockifyTagList = class {
         str += arr.join('');
 
         if (this.state.loadMore) {
-            str += "<button class='clockify-list-load' id='clockifyLoadMoreTags'>Load more</button>";
+            str += `<button class='clockify-list-load' id='clockifyLoadMoreTags'>${clockifyLocales.LOAD_MORE}</button>`;
         }
         
         this.getDropDownPopupElem('#ulClockifyTagDropDown').innerHTML = str;

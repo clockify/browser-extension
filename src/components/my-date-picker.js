@@ -1,9 +1,20 @@
 import * as React from 'react';
+import DatePicker, { registerLocale } from "react-datepicker";
 
 class MyDatePicker extends React.Component {
 
     constructor(props) {
         super(props);
+        this.state = {
+            lang: 'en'
+        };
+    }
+
+    componentDidMount() {
+        const lang = await localStorage.getItem('lang');
+        this.setState({
+            lang
+        });
     }
 
     shouldComponentUpdate(nextProps, nextState) {
@@ -35,6 +46,7 @@ class MyDatePicker extends React.Component {
     }
 
     render() {
+
         return (
             <div className="date-picker">
                 <div onClick={this.openDatePicker.bind(this)}>
@@ -49,6 +61,7 @@ class MyDatePicker extends React.Component {
                     cancelText={"Cancel"}
                     max={this.props.end ? new Date(2050, 0, 1) : new Date()}
                     min={this.props.min}
+                    locale={this.state.lang}
                 />
             </div>
         )

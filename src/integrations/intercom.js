@@ -33,7 +33,7 @@ clockifyButton.render('.conversation__card__content-expanded__controls .inbox__c
 clockifyButton.render('.articles__editor__header-text:not(.clockify)', { observe: true }, function (elem) {
   const descriptionSelector = () => {
     const description = elem.textContent;
-    return description ? description.trim().replace(" Start timer", "") : '';
+    return description ? description.trim().replace(" " + clockifyLocales.START_TIMER, "") : '';
   };
 
   const link = clockifyButton.createButton(descriptionSelector);

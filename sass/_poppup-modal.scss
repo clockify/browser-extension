@@ -1,0 +1,93 @@
+.poppup-modal {
+    cursor: default;
+    box-sizing: border-box;
+    position: relative;
+    width: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 320px;
+    background: $input-background;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 2px;
+    text-align: center;
+    align-items: center;
+    &__title-and-close {
+    display: flex;
+    margin-bottom: 20px;
+    width: 100%;
+    }
+    &__close {
+    position: absolute;
+    right: 20px;
+    top: 25px;
+    height: 12px;
+    width: 12px;
+    content: url("../assets/images/x.png");
+    cursor: pointer;
+    }
+    &--open {
+    background-color: rgba(0, 0, 0, 0.8);
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    left: 0;
+    top: 0;
+    z-index: 9999;
+    }
+    &--divider {
+    width: 100%;
+    height: 1px;
+    border-bottom: 1px dotted $border;
+    margin-bottom: 20px;
+    }
+    &--title {
+    margin-top: 20px;
+    margin-left: 20px;
+    font-size: 18px;
+    line-height: 21px;
+    color: $middle_light_text;
+    }
+    &--tag-name {
+    margin-bottom: 20px;
+    padding-left: 10px;
+    border: 1px solid $border;
+    border-radius: 2px;
+    width: 280px;
+    height: 40px;
+    &::placeholder {
+        color: $lighter_text;
+    }
+    }
+    &--confirmation_button {
+    margin-bottom: 20px;
+    padding-top: 12px;
+    width: 280px;
+    height: 28px;
+    border-radius: 2px;
+    background: $blue;
+    color: $input-background;
+    font-size: 14px;
+    line-height: 16px;
+    text-transform: uppercase;
+    cursor: pointer;
+    }
+
+    &--cancel {
+    font-size: 14px;
+    line-height: 16px;
+    color: $blue;
+    cursor: pointer;
+    }
+
+    &--text {
+        max-width: 90%;
+        word-break: break-word;
+    }
+  }
+  
+  
+  
