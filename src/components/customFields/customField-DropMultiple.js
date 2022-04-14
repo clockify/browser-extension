@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import useCustomField from './useCustomField';
 import debounce from 'lodash/debounce';
 import {isOffline} from "../check-connection";
+import locales from "../../helpers/locales";
 
 const CustomFieldDropMultiple = ({cf, closeOther, updateValue}) => {
 
@@ -25,9 +26,10 @@ const CustomFieldDropMultiple = ({cf, closeOther, updateValue}) => {
 
     const tagsRequired = false;
 
-    const handleChangeDelayed = useRef(debounce(val => {
+    const handleChangeDelayed = useRef(debounce(async val => {
         updateValue(id, val);
-        if (!(manualMode || isOffline())) {
+        const isOff = await isOffline();
+        if (!(manualMode || isOff)) {
             storeValue(val);
         }
     }, manualMode ? 0 : 1000));
@@ -77,9 +79,10 @@ const CustomFieldDropMultiple = ({cf, closeOther, updateValue}) => {
 
     let naslov = '';
     if (value && value.length > 0) {
-        naslov = (value.length > 1 ? 'Tags:\n' : "Tag: ") + value.join('\n')
+        naslov = (value.length > 1 ? `${locales.TAGS}:\n` : `${locales.TAG}: `) + value.join('\n')
     }
-       
+    const noMatcingItems = locales.NO_MATCHING('items');
+
     return (
         <div key={id} index={index} className={`custom-field${isDisabled?'-disabled':''}`}>
             <div className="tag-list" title={naslov}>
@@ -142,7 +145,7 @@ const CustomFieldDropMultiple = ({cf, closeOther, updateValue}) => {
                                             </span>
                                         </div>
                                     )
-                                }) : <span className="tag-list--not_tags">No matching items</span>
+                                }) : <span className="tag-list--not_tags">{noMatcingItems}</span>
                             }
                         </div>
                     </div>

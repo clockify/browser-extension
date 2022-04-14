@@ -1,5 +1,5 @@
-.create-project {
-  &__project-name {
+.create-project, .create-task {
+  &__project-name, &__task-name {
     margin-left: 20px;
     padding-left: 10px;
     border: 1px solid $border;
@@ -88,8 +88,7 @@
   }
   &__cancel {
     display: block;
-    margin-right: auto;
-    margin-left: auto;
+    margin: 19px auto;
     width: 40px;
     color: $blue;
     cursor: pointer;

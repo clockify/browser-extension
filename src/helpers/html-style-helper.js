@@ -27,12 +27,13 @@ export class HtmlStyleHelper {
         });
     }
 
-    addOrRemoveDarkModeClassOnBodyElement() {
-        const userId = localStorageService.get('userId');
-        const darkModeFromStorageForUser = localStorageService.get('darkMode') &&
-        JSON.parse(localStorageService.get('darkMode'))
+    async addOrRemoveDarkModeClassOnBodyElement() {
+        const userId = await localStorageService.get('userId');
+        const darkMode = await localStorageService.get('darkMode');
+        const darkModeFromStorageForUser = darkMode &&
+        JSON.parse(darkMode)
             .filter(darkMode => darkMode.userId === userId).length > 0 ?
-            JSON.parse(localStorageService.get('darkMode'))
+            JSON.parse(darkMode)
                 .filter(darkMode => darkMode.userId === userId)[0] : null;
 
         if (!darkModeFromStorageForUser) {

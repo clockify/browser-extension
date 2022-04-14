@@ -61,9 +61,9 @@ Use `createButton()` so both the icon and "Start timer" is displayed. If there's
 
 Before sending us a pull request, make sure you test the integration in both Chrome and Firefox.
  
-  
-## Setup (Linux)
 
+
+## Setup (Ubuntu)
 ```
 sudo apt-get install nodejs
 sudo apt-get install ruby-dev
@@ -79,16 +79,23 @@ sudo npm install
 > npm install
 ```
 
-Compile (Linux)
----
+## Setup (Mac)
+```
+brew install rbenv ruby-build
+sudo gem install compass
+sudo npm install
+npm install @popperjs/core
+```
+
+## Compile
 ```
 npm run compile.dev.chrome
 npm run compile.prod.chrome
 npm run compile.dev.firefox
 npm run compile.prod.firefox
 ```
-Compile (Windows)
----
+
+## Compile (Windows)
 ```
 > npm run compile.dev.chrome.win
 > npm run compile.dev.firefox.win

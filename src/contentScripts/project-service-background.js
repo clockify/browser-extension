@@ -3,22 +3,25 @@ class ProjectService extends ClockifyService {
     constructor() {
     }
 
-    static get wsSettings() {
-        const wsSettings = localStorage.getItem("workspaceSettings");
+    static async wsSettings() {
+        const wsSettings = await localStorage.getItem("workspaceSettings");
         return wsSettings ? JSON.parse(wsSettings) : null;
     }
 
-    static get projectFavorites() {
-        return this.wsSettings ? this.wsSettings.projectFavorites : true;
+    static async getProjectFavorites() {
+        const wsSettings = await this.wsSettings();
+        return wsSettings ? wsSettings.projectFavorites : true;
     }
 
 
-    static get urlProjects() {
-        return `${this.apiEndpoint}/workspaces/${this.workspaceId}/projects`;
+    static async getUrlProjects() {
+        const apiEndpoint = await this.apiEndpoint;
+        const workspaceId = await this.workspaceId;
+        return `${apiEndpoint}/workspaces/${workspaceId}/projects`;
     }
 
     static async getOrCreateProjectAndTask(projectName, task) {
-        const {forceTasks} = this.forces;
+        const {forceTasks} = await this.getForces();
         let {
             projectDB, taskDB, msg,
             found, created, onlyAdminsCanCreateProjects, projectArchived
@@ -61,7 +64,7 @@ class ProjectService extends ClockifyService {
         const page = 0;
         const pageSize = 50;
         let projectFilter;
-        const { projectPickerSpecialFilter } = this.forces;
+        const { projectPickerSpecialFilter } = await this.getForces();
 
         let project;
         projectName = projectName.trim().replace(/\s+/g, ' ');
@@ -83,12 +86,13 @@ class ProjectService extends ClockifyService {
 
         let onlyAdminsCanCreateProjects = false;
         let projectArchived = false;
+        const createObjects = await this.getCreateObjects();
         if (project) {
             if (!project.archived)
                 return { projectDB: project, found: true };
             projectArchived = true;
         }
-        else if (this.createObjects) {
+        else if (createObjects) {
             const { data: project, error, status } = await this.createProject({
                     name: projectName
                     // , clientId: ""
@@ -110,18 +114,23 @@ class ProjectService extends ClockifyService {
 
     static async getProjectWithFilter(filter, page, pageSize) {
         const filterTrimmedEncoded = encodeURIComponent(filter.trim())
-        const endPoint = `${this.apiEndpoint}/workspaces/${this.workspaceId}/project-picker/projects?page=${page}&search=${filterTrimmedEncoded}`;  // &favorites
+        const apiEndpoint = await this.apiEndpoint;
+        const workspaceId = await this.workspaceId;
+        const endPoint = `${apiEndpoint}/workspaces/${workspaceId}/project-picker/projects?page=${page}&search=${filterTrimmedEncoded}`;  // &favorites
         const { data: projects, error } = await this.apiCall(endPoint);
         return { projects, error };
     }
 
     static async createProject(bodyProject) {
-        const endPoint = `${this.apiEndpoint}/v1/workspaces/${this.workspaceId}/projects`;
+        const apiEndpoint = await this.apiEndpoint;
+        const workspaceId = await this.workspaceId;
+        const endPoint = `${apiEndpoint}/v1/workspaces/${workspaceId}/projects`;
         return await this.apiCall(endPoint, 'POST', bodyProject);
     }
 
     static async getLastUsedProjectFromTimeEntries(forceTasks) { 
-        const endPoint = `${this.urlProjects}/lastUsed?type=PROJECT${forceTasks?'_AND_TASK':''}`;
+        const urlProjects = await this.getUrlProjects();
+        const endPoint = `${urlProjects}/lastUsed?type=PROJECT${forceTasks?'_AND_TASK':''}`;
         const { data, error, status } = await this.apiCall(endPoint);
         if (status === 200 && data)
             return { 
@@ -136,7 +145,8 @@ class ProjectService extends ClockifyService {
     }
 
     static async getProjectsByIds(projectIds, taskIds) {
-        const endPoint = `${this.urlProjects}/ids`;
+        const urlProjects = await this.getUrlProjects();
+        const endPoint = `${urlProjects}/ids`;
         const body = { ids: projectIds };
         const { data: projects, error, status } = await this.apiCall(endPoint, 'POST', body);
         if (error) {
@@ -160,7 +170,8 @@ class ProjectService extends ClockifyService {
     }
 
     static async getAllTasks(taskIds) {
-        const endPoint = `${this.urlProjects}/taskIds`;
+        const urlProjects = await this.getUrlProjects();
+        const endPoint = `${urlProjects}/taskIds`;
         const body = {
             ids: taskIds
         };
@@ -171,10 +182,13 @@ class ProjectService extends ClockifyService {
     
     static async getProjectsWithFilter(filter, page, pageSize, forceTasks=false, alreadyIds=[]) {
         const filterTrimmedEncoded = encodeURIComponent(filter.trim())
+        const apiEndpoint = await this.apiEndpoint;
+        const workspaceId = await this.workspaceId;
         //const projectUrl = `${this.apiEndpoint}/workspaces/${this.workspaceId}/project-picker/projects?search=${filterTrimmedEncoded}`;  // &favorites
-        const projectUrlFavs = `${this.apiEndpoint}/workspaces/${this.workspaceId}/project-picker/projects?search=${filterTrimmedEncoded}`;
-        const projectUrlNonFavs = `${this.apiEndpoint}/workspaces/${this.workspaceId}/project-picker/projects?favorites=false&clientId=&excludedTasks=&search=${filterTrimmedEncoded}&userId=`;
-        if (this.projectFavorites) {
+        const projectUrlFavs = `${apiEndpoint}/workspaces/${workspaceId}/project-picker/projects?search=${filterTrimmedEncoded}`;
+        const projectUrlNonFavs = `${apiEndpoint}/workspaces/${workspaceId}/project-picker/projects?favorites=false&clientId=&excludedTasks=&search=${filterTrimmedEncoded}&userId=`;
+        const projectFavorites = await this.getProjectFavorites();
+        if (projectFavorites) {
             const { data, error } = await this.dopuniFavs(alreadyIds, projectUrlFavs, [], 1, pageSize, forceTasks) // always go page:1
             if (error) {
                 return { data, error }
@@ -243,18 +257,26 @@ class ProjectService extends ClockifyService {
 
     static async getProjectTasksWithFilter(projectId, filter, page) {
         const filterTrimmedEncoded = encodeURIComponent(filter.trim())
-        const endPoint = `${this.apiEndpoint}/workspaces/${this.workspaceId}/project-picker/projects/${projectId}/tasks?page=${page}&search=${filterTrimmedEncoded}`;  // &favorites
+        const apiEndpoint = await this.apiEndpoint;
+        const workspaceId = await this.workspaceId;
+        const endPoint = `${apiEndpoint}/workspaces/${workspaceId}/project-picker/projects/${projectId}/tasks?page=${page}&search=${filterTrimmedEncoded}`;  // &favorites
         return await this.apiCall(endPoint);
     }
 
     static async makeProjectFavorite(projectId) {
-        const endPoint = `${this.apiEndpoint}/workspaces/${this.workspaceId}/users/${this.userId}/projects/favorites/${projectId}`;
+        const apiEndpoint = await this.apiEndpoint;
+        const userId = await this.userId;
+        const workspaceId = await this.workspaceId;
+        const endPoint = `${apiEndpoint}/workspaces/${workspaceId}/users/${userId}/projects/favorites/${projectId}`;
         const body = {};
         return await this.apiCall(endPoint, 'POST', body);
     }
 
     static async removeProjectAsFavorite(projectId) {
-        const endPoint = `${this.apiEndpoint}/workspaces/${this.workspaceId}/users/${this.userId}/projects/favorites/projects/${projectId}`;
+        const apiEndpoint = await this.apiEndpoint;
+        const userId = await this.userId;
+        const workspaceId = await this.workspaceId;
+        const endPoint = `${apiEndpoint}/workspaces/${workspaceId}/users/${userId}/projects/favorites/projects/${projectId}`;
         return await this.apiCall(endPoint, 'DELETE');
     }
 

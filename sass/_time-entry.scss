@@ -21,7 +21,7 @@
   &__project-wrapper{
     display: flex;
     align-items: center;
-    max-width: 65%;
+    max-width: 100%;
   }
   &__project-name {
     margin-left: 3px;
@@ -29,7 +29,7 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-  &__task-name {
+  &__task-name, &__client-name {
     width: 90%;
     margin-left: 5px;
     overflow: hidden;
@@ -39,7 +39,6 @@
   }
   &__right-side {
     display: flex;
-    margin-right: 10px;
     float: right;
     align-items: center;
     position: relative;
@@ -71,7 +70,7 @@
     }
     &--duration {
       position: relative;
-      top: -1px;
+      top: -11px;
     }
   }
   &:hover {
@@ -91,7 +90,7 @@
 .time-entry-arrow {
   position:relative;
   top: 3px;
-  margin-left: 10px;
+  padding: 10px;
   content: url("../assets/images/play-normal.png");
 }
 

@@ -1,100 +1,111 @@
 import * as React from 'react';
 import Menu from './menu.component';
 import {getEnv} from '../environment';
-import {getAppTypes} from "../enums/applications-types.enum";
+// import {getAppTypes} from "../enums/applications-types.enum";
 import {LocalStorageService} from "../services/localStorage-service";
 import {TokenService} from "../services/token-service";
-import {isAppTypeDesktop} from "../helpers/app-types-helper";
 import {getLocalStorageEnums} from "../enums/local-storage.enum";
-import {UserService} from "../services/user-service";
+// import {UserService} from "../services/user-service";
+import locales from "../helpers/locales";
 
 const environment = getEnv();
 const localStorageService = new LocalStorageService();
 const tokenService = new TokenService();
-const userService = new UserService();
+// const userService = new UserService();
 
 let _interval;
-const _sreenshotMessage = "Screenshot recording is enabled. This app can't take screenshots.";
-const _sreenshotMessageON = "Screenshot recording is enabled. This app can't take screenshots.";
+// const _sreenshotMessage = "Screenshot recording is enabled. This app can't take screenshots.";
+// const _sreenshotMessageON = "Screenshot recording is enabled. This app can't take screenshots.";
                           //"Admin has enabled screenshots recording in COING workspace.";
-const _sreenshotMessageOFF = "Admin has turned off screenshot recording in COING workspace.";
+// const _sreenshotMessageOFF = "Admin has turned off screenshot recording in COING workspace.";
 
 class Header extends React.Component {
 
     constructor(props) {
         super(props);
 
-        // console.log('headrr mode', localStorage.getItem('mode'))
-        // console.log('headrr localStorage.getItem(manualModeDisabled)', localStorage.getItem('manualModeDisabled'))
-        // console.log('headrr localStorage.getItem(modeEnforced)', localStorage.getItem('modeEnforced'))
-
         this.state = {
             menuOpen: false,
-            mode: localStorage.getItem('modeEnforced') ? localStorage.getItem('modeEnforced') : localStorage.getItem('mode'),
+            mode: null,
             showScreenshotNotification: false,
-            screenshotMessage: _sreenshotMessage,
-            showScreenshotLink: false
+            screenshotMessage: locales.SCREENSHOT_RECORDING,
+            showScreenshotLink: false,
+            manualModeDisabled: null
         };
 
         this.closeMenu = this.closeMenu.bind(this);
         this.showScreenshotNotifications = this.showScreenshotNotifications.bind(this);
-        this.processNotifications = this.processNotifications.bind(this);
+        // this.processNotifications = this.processNotifications.bind(this);
         this.handleRefresh = this.handleRefresh.bind(this);
-        this.checkScreenshotNotifications = this.checkScreenshotNotifications.bind(this);
+        // this.checkScreenshotNotifications = this.checkScreenshotNotifications.bind(this);
+        this.setAsyncStateItems = this.setAsyncStateItems.bind(this);
     }
 
     componentDidMount() {
-        this.checkScreenshotNotifications();
+        // this.checkScreenshotNotifications();
+        this.setAsyncStateItems();
     }
 
-    checkScreenshotNotifications() {
-        if (isAppTypeDesktop()) {
-            if (_interval)
-                clearInterval(_interval);
-            if (this.props.isTrackerPage) {
-                this.processNotifications();
-                _interval = setInterval(() => {
-                    this.processNotifications();
-                }, 20000);
-            }
-        }
+    async setAsyncStateItems() {
+        const manualModeDisalbedStorage = await localStorage.getItem('manualModeDisabled');
+        const modeEnforcedStorage = await localStorage.getItem('modeEnforced');
+        const modeStorage = await localStorage.getItem('mode');
+        const manualModeDisabled = JSON.parse(manualModeDisalbedStorage);
+        this.setState({
+            manualModeDisabled,
+            mode: modeEnforcedStorage ? modeEnforcedStorage : modeStorage
+        });
     }
+
+    // ovo je nesto samo za desktop pa treba maci
+    // checkScreenshotNotifications() {
+        // if (isAppTypeDesktop()) {
+        //     if (_interval)
+        //         clearInterval(_interval);
+        //     if (this.props.isTrackerPage) {
+        //         this.processNotifications();
+        //         _interval = setInterval(() => {
+        //             this.processNotifications();
+        //         }, 20000);
+        //     }
+        // }
+    // }
 
     componentWillUnmount() {
         if (_interval)
             clearInterval(_interval);
     }
 
-    processNotifications() {
-        const activeWorkspaceId = localStorageService.get('activeWorkspaceId', null);
-        const userId = localStorageService.get('userId', null);
-        if (userId) {
-            userService.getNotifications(userId)
-                .then(response => {
-                    let notifications = response.data;
-                    notifications.forEach(notification => {
-                        const { id, type, status, data } = notification;
-                        const { workspaceId, message, title } = data;
-                        if (status === 'UNREAD' && activeWorkspaceId === workspaceId && type === 'MONITORING') {
-                            const wsNames = message.match(/recording in (\w+)/);
-                            const wsName = wsNames.length > 1 ? wsNames[1] : "COING";
-                            const on = title === "Screenshots enabled";
-                            const msg = on
-                                ? _sreenshotMessageON
-                                : _sreenshotMessageOFF.replace(/COING/, wsName);
-                            this.onBackendScreenshotNotification({
-                                workspaceId,
-                                userId,
-                                on,
-                                message: msg
-                            })
-                            userService.markAsRead(userId, id);
-                        }
-                    })
-                    this.showScreenshotNotifications();
-                })
-        }
-    }
+    // processNotifications() {
+    //     const activeWorkspaceId = await localStorageService.get('activeWorkspaceId', null);
+    //     const userId = await localStorageService.get('userId', null);
+    //     if (userId) {
+    //         userService.getNotifications(userId)
+    //             .then(response => {
+    //                 let notifications = response.data;
+    //                 notifications.forEach(notification => {
+    //                     const { id, type, status, data } = notification;
+    //                     const { workspaceId, message, title } = data;
+    //                     if (status === 'UNREAD' && activeWorkspaceId === workspaceId && type === 'MONITORING') {
+    //                         const wsNames = message.match(/recording in (\w+)/);
+    //                         const wsName = wsNames.length > 1 ? wsNames[1] : "COING";
+    //                         const on = title === "Screenshots enabled";
+    //                         const msg = on
+    //                             ? _sreenshotMessageON
+    //                             : _sreenshotMessageOFF.replace(/COING/, wsName);
+    //                         this.onBackendScreenshotNotification({
+    //                             workspaceId,
+    //                             userId,
+    //                             on,
+    //                             message: msg
+    //                         })
+    //                         userService.markAsRead(userId, id);
+    //                     }
+    //                 })
+    //                 this.showScreenshotNotifications();
+    //             })
+    //     }
+    // }
 
     openMenu() {
         this.setState({
@@ -128,40 +139,37 @@ class Header extends React.Component {
         });
     }
 
-    goToClockify() {
-        const subDomain = localStorageService.get("subDomainName", null);
+    async goToClockify() {
+        const subDomain = await localStorageService.get("subDomainName", null);
         const homeUrl = subDomain ? `https://${subDomain}.${environment.home.split('https://')[1]}` : environment.home;
-        if (localStorage.getItem('appType') === getAppTypes().DESKTOP) {
-            openExternal(`${homeUrl}/tracker`);
-        } else {
-            window.open(`${homeUrl}/tracker`, '_blank');
-        }
+        window.open(`${homeUrl}/tracker`, '_blank');
     }
 
-    getScreenshotNotificationInfo() {
-        const activeWorkspaceId = localStorageService.get('activeWorkspaceId', null);
-        const userId = localStorageService.get('userId', null);
-        const workspaceSettings = localStorageService.get('workspaceSettings')
-                ? JSON.parse(localStorageService.get('workspaceSettings'))
+    async getScreenshotNotificationInfo() {
+        const activeWorkspaceId = await localStorageService.get('activeWorkspaceId', null);
+        const userId = await localStorageService.get('userId', null);
+        let workspaceSettings = await localStorageService.get('workspaceSettings');
+        workspaceSettings = await workspaceSettings
+                ? JSON.parse(workspaceSettings)
                 : null;
-        let list = localStorageService.get('isScreenshotMessageRed')
-                    ? JSON.parse(localStorageService.get('isScreenshotMessageRed'))
+        const isScreenshotMessageRed = await localStorageService.get('isScreenshotMessageRed');
+        let list = await isScreenshotMessageRed
+                    ? JSON.parse(isScreenshotMessageRed)
                     : [];
         return { activeWorkspaceId, userId, workspaceSettings, list };
     }
 
 
-    showScreenshotNotifications() {
-        const { activeWorkspaceId, userId, workspaceSettings, list } = this.getScreenshotNotificationInfo();
+    async showScreenshotNotifications() {
+        const { activeWorkspaceId, userId, workspaceSettings, list } = await this.getScreenshotNotificationInfo();
         if (activeWorkspaceId == null ||
             userId == null ||
-            workspaceSettings == null ||
-            !isAppTypeDesktop()
+            workspaceSettings == null
         ) {
             return;
         }
 
-        let message = _sreenshotMessage;
+        let message = locales.SCREENSHOT_RECORDING;
         let filtered = list.filter(item =>
             item.workspaceId === activeWorkspaceId && 
             item.userId === userId);
@@ -172,7 +180,7 @@ class Header extends React.Component {
                 if (workspaceSettings.screenshotsEnabled && !item.turnedOn) {
                     this.setState({
                         showScreenshotNotification: true,
-                        screenshotMessage: _sreenshotMessageON,
+                        screenshotMessage: locales.SCREENSHOT_RECORDING,
                         showScreenshotLink: true
                     });
                 }
@@ -195,15 +203,15 @@ class Header extends React.Component {
             if (workspaceSettings.screenshotsEnabled) {
                 this.setState({
                     showScreenshotNotification: true,
-                    screenshotMessage: _sreenshotMessageON,
+                    screenshotMessage: locales.SCREENSHOT_RECORDING,
                     showScreenshotLink: true
                 })
             }    
         }
     }
 
-    onBackendScreenshotNotification(notification) {
-        const { activeWorkspaceId, userId, workspaceSettings, list } = this.getScreenshotNotificationInfo();
+    async onBackendScreenshotNotification(notification) {
+        const { list } = await this.getScreenshotNotificationInfo();
         let index = list.findIndex(item =>
                 item.workspaceId === notification.workspaceId && 
                 item.userId === notification.userId);
@@ -233,8 +241,8 @@ class Header extends React.Component {
         );        
     }
 
-    closeScreenshotNotification() {
-        const { activeWorkspaceId, userId, workspaceSettings, list } = this.getScreenshotNotificationInfo();
+    async closeScreenshotNotification() {
+        const { activeWorkspaceId, userId, list } = await this.getScreenshotNotificationInfo();
         if (list.length === 0) {
             list.push({userId: userId, workspaceId: activeWorkspaceId, isClosed: true})
         } else {
@@ -264,14 +272,14 @@ class Header extends React.Component {
     }
 
     goToDownloadScreenshotsApp() {
-        openExternal("https://clockify.me/screenshot-recording-app");
+        openExternal("https://app.clockify.me/screenshot-recording-app");
     }
 
     goToScreenshotsHelp() {
         openExternal(`${environment.home}/help/extra-features/screenshots`);
     }
 
-    beforeWorkspaceChange() {       
+    async beforeWorkspaceChange() {       
         this.setState({
             showScreenshotNotification: false
         })
@@ -281,7 +289,7 @@ class Header extends React.Component {
             _interval = null;
         }
 
-        const { activeWorkspaceId, userId, workspaceSettings, list } = this.getScreenshotNotificationInfo();
+        const { activeWorkspaceId, userId, workspaceSettings, list } = await this.getScreenshotNotificationInfo();
         let index = list.findIndex(item =>
                 item.workspaceId === activeWorkspaceId && 
                 item.userId === userId  &&
@@ -296,7 +304,7 @@ class Header extends React.Component {
                 workspaceId: activeWorkspaceId,
                 userId,
                 on: true,
-                message: _sreenshotMessage
+                message: locales.SCREENSHOT_RECORDING
             });
         }
         this.setState({
@@ -329,17 +337,17 @@ class Header extends React.Component {
                     </div>
                     <div>
                         <div onClick={this.handleRefresh}
-                             title="Refresh"
+                             title={locales.REFRESH}
                              className={this.props.showSync ?
                                  "header-sync" : "disabled"}>
                         </div>
                         <div className={this.props.showActions ? "actions" : "disabled"}
-                             title="Settings"
+                             title={locales.SETTINGS}
                              onClick={this.openMenu.bind(this)}>
                             <Menu
                                 isOpen={this.state.menuOpen}
                                 mode={this.state.mode}
-                                manualModeDisabled={JSON.parse(localStorage.getItem('manualModeDisabled'))}
+                                manualModeDisabled={this.state.manualModeDisabled}
                                 changeModeToManual={this.changeToManualMode.bind(this)}
                                 changeModeToTimer={this.changeToTimerMode.bind(this)}
                                 disableManual={this.props.disableManual}
@@ -347,10 +355,11 @@ class Header extends React.Component {
                                 workspaceSettings={this.props.workspaceSettings}
                                 beforeWorkspaceChange= {this.beforeWorkspaceChange.bind(this)}
                                 workspaceChanged={this.workspaceChange.bind(this)}
+                                toaster={this.props.toaster}
                             />
                         </div>
                         <span className={this.props.backButton ? "header-back" : "disabled"}
-                              onClick={this.goBack.bind(this)}>Back</span>
+                              onClick={this.goBack.bind(this)}>{locales.BACK}</span>
                     </div>
                 </div>
                 {this.state.showScreenshotNotification && 
@@ -361,7 +370,7 @@ class Header extends React.Component {
                             {this.state.showScreenshotLink &&
                                 <a onClick={this.goToDownloadScreenshotsApp.bind(this)}
                                     className = "screenshot-notification__action_buttons--help">
-                                    Download screenshots recording app 
+                                    {locales.DOWNLOAD_SCREENSHOTS_RECORDING_APP}
                                 </a>
                             }
                         </span>

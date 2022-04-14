@@ -3,6 +3,7 @@ import useCustomField from './useCustomField';
 import debounce from 'lodash/debounce';
 import { useOnClickOutside } from './useOnClickOutside'
 import {isOffline} from "../check-connection";
+import locales from "../../helpers/locales";
 
 const CustomFieldLink = ({cf, updateValue}) => {
 
@@ -10,9 +11,10 @@ const CustomFieldLink = ({cf, updateValue}) => {
             setValue,
             storeValue ] = useCustomField(cf);
 
-    const handleChangeDelayed = useRef(debounce(val => {
+    const handleChangeDelayed = useRef(debounce(async val => {
         updateValue(id, val);
-        if (!(manualMode || isOffline())) {
+        const isOff = await isOffline();
+        if (!(manualMode || isOff)) {
             storeValue(val);
         }
     }, manualMode ? 0 : 1000));
@@ -66,7 +68,9 @@ const CustomFieldLink = ({cf, updateValue}) => {
     }
 
     const saveModal = () => {
-        // storeValue(value);
+        if(!valueTemp || value === valueTemp){
+            return;
+        }
         setValue(valueTemp);
         setValueStay(valueTemp);
         handleChangeDelayed.current(valueTemp);
@@ -116,7 +120,7 @@ const CustomFieldLink = ({cf, updateValue}) => {
                         <h1 className="cl-modal-title">Edit link</h1>
                         <button type="button" className="cl-close" onClick={closeModal}>
                             <span aria-hidden="true">
-                                <span className='clockify-close'>&times;</span>                  
+                                <span className='clockify-close'></span>                  
                             </span>
                         </button>
                     </div>
@@ -132,8 +136,8 @@ const CustomFieldLink = ({cf, updateValue}) => {
                         />
                     </div>
                     <div className="cl-modal-footer">
-                        <a className="clockify-cancel" onClick={closeModal} disabled="">Cancel</a>
-                        <a className="clockify-save" onClick={saveModal} disabled="">SAVE</a>
+                        <a className="clockify-cancel" onClick={closeModal} disabled="">{locales.CANCEL}</a>
+                        <a className={`clockify-save${!valueTemp || value === valueTemp ? ' clockify-save--disabled' : ''}`} onClick={saveModal} disabled="">SAVE</a>
                     </div>
                 </div>
             </div>

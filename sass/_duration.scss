@@ -25,6 +25,10 @@
     &-clear {
       display: none;
     }
+
+    .ant-time-picker-input::placeholder {
+      font-size: 11px;
+    }
   }
 }
 

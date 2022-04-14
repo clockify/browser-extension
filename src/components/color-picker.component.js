@@ -1,4 +1,5 @@
 import * as React from "react";
+import locales from "../helpers/locales";
 
 const colorList = [
     "#F44336",
@@ -38,12 +39,14 @@ export class ColorPicker extends React.Component {
     render() {
         return (
             <div className="color-picker">
-                <span className="color-picker__title">Select color</span>
+                <span className="color-picker__title">{locales.SELECT_COLOR}</span>
                 <div className="color-picker__container">
                     {
                         colorList.map(color => {
                             return (
-                                <div className="color-picker__color_box"
+                                <div
+                                    key={color} 
+                                    className="color-picker__color_box"
                                      style={{background: color}}
                                      value={JSON.stringify(color)}
                                      onClick={this.selectColor.bind(this)}>

@@ -35,6 +35,7 @@ class SelfHostedBootSettings extends React.Component {
                     verbose={true}>
                     {
                         ({error, result, loading}) => {
+
                             if (error) {
                                 return <Login logout={true}/>;
                             }
@@ -56,7 +57,7 @@ class SelfHostedBootSettings extends React.Component {
                                     } else {
                                         baseUrl = data.endpoint;
                                     }
-                                    
+                                    localStorage.setItem('frontendUrl', data.frontendUrl)
                                     if (data.synchronization && data.synchronization.websockets) {
                                         const { websockets } = data.synchronization;
                                         let webSocketEndPoint;

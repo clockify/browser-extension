@@ -1,6 +1,7 @@
 import * as React from 'react';
-import moment, {utc} from 'moment';
-import {parseInput} from './time-input-converter'
+import moment from 'moment';
+import {parseInput} from './time-input-converter';
+import locales from '../helpers/locales';
 
 class MyTimePicker extends React.Component {
 
@@ -48,7 +49,7 @@ class MyTimePicker extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (!this.props.isDisabled && !prevProps.value.isSame(this.props.value)) {
+    if (!this.props.isDisabled && this.props.value && !prevProps.value.isSame(this.props.value)) {
       this.doTheJob();
     }
   }
@@ -133,7 +134,7 @@ class MyTimePicker extends React.Component {
                 className={className}
                 autoComplete="off"
                 type="text"
-                placeholder="Select time"
+                placeholder={locales.SELECT}
                 tabIndex={"0"}
                 spellCheck = "false"
                 disabled={false}

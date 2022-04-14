@@ -18,6 +18,7 @@ var ClockifyEditForm = class {
             tags: timeEntry.tags ? timeEntry.tags : []
         }
         this.editFormElem = null;
+        this.buttonsElem = null;
         this.customFields = [];
     }    
 
@@ -45,7 +46,17 @@ var ClockifyEditForm = class {
 
     setState(obj) {
         Object.assign(this.state, obj);
-        // this.renderContent()
+        _clockifyProjectList.redrawHeader();
+        this.renderContent();
+    }
+
+    renderContent() {
+        if(!this.editFormElem){
+            return;
+        }
+        const button = this.createButtons();
+        this.editFormElem.replaceChild(button, this.buttonsElem);
+        this.buttonsElem = button;
     }
 
     create(msg) {
@@ -55,10 +66,10 @@ var ClockifyEditForm = class {
         let doShaking = true;
         if (!timeEntry.projectId) {
             doShaking = false;
-            this.checkForDefaultProjectTask()
-                .then(() => {
-                    this.shaking();
-                });
+            // this.checkForDefaultProjectTask()
+            //     .then(() => {
+            //         this.shaking();
+            //     });
         }
 
         const editForm = document.createElement('div');
@@ -137,6 +148,7 @@ var ClockifyEditForm = class {
         editForm.appendChild(doneButtons);
 
         this.editFormElem = editForm;
+        this.buttonsElem = doneButtons;
 
         if (doShaking)
             this.shaking();
@@ -310,7 +322,7 @@ var ClockifyEditForm = class {
         const divCloseDlg = document.createElement('span');
         divCloseDlg.classList.add('clockify-close-dlg');
         divCloseDlg.innerHTML = 
-            `<img id='clockifyCloseDlg' src='${aBrowser.runtime.getURL("assets/images/closeX.png")}' style='width:14px; height:14px;' alt='Close'` + 
+            `<img id='clockifyCloseDlg' src='${aBrowser.runtime.getURL("assets/images/closeX.svg")}' style='width:14px; height:14px;' alt='Close'` + 
                 " class='clockify-close-dlg-icon' />";
         return divCloseDlg;
     }
@@ -319,7 +331,7 @@ var ClockifyEditForm = class {
         const span = document.createElement('span');
         span.classList.add('clockify-msg');
         span.innerHTML = msg + 
-        `<img id='clockifyCloseMsg' src='${aBrowser.runtime.getURL("assets/images/closeX.png")}' style='width:12px; height:12px;' alt='Close'` + 
+        `<img id='clockifyCloseMsg' src='${aBrowser.runtime.getURL("assets/images/closeX.svg")}' style='width:12px; height:12px;' alt='Close'` + 
         " class='clockify-close-msg-icon' />";
         return span;
     }
@@ -389,7 +401,7 @@ var ClockifyEditForm = class {
 
     get descriptionContent() {
         let desc = this.state.timeEntry.description;
-        return "<textarea id='clockifyTextareaDescription' type='text' class='clockify-edit-form-description' placeholder='Description'>" + 
+        return `<textarea id='clockifyTextareaDescription' type='text' class='clockify-edit-form-description' placeholder='${clockifyLocales.DESCRIPTION_LABEL}'>` + 
                 desc + 
                "</textarea>";
         // box-sizing:border-box;
@@ -423,11 +435,10 @@ var ClockifyEditForm = class {
         return `<span class='clockify-edit-form-checkbox${timeEntry.billable ? " clockify-checked" : ""}' tabIndex='0' >` + 
             `<img src='${aBrowser.runtime.getURL('assets/images/checked.png')}' class='edit-form-billable-img${timeEntry.billable ? "" : "-hidden"}' />` +
         "</span>" +
-        "<label class='clockify-edit-form-billable'>Billable</label>"
+        `<label class='clockify-edit-form-billable'>${clockifyLocales.BILLABLE_LABEL}</label>`
     }
 
     createButtons() {
-        const { timeEntry } = this.state;
         const { descRequired, projectRequired, taskRequired, tagsRequired } = this.state;
 
         const divButtons = document.createElement('div');
@@ -438,7 +449,7 @@ var ClockifyEditForm = class {
                 `<button id='clockifyButtonDone' class='${
                     descRequired || projectRequired || taskRequired || tagsRequired
                         ? "clockify-edit-form-done-disabled"
-                        : "clockify-edit-form-done"}'>Done` +
+                        : "clockify-edit-form-done"}'>${clockifyLocales.DONE_LABEL}` +
                 "</button>" + 
             "</div>" + 
         "</div>";      
@@ -552,15 +563,14 @@ var ClockifyEditForm = class {
                                 alert("Can't log time without project/task/description or tags.");
                             }
                         } else {
-                            // we don't get notified if we are source of event TIME_ENTRY_UPDATED
-                            // aBrowser.storage.local.set({
-                            //    timeEntryInProgress: Object.assign(timeEntry, { 
-                            //        originPopupDlg: true
-                            //    })
-                            // }); 
-                            // ovo bi pokvarilo polja project i task
-                            //this.setState({timeEntry});
+                            // we don't get notified if we are source of event TIME_ENTRY_UPDATED                   
                             timeEntry.description = entry.description;
+                            aBrowser.storage.local.set({
+                               timeEntryInProgress: Object.assign(timeEntry, { 
+                                   originPopupDlg: true
+                               })
+                            }); 
+                            
                             this.checkRequiredFields();
                             if (this.state.descRequired)
                                 this.shakeDescription();
@@ -600,7 +610,7 @@ var ClockifyEditForm = class {
                         return;
                     }
                     const { status, entry } = response;
-                    timeEntry.customFieldValues = ClockifyEditForm.userHasCustomFieldsFeature ? entry.customFieldValues : [];
+                    timeEntry.customFieldValues = entry.customFieldValues;
                     timeEntry.project = project;
                     timeEntry.projectId = project.id;
                     timeEntry.task = null;
@@ -626,11 +636,10 @@ var ClockifyEditForm = class {
                     //     }
                     // }
 
-                    /*
                     aBrowser.storage.local.set({
                         timeEntryInProgress: Object.assign(timeEntry, { originPopupDlg: true })
                     });
-                    */
+
                     /* mislim da ovo ne treba
                     this.setState({ timeEntry });
                     */
@@ -664,9 +673,6 @@ var ClockifyEditForm = class {
                         task
                     }
                 }, (response) => {
-                    //aBrowser.storage.local.set({
-                    //    timeEntryInProgress: Object.assign(timeEntry, { originPopupDlg: true })
-                    //});
                     if (!response || typeof response === 'string') {
                         alert(response??'Error');
                         resolve(null);
@@ -687,6 +693,10 @@ var ClockifyEditForm = class {
                     //this.setState({timeEntry})
                     this.checkRequiredFields();
                     //_clockifyProjectList.mapSelectedProject();
+
+                    aBrowser.storage.local.set({
+                        timeEntryInProgress: Object.assign(timeEntry, { originPopupDlg: true })
+                    });
                     resolve(timeEntry)
                 });
             } catch (e) {
@@ -737,11 +747,11 @@ var ClockifyEditForm = class {
                         alert('Tags response ' + status)
                         return;
                     }
-                    /*
+                    
                     aBrowser.storage.local.set({
                         timeEntryInProgress: Object.assign(timeEntry, { originPopupDlg: true })
                     });
-                    */
+                    
                    this.setState({ // timeEntry,
                         tags: tagList
                     });
@@ -774,17 +784,17 @@ var ClockifyEditForm = class {
                     if (response && status !== 200) {
                         return;
                     }
-                    /*
-                    aBrowser.storage.local.set({
-                        timeEntryInProgress: Object.assign(timeEntry, { originPopupDlg: true })
-                    });
-                    */
+                                      
                     // treba li nam ovo, jer ko zna kakav timeEntry vraca, 
                     // pa izgubimo entry.project, ili entry.task
                     // this.setState({ 
                     //     timeEntry
                     // });
                     timeEntry.billable = !timeEntry.billable;
+
+                    aBrowser.storage.local.set({
+                        timeEntryInProgress: Object.assign(timeEntry, { originPopupDlg: true })
+                    });
 
                     //this.checkRequiredFields();
                     resolve({entry})
@@ -795,11 +805,12 @@ var ClockifyEditForm = class {
         })        
     }  
     
-    checkRequiredFields() {
+    async checkRequiredFields() {
         let descRequired = false;
         let projectRequired = false;
         let taskRequired = false;
         let tagsRequired = false;
+        const isOnline = !(await isOffline());
 
         const { wsSettings } = this;
         if (wsSettings) {
@@ -812,7 +823,7 @@ var ClockifyEditForm = class {
 
             if (wsSettings.forceProjects &&
                 (!timeEntry.projectId || timeEntry.projectId === 'no-project') &&
-                !isOffline()
+                isOnline
             ) {
                 projectRequired = true;
             }
@@ -820,7 +831,7 @@ var ClockifyEditForm = class {
             if (wsSettings.forceTasks &&
                 !timeEntry.task &&
                 !timeEntry.taskId &&
-                !isOffline()
+                isOnline
             ) {
                 taskRequired = true;
             }
@@ -828,7 +839,7 @@ var ClockifyEditForm = class {
             // TODO odakle tagIds u timeEntry
             const imaTagove = timeEntry.tagIds && timeEntry.tagIds.length > 0 ||
                               timeEntry.tags && timeEntry.tags.length > 0;
-            if (wsSettings.forceTags && !imaTagove && !isOffline()) {
+            if (wsSettings.forceTags && !imaTagove && isOnline) {
                 tagsRequired = true;
             }
         }
@@ -847,7 +858,8 @@ var ClockifyEditForm = class {
 
 }
 
-function isOffline() {
+async function isOffline() {
     //return !navigator.onLine;
-    return localStorage.getItem('offline') && localStorage.getItem('offline') === 'true';
+    const isOffline = await localStorage.getItem('offline');
+    return isOffline && isOffline === 'true';
 }

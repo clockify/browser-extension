@@ -72,7 +72,7 @@
   z-index: 9999999999 !important;
   display: block !important;
   border-radius: 2px !important;
-  background-color: #eff4f7 !important; /*rgba(3, 169, 244, 0.9);*/
+  background-color: #eff4f7; /*rgba(3, 169, 244, 0.9);*/
   right: 3vw !important;
   top: 3vh !important;
   width: 320px !important; /*30vw;*/
@@ -333,6 +333,10 @@ ul.clockify-task-list > li.clockify-task-item:last-child {
   color: #333;
 }
 
+.clockify-project-list-name-client {
+  color: #999 !important;
+}
+
 .clockify-project-list-dropdown {
   position: absolute;
   width: 100%;
@@ -450,16 +454,13 @@ div.clockify-custom-field {
   padding: 0px !important; 
   border: 0px solid #C6D2D9 !important; 
   border-image-width: 0 !important;
-  background-color: white !important;
   margin: 8px 0px 0px 0px !important;
   height: 34px !important;
 }
 
 div.clockify-custom-field-disabled {
-  padding: 0px !important; 
-  border: 1px solid #C6D2D9 !important; 
+  padding: 0px !important;
   border-image-width: 0 !important;
-  background-color: white !important;
   margin: 8px 0px 0px 0px !important;
   height: 36px !important;
 }
@@ -468,18 +469,15 @@ div.clockify-custom-field-ta {
   padding: 0px !important; 
   border: 0px solid #C6D2D9 !important; 
   border-image-width: 0 !important;
-  background-color: white !important;
   margin: 8px 0px 0px 0px !important;
   height: 45px !important;
 }
 
 div.clockify-custom-field-ta-disabled {
-  padding: 0px !important; 
-  border: 1px solid #C6D2D9 !important; 
+  padding: 0px !important;
   border-image-width: 0 !important;
   background-color: white !important;
   margin: 8px 0px 0px 0px !important;
-  height: 45px !important;
   background: #eff4f7 !important;
 }
 
@@ -487,7 +485,6 @@ div.clockify-custom-field-inner {
   padding: 0px 7px !important;
   display: flex !important;
   align-items: center !important;
-  background-color: white !important;
   width: 100% !important;
   height: 100% !important;
   margin: 0 !important;
@@ -520,11 +517,12 @@ div.clockify-custom-field-inner-checkbox-disabled {
   padding: 0px !important;
   display: flex !important;
   align-items: center !important;
-  background-color: #eff4f7 !important;
   width: 100% !important;
   height: 100% !important;
   margin: 0 !important;
-  border: 1px solid #C6D2D9 !important; 
+  cursor: not-allowed;
+  opacity: 0.4;
+  background: none !important;
 }
 
 
@@ -534,7 +532,7 @@ textarea.custom-field-text {
   /* height: 100% !important; */
   height: 45px !important;
   min-height: 45px !important;
-  border: 0 !important;
+  border: 1px solid #C6D2D9;
   margin: 0 !important;
   resize: none !important;
   font-size: 14px !important;
@@ -549,18 +547,16 @@ textarea.custom-field-text {
 textarea.custom-field-text-disabled {
   pointer-events: none;
   width: 100% !important;
-  height: 100% !important;
-  min-height: 65px !important;
+  height: 45px !important;
+  min-height: 45px !important;
   border: 1px solid #C6D2D9 !important; 
   margin: 0 !important;
   resize: none !important;
   font-size: 14px !important;
+  padding: 5px !important;
   outline: none !important;
   color: #333333 !important;
-  padding: 10px !important;
-  height: 65px !important;
   word-wrap: break-word !important;
-  background-color: #eff4f7 !important;
   border-image-width: 0 !important;
 }
 
@@ -580,7 +576,7 @@ input.custom-field-number {
 
 input.custom-field-number-disabled {
   border: 1px solid #C6D2D9 !important; 
-  width: 95% !important;
+  width: 100% !important;
   height: 100% !important;
   padding: 5px 8px !important;
   margin: 0 !important;
@@ -588,6 +584,7 @@ input.custom-field-number-disabled {
   line-height: 20px !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
+  font-size: 14px !important;
 }
 
 
@@ -602,14 +599,15 @@ span.custom-field-link-label {
   font-size: 14px !important;
   font-weight: 400px !important;
   margin: 0 !important;
+  width: 25%;
 }
 
 .clockify-edit-form-checkbox {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   background-color: white;
   border: 1px solid #C6D2D9;
   border-radius: 2px;
@@ -632,7 +630,7 @@ span.custom-field-link-label {
   margin-left: 1px !important;
 }
 
-.clockify-edit-form-billable-img-hidden {
+.clockify-edit-form-billable-img-hidden, .clockify-edit-form-checkbox .edit-form-billable-img-hidden {
   margin-top: 3px;
   margin-left: 1px;
   visibility: hidden;
@@ -904,12 +902,17 @@ li.clockify-tag-item {
   width: 85% !important;
   font-size: 14px !important;
   overflow: hidden !important;
-  text-overflow: ellipsis !important;
   white-space: nowrap !important;
 }
 
 .clockify-tag-list-add {
   color: #999999 !important;
+}
+
+#divClockifyPopupDlg .clockify-tag-list-button-disabled .clockify-tag-list-selected,
+#divClockifyPopupDlg .clockify-tag-list-button-disabled .clockify-tag-list-add,
+#divClockifyPopupDlg .custom-field-number-disabled{
+  color: #90A4AE !important;
 }
 
 .clockify-tag-list-dropdown {
@@ -984,9 +987,14 @@ li.clockify-tag-item {
 
 .clockify-tag-list-checkbox {
   display: inline-block;
+  line-height: initial;
   width: 16px;
   height: 16px;
   border: 1px solid #C6D2D9;
+}
+
+.clockify-tag-list-checkbox img {
+  vertical-align: unset;
 }
 
 .clockify-tag-list-item {
@@ -1012,12 +1020,13 @@ li.clockify-tag-item {
 
 .clockify-tag-list--not_tags {
   margin-left: 10px;
+  color: #C6D2D9;
 }
 
 .clockify-checked {
   width: 18px;
   height: 18px;
-  background: #03A9F4;
+  background: #03A9F4 !important;
   border: none;
 }
 
@@ -1042,7 +1051,7 @@ li.clockify-tag-item {
 
 .clockify-tag-list-selected-item {
   display: inline-block !important;
-  padding: 5px 5px !important;
+  padding: 5px 2px !important;
   border-radius: 3px !important;
   /* color: #02587f; */
 }
@@ -1113,7 +1122,7 @@ textarea {
   position: relative !important;
   display: flex !important; /*inline-block;*/
   align-items: center;
-  width: 280px !important;
+  width: 0px !important;
   height: 22px !important;
   margin: 0 !important;
 }
@@ -1175,7 +1184,6 @@ input.clockify-switch-input:checked + .clockify-switch-slider:before {
 }
 
 span.clockify-switch-label {
-  cursor: pointer !important;
   color:#333 !important;
   font-size:14px !important;
   white-space:nowrap !important;
@@ -1303,20 +1311,21 @@ span.clockify-switch-label {
 .clockify-modal-content {
   background-color: #fefefe !important;
   margin: auto !important;
-  padding: 10px !important;
   border: 2px solid #888 !important;
   border-radius: 2px !important;
   width: 50% !important;
+  max-width: 500px;
 }
 
 
 /* The Close Button */
 .clockify-close {
-  color: #aaaaaa !important;
   float: right !important;
-  font-size: 28px !important;
-  font-weight: bold !important;
-  background-color: #fff !important;
+  width: 16px; 
+  height: 16px;
+  cursor: pointer;
+  opacity: .5;
+  background-size: contain;
 }
 
 .cl-close {
@@ -1324,18 +1333,15 @@ span.clockify-switch-label {
   border: 0 !important;
 }
 
-.clockify-close:hover,
-.clockify-close:focus {
-  color: #000 !important;
-  text-decoration: none !important;
-  cursor: pointer !important;
+.clockify-close:hover {
+  opacity: .75;
 }
 
 .cl-form-control {
   margin: 0 !important;
 }
 
-.clockify-link-input {
+.clockify-link-input, .clockify-link-input-disabled {
   display: block !important;
   flex: 1;
   margin: 0 !important;
@@ -1353,6 +1359,12 @@ span.clockify-switch-label {
   box-shadow: none !important;
 }
 
+.clockify-link-input-disabled {
+  background-color: #eff4f7 !important;
+  pointer-events: none;
+  border: 1px solid #C6D2D9 !important; 
+}
+
 .clockify-link-input-modal {
   display: block !important;
   flex: 1;
@@ -1362,17 +1374,17 @@ span.clockify-switch-label {
   font-size: 14px !important;
   font-weight: 400 !important;
   line-height: 21px !important;
-  color: #333 !important;
-  background-color: #fff !important;
+  color: #333;
+  background-color: #fff;
   background-clip: padding-box !important;
   border: 1px solid #c6d2d9 !important;
-  border-radius: 1px !important;
+  border-radius: 2px;
   transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out !important;
   box-shadow: none !important;
 }
 
 
-.modal-content {
+/* .modal-content {
   position: relative !important;
   display: flex!important;
   flex-direction: column!important;
@@ -1381,13 +1393,13 @@ span.clockify-switch-label {
   background-color: #fff!important;
   background-clip: padding-box!important;
   outline: 0!important;
-}
+} */
 
 .cl-modal-header {
   align-items: center !important;
   display: flex !important;
   justify-content: space-between !important;
-  padding: 10px 15px 15px 15px !important;
+  padding: 20px !important;
   border-bottom: 1px solid #c6d2d9 !important;
   border-top-left-radius: 2px !important;
   border-top-right-radius: 2px !important;
@@ -1395,7 +1407,7 @@ span.clockify-switch-label {
 
 .cl-modal-title {
   font-size: 24px !important;
-  font-weight: 400px !important;
+  font-weight: 100 !important;
   line-height: 36px !important;
   color: rgb(102, 102, 102) !important;
   margin: 0 !important;
@@ -1418,17 +1430,30 @@ span.clockify-switch-label {
   border-top: 1px solid #c6d2d9 !important;
   border-bottom-right-radius: 2px !important;
   border-bottom-left-radius: 2px !important;
+  font-size: 14px;
 }
 
 .clockify-cancel {
   color: #2196F3 !important;
 }
 
+.clockify-cancel:hover{
+  text-decoration: underline;
+}
+
 .clockify-save {
   color: white;
   background-color: #2196F3 !important;
-  margin-left: 20px;
+  margin-left: 40px;
   padding: 10px;
+  min-width: 100px;
+  text-align: center;
+  border-radius: 2px;
+}
+
+.clockify-save.clockify-save--disabled {
+  opacity: .65;
+  cursor: default !important;
 }
 
 a.clockify-cancel, a.clockify-save {

@@ -1,42 +1,44 @@
+
+
 class ClockifyIntegrationBase {
 
     constructor() {
     }
 
-    static get wsSettings() {
-        const wsSettings = localStorage.getItem("workspaceSettings");
-        return wsSettings ? JSON.parse(wsSettings) : null;
-    }
+    // static async get wsSettings() {
+    //     const wsSettings = await localStorage.getItem("workspaceSettings");
+    //     return wsSettings ? JSON.parse(wsSettings) : null;
+    // }
 
-    static get isSpecialFilter() {
-        return this.wsSettings ? this.wsSettings.projectPickerSpecialFilter : false;
-    }
+    // static get isSpecialFilter() {
+    //     return this.wsSettings ? this.wsSettings.projectPickerSpecialFilter : false;
+    // }
 
     
     static async takeTimeEntryInProgress(sendResponse) {      
-        if (isNavigatorOffline()) {
+        if (await isNavigatorOffline()) {
             sendResponse('Connection is offline');
             return;
         }
         const { entry, error } = await TimeEntry.getEntryInProgress();
         if (!entry || error) {
             setTimeEntryInProgress(null);
-            aBrowser.browserAction.setIcon({
+            aBrowser.action.setIcon({
                 path: iconPathEnded
             });
         }
         else {
             setTimeEntryInProgress(entry);
-            aBrowser.browserAction.setIcon({
+            aBrowser.action.setIcon({
                 path: iconPathStarted
             });
         }
-        sendResponse({ status: 'OK' })
+        sendResponse({ status: clockifyLocales.OK_BTN })
     }
 
 
     static async stopEntryInProgress(sendResponse) {      
-        if (isNavigatorOffline()) {
+        if (await isNavigatorOffline()) {
             sendResponse('Connection is offline');
             return;
         }
@@ -47,15 +49,15 @@ class ClockifyIntegrationBase {
         else {
             aBrowser.notifications.clear('idleDetection');
             restartPomodoro();
-            aBrowser.browserAction.setIcon({
+            aBrowser.action.setIcon({
                 path: iconPathEnded
             });
-            sendResponse({ status: 'OK' })
+            sendResponse({ status: clockifyLocales.OK_BTN })
         }
     }
 
     static async startWithDescription({timeEntryOptions}, sendResponse) {
-        if (isNavigatorOffline()) {
+        if (await isNavigatorOffline()) {
             sendResponse('Connection is offline');
             return;
         }
@@ -82,11 +84,13 @@ class ClockifyIntegrationBase {
         else {
             if (status === 201) {
                 // proveri afterStartTimer
-                window.inProgress = true;
-                aBrowser.browserAction.setIcon({
+                // window.inProgress = true;
+                aBrowser.action.setIcon({
                     path: iconPathStarted
                 });
                 addPomodoroTimer();
+                // localStorage.setItem('timeEntryInProgress', JSON.stringify(ent));
+                aBrowser.storage.local.set({'timeEntryInProgress': ent});
             }   
             sendResponse({ status: status, data: ent });
         }
@@ -94,7 +98,7 @@ class ClockifyIntegrationBase {
     
 
     static async getProjectsByIds({ projectIds, taskIds }, sendResponse) {
-        if (isNavigatorOffline()) {
+        if (await isNavigatorOffline()) {
             sendResponse('Connection is offline');
             return;
         }
@@ -131,7 +135,7 @@ class ClockifyIntegrationBase {
 
 
     static async getDefaultProjectTask(sendResponse) {
-        if (isNavigatorOffline()) {
+        if (await isNavigatorOffline()) {
             sendResponse('Connection is offline');
             return;
         }
@@ -152,7 +156,7 @@ class ClockifyIntegrationBase {
     } 
 
     static async getProjects({filter, page, pageSize, forceTasks, alreadyIds}, sendResponse) {
-        if (isNavigatorOffline()) {
+        if (await isNavigatorOffline()) {
             sendResponse('Connection is offline');
             return;
         }
@@ -182,7 +186,7 @@ class ClockifyIntegrationBase {
     }
 
     static async getProjectTasks({projectId, filter, page}, sendResponse) {
-        if (isNavigatorOffline()) {
+        if (await isNavigatorOffline()) {
             sendResponse('Connection is offline');
             return;
         }
@@ -208,7 +212,7 @@ class ClockifyIntegrationBase {
     }        
     
     static async submitDescription({ id, description }, sendResponse) {
-        if (isNavigatorOffline()) {
+        if (await isNavigatorOffline()) {
             sendResponse('Connection is offline');
             return;
         }
@@ -233,7 +237,7 @@ class ClockifyIntegrationBase {
     }
 
     static async editProject({ id, project }, sendResponse) {
-        if (isNavigatorOffline()) {
+        if (await isNavigatorOffline()) {
             sendResponse('Connection is offline');
             return;
         }
@@ -268,7 +272,7 @@ class ClockifyIntegrationBase {
     }    
 
     static async editTask({ id, project, task }, sendResponse) {
-        if (isNavigatorOffline()) {
+        if (await isNavigatorOffline()) {
             sendResponse('Connection is offline');
             return;
         }
@@ -303,7 +307,7 @@ class ClockifyIntegrationBase {
     }
 
     static async getTags({ filter, page, pageSize}, sendResponse) {
-        if (isNavigatorOffline()) {
+        if (await isNavigatorOffline()) {
             sendResponse('Connection is offline');
             return;
         }
@@ -328,7 +332,7 @@ class ClockifyIntegrationBase {
     }
 
     static async editTags({ id, tagIds }, sendResponse) {
-        if (isNavigatorOffline()) {
+        if (await isNavigatorOffline()) {
             sendResponse('Connection is offline');
             return;
         }
@@ -354,7 +358,7 @@ class ClockifyIntegrationBase {
 
     
     static async fetchEntryInProgress(sendResponse) {
-        if (isNavigatorOffline()) {
+        if (await isNavigatorOffline()) {
             sendResponse('Connection is offline');
             return;
         }
@@ -366,11 +370,11 @@ class ClockifyIntegrationBase {
             return;
         }
 
-        sendResponse({ status, entry });
+        sendResponse({ entry });
     }
 
     static async removeProjectAsFavorite({ projectId }, sendResponse) {
-        if (isNavigatorOffline()) {
+        if (await isNavigatorOffline()) {
             sendResponse('Connection is offline');
             return;
         }
@@ -395,7 +399,7 @@ class ClockifyIntegrationBase {
     }
 
     static async makeProjectFavorite({ projectId }, sendResponse) {
-        if (isNavigatorOffline()) {
+        if (await isNavigatorOffline()) {
             sendResponse('Connection is offline');
             return;
         }
@@ -420,7 +424,7 @@ class ClockifyIntegrationBase {
     }
 
     static async editBillable({ id, billable }, sendResponse) {
-        if (isNavigatorOffline()) {
+        if (await isNavigatorOffline()) {
             sendResponse('Connection is offline');
             return;
         }
@@ -446,7 +450,7 @@ class ClockifyIntegrationBase {
 
 
     static async submitTime({ totalMins, timeEntryOptions }, sendResponse) {
-        if (isNavigatorOffline()) {
+        if (await isNavigatorOffline()) {
             sendResponse('Connection is offline');
             return;
         }
@@ -486,7 +490,7 @@ class ClockifyIntegrationBase {
 
 
     static async getWSCustomField({ name }, sendResponse) {
-        if (isNavigatorOffline()) {
+        if (await isNavigatorOffline()) {
             sendResponse('Connection is offline', 0);
             return;
         }
@@ -520,7 +524,7 @@ class ClockifyIntegrationBase {
 
 
     static async getUserRoles({ }, sendResponse) {
-        if (isNavigatorOffline()) {
+        if (await isNavigatorOffline()) {
             sendResponse('Connection is offline', 0);
             return;
         }
@@ -541,7 +545,7 @@ class ClockifyIntegrationBase {
     }    
 
     static async submitCustomField({ timeEntryId, customFieldId, value }, sendResponse) {
-        if (isNavigatorOffline()) {
+        if (await isNavigatorOffline()) {
             sendResponse('Connection is offline', 0);
             return;
         }

@@ -117,7 +117,7 @@
 
     &-item {
       display: inline-block;
-      padding: 5px 5px;
+      padding: 5px 2px;
       border-radius: 3px;
       // color: $blue_tag;
       font-size: 14px;
@@ -274,6 +274,7 @@
       height: 100vh;
       left: 0;
       top: 0;
+      z-index: 999;
     }
     &--divider {
       width: 100%;

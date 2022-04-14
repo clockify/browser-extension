@@ -3,6 +3,7 @@ import * as ReactDOM from 'react-dom';
 import Header from './header.component';
 import Login from './login.component';
 import SelfHostedBootSettings from "./self-hosted-login-settings.component";
+import locales from "../helpers/locales";
 
 class SelfHostedUrl extends React.Component {
     constructor(props) {
@@ -46,17 +47,16 @@ class SelfHostedUrl extends React.Component {
                 <Header showActions={false}/>
                 <form className="self-hosted-url">
                     <div>
-                        <label className="self-hosted-url__server_url">Custom domain URL</label>
-                        <p className="self-hosted-url__server_url--info">Enter your Clockify domain.
-                           Your domain is the URL from which you access Clockify in the browser</p>
+                        <label className="self-hosted-url__server_url">{locales.CUSTOM_DOMAIN_URL}</label>
+                        <p className="self-hosted-url__server_url--info">{locales.CUSTOM_DOMAIN_DESCRIPTION}</p>
                         <input required = {true} id="selfHostedurl" placeholder="https://"/>
                     </div>
                 </form>
                 <div className="self-hosted-url__actions">
                     <button className="self-hosted-url__actions--submit"
-                            onClick={this.submitUrl.bind(this)}>Submit</button>
+                            onClick={this.submitUrl.bind(this)}>{locales.SUBMIT}</button>
                     <a className="self-hosted-url__actions--cancel"
-                       onClick={this.cancel.bind(this)}>Cancel</a>
+                       onClick={this.cancel.bind(this)}>{locales.CANCEL}</a>
                 </div>
             </div>
         )

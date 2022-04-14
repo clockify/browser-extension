@@ -1,12 +1,12 @@
 import * as React from 'react';
 import {LocalStorageService} from '../services/localStorage-service';
-import {isAppTypeExtension} from '../helpers/app-types-helper';
 import {getLocalStorageEnums} from '../enums/local-storage.enum';
 import {getKeyCodes} from '../enums/key-codes.enum';
 import Switch from 'antd/lib/switch'
 import {getBrowser} from "../helpers/browser-helper";
 import {HtmlStyleHelper} from "../helpers/html-style-helper";
 import DefaultPomodoroBreakProject from "./default-pomodoro-break-project.component";
+import locales from '../helpers/locales';
 
 const localStorageService = new LocalStorageService();
 const htmlStyleHelper = new HtmlStyleHelper();
@@ -58,9 +58,9 @@ class Pomodoro extends React.Component {
         }, 250);
     }
 
-    get pomodoroStorage() {
-        const userId = localStorageService.get('userId');
-        const strPomodoro = localStorageService.get('pomodoro');
+    async getPomodoroStorage() {
+        const userId = await localStorageService.get('userId');
+        const strPomodoro = await localStorageService.get('pomodoro');
         const pomodoroStorage = strPomodoro ? JSON.parse(strPomodoro) : [];
         return { 
             pomodoroForUser: pomodoroStorage.find(pomodoro => pomodoro.userId === userId),
@@ -73,8 +73,8 @@ class Pomodoro extends React.Component {
             .set('pomodoro', JSON.stringify(pomodoroStorage), getLocalStorageEnums().PERMANENT_PREFIX);
     }
 
-    isPomodoroOn() {
-        const { pomodoroForUser }  = this.pomodoroStorage;
+    async isPomodoroOn() {
+        const { pomodoroForUser }  = await this.getPomodoroStorage();
         if (!pomodoroForUser)
             return;
 
@@ -114,13 +114,13 @@ class Pomodoro extends React.Component {
         });
     }
 
-    togglePomodoro() {
-        let { pomodoroForUser, pomodoroStorage }  = this.pomodoroStorage;
+    async togglePomodoro() {
+        let { pomodoroForUser, pomodoroStorage }  = await this.getPomodoroStorage();
         let isEnabled;
         
         const pomodoroElem = document.getElementById('pomodoro');
         const elementsIds = ['longBreak', 'breakCounter'];
-        const userId = localStorageService.get('userId');
+        const userId = await localStorageService.get('userId');
 
         if (!pomodoroForUser) {
             const obj = {
@@ -179,30 +179,37 @@ class Pomodoro extends React.Component {
         this.props.changeSaved();
         this.store(pomodoroStorage)
 
-        if (isAppTypeExtension()) {
-            if (isEnabled) {
-                getBrowser().extension.getBackgroundPage().addPomodoroTimer();
-            } else {
-                getBrowser().extension.getBackgroundPage().restartPomodoro();
-            }
+        if (isEnabled) {
+            getBrowser().runtime.sendMessage({
+                eventName: 'pomodoroTimer'
+            });
+        } else {
+            getBrowser().runtime.sendMessage({
+                eventName: 'restartPomodoro'
+            });
+            getBrowser().runtime.sendMessage({
+                eventName: "removeBadge"
+            });
         }
+        
     }
 
     sendPomodoroRequest() {
-        if (isAppTypeExtension()) {
-            getBrowser().runtime.sendMessage({
-                eventName: "pomodoroTimer"
-            });
-        }
+        
+        getBrowser().runtime.sendMessage({
+            eventName: "pomodoroTimer"
+        });
+        
     }
 
-    changePomodoroProperty(event) {
+    async changePomodoroProperty(event) {
         let value = parseInt(event.target.value);
         if (value === 0) {
             value = 1;
         }
-        const { pomodoroForUser, pomodoroStorage } = this.pomodoroStorage;
         const { id } = event.target;
+
+        const { pomodoroForUser, pomodoroStorage } = await this.getPomodoroStorage();
         if (pomodoroForUser) {
             pomodoroForUser[id] = value ? value : pomodoroForUser[id];
             const obj = {
@@ -212,9 +219,12 @@ class Pomodoro extends React.Component {
         }
         this.store(pomodoroStorage);
         this.props.changeSaved();
-        if (isAppTypeExtension()) {
-            getBrowser().extension.getBackgroundPage().addPomodoroTimer();
-        }
+        
+        // getBrowser().extension.getBackgroundPage().addPomodoroTimer();
+        getBrowser().runtime.sendMessage({
+            eventName: 'pomodoroTimer'
+        });
+        
     }
 
     changePomodoroPropertyOnEnter(event) {
@@ -236,8 +246,8 @@ class Pomodoro extends React.Component {
         });
     }
 
-    changeIsSoundNotification(event) {
-        const { pomodoroForUser, pomodoroStorage } = this.pomodoroStorage;
+    async changeIsSoundNotification(event) {
+        const { pomodoroForUser, pomodoroStorage } = await this.getPomodoroStorage();
         pomodoroForUser.isSoundNotification = event;
         this.store(pomodoroStorage);
         this.props.changeSaved();
@@ -246,8 +256,8 @@ class Pomodoro extends React.Component {
         });
     }
 
-    changeIsAutomaticStartStop(event) {
-        const { pomodoroForUser, pomodoroStorage } = this.pomodoroStorage;
+    async changeIsAutomaticStartStop(event) {
+        const { pomodoroForUser, pomodoroStorage } = await this.getPomodoroStorage();
         pomodoroForUser.isAutomaticStartStop = event;
         this.store(pomodoroStorage);
         this.props.changeSaved();
@@ -256,8 +266,8 @@ class Pomodoro extends React.Component {
         });
     }
 
-    changeIsDefaultProjectEnabled(event) {
-        const { pomodoroForUser, pomodoroStorage } = this.pomodoroStorage;
+    async changeIsDefaultProjectEnabled(event) {
+        const { pomodoroForUser, pomodoroStorage } = await this.getPomodoroStorage();
         pomodoroForUser.isDefaultProjectEnabled = event;
         this.store(pomodoroStorage);
         this.props.changeSaved();
@@ -266,8 +276,8 @@ class Pomodoro extends React.Component {
         });
     }    
 
-    toggleLongBreakEnabled(event) {
-        const { pomodoroForUser, pomodoroStorage } = this.pomodoroStorage;
+    async toggleLongBreakEnabled(event) {
+        const { pomodoroForUser, pomodoroStorage } = await this.getPomodoroStorage();
         pomodoroForUser.isLongBreakEnabled = event;
         this.store(pomodoroStorage);
         this.props.changeSaved();
@@ -281,10 +291,10 @@ class Pomodoro extends React.Component {
 
     render() {
         const {forceProjects, forceTasks} = this.props.workspaceSettings;
-        const name = `Default break project ${forceTasks?' and task':''}`;
+        const name = `${locales.DEFAULT_BREAK_PROJECT} ${forceTasks?` ${locales.AND_TASK}`:''}`;
         return(
             <div>
-                <div className={isAppTypeExtension() ? "pomodoro" : "disabled"}
+                <div className="pomodoro"
                      onClick={this.togglePomodoro.bind(this)}>
                         <div className={this.state.enabled ?
                             "pomodoro__checkbox checked" : "pomodoro__checkbox"}>
@@ -293,31 +303,31 @@ class Pomodoro extends React.Component {
                                      "pomodoro__checkbox--img" :
                                      "pomodoro__checkbox--img_hidden"}/>
                         </div>
-                    <span className="pomodoro__title">Enable pomodoro timer</span>
+                    <span className="pomodoro__title">{locales.ENABLE_POMODORO_TIMER}</span>
                 </div>
                 <div id="pomodoro"
                      className="pomodoro__content expandContainer">
                     <div>
                         <div className="pomodoro__box__content">
-                            <p>Timer interval</p>
+                            <p>{locales.TIMER_INTERVAL}</p>
                             <div className="pomodoro__box__content--right_side">
                                 <input id="timerInterval"
                                        value={this.state.timerInterval}
                                        onBlur={this.changePomodoroProperty.bind(this)}
                                        onKeyDown={this.changePomodoroPropertyOnEnter.bind(this)}
                                        onChange={this.changePomodoroPropertyState.bind(this)}/>
-                                <p>minutes</p>
+                                <p>{locales.MINUTES}</p>
                             </div>
                         </div>
                         <div className="pomodoro__box__content">
-                            <p>Short break</p>
+                            <p>{locales.SHORT_BREAK}</p>
                             <div className="pomodoro__box__content--right_side">
                                 <input id="shortBreak"
                                        value={this.state.shortBreak}
                                        onBlur={this.changePomodoroProperty.bind(this)}
                                        onKeyDown={this.changePomodoroPropertyOnEnter.bind(this)}
                                        onChange={this.changePomodoroPropertyState.bind(this)}/>
-                                <p>minutes</p>
+                                <p>{locales.MINUTES}</p>
                             </div>
                         </div>
                         <div className="pomodoro__border"></div>
@@ -325,37 +335,37 @@ class Pomodoro extends React.Component {
                             <Switch className="pomodoro__switch"
                                     checked={this.state.isLongBreakEnabled}
                                     onChange={this.toggleLongBreakEnabled.bind(this)}/>
-                            <p>Long break</p>
+                            <p>{locales.LONG_BREAK}</p>
                             <div className="pomodoro__box__content--right_side">
                                 <input id="longBreak"
                                        value={this.state.longBreak}
                                        onBlur={this.changePomodoroProperty.bind(this)}
                                        onKeyDown={this.changePomodoroPropertyOnEnter.bind(this)}
                                        onChange={this.changePomodoroPropertyState.bind(this)}/>
-                                <p>minutes</p>
+                                <p>{locales.MINUTES}</p>
                             </div>
                         </div>
                         <div className="pomodoro__box__content">
-                            <p>Long break starts after</p>
+                            <p>{locales.LONG_BREAK_STARTS_AFTER}</p>
                             <div className="pomodoro__box__content--right_side">
                                 <input id="breakCounter"
                                        value={this.state.breakCounter}
                                        onBlur={this.changePomodoroProperty.bind(this)}
                                        onKeyDown={this.changePomodoroPropertyOnEnter.bind(this)}
                                        onChange={this.changePomodoroPropertyState.bind(this)}/>
-                                <p>breaks</p>
+                                <p>{locales.BREAKS}</p>
                             </div>
                         </div>
                         <div className="pomodoro__border"></div>
-                        <div className="pomodoro__box__content">
+                        {/* <div className="pomodoro__box__content">
                             <p>Sound notification</p>
                             <Switch className="pomodoro__switch"
                                     checked={this.state.isSoundNotification}
                                     onChange={this.changeIsSoundNotification.bind(this)}/>
-                        </div>
+                        </div> */}
                         <div className="pomodoro__border"></div>
                         <div className="pomodoro__box__content">
-                            <p>Automatic breaks</p>
+                            <p>{locales.AUTOMATIC_BREAKS}</p>
                             <Switch className="pomodoro__switch"
                                     checked={this.state.isAutomaticStartStop}
                                     onChange={this.changeIsAutomaticStartStop.bind(this)}/>

@@ -1,39 +1,54 @@
 import * as React from "react";
 import DefaultProjectList from "./default-project-list.component";
-import {getDefaultProjectEnums} from "../enums/default-project.enum";
 
 import {DefaultProject} from '../helpers/storageUserWorkspace';
+import locales from "../helpers/locales";
 
 class DefaultProjectComponent extends React.Component {
     constructor(props) {
         super(props);
 
-        const { storage, defaultProject } = DefaultProject.getStorage();
         this.state = {
+            defaultProjectEnabled: false,
+            selectedProject: null,
+            defaultProjectStyles: {}
+        };
+        this.setAsyncStateItems = this.setAsyncStateItems.bind(this);
+        this.setDefaultProject = this.setDefaultProject.bind(this);
+        this.projectListOpened = this.projectListOpened.bind(this);
+    }
+
+    async setAsyncStateItems() {
+        const { defaultProject } = await DefaultProject.getStorage(); 
+        this.setState({
             defaultProjectEnabled: defaultProject ? defaultProject.enabled : false,
             selectedProject: defaultProject ? defaultProject.project : null
-        };
+        });
     }
 
     componentDidMount() {
         this.onMountOrUpdate();
+        this.setAsyncStateItems();
     }
 
     onMountOrUpdate() {
-        const elem = document.getElementById('defaultProject');
         if (this.state.defaultProjectEnabled) {
-            elem.style.padding = "10px 20px";
-            elem.style.maxHeight = '360px';
+            this.setState({defaultProjectStyles: {
+                padding: '10px 20px',
+                maxHeight: '360px'
+            }});
         }  
         else {
-            elem.style.padding = '0 20px';
-            elem.style.maxHeight = "0";
+            this.setState({defaultProjectStyles: {
+                padding: '0 20px',
+                maxHeight: '0'
+            }});
         }
     }
 
-    componentDidUpdate(prevProps, prevState) {
+    async componentDidUpdate(prevProps, prevState) {
         if (prevState.defaultProjectEnabled !== this.state.defaultProjectEnabled) {
-            const { storage, defaultProject } = DefaultProject.getStorage();
+            const { storage, defaultProject } = await DefaultProject.getStorage();
             this.setState({
                 defaultProjectEnabled: defaultProject ? defaultProject.enabled : false,
                 selectedProject: defaultProject ? defaultProject.project : null
@@ -43,8 +58,8 @@ class DefaultProjectComponent extends React.Component {
         }
     }
 
-    toggleDefaultProjectEnabled() {
-        let { storage, defaultProject } = DefaultProject.getStorage();
+    async toggleDefaultProjectEnabled() {
+        let { storage, defaultProject } = await DefaultProject.getStorage();
         if (!defaultProject) {
             defaultProject = storage.setInitialDefaultProject();
         } 
@@ -62,8 +77,8 @@ class DefaultProjectComponent extends React.Component {
     }
 
 
-    setDefaultProject(project) {
-        const { storage } = DefaultProject.getStorage();
+    async setDefaultProject(project) {
+        const { storage } = await DefaultProject.getStorage();
         storage.setDefaultProject(project);
 
         this.setState({
@@ -84,7 +99,7 @@ class DefaultProjectComponent extends React.Component {
     render() {
         const { defaultProjectEnabled, selectedProject } = this.state;
         const {forceProjects, forceTasks} = this.props.workspaceSettings;
-        const name = forceTasks ? 'Default project and task' : 'Default project';
+        const name = forceTasks ? locales.DEFAULT_PROJECT_AND_TASK : locales.DEFAULT_PROJECT;
 
         return (
             <div>
@@ -100,15 +115,17 @@ class DefaultProjectComponent extends React.Component {
                     <span className="default-project-title">{name}</span>
                 </div>
                 <div id="defaultProject"
-                    className="default-project__project-list expandContainer">
+                    className="default-project__project-list expandContainer"
+                    style={this.state.defaultProjectStyles}
+                    >
                     <DefaultProjectList
                         ref={instance => {
                             this.projectList = instance
                         }}
                         selectedProject={selectedProject}
-                        selectProject={this.setDefaultProject.bind(this)}
+                        selectProject={this.setDefaultProject}
                         workspaceSettings={this.props.workspaceSettings}
-                        projectListOpened={this.projectListOpened.bind(this)}
+                        projectListOpened={this.projectListOpened}
                         isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}
                         noTask={false}
                         isPomodoro={false}

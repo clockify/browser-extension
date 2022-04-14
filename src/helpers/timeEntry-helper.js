@@ -18,7 +18,7 @@ export class TimeEntryHelper {
     }
 
     async updateProjectTask(timeEntry, projectDB, taskDB) {
-        if (isOffline())
+        if (await isOffline())
             return null;
 
         if (taskDB) {

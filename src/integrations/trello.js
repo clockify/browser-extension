@@ -40,11 +40,6 @@ setTimeout(() => {
             small: true
         });
         link.classList.add('checklist-item-button');
-        link.style.position = 'absolute';
-        link.style.paddingTop = 0;
-        link.style.paddingRight = 0;
-        link.style.right = '81px';
-        link.style.top = '8px';
-        elem.appendChild(link);
+        $('.checklist-item-controls', elem).prepend(link);
     });
 }, 1000);

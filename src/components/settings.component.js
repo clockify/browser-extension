@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {getBrowser, isChrome} from "../helpers/browser-helper";
-import {isAppTypeDesktop, isAppTypeExtension} from "../helpers/app-types-helper";
 import Header from "./header.component";
 import {UserService} from "../services/user-service";
 import {LocalStorageService} from "../services/localStorage-service";
@@ -16,20 +15,24 @@ import DefaultProject from "./default-project.component";
 import Toaster from "./toaster-component";
 import * as ReactDOM from "react-dom";
 import HomePage from "./home-page.component";
+import locales from "../helpers/locales";
+
+import dateFnsLocale from './date-fns-locale';
 
 const userService = new UserService();
 const localStorageService = new LocalStorageService();
 const htmlStyleHelpers = new HtmlStyleHelper();
 
 const daysOfWeek = [
-    {id:1, name:"Mo"},
-    {id:2, name:"Tu"},
-    {id:3, name:"We"},
-    {id:4, name:"Th"},
-    {id:5, name:"Fr"},
-    {id:6, name:"Sa"},
-    {id:0, name:"Su"}
+    {id:1, name: "MON"},
+    {id:2, name: "TUE"},
+    {id:3, name: "WED"},
+    {id:4, name: "THU"},
+    {id:5, name: "FRI"},
+    {id:6, name: "SAT"},
+    {id:7, name: "SUN"}
 ];
+
 
 class Settings extends React.Component {
 
@@ -39,8 +42,8 @@ class Settings extends React.Component {
         this.state = {
             userEmail: '',
             userPicture: null,
-            createObjects: JSON.parse(localStorageService.get('createObjects', false)), // TODO what is the sensible default here?
-            isSelfHosted: JSON.parse(localStorageService.get('selfHosted', false)),
+            createObjects: null,
+            isSelfHosted: null,
             idleDetection: false,
             idleDetectionCounter: null,
             timerShortcut: true,
@@ -52,25 +55,36 @@ class Settings extends React.Component {
             autoStartOnBrowserStart: false,
             autoStopOnBrowserClose: false,
             showPostStartPopup: true,
-            changeSaved: false
+            changeSaved: false,
+            daysOfWeekLocales: []
         };
 
         this.pomodoroEnd = React.createRef();
+        this.setAsyncStateItems = this.setAsyncStateItems.bind(this);
+    }
+
+    async setAsyncStateItems() {
+        const createObjects = JSON.parse(await localStorageService.get('createObjects', false));
+        const isSelfHosted = JSON.parse(await localStorageService.get('selfHosted', false));
+        const daysOfWeekLocales = await dateFnsLocale.getDaysShort();
+        this.setState({
+            createObjects,
+            isSelfHosted,
+            daysOfWeekLocales
+        });
     }
 
     componentDidMount(){
         this.getUserSettings();
-
-        if (isAppTypeExtension()) {
-            this.isIdleDetectionOn();
-            this.isReminderOn();
-            this.isAutoStartStopOn();
-            this.isTimerShortcutOn();
-            this.isContextMenuOn();
-            this.isShowPostStartPopup();
-        }
-
+        this.isIdleDetectionOn();
+        this.isReminderOn();
+        this.isAutoStartStopOn();
+        this.isTimerShortcutOn();
+        this.isContextMenuOn();
+        this.isShowPostStartPopup();
+        
         this.scrollIntoView = this.scrollIntoView.bind(this);
+        this.setAsyncStateItems();
     }
 
     scrollIntoView() {
@@ -79,9 +93,9 @@ class Settings extends React.Component {
         }, 200);
     }
 
-    isIdleDetectionOn() {
-        const idleDetectionFromStorage = localStorageService.get('idleDetection');
-        const userId = localStorageService.get('userId');
+    async isIdleDetectionOn() {
+        const idleDetectionFromStorage = await localStorageService.get('idleDetection');
+        const userId = await localStorageService.get('userId');
 
         this.setState({
             idleDetectionCounter: idleDetectionFromStorage && JSON.parse(idleDetectionFromStorage)
@@ -109,33 +123,33 @@ class Settings extends React.Component {
         });
     }
 
-    isShowPostStartPopup() {
-        const showPostStartPopup = JSON.parse(localStorageService.get('showPostStartPopup', 'true'));
+    async isShowPostStartPopup() {
+        const showPostStartPopup = JSON.parse(await localStorageService.get('showPostStartPopup', 'true'));
         this.setState({showPostStartPopup});
         getBrowser().storage.local.set({
             showPostStartPopup: (showPostStartPopup)
         });
     }
 
-    isTimerShortcutOn() {
-        const timerShortcutFromStorage = localStorageService.get('timerShortcut');
-        const userId = localStorageService.get('userId');
+    async isTimerShortcutOn() {
+        const timerShortcutFromStorage = await localStorageService.get('timerShortcut');
+        const userId = await localStorageService.get('userId');
 
         this.setState({
             timerShortcut: timerShortcutFromStorage && JSON.parse(timerShortcutFromStorage)
                 .filter(timerShortcutByUser =>
-                    timerShortcutByUser.userId === userId && JSON.parse(timerShortcutByUser.enabled)).length > 0
+                    timerShortcutByUser && timerShortcutByUser.userId === userId && timerShortcutByUser.enabled).length > 0
         });
     }
 
-    isContextMenuOn() {
-        const contextMenuEnabled = JSON.parse(localStorageService.get('contextMenuEnabled', 'true'));
+    async isContextMenuOn() {
+        const contextMenuEnabled = JSON.parse(await localStorageService.get('contextMenuEnabled', 'true'));
         this.setState({ contextMenuEnabled });
     }
 
-    isReminderOn() {
-        const reminderFromStorage = localStorageService.get('reminders');
-        const userId = localStorageService.get('userId');
+    async isReminderOn() {
+        const reminderFromStorage = await localStorageService.get('reminders');
+        const userId = await localStorageService.get('userId');
         const reminderFromStorageForUser = reminderFromStorage ?
             JSON.parse(reminderFromStorage).filter(reminder => reminder.userId === userId)[0] : null;
 
@@ -164,12 +178,14 @@ class Settings extends React.Component {
         setTimeout(() => this.checkForRemindersDatesAndTimes(), 200);
     }
 
-    isAutoStartStopOn() {
-        const userId = localStorageService.get('userId');
-        const autoStartFromStorage = localStorageService.get('autoStartOnBrowserStart') ?
-            JSON.parse(localStorageService.get('autoStartOnBrowserStart')) : [];
-        const autoStopFromStorage = localStorageService.get('autoStopOnBrowserClose') ?
-            JSON.parse(localStorageService.get('autoStopOnBrowserClose')) : [];
+    async isAutoStartStopOn() {
+        const userId = await localStorageService.get('userId');
+        const autoStartOnBrowserStart = await localStorageService.get('autoStartOnBrowserStart');
+        const autoStartFromStorage = autoStartOnBrowserStart ?
+            JSON.parse(autoStartOnBrowserStart) : [];
+        const autoStopOnBrowserClose = await localStorageService.get('autoStopOnBrowserClose');
+        const autoStopFromStorage = autoStopOnBrowserClose ?
+            JSON.parse(autoStopOnBrowserClose) : [];
 
         this.setState({
             autoStartOnBrowserStart:
@@ -181,10 +197,10 @@ class Settings extends React.Component {
 
     
 
-    checkForRemindersDatesAndTimes() {
-        const userId = localStorageService.get('userId');
+    async checkForRemindersDatesAndTimes() {
+        const userId = await localStorageService.get('userId');
         const reminderDatesAndTimesFromStorageForUser =
-            JSON.parse(localStorageService.get('reminderDatesAndTimes'))
+            JSON.parse(await localStorageService.get('reminderDatesAndTimes'))
                 .filter(reminderDatesAndTimes => reminderDatesAndTimes.userId === userId)[0];
 
         this.setState({
@@ -195,7 +211,7 @@ class Settings extends React.Component {
 
         reminderDatesAndTimesFromStorageForUser.dates.forEach(date => {
             const activeDayName = daysOfWeek.filter(day => day.id === date).map(day => day.name)[0];
-            document.getElementById(activeDayName).classList.add('day-active');
+            document.getElementById('day_' + date).classList.add('day-active');
         });
     }
 
@@ -235,9 +251,9 @@ class Settings extends React.Component {
         this.showSuccessMessage();
     }
 
-    toggleIdleDetection() {
-        const idleDetectionFromStorage = localStorageService.get('idleDetection');
-        const userId = localStorageService.get('userId');
+    async toggleIdleDetection() {
+        const idleDetectionFromStorage = await localStorageService.get('idleDetection');
+        const userId = await localStorageService.get('userId');
         let idleDetectionToSaveInStorage;
         let idleCounter;
 
@@ -278,14 +294,14 @@ class Settings extends React.Component {
         this.showSuccessMessage();
     }
 
-    changeIdleCounter(event) {
+    async changeIdleCounter(event) {
         let value = parseInt(event.target.value);
         if (value === 0) {
             value = 1;
         }
 
-        const userId = localStorageService.get('userId');
-        const idleDetectionFromStorage = localStorageService.get('idleDetection');
+        const userId = await localStorageService.get('userId');
+        const idleDetectionFromStorage = await localStorageService.get('idleDetection');
 
         let idleDetectionToSaveInStorage = JSON.parse(idleDetectionFromStorage)
             .filter(idleDetection => idleDetection.userId !== userId);
@@ -323,25 +339,21 @@ class Settings extends React.Component {
     }
 
     sendIdleDetectionRequest(counter) {
-        if (isAppTypeExtension()) {
-            getBrowser().runtime.sendMessage({
-                eventName: "idleDetection",
-                counter: counter
-            });
-        }
+        getBrowser().runtime.sendMessage({
+            eventName: "idleDetection",
+            counter: counter
+        });
     }
 
     sendReminderRequest() {
-        if (isAppTypeExtension()) {
-            getBrowser().runtime.sendMessage({
-                eventName: "reminder"
-            });
-        }
+        getBrowser().runtime.sendMessage({
+            eventName: "reminder"
+        });
     }
 
-    toggleTimerShortcut() {
-        const timerShortcutFromStorage = localStorageService.get('timerShortcut');
-        const userId = localStorageService.get('userId');
+    async toggleTimerShortcut() {
+        const timerShortcutFromStorage = await localStorageService.get('timerShortcut');
+        const userId = await localStorageService.get('userId');
         let timerShortcutToSaveInStorage;
 
         if (this.state.timerShortcut) {
@@ -380,16 +392,18 @@ class Settings extends React.Component {
         }
     }
 
-    toggleReminder() {
-        const reminderFromStorage = localStorageService.get('reminders') ?
-            JSON.parse(localStorageService.get('reminders')) : [];
-        const userId = localStorageService.get('userId');
+    async toggleReminder() {
+        const reminders = await localStorageService.get('reminders');
+        const reminderFromStorage =reminders ?
+            JSON.parse(reminders) : [];
+        const userId = await localStorageService.get('userId');
         const reminderForCurrentUser =
             reminderFromStorage &&
             reminderFromStorage.filter(reminder => reminder.userId === userId).length > 0 ?
                 reminderFromStorage.filter(reminder => reminder.userId === userId)[0] : null;
-        const reminderDatesAndTimesFromStorage = localStorageService.get('reminderDatesAndTimes') ?
-            JSON.parse(localStorageService.get('reminderDatesAndTimes')) : [];
+        const reminderDatesAndTimes = await localStorageService.get('reminderDatesAndTimes');
+        const reminderDatesAndTimesFromStorage = reminderDatesAndTimes ?
+            JSON.parse(reminderDatesAndTimes) : [];
         let reminderToSaveInStorage;
         let reminderDatesAndTimesToSaveInStorage;
 
@@ -428,9 +442,11 @@ class Settings extends React.Component {
                                 reminder: false
                             }, () => {
                                 reminderElem.style.maxHeight = '0';
-                                if (isAppTypeExtension()) {
-                                    getBrowser().extension.getBackgroundPage().removeReminderTimer();
-                                }
+                                // getBrowser().extension.getBackgroundPage().removeReminderTimer();
+                                getBrowser().runtime.sendMessage({
+                                    eventName: 'removeReminderTimer'
+                                });
+                                
                             });
                         }
                         return reminder;
@@ -462,16 +478,16 @@ class Settings extends React.Component {
         this.showSuccessMessage();
     }
 
-    changeReminderMinutes(event) {
+    async changeReminderMinutes(event) {
         let value = parseInt(event.target.value);
 
         if (value === 0) {
             value = 1;
         }
 
-        const userId = localStorageService.get('userId');
+        const userId = await localStorageService.get('userId');
         const remindersDatesAndTimesToSaveInStorage =
-            JSON.parse(localStorageService.get('reminderDatesAndTimes'))
+            JSON.parse(await localStorageService.get('reminderDatesAndTimes'))
                 .map(reminder => {
                     if (reminder.userId === userId) {
                         reminder.minutesSinceLastEntry = value ? value : reminder.minutesSinceLastEntry;
@@ -490,10 +506,14 @@ class Settings extends React.Component {
             getLocalStorageEnums().PERMANENT_PREFIX
         );
 
-        if (isAppTypeExtension()) {
-            getBrowser().extension.getBackgroundPage().removeReminderTimer();
-            getBrowser().extension.getBackgroundPage().addReminderTimer();
-        }
+        // getBrowser().extension.getBackgroundPage().removeReminderTimer();
+        // getBrowser().extension.getBackgroundPage().addReminderTimer();
+        getBrowser().runtime.sendMessage({
+            eventName: 'removeReminderTimer'
+        });
+        getBrowser().runtime.sendMessage({
+            eventName: 'reminder'
+        });
 
         this.showSuccessMessage();
     }
@@ -517,19 +537,18 @@ class Settings extends React.Component {
     }
 
     sendToggleContextMenuRequest(iscontextMenuEnabled) {
-        if (isAppTypeExtension()) {
-            getBrowser().runtime.sendMessage({
-                eventName: "contextMenuEnabledToggle",
-                enabled: iscontextMenuEnabled
-            });
-        }
+        getBrowser().runtime.sendMessage({
+            eventName: "contextMenuEnabledToggle",
+            enabled: iscontextMenuEnabled
+        });
+        
     }    
 
-    toggleDay(event) {
+    async toggleDay(event) {
         const day = daysOfWeek.filter(day => day.name === event.target.firstChild.textContent)[0];
-        const userId = localStorageService.get('userId');
+        const userId = await localStorageService.get('userId');
         const reminderDatesAndTimesFromStorage =
-            JSON.parse(localStorageService.get('reminderDatesAndTimes')).map(reminder => {
+            JSON.parse(await localStorageService.get('reminderDatesAndTimes')).map(reminder => {
                 if (reminder.userId === userId) {
                     if (reminder.dates.includes(day.id)) {
                         reminder.dates.splice(reminder.dates.indexOf(day.id), 1);
@@ -551,10 +570,15 @@ class Settings extends React.Component {
             getLocalStorageEnums().PERMANENT_PREFIX
         );
 
-        if (isAppTypeExtension()) {
-            getBrowser().extension.getBackgroundPage().removeReminderTimer();
-            getBrowser().extension.getBackgroundPage().addReminderTimer();
-        }
+        // getBrowser().extension.getBackgroundPage().removeReminderTimer();
+        // getBrowser().extension.getBackgroundPage().addReminderTimer();
+        getBrowser().runtime.sendMessage({
+            eventName: 'removeReminderTimer'
+        });
+        getBrowser().runtime.sendMessage({
+            eventName: 'reminder'
+        });
+
         this.showSuccessMessage();
     }
 
@@ -592,10 +616,10 @@ class Settings extends React.Component {
         }
     }
 
-    changeTime(time, type) {
-        const userId = localStorageService.get('userId');
+    async changeTime(time, type) {
+        const userId = await localStorageService.get('userId');
         const remindersForCurrentUserToSaveInStorage =
-            JSON.parse(localStorageService.get('reminderDatesAndTimes')).map(reminder => {
+            JSON.parse(await localStorageService.get('reminderDatesAndTimes')).map(reminder => {
                 if (reminder.userId === userId) {
                     if (type === 'fromTime') {
                         reminder.timeFrom = time;
@@ -613,10 +637,14 @@ class Settings extends React.Component {
             getLocalStorageEnums().PERMANENT_PREFIX
         );
 
-        if (isAppTypeExtension()) {
-            getBrowser().extension.getBackgroundPage().removeReminderTimer();
-            getBrowser().extension.getBackgroundPage().addReminderTimer();
-        }
+        // getBrowser().extension.getBackgroundPage().removeReminderTimer();
+        // getBrowser().extension.getBackgroundPage().addReminderTimer();
+        getBrowser().runtime.sendMessage({
+            eventName: 'removeReminderTimer'
+        });
+        getBrowser().runtime.sendMessage({
+            eventName: 'reminder'
+        });
 
         this.showSuccessMessage();
     }
@@ -655,10 +683,11 @@ class Settings extends React.Component {
         }
     }
 
-    toggleAutoStartOnBrowserStart() {
-        const userId = localStorageService.get('userId');
-        let autoStartFromStorage = localStorageService.get('autoStartOnBrowserStart') ?
-            JSON.parse(localStorageService.get('autoStartOnBrowserStart')) : [];
+    async toggleAutoStartOnBrowserStart() {
+        const userId = await localStorageService.get('userId');
+        const autoStartOnBrowserStart = await localStorageService.get('autoStartOnBrowserStart')
+        let autoStartFromStorage = autoStartOnBrowserStart ?
+            JSON.parse(autoStartOnBrowserStart) : [];
         const autoStartForCurrentUser =
             autoStartFromStorage &&
             autoStartFromStorage.filter(autoStart => autoStart.userId === userId).length > 0 ?
@@ -706,10 +735,11 @@ class Settings extends React.Component {
         this.showSuccessMessage();
     }
 
-    toggleAutoStopOnBrowserClose() {
-        const userId = localStorageService.get('userId');
-        let autoStopFromStorage = localStorageService.get('autoStopOnBrowserClose') ?
-            JSON.parse(localStorageService.get('autoStopOnBrowserClose')) : [];
+    async toggleAutoStopOnBrowserClose() {
+        const userId = await localStorageService.get('userId');
+        const autoStopOnBrowserClose = await localStorageService.get('autoStopOnBrowserClose');
+        let autoStopFromStorage = autoStopOnBrowserClose ?
+            JSON.parse(autoStopOnBrowserClose) : [];
         const autoStopForCurrentUser =
             autoStopFromStorage &&
             autoStopFromStorage.filter(autoStop => autoStop.userId === userId).length > 0 ?
@@ -758,7 +788,7 @@ class Settings extends React.Component {
     }
 
     showSuccessMessage() {
-        this.toaster.toast('success', 'Change saved.', 2);
+        this.toaster.toast('success', `${locales.CHANGE_SAVED}.`, 2);
     }
 
     goBackToHomePage() {
@@ -768,10 +798,6 @@ class Settings extends React.Component {
 
     render(){
         let version;
-        if (isAppTypeDesktop()) {
-            version =
-                <div className="app-version">Version: {localStorage.getItem('appVersion')}</div>
-        }
 
         if(!this.state.userPicture) {
             return null;
@@ -798,7 +824,7 @@ class Settings extends React.Component {
                         workspaceSettings={this.props.workspaceSettings}
                         changeSaved={this.showSuccessMessage.bind(this)}
                     />
-                    <div className={isAppTypeExtension() ? "settings__send-errors" : "disabled"}
+                    <div className="settings__send-errors"
                          onClick={this.toggleCreateObjects.bind(this)}>
                         <span className={this.state.createObjects ?
                             "settings__send-errors__checkbox checked" : "settings__send-errors__checkbox"}>
@@ -807,13 +833,13 @@ class Settings extends React.Component {
                                      "settings__send-errors__checkbox--img" :
                                      "settings__send-errors__checkbox--img_hidden"}/>
                         </span>
-                        <span className="settings__send-errors__title">Integrations can create projects/tasks/tags</span>
+                        <span className="settings__send-errors__title">{locales.INTEGRATIONS_CAN_CREATE_PROJECTS}</span>
                     </div>
                     <DarkModeComponent
                         changeSaved={this.showSuccessMessage.bind(this)}
                     />
 
-                    <div className={isAppTypeExtension() ? "settings__send-errors" : "disabled"}
+                    <div className="settings__send-errors"
                          onClick={this.toggleShowPostStartPopup.bind(this)}>
                         <span className={this.state.showPostStartPopup ?
                             "settings__send-errors__checkbox checked" : "settings__send-errors__checkbox"}>
@@ -822,11 +848,11 @@ class Settings extends React.Component {
                                      "settings__send-errors__checkbox--img" :
                                      "settings__send-errors__checkbox--img_hidden"}/>
                         </span>
-                        <span className="settings__send-errors__title">Show post-start popup</span>
+                        <span className="settings__send-errors__title">{locales.SHOW_POST_START_POPUP}</span>
                     </div>
 
 
-                    <div className={isAppTypeExtension() && !this.state.isSelfHosted ?
+                    <div className={!this.state.isSelfHosted ?
                         "settings__send-errors" : "disabled"}
                          onClick={this.toggleTimerShortcut.bind(this)}>
                         <span className={this.state.timerShortcut ?
@@ -836,10 +862,10 @@ class Settings extends React.Component {
                                      "settings__send-errors__checkbox--img" :
                                      "settings__send-errors__checkbox--img_hidden"}/>
                         </span>
-                        <span className="settings__send-errors__title">Start/stop timer shortcut</span>
+                        <span className="settings__send-errors__title">{locales.START}/{locales.STOP} {locales.TIMER} {locales.SHORTCUT}</span>
                         <span className="settings__send-errors__title--shortcut">(Ctrl+Shift+U)</span>
                     </div>
-                    <div className={isAppTypeExtension() && isChrome() ?
+                    <div className={isChrome() ?
                             "settings__auto_start_on_browser_start" : "disabled"}
                          onClick={this.toggleAutoStartOnBrowserStart.bind(this)}>
                         <span className={this.state.autoStartOnBrowserStart ?
@@ -851,10 +877,10 @@ class Settings extends React.Component {
                                      "settings__auto_start_on_browser_start__checkbox--img_hidden"}/>
                         </span>
                         <span className="settings__auto_start_on_browser_start__title">
-                            Start timer when browser starts
+                            {locales.START_TIMER_WHEN_BROWSER_STARTS}
                         </span>
                     </div>
-                    <div className={isAppTypeExtension() && isChrome() ?
+                    <div className={isChrome() ?
                             "settings__auto_stop_on_browser_close" : "disabled"}
                          onClick={this.toggleAutoStopOnBrowserClose.bind(this)}>
                         <span className={this.state.autoStopOnBrowserClose ?
@@ -866,10 +892,10 @@ class Settings extends React.Component {
                                      "settings__auto_stop_on_browser_close__checkbox--img_hidden"}/>
                         </span>
                         <span className="settings__auto_stop_on_browser_close__title">
-                            Stop timer when browser closes
+                            {locales.STOP_TIMER_WHEN_BROWSER_CLOSES}
                         </span>
                     </div>
-                    <div className={isAppTypeExtension() ? "settings__reminder__section expandTrigger" : "disabled"}
+                    <div className="settings__reminder__section expandTrigger"
                          onClick={this.toggleReminder.bind(this)}>
                         <span className={this.state.reminder ?
                             "settings__reminder__section__checkbox checked" : "settings__reminder__section__checkbox"}>
@@ -878,7 +904,7 @@ class Settings extends React.Component {
                                      "settings__reminder__section__checkbox--img" :
                                      "settings__reminder__section__checkbox--img_hidden"}/>
                         </span>
-                        <span className="settings__send-errors__title">Remind me to track time</span>
+                        <span className="settings__send-errors__title">{locales.REMIND_ME_TO_TRACK_TIME}</span>
                     </div>
                     <div id="reminder"
                          className="settings__reminder expandContainer">
@@ -886,12 +912,12 @@ class Settings extends React.Component {
                             {
                                 daysOfWeek.map(day => {
                                     return (
-                                        <div id={day.name} 
+                                        <div id={'day_' + day.id} 
                                              key={day.name}
                                              className="settings__reminder__week__day"
                                              onClick={this.toggleDay.bind(this)}>
                                             <span className="settings__reminder__week__day--name">
-                                                {day.name}
+                                                {(this.state.daysOfWeekLocales[day.id === 7 ? 0 : day.id] || day.name).toUpperCase()}
                                             </span>
                                         </div>
                                     )
@@ -900,7 +926,7 @@ class Settings extends React.Component {
                         </div>
                         <div className="settings__reminder__times">
                             <div className="settings__reminder__times--from">
-                                <p>From</p>
+                                <p>{locales.FROM}</p>
                                 <TimePicker id="reminderFromTime"
                                             className="settings__reminder__time_picker"
                                             value={moment(this.state.reminderFromTime, 'HH:mm')}
@@ -911,7 +937,7 @@ class Settings extends React.Component {
                                 />
                             </div>
                             <div className="settings__reminder__times--to">
-                                <p>To</p>
+                                <p>{locales.TO}</p>
                                 <TimePicker id="reminderFromTime"
                                             className="settings__reminder__time_picker"
                                             value={moment(this.state.reminderToTime, "HH:mm")}
@@ -927,10 +953,10 @@ class Settings extends React.Component {
                                    onBlur={this.changeReminderMinutes.bind(this)}
                                    onKeyDown={this.changeReminderMinutesOnEnter.bind(this)}
                                    onChange={this.changeReminderMinutesState.bind(this)}/>
-                            <p>minutes since last entry</p>
+                            <p>{locales.MINUTES_SINCE_LAST_ENTRY}</p>
                         </div>
                     </div>
-                    <div className={isAppTypeExtension() ? "settings__context_menu__section" : "enabled"}
+                    <div className="settings__context_menu__section"
                         onClick={this.toggleContextMenu.bind(this)}>
                         <span className={this.state.contextMenuEnabled ?
                             "settings__context_menu__section__checkbox checked" : "settings__context_menu__section__checkbox"}>
@@ -939,9 +965,9 @@ class Settings extends React.Component {
                                     "settings__context_menu__section__checkbox--img" :
                                     "settings__context_menu__section__checkbox--img_hidden"} />
                         </span>
-                        <span className="settings__send-errors__title">Enable context menu</span>
+                        <span className="settings__send-errors__title">{locales.ENABLE_CONTEXT_MENU}</span>
                     </div>                         
-                    <div className={isAppTypeExtension() ? "settings__idle-detection expandTrigger" : "disabled"}
+                    <div className="settings__idle-detection expandTrigger"
                          onClick={this.toggleIdleDetection.bind(this)}>
                         <span className={this.state.idleDetection ?
                             "settings__idle-detection__checkbox checked" : "settings__idle-detection__checkbox"}>
@@ -950,12 +976,12 @@ class Settings extends React.Component {
                                      "settings__idle-detection__checkbox--img" :
                                      "settings__idle-detection__checkbox--img_hidden"}/>
                         </span>
-                        <span className="settings__send-errors__title">Idle detection</span>
+                        <span className="settings__send-errors__title">{locales.IDLE_DETECTION}</span>
                     </div>
                     <div id="idleDetection"
                          className="settings__idle-detection__box expandContainer">
                         <div className="settings__idle-detection__box__content">
-                            <p>Detect idle time if inactive for</p>
+                            <p>{locales.DETECT_IDLE_TIME}</p>
                             <input id="idleDetectionCounter"
                                    value={this.state.idleDetectionCounter}
                                    onBlur={this.changeIdleCounter.bind(this)}

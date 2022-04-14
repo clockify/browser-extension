@@ -3,7 +3,6 @@ import * as ReactDOM from 'react-dom';
 import Login from '../components/login.component';
 import * as jwt from 'jsonwebtoken';
 import {getBrowser} from "../helpers/browser-helper";
-import {isAppTypeExtension} from "../helpers/app-types-helper";
 import {HttpService} from "./http-service";
 import {LocalStorageService} from "./localStorage-service";
 
@@ -15,28 +14,28 @@ export class TokenService {
     constructor() {
     }
 
-    getToken() {
-        const token = localStorageService.get('token');
+    async getToken() {
+        const token = await localStorageService.get('token');
 
         if (this.isTokenValid(token)) {
             return Promise.resolve(token);
         }
 
-        const refreshToken = localStorageService.get('refreshToken');
+        const refreshToken = await localStorageService.get('refreshToken');
 
         if (this.isTokenValid(refreshToken)) {
 
             return this.refreshToken(refreshToken)
                 .then(response => {
                     let data = response.data;
-                    if (isAppTypeExtension()) {
-                        getBrowser().storage.local.set({
-                            token: (data.token),
-                            userId: (data.userId),
-                            refreshToken: (data.refreshToken),
-                            userEmail: (data.userEmail)
-                        });
-                    }
+                    
+                    getBrowser().storage.local.set({
+                        token: (data.token),
+                        userId: (data.userId),
+                        refreshToken: (data.refreshToken),
+                        userEmail: (data.userEmail)
+                    });
+                    
                     localStorageService.set('token', data.token);
                     localStorageService.set('refreshToken', data.refreshToken);
                     localStorageService.set('userId', data.id);
@@ -50,8 +49,8 @@ export class TokenService {
         });
     }
 
-    refreshToken(refreshToken) {
-        const baseUrl = localStorageService.get('baseUrl');
+    async refreshToken(refreshToken) {
+        const baseUrl = await localStorageService.get('baseUrl');
         const refreshTokenUrl = `${baseUrl}/auth/token/refresh`;
         const body = {
             refreshToken: refreshToken
@@ -79,7 +78,8 @@ export class TokenService {
         ReactDOM.render(<Login logout={true}/>, document.getElementById('mount'));
     }
 
-    isLoggedIn() {
-        return localStorageService.get('token') !== null && localStorageService.get('token') !== undefined;
+    async isLoggedIn() {
+        const token = await localStorageService.get('token');
+        return token !== null && token !== undefined;
     }
 }

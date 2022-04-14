@@ -1,7 +1,7 @@
 clockifyButton.render('.issue .two.column.stackable.grid .right:not(.clockify)', {observe: true}, function (elem) {
     issueId = $(".issue .index").innerText;
     description = issueId + " " + $(".issue #issue-title").innerText;
-    project = $(".repo-title div.divider ~ a").innerText;
+    project = $(".repo-title a").innerText;
     tags = () => Array.from($$(".labels .label")).map(e => e.innerText);
 
     link = clockifyButton.createButton({

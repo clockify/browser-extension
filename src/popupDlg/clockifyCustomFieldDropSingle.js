@@ -301,35 +301,11 @@ var ClockifyCustomFieldDropSingle = class extends ClockifyCustomField {
         //     if (multipleItem.state.isChecked) 
         //         value = multipleItem.item.name;
         // });
-        this.onChanged(value);
+        super.onChanged(value);
+        this.value = value;
+        this.redrawHeader();
+        this.close();
     }
-
-    onChanged(value) {
-        aBrowser.runtime.sendMessage({
-            eventName: 'submitCustomField',
-            options: {
-                timeEntryId: this.timeEntryId,
-                customFieldId: this.customFieldId,
-                value
-            }
-        }, (response) => {
-            if (!response) {
-                alert('Error response must be defined');
-                return response;
-            } 
-            const { data, status } = response;
-            if (status !== 201) {
-                if (status === 400) {
-                    alert("Problem with Custom Field Value.");
-                }
-            } 
-            else {
-                this.value = value; // data.value, renderContent() is called only one time
-                this.redrawHeader();
-                this.close();
-            }
-        });
-    } 
 
     clean() {
         const Items = this.state.Items;

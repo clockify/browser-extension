@@ -65,16 +65,21 @@ var ClockifyCustomField = class {
             }
         }, (response) => {
             if (!response) {
-                alert('Error response must be defined');
+                console.log('Error response must be defined');
                 return response;
             } 
             const { data, status } = response;
             if (status !== 201) {
                 if (status === 400) {
-                    alert("Problem with Custom Field Value.");
+                    alert(clockifyLocales.CUSTOM_FIELDS + "?");
                 }
             }
-            //this.value = data;
+            aBrowser.storage.local.get('timeEntryInProgress', ({timeEntryInProgress}) => {
+                if(timeEntryInProgress && timeEntryInProgress.customFieldValues){
+                    const updatedCFs = timeEntryInProgress.customFieldValues.map(el => el.customFieldId === data.customFieldId ? Object.assign(el, {value: data.value}) : el);
+                    aBrowser.storage.local.set({'timeEntryInProgress': Object.assign(timeEntryInProgress, {customFieldValues: updatedCFs})});
+                }
+            });
         });
     }    
 
@@ -148,7 +153,7 @@ var ClockifyCustomFieldLink = class extends ClockifyCustomField {
 
     draw() {
         if (!!this.value) {
-            return `<div class='clockify-custom-field-inner${this.isDisabled?'-disabled':''}'>\
+            return `<div class='clockify-custom-field-inner${this.isDisabled ? '-disabled':''}'>\
             <a href="${this.value}" style="color: #03a9f4;font-size:14px;" id='aCustomFieldLink' target="_blank" title="${this.title}">${this.placeholderOrName}</a>\
             <img id='aEditCustomFieldLink' index='${this.index}' title="${this.title}" src='${aBrowser.runtime.getURL("assets/images/edit-unsynced.png")}'\
                 style='margin-left: 8px; width:14px; height:14px;'\
@@ -156,7 +161,7 @@ var ClockifyCustomFieldLink = class extends ClockifyCustomField {
         </div>`
         } 
         else {
-            return `<input id='txtCustomField${this.index}' name='txtCustomField${this.index}' type="url" index='${this.index}' class='custom-field-link clockify-link-input' style='margin: 0' title="${this.title}" placeholder="${this.placeholderOrName}" >`
+            return `<input id='txtCustomField${this.index}' name='txtCustomField${this.index}' type="url" index='${this.index}' class='custom-field-link clockify-link-input${this.isDisabled ? '-disabled' : ''}' style='margin: 0' title="${this.title}" placeholder="${this.placeholderOrName}" ${this.isDisabled?'disabled':''}>`
         }
 
     }
@@ -165,7 +170,7 @@ var ClockifyCustomFieldLink = class extends ClockifyCustomField {
         // list='customField${this.index}'
         const div = document.createElement('div');
         div.setAttribute("id", `${this.divId}`);
-        div.setAttribute('class', 'clockify-custom-field');
+        div.setAttribute('class', `clockify-custom-field${this.isDisabled ? '-disabled' : ''}`);
 
         // if (this.value === "window.location.href") {
         //     this.value = window.location.href;
@@ -200,17 +205,17 @@ var ClockifyCustomFieldLink = class extends ClockifyCustomField {
                 <h1 class="cl-modal-title">Edit link</h1>\
                 <button type="button" class="cl-close">\
                     <span aria-hidden="true">\
-                        <span class='clockify-close'>&times;</span>                  
+                        <span class='clockify-close' style='background: url(${aBrowser.runtime.getURL("assets/images/closeX.svg")}) no-repeat;'></span>                  
                     </span>\
                 </button>\
             </div>\
             <div class="cl-modal-body">\
                 <span id='clLinkLabel' class='custom-field-link-label'></span>
-                <input type="url" class='custom-field-link clockify-link-input-modal' placeholder="link" autocomplete="off">\
+                <input type="url" id='txtCustomFieldLinkModal' class='custom-field-link clockify-link-input-modal' placeholder="link" autocomplete="off">\
             </div>\
             <div class="cl-modal-footer">\
-                <a class="clockify-cancel" disabled="">Cancel</a>\
-                <a class="clockify-save" disabled="">SAVE</a>\
+                <a class="clockify-cancel" disabled="">${clockifyLocales.CANCEL}</a>\
+                <a class="clockify-save clockify-save--disabled" disabled="">SAVE</a>\
             </div>\
         </div>`;
         document.body.appendChild(linkModal);
@@ -284,8 +289,8 @@ var ClockifyCustomFieldCheckbox = class extends ClockifyCustomField {
             `<input id='switchboxCustomField' index='${this.index}' ${this.value?'checked':''} class="clockify-switch-input" type="checkbox" ${this.isDisabled?'disabled':''}>` +
             // id begins with 'switchbox' to prevent: e.preventDefault(); in clockifyButton::clockifyClicks()  
             `<span id='switchboxSpan' class="clockify-switch-slider clockify-switch-round"></span>` + 
-            `<span id='switchboxLabel' class='clockify-switch-label' title="${this.title}">${ph}</span>` +
-        `</label>`
+        `</label>` +
+        `<span id='switchboxLabel' class='clockify-switch-label' title="${this.title}">${ph}</span>`
     }
 
     create() {

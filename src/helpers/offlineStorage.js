@@ -1,5 +1,7 @@
 import {LocalStorageService} from "../services/localStorage-service";
 import {getBrowser} from "../helpers/browser-helper";
+import locales from "../helpers/locales";
+
 
 const localStorageService = new LocalStorageService();
 
@@ -9,19 +11,17 @@ const getWSCustomFields = () =>
             eventName: 'getWSCustomField',
             options: {}
         }, (response) => {
-            console.log('getWSCustomFields response', response)
             if (response) {
                 const { data, status } = response;
                 if (status !== 200) {
                     if (status === 403) {
-                        resolve({data: null, msg: 'Your Workspace is not authorized for Custom Fields'})
+                        resolve({data: null, msg: locales.WORKSPACE_NOT_AUTHORIZED_FOR_CUSTOM_FIELDS})
                     }
                     else {
                         resolve({data: null, msg: "getWSCustomField " + status})
                     }
                 } 
                 else {
-                    console.log('getWSCustomField', data)
                     //_clockifyPopupDlg.wsCustomFields = data;
                     //_clockifyPopupDlg.injectLinkModal();
                     resolve({ data, msg: ""})
@@ -48,30 +48,31 @@ var offlineStorage = {
     _timeEntriesOffline: [], 
     _timeEntryInOffline: null,
 
-    load() {
-        this._activeBillableHours = localStorage.getItem('activeBillableHours') ?
-            JSON.parse(localStorage.getItem('activeBillableHours'))
+    async load() {
+        const activeBillableHours = await localStorage.getItem('activeBillableHours');
+        this._activeBillableHours = activeBillableHours ?
+            JSON.parse(activeBillableHours)
             : false;
-
-        this._onlyAdminsCanChangeBillableStatus = localStorage.getItem('onlyAdminsCanChangeBillableStatus') ?
-            JSON.parse(localStorage.getItem('onlyAdminsCanChangeBillableStatus'))
+        const onlyAdminsCanChangeBillableStatus = await localStorage.getItem('onlyAdminsCanChangeBillableStatus');
+        this._onlyAdminsCanChangeBillableStatus = onlyAdminsCanChangeBillableStatus ?
+            JSON.parse(onlyAdminsCanChangeBillableStatus)
             : false;
-
-        this._userHasCustomFieldsFeature = localStorage.getItem('userHasCustomFieldsFeature') ?
-            JSON.parse(localStorage.getItem('userHasCustomFieldsFeature'))
+        const userHasCustomFieldsFeature = await localStorage.getItem('userHasCustomFieldsFeature');
+        this._userHasCustomFieldsFeature = userHasCustomFieldsFeature ?
+            JSON.parse(userHasCustomFieldsFeature)
             : false;
-
-        this._wsCustomFields = localStorage.getItem('wsCustomFields')
-            ? JSON.parse(localStorage.getItem('wsCustomFields')):
+        const wsCustomFields = await localStorage.getItem('wsCustomFields');
+        this._wsCustomFields = wsCustomFields
+            ? JSON.parse(wsCustomFields):
             [];
-
+        const timeEntriesOffline = await localStorage.getItem('timeEntriesOffline');
         this._timeEntriesOffline =
-            localStorage.getItem('timeEntriesOffline') 
-                ? JSON.parse(localStorage.getItem('timeEntriesOffline')) 
+            timeEntriesOffline
+                ? JSON.parse(timeEntriesOffline) 
                 : [];
-
-        this._timeEntryInOffline = localStorage.getItem('timeEntryInOffline')
-            ? JSON.parse(localStorage.getItem('timeEntryInOffline'))
+        const timeEntryInOffline = await localStorage.getItem('timeEntryInOffline');
+        this._timeEntryInOffline = timeEntryInOffline
+            ? JSON.parse(timeEntryInOffline)
             : null;
 
         // this.log('After load storage:');
@@ -102,12 +103,9 @@ var offlineStorage = {
         }
     },
 
-    get hideBillable() {
-        //console.log('------')
-        //console.log('this._activeBillableHours', this._activeBillableHours)
-        //console.log('this._onlyAdminsCanChangeBillableStatus', this._onlyAdminsCanChangeBillableStatus)
-        //console.log('this.isUserOwnerOrAdmin', this.isUserOwnerOrAdmin)
-        return !this._activeBillableHours || this._onlyAdminsCanChangeBillableStatus && !this.isUserOwnerOrAdmin;
+    async getHideBillable() {
+        const isUserOwnerOrAdmin = await this.getIsUserOwnerOrAdmin();
+        return !this._activeBillableHours || this._onlyAdminsCanChangeBillableStatus && !isUserOwnerOrAdmin;
     },
 
     get userHasCustomFieldsFeature() { return this._userHasCustomFieldsFeature },
@@ -197,9 +195,10 @@ var offlineStorage = {
             : [];
     },
 
-    get isUserOwnerOrAdmin() {
-        return localStorage.getItem('isUserOwnerOrAdmin')
-            ? JSON.parse(localStorage.getItem('isUserOwnerOrAdmin'))
+    async getIsUserOwnerOrAdmin() {
+        const isUserOwnerOrAdmin = await localStorage.getItem('isUserOwnerOrAdmin');
+        return isUserOwnerOrAdmin
+            ? JSON.parse(isUserOwnerOrAdmin)
             : false;
     },
 

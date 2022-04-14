@@ -1,5 +1,7 @@
 import React from 'react'
 import debounce from 'lodash/debounce';
+import { locale } from 'moment';
+import locales from "../helpers/locales";
 
 class EditDescription extends React.Component {
 
@@ -43,7 +45,7 @@ class EditDescription extends React.Component {
                 value={this.state.description}
                 ref={this.descriptionRef}
                 className={"edit-form-description"}
-                placeholder={this.props.descRequired ? "Description (required)" : "Description"}
+                placeholder={this.props.descRequired ? `${locales.DESCRIPTION_LABEL} ${locales.REQUIRED_LABEL}` : locales.DESCRIPTION_LABEL}
                 onChange={this.onChangeDescription}
             />            
         )

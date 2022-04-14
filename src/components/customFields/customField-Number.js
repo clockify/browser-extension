@@ -8,16 +8,18 @@ const CustomFieldNumber = ({cf, updateValue}) => {
             setValue,
             storeValue ] = useCustomField(cf);
 
-    const handleChangeDelayed = useRef(debounce(val => {
-        updateValue(id, val);
-        if (!(manualMode || isOffline())) {
+    const handleChangeDelayed = useRef(debounce(async val => {
+        // updateValue(id, val);
+        const isOff = await isOffline();
+        if (!(manualMode || isOff)) {
             storeValue(val);
         }
     }, manualMode ? 0 : 1000));
 
     const handleChange = (e) => {
         const val = e.target.value;
-        setValue(parseFloat(val));
+        setValue(val);
+        updateValue(id, val);
         handleChangeDelayed.current(parseFloat(val));
     };
 
@@ -26,7 +28,7 @@ const CustomFieldNumber = ({cf, updateValue}) => {
             <input 
                 type="number"
                 index={index}
-                value={!!value ? value : ''}
+                value={String(value)}
                 className={`custom-field-number${isDisabled?'-disabled':''}`}
                 title={title}
                 placeholder={placeHolder} 

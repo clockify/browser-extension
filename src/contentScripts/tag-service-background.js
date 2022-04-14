@@ -3,15 +3,19 @@ class TagService extends ClockifyService {
     constructor() {
     }
 
-    static get urlTags() {
-        return `${this.apiEndpoint}/v1/workspaces/${this.workspaceId}/tags`;
+    static async getUrlTags() {
+        const apiEndpoint = await this.apiEndpoint;
+        const workspaceId = await this.workspaceId;
+        return `${apiEndpoint}/v1/workspaces/${workspaceId}/tags`;
     }
   
     static async getOrCreateTags(tagNames) {
         const pageSize = 50;
         let allTags = [];
         let message = "";
-        for (var page=1; page < 20; page++) {
+        let page = 1;
+        let pageTagsLength = 0;
+        do {
             const { data: pageTags, error, status } = await this.getAllTagsWithFilter(page, pageSize);
             if (status !== 200) {
                 if (error)
@@ -19,19 +23,20 @@ class TagService extends ClockifyService {
                 break; //return [];
             }
             allTags = allTags.concat(pageTags.map(tag => { return { id: tag.id, name: tag.name}}) );
-            if (pageTags.length < pageSize)
-                break;
-        }
+            page++;
+            pageTagsLength = pageTags.length;
+        } while (pageTagsLength === pageSize);
         
-        const { forceTags } = this.forces;
+        const { forceTags } = await this.getForces();
         const tags = [];
         let notifyCanNotreateObjects = false;
         for (const tagName of tagNames) {
             const t = allTags.find(e => e.name.toUpperCase() === tagName.toUpperCase());
+            const createObjects = await this.getCreateObjects();
             if (t) {
                 tags.push(t);
             } 
-            else if (this.createObjects) {
+            else if (createObjects) {
                 const { data: tag, error, status } = await this.createTag({ name: tagName });
                 if (status === 201) {
                     tags.push(tag);
@@ -55,15 +60,16 @@ class TagService extends ClockifyService {
 
 
     static async getAllTagsWithFilter(page, pageSize, filter) {
-        let endPoint = `${this.urlTags}?page=${page}&pagesize=${pageSize}&archived=false`;
+        const urlTags = await this.getUrlTags();
+        let endPoint = `${urlTags}?page=${page}&pagesize=${pageSize}&archived=false`;
         if (!!filter) {
-            url = url.concat(`&name=${filter}`);
+            endPoint = endPoint.concat(`&name=${filter}`);
         }
         return await this.apiCall(endPoint);
     }
 
     static async createTag(tag) {
-        const endPoint = this.urlTags;
+        const endPoint = await this.getUrlTags();
         const body = tag;
         return await this.apiCall(endPoint, 'POST', body);
     }

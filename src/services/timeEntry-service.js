@@ -1,3 +1,4 @@
+import moment from "moment";
 import {HttpWrapperService} from "./http-wrapper-service";
 import {LocalStorageService} from "./localStorage-service";
 
@@ -9,10 +10,10 @@ export class TimeEntryService extends HttpWrapperService {
         super();
     }
 
-    getTimeEntries(page) {
-        const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
-        const userId = localStorageService.get('userId');
-        const baseUrl = localStorageService.get('baseUrl');
+    async getTimeEntries(page) {
+        const activeWorkspaceId = await localStorageService.get('activeWorkspaceId');
+        const userId = await localStorageService.get('userId');
+        const baseUrl = await localStorageService.get('baseUrl');
 
         const allTimeEntriesEndpoint =
             `${baseUrl}/workspaces/${activeWorkspaceId}/timeEntries/user/${userId}/full?page=${page}&limit=50`;
@@ -20,9 +21,9 @@ export class TimeEntryService extends HttpWrapperService {
         return super.get(allTimeEntriesEndpoint, addToken);
     }
 
-    changeStart(start, timeEntryId) {
-        const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
-        const baseUrl = localStorageService.get('baseUrl');
+    async changeStart(start, timeEntryId) {
+        const activeWorkspaceId = await localStorageService.get('activeWorkspaceId');
+        const baseUrl = await localStorageService.get('baseUrl');
         const changeStartUrl =
             `${baseUrl}/workspaces/${activeWorkspaceId}/timeEntries/${timeEntryId}/start`;
 
@@ -33,9 +34,9 @@ export class TimeEntryService extends HttpWrapperService {
         return super.put(changeStartUrl, body, addToken);
     }
 
-    changeEnd(end, timeEntryId) {
-        const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
-        const baseUrl = localStorageService.get('baseUrl');
+    async changeEnd(end, timeEntryId) {
+        const activeWorkspaceId = await localStorageService.get('activeWorkspaceId');
+        const baseUrl = await localStorageService.get('baseUrl');
         const changeEndUrl =
             `${baseUrl}/workspaces/${activeWorkspaceId}/timeEntries/${timeEntryId}/end`;
 
@@ -46,70 +47,108 @@ export class TimeEntryService extends HttpWrapperService {
         return super.put(changeEndUrl, body, addToken);
     }
 
-    editTimeInterval(entryId, timeInterval) {
+    async editTimeInterval(entryId, timeInterval) {
         if (!entryId) {
             return;
         }
-        const baseUrl = localStorageService.get('baseUrl');
-        const activeWorkspaceId = localStorage.getItem('activeWorkspaceId');
+        const baseUrl = await localStorageService.get('baseUrl');
+        const activeWorkspaceId = await localStorage.getItem('activeWorkspaceId');
         const editIntervalUrl = `${baseUrl}/workspaces/` +
                                     `${activeWorkspaceId}/timeEntries/${entryId}/timeInterval`;
+
+        let { start, end } = timeInterval;
+        if(moment(start).date() !== moment(end).date()){
+            start = moment(start).add(1, 'day');
+            end = moment(end).add(1, 'day');
+        }
+
         const body = {
-            start: timeInterval.start,
-            end: timeInterval.end
+            start,
+            end
         };
 
         return super.put(editIntervalUrl, body, addToken);
     }
 
-    getEntryInProgress() {
-        const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
-        const userId = localStorageService.get('userId');
-        const baseUrl = localStorageService.get('baseUrl');
+    async getEntryInProgress() {
+        const activeWorkspaceId = await localStorageService.get('activeWorkspaceId');
+        const userId = await localStorageService.get('userId');
+        const baseUrl = await localStorageService.get('baseUrl');
         const entryInProgressUrl =
             `${baseUrl}/v1/workspaces/${activeWorkspaceId}/user/${userId}/time-entries?in-progress=true&hydrated=true`;
 
         return super.get(entryInProgressUrl, addToken);
     }
 
-    healthCheck() {
-        const baseUrl = localStorageService.get('baseUrl');
+    async healthCheck() {
+        const baseUrl = await localStorageService.get('baseUrl');
         const url = `${baseUrl}/health`;
         return super.get(url, addToken);
     }
 
-    startNewEntry(projectId, description, billable, start, taskId=null) {
-        const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
-        const baseUrl = localStorageService.get('baseUrl');
+    async startNewEntry(projectId, description, billable, start, end = null, taskId = null, tagIds, customFields) {
+        const activeWorkspaceId = await localStorageService.get('activeWorkspaceId');
+        const baseUrl = await localStorageService.get('baseUrl');
         const startEntryUrl =
             `${baseUrl}/workspaces/${activeWorkspaceId}/timeEntries/full`;
 
+        if(end){
+            if(moment(start).date() !== moment(end).date()){
+                start = moment(start).add(1, 'day');
+                end = moment(end).add(1, 'day');
+            }
+        }
+        
         const body = {
             projectId,
             taskId,
+            tagIds,
             description,
             start,
-            billable
+            end,
+            billable,
+            customFields
         };
 
         return super.post(startEntryUrl, body, addToken);
     }
 
-    stopEntryInProgress(end) {
-        const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
-        const baseUrl = localStorageService.get('baseUrl');
+    async stopEntryInProgress(end) {
+        const timeEntryInProgress = await localStorageService.get('timeEntryInProgress');
+        if(!timeEntryInProgress){
+            return;
+        }
+        const { id, projectId, billable, task, description, timeInterval, customFieldValues, tags } = timeEntryInProgress;
+        let { start } = timeInterval;
+        const taskId = task ? task.id : null;
+        const tagIds = tags ? tags.map(tag => tag.id) : [];
+        const activeWorkspaceId = await localStorageService.get('activeWorkspaceId');
+        const baseUrl = await localStorageService.get('baseUrl');
+
+        if(moment(start).date() !== moment(end).date()){
+            start = moment(start).add(1, 'day');
+            end = moment(end).add(1, 'day');
+        }
+
         const stopEntryUrl =
-            `${baseUrl}/workspaces/${activeWorkspaceId}/timeEntries/endStarted`;
+            `${baseUrl}/workspaces/${activeWorkspaceId}/timeEntries/${id}/full`;
         const body = {
-            end: end
+            projectId,
+            taskId,
+            tagIds,
+            description,
+            start,
+            end,
+            billable,
+            customFields: customFieldValues
         };
 
         return super.put(stopEntryUrl, body, addToken);
     }
 
-    setDescription(timeEntryId, description) {
-        const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
-        const baseUrl = localStorageService.get('baseUrl');
+    async setDescription(timeEntryId, description) {
+        const activeWorkspaceId = await localStorageService.get('activeWorkspaceId');
+        const baseUrl = await localStorageService.get('baseUrl');
         const descriptionUrl =
             `${baseUrl}/workspaces/${activeWorkspaceId}/timeEntries/${timeEntryId}/description`;
 
@@ -120,18 +159,18 @@ export class TimeEntryService extends HttpWrapperService {
         return super.put(descriptionUrl, body, addToken);
     }
 
-    removeProject(timeEntryId) {
-        const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
-        const baseUrl = localStorageService.get('baseUrl');
+    async removeProject(timeEntryId) {
+        const activeWorkspaceId = await localStorageService.get('activeWorkspaceId');
+        const baseUrl = await localStorageService.get('baseUrl');
         const removeProjectUrl =
             `${baseUrl}/workspaces/${activeWorkspaceId}/timeEntries/${timeEntryId}/project/remove`;
 
         return super.delete(removeProjectUrl, addToken);
     }
 
-    updateProject(projectId, timeEntryId) {
-        const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
-        const baseUrl = localStorageService.get('baseUrl');
+    async updateProject(projectId, timeEntryId) {
+        const activeWorkspaceId = await localStorageService.get('activeWorkspaceId');
+        const baseUrl = await localStorageService.get('baseUrl');
         const updateProjectUrl =
             `${baseUrl}/workspaces/${activeWorkspaceId}/timeEntries/${timeEntryId}/project`;
 
@@ -142,9 +181,9 @@ export class TimeEntryService extends HttpWrapperService {
         return super.put(updateProjectUrl, body, addToken);
     }
 
-    updateTask(taskId, projectId, timeEntryId) {
-        const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
-        const baseUrl = localStorageService.get('baseUrl');
+    async updateTask(taskId, projectId, timeEntryId) {
+        const activeWorkspaceId = await localStorageService.get('activeWorkspaceId');
+        const baseUrl = await localStorageService.get('baseUrl');
         const updateTaskAndProjectUrl =
             `${baseUrl}/workspaces/${activeWorkspaceId}/timeEntries/${timeEntryId}/projectAndTask`;
 
@@ -156,18 +195,18 @@ export class TimeEntryService extends HttpWrapperService {
         return super.put(updateTaskAndProjectUrl, body, addToken);
     }
 
-    removeTask(timeEntryId) {
-        const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
-        const baseUrl = localStorageService.get('baseUrl');
+    async removeTask(timeEntryId) {
+        const activeWorkspaceId = await localStorageService.get('activeWorkspaceId');
+        const baseUrl = await localStorageService.get('baseUrl');
         const removeTaskUrl =
             `${baseUrl}/workspaces/${activeWorkspaceId}/timeEntries/${timeEntryId}/task/remove`;
 
         return super.delete(removeTaskUrl, addToken);
     }
 
-    updateTags(tagList, timeEntryId) {
-        const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
-        const baseUrl = localStorageService.get('baseUrl');
+    async updateTags(tagList, timeEntryId) {
+        const activeWorkspaceId = await localStorageService.get('activeWorkspaceId');
+        const baseUrl = await localStorageService.get('baseUrl');
         const updateTagList =
             `${baseUrl}/workspaces/${activeWorkspaceId}/timeEntries/${timeEntryId}/tags`;
 
@@ -178,9 +217,9 @@ export class TimeEntryService extends HttpWrapperService {
         return super.put(updateTagList, body, addToken);
     }
 
-    updateBillable(billable, timeEntryId) {
-        const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
-        const baseUrl = localStorageService.get('baseUrl');
+    async updateBillable(billable, timeEntryId) {
+        const activeWorkspaceId = await localStorageService.get('activeWorkspaceId');
+        const baseUrl = await localStorageService.get('baseUrl');
         const billableUrl = `${baseUrl}/workspaces/${activeWorkspaceId}/timeEntries/${timeEntryId}/billable`;
         const body = {
             billable: billable
@@ -189,9 +228,9 @@ export class TimeEntryService extends HttpWrapperService {
         return super.put(billableUrl, body, addToken);
     }
 
-    deleteTimeEntry(timeEntryId) {
-        const activeWorkspaceId = localStorageService.get('activeWorkspaceId');
-        const baseUrl = localStorageService.get('baseUrl');
+    async deleteTimeEntry(timeEntryId) {
+        const activeWorkspaceId = await localStorageService.get('activeWorkspaceId');
+        const baseUrl = await localStorageService.get('baseUrl');
         const deleteUrl =
             `${baseUrl}/workspaces/${activeWorkspaceId}/timeEntries/${timeEntryId}`;
 
@@ -199,21 +238,21 @@ export class TimeEntryService extends HttpWrapperService {
 
     }
 
-    createEntry(
-        workspaceId,
-        description,
-        start,
-        end,
-        projectId,
-        taskId,
-        tagIds,
-        billable,
-        customFields
-    ) {
-        const activeWorkspaceId = localStorage.getItem('activeWorkspaceId');
-        const wsId = workspaceId ? workspaceId : activeWorkspaceId;
+    // createEntry(
+    //     workspaceId,
+    //     description,
+    //     start,
+    //     end,
+    //     projectId,
+    //     taskId,
+    //     tagIds,
+    //     billable,
+    //     customFields
+    // ) {
+    //     const activeWorkspaceId = localStorage.getItem('activeWorkspaceId');
+    //     const wsId = workspaceId ? workspaceId : activeWorkspaceId;
 
-        let baseUrl = localStorageService.get('baseUrl');
+    //     let baseUrl = localStorageService.get('baseUrl');
         /*
         if (baseUrl.includes('.api.')) {
             // https://global.api.clockify.me
@@ -221,21 +260,21 @@ export class TimeEntryService extends HttpWrapperService {
             baseUrl = baseUrl.replace('.api', '') + '/api';
         }
         */
-        const timeEntryUrl = `${baseUrl}/workspaces/${wsId}/timeEntries/`;
+    //     const timeEntryUrl = `${baseUrl}/workspaces/${wsId}/timeEntries/`;
 
-        const body = {
-            description,
-            start,
-            end,
-            projectId,
-            taskId,
-            tagIds,
-            billable,
-        };
+    //     const body = {
+    //         description,
+    //         start,
+    //         end,
+    //         projectId,
+    //         taskId,
+    //         tagIds,
+    //         billable,
+    //     };
 
-        if (customFields)
-            body.customFields = customFields;
+    //     if (customFields)
+    //         body.customFields = customFields;
 
-        return super.post(timeEntryUrl, body, addToken);
-    }
+    //     return super.post(timeEntryUrl, body, addToken);
+    // }
 }

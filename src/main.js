@@ -47,20 +47,11 @@ if (
 }
 
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     checkConnection();
     
     Mek();
-
-    let appType;
-    let application;
-    if (!localStorageService.get('appType') || localStorageService.get('appType') === '') {
-        appType = determineAppType();
-        application = new Application(appType);
-    } else {
-        appType = localStorageService.get('appType');
-        application = new Application(appType);
-    }
+    const application = new Application();
 
     localStorage.setItem('timeZone', moment.tz.guess());
 

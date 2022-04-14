@@ -26,8 +26,9 @@ export class SettingsService extends HttpWrapperService {
         localStorageService.set('selfHosted', value, getLocalStorageEnums().SELF_HOSTED_PREFIX);
     }
 
-    getLoginSettings() {
-        const baseUrl = this.getBaseUrl() + '/system-settings/login-settings';
+    async getLoginSettings() {
+        const base = await this.getBaseUrl();
+        const baseUrl = base + '/system-settings/login-settings';
         return super.get(baseUrl).then(response => response.data);
     }
 

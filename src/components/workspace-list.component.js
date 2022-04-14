@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {WorkspaceService} from "../services/workspace-service";
 import {LocalStorageService} from "../services/localStorage-service";
+import locales from '../helpers/locales';
 
 const workspaceService = new WorkspaceService();
 const localStorageService = new LocalStorageService();
@@ -15,12 +16,21 @@ class WorkspaceList  extends React.Component {
             isOpen: false,
             selectedWorkspace: null,
             previousWorkspace: null,
-            isSubDomain: !!localStorageService.get('subDomainName')
+            isSubDomain: null
         }
+        this.setAsyncStateItems = this.setAsyncStateItems.bind(this);
     }
 
     componentDidMount() {
         this.getWorkspaces();
+        this.setAsyncStateItems();
+    }
+
+    async setAsyncStateItems() {
+        const subDomainName = !!(await localStorageService.get('subDomainName'));
+        this.setState({
+            subDomainName
+        });
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -42,9 +52,10 @@ class WorkspaceList  extends React.Component {
 
     getWorkspaces() {
         workspaceService.getWorkspacesOfUser()
-            .then(response => {
+            .then(async response => {
                 let data = response.data;
-                let selectedWorkspace = data.filter(workspace => workspace.id === localStorage.getItem('activeWorkspaceId'))[0];
+                const activeWorkspaceId = await localStorage.getItem('activeWorkspaceId');
+                let selectedWorkspace = data.filter(workspace => workspace.id === activeWorkspaceId)[0];
                 this.setState({
                     workspaces: data,
                     selectedWorkspace: selectedWorkspace,
@@ -91,7 +102,7 @@ class WorkspaceList  extends React.Component {
         } else {
             return(
                 <div className="workspace-list">
-                    <div className="workspace-list-title">Workspace</div>
+                    <div className="workspace-list-title">{locales.WORKSPACE}</div>
                     <div className={this.state.isSubDomain ?
                             "workspace-list-selection list-disabled" : "workspace-list-selection"}
                          onClick={this.toggleWorkspaceList.bind(this)}>
@@ -112,7 +123,7 @@ class WorkspaceList  extends React.Component {
                                         {workspace.name}
                                     </span>
                                     <span className={workspace.id ===
-                                            localStorage.getItem('activeWorkspaceId') ?
+                                            this.state.selectedWorkspace.id ?
                                                "workspace-list-active__img" : "disabled"}>
                                     </span>
                                 </div>

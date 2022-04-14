@@ -9,7 +9,6 @@ import HomePage from "./home-page.component";
 import {isOffline} from "./check-connection";
 import {TimeEntryHelper} from "../helpers/timeEntry-helper";
 import {TimeEntryService} from "../services/timeEntry-service";
-import {isAppTypeExtension} from "../helpers/app-types-helper";
 import {getBrowser} from "../helpers/browser-helper";
 import DeleteEntryConfirmationComponent from "./delete-entry-confirmation.component";
 import Toaster from "./toaster-component";
@@ -18,6 +17,9 @@ import EditDescription from './edit-description.component'
 import {DefaultProject} from '../helpers/storageUserWorkspace';
 import { CustomFieldsContainer } from './customFields/customFields-Container';
 import { offlineStorage, getWSCustomFields } from '../helpers/offlineStorage';
+import locales from "../helpers/locales";
+import { registerLocale } from "react-datepicker";
+//import en from 'date-fns/locale/fr-CH'
 
 const timeEntryHelper = new TimeEntryHelper();
 const timeEntryService = new TimeEntryService();
@@ -42,7 +44,7 @@ class EditForm extends React.Component {
             tags: this.props.timeEntry.tags ? this.props.timeEntry.tags : [],
             redrawCustomFields: 0,
             closeOpenedCounter: 0,
-            isUserOwnerOrAdmin: offlineStorage.isUserOwnerOrAdmin
+            workspaceSettings: null
         };
 
         this.setDescription = this.setDescription.bind(this);
@@ -55,6 +57,33 @@ class EditForm extends React.Component {
         this.onChangeProjectRedrawCustomFields = this.onChangeProjectRedrawCustomFields.bind(this);
         this.closeOtherDropdowns = this.closeOtherDropdowns.bind(this);
         this.updateCustomFields = this.updateCustomFields.bind(this);
+        this.setAsyncStateItems = this.setAsyncStateItems.bind(this);
+    }
+
+    async setAsyncStateItems() {
+        const hideBillable = await offlineStorage.getHideBillable();
+        const isUserOwnerOrAdmin = await offlineStorage.getIsUserOwnerOrAdmin();
+        const modeEnforced = await localStorage.getItem('modeEnforced');
+        const inProgress = await localStorage.getItem('inProgress');
+        const workspaceSettings = await localStorage.getItem('workspaceSettings');
+
+        if(this.state.isUserOwnerOrAdmin !== isUserOwnerOrAdmin || 
+           this.state.hideBillable !== hideBillable || 
+           this.state.modeEnforced !== modeEnforced ||
+           this.state.inProgress !== inProgress ||
+           this.state.workspaceSettings !== workspaceSettings){
+            this.setState({
+                hideBillable,
+                isUserOwnerOrAdmin,
+                modeEnforced,
+                inProgress,
+                workspaceSettings
+            });
+        }
+    }
+
+    componentDidUpdate() {
+        this.setAsyncStateItems();
     }
 
     async componentDidMount() {
@@ -63,7 +92,7 @@ class EditForm extends React.Component {
         const {projectId, task} = timeEntry;
         const taskId = task ? task.id : null;
 
-        if (!isOffline() && offlineStorage.userHasCustomFieldsFeature) {
+        if (!(await isOffline()) && offlineStorage.userHasCustomFieldsFeature) {
             const { data, msg } = await getWSCustomFields();
             if (data)
                 offlineStorage.wsCustomFields = data;
@@ -95,8 +124,8 @@ class EditForm extends React.Component {
     }
 
 
-    updateCustomFields(customFields) {
-        if (isOffline()) {
+    async updateCustomFields(customFields) {
+        if (await isOffline()) {
             let timeEntry = offlineStorage.timeEntryInOffline;
             if (timeEntry && timeEntry.id === this.state.timeEntry.id) {
                 if (timeEntry.customFieldValues) {
@@ -145,21 +174,41 @@ class EditForm extends React.Component {
     }
 
     async checkDefaultProjectTask(forceTasks) {
-        const { storage, defaultProject } = DefaultProject.getStorage();
-        if (defaultProject) {
-            const { projectDB, taskDB, msg, msgId } = await defaultProject.getProjectTaskFromDB(forceTasks);
-            if (msg) {
-                setTimeout(() => {
-                    this.toaster.toast('info', msg, 5);
-                }, 2000)
+        const { defaultProject } = await DefaultProject.getStorage();
+        const lastEntry = this.props.timeEntries && this.props.timeEntries[0];
+
+        if(defaultProject && defaultProject.enabled){
+            const isLastUsedProject = defaultProject.project.id === 'lastUsedProject';
+            const isLastUsedProjectWithoutTask = defaultProject.project.id === 'lastUsedProject' && !defaultProject.project.name.includes('task');
+            if (!isLastUsedProject) {
+                const { projectDB, taskDB, msg } = await defaultProject.getProjectTaskFromDB(forceTasks);
+                if (msg) {
+                    setTimeout(() => {
+                        this.toaster.toast('info', msg, 5);
+                    }, 2000)
+                }
+                return {projectDB, taskDB};
+            } else {
+                if (!lastEntry) {
+                    setTimeout(() => {
+                        this.toaster.toast('info', `${locales.DEFAULT_PROJECT_NOT_AVAILABLE} ${locales.YOU_CAN_SET_A_NEW_ONE_IN_SETTINGS}`, 5);
+                    }, 2000)
+                    return {projectDB: null, taskDB: null};
+                }
+                let { project, task } = lastEntry;
+    
+                if(isLastUsedProjectWithoutTask){
+                    task = null;
+                }
+                
+                return {projectDB: project, taskDB: task};
             }
-            return {projectDB, taskDB};
         }
         return {projectDB: null, taskDB: null};
     }
 
-    changeInterval(timeInterval) {
-        if (isOffline()) {
+    async changeInterval(timeInterval) {
+        if (await isOffline()) {
             let timeEntry = offlineStorage.timeEntryInOffline;
             if (timeEntry && timeEntry.id === this.state.timeEntry.id) {
                 timeEntry.timeInterval = timeInterval;
@@ -205,22 +254,24 @@ class EditForm extends React.Component {
                     this.setState({
                         timeEntry: data
                     }, () => {
-                        if (isAppTypeExtension()) {
-                            getBrowser().extension.getBackgroundPage().addPomodoroTimer();
-                        }
+                        // getBrowser().extension.getBackgroundPage().addPomodoroTimer();
+                        getBrowser().runtime.sendMessage({
+                            eventName: 'pomodoroTimer'
+                        });
+                        
                     });
                 }).catch((error) => {});
             }
         }
     }
 
-    changeDuration(newDuration) {
+    async changeDuration(newDuration) {
         if (!newDuration || !this.state.timeEntry.timeInterval.end) {
             return;
         }
         let timeEntry;
 
-        if (isOffline()) {
+        if (await isOffline()) {
             timeEntry = offlineStorage.timeEntryInOffline;
             let end = moment(this.state.timeEntry.timeInterval.start)
                 .add(parseInt(newDuration.split(':')[0]), 'hours')
@@ -284,9 +335,9 @@ class EditForm extends React.Component {
             () => this.setDescription())
     }
 
-    setDescription() {
+    async setDescription() {
         const { description } = this.state;
-        if(isOffline()) {
+        if(await isOffline()) {
             let timeEntry = offlineStorage.timeEntryInOffline;
             if(timeEntry && timeEntry.id === this.state.timeEntry.id) {
                 timeEntry.description = description.trim();
@@ -334,9 +385,9 @@ class EditForm extends React.Component {
         }
     }
 
-    onChangeProjectRedrawCustomFields() {
+    async onChangeProjectRedrawCustomFields() {
         const { redrawCustomFields } = this.state;
-        if (isOffline()) {
+        if (await isOffline()) {
             // const { timeEntry } = this.state;
             // const { customFieldValues } = timeEntry;
             // ...
@@ -352,9 +403,9 @@ class EditForm extends React.Component {
         }
     }
 
-    editProject(project, callbackDefaultTask) {
+    async editProject(project, callbackDefaultTask) {
         if (!project.id || project.id === 'no-project') {
-            if (isOffline()) {
+            if (await isOffline()) {
                 let timeEntry = offlineStorage.timeEntryInOffline;
                 if (timeEntry && timeEntry.id === this.state.timeEntry.id) {
                     timeEntry.projectId = 'no-project';
@@ -402,7 +453,7 @@ class EditForm extends React.Component {
             }
         }
         else {
-            if (isOffline()) {
+            if (await isOffline()) {
                 let timeEntry = offlineStorage.timeEntryInOffline;
                 if (timeEntry && timeEntry.id === this.state.timeEntry.id) {
                     timeEntry.project = project;
@@ -477,7 +528,7 @@ class EditForm extends React.Component {
         }
     }
 
-    editTags(tag) {
+    async editTags(tag) {
         let tagIds = this.state.tags ? this.state.tags.map(it => it.id) : [];
         let tagList = this.state.tags;
 
@@ -490,7 +541,7 @@ class EditForm extends React.Component {
             tagList.push(tag)
         }
 
-        if (isOffline()) {
+        if (await isOffline()) {
             let timeEntry = offlineStorage.timeEntryInOffline;
             if (timeEntry && timeEntry.id === this.state.timeEntry.id) {
                 timeEntry.tags = tagList;
@@ -533,8 +584,8 @@ class EditForm extends React.Component {
         }
     }
 
-    editBillable() {
-        if(isOffline()) {
+    async editBillable() {
+        if(await isOffline()) {
             let timeEntry = offlineStorage.timeEntryInOffline;
             if(timeEntry && timeEntry.id === this.state.timeEntry.id) {
                 timeEntry.billable = !this.state.timeEntry.billable;
@@ -568,8 +619,8 @@ class EditForm extends React.Component {
         }
     }
 
-    deleteEntry() {
-        if(isOffline()) {
+    async deleteEntry() {
+        if(await isOffline()) {
             let timeEntry = offlineStorage.timeEntryInOffline;
             if(timeEntry && timeEntry.id === this.state.timeEntry.id) {
                 offlineStorage.timeEntryInOffline = null;
@@ -585,11 +636,12 @@ class EditForm extends React.Component {
         } else {
             timeEntryService.deleteTimeEntry(this.state.timeEntry.id)
                 .then(response => {
-                    if (isAppTypeExtension()) {
-                        const backgroundPage = getBrowser().extension.getBackgroundPage();
-                        backgroundPage.restartPomodoro();
-                        backgroundPage.setTimeEntryInProgress(null);
-                    }
+                    
+                    getBrowser().runtime.sendMessage({
+                        eventName: 'restartPomodoro'
+                    });
+                    localStorage.setItem('timeEntryInProgress', null);
+                    
                     ReactDOM.render(<HomePage/>, document.getElementById('mount'));
                 })
                 .catch(() => {
@@ -610,8 +662,8 @@ class EditForm extends React.Component {
         ReactDOM.render(<HomePage/>, document.getElementById('mount'));
     }
 
-    changeDate(date) {
-        if(isOffline()) {
+    async changeDate(date) {
+        if(await isOffline()) {
             let getDate = new Date(date);
             let timeEntryStart = moment(this.state.timeEntry.timeInterval.start);
             let start = moment(getDate).hour(timeEntryStart.hour()).minutes(timeEntryStart.minutes()).seconds(timeEntryStart.seconds());
@@ -646,8 +698,8 @@ class EditForm extends React.Component {
         }
     }
 
-    changeStartDate(date) {
-        if(isOffline()) {
+    async changeStartDate(date) {
+        if(await isOffline()) {
             let getDate = new Date(date);
             let timeEntryStart = moment(this.state.timeEntry.timeInterval.start);
             let timeEntry = offlineStorage.timeEntryInOffline;
@@ -684,7 +736,7 @@ class EditForm extends React.Component {
         })
     }
 
-    checkRequiredFields() {
+    async checkRequiredFields() {
         let descRequired = false;
         let projectRequired = false;
         let taskRequired = false;
@@ -695,9 +747,11 @@ class EditForm extends React.Component {
         if (typeof this.props.workspaceSettings.forceDescription !== "undefined") {
             workspaceSettings = this.props.workspaceSettings;
         } else {
-            workspaceSettings = localStorage.getItem('workspaceSettings') ?
-                JSON.parse(localStorage.getItem('workspaceSettings')) : null
+            workspaceSettings = this.state.workspaceSettings ?
+                JSON.parse(this.state.workspaceSettings) : null
         }
+
+        const isOnline = !(await isOffline());
 
         if (workspaceSettings) {
             if (workspaceSettings.forceDescription &&
@@ -708,7 +762,7 @@ class EditForm extends React.Component {
 
             if (workspaceSettings.forceProjects &&
                 !this.state.timeEntry.projectId &&
-                !isOffline()
+                isOnline
             ) {
                 projectRequired = true;
             }
@@ -718,14 +772,14 @@ class EditForm extends React.Component {
                 workspaceSettings.forceTasks &&
                 !this.state.timeEntry.task &&
                 !this.state.timeEntry.taskId &&
-                !isOffline()
+                isOnline
             ) {
                 taskRequired = true;
             }
 
             if (workspaceSettings.forceTags &&
                 (!this.state.timeEntry.tags || !this.state.timeEntry.tags.length > 0) &&
-                (!this.state.timeEntry.tagIds || !this.state.timeEntry.tagIds.length > 0) && !isOffline()) {
+                (!this.state.timeEntry.tagIds || !this.state.timeEntry.tagIds.length > 0) && isOnline) {
                 tagsRequired = true;
             }
         }
@@ -797,10 +851,10 @@ class EditForm extends React.Component {
                 <div>
                     <Header
                         backButton={true}
-                        mode={localStorage.getItem('modeEnforced')}
-                        disableManual={localStorage.getItem('inProgress')}
+                        mode={this.state.modeEnforced}
+                        disableManual={this.state.inProgress}
                         changeMode={this.changeMode.bind(this)}
-                        workspaceSettings={JSON.parse(localStorage.getItem('workspaceSettings'))}
+                        workspaceSettings={JSON.parse(this.state.workspaceSettings)}
                         goBackTo={this.goBack.bind(this)}
                     />
                     <Toaster
@@ -869,7 +923,7 @@ class EditForm extends React.Component {
                             errorMessage={this.notifyAboutError}
                         />
                         <div className="edit-form-buttons">
-                            <div className={`edit-form-buttons__billable ${offlineStorage.hideBillable?'disabled':''}`}>
+                            <div className={`edit-form-buttons__billable ${this.state.hideBillable?'disabled':''}`}>
                                 <span className={timeEntry.billable ?
                                     "edit-form-checkbox checked" : "edit-form-checkbox"}
                                     onClick={this.editBillable}
@@ -883,7 +937,7 @@ class EditForm extends React.Component {
                                          }/>
                                 </span>
                                 <label onClick={this.editBillable}
-                                       className="edit-form-billable">Billable</label>
+                                       className="edit-form-billable">{locales.BILLABLE_LABEL}</label>
                             </div>
                             { offlineStorage.userHasCustomFieldsFeature &&
                                 <CustomFieldsContainer
@@ -902,11 +956,11 @@ class EditForm extends React.Component {
                                         className={
                                             this.state.descRequired || this.state.projectRequired ||
                                             this.state.taskRequired || this.state.tagsRequired ?
-                                                "edit-form-done-disabled" : "edit-form-done"}>OK
+                                                "edit-form-done-disabled" : "edit-form-done"}>{locales.OK_BTN}
                                 </button>
                                 <div className="edit-form-right-buttons__back_and_delete">
                                     <span onClick={this.askToDeleteEntry.bind(this)}
-                                      className="edit-form-delete">Delete</span>
+                                      className="edit-form-delete">{locales.DELETE}</span>
                                 </div>
                                 <DeleteEntryConfirmationComponent askToDeleteEntry={this.state.askToDeleteEntry}
                                                                   canceled={this.cancelDeletingEntry.bind(this)}

@@ -10,9 +10,10 @@ const CustomFieldCheckbox = ({cf, updateValue}) => {
             setValue,
             storeValue ] = useCustomField(cf);
 
-    const handleChangeDelayed = useRef(debounce(val => {
+    const handleChangeDelayed = useRef(debounce(async val => {
         updateValue(id, val);
-        if (!(manualMode || isOffline())) {
+        const isOff = await isOffline();
+        if (!(manualMode || isOff)) {
             storeValue(val);
         }
     }, 0));
@@ -34,7 +35,7 @@ const CustomFieldCheckbox = ({cf, updateValue}) => {
                         onChange={handleChange}
                         disabled={isDisabled}
                     />
-                    <label className='clockify-switch-label' htmlFor={`switchboxCustomField${index}`} title={title}>{placeHolder?placeHolder: name}</label>
+                    <span className='clockify-switch-label' htmlFor={`switchboxCustomField${index}`} title={title}>{placeHolder?placeHolder: name}</span>
                 {/* </div> */}
             </div>
         </div>

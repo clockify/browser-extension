@@ -61,7 +61,7 @@ body.dark {
   .description {
     color: $bg-02;
   }
-  .time-entry__task-name, .time-entry__right-side--duration {
+  .time-entry__task-name, .time-entry__client-name, .time-entry__right-side--duration {
     color: $bg-03;
   }
   .no-description {
@@ -93,6 +93,73 @@ body.dark {
       color: $bg-04;
     }
   }
+  
+  textarea.custom-field-text {
+    color: #C6D2D9;
+    background-color: #263238;
+    border: 1px solid $bg-12;
+  
+    &-disabled {
+      border: 1px solid #12191D !important;
+      background-color: #36464f !important;
+      cursor: not-allowed;
+      color: #90A4AE !important;
+      &::placeholder{
+        color: #90A4AE !important;
+      }
+    }
+    &::placeholder{
+      color: #C6D2D9;
+    }
+  }
+
+  .clockify-switch-label{
+    color: #8fa2ad !important;
+  }
+
+  .custom-field-inner-checkbox{
+    background-color: #36464f !important;
+    &-disabled{
+      border: none !important;
+      background-color: initial !important;
+    }
+  }
+
+  .clockify-link-input-disabled, .custom-field-number-disabled{
+    border: 1px solid #12191D !important;
+    background-color: #36464f !important;
+    cursor: not-allowed;
+    color: #90A4AE !important;
+    &::placeholder{
+      color: #90A4AE !important;
+    }
+  }
+
+  .tag-list-item-row{
+    color: white !important;
+  }
+
+  .custom-fields{
+    background-color: #36464f !important;
+  }
+
+  .custom-field{
+    background-color: transparent !important;
+    input{
+      background-color: #263238 !important;
+      color: white !important;
+      border: 0 !important;
+      outline: none !important;
+      &::placeholder{
+        color: #C6D2D9;
+      }
+    }
+    &-disabled{
+      border: none !important;
+      background-color: initial !important;
+    }
+  }
+
   .description-textarea-required,
   .project-list-button-required,
   .tag-list-button-required {
@@ -113,7 +180,14 @@ body.dark {
   .pomodoro__checkbox,
   .create-project__checkbox {
     background-color: $bg-10;
-    border: 1px solid $bg-12;
+    border: 1px solid #12191D;
+    &-disabled{
+      background-color: initial !important;
+      border: 1px solid #12191D;
+      .tag-list-selected-item, .tag-list-add{
+        color: #90A4AE;
+      }
+    }
   }
   .tag-list-add, .edit-form-billable {
     color: $bg-04;
@@ -328,9 +402,9 @@ body.dark {
   }
   .task-item {
     color: $bg-04;
-    background-color: $bg-12;
+    background-color: $bg-10;
     &:hover {
-      background-color: $bg-10;
+      background-color: $bg-09;
     }
   }
   .tag-list-item {
@@ -342,6 +416,10 @@ body.dark {
   .tag-list-selected-item {
     color: $bg-03;
   }
+
+  .projects-list__create-task{
+    background-color: $bg-10;
+  }
   .projects-list__create-project,
   .tag-list__create-tag,
   .client-list__create-client,
@@ -349,7 +427,7 @@ body.dark {
     background-color: $bg-12;
     box-shadow: none;
   }
-  .create-project__project-name {
+  .create-project__project-name, .create-task__task-name {
     border: 1px solid $bg-12;
     background-color: $bg-10;
     color: $bg-03;
@@ -358,7 +436,8 @@ body.dark {
     }
   }
   .color-picker__title,
-  .create-project__billable-title {
+  .create-project__billable-title,
+  .create-project__public-title  {
     color: $bg-04;
   }
   .create-project__divider {
@@ -407,7 +486,10 @@ body.dark {
       }
     }
   }
-  .tag-list__create-form {
+  .tag-list--not_tags {
+    color: #8c9fa9;
+  }
+  .tag-list__create-form, .poppup-modal {
     background-color: $bg-09;
     &--open {
       background-color: rgba(0, 0, 0, 0.5);
@@ -415,7 +497,7 @@ body.dark {
     &--divider {
       border-bottom: 1px dotted $bg-12;
     }
-    &--title {
+    &--title, p {
       color: $bg-03;
     }
     &--tag-name {
@@ -427,6 +509,32 @@ body.dark {
       }
     }
   }
+
+  .clockify-modal-content {
+    background-color: #37474F;
+    border: none;
+    box-shadow: 0px 4px 4px rgba(0,0,0,0.25);
+    .cl-modal-title, .custom-field-link-label{
+      color: #C6D2D9;
+    }
+    .custom-field-link{
+      background-color: #263238;
+      color: #C6D2D9;
+    }
+    .cl-close{
+      background: none;
+      .clockify-close{
+        background: none;
+      }
+    }
+    .cl-modal-header{
+      border-bottom: 1px dotted #12191D;
+    }
+    .cl-modal-footer{
+      border-top: 1px dotted #12191D;
+    }
+  }
+
   // .tag-list-selected {
   //   background-color: $bg-12;
   // }

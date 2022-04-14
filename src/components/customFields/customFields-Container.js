@@ -46,7 +46,6 @@ export function CustomFieldsContainer({
             customFieldValues.forEach(item => { // hopefully we have no INACTIVE here
                 const { customFieldId, type, value, timeEntryId } = item; // name, 
                 const wsCustomField = getWSCustomField(customFieldId);
-                console.log(item.name.toUpperCase(), { item, wsCustomField })
                 let status = wsCustomField.status;
                 const { projectDefaultValues } = wsCustomField;
                 if (projectDefaultValues && projectDefaultValues.length > 0) {
@@ -70,7 +69,7 @@ export function CustomFieldsContainer({
             });
             setCustomFields(arr);
         }
-    }, []);
+    }, [isUserOwnerOrAdmin]);
 
     useEffect(() => {
         if (redrawCustomFields > 0) // not on the first render
@@ -104,7 +103,6 @@ export function CustomFieldsContainer({
         //setCustomFields(customFields);
         const cf = customFields.find(x => x.customFieldId === customFieldId);
         cf.value = value;
-        console.log('Container updateValue', { cf, value } );
         const arr = customFields.map(({customFieldId, value}) => ({ 
             customFieldId,
             sourceType: 'TIMEENTRY',
@@ -146,7 +144,6 @@ export function CustomFieldsContainer({
             if (manualMode) {
                 value = wsCustomField.workspaceDefaultValue;
             }
-            console.log(name.toUpperCase(), {item, wsCustomField})
             let status = wsCustomField.status;
             const { projectDefaultValues } = wsCustomField;
             if (projectDefaultValues && projectDefaultValues.length > 0) {
@@ -157,7 +154,6 @@ export function CustomFieldsContainer({
                 }
             }
             const cf = arr.find(it => it.wsCustomField.id === wsCustomField.id);
-            console.log('cf ===>>>', cf)
             if (status === 'VISIBLE') {
                 if (!cf) {
                     // setCustomFields((prevState) => ([...prevState, { fields }]));
@@ -187,16 +183,17 @@ export function CustomFieldsContainer({
             }
         });
         if (manualMode) { // mozda i ovo  =>   || isOffline()
-            const cfs = arr.map(({customFieldId, value}) => ({ 
-                customFieldId,
-                sourceType: 'TIMEENTRY',
-                value
-            }));
+            const cfs = arr && arr.length > 0
+                            ? arr.map(({type, customFieldId, value}) => ({ 
+                                customFieldId,
+                                sourceType: 'TIMEENTRY',
+                                value: type === 'NUMBER' ? parseFloat(value) : value
+                            }))
+                            : [];
             updateCustomFields(cfs);
         }
         setCustomFields(arr);
     }
-
     return (
         <div className="custom-fields">
             { customFields

@@ -9,16 +9,17 @@ const httpHeadersHelper = new HttpHeadersHelper();
 export class HttpWrapperService {
     constructor() {}
 
-    get(url, addToken) {
-        let headers = httpHeadersHelper.createHttpHeaders();
+    async get(url, addToken) {
+        let headers = await httpHeadersHelper.createHttpHeaders();
 
         if (addToken) {
             return tokenService.getToken().then(token => {
                 if (token) {
                     headers['X-Auth-Token'] = '' + token;
                     return httpService.get(url, headers)
-                        .then(response => {
-                            if (localStorage.getItem('offline') === 'true') {
+                        .then(async response => {
+                            const offline = await localStorage.getItem('offline');
+                            if (offline === 'true') {
                                 localStorage.setItem('offline', 'false');
                             }
                             return Promise.resolve(response);
@@ -38,8 +39,8 @@ export class HttpWrapperService {
         return httpService.get(encodeURI(url), headers);
     }
 
-    put(url, body, addToken) {
-        let headers = httpHeadersHelper.createHttpHeaders();
+    async put(url, body, addToken) {
+        let headers = await httpHeadersHelper.createHttpHeaders();
 
         if (addToken) {
             return tokenService.getToken().then(token => {
@@ -54,8 +55,8 @@ export class HttpWrapperService {
         return httpService.put(encodeURI(url), body, headers);
     }
 
-    post(url, body, addToken) {
-        let headers = httpHeadersHelper.createHttpHeaders();
+    async post(url, body, addToken) {
+        let headers = await httpHeadersHelper.createHttpHeaders();
 
         if (addToken) {
             return tokenService.getToken().then(token => {
@@ -70,8 +71,8 @@ export class HttpWrapperService {
         return httpService.post(encodeURI(url), body, headers);
     }
 
-    delete(url, addToken) {
-        let headers = httpHeadersHelper.createHttpHeaders();
+    async delete(url, addToken) {
+        let headers = await httpHeadersHelper.createHttpHeaders();
 
         if (addToken) {
             return tokenService.getToken().then(token => {

@@ -1,34 +1,14 @@
 {
-  "manifest_version" : 2,
-  "name": "Clockify Time Tracker",
+  "manifest_version" : 3,
+  "name": "__MSG_appName__",
   "short_name": "Clockify",
-  "description": "Track time from anywhere on the web and improve productivity.",
+  "description": "__MSG_appDesc__",
+  "default_locale": "en",
   "background": {
-    "scripts": [
-      "main.bundle.js",
-      "vendors.main.bundle.js",
-      "contentScripts/defaultProject.js",
-      "contentScripts/userWorkspaceStorage.js",
-      "contentScripts/service-background.js",
-      "contentScripts/token-service-background.js",
-      "contentScripts/user-service-background.js",
-      "contentScripts/integration-background.js",
-      "contentScripts/task-service-background.js",
-      "contentScripts/project-service-background.js",
-      "contentScripts/tag-service-background.js",
-      "contentScripts/custom-field-service-background.js",
-      "contentScripts/timeEntry.js",
-      "contentScripts/background.js",
-      "contentScripts/webSocket-background.js",
-      "contentScripts/idle-detection-background.js",
-      "contentScripts/context-menu.background.js",
-      "contentScripts/notification-background.js",
-      "contentScripts/reminder-background.js",
-      "contentScripts/pomodoro-background.js"
-    ]
+    "service_worker": "sw.js"
   },
-  "version": "1.9.4",
-  "browser_action": {
+  "version": "2.1.1",
+  "action": {
     "default_popup": "index.html",
     "default_title": "Clockify"
   },
@@ -46,24 +26,34 @@
     "48":"assets/images/logo-48.png",
     "128":"assets/images/logo-128.png"
   },
-  "web_accessible_resources" : [
+  "web_accessible_resources" : [{
+    "resources": [
     "assets/images/*.png",
+    "assets/images/*.svg",
     "assets/images/ui-icons/*.svg"
-  ],
+    ],
+    "matches": [ "<all_urls>"]
+  }],
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnGPvcU+dm/buLXvICzoohIQrifJQyUq2CggI7hK8rfl/lowHVpMWKGep83DoKtoc9b7ITmuFbdfJAvYzewKoGu2wJWM9rUH1mZaUtcqwOLxRvYQpiJzr+EXzUU3foFaqf//KNjsmWkV8hy0Uw6Hd0fB24kWdnlbIWE13YeCHifgH5gHJbNzBw6SEOWg5EAt986El6+xFhjtL40HdJwZ2gRJvSvM1qSr3HAIQBb5P/fJeOkBYSnt8+XkbvlWgxWANiWmBco+Zj4sUBmuRUOapVhajRaiGXU/fA5jCnE3Q6QJAv2W7piDJIYTWpvpPsTfZxmgc0TBGF7uvpeJsJmqFmQIDAQAB",
   "permissions": [
     "background",
     "contextMenus",
-    "*://*.clockify.me/*",
     "storage",
     "tabs",
-    "*://*/",
     "activeTab",
     "identity",
     "idle",
-    "notifications"
+    "notifications",
+    "scripting",
+    "alarms"
   ],
-  "content_security_policy": "script-src 'self'; object-src 'self'",
+  "host_permissions": [
+    "*://*/",
+    "*://*.clockify.me/*"
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  },
   "externally_connectable": {
     "ids": ["*"],
     "accepts_tls_channel_id": false

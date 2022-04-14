@@ -10,7 +10,7 @@ clockifyButton.render('.conversation-view__main [class^=conversationHeader__]:no
             const title = document.querySelector('.conversation-view__main [class^=conversationHeader__] [class^=headline__] p').textContent;
             return title;
         };
-    
+
         const getProject = () => {
             const subdomain = window.location.host.replace(".dixa.com", "");
             return subdomain;

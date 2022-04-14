@@ -5,21 +5,23 @@ import {debounce, reduce} from "lodash";
 import {LocalStorageService} from "../services/localStorage-service";
 import * as ReactDOM from "react-dom";
 import CreateProjectComponent from "./create-project.component";
+import CreateTask from "./create-task.component";
 import { offlineStorage } from '../helpers/offlineStorage';
+import locales from "../helpers/locales";
 
 const projectService = new ProjectService();
 const localStorageService = new LocalStorageService();
 const pageSize = 50;
 
-const _noProjectObj = { 
+const _noProjectObj = () => ({ 
     id: 'no-project',
-    name: 'No project',
+    name: locales.NO_PROJECT,
     client: { 
         name: 'NO-PROJECT'
     },
     color: '#999999', 
     tasks: []
-}
+})
 
 class ProjectList extends React.Component {
 
@@ -30,7 +32,7 @@ class ProjectList extends React.Component {
             isOpen: false,
             selectedProject: {
                 name: this.createNameForSelectedProject(),
-                color: this.getColorForProject()
+                color: null
             },
             selectedTaskName: '',
             projectList: this.initialProjectList,
@@ -39,9 +41,7 @@ class ProjectList extends React.Component {
             clientProjects: {},
             title: '',
             filter: '',
-            isSpecialFilter: localStorageService.get('workspaceSettings') ?
-                JSON.parse(localStorageService.get('workspaceSettings')).projectPickerSpecialFilter : false,
-            isEnabledCreateProject: false,
+            isSpecialFilter: null,
             specFilterNoTasksOrProject: ""
         };
         this.filterProjects = debounce(this.filterProjects, 500);
@@ -50,13 +50,14 @@ class ProjectList extends React.Component {
         this.mapSelectedTask = this.mapSelectedTask.bind(this);
         this.createProject = this.createProject.bind(this);
         this.clearProjectFilter = this.clearProjectFilter.bind(this);
+        this.openCreateTaskModal = this.openCreateTaskModal.bind(this);
         this.forceProjects = this.props.workspaceSettings.forceProjects;
     }
 
     get initialProjectList() {
         const { selectedProject} = this.props;
         return !this.forceProjects && selectedProject && selectedProject.id !== 'no-project'
-            ? [_noProjectObj]
+            ? [_noProjectObj()]
             : []
     }
 
@@ -87,16 +88,31 @@ class ProjectList extends React.Component {
         }
     }
 
+    async setAsyncStateItems() {
+        const workspaceSettings = await localStorageService.get('workspaceSettings');
+        const isSpecialFilter = workspaceSettings ?
+                JSON.parse(workspaceSettings).projectPickerSpecialFilter : false;
+        const color = await this.getColorForProject();
+        const isOffline = await localStorage.getItem('offline');
+        this.setState(state => ({
+            isSpecialFilter,
+            selectedProject: {
+                name: state.selectProject.name,
+                color,
+                isOffline: JSON.parse(isOffline)
+            }
+        }));
+    }
+
     componentDidMount() {
-        this.setState({
-            isEnabledCreateProject: !this.props.workspaceSettings.onlyAdminsCreateProject ||
-                this.props.isUserOwnerOrAdmin ? true : false
-        });
 
         if (this.props.selectedProject) {
             this.setState({
                 selectedProject: {
                     name: this.props.selectedProject.name,
+                    client: {
+                        name: this.props.selectedProject.clientName
+                    },
                     color: this.props.selectedProject.color
                 },
                 selectedTaskName: this.props.selectedTask ? this.props.selectedTask.name : ""
@@ -119,11 +135,10 @@ class ProjectList extends React.Component {
         });
     }
 
-    getProjects(page, pageSize) {
-        if (!JSON.parse(localStorage.getItem('offline'))) {
-            const {forceTasks} = this.props;
+    async getProjects(page, pageSize) {
+        if (!JSON.parse(await localStorage.getItem('offline'))) {
             const already = this.state.projectList.map(p => p.id);
-            projectService.getProjectsWithFilter(this.state.filter, page, pageSize, forceTasks, already)
+            projectService.getProjectsWithFilter(this.state.filter, page, pageSize, false, already)
                 .then(response => {
                     const projects = response.data;
                     const projectList = this.state.projectList.concat(projects);
@@ -134,7 +149,7 @@ class ProjectList extends React.Component {
                                 ? projectList
                                 : this.forceProjects
                                     ? []
-                                    : [_noProjectObj],
+                                    : [_noProjectObj()],
                         page: this.state.page + 1
                     }, () => {
                         this.setState({
@@ -156,10 +171,13 @@ class ProjectList extends React.Component {
     createMessageForNoTaskOrProject(projects, isSpecialFilter, filter) {
         if (!isSpecialFilter || filter.length === 0 || projects.length > 0) return ""
         
+        const noMatcingTasks = locales.NO_MATCHING('tasks');
+        const noMatcingTProjects = locales.NO_MATCHING('projects');
+
         if (!filter.includes("@")) {
-            return "No matching tasks. Search projects with @project syntax"
+            return `${noMatcingTasks}. ${locales.MONKEY_SEARCH}`
         } else {
-            return "No matching projects"
+            return noMatcingTProjects
         }
     }
 
@@ -299,7 +317,7 @@ class ProjectList extends React.Component {
         let projectList;
         if (project.id && !this.forceProjects) {
             if (this.state.projectList.find(project => project.id === "no-project")) {
-                projectList = [_noProjectObj, ...this.state.projectList]
+                projectList = [_noProjectObj(), ...this.state.projectList]
             } else {
                 projectList = this.state.projectList
             }
@@ -331,9 +349,9 @@ class ProjectList extends React.Component {
         );
     }
 
-    openProjectDropdown(e) {
+    async openProjectDropdown(e, isEnabledCreateProject) {
         e.stopPropagation();
-        if (!JSON.parse(localStorage.getItem('offline'))) {
+        if (!JSON.parse(await localStorage.getItem('offline'))) {
             this.setState({
                 isOpen: true,
                 filter: '',
@@ -342,7 +360,7 @@ class ProjectList extends React.Component {
             }, () => {
                 document.getElementById('project-filter').value = null;
                 document.getElementById('project-filter').focus();
-                this.getProjects(this.state.page, pageSize, this.state.isEnabledCreateProject);
+                this.getProjects(this.state.page, pageSize, isEnabledCreateProject);
                 this.props.projectListOpened();
             });
         }
@@ -373,17 +391,18 @@ class ProjectList extends React.Component {
     }
 
 
+
     createTitle() {
-        let title = 'Add project';
-        if (this.state.selectedProject && this.state.selectedProject.id) {
-            title = 'Project: ' + this.state.selectedProject.name;
+        let title = locales.ADD_PROJECT;
+        if (this.state.selectedProject && this.state.selectedProject.id && this.state.selectedProject.id !== 'no-project') {
+            title = `${locales.PROJECT}: ` + this.state.selectedProject.name;
 
             if (this.state.selectedTaskName) {
-                title = title + '\nTask: ' + this.state.selectedTaskName;
+                title = title + `\n${locales.TASK}: ` + this.state.selectedTaskName;
             }
 
             if (this.state.selectedProject.client && this.state.selectedProject.client.name) {
-                title = title + '\nClient: ' + this.state.selectedProject.client.name;
+                title = title + `\n${locales.CLIENT}: ` + this.state.selectedProject.client.name;
             }
         }
 
@@ -391,13 +410,12 @@ class ProjectList extends React.Component {
     }
 
     createNameForSelectedProject() {
-        let name = 'Add project';
+        let name = locales.ADD_PROJECT;
         if (this.props.projectRequired) {
-            name += ' (project ';
             if (this.props.taskRequired) {
-                name = 'Add task (';
+                name = `${locales.ADD_TASK}`;
             }
-            name += 'required)'
+            name += ` ${locales.REQUIRED_LABEL}`;
         }
         return name;
     }
@@ -413,10 +431,11 @@ class ProjectList extends React.Component {
         });
     }
 
-    getColorForProject() {
-        const userId = localStorageService.get('userId');
-        const darkModeFromStorage = localStorageService.get('darkMode') ?
-            JSON.parse(localStorageService.get('darkMode')) : [];
+    async getColorForProject() {
+        const userId = await localStorageService.get('userId');
+        const darkMode = await localStorageService.get('darkMode');
+        const darkModeFromStorage = darkMode ?
+            JSON.parse(darkMode) : [];
 
         if (darkModeFromStorage.length > 0 &&
             darkModeFromStorage.filter(darkMode => darkMode.userId === userId && darkMode.enabled).length > 0
@@ -439,7 +458,21 @@ class ProjectList extends React.Component {
         />, document.getElementById('mount'));
     }
 
+    openCreateTaskModal(project) {
+        ReactDOM.render(<CreateTask
+            timeEntry={this.props.timeEntry}
+            editForm={this.props.editForm}
+            workspaceSettings={this.props.workspaceSettings}
+            timeFormat={this.props.timeFormat}
+            isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}
+            userSettings={this.props.userSettings}
+            project={project}
+        />, document.getElementById('mount'));
+        
+    }
+
     render() {
+        const isEnabledCreateProject = !this.props.workspaceSettings.onlyAdminsCreateProject || this.props.isUserOwnerOrAdmin ? true : false;
         const { clientProjects } = this.state;
         const sortedClients = Object.keys(clientProjects).sort();
         return (
@@ -448,21 +481,24 @@ class ProjectList extends React.Component {
                 <div 
                     onClick={this.openProjectDropdown}
                     tabIndex={"0"} 
-                    onKeyDown={e => {if (e.key==='Enter') this.openProjectDropdown(e)}}
-                    className={JSON.parse(localStorage.getItem('offline')) ?
+                    onKeyDown={e => {if (e.key==='Enter') this.openProjectDropdown(e, isEnabledCreateProject)}}
+                    className={this.state.isOffline ?
                             "project-list-button-offline" : this.props.projectRequired || this.props.taskRequired ?
                                 "project-list-button-required" : "project-list-button"}>
                     <span className="project-list-name" style={{color: this.state.selectedProject ? this.state.selectedProject.color : "#333"}}>
-                        {this.state.selectedProject ? this.state.selectedProject.name : "Add project"}
+                        {this.state.selectedProject ? this.state.selectedProject.name : locales.ADD_PROJECT}
                         <span className={this.state.selectedTaskName === "" ? "disabled" : ""}>
-                            {" : " + this.state.selectedTaskName}
+                            {": " + this.state.selectedTaskName}
+                        </span>
+                        <span className="project-list-name-client">
+                            {this.state.selectedProject && this.state.selectedProject.client && this.state.selectedProject.client.name && this.state.selectedProject.client.name !== 'NO-PROJECT' ? " - " + this.state.selectedProject.client.name : ""}
                         </span>
                     </span>
                     <span className={this.state.isOpen ? 'project-list-arrow-up' : 'project-list-arrow'} >
                     </span>
                 </div>
                 {this.props.taskRequired && 
-                    <div className='error'>Can't save without task</div>
+                    <div className='error'>{locales.CANT_SAVE_WITHOUT_REQUIRED_FIELDS} ({locales.TASK})</div>
                 }
 
                 {this.state.isOpen &&
@@ -476,7 +512,7 @@ class ProjectList extends React.Component {
                                     <input
                                         placeholder={
                                             this.state.isSpecialFilter ?
-                                                "Filter task @project or client" : "Filter projects"
+                                                locales.MONKEY_SEARCH : locales.FIND_PROJECTS
                                         }
                                         className="project-list-filter"
                                         onChange={this.filterProjects.bind(this)}
@@ -499,6 +535,7 @@ class ProjectList extends React.Component {
                                             isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}
                                             getProjectTasks={this.getProjectTasks}
                                             projectFavorites={false}
+                                            openCreateTaskModal={this.openCreateTaskModal}
                                         />
                                     )}
                                 </div>
@@ -506,7 +543,7 @@ class ProjectList extends React.Component {
 
                             { clientProjects['FAVORITES'] && clientProjects['FAVORITES'].length > 0 &&
                                 <div>
-                                    <div className="project-list-client"><i>FAVORITES</i></div>
+                                    <div className="project-list-client"><i>{locales.FAVORITES.toUpperCase()}</i></div>
                                     {clientProjects['FAVORITES'].map(project => 
                                         <div key={project.id}>
                                             <ProjectItem
@@ -521,6 +558,7 @@ class ProjectList extends React.Component {
                                                 makeProjectFavorite={this.makeProjectFavorite}
                                                 removeProjectAsFavorite={this.removeProjectAsFavorite}
                                                 projectFavorites={this.props.workspaceSettings.projectFavorites}
+                                                openCreateTaskModal={this.openCreateTaskModal}
                                             />
                                         </div>                            
                                     )}
@@ -529,7 +567,7 @@ class ProjectList extends React.Component {
 
                             { clientProjects['WITHOUT-CLIENT'] && clientProjects['WITHOUT-CLIENT'].length > 0 &&
                                 <div>
-                                    <div className="project-list-client"><i>Without client</i></div>
+                                    <div className="project-list-client"><i>{locales.WITHOUT_CLIENT}</i></div>
                                     {clientProjects['WITHOUT-CLIENT'].map(project => 
                                         <div key={project.id}>
                                             <ProjectItem
@@ -544,6 +582,7 @@ class ProjectList extends React.Component {
                                                 makeProjectFavorite={this.makeProjectFavorite}
                                                 removeProjectAsFavorite={this.removeProjectAsFavorite}
                                                 projectFavorites={this.props.workspaceSettings.projectFavorites}
+                                                openCreateTaskModal={this.openCreateTaskModal}
                                             />
                                         </div>                            
                                     )}
@@ -566,6 +605,7 @@ class ProjectList extends React.Component {
                                                 makeProjectFavorite={this.makeProjectFavorite}
                                                 removeProjectAsFavorite={this.removeProjectAsFavorite}
                                                 projectFavorites={this.props.workspaceSettings.projectFavorites}
+                                                openCreateTaskModal={this.openCreateTaskModal}
                                             />
                                         )}
                                     </div>                            
@@ -576,17 +616,17 @@ class ProjectList extends React.Component {
                             </div>
                             { this.state.loadMore &&
                                 <div className="project-list-load" onClick={this.loadMoreProjects.bind(this)}>
-                                    Load more
+                                    {locales.LOAD_MORE}
                                 </div>
                             }
-                            <div className={this.state.isEnabledCreateProject ?
+                            <div className={isEnabledCreateProject ?
                                     "projects-list__bottom-padding" : "disabled"}>
                             </div>
-                            <div className={this.state.isEnabledCreateProject ?
+                            <div className={isEnabledCreateProject ?
                                     "projects-list__create-project" : "disabled"}
                                     onClick={this.createProject}>
                                 <span className="projects-list__create-project--icon"></span>
-                                <span className="projects-list__create-project--text">Create new project</span>
+                                <span className="projects-list__create-project--text">{locales.CREATE_NEW_PROJECT}</span>
                             </div>
                         </div>
                     </div>

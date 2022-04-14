@@ -10,17 +10,25 @@ class DefaultPomodoroBreakProject extends React.Component {
     constructor(props) {
         super(props);
 
-        let { storage, defaultProject } = DefaultProject.getStorage(_isPomodoro);
+        this.state = {
+            selectedProject: null
+        };
+        this.setAsyncStateItems = this.setAsyncStateItems.bind(this);
+    }
+
+    async setAsyncStateItems() {
+        let { storage, defaultProject } = await DefaultProject.getStorage(_isPomodoro); 
         if (!defaultProject) {
             defaultProject = storage.setInitialDefaultProject();
         }
-        this.state = {
+        this.setState({
             selectedProject: defaultProject ? defaultProject.project : null
-        };
+        });
     }
 
     componentDidMount() {
         this.onMountOrUpdate();
+        this.setAsyncStateItems();
         // pomodoro is at User level, so when we create a new WS, we inherit settings from previous WS
     }
 
@@ -33,8 +41,8 @@ class DefaultPomodoroBreakProject extends React.Component {
     componentDidUpdate(prevProps, prevState) {
     }
 
-    setDefaultProject(project) {
-        const { storage } = DefaultProject.getStorage(_isPomodoro);
+    async setDefaultProject(project) {
+        const { storage } = await DefaultProject.getStorage(_isPomodoro);
         storage.setDefaultProject(project);
 
         this.setState({
