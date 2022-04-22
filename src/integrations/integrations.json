@@ -76,7 +76,7 @@
     "link": "*://app.shortcut.com/*",
     "script": "clubhouse.js",
     "clone": false
-  },  
+  },
   "coda.io": {
     "name": "Coda",
     "link": "*://*.coda.io/*",
@@ -201,6 +201,12 @@
     "name": "Husky Marketing Planner",
     "link": "*://*.huskymarketingplanner.com/*",
     "script": "husky-marketing-planner.js",
+    "clone": false
+  },
+  "kanbanize.com": {
+    "name": "Kanbanize",
+    "link": "*://*.kanbanize.com/*",
+    "script": "kanbanize.js",
     "clone": false
   },
   "linear.app": {
@@ -499,7 +505,7 @@
   },
   "usepixie.net": {
     "name": "Pixie",
-    "link": "*://*.usepixie.net/*, *://*.pureworkflow.io/*", 
+    "link": "*://*.usepixie.net/*, *://*.pureworkflow.io/*",
     "script": "usepixie.js"
   },
   "figma.com": {
