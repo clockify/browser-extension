@@ -179,6 +179,12 @@
     "script": "helpscout.js",
     "clone": false
   },
+  "crowdin.com": {
+    "name": "Crowdin",
+    "link": "*://*.crowdin.com/*",
+    "script": "crowdin.js",
+    "clone": false
+  },
   "helprace.com": {
     "name": "Helprace",
     "link": "*://*.helprace.com/*",
