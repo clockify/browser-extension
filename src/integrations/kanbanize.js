@@ -15,7 +15,7 @@ clockifyButton.render('.eve-accordions:not(.clockify)', {observe: true}, functio
     // Allow defining Clockify Project Name in Custom Field.
     // Use card name as sensible default if undefined.
     customFields = document.querySelectorAll("div.card-custom-field");
-    projectName = findProjectNameInCustomFields(customFields) ||
+    projectName = findProjectNameInCustomFields(customFields) || '';
 
     button = clockifyButton.createButton({
         description: description,
