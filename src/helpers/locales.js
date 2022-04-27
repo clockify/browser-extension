@@ -387,7 +387,7 @@ var locales = {
     get CLICK_HERE_TO_START_TIMER() { return this.getMessage('EXTENSION__CLICK_HERE_TO_START_TIMER') },
     get CLICK_HERE_TO_START_BREAK() { return this.getMessage('EXTENSION__CLICK_HERE_TO_START_BREAK') },
     SESSION(number) { return this.getMessage('EXTENSION__POMODORO_SESSION', [number]) },
-    get POMODORO_TAKE_LONG_BREAK() { return this.getMessage('EXTENSION__POMODORO_TAKE_LONG_BREAK') },
+    POMODORO_TAKE_LONG_BREAK(minutes) { return this.getMessage('EXTENSION__POMODORO_TAKE_LONG_BREAK', [minutes]) },
     get CLICK_HERE_TO_START_LONG_BREAK() { return this.getMessage('EXTENSION__CLICK_HERE_TO_START_LONG_BREAK') },
     get POMODORO_TIMER() { return this.getMessage('EXTENSION__POMODORO_TIMER') },
     REMINDER_MESSAGE(minutes) { return this.getMessage('EXTENSION__REMINDER_MESSAGE', [minutes]) },
@@ -419,7 +419,8 @@ var locales = {
     get WORKSPACE__TWO_FACTOR__MODAL__INFO_MESSAGE() { return this.getMessage('WORKSPACE__TWO_FACTOR__MODAL__INFO_MESSAGE') },
     get WORKSPACE__TWO_FACTOR__MODAL__ENABLE() { return this.getMessage('WORKSPACE__TWO_FACTOR__MODAL__ENABLE') },
     get SCREENSHOT_RECORDING() { return this.getMessage('EXTENSION__SCREENSHOT_RECORDING') },
-    get DOWNLOAD_SCREENSHOTS_RECORDING_APP() { return this.getMessage('EXTENSION__DOWNLOAD_SREENSHOTS_RECORDING_APP') }
+    get DOWNLOAD_SCREENSHOTS_RECORDING_APP() { return this.getMessage('EXTENSION__DOWNLOAD_SREENSHOTS_RECORDING_APP') },
+    get TRACKER__ENTRY_MESSAGES__LOADING() { return this.getMessage('TRACKER__ENTRY_MESSAGES__LOADING') }
 
 }
 

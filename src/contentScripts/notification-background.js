@@ -2,14 +2,14 @@
 const buttonClickedListener = (notificationId, buttonIndex) => {
     switch (notificationId) {
         case 'idleDetection':
-            if (idleButtons[buttonIndex] === 'Discard idle time') {
+            if (buttonIndex === 0) {
                 this.discardIdleTimeAndStopEntry();
             } else {
                 this.discardIdleTimeAndContinueEntry();
             }
             break;
         case 'reminder':
-            if (reminderButtons[buttonIndex] === clockifyLocales.START_TIMER) {
+            if (buttonIndex === 0) {
                 TimeEntry.startTimer('');
                 this.removeReminderTimer();
             } else {
@@ -19,21 +19,21 @@ const buttonClickedListener = (notificationId, buttonIndex) => {
             }
             break;
         case 'pomodoroBreak':
-            if (breakButtons[buttonIndex] === clockifyLocales.STOP_TIMER) {
+            if (buttonIndex === 0) {
                 this.stopTimerByPomodoro();
             } else if (breakButtons[buttonIndex] === 'Start break') {
                 this.startBreak('Pomodoro break');
             }
             break;
         case 'pomodoroLongBreak':
-            if (longBreakButtons[buttonIndex] === clockifyLocales.STOP_TIMER) {
+            if (buttonIndex === 0) {
                 this.stopTimerByPomodoro();
             } else {
                 this.startBreak('Pomodoro long break');
             }
             break;
         case 'breakOver':
-            if (breakOverButtons[buttonIndex] === clockifyLocales.START_TIMER) {
+            if (buttonIndex === 0) {
                 this.startTimerByPomodoro();
             } else {
                 this.continueLastEntryByPomodoro();

@@ -11,6 +11,7 @@ import {getBrowser, isChrome} from "../helpers/browser-helper";
 import {HtmlStyleHelper} from "../helpers/html-style-helper";
 import SubDomainName from "./sub-domain-name.component";
 import locales from "../helpers/locales";
+import { checkConnection } from './check-connection';
 
 const environment = getEnv();
 const localStorageService = new LocalStorageService();
@@ -162,36 +163,40 @@ class Login extends React.Component {
             this.clearPermissions();
             getBrowser().runtime.sendMessage('closeOptionsPage');
             
-            localStorageService.clearByPrefixes([getLocalStorageEnums().PERMANENT_PREFIX, getLocalStorageEnums().SELF_HOSTED_PREFIX, getLocalStorageEnums().SUB_DOMAIN_PREFIX], true);
+            await localStorageService.clearByPrefixes([getLocalStorageEnums().PERMANENT_PREFIX, getLocalStorageEnums().SELF_HOSTED_PREFIX, getLocalStorageEnums().SUB_DOMAIN_PREFIX], true);
             localStorageService.set('timeEntriesOffline', JSON.stringify(timeEntriesOffline));
         }
         getBrowser().runtime.sendMessage({
             eventName: "removeBadge"
         });
+        checkConnection();
     }
 
     clearPermissions() {
         getBrowser().storage.local.get(['permissions'], (result) => {
             const { permissions } = result;
-            const newPermissions = [];
-            permissions.forEach(permissionsForUser => {
-                const { userId, permissions } = permissionsForUser;
-                if (permissions.filter(p => p.isCustom || p.isEnabled).length > 0) {
-                    const newPermissionsForUser = {
-                        userId,
-                        permissions: []
+            if(permissions){
+                const newPermissions = [];
+                permissions.forEach(permissionsForUser => {
+                    const { userId, permissions } = permissionsForUser;
+                    if (permissions.filter(p => p.isCustom || p.isEnabled).length > 0) {
+                        const newPermissionsForUser = {
+                            userId,
+                            permissions: []
+                        }
+                        permissions.forEach(p => {
+                            if (p.isCustom || p.isEnabled)
+                                newPermissionsForUser.permissions.push(Object.assign(p, {}))
+                        });
+                        newPermissions.push(newPermissionsForUser);
                     }
-                    permissions.forEach(p => {
-                        if (p.isCustom || p.isEnabled)
-                            newPermissionsForUser.permissions.push(Object.assign(p, {}))
-                    });
-                    newPermissions.push(newPermissionsForUser);
-                }
-            });
+                });
+    
+                localStorageService.removeItem('permissions');
+                if (newPermissions.length > 0)
+                    getBrowser().storage.local.set({"permissions": newPermissions});
 
-            localStorageService.removeItem('permissions');
-            if (newPermissions.length > 0)
-                getBrowser().storage.local.set({"permissions": newPermissions});
+            }
         });
     }
 

@@ -80,6 +80,10 @@ class SelfHostedBootSettings extends React.Component {
                                 settingsService.setBaseUrl(baseUrl)
                                 settingsService.setHomeUrl(this.state.homeUrl);
                                 settingsService.setSelfHosted(true); 
+                                // const subDomain = [...this.state.homeUrl.matchAll(/\/\/(.*)\.clockify\.me/g)][0]?.[1];
+                                // if(subDomain){
+                                //     settingsService.setSubDomainName(subDomain);
+                                // }
                                 return <Login/>
                             }
                         }

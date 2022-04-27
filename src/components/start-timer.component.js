@@ -36,10 +36,24 @@ class StartTimer extends React.Component {
         };
         this.application = new Application();
         this.startNewEntry = this.startNewEntry.bind(this);
+        this.setAsyncStateItems = this.setAsyncStateItems.bind(this);
     }
 
-    async componentDidMount() {
-        this.getTimeEntryInProgress();
+    async setAsyncStateItems() {
+        const timeEntry = await localStorage.getItem('timeEntryInProgress') || {};
+        const workspaceSettings = await localStorage.getItem('workspaceSettings');
+        let currentPeriod =  moment().diff(moment(timeEntry?.timeInterval?.start));
+        this.setState({
+            timeEntry,
+            time: timeEntry?.timeInterval?.start ? duration(currentPeriod).format('HH:mm:ss', {trim: false}) : moment().hour(0).minute(0).second(0).format('HH:mm:ss')
+        });
+        if(workspaceSettings){
+            this.getTimeEntryInProgress();
+        }
+    }
+
+    componentDidMount() {
+        this.setAsyncStateItems();
     }  
 
     componentWillUnmount() {

@@ -63,19 +63,16 @@ class EditForm extends React.Component {
     async setAsyncStateItems() {
         const hideBillable = await offlineStorage.getHideBillable();
         const isUserOwnerOrAdmin = await offlineStorage.getIsUserOwnerOrAdmin();
-        const modeEnforced = await localStorage.getItem('modeEnforced');
         const inProgress = await localStorage.getItem('inProgress');
         const workspaceSettings = await localStorage.getItem('workspaceSettings');
 
         if(this.state.isUserOwnerOrAdmin !== isUserOwnerOrAdmin || 
-           this.state.hideBillable !== hideBillable || 
-           this.state.modeEnforced !== modeEnforced ||
+           this.state.hideBillable !== hideBillable ||
            this.state.inProgress !== inProgress ||
            this.state.workspaceSettings !== workspaceSettings){
             this.setState({
                 hideBillable,
                 isUserOwnerOrAdmin,
-                modeEnforced,
                 inProgress,
                 workspaceSettings
             });
@@ -624,14 +621,14 @@ class EditForm extends React.Component {
             let timeEntry = offlineStorage.timeEntryInOffline;
             if(timeEntry && timeEntry.id === this.state.timeEntry.id) {
                 offlineStorage.timeEntryInOffline = null;
-                ReactDOM.render(<HomePage/>, document.getElementById('mount'));
+                this.goBack();
             } else {
                 let timeEntries = offlineStorage.timeEntriesOffline;
                 if(timeEntries.findIndex(entry => entry.id === this.state.timeEntry.id) > -1) {
                     timeEntries.splice( timeEntries.findIndex(entry => entry.id === this.state.timeEntry.id), 1);
                 }
                 offlineStorage.timeEntriesOffline = timeEntries;
-                ReactDOM.render(<HomePage/>, document.getElementById('mount'));
+                this.goBack();
             }
         } else {
             timeEntryService.deleteTimeEntry(this.state.timeEntry.id)
@@ -642,7 +639,7 @@ class EditForm extends React.Component {
                     });
                     localStorage.setItem('timeEntryInProgress', null);
                     
-                    ReactDOM.render(<HomePage/>, document.getElementById('mount'));
+                    this.goBack();
                 })
                 .catch(() => {
                 })
@@ -658,8 +655,7 @@ class EditForm extends React.Component {
         ) {
             return;
         }
-        ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
-        ReactDOM.render(<HomePage/>, document.getElementById('mount'));
+        this.goBack();
     }
 
     async changeDate(date) {
@@ -832,9 +828,9 @@ class EditForm extends React.Component {
         });
     }
 
-    goBack() {
+    async goBack() {
         ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
-        ReactDOM.render(<HomePage/>, document.getElementById('mount'));
+        ReactDOM.render(<HomePage />, document.getElementById('mount'));
     }
 
     notifyAboutError(message, type='error', n=2) {
@@ -851,7 +847,6 @@ class EditForm extends React.Component {
                 <div>
                     <Header
                         backButton={true}
-                        mode={this.state.modeEnforced}
                         disableManual={this.state.inProgress}
                         changeMode={this.changeMode.bind(this)}
                         workspaceSettings={JSON.parse(this.state.workspaceSettings)}

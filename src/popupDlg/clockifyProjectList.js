@@ -86,6 +86,23 @@ var ClockifyProjectList = class {
     }
 
     componentDidMount() {
+        aBrowser.storage.local.get('preProjectList', (result) => {
+            const preProjectList = result.preProjectList || {};
+            let {projectList = [this.initialProjectList], clientProjects = {}} = preProjectList;
+            if(this.editForm.isForceTasks){
+                projectList = projectList.filter(project => project.taskCount > 0);
+                clientProjects = this.getClients(projectList);
+            }
+            else if(!preProjectList || !preProjectList.clientProjects){
+                clientProjects = this.getClients(projectList);
+            }
+            this.setState({
+                projectList,
+                clientProjects,
+                ready: true
+            });
+            this.setState({}, true);
+        });
         this.getProjects();
         this.render();
         this.repositionDropDown();
@@ -320,7 +337,7 @@ var ClockifyProjectList = class {
                 filter, 
                 page, 
                 pageSize,
-                forceTasks: this.editForm.isForceTasks,
+                forceTasks: false,
                 alreadyIds: this.state.projectList.map(p => p.id)
             }
         }, (response) => {
@@ -336,8 +353,15 @@ var ClockifyProjectList = class {
                 // openPostStartPopup("Can't start entry without project/task/description or tags. Please edit your time entry. Please create your time entry using the dashboard or edit your workspace settings.")
                 // alert("Can't start entry without project/task/description or tags. Please edit your time entry. Please create your time entry using the dashboard or edit your workspace settings.");
             } else {
-                const items = response.data ? response.data.projectList : [];
-                const projectList = this.state.projectList.concat(items);                
+                let items = response.data ? response.data.projectList : [];
+                const loadMore = items.length >= this.state.pageSize ? true : false;
+                if(this.editForm.isForceTasks){
+                    items = items.filter(project => project.taskCount > 0);
+                }
+                if(!filter && page === 1){
+                    aBrowser.storage.local.set({'preProjectList': {projectList: items}});
+                }
+                const projectList = this.state.page === 1 ? items : this.state.projectList.concat(items);                
                 this.setState({
                     projectList: this.state.filter.length > 0 
                         ? projectList.filter(project => project.id !== "no-project")
@@ -352,7 +376,7 @@ var ClockifyProjectList = class {
 
                 this.setState({
                     clientProjects: this.getClients(this.state.projectList),
-                    loadMore: items.length >= this.state.pageSize ? true : false,
+                    loadMore: loadMore,
                     specFilterNoTasksOrProject: 
                         this.createMessageForNoTaskOrProject(
                             response.data, this.state.isSpecialFilter, this.state.filter

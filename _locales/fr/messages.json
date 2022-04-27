@@ -2,6 +2,9 @@
   "APPROVAL__ENTRY_NO_DESCRIPTION": {
     "message": "Aucune description"
   },
+  "TRACKER__ENTRY_MESSAGES__LOADING": {
+    "message": "Chargement, veuillez patienter."
+  },
   "TRACKER__DEFAULT": {
     "message": "par défaut"
   },

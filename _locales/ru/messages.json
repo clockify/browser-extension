@@ -2,6 +2,9 @@
   "APPROVAL__ENTRY_NO_DESCRIPTION": {
     "message": "Без описания"
   },
+  "TRACKER__ENTRY_MESSAGES__LOADING": {
+    "message": "Загрузка, пожалуйста подождите."
+  },
   "TRACKER__DEFAULT": {
     "message": "дефолт"
   },

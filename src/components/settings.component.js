@@ -23,17 +23,6 @@ const userService = new UserService();
 const localStorageService = new LocalStorageService();
 const htmlStyleHelpers = new HtmlStyleHelper();
 
-const daysOfWeek = [
-    {id:1, name: "MON"},
-    {id:2, name: "TUE"},
-    {id:3, name: "WED"},
-    {id:4, name: "THU"},
-    {id:5, name: "FRI"},
-    {id:6, name: "SAT"},
-    {id:7, name: "SUN"}
-];
-
-
 class Settings extends React.Component {
 
     constructor(props) {
@@ -41,36 +30,51 @@ class Settings extends React.Component {
 
         this.state = {
             userEmail: '',
-            userPicture: null,
+            userPicture: '',
             createObjects: null,
             isSelfHosted: null,
             idleDetection: false,
-            idleDetectionCounter: null,
+            idleDetectionCounter: '',
             timerShortcut: true,
             reminder: false,
-            reminderFromTime: null,
-            reminderToTime: null,
+            reminderFromTime: '',
+            reminderToTime: '',
             reminderMinutesSinceLastEntry: 0,
             contextMenuEnabled: true,
             autoStartOnBrowserStart: false,
             autoStopOnBrowserClose: false,
             showPostStartPopup: true,
             changeSaved: false,
-            daysOfWeekLocales: []
+            daysOfWeekLocales: [],
+            daysOfWeek: [
+                {id:1, name: 'MON', active: true},
+                {id:2, name: 'TUE', active: true},
+                {id:3, name: 'WED', active: true},
+                {id:4, name: 'THU', active: true},
+                {id:5, name: 'FRI', active: true},
+                {id:6, name: 'SAT', active: false},
+                {id:7, name: 'SUN', active: false}
+            ]
         };
 
         this.pomodoroEnd = React.createRef();
         this.setAsyncStateItems = this.setAsyncStateItems.bind(this);
+        this.toggleDay = this.toggleDay.bind(this);
+        this.checkForRemindersDatesAndTimes = this.checkForRemindersDatesAndTimes.bind(this);
     }
 
     async setAsyncStateItems() {
         const createObjects = JSON.parse(await localStorageService.get('createObjects', false));
         const isSelfHosted = JSON.parse(await localStorageService.get('selfHosted', false));
         const daysOfWeekLocales = await dateFnsLocale.getDaysShort();
+        const userEmail = await localStorage.getItem('userEmail');
+        const userPicture = await localStorage.getItem('profilePicture');
         this.setState({
             createObjects,
             isSelfHosted,
-            daysOfWeekLocales
+            daysOfWeekLocales,
+            userEmail,
+            userPicture
         });
     }
 
@@ -203,16 +207,17 @@ class Settings extends React.Component {
             JSON.parse(await localStorageService.get('reminderDatesAndTimes'))
                 .filter(reminderDatesAndTimes => reminderDatesAndTimes.userId === userId)[0];
 
-        this.setState({
+        this.setState(state => ({
             reminderFromTime: reminderDatesAndTimesFromStorageForUser.timeFrom,
             reminderToTime: reminderDatesAndTimesFromStorageForUser.timeTo,
-            reminderMinutesSinceLastEntry: parseInt(reminderDatesAndTimesFromStorageForUser.minutesSinceLastEntry)
-        });
+            reminderMinutesSinceLastEntry: parseInt(reminderDatesAndTimesFromStorageForUser.minutesSinceLastEntry),
+            daysOfWeek: state.daysOfWeek.map(day => ({...day, active: reminderDatesAndTimesFromStorageForUser.dates.includes(day.id)}))
+        }));
 
-        reminderDatesAndTimesFromStorageForUser.dates.forEach(date => {
-            const activeDayName = daysOfWeek.filter(day => day.id === date).map(day => day.name)[0];
-            document.getElementById('day_' + date).classList.add('day-active');
-        });
+        // reminderDatesAndTimesFromStorageForUser.dates.forEach(date => {
+        //     // const activeDayName = this.state.daysOfWeek.filter(day => day.id === date).map(day => day.name)[0];
+        //     document.getElementById('day_' + date).classList.add('day-active');
+        // });
     }
 
     getUserSettings() {
@@ -222,6 +227,9 @@ class Settings extends React.Component {
                 this.setState({
                     userEmail: data.email,
                     userPicture: data.profilePicture
+                }, () => {
+                    localStorage.setItem('userEmail', this.state.userEmail);
+                    localStorage.setItem('profilePicture', this.state.userPicture);
                 })
             })
     }
@@ -544,20 +552,18 @@ class Settings extends React.Component {
         
     }    
 
-    async toggleDay(event) {
-        const day = daysOfWeek.filter(day => day.name === event.target.firstChild.textContent)[0];
+    async toggleDay(dayName) {
+        const day = this.state.daysOfWeek.find(day => day.name === dayName);
         const userId = await localStorageService.get('userId');
         const reminderDatesAndTimesFromStorage =
             JSON.parse(await localStorageService.get('reminderDatesAndTimes')).map(reminder => {
                 if (reminder.userId === userId) {
                     if (reminder.dates.includes(day.id)) {
                         reminder.dates.splice(reminder.dates.indexOf(day.id), 1);
-                        setTimeout(() => {
-                            document.getElementById(day.name).classList.remove('day-active');
-                        }, 100);
+                        this.setState(state => ({daysOfWeek: state.daysOfWeek.map(day => ({...day, active: day.name === dayName ? false : day.active}))}));
                     } else {
                         reminder.dates.push(day.id);
-                        document.getElementById(day.name).classList.add('day-active');
+                        this.setState(state => ({daysOfWeek: state.daysOfWeek.map(day => ({...day, active: day.name === dayName ? true : day.active}))}));
                     }
                 }
 
@@ -791,17 +797,17 @@ class Settings extends React.Component {
         this.toaster.toast('success', `${locales.CHANGE_SAVED}.`, 2);
     }
 
-    goBackToHomePage() {
+    async goBackToHomePage() {
         ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
-        ReactDOM.render(<HomePage/>, document.getElementById('mount'));
+        ReactDOM.render(<HomePage />, document.getElementById('mount'));
     }
 
     render(){
         let version;
 
-        if(!this.state.userPicture) {
-            return null;
-        } else {
+        // if(!this.state.userPicture) {
+        //     return null;
+        // } else {
             return(
                 <div className="settings_page">
                     <Toaster
@@ -817,7 +823,7 @@ class Settings extends React.Component {
                         />
                     </div>
                     <div className="user-settings">
-                        <span><img src={this.state.userPicture}/></span>
+                        <span>{this.state.userPicture && <img src={this.state.userPicture}/>}</span>
                         <span>{this.state.userEmail}</span>
                     </div>
                     <DefaultProject
@@ -910,14 +916,14 @@ class Settings extends React.Component {
                          className="settings__reminder expandContainer">
                         <div className="settings__reminder__week">
                             {
-                                daysOfWeek.map(day => {
+                                this.state.daysOfWeek.map(day => {
                                     return (
                                         <div id={'day_' + day.id} 
                                              key={day.name}
-                                             className="settings__reminder__week__day"
-                                             onClick={this.toggleDay.bind(this)}>
+                                             className={'settings__reminder__week__day' + (day.active ? ' day-active' : '')}
+                                             onClick={() => this.toggleDay(day.name)}>
                                             <span className="settings__reminder__week__day--name">
-                                                {(this.state.daysOfWeekLocales[day.id === 7 ? 0 : day.id] || day.name).toUpperCase()}
+                                                {(this.state.daysOfWeekLocales[day.id === 7 ? 0 : day.id] || day.name)}
                                             </span>
                                         </div>
                                     )
@@ -999,7 +1005,7 @@ class Settings extends React.Component {
                     { version}
                 </div>
             )
-        }
+        // }
     }
 }
 

@@ -39,6 +39,11 @@
   border-bottom: 1px dotted $border;
   align-items: center;
 }
+.user-settings span:first-child {
+  width: 32px;
+  height: 32px;
+}
+
 
 .user-settings span img {
   display: inline-block;
@@ -235,6 +240,7 @@
           line-height: 16px;
           color: $dark_text;
           transform: translate(0, -50%);
+          text-transform: uppercase;
         }
       }
     }

@@ -26,11 +26,9 @@ class Header extends React.Component {
 
         this.state = {
             menuOpen: false,
-            mode: null,
             showScreenshotNotification: false,
             screenshotMessage: locales.SCREENSHOT_RECORDING,
-            showScreenshotLink: false,
-            manualModeDisabled: null
+            showScreenshotLink: false
         };
 
         this.closeMenu = this.closeMenu.bind(this);
@@ -38,38 +36,11 @@ class Header extends React.Component {
         // this.processNotifications = this.processNotifications.bind(this);
         this.handleRefresh = this.handleRefresh.bind(this);
         // this.checkScreenshotNotifications = this.checkScreenshotNotifications.bind(this);
-        this.setAsyncStateItems = this.setAsyncStateItems.bind(this);
     }
 
     componentDidMount() {
         // this.checkScreenshotNotifications();
-        this.setAsyncStateItems();
     }
-
-    async setAsyncStateItems() {
-        const manualModeDisalbedStorage = await localStorage.getItem('manualModeDisabled');
-        const modeEnforcedStorage = await localStorage.getItem('modeEnforced');
-        const modeStorage = await localStorage.getItem('mode');
-        const manualModeDisabled = JSON.parse(manualModeDisalbedStorage);
-        this.setState({
-            manualModeDisabled,
-            mode: modeEnforcedStorage ? modeEnforcedStorage : modeStorage
-        });
-    }
-
-    // ovo je nesto samo za desktop pa treba maci
-    // checkScreenshotNotifications() {
-        // if (isAppTypeDesktop()) {
-        //     if (_interval)
-        //         clearInterval(_interval);
-        //     if (this.props.isTrackerPage) {
-        //         this.processNotifications();
-        //         _interval = setInterval(() => {
-        //             this.processNotifications();
-        //         }, 20000);
-        //     }
-        // }
-    // }
 
     componentWillUnmount() {
         if (_interval)
@@ -120,23 +91,13 @@ class Header extends React.Component {
     }
 
     changeToManualMode() {
-        localStorage.setItem('mode', 'manual');
-        this.setState({
-            mode: 'manual'
-        }, () => {
-           this.closeMenu();
-           this.props.changeMode('manual');
-        });
+        this.closeMenu();
+        this.props.changeMode('manual');
     }
 
     changeToTimerMode() {
-        localStorage.setItem('mode', 'timer');
-        this.setState({
-            mode: 'timer'
-        }, () => {
-           this.closeMenu();
-           this.props.changeMode('timer');
-        });
+        this.closeMenu();
+        this.props.changeMode('timer');
     }
 
     async goToClockify() {
@@ -341,13 +302,14 @@ class Header extends React.Component {
                              className={this.props.showSync ?
                                  "header-sync" : "disabled"}>
                         </div>
+                        { this.props.showActions && 
                         <div className={this.props.showActions ? "actions" : "disabled"}
                              title={locales.SETTINGS}
                              onClick={this.openMenu.bind(this)}>
                             <Menu
                                 isOpen={this.state.menuOpen}
-                                mode={this.state.mode}
-                                manualModeDisabled={this.state.manualModeDisabled}
+                                mode={this.props.mode}
+                                manualModeDisabled={this.props.manualModeDisabled}
                                 changeModeToManual={this.changeToManualMode.bind(this)}
                                 changeModeToTimer={this.changeToTimerMode.bind(this)}
                                 disableManual={this.props.disableManual}
@@ -356,8 +318,10 @@ class Header extends React.Component {
                                 beforeWorkspaceChange= {this.beforeWorkspaceChange.bind(this)}
                                 workspaceChanged={this.workspaceChange.bind(this)}
                                 toaster={this.props.toaster}
+                                clearEntries={this.props.clearEntries}
                             />
                         </div>
+                        }
                         <span className={this.props.backButton ? "header-back" : "disabled"}
                               onClick={this.goBack.bind(this)}>{locales.BACK}</span>
                     </div>

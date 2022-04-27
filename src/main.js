@@ -48,7 +48,7 @@ if (
 
 
 document.addEventListener('DOMContentLoaded', async () => {
-    checkConnection();
+    await checkConnection();
     
     Mek();
     const application = new Application();

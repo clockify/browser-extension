@@ -10,7 +10,7 @@ export async function isOffline() {
         return false;
 }
 
-export function checkConnection() {
+export async function checkConnection() {
     if (navigator && !navigator.onLine) {
         localStorage.setItem('offline', 'true')
     } else {

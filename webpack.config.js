@@ -7,8 +7,10 @@ let targetForManifest =
     process.env.TARGET === 'www/chrome' ? 'chrome' : process.env.TARGET;
 
 module.exports = {
+    mode: 'production',
+    devtool: 'nosources-cheap-module-source-map',
     entry: [
-        'babel-polyfill', './src/main.js'
+        '@babel/polyfill', './src/main.js'
     ],
     output: {
         path: path.join(__dirname, `${process.env.TARGET}`),
@@ -26,9 +28,12 @@ module.exports = {
             {
                 test: /\.js$/,
                 exclude: /node_modules/,
-                use: [
-                    'babel-loader',
-                ],
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        presets: ['@babel/preset-env', '@babel/preset-react']
+                      }
+                },
             },
         ],
     },

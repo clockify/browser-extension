@@ -25,7 +25,7 @@ var ClockifyTagList = class {
             tagList: [],
             filter: '',
             ready: false,
-            loadMore: true,
+            loadMore: false,
             title: '',
             Items: {},
         }
@@ -71,6 +71,14 @@ var ClockifyTagList = class {
 
 
     componentDidMount() {
+        aBrowser.storage.local.get('preTagsList', (result) => {
+            const preTagsList = result.preTagsList || [];
+            this.setState({
+                tagList: sortArrayByStringProperty(preTagsList, 'name'),
+                ready: true
+            });
+            this.setState({}, true);
+        });
         this.getTags();
         this.render();
         this.repositionDropDown();
@@ -235,7 +243,9 @@ var ClockifyTagList = class {
         if (fromOtherDropDown && !this.state.isOpen)
             return;
         this.setState({ 
-            isOpen: false
+            isOpen: false,
+            tagList: [],
+            page: 1
         });
         this.getElem('#imgClockifyDropDownTags').src = aBrowser.runtime.getURL('assets/images/arrow-light-mode.png');
         this.divDropDownPopup.style.display = 'none';
@@ -255,12 +265,12 @@ var ClockifyTagList = class {
     }
    
     getTags() {
-        if (this.state.page === 1) {
-            this.setState({
-                tagList: !this.wsSettings.forceTags && this.editForm.SelectedTag ?
-                    [{name: 'No tag', id: 'no-tag', color: '#999999', tasks: []}] : []
-            })
-        }        
+        // if (this.state.page === 1) {
+        //     this.setState({
+        //         tagList: !this.wsSettings.forceTags && this.editForm.SelectedTag ?
+        //             [{name: 'No tag', id: 'no-tag', color: '#999999', tasks: []}] : []
+        //     })
+        // }        
         aBrowser.runtime.sendMessage({
             eventName: 'getTags',
             options: { 
@@ -281,13 +291,13 @@ var ClockifyTagList = class {
                 // openPostStartPopup("Can't start entry without tag/task/description or tags. Please edit your time entry. Please create your time entry using the dashboard or edit your workspace settings.")
                 // alert("Can't start entry without tag/task/description or tags. Please edit your time entry. Please create your time entry using the dashboard or edit your workspace settings.");
             } else {
-                const pageTags = response.pageTags ? response.pageTags : []
-                /*
-                 ne mora svaki setState redraw
-                */
-
+                const pageTags = response.pageTags ? response.pageTags : [];
+                if(!this.state.filter && this.state.page === 1){
+                    aBrowser.storage.local.set({'preTagsList': pageTags});
+                }
+                const tagList = this.state.page === 1 ? pageTags : this.state.tagList.concat(pageTags);
                 this.setState({
-                    tagList: sortArrayByStringProperty(this.state.tagList.concat(pageTags), 'name'),
+                    tagList: sortArrayByStringProperty(tagList, 'name'),
                     page: this.state.page + 1,
                     ready: true
                 });
@@ -391,7 +401,7 @@ var ClockifyTagList = class {
     selectTag(tag) {
         this.editForm.editTags(tag)
             .then(({entry, tagList}) => {
-                this.setState({tagList});
+                // this.setState({tagList});
                 this.redrawHeader();
             }
         );

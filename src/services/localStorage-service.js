@@ -27,7 +27,7 @@ export class LocalStorageService {
             return inverse ? !res : res;
         });
 
-        localStorage.removeItem(keysToDelete);
+        return await localStorage.removeItem(keysToDelete);
         
     }
 

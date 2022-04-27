@@ -228,7 +228,6 @@ function setClockifyOriginsToStorage() {
 // call it
 setClockifyOriginsToStorage();
 
-// call it
 UserWorkspaceStorage.getSetWorkspaceSettings();
 
 UserService.getSetUserRoles();
@@ -462,10 +461,6 @@ async function extractAndSaveToken(url) {
         .replace('accessToken=','')
         .replace('refreshToken=','')
         .split('&');
-    aBrowser.storage.local.set({
-        token: (token),
-        refreshToken: (refreshToken)
-    });
     await localStorage.setItem('token', token);
     await localStorage.setItem('refreshToken', refreshToken);
     await UserService.getAndStoreUser();
@@ -473,6 +468,26 @@ async function extractAndSaveToken(url) {
     
     const lang = await localStorage.getItem('lang');
     clockifyLocales.onProfileLangChange(lang);
+    TimeEntry.getTimeEntries(1, 50).then(async (timeEntries) => {
+        if(timeEntries && timeEntries.data){
+            await localStorage.setItem('preData', {
+                bgEntries: timeEntries.data.timeEntriesList,
+                durationMap: timeEntries.data.durationMap
+            });
+        }
+    });
+    ProjectService.getProjectsWithFilter('', 1, 50).then(projects => {
+        if(projects && projects.data){
+            localStorage.setItem('preProjectList', {
+                projectList: projects.data
+            });
+        }
+    });
+    TagService.getAllTagsWithFilter(1, 50).then(tags => {
+        if(tags && tags.data & tags.data.length){
+            localStorage.setItem('preTagsList', tags.data);
+        }
+    });
 }
 
 

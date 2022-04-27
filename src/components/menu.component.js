@@ -6,6 +6,7 @@ import {getBrowser, isChrome} from "../helpers/browser-helper";
 import {getEnv} from "../environment";
 import {HtmlStyleHelper} from "../helpers/html-style-helper";
 import WorkspaceList from './workspace-list.component';
+import {WorkspaceService} from "../services/workspace-service";
 import {LocalStorageService} from "../services/localStorage-service";
 import {UserService} from "../services/user-service";
 import WorkspaceChangeConfirmation from './workspace-change-confirmation.component'
@@ -20,6 +21,7 @@ const htmlStyleHelper = new HtmlStyleHelper();
 const localStorageService = new LocalStorageService();
 const userService = new UserService();
 const settingsService = new SettingsService();
+const workspaceService = new WorkspaceService();
 
 class Menu extends React.Component {
 
@@ -33,14 +35,50 @@ class Menu extends React.Component {
             workspaceNameSelected: "",
             subDomainName: "",
             isOffline: null,
-            show2FAPopup: false
+            show2FAPopup: false,
+            workspaces: [],
+            selectedWorkspace: null,
+            previousWorkspace: null,
         }
 
-        this.onSetWorkspace = this.onSetWorkspace.bind(this);
+        // this.onSetWorkspace = this.onSetWorkspace.bind(this);
         this.selectWorkspace = this.selectWorkspace.bind(this);
         this.changeToSubdomainWorkspace = this.changeToSubdomainWorkspace.bind(this);
         this.cancelSubdomainWorkspaceChange = this.cancelSubdomainWorkspaceChange.bind(this);
         this.changeModeToManual = this.changeModeToManual.bind(this);
+        this.getWorkspaces = this.getWorkspaces.bind(this);
+    }
+
+    componentDidMount() {
+        this.getWorkspaces();
+    }
+
+    async componentDidUpdate(prevProps) {
+        const isOffline = JSON.parse(await localStorage.getItem('offline'));
+        if(this.state.isOffline !== isOffline) {
+            this.setState({
+                isOffline
+            });
+        }
+        if(this.props.workspaceSettings !== prevProps.workspaceSettings) {
+            this.getWorkspaces();
+        }
+    }
+
+    getWorkspaces() {
+        workspaceService.getWorkspacesOfUser()
+            .then(async response => {
+                let data = response.data;
+                const activeWorkspaceId = await localStorage.getItem('activeWorkspaceId');
+                let selectedWorkspace = data.filter(workspace => workspace.id === activeWorkspaceId)[0];
+                this.setState({
+                    workspaces: data,
+                    selectedWorkspace: selectedWorkspace,
+                    previousWorkspace: selectedWorkspace
+                })
+            })
+            .catch(() => {
+            });
     }
 
     setActiveClassToActiveElement() {
@@ -110,18 +148,21 @@ class Menu extends React.Component {
         }
     }
 
-    onSetWorkspace(workspaceId) {
-    }
+    selectWorkspace(workspace) {
+        this.props.clearEntries();
 
-    selectWorkspace(workspaceId, workspaceName) {
+        const workspaceId = workspace.id;
+        const workspaceName = workspace.name
 
         this.props.beforeWorkspaceChange();
 
-        this.setState({
+        this.setState(state => ({
             revert: false,
             selectedWorkspaceId: workspaceId,
-            workspaceNameSelected: workspaceName
-        })
+            workspaceNameSelected: workspaceName,
+            previousWorkspace: state.selectedWorkspace,
+            selectedWorkspace: workspace
+        }))
 
         userService.setDefaultWorkspace(workspaceId)
             .then(response => {
@@ -135,7 +176,9 @@ class Menu extends React.Component {
                     return;
                 }
                 localStorageService.set('activeWorkspaceId', workspaceId);
-                
+                localStorage.removeItem('preProjectList');
+                localStorage.removeItem('preTagsList');
+            
                 getBrowser().storage.local.set({
                     activeWorkspaceId: (workspaceId)
                 });
@@ -179,14 +222,6 @@ class Menu extends React.Component {
         this.logout.bind(this)()
     }
 
-    async componentDidUpdate() {
-        const isOffline = JSON.parse(await localStorage.getItem('offline'));
-        if(this.state.isOffline !== isOffline) {
-            this.setState({
-                isOffline
-            });
-        }
-    }
 
     render() {
         const title = this.props.disableManual ? "You have time entry in progress!" :
@@ -220,7 +255,9 @@ class Menu extends React.Component {
                         <WorkspaceList
                             revert={this.state.revert}
                             selectWorkspace={this.selectWorkspace}
-                            onSetWorkspace={this.onSetWorkspace}
+                            workspaces={this.state.workspaces}
+                            selectedWorkspace={this.state.selectedWorkspace}
+                            previousWorkspace={this.state.previousWorkspace}
                         />
                         <a onClick={this.openSettings.bind(this)}
                            className="dropdown-item"
@@ -259,7 +296,7 @@ class Menu extends React.Component {
 
                     {   this.state.show2FAPopup && 
                         <WsChange2FAPopupComponent 
-                            cancel={() => this.setState({show2FAPopup: false})} 
+                            cancel={() => this.setState({show2FAPopup: false, revert: true})} 
                             workspaceName={this.state.workspaceNameSelected}
                         />
                     }

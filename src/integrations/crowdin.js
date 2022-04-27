@@ -30,4 +30,4 @@ clockifyButton.render('#panes-controller:not(.clockify)', { observe: true }, fun
     trackingButton.appendChild(link);
 
     $('#panes-controller').prepend(trackingButton);
-});
+}); 

@@ -40,7 +40,6 @@ class EditFormManual extends React.Component {
             tags: this.props.timeEntry.tags ? this.props.timeEntry.tags : [],
             redrawCustomFields: 0,
             closeOpenedCounter: 0,
-            modeEnforced: null,
             inProgress: null,
             workspaceSettings: null
         }
@@ -57,19 +56,16 @@ class EditFormManual extends React.Component {
     async setAsyncStateItems() {
         const hideBillable = await offlineStorage.getHideBillable();
         const isUserOwnerOrAdmin = await offlineStorage.getIsUserOwnerOrAdmin();
-        const modeEnforced = await localStorage.getItem('modeEnforced');
         const inProgress = await localStorage.getItem('inProgress');
         const workspaceSettings = await localStorage.getItem('workspaceSettings');
 
         if(this.state.isUserOwnerOrAdmin !== isUserOwnerOrAdmin || 
            this.state.hideBillable !== hideBillable || 
-           this.state.modeEnforced !== modeEnforced ||
            this.state.inProgress !== inProgress ||
            this.state.workspaceSettings !== workspaceSettings){
             this.setState({
                 hideBillable,
                 isUserOwnerOrAdmin,
-                modeEnforced,
                 inProgress,
                 workspaceSettings
             });
@@ -357,7 +353,7 @@ class EditFormManual extends React.Component {
     }
 
     deleteEntry() {
-        ReactDOM.render(<HomePage/>, document.getElementById('mount'));
+        this.goBack();
         let timeEntries = offlineStorage.timeEntriesOffline;
         if(timeEntries.findIndex(entryOffline => entryOffline.id === this.state.timeEntry.id) > -1) {
             timeEntries.splice( timeEntries.findIndex(entry => entry.id === this.state.timeEntry.id), 1);
@@ -461,7 +457,7 @@ class EditFormManual extends React.Component {
             let timeEntries = offlineStorage.timeEntriesOffline;
             timeEntries.push(timeEntry);
             offlineStorage.timeEntriesOffline = timeEntries;
-            ReactDOM.render(<HomePage/>, document.getElementById('mount'));
+            this.goBack();
         }
         else {
             if (this.state.descRequired || this.state.projectRequired || this.state.taskRequired || this.state.tagsRequired) {
@@ -499,7 +495,7 @@ class EditFormManual extends React.Component {
                         timeEntries.splice( timeEntries.findIndex(entry => entry.id === this.state.timeEntry.id), 1);
                     }
                     offlineStorage.timeEntriesOffline = timeEntries;
-                    ReactDOM.render(<HomePage/>, document.getElementById('mount'));
+                    this.goBack();
                 })
                 .catch(error => {
                     if (error.request.status === 403) {
@@ -572,9 +568,9 @@ class EditFormManual extends React.Component {
         }
     }
 
-    goBack() {
+    async goBack() {
         ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
-        ReactDOM.render(<HomePage/>, document.getElementById('mount'));
+        ReactDOM.render(<HomePage />, document.getElementById('mount'));
     }
 
     notifyAboutError(message, type='error', n=2) {
@@ -591,7 +587,6 @@ class EditFormManual extends React.Component {
                 <div>
                     <Header
                         backButton={true}
-                        mode={this.state.modeEnforced}
                         disableManual={this.state.inProgress}
                         disableAutomatic={false}
                         changeMode={this.changeMode.bind(this)}

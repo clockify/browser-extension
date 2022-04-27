@@ -34,13 +34,20 @@ class TagsList extends React.Component {
 
     async setAsyncStateItems() {
         const isOffline = await localStorage.getItem('offline');
+        let tagsList = await localStorage.getItem('preTagsList') || [];
+        if(tagsList?.length){
+            tagsList = sortHelpers.sortArrayByStringProperty(tagsList, 'name');
+        }
         this.setState({
-            isOffline: JSON.parse(isOffline)
+            isOffline: JSON.parse(isOffline),
+            tagsList,
+            isEnabledCreateTag: !this.props.workspaceSettings.onlyAdminsCreateTag ||
+            (this.props.workspaceSettings.onlyAdminsCreateTag && this.props.isUserOwnerOrAdmin) ? true : false
         });
     }
 
     componentDidMount(){
-        this.isEnabledCreateTag();
+        // this.isEnabledCreateTag();
         this.setAsyncStateItems();
     }
 
@@ -60,11 +67,13 @@ class TagsList extends React.Component {
             tagService.getAllTagsWithFilter(page, pageSize, this.state.filter)
                 .then(response => {
                     let data = response.data;
+                    const tagsList = this.state.page === 1 ? data : this.state.tagsList.concat(data);
                     this.setState({
-                        tagsList: sortHelpers.sortArrayByStringProperty(this.state.tagsList.concat(data), 'name'),
+                        tagsList: sortHelpers.sortArrayByStringProperty(tagsList, 'name'),
                         page: this.state.page + 1,
                         loadMore: data.length === pageSize ? true : false
                     }, () => {
+                        localStorage.setItem('preTagsList', this.state.tagsList);
                     });
                 })
                 .catch(() => {
@@ -134,12 +143,12 @@ class TagsList extends React.Component {
         this.props.editTag(tag);
     }
 
-    isEnabledCreateTag() {
-        this.setState({
-            isEnabledCreateTag: !this.props.workspaceSettings.onlyAdminsCreateTag ||
-            (this.props.workspaceSettings.onlyAdminsCreateTag && this.props.isUserOwnerOrAdmin) ? true : false
-        })
-    }
+    // isEnabledCreateTag() {
+    //     this.setState({
+    //         isEnabledCreateTag: !this.props.workspaceSettings.onlyAdminsCreateTag ||
+    //         (this.props.workspaceSettings.onlyAdminsCreateTag && this.props.isUserOwnerOrAdmin) ? true : false
+    //     })
+    // }
 
     openCreateTag() {
         this.setState({

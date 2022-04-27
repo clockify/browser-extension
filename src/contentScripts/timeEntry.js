@@ -77,6 +77,21 @@ class TimeEntry extends ClockifyService {
         return { entry, error }
     }
 
+    static async getTimeEntries(page, limit) {
+        const apiEndpoint = await this.apiEndpoint;
+        const workspaceId = await this.workspaceId;
+        const userId = await this.userId;
+
+        const allTimeEntriesEndpoint =
+            `${apiEndpoint}/workspaces/${workspaceId}/timeEntries/user/${userId}/full?page=${page}&limit=${limit}`;
+
+        const { data, error } = await this.apiCall(allTimeEntriesEndpoint);
+        if (error) {
+            console.error('oh no, failed', error);
+        }
+        return { data, error };
+    }
+
 
     static async endInProgress(timeEntry=null, end=new Date()) {
         const inProgress = await this.getEntryInProgress();

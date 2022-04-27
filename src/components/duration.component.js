@@ -142,6 +142,7 @@ class Duration extends React.Component {
         const { timeInterval } = this.props.timeEntry;
         if (!timeInterval.end) {
             _currentPeriod = moment().diff(moment(timeInterval.start));
+            clearInterval(_interval);
             _interval = setInterval(() => {
                 _currentPeriod += 1000;
                 this.setState({
@@ -273,7 +274,7 @@ class Duration extends React.Component {
                     </span>
                     <span style={{ paddingRight: this.state.end ? '' : '3px', position: 'relative'}}>
                         {!this.state.end
-                            ? <span style={{position: 'absolute', zIndex: '999', right: '5px', bottom: '-9px'}}>{locales.TODAY_LABEL}</span>
+                            ? <span style={{position: 'absolute', right: '5px', bottom: '-9px'}}>{locales.TODAY_LABEL}</span>
                             : <DatePicker
                                 selected={new Date(this.state.start)} //moment(this.state.start)}
                                 onChange={this.selectDate.bind(this)}

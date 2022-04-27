@@ -46,7 +46,6 @@ class ProjectList extends React.Component {
         };
         this.filterProjects = debounce(this.filterProjects, 500);
         this.openProjectDropdown = this.openProjectDropdown.bind(this);
-        this.mapSelectedProject = this.mapSelectedProject.bind(this);
         this.mapSelectedTask = this.mapSelectedTask.bind(this);
         this.createProject = this.createProject.bind(this);
         this.clearProjectFilter = this.clearProjectFilter.bind(this);
@@ -61,51 +60,29 @@ class ProjectList extends React.Component {
             : []
     }
 
-    createDemoProjects() {
-        for (let i=100; i <= 300; i++) {
-            const project = {
-                name: 'p' + i,
-                clientId: null,
-                color: "#3F51B5",
-                billable: i%3 === 0 ? true : false,
-                isPublic: i%2 === 0 ? true : false
-            }
-
-            projectService.createProject(project)
-                .then(response => {
-                    if (i%2 === 0) {
-                        for (var j=1; j <= 5; j++)
-                            projectService.createTestTask({ 
-                                projectId: response.data.id,
-                                name: 'Task' + j
-                            })
-                    }
-
-                })
-                .catch(error => {
-                    console.log('error', error.response.data.message);
-                });
-        }
-    }
-
     async setAsyncStateItems() {
         const workspaceSettings = await localStorageService.get('workspaceSettings');
         const isSpecialFilter = workspaceSettings ?
                 JSON.parse(workspaceSettings).projectPickerSpecialFilter : false;
         const color = await this.getColorForProject();
-        const isOffline = await localStorage.getItem('offline');
+        const preProjectList = await localStorage.getItem('preProjectList') || {};
+        let {projectList = [_noProjectObj()], clientProjects = {}} = preProjectList;
+        if(!preProjectList?.clientProjects){
+            clientProjects = this.getClients(projectList);
+        }
         this.setState(state => ({
             isSpecialFilter,
             selectedProject: {
-                name: state.selectProject.name,
-                color,
-                isOffline: JSON.parse(isOffline)
-            }
+                name: state.selectedProject.name,
+                color
+            },
+            projectList,
+            clientProjects
         }));
     }
 
     componentDidMount() {
-
+        this.setAsyncStateItems();
         if (this.props.selectedProject) {
             this.setState({
                 selectedProject: {
@@ -118,10 +95,6 @@ class ProjectList extends React.Component {
                 selectedTaskName: this.props.selectedTask ? this.props.selectedTask.name : ""
             })
         }
-
-        setTimeout(()=> {
-           // this.createDemoProjects();
-        })
 
     }
 
@@ -137,11 +110,11 @@ class ProjectList extends React.Component {
 
     async getProjects(page, pageSize) {
         if (!JSON.parse(await localStorage.getItem('offline'))) {
-            const already = this.state.projectList.map(p => p.id);
+            const already = page === 1 ? [] : this.state.projectList.map(p => p.id);
             projectService.getProjectsWithFilter(this.state.filter, page, pageSize, false, already)
                 .then(response => {
                     const projects = response.data;
-                    const projectList = this.state.projectList.concat(projects);
+                    const projectList = page === 1 ? projects : this.state.projectList.concat(projects);
                     this.setState({
                         projectList: this.state.filter.length > 0
                             ? projectList.filter(project => project.id !== "no-project")
@@ -158,13 +131,18 @@ class ProjectList extends React.Component {
                             specFilterNoTasksOrProject: 
                                 this.createMessageForNoTaskOrProject(
                                     projects, this.state.isSpecialFilter, this.state.filter)
+                        }, () => {
+                            if(!this.state.filter && page === 1){
+                                localStorage.setItem('preProjectList', {
+                                    projectList: this.state.projectList,
+                                    clientProjects: this.state.clientProjects
+                                });
+                            }
                         });
                     });
                 })
                 .catch(() => {
                 });
-        }
-        else {
         }
     }
 
@@ -355,8 +333,7 @@ class ProjectList extends React.Component {
             this.setState({
                 isOpen: true,
                 filter: '',
-                page: 1,
-                projectList: this.initialProjectList
+                page: 1
             }, () => {
                 document.getElementById('project-filter').value = null;
                 document.getElementById('project-filter').focus();
@@ -371,7 +348,7 @@ class ProjectList extends React.Component {
         this.setState({
             isOpen: false,
             filter: '',
-            clientProjects: {}
+            page: 1
         }, () => {
         });
     }

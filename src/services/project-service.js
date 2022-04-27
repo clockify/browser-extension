@@ -91,10 +91,9 @@ export class ProjectService extends HttpWrapperService {
                       data.push(project);
                 });
                 if (response.data.length < pageSize || data.length >= pageSize) {
-                    return Promise.resolve(data);
+                    return Promise.resolve({data, page});
                 }
-                return this.dopuniNonFavorites(alreadyIds, projectUrl, data, page+1, pageSize, forceTasks)
-                        .then(data => Promise.resolve(data));
+                return this.dopuniNonFavorites(alreadyIds, projectUrl, data, page+1, pageSize, forceTasks);
             })
             .catch(error => {
                 return Promise.resolve(data);
@@ -113,10 +112,9 @@ export class ProjectService extends HttpWrapperService {
                       data.push(project);
                 });
                 if (response.data.length < pageSize || data.length >= pageSize) {
-                    return Promise.resolve(data);
+                    return Promise.resolve({data, page});
                 }
-                return this.dopuniPage(alreadyIds, projectUrl, data, page+1, pageSize, forceTasks)
-                        .then(data => Promise.resolve(data));
+                return this.dopuniPage(alreadyIds, projectUrl, data, page+1, pageSize, forceTasks);
             })
             .catch(error => {
                 return Promise.resolve(data);
@@ -136,6 +134,7 @@ export class ProjectService extends HttpWrapperService {
         const ws = str ? JSON.parse(str) : { projectFavorites: true }
 
         if (ws.projectFavorites) {
+            console.log('IMAMO FAVORITES');
             return this.dopuniFavs(alreadyIds, projectUrlFavs, [], 1, pageSize, forceTasks) // always go page:1
                 .then(data => {
                     if (data.length >= pageSize) {
@@ -143,7 +142,7 @@ export class ProjectService extends HttpWrapperService {
                     }
                     // alreadyIds.concat(data.map(p => p.id)
                     return this.dopuniNonFavorites(alreadyIds, projectUrlNonFavs, data, page, pageSize, forceTasks) // always go page:1
-                        .then(data => Promise.resolve({data}));
+                        .then(data => Promise.resolve(data));
                 })
                 .catch(() => {
                     return Promise.resolve({data});
@@ -151,8 +150,8 @@ export class ProjectService extends HttpWrapperService {
         }
         else {
             return this.dopuniPage(alreadyIds, projectUrlNonFavs, [], page, pageSize, forceTasks) // always go page:1
-                .then(data => {
-                    return Promise.resolve({data});
+                .then((data) => {
+                    return Promise.resolve(data);
                 })
                 .catch(() => {
                     return Promise.resolve({data});

@@ -4,7 +4,6 @@ import {getBrowser} from "../helpers/browser-helper";
 import {getIconStatus} from "../enums/browser-icon-status-enum";
 import Login from "../components/login.component";
 import HomePage from "../components/home-page.component";
-import {isOffline} from "../components/check-connection";
 import {LocalStorageService} from "../services/localStorage-service";
 import {getLocalStorageEnums} from "../enums/local-storage.enum";
 import {UserService} from "../services/user-service";
@@ -29,13 +28,14 @@ export class Extension {
         const token = await localStorageService.get("token");
         const isOffline = await localStorageService.get("offline");
         const mountHtmlElem = document.getElementById('mount');
-        if (mountHtmlElem) {
-            mountHtmlElem.style.width = '360px';
-            mountHtmlElem.style.minHeight = '430px';
-        }
+        // if (mountHtmlElem) {
+        //     mountHtmlElem.style.width = '360px';
+        //     mountHtmlElem.style.minHeight = '430px';
+        // }
         
         if (token) {
             if (!JSON.parse(isOffline)) {
+                ReactDOM.render(<HomePage/>, mountHtmlElem);
                 userService.getUser()
                     .then(async (response) => {
                         let data = response.data;
@@ -69,21 +69,22 @@ export class Extension {
                                         endPoint,
                                         getLocalStorageEnums().PERMANENT_PREFIX);
                                 }
-                                if (mountHtmlElem) {
-                                    ReactDOM.render(<HomePage/>, mountHtmlElem);
-                                }
+                                // if (mountHtmlElem) {
+                                    // ReactDOM.render(<HomePage/>, mountHtmlElem);
+                                // }
                             })
                             .catch( err => {
-                                if (mountHtmlElem) {
-                                    ReactDOM.render(<HomePage/>, mountHtmlElem);
-                                }
+                                console.log(err);
+                                // if (mountHtmlElem) {
+                                    // ReactDOM.render(<HomePage/>, mountHtmlElem);
+                                // }
                             })
                     })
                     .catch(async (error) => {
                         if (mountHtmlElem) {
                             const isOffline = await localStorage.getItem('offline');
                             if (isOffline === 'true') {
-                                ReactDOM.render(<HomePage/>, mountHtmlElem);
+                                // ReactDOM.render(<HomePage/>, mountHtmlElem);
                             }
                             else {
                                 ReactDOM.render(<Login logout={true}/>, mountHtmlElem);
@@ -91,9 +92,9 @@ export class Extension {
                         }
                     });
             } else {
-                if (mountHtmlElem) {
-                    ReactDOM.render(<HomePage/>, mountHtmlElem);
-                }
+                // if (mountHtmlElem) {
+                    // ReactDOM.render(<HomePage/>, mountHtmlElem);
+                // }
             }
         } else {
             this.setIcon(getIconStatus().timeEntryEnded);

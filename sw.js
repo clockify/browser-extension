@@ -9,7 +9,7 @@ try {
       "contentScripts/integration-background.js",
       "contentScripts/task-service-background.js",
       "contentScripts/project-service-background.js",
-      "/contentScripts/tag-service-background.js",
+      "contentScripts/tag-service-background.js",
       "contentScripts/custom-field-service-background.js",
       "contentScripts/timeEntry.js",
       "contentScripts/clockifyLocales.js",

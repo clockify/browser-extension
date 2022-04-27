@@ -62,14 +62,15 @@ class UserWorkspaceStorage {
             return false;
     }
 
-    static async getSetWorkspaceSettings() {
+    static async getSetWorkspaceSettings(projectPickerTaskFilter) {
         const apiEndpoint = await this.apiEndpoint;
         const workspaceId = await this.workspaceId;
+        projectPickerTaskFilter = projectPickerTaskFilter || (JSON.parse(await localStorage.getItem('userSettings'))) || {};
         let endPoint = `${apiEndpoint}/workspaces/${workspaceId}`;
         const { data, error, status } = await ClockifyService.apiCall(endPoint);
         if (data) {
             const { workspaceSettings, features } = data;
-            workspaceSettings.projectPickerSpecialFilter = await UserWorkspaceStorage.getProjectPickerTaskFilter();
+            workspaceSettings.projectPickerSpecialFilter = projectPickerTaskFilter || (await UserWorkspaceStorage.getProjectPickerTaskFilter());
             workspaceSettings.features = { 
                 customFields: features.some(feature => feature === "CUSTOM_FIELDS")
             }

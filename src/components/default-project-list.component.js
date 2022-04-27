@@ -109,6 +109,19 @@ class DefaultProjectList extends React.PureComponent {
         const darkMode = await this.getDarkMode();
         _lastUsedProject.color = this.getColorForProject(darkMode);
         _lastUsedProjectAndTask.color = this.getColorForProject(darkMode);
+        const preProjectList = await localStorage.getItem('preProjectList') || {};
+        let {projectList = [], clientProjects = {}} = preProjectList;
+        if(this.state.forceTasks){
+            projectList = projectList.filter(project => project.taskCount > 0);
+        }
+        projectList = [...this.initProjectList, ...projectList];
+        if(!preProjectList?.clientProjects){
+            clientProjects = this.getClients(projectList);
+        }
+        this.setState({
+            projectList,
+            clientProjects
+        });
     }
 
     componentDidMount() {
@@ -124,7 +137,7 @@ class DefaultProjectList extends React.PureComponent {
         const projectsAreDifferent = projectsAreObjects && (this.props.selectedProject.name !== prevProps.selectedProject.name ||
                                                             this.props.selectedProject.selectedTask && 
                                                             this.props.selectedProject.selectedTask.name !== prevProps.selectedProject.selectedTask.name);
-        if(projectsAreDifferent || !projectsAreObjects) {
+        if(projectsAreDifferent || (!projectsAreObjects && this.props.selectedProject)) {
             let selectedProject = this.props.selectedProject;
             if (this.props.selectedProject) {
                 if (this.props.selectedProject.id === _lastUsedProject.id) {
@@ -191,27 +204,22 @@ class DefaultProjectList extends React.PureComponent {
         });
     }
 
-    async getProjects(page, pageSize) {
-        if (page === 1) {
-            this.setState({
-                projectList: this.initProjectList
-            })
-        }
+    async getProjects(pageSize) {
         const offline = await localStorage.getItem('offline');
         if (!JSON.parse(offline)) {
             const {filter, forceTasks, projectList, isSpecialFilter, page} = this.state;
-            const already = projectList.map(p => p.id);
+            const already = page === 1 ? [] : projectList.map(p => p.id);
             projectService.getProjectsWithFilter(filter, page, pageSize, forceTasks, already)
                 .then(response => {
                     const projects = response.data;
                     this.setState({
-                        projectList: projectList.concat(projects),
-                        page: page + 1
+                        projectList: page === 1 ? [...this.initProjectList, ...projects] : [...projectList, ...projects],
+                        page: response.page ? response.page + 1 : page + 1
                     }, () => {
                         const {filter, projectList} = this.state;
                         this.setState({
                             clientProjects: this.getClients(projectList),
-                            loadMore: response.data.length === pageSize ? true : false,
+                            loadMore: response.data.length === pageSize,
                             specFilterNoTasksOrProject: 
                                 this.createMessageForNoTaskOrProject(projects, isSpecialFilter, filter)
                         });
@@ -219,8 +227,6 @@ class DefaultProjectList extends React.PureComponent {
                 })
                 .catch(() => {
                 });
-        }
-        else {
         }
     }
     
@@ -297,12 +303,11 @@ class DefaultProjectList extends React.PureComponent {
             this.setState({
                 isOpen: true,
                 filter: '',
-                page: 1,
-                projectList: this.initProjectList
+                page: 1
             }, () => {
                 document.getElementById('project-filter').value = null;
                 document.getElementById('project-filter').focus();
-                this.getProjects(this.state.page, pageSize, this.state.isEnabledCreateProject);
+                this.getProjects(pageSize);
                 this.props.projectListOpened();
             });
         }
@@ -312,24 +317,22 @@ class DefaultProjectList extends React.PureComponent {
         document.getElementById('project-dropdown').scroll(0, 0);
         this.setState({
             isOpen: false,
-            filter: '',
-            clientProjects: { [_withoutClient]: [] }
+            filter: ''
         }, () => {
         });
     }
 
     filterProjects() {
-        this.setState({
-            projectList: this.initProjectList,           
+        this.setState({           
             filter: document.getElementById('project-filter').value.toLowerCase(),
             page: 1
         }, () => {
-            this.getProjects(this.state.page, pageSize);
+            this.getProjects(pageSize);
         });
     }
 
     loadMoreProjects() {
-        this.getProjects(this.state.page, pageSize);
+        this.getProjects(pageSize);
     }
 
 
@@ -353,12 +356,11 @@ class DefaultProjectList extends React.PureComponent {
 
 
     clearProjectFilter() {
-        this.setState({
-            projectList: this.initProjectList,            
+        this.setState({            
             filter: '',
             page: 1
         }, () => {
-            this.getProjects(this.state.page, pageSize);
+            this.getProjects(pageSize);
             document.getElementById('project-filter').value = null
         });
     }
@@ -389,10 +391,21 @@ class DefaultProjectList extends React.PureComponent {
         const { clientProjects } = this.state;
         const sortedClients = Object.keys(clientProjects).sort();
         const index = sortedClients.indexOf('FAVORITES');
+        const index2 = sortedClients.indexOf('Without client');
         if (index > 0) {
             const temp = sortedClients[0];
             sortedClients[0] = sortedClients[index];
             sortedClients[index] = temp;
+            if (index2 > 1) {
+                const temp = sortedClients[1];
+                sortedClients[1] = sortedClients[index2];
+                sortedClients[index2] = temp;
+            }
+        }
+        else if (index2 > 0) {
+            const temp = sortedClients[0];
+            sortedClients[0] = sortedClients[index2];
+            sortedClients[index2] = temp;
         }
 
         const className = JSON.parse(this.state.offline)

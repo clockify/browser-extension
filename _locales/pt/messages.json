@@ -2,6 +2,9 @@
   "APPROVAL__ENTRY_NO_DESCRIPTION": {
     "message": "Sem descrição"
   },
+  "TRACKER__ENTRY_MESSAGES__LOADING": {
+    "message": "Carregando, por favor espere."
+  },
   "TRACKER__DEFAULT": {
     "message": "predefinição"
   },

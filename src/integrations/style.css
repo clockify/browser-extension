@@ -1459,3 +1459,7 @@ span.clockify-switch-label {
 a.clockify-cancel, a.clockify-save {
   cursor: pointer !important;
 }
+
+button {
+  text-transform: uppercase;
+}

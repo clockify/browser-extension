@@ -23,7 +23,10 @@ class TimeEntryList extends React.Component {
 
     render() {
         const { isOffline } = this.props;
-        if(this.props.timeEntries.length === 0 && !isOffline) {
+        if(this.props.isLoading && !this.props.timeEntries.length) {
+            return <div><p className="loading-entries">{locales.TRACKER__ENTRY_MESSAGES__LOADING}</p></div>;
+        }
+        else if(this.props.timeEntries.length === 0 && !isOffline) {
             return (
                 <div className="no-entries">
                     <div className="no-entries-img"></div>

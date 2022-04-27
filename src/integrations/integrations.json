@@ -71,12 +71,18 @@
     "script": "clubhouse.js",
     "clone": false
   },
+  "crowdin.com": {
+    "name": "Crowdin",
+    "link": "*://*.crowdin.com/*",
+    "script": "crowdin.js",
+    "clone": false
+  },
   "shortcut.com": {
     "name": "Shortcut",
     "link": "*://app.shortcut.com/*",
     "script": "clubhouse.js",
     "clone": false
-  },
+  },  
   "coda.io": {
     "name": "Coda",
     "link": "*://*.coda.io/*",
@@ -161,6 +167,12 @@
     "script": "google-docs.js",
     "clone": false
   },
+  "kanbanize.com": {
+    "name": "Kanbanize",
+    "link": "*://*.kanbanize.com/*",
+    "script": "kanbanize.js",
+    "clone": false
+  },
   "keep.google.com": {
     "name": "Google Keep",
     "link": "*://keep.google.com/*",
@@ -177,12 +189,6 @@
     "name": "Helpscout",
     "link": "*://*.helpscout.net/*",
     "script": "helpscout.js",
-    "clone": false
-  },
-  "crowdin.com": {
-    "name": "Crowdin",
-    "link": "*://*.crowdin.com/*",
-    "script": "crowdin.js",
     "clone": false
   },
   "helprace.com": {
@@ -207,12 +213,6 @@
     "name": "Husky Marketing Planner",
     "link": "*://*.huskymarketingplanner.com/*",
     "script": "husky-marketing-planner.js",
-    "clone": false
-  },
-  "kanbanize.com": {
-    "name": "Kanbanize",
-    "link": "*://*.kanbanize.com/*",
-    "script": "kanbanize.js",
     "clone": false
   },
   "linear.app": {
@@ -511,8 +511,14 @@
   },
   "usepixie.net": {
     "name": "Pixie",
-    "link": "*://*.usepixie.net/*, *://*.pureworkflow.io/*",
+    "link": "*://*.usepixie.net/*", 
     "script": "usepixie.js"
+  },
+  "pureworkflow.io": {
+    "name": "Pureworkflow",
+    "link": "*://*.pureworkflow.io/*", 
+    "script": "usepixie.js",
+    "clone": true
   },
   "figma.com": {
     "name": "Figma",
