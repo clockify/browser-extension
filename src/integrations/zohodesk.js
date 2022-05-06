@@ -9,7 +9,7 @@ clockifyButton.render('.lhs-ticket-dtls:not(.clockify)', { observe: true }, func
 //Newer Next Gen UI - places the start/stop timer in the ticket title bar after the ticket creation time.
 clockifyButton.render('.zd-dvsubjectsection-timerWrapper:not(.clockify)', { observe: true }, function (elem) {
     const desc = $(".zd-dvsubjectsection-subject").innerText;
-    const ticket = $(".zd-ticketidcopy-ticketId").innerText;
+    const ticket = $(".zd-ticketsubject-ticketId").innerText;
     const link = clockifyButton.createButton("[#" + ticket + "##] " + desc);
   link.style.display = "block";
   link.style.paddingTop = "0";
