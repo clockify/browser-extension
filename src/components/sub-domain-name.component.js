@@ -2,10 +2,11 @@ import React from 'react';
 import * as ReactDOM from 'react-dom';
 import Header from './header.component';
 import Login from './login.component';
-import {SettingsService} from "../services/settings-service";
+// import {SettingsService} from "../services/settings-service";
 import locales from "../helpers/locales";
+import SelfHostedBootSettings from "./self-hosted-login-settings.component";
 
-const settingsService = new SettingsService();
+// const settingsService = new SettingsService();
 
 class SubDomainName extends React.Component {
     constructor(props) {
@@ -33,9 +34,12 @@ class SubDomainName extends React.Component {
 
     submitDomainName() {
         let domainName = document.getElementById('domainName').value;
-        settingsService.setSubDomainName(domainName);
-        settingsService.setHomeUrl(`https://${domainName}.clockify.me`)
-        ReactDOM.render(<Login/>, document.getElementById('mount'))
+        // settingsService.setSubDomainName(domainName);
+        // settingsService.setHomeUrl(`https://${domainName}.clockify.me`)
+        ReactDOM.render(
+            <SelfHostedBootSettings url={`https://${domainName}.clockify.me`}/>,
+            document.getElementById("mount")
+        );
     }
 
     cancel() {

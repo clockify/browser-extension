@@ -277,7 +277,6 @@ function setButtonProperties(button, title, active) {
         button.classList.add('clockify-button-inactive');
         button.innerHTML = getInactiveIcon();
         if (!button.classList.contains('small')) {
-            console.log('clockifyLocales.START_TIMER', clockifyLocales.START_TIMER)
             span.innerHTML = clockifyLocales.START_TIMER;
             span.classList.remove('clockify-button-active-span');
             span.classList.add('clockify-button-inactive-span');

@@ -2,6 +2,7 @@ import moment from 'moment';
 import * as React from 'react';
 import TimeEntry from './time-entry.component';
 import locales from "../helpers/locales";
+import { isEqual } from 'lodash';
 
 class TimeEntryList extends React.Component {
 
@@ -19,6 +20,24 @@ class TimeEntryList extends React.Component {
 
     changeMode(mode) {
         this.props.changeMode(mode);
+    }
+
+    isSimilarEntry(entry1, entry2) {
+        const { billable, isLocked, start, description, tags, projectId, taskId, customFieldValues } = entry1;
+        const { billable: billable2, isLocked: isLocked2, start: start2,
+                description: description2, tags: tags2, projectId: projectId2, taskId: taskId2, customFieldValues: customFieldValues2 } = entry2;
+                
+        if(billable === billable2 && isLocked === isLocked2 && 
+            start === start2 && description === description2 && projectId === projectId2 &&
+            taskId === taskId2 && tags.length === tags2.length && isEqual(tags, tags2) &&
+            customFieldValues.every(cf => {
+                const cf2 = customFieldValues2.find(cf2 => cf.customFieldId === cf2.customFieldId);
+                return cf && cf2 && isEqual(cf.value, cf2.value)
+            })
+            ){
+                return true
+        }
+        return false;
     }
 
     render() {
@@ -47,6 +66,7 @@ class TimeEntryList extends React.Component {
                 <div>
                     {
                         this.props.dates.map((day) => {
+                            const groupedIndexes = [];
                             const parts = day.split("-");
                             const lastPart = parts.pop();
                             const firstPart = parts.join('-');
@@ -66,9 +86,26 @@ class TimeEntryList extends React.Component {
                                         const aSeconds = aMoment.hours() * 3600 + aMoment.minutes() * 60 + aMoment.seconds();
                                         const bSeconds = bMoment.hours() * 3600 + bMoment.minutes() * 60 + bMoment.seconds();
 
-                                        return bSeconds - aSeconds;
+                                        return aSeconds - bSeconds;
                                     })
-                                    .map(timeEntry => {
+                                    .map((timeEntry, index, array) => {
+                                        let group = [];
+                                        if(!this.props.userSettings?.groupSimilarEntriesDisabled){
+                                            if(groupedIndexes.includes(index)){
+                                                return null;
+                                            }
+                                            groupedIndexes.push(index);
+                                            group = array.reduce((prev, curr, currIndex) => {
+                                                if(currIndex !== index && this.isSimilarEntry(timeEntry, curr)){
+                                                    groupedIndexes.push(currIndex);
+                                                    prev.push(curr);
+                                                }
+                                                return prev
+                                            }, []);
+                                            if(group.length){
+                                                group.unshift(timeEntry);
+                                            }
+                                        }
                                         return (
                                             <TimeEntry
                                                 key={timeEntry.id}
@@ -82,9 +119,10 @@ class TimeEntryList extends React.Component {
                                                 features={this.props.features}
                                                 isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}
                                                 userSettings={this.props.userSettings}
+                                                groupedEntries={group}
                                             />
                                         )
-                                    })}
+                                    }).reverse()}
                                 </div>
                             )
                         })

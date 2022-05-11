@@ -89,6 +89,12 @@
     "script": "coda.js",
     "clone": false
   },
+  "conectohub.com": {
+    "name": "ConectoHub",
+    "link": "*://*.conectohub.com/*",
+    "script": "conectohub.js",
+    "clone": false
+  },
   "dixa.com": {
     "name": "Dixa",
     "link": "*://*.dixa.com/*",

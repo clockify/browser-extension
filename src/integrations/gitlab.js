@@ -1,6 +1,6 @@
 clockifyButton.render('.issue-details .detail-page-description:not(.clockify)', {observe: true}, (elem) => {
     var link, description,
-        numElem = $(".identifier") || $(".breadcrumbs-list li:last-child .breadcrumbs-sub-title"),
+        numElem = $(".identifier") || $(".breadcrumbs-links li:last-child a"),
         titleElem = $(".title", elem),
         projectElem = $(".title .project-item-select-holder") || $(".breadcrumbs-list li:nth-last-child(3) .breadcrumb-item-text"),
         actionsElem = $(".detail-page-header-actions");
@@ -33,7 +33,7 @@ clockifyButton.render('.issue-details .detail-page-description:not(.clockify)', 
 
 clockifyButton.render('.merge-request-details.issuable-details > .detail-page-description:not(.clockify)', {observe: true}, (elem) => {
     var link, description,
-        numElem = $(".identifier") || $(".breadcrumbs-list li:last-child .breadcrumbs-sub-title"),
+        numElem = $(".identifier") || $(".breadcrumbs-links li:last-child a"),
         titleElem = $(".title", elem),
         projectElem = $(".title .project-item-select-holder") || $(".breadcrumbs-list li:nth-last-child(3) .breadcrumb-item-text"),
         actionsElem = $(".detail-page-header-actions");

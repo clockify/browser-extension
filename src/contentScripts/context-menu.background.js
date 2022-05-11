@@ -8,6 +8,17 @@ aBrowser.runtime.onMessage.addListener((request, sender, sendResponse) => {
     }
 });
 
+function listener(info, tab) {
+        switch (info.menuItemId) {
+            case "startTimerWithDescriptionCM":
+            case "startTimerCM":
+                TimeEntry.startTimerWithDescription(info)
+                break;
+            default:
+                break;
+        }
+}
+
 
 function toggleBrowserContextMenu(isContextMenuEnabled) {
     aBrowser.contextMenus.removeAll();
@@ -22,17 +33,8 @@ function toggleBrowserContextMenu(isContextMenuEnabled) {
             "title": clockifyLocales.START_TIMER,
             "contexts": ["page"]
         });
-
-        aBrowser.contextMenus.onClicked.addListener(function(info, tab) {
-            switch (info.menuItemId) {
-                case "startTimerWithDescriptionCM":
-                case "startTimerCM":
-                    TimeEntry.startTimerWithDescription(info)
-                    break;
-                default:
-                    break;
-            }
-        });
+        aBrowser.contextMenus.onClicked.removeListener(listener);
+        aBrowser.contextMenus.onClicked.addListener(listener);
     }
 
 }

@@ -50,8 +50,11 @@ class SelfHostedBootSettings extends React.Component {
                                 )
                             } else {
                                 let baseUrl;    
+                                let selfHosted = true;
                                 try {
                                     const data = JSON.parse(result.text);
+                                    selfHosted = data.selfHosted;
+                                    settingsService.setSelfHosted(data.selfHosted); 
                                     if (data.endpoint.startsWith("/")) {
                                         baseUrl = `${this.state.homeUrl}${data.endpoint}`;
                                     } else {
@@ -79,11 +82,12 @@ class SelfHostedBootSettings extends React.Component {
                                 }
                                 settingsService.setBaseUrl(baseUrl)
                                 settingsService.setHomeUrl(this.state.homeUrl);
-                                settingsService.setSelfHosted(true); 
-                                // const subDomain = [...this.state.homeUrl.matchAll(/\/\/(.*)\.clockify\.me/g)][0]?.[1];
-                                // if(subDomain){
-                                //     settingsService.setSubDomainName(subDomain);
-                                // }
+                                
+                                const subDomain = [...this.state.homeUrl.matchAll(/\/\/(.*)\.clockify\.me/g)][0]?.[1];
+                                if(subDomain){
+                                    settingsService.setSubDomainName(subDomain);
+                                }
+                                
                                 return <Login/>
                             }
                         }

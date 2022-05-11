@@ -1460,6 +1460,6 @@ a.clockify-cancel, a.clockify-save {
   cursor: pointer !important;
 }
 
-button {
+#divClockifyPopupDlg button {
   text-transform: uppercase;
 }

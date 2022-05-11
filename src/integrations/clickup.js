@@ -8,7 +8,8 @@ clockifyButton.render('.task-container__header:not(.clockify)', {observe: true},
     var link,
       task = $(projectSelector) ? ($(taskSelector) ? $(taskSelector).textContent : "") : "",
       project = $(projectSelector) ? $(projectSelector).textContent : ($(taskSelector) ? $(taskSelector).textContent : ""),
-      tags = $(tagSelector) ? () => [...new Set(Array.from($$(tagSelector)).map(e => e.innerText))] : "",
+      tags = $(tagSelector) ? () => [...new Set(Array.from($$(tagSelector)).map(e => e.innerText))] : "";
+
   
     link = clockifyButton.createButton({
       description: document.title,

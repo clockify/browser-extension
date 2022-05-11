@@ -8,14 +8,26 @@
   position: relative;
   z-index: 1;
   transition: all 0.2s ease;
+  &-group-number {
+    position: relative;
+    padding: 2px 6px;
+    float: left;
+    top: 50%;
+    margin-left: 10px;
+    transform: translate(0, -50%);
+    color: #02587f;
+    background: #E1F5FE;
+    &:hover{
+      background: #B3E5FC;
+    }
+  }
   &-description {
     display: inline-block;
     margin-bottom: 2px;
     position: relative;
-    width: 48%;
     top: 50%;
+    max-width: 40%;
     transform: translate(0, -50%);
-    float: left;
     margin-left: 10px;
   }
   &__project-wrapper{

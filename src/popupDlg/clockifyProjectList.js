@@ -88,7 +88,7 @@ var ClockifyProjectList = class {
     componentDidMount() {
         aBrowser.storage.local.get('preProjectList', (result) => {
             const preProjectList = result.preProjectList || {};
-            let {projectList = [this.initialProjectList], clientProjects = {}} = preProjectList;
+            let {projectList = this.initialProjectList, clientProjects = {}} = preProjectList;
             if(this.editForm.isForceTasks){
                 projectList = projectList.filter(project => project.taskCount > 0);
                 clientProjects = this.getClients(projectList);

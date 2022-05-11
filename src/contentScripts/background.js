@@ -285,9 +285,6 @@ const chromeExtensionID = 'pmjeegjhjdlccodhacdgbgfagbpmccpe';
 const firefoxExtensionID = '{1262fc44-5ec9-4088-a7a7-4cd42f3f548d}';
 
 aBrowser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
-    // let selfHosted = false;
-    // if (await localStorage.getItem('selfhosted_selfHosted'))
-    //     selfHosted = JSON.parse(await localStorage.getItem('selfhosted_selfHosted'))
 
     const isIdentityRedirectUrl = tab.url.includes(aBrowser.identity.getRedirectURL())
     if (!isIdentityRedirectUrl && tab.url.includes("clockify.me")) {
@@ -484,7 +481,7 @@ async function extractAndSaveToken(url) {
         }
     });
     TagService.getAllTagsWithFilter(1, 50).then(tags => {
-        if(tags && tags.data & tags.data.length){
+        if(tags && tags.data && tags.data.length){
             localStorage.setItem('preTagsList', tags.data);
         }
     });

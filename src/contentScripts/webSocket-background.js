@@ -10,7 +10,8 @@ const webSocketEventsEnums = {
     'TIME_TRACKING_SETTINGS_UPDATED': 'TIME_TRACKING_SETTINGS_UPDATED',
     'WORKSPACE_SETTINGS_UPDATED': 'WORKSPACE_SETTINGS_UPDATED',
     'CHANGED_ADMIN_PERMISSION': 'CHANGED_ADMIN_PERMISSION',
-    'PROFILE_UPDATED': 'PROFILE_UPDATED'
+    'PROFILE_UPDATED': 'PROFILE_UPDATED',
+    'USER_SETTINGS_UPDATED': 'USER_SETTINGS_UPDATED'
 };
 Object.freeze(webSocketEventsEnums);
 
@@ -165,6 +166,10 @@ async function messageHandler(event) {
             this.sendWebSocketEventToExtension(event.data);
             break;
         }
+
+        case webSocketEventsEnums.USER_SETTINGS_UPDATED:
+            UserService.getAndStoreUser();
+            break;
 
         case webSocketEventsEnums.WORKSPACE_SETTINGS_UPDATED:
             this.sendWebSocketEventToExtension(event.data);
