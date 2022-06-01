@@ -3,7 +3,7 @@ clockifyButton.render('.work-item-form-headerContent:not(.clockify,.flex-row)', 
   itemId = () => $('.work-item-form-id > span', elem).textContent;
   description = () => $('.work-item-form-title input', elem).value;
   project = $("input[aria-label='Clockify Project']") ? $("input[aria-label='Clockify Project']").value : $(".navigation-container .project-item .text-ellipsis").textContent;
-  tagNames = () => Array.from($$(".tags-items-container > ul > .tag-item:not(.tags-add-button) > .tag-container > .tag-box")).map(e => e.innerText);
+  tagNames = () => Array.from($$(".tags-items-container .tag-item:not(.tags-add-button) .tag-box")).map(e => e.innerText);
   link = clockifyButton.createButton({
       description: () => "#" + itemId() + " " + description(),
       projectName: project,
