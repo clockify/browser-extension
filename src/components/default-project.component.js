@@ -71,7 +71,7 @@ class DefaultProjectComponent extends React.Component {
             defaultProjectEnabled: !this.state.defaultProjectEnabled,
             selectedProject: defaultProject ? defaultProject.project : null
         }, () => {
-            this.projectList.closeOpened();
+            // this.projectList.closeOpened();
             this.props.changeSaved();
         });
     }

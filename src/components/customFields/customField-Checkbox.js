@@ -1,26 +1,15 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React from 'react';
 import useCustomField from './useCustomField';
-import debounce from 'lodash/debounce';
 import Switch from 'antd/lib/switch';
-import {isOffline} from "../check-connection";
 
 const CustomFieldCheckbox = ({cf, updateValue}) => {
 
     const [ {id, index, value, isDisabled, placeHolder, placeHolderOrName, title, manualMode}, 
             setValue,
-            storeValue ] = useCustomField(cf);
-
-    const handleChangeDelayed = useRef(debounce(async val => {
-        updateValue(id, val);
-        const isOff = await isOffline();
-        if (!(manualMode || isOff)) {
-            storeValue(val);
-        }
-    }, 0));
+            storeValue ] = useCustomField(cf, updateValue);
 
     const handleChange = (e) => {
         setValue(e);
-        handleChangeDelayed.current(e);
     };
 
     return (

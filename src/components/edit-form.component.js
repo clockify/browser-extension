@@ -42,8 +42,7 @@ class EditForm extends React.Component {
             forceTasks: false,
             askToDeleteEntry: false,
             tags: this.props.timeEntry.tags ? this.props.timeEntry.tags : [],
-            redrawCustomFields: 0,
-            closeOpenedCounter: 0,
+            // redrawCustomFields: 0,
             workspaceSettings: null
         };
 
@@ -54,8 +53,7 @@ class EditForm extends React.Component {
         this.notifyAboutError = this.notifyAboutError.bind(this);
         this.editProject = this.editProject.bind(this);
         this.editTask = this.editTask.bind(this);
-        this.onChangeProjectRedrawCustomFields = this.onChangeProjectRedrawCustomFields.bind(this);
-        this.closeOtherDropdowns = this.closeOtherDropdowns.bind(this);
+        // this.onChangeProjectRedrawCustomFields = this.onChangeProjectRedrawCustomFields.bind(this);
         this.updateCustomFields = this.updateCustomFields.bind(this);
         this.setAsyncStateItems = this.setAsyncStateItems.bind(this);
     }
@@ -97,10 +95,24 @@ class EditForm extends React.Component {
                 alert(msg);
         }
 
-        if (this.props.afterCreateProject)
-            timeEntry.customFieldValues = offlineStorage.customFieldValues; // generate from wsCustomFields
+        if (this.props.afterCreateProject){
+            this.setState(state => ({
+                timeEntry: {...state.timeEntry, customFieldValues: offlineStorage.customFieldValues}
+            }));
+        } else { 
+            if(offlineStorage.wsCustomFields?.length){
+                const additinalFields = offlineStorage.wsCustomFields.filter(field =>
+                        field.status === 'VISIBLE' && 
+                        (!field.projectDefaultValues.find(el => el.projectId === projectId) ||
+                        field.projectDefaultValues.find(el => el.projectId === projectId)?.status === 'VISIBLE') &&
+                        !timeEntry.customFieldValues.find(cf => cf.customFieldId === field.id)).map(el => ({...el, customFieldId: el.id}));
+                this.setState(state => ({
+                    timeEntry: {...state.timeEntry, customFieldValues: [...state.timeEntry.customFieldValues, ...additinalFields]}
+                }));
+            }
+            
+        }
 
-        // if (forceProjects && (!projectId || forceTasks && !taskId)) {
         if (!projectId || forceTasks && !taskId) {
             const {projectDB, taskDB} = await this.checkDefaultProjectTask(forceTasks);
             if (projectDB) {
@@ -339,19 +351,25 @@ class EditForm extends React.Component {
             if(timeEntry && timeEntry.id === this.state.timeEntry.id) {
                 timeEntry.description = description.trim();
                 offlineStorage.timeEntryInOffline = timeEntry;
-                this.setState({
-                    timeEntry,
-                    description: timeEntry.description + description.endsWith(' ') ? ' ' : ''
-                }, () => this.checkRequiredFields());
+                this.setState(state => ({
+                    timeEntry: {
+                        ...state.timeEntry,
+                        description: timeEntry.description
+                    },
+                    description: timeEntry.description
+                }), () => this.checkRequiredFields());
             } else {
                 let timeEntries = offlineStorage.timeEntriesOffline;
                 timeEntries.map(entry => {
                     if(entry.id === this.state.timeEntry.id) {
                         entry.description = description.trim();
-                        this.setState({
-                            timeEntry: entry,
-                            description: entry.description + description.endsWith(' ') ? ' ' : ''
-                        }, () => this.checkRequiredFields());
+                        this.setState(state => ({
+                            timeEntry: {
+                                ...state.timeEntry,
+                                description: entry.description
+                            },
+                            description: entry.description
+                        }), () => this.checkRequiredFields());
                     }
                     return entry;
                 });
@@ -362,10 +380,13 @@ class EditForm extends React.Component {
                 .then(response => {
                     let data = response.data;
                     setTimeout(() => {
-                        this.setState({
-                            timeEntry: data,
-                            description: data.description + description.endsWith(' ') ? ' ' : ''
-                        }, () => this.checkRequiredFields());
+                        this.setState(state => ({
+                            timeEntry: {
+                                ...state.timeEntry,
+                                description: data.description
+                            },
+                            description: data.description
+                        }), () => this.checkRequiredFields());
                     }, 100);
                 })
                 .catch(() => {
@@ -382,9 +403,9 @@ class EditForm extends React.Component {
         }
     }
 
-    async onChangeProjectRedrawCustomFields() {
-        const { redrawCustomFields } = this.state;
-        if (await isOffline()) {
+    // async onChangeProjectRedrawCustomFields() {
+    //     const { redrawCustomFields } = this.state;
+    //     if (await isOffline()) {
             // const { timeEntry } = this.state;
             // const { customFieldValues } = timeEntry;
             // ...
@@ -392,13 +413,13 @@ class EditForm extends React.Component {
             //     timeEntry,
             //     redrawCustomFields: redrawCustomFields + 1
             // });
-        }
-        else {
-            this.setState({
-                redrawCustomFields: redrawCustomFields + 1
-            });
-        }
-    }
+        // }
+    //     else {
+    //         this.setState({
+    //             redrawCustomFields: redrawCustomFields + 1
+    //         });
+    //     }
+    // }
 
     async editProject(project, callbackDefaultTask) {
         if (!project.id || project.id === 'no-project') {
@@ -411,7 +432,7 @@ class EditForm extends React.Component {
                     this.setState({
                         timeEntry
                     }, () => {
-                        this.projectList.mapSelectedProject()
+                        // this.projectList.mapSelectedProject()
                         this.checkRequiredFields()
                     })
                 } 
@@ -424,7 +445,7 @@ class EditForm extends React.Component {
                             this.setState({
                                 timeEntry
                             }, () => {
-                                this.projectList.mapSelectedProject()
+                                // this.projectList.mapSelectedProject()
                                 this.checkRequiredFields()
                             })
                         }
@@ -442,7 +463,7 @@ class EditForm extends React.Component {
                             timeEntry: Object.assign(response.data, { project, projectId: project.id })
                         }, () => {
                             this.checkRequiredFields();
-                            this.projectList.mapSelectedProject();
+                            // this.projectList.mapSelectedProject();
                         })
                     })
                     .catch((error) => {
@@ -459,7 +480,7 @@ class EditForm extends React.Component {
                     this.setState({
                         timeEntry
                     }, () => {
-                        this.projectList.mapSelectedProject();
+                        // this.projectList.mapSelectedProject();
                         this.checkRequiredFields();
                     })
                 } 
@@ -472,7 +493,7 @@ class EditForm extends React.Component {
                             this.setState({
                                 timeEntry
                             }, () => {
-                                this.projectList.mapSelectedProject();
+                                // this.projectList.mapSelectedProject();
                                 this.checkRequiredFields();
                             })
                         }
@@ -490,7 +511,7 @@ class EditForm extends React.Component {
                             timeEntry: Object.assign(response.data, { project, projectId: project.id })
                         }, () => {
                             this.checkRequiredFields()
-                            this.projectList.mapSelectedProject();
+                            // this.projectList.mapSelectedProject();
                             if (callbackDefaultTask) 
                                 callbackDefaultTask()
                         })
@@ -517,7 +538,7 @@ class EditForm extends React.Component {
                         timeEntry: Object.assign(response.data, { project, task }),
                     }, () => {
                         this.checkRequiredFields();
-                        this.projectList.mapSelectedTask(task.name)
+                        // this.projectList.mapSelectedTask(task.name)
                     });
                 })
                 .catch(() => {
@@ -568,17 +589,37 @@ class EditForm extends React.Component {
             //    callbackDefaultTask();
         }
         else {
-            timeEntryService.updateTags(tagIds, this.state.timeEntry.id)
-                .then(response => {
-                    let data = response.data;
-                    this.setState({
-                        timeEntry: data,
-                        tags: tagList
-                    }, () => this.checkRequiredFields());
-                })
-                .catch(() => {
-                })
+            this.setState({
+                tags: tagList
+            }, () => this.checkRequiredFields());
+            // timeEntryService.updateTags(tagIds, this.state.timeEntry.id)
+            //     .then(response => {
+            //         let data = response.data;
+            //         this.setState({
+            //             timeEntry: data,
+            //             tags: tagList
+            //         }, () => this.checkRequiredFields());
+            //     })
+            //     .catch(() => {
+            //     })
         }
+    }
+
+    onTagListClose() {
+        const tagIds = this.state.tags ? this.state.tags.map(it => it.id) : [];
+        timeEntryService.updateTags(tagIds, this.state.timeEntry.id)
+            .then(response => {
+                let data = response.data;
+                this.setState(state => ({
+                    timeEntry: {
+                        ...state.timeEntry,
+                        ...data
+                    }
+                }), () => this.checkRequiredFields());
+            })
+            .catch((err) => {
+                console.log(err)
+            })
     }
 
     async editBillable() {
@@ -605,14 +646,13 @@ class EditForm extends React.Component {
             }
         } else {
             timeEntryService.updateBillable(!this.state.timeEntry.billable, this.state.timeEntry.id)
-                .then(response => {
-                    let data = response.data;
-                    this.setState({
-                        timeEntry: data
-                    })
-                })
-                .catch(() => {
+                .catch((err) => {
+                    console.log(err);
                 });
+        
+            this.setState(state => ({
+                timeEntry: {...state.timeEntry, billable: !state.timeEntry.billable}
+            }));
         }
     }
 
@@ -790,32 +830,6 @@ class EditForm extends React.Component {
         });
     }
 
-    projectListOpened() {
-        this.closeOtherDropdowns('projectList');
-    }
-
-    tagListOpened() {
-        this.closeOtherDropdowns('tagList');
-    }
-
-    closeOtherDropdowns(openedDropdown) {
-        if (openedDropdown === 'projectList' || openedDropdown === 'customField') {
-            if (this.tagList.isOpened())
-                this.tagList.closeOpened();
-        }
-
-        if (openedDropdown === 'tagList' || openedDropdown === 'customField') {
-            if (this.projectList.isOpened())
-                this.projectList.closeOpened();
-        }
-
-        if (openedDropdown !== 'customField') {
-            this.setState({
-                closeOpenedCounter: this.state.closeOpenedCounter + 1
-            });
-        }
-    }
-
     askToDeleteEntry() {
         this.setState({
             askToDeleteEntry: true
@@ -842,7 +856,7 @@ class EditForm extends React.Component {
             return null;
         } else {
             // const hideBillable = offlineStorage.onlyAdminsCanChangeBillableStatus && !offlineStorage.isUserOwnerOrAdmin;
-            const { timeEntry, redrawCustomFields, closeOpenedCounter } = this.state;
+            const { timeEntry } = this.state;
             return (
                 <div>
                     <Header
@@ -877,16 +891,17 @@ class EditForm extends React.Component {
                                 description={this.state.description}
                                 descRequired={this.descRequired}
                                 onSetDescription={this.onSetDescription} 
+                                toaster={this.toaster}
                             />
                         </div>
                         <div className="edit-form__project_list">
                             <ProjectList
-                                ref={instance => {
-                                    this.projectList = instance;
-                                }}
+                                // ref={instance => {
+                                //     this.projectList = instance;
+                                // }}
                                 timeEntry={timeEntry}
-                                selectedProject={timeEntry.project}
-                                selectedTask={timeEntry.task}
+                                // selectedProject={timeEntry.project}
+                                // selectedTask={timeEntry.task}
                                 selectProject={this.editProject}
                                 selectTask={this.editTask}
                                 noTask={false}
@@ -896,11 +911,10 @@ class EditForm extends React.Component {
                                 projectRequired={this.state.projectRequired}
                                 taskRequired={this.state.taskRequired}
                                 forceTasks={this.state.forceTasks}
-                                projectListOpened={this.projectListOpened.bind(this)}
                                 editForm={true}
                                 timeFormat={this.props.timeFormat}
                                 userSettings={this.props.userSettings}
-                                onChangeProjectRedrawCustomFields={this.onChangeProjectRedrawCustomFields}
+                                // onChangeProjectRedrawCustomFields={this.onChangeProjectRedrawCustomFields}
                             />
                         </div>
                         <TagsList
@@ -911,11 +925,11 @@ class EditForm extends React.Component {
                             tagIds={this.state.tags.map(it => it.id)}
                             editTag={this.editTags.bind(this)}
                             tagsRequired={this.state.tagsRequired}
-                            tagListOpened={this.tagListOpened.bind(this)}
                             isUserOwnerOrAdmin={this.state.isUserOwnerOrAdmin}
                             workspaceSettings={this.props.workspaceSettings}
                             editForm={true}
                             errorMessage={this.notifyAboutError}
+                            onClose={this.onTagListClose.bind(this)}
                         />
                         <div className="edit-form-buttons">
                             <div className={`edit-form-buttons__billable ${this.state.hideBillable?'disabled':''}`}>
@@ -939,9 +953,7 @@ class EditForm extends React.Component {
                                     key="customFieldsContainer"
                                     timeEntry={timeEntry} 
                                     isUserOwnerOrAdmin={this.state.isUserOwnerOrAdmin}
-                                    redrawCustomFields={redrawCustomFields}
-                                    closeOpenedCounter={closeOpenedCounter}
-                                    closeOtherDropdowns={this.closeOtherDropdowns}
+                                    // redrawCustomFields={redrawCustomFields}
                                     manualMode={false}
                                     updateCustomFields={this.updateCustomFields}
                                 />
@@ -951,7 +963,7 @@ class EditForm extends React.Component {
                                         className={
                                             this.state.descRequired || this.state.projectRequired ||
                                             this.state.taskRequired || this.state.tagsRequired ?
-                                                "edit-form-done-disabled" : "edit-form-done"}>{locales.OK_BTN}
+                                                "edit-form-done-disabled" : "edit-form-done"}>{locales.SAVE}
                                 </button>
                                 <div className="edit-form-right-buttons__back_and_delete">
                                     <span onClick={this.askToDeleteEntry.bind(this)}

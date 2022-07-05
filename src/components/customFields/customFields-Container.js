@@ -11,33 +11,12 @@ import CustomFieldDropSingle from './customField-DropSingle'
 
 export function CustomFieldsContainer({
         timeEntry,
-        redrawCustomFields,
         isUserOwnerOrAdmin,
-        closeOpenedCounter,
-        closeOtherDropdowns,
         manualMode,
         updateCustomFields } 
 ) {
     const [customFields, setCustomFields] = useState([]);
-
-    const closeOther = useCallback((idMe) => {
-        let b = false;
-        const arr = [...customFields];
-        arr.forEach(cf => {
-            const { wsCustomField: { id, type } } = cf;
-            if (['DROPDOWN_SINGLE', 'DROPDOWN_MULTIPLE'].includes(type)) {
-                if (id != idMe) {
-                    cf.redrawCounter++;
-                    b = true;
-                }
-            }
-        })
-        if (b) {
-            setCustomFields(arr);
-        }
-        // close opened projectList or tagList
-        closeOtherDropdowns('customField');
-    }, [customFields]);
+    const [projectId, setProjectId] = useState(timeEntry.projectId);
 
     useEffect(() => {
         const { customFieldValues, projectId } = timeEntry;
@@ -69,38 +48,22 @@ export function CustomFieldsContainer({
             });
             setCustomFields(arr);
         }
-    }, [isUserOwnerOrAdmin]);
+    }, [isUserOwnerOrAdmin, timeEntry]);
 
     useEffect(() => {
-        if (redrawCustomFields > 0) // not on the first render
-            onChangeProjectRedrawCustomFields()
-    }, [redrawCustomFields])
-
-    
-    useEffect(() => {
-        if (closeOpenedCounter > 0) {// not on the first render
-            let b = false;
-            const arr = [...customFields];
-            arr.forEach(cf => {
-                const {wsCustomField: {type} } = cf;
-                if (['DROPDOWN_SINGLE', 'DROPDOWN_MULTIPLE'].includes(type)) {
-                    cf.redrawCounter++;
-                    b = true;
-                }
-            })
-            if (b) {
-                setCustomFields(arr);
-            }
+        // if (redrawCustomFields > 0) // not on the first render
+        if (projectId !== timeEntry.projectId) {
+            setProjectId(timeEntry.projectId);
+            onChangeProjectRedrawCustomFields();
         }
-    }, [closeOpenedCounter]);
-
+    }, [timeEntry])
 
     const getWSCustomField = (customFieldId) => offlineStorage.getWSCustomField(customFieldId);
 
     const updateValue = (customFieldId, value) => {
         // const cf = getWSCustomField(customFieldId);
-        //cf.value = value;
-        //setCustomFields(customFields);
+        // cf.value = value;
+        // setCustomFields(customFields);
         const cf = customFields.find(x => x.customFieldId === customFieldId);
         cf.value = value;
         const arr = customFields.map(({customFieldId, value}) => ({ 
@@ -203,22 +166,16 @@ export function CustomFieldsContainer({
                     switch (type) {
                         case 'TXT':
                             return <CustomFieldText key={id} cf={cf} updateValue={updateValue} />
-                            break;
                         case 'NUMBER':
                             return <CustomFieldNumber key={id} cf={cf} updateValue={updateValue} />
-                            break;
                         case 'LINK':
                             return <CustomFieldLink key={id} cf={cf} updateValue={updateValue} />
-                            break;
                         case 'CHECKBOX':
                             return <CustomFieldCheckbox key={id} cf={cf} updateValue={updateValue} />
-                            break;
                         case 'DROPDOWN_SINGLE':
-                            return <CustomFieldDropSingle key={id} cf={cf} closeOther={closeOther} updateValue={updateValue} />
-                           break;
+                            return <CustomFieldDropSingle key={id} cf={cf} updateValue={updateValue} />
                         case 'DROPDOWN_MULTIPLE':
-                            return <CustomFieldDropMultiple key={id} cf={cf}  closeOther={closeOther} updateValue={updateValue} />
-                            break;
+                            return <CustomFieldDropMultiple key={id} cf={cf} updateValue={updateValue} />
                         default:
                             // TODO uncomment
                             console.error('Uncovered custom field type: ' + type)

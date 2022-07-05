@@ -366,6 +366,8 @@ aBrowser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
                                                     forceTags: ${workspaceSettings.forceTags},
                                                     projectPickerSpecialFilter: ${workspaceSettings.projectPickerSpecialFilter},
                                                     projectFavorites: ${workspaceSettings.projectFavorites},
+                                                    activeBillableHours: ${workspaceSettings.activeBillableHours},
+                                                    onlyAdminsCanChangeBillableStatus: ${workspaceSettings.onlyAdminsCanChangeBillableStatus},
                                                     features: ${JSON.stringify(workspaceSettings.features)}
                                                 }`
                                             }); 
@@ -469,7 +471,8 @@ async function extractAndSaveToken(url) {
         if(timeEntries && timeEntries.data){
             await localStorage.setItem('preData', {
                 bgEntries: timeEntries.data.timeEntriesList,
-                durationMap: timeEntries.data.durationMap
+                durationMap: timeEntries.data.durationMap,
+                weekStatusMap: timeEntries.data.weekStatusMap
             });
         }
     });
@@ -629,7 +632,9 @@ aBrowser.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
         case 'submitCustomField':
             return ClockifyIntegration.submitCustomField(request, sendResponse); 
-
+            
+        case 'generateManualEntryData':
+            return ClockifyIntegration.generateManualEntryData(request, sendResponse);
         default:
             return false;
     }

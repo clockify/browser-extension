@@ -12,8 +12,7 @@
     border-radius: 2px;
     text-align: center;
     align-items: center;
-    z-index: 3;
-
+    
     &-open {
         background-color: rgba(0, 0, 0, 0.8);
         position: fixed;
@@ -21,6 +20,7 @@
         height: 100vh;
         left: 0;
         top: 0;
+        z-index: 1111;
     }
 
     &__question {

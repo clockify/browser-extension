@@ -23,7 +23,7 @@ class DeleteEntryConfirmationComponent extends React.Component {
                 <div className="delete-entry-confirmation-dialog-open">
                     <div className="delete-entry-confirmation-dialog">
                         <span className="delete-entry-confirmation-dialog__question">
-                            {locales.ARE_YOU_SURE_DELETE}
+                            {this.props.multiple?.length > 1 ? locales.DELETE_MULTIPLE_ENTRIES(this.props.multiple.length) : locales.ARE_YOU_SURE_DELETE}
                         </span>
                         <span onClick={this.confirm.bind(this)}
                               className="delete-entry-confirmation-dialog__confirmation_button">{locales.DELETE}</span>

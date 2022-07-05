@@ -2,6 +2,15 @@
   "APPROVAL__ENTRY_NO_DESCRIPTION": {
     "message": "Без описания"
   },
+  "TRACKER__APPROVAL__THIS_WEEK": {
+    "message": "На этой неделе"
+  },
+  "TRACKER__APPROVAL__LAST_WEEK": {
+    "message": "Прошлая неделя"
+  },
+  "TRACKER__TIME_TRACKER__WEEK_TOTAL": {
+    "message": "Всего за неделю:"
+  },
   "TRACKER__ENTRY_MESSAGES__LOADING": {
     "message": "Загрузка, пожалуйста подождите."
   },
@@ -167,6 +176,9 @@
   "GLOBAL__USERS_LABEL": {
     "message": "Пользователи"
   },
+  "GLOBAL__DUPLICATE_BTN": {
+    "message": "Дубликат"
+  },
   "GLOBAL__WITHOUT_PROJECT_LABEL": {
     "message": "Без проекта"
   },
@@ -331,6 +343,15 @@
   },
   "GLOBAL__PLACEHOLDER__ENTER_NAME": {
     "message": "Введите имя"
+  },
+  "GLOBAL__DESCRIPTION_LIMIT_ERROR_MSG": {
+    "message": "Описание сокращено (максимальная длина $limit$ символа)",
+    "placeholders": {
+      "limit": {
+        "content": "$1",
+        "example": "3000"
+      }
+    }
   },
   "INSTAL_AND_TRACK_ANYWHERE": {
     "message": "Установите Clockify и отслеживайте время где угодно."
@@ -530,6 +551,9 @@
   },
   "GLOBAL__TODAY_LABEL": {
     "message": "Сегодня"
+  },
+  "GLOBAL__YESTERDAY_LABEL": {
+    "message": "Вчера"
   },
   "GLOBAL__TOTAL_TIME": {
     "message": "Общий:"

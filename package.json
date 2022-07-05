@@ -1,6 +1,6 @@
 {
   "name": "Clockify",
-  "version": "2.3.0",
+  "version": "2.6.1",
   "description": "Clockify App 100% Free Time Tracker",
   "main": "./main.js",
   "productName": "Clockify",
@@ -42,6 +42,7 @@
     "moment-duration-format": "^2.2.2",
     "moment-timezone": "^0.5.21",
     "react": "^16.5.2",
+    "react-autocomplete": "^1.8.1",
     "react-datepicker": "^4.6.0",
     "react-dom": "^16.5.2",
     "react-http-request": "^2.0.0",

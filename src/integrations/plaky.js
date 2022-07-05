@@ -17,11 +17,11 @@ clockifyButton.render('.offcanvas-header > div > .offcanvas-title:not(.clockify)
         } else {
             link.style.color = "#f2f2f8de";
         }
-        document.getElementById('dropdown-item-19').parentNode.addEventListener('click', () => {
+        document.getElementsByClassName('icon-sun')[0].parentNode.addEventListener('click', () => {
             link.style.color = "#444444";
         });
             
-        document.getElementById('dropdown-item-20').parentNode.addEventListener('click', () => {
+        document.getElementsByClassName('icon-moon')[0].parentNode.addEventListener('click', () => {
             link.style.color = "#f2f2f8de";
         });
         elem.appendChild(link);

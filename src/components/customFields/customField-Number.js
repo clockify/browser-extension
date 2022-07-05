@@ -1,26 +1,23 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React from 'react';
 import useCustomField from './useCustomField';
-import debounce from 'lodash/debounce';
-import {isOffline} from "../check-connection";
 
 const CustomFieldNumber = ({cf, updateValue}) => {
     const [ {id, index, value, isDisabled, placeHolder, title, manualMode}, 
             setValue,
-            storeValue ] = useCustomField(cf);
-
-    const handleChangeDelayed = useRef(debounce(async val => {
-        // updateValue(id, val);
-        const isOff = await isOffline();
-        if (!(manualMode || isOff)) {
-            storeValue(val);
-        }
-    }, manualMode ? 0 : 1000));
+            storeValue ] = useCustomField(cf, updateValue);
 
     const handleChange = (e) => {
         const val = e.target.value;
-        setValue(val);
-        updateValue(id, val);
-        handleChangeDelayed.current(parseFloat(val));
+        if(val){
+            setValue(parseFloat(val));
+        }
+        // updateValue(id, val);
+        // handleChangeDelayed.current(parseFloat(val));
+    };
+
+    const handleBlur = (e) => {
+        e.preventDefault();
+        storeValue();
     };
 
     return (
@@ -28,12 +25,13 @@ const CustomFieldNumber = ({cf, updateValue}) => {
             <input 
                 type="number"
                 index={index}
-                value={String(value)}
+                value={value ? String(value) : ''}
                 className={`custom-field-number${isDisabled?'-disabled':''}`}
                 title={title}
                 placeholder={placeHolder} 
                 disabled={isDisabled}
                 onChange={handleChange} 
+                onBlur={handleBlur}
             />
         </div>
     )

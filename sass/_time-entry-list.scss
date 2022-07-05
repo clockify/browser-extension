@@ -1,3 +1,19 @@
+.week-header {
+    margin: 0 23px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    &-total {
+        &-time{
+            font-weight: bold;
+        }
+        &-label{
+            font-size: 12px;
+            color: #999;
+        }
+    }
+}
+
 .time-entries-list {
     background: $background;
     margin: 20px;

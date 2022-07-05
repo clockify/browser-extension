@@ -1,5 +1,3 @@
-
-
 class ClockifyIntegrationBase {
 
     constructor() {
@@ -95,7 +93,31 @@ class ClockifyIntegrationBase {
             sendResponse({ status: status, data: ent });
         }
     }
-    
+
+                                   
+    static async generateManualEntryData({projectName, taskName, tagNames}, sendResponse){
+        if (await isNavigatorOffline()) {
+            sendResponse('Connection is offline');
+            return;
+        }
+        let project, task, tags;
+        if(projectName) {
+            let { projectDB } = await ProjectService.getOrCreateProject(projectName);
+            project = projectDB;
+
+            if(project && taskName){
+                let { taskDB } = await ProjectService.getOrCreateProjectAndTask(project.name, {name : taskName});
+                task = taskDB;
+            }
+        }
+
+        if(tagNames){
+            const { tagovi } = await TagService.getOrCreateTags(tagNames.map(tagName=>tagName.trim()));
+            tags = tagovi;
+        }
+
+        sendResponse({project, task, tags})
+    }
 
     static async getProjectsByIds({ projectIds, taskIds }, sendResponse) {
         if (await isNavigatorOffline()) {
@@ -108,29 +130,23 @@ class ClockifyIntegrationBase {
             sendResponse({projectDB: null , taskDB: null, msg: (error.message ? error.message : error.status)}  )
             return;
         }
-
-        if (entry) {
-            const { projectDB, error, status } = await ProjectService.getProjectsByIds(projectIds, taskIds);
-            if (error) {
-                sendResponse(error.message ? error.message : error.status)
-                return;
-            }
-            if (projectDB) {
-                sendResponse({
-                    status,
-                    data: [projectDB]
-                })
-            }
-            else {
-                sendResponse({
-                    status,
-                    data: []
-                })
-            }
+        const { projectDB, error : projectError, status } = await ProjectService.getProjectsByIds(projectIds, taskIds);
+        if (projectError) {
+            sendResponse(projectError.message ? projectError.message : projectError.status)
+            return;
+        }
+        if (projectDB) {
+            sendResponse({
+                status,
+                data: [projectDB]
+            })
         }
         else {
-            sendResponse('There is no TimeEntry in progress')
-        }        
+            sendResponse({
+                status,
+                data: []
+            })
+        }
     }     
 
 
@@ -146,13 +162,9 @@ class ClockifyIntegrationBase {
             return;
         }
 
-        if (entry) {
-            const { projectDB, taskDB, msg, msgId } = await DefaultProject.getProjectTaskFromDB();
-            sendResponse({projectDB, taskDB, msg, msgId});
-        }
-        else {
-            sendResponse('There is no TimeEntry in progress')
-        }        
+        const { projectDB, taskDB, msg, msgId } = await DefaultProject.getProjectTaskFromDB();
+        sendResponse({projectDB, taskDB, msg, msgId});
+               
     } 
 
     static async getProjects({filter, page, pageSize, forceTasks, alreadyIds}, sendResponse) {
@@ -167,22 +179,17 @@ class ClockifyIntegrationBase {
             return;
         }
 
-        if (entry) {
-            let projectList = [];
-            const { data: projects, error } = await ProjectService.getProjectsWithFilter(filter, page, pageSize, forceTasks, alreadyIds);
-            if (error) {
-                sendResponse(error.message ? error.message : error.status) 
-            }
-            sendResponse({
-                status: 201,
-                data: {
-                    projectList: projectList.concat(projects)
-                }
-            })
+        let projectList = [];
+        const { data: projects, error : projectsError } = await ProjectService.getProjectsWithFilter(filter, page, pageSize, forceTasks, alreadyIds);
+        if (projectsError) {
+            sendResponse(projectsError.message ? projectsError.message : projectsError.status) 
         }
-        else {
-            sendResponse('There is no TimeEntry in progress')
-        }        
+        sendResponse({
+            status: 201,
+            data: {
+                projectList: projectList.concat(projects)
+            }
+        })
     }
 
     static async getProjectTasks({projectId, filter, page}, sendResponse) {
@@ -197,18 +204,13 @@ class ClockifyIntegrationBase {
             return;
         }
 
-        if (entry) {
-            const { data, error, status } = await ProjectService.getProjectTasksWithFilter(projectId, filter, page);
+            const { data , status } = await ProjectService.getProjectTasksWithFilter(projectId, filter, page);
             sendResponse ({
                 status,
                 data: {
                     taskList: data,
                 }
             })
-        }
-        else {
-            sendResponse('There is no TimeEntry in progress')
-        }        
     }        
     
     static async submitDescription({ id, description }, sendResponse) {
@@ -248,27 +250,22 @@ class ClockifyIntegrationBase {
             return;
         }
 
-        if (entry) {
-            if (!project.id) {
-                const {data: entry, error, status} = await TimeEntry.removeProject(id);
-                if (error) {
-                    sendResponse(error.message ? error.message : error.status);
-                    return;
-                }
-                sendResponse({ status, entry });
-            } 
-            else {
-                const {data: entry, error, status} = await TimeEntry.updateProject(id, project.id);
-                if (error) {
-                    sendResponse(error.message ? error.message : error.status);
-                    return;
-                }
-                sendResponse({ status, entry });
+        if (!project.id) {
+            const {data: entry, error, status} = await TimeEntry.removeProject(id);
+            if (error) {
+                sendResponse(error.message ? error.message : error.status);
+                return;
             }
-        }
+            sendResponse({ status, entry });
+        } 
         else {
-            sendResponse('There is no TimeEntry in progress')
-        }        
+            const {data: entry, error, status} = await TimeEntry.updateProject(id, project.id);
+            if (error) {
+                sendResponse(error.message ? error.message : error.status);
+                return;
+            }
+            sendResponse({ status, entry });
+        }      
     }    
 
     static async editTask({ id, project, task }, sendResponse) {
@@ -318,17 +315,13 @@ class ClockifyIntegrationBase {
             return;
         }
 
-        if (entry) {
-            const { data: pageTags, error, status } = await TagService.getAllTagsWithFilter(page, pageSize, filter);
-            if (error) {
-                sendResponse(error.message ? error.message : error.status);
-                return;
-            }
-            sendResponse({ status, pageTags });
+        const { data: pageTags, error: tagsError, status } = await TagService.getAllTagsWithFilter(page, pageSize, filter);
+        if (tagsError) {
+            sendResponse(tagsError.message ? tagsError.message : tagsError.status);
+            return;
         }
-        else {
-            sendResponse('There is no TimeEntry in progress')
-        }        
+        sendResponse({ status, pageTags });
+                
     }
 
     static async editTags({ id, tagIds }, sendResponse) {
@@ -503,19 +496,24 @@ class ClockifyIntegrationBase {
 
         //if (entry) {
             // const {data: timeEntry, error, status} = await TimeEntry.setDescription(id, description.trim())
-            const { data, error, status } = await CustomFieldService.getWSCustomField(name);
-            // if (status === 201) {
-            //     //tags.push(tag);
-            // }
-            // else {
-            //     message += `\nCouldn't create tag: ${tagName}`;
-            // }
+            const response = await CustomFieldService.getWSCustomField(name);
+            if(response){
+                const { data, error, status } = response;
+                // if (status === 201) {
+                //     //tags.push(tag);
+                // }
+                // else {
+                //     message += `\nCouldn't create tag: ${tagName}`;
+                // }
 
-            if (error) {
-                sendResponse(error.message, error.status)
-                return;
+                if (error) {
+                    sendResponse(error.message, error.status)
+                    return;
+                }
+                sendResponse({ data, status });
+            } else {
+                sendResponse('Connection is offline', 0);
             }
-            sendResponse({ data, status });
         //}
         //else {
         //    sendResponse('There is no TimeEntry in progress', 0)
@@ -653,6 +651,17 @@ class ClockifyIntegration extends ClockifyIntegrationBase {
             return new Promise(resolve => {
                 super.getProjects(request.options, resolve);
             });
+        }
+    }
+
+    static generateManualEntryData(request, sendResponse){
+        if(isChrome()){
+            super.generateManualEntryData(request.options, sendResponse);
+            return true;
+        } else {
+            return new Promise(resolve => {
+                super.generateManualEntryData(request.options, resolve);
+            })
         }
     }
 

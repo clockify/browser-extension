@@ -55,9 +55,30 @@ body.dark {
     color: $bg-03;
   }
   .time-entry, .time-entry-locked {
-    background-color: $bg-11;
+    background: $bg-11;
     border: 1px solid $bg-12;
   }
+  .time-entry--collapsed {
+    background-color: #36464f;
+  }
+  .time-entry-group-number {
+    background-color: #12191D;
+    color: #90a4ae;
+    &:hover{
+      background-color: #37474F;
+    }
+  }
+  .week-header {
+    color: #C6D2D9;
+    &-total {
+        &-time {
+          color: #C6D2D9;
+        }
+        &-label{
+            color: #90A4AE;
+        }
+    }
+}
   .description {
     color: $bg-02;
   }
@@ -547,5 +568,26 @@ body.dark {
   .error {
     color: red;
     font-size: 14px;
+  }
+  .loading-entries {
+    color: #C6D2D9;
+  }
+
+  .autocomplete-dropdown-item {
+    color: #90a4ae;
+    background-color: #1d272c;
+    &:hover {
+      background-color: #263238;
+    }
+    &__tag {
+      color: #90a4ae;
+      background: #12191D;
+      &:hover {
+        background: #37474F;
+      }
+    }
+  }
+  .react-autocomplete > div {
+    background: #1d272c !important;
   }
 }

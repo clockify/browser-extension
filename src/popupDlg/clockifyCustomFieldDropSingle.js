@@ -174,6 +174,9 @@ var ClockifyCustomFieldDropSingle = class extends ClockifyCustomField {
                 break;
                 
                 default:
+                    if (this.state.isOpen) {
+                        this.close();
+                    }
                     break;
             }
         }

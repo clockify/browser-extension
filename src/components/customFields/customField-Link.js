@@ -9,27 +9,27 @@ const CustomFieldLink = ({cf, updateValue}) => {
 
     const [ {id, index, value, isDisabled, placeHolder, placeHolderOrName, title, manualMode}, 
             setValue,
-            storeValue ] = useCustomField(cf);
+            storeValue ] = useCustomField(cf, updateValue);
 
-    const handleChangeDelayed = useRef(debounce(async val => {
-        updateValue(id, val);
-        const isOff = await isOffline();
-        if (!(manualMode || isOff)) {
-            storeValue(val);
-        }
-    }, manualMode ? 0 : 1000));
+    // const handleChangeDelayed = useRef(debounce(async val => {
+    //     updateValue(id, val);
+    //     const isOff = await isOffline();
+    //     if (!(manualMode || isOff)) {
+    //         storeValue(val);
+    //     }
+    // }, manualMode ? 0 : 1000));
 
-    const handleChangeStore = (e) => {
-        const val = e.target.value;
-        setValue(val);
-        handleChangeDelayed.current(val);
-    };
+    // const handleChangeStore = (e) => {
+    //     const val = e.target.value;
+    //     setValue(val);
+    //     handleChangeDelayed.current(val);
+    // };
 
-    const handleChange = (e) => {
-        const val = e.target.value;
-        setValue(val);
-        // handleChangeDelayed.current(val);
-    };
+    // const handleChange = (e) => {
+    //     const val = e.target.value;
+    //     setValue(val);
+    //     // handleChangeDelayed.current(val);
+    // };
 
     const [valueTemp, setValueTemp] = useState(null);
     const handleChangeTemp = (e) => {
@@ -48,7 +48,7 @@ const CustomFieldLink = ({cf, updateValue}) => {
 
     const storeStay = () => {
         setValue(valueStay);
-        handleChangeDelayed.current(valueStay);
+        // handleChangeDelayed.current(valueStay);
     }
 
 
@@ -73,7 +73,7 @@ const CustomFieldLink = ({cf, updateValue}) => {
         }
         setValue(valueTemp);
         setValueStay(valueTemp);
-        handleChangeDelayed.current(valueTemp);
+        // handleChangeDelayed.current(valueTemp);
         setModalOpen(false);
     }
 

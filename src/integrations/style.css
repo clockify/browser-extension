@@ -1245,7 +1245,7 @@ span.clockify-switch-label {
 }
 
 /* Create a custom radio button */
-.checkmark {
+.cf-container .checkmark {
   position: absolute !important;
   top: 0 !important;
   left: 0 !important;
@@ -1267,7 +1267,7 @@ span.clockify-switch-label {
 }
 
 /* Create the indicator (the dot/circle - hidden when not checked) */
-.checkmark:after {
+.cf-container .checkmark:after {
   content: "" !important;
   position: absolute !important;
   display: none !important;

@@ -17,7 +17,7 @@ var ClockifyCustomFieldDropMultiple = class extends ClockifyCustomField {
         //this.id = `clockifyCustomFieldDropMultiple${this.index}`;
         this.popupId = `${this.divId}Popup`;
 
-        this.liHeaderId = 'liClockifyCFDropHeader'
+        this.liHeaderId = 'liClockifyCFDropHeaderMultiple'
         
         this.elem = null;
         this.divDropDownPopup = null;
@@ -178,6 +178,9 @@ var ClockifyCustomFieldDropMultiple = class extends ClockifyCustomField {
                 break;
                 
                 default:
+                    if (this.state.isOpen) {
+                        this.close();
+                    }
                     break;
             }
         }
@@ -228,6 +231,8 @@ var ClockifyCustomFieldDropMultiple = class extends ClockifyCustomField {
     close(fromOtherDropDown) {
         if (fromOtherDropDown && !this.state.isOpen)
             return;
+        
+        super.onChanged(this.value);
         this.setState({ 
             isOpen: false
         });
@@ -296,7 +301,6 @@ var ClockifyCustomFieldDropMultiple = class extends ClockifyCustomField {
         });
         this.value = values;
         this.redrawHeader();
-        super.onChanged(values);
     }
 
     clean() {

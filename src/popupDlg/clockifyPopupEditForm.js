@@ -5,7 +5,7 @@ var _button;
 
 var ClockifyEditForm = class {
 
-    constructor(timeEntry) {
+    constructor(timeEntry, manualMode) {
         this.state = {
             timeEntry: Object.assign(timeEntry, { 
                 project: { id: timeEntry.projectId },
@@ -15,7 +15,8 @@ var ClockifyEditForm = class {
             projectRequired: false,
             taskRequired: false,
             tagsRequired: false,
-            tags: timeEntry.tags ? timeEntry.tags : []
+            tags: timeEntry.tags ? timeEntry.tags : [],
+            manualMode: manualMode,
         }
         this.editFormElem = null;
         this.buttonsElem = null;
@@ -76,9 +77,14 @@ var ClockifyEditForm = class {
         editForm.setAttribute("id", 'divClockifyEditForm');
         editForm.classList.add('clockify-edit-form');
 
-        // stopTimer
-        const stopTimer = this.createStopTimer();
-        editForm.appendChild(stopTimer);
+        // show either the stop timer button or data for the manual time entry
+        if(this.state.manualMode){
+            const manualEntryHeader = this.createManualModeHeader();
+            editForm.appendChild(manualEntryHeader);
+        }else {
+            const stopTimer = this.createStopTimer();
+            editForm.appendChild(stopTimer);
+        }
 
         // closeDlg
         const closeDlg = this.createCloseDlg()
@@ -98,7 +104,7 @@ var ClockifyEditForm = class {
         editForm.appendChild(divProjectDown);
 
         // tags
-        const divTagDown = _clockifyTagList.create(this.state.timeEntry, editForm);
+        const divTagDown = _clockifyTagList.create({...this.state.timeEntry, tags: this.state.tags}, editForm);
         editForm.appendChild(divTagDown);
 
         // billable
@@ -398,6 +404,19 @@ var ClockifyEditForm = class {
         return divStopTimer;
     }
 
+    // When opening popup dialog for manual time entry,
+    // in popup header, show the time period entered
+    // instead of the regular stop timer button
+    createManualModeHeader(){
+        const manualHeaderContainer = document.createElement('div');
+        const manualHeaderText = document.createElement('p');
+        manualHeaderText.innerText = `Time: ${this.state.timeEntry.originalInput}`;
+        manualHeaderContainer.appendChild(manualHeaderText);
+        manualHeaderContainer.classList.add('clockify-manual-entry-header-container');
+        manualHeaderText.classList.add('clockify-manual-entry-header-text');
+        return manualHeaderContainer;
+    }
+
 
     get descriptionContent() {
         let desc = this.state.timeEntry.description;
@@ -413,12 +432,25 @@ var ClockifyEditForm = class {
             `<div class='clockify-description-textarea${this.descRequired?" required":""}' style='padding:0'>` +
                 this.descriptionContent +
             "</div>";
+        divDesc.oninput = (e) => {
+            e.preventDefault();
+            // if(e.target.value[e.target.value.length-1] === '\n'){
+            //     e.target.blur();
+            //     e.target.value = e.target.value.slice(0, -1);
+            //     return;
+            // }
+        };
         return divDesc;
     }
 
     redrawDescription() {
         const el = $("#clockifyTextareaDescription", this.editFormElem).parentNode;
         el.innerHTML = this.descriptionContent;
+    }
+
+    manualEntryHeaderText(value){
+        const el = $(".clockify-manual-entry-header-text", this.editFormElem)
+        el.innerText = value;
     }
 
     shakeDescription() {
@@ -481,13 +513,18 @@ var ClockifyEditForm = class {
                 break;
 
             case 'spanClockifyBillable':
-                this.editBillable()
-                    .then(({entry}) => {
+                if ( this.state.manualMode ) {
+                    this.editBillableManualMode().then(() => {
                         $('#spanClockifyBillable', this.editFormElem).innerHTML = this.billableContent;
-                    });
+                    }) 
+                } else {
+                    this.editBillable();
+                    $('#spanClockifyBillable', this.editFormElem).innerHTML = this.billableContent;
+                }
                 break;
-
             case 'clockifyButtonDone':
+                if(this.canClose()) this.state.manualMode ? this.onManualModeSubmit() : clockifyDestroyPopupDlg();
+                break;
             case 'clockifyCloseDlg':
                     //if (this.canClose())
                     clockifyDestroyPopupDlg();
@@ -590,6 +627,17 @@ var ClockifyEditForm = class {
     }
 
 
+    editProjectManualMode(project){
+        const { timeEntry } = this.state;
+        timeEntry.project = project;
+        timeEntry.projectId = project.id;
+        timeEntry.billable = project.billable;
+        timeEntry.task.id = null;
+        timeEntry.taskId = null;
+        $('#spanClockifyBillable', this.editFormElem).innerHTML = this.billableContent;
+        this.checkRequiredFields();
+    }
+
     async editProject(project) {
         const { timeEntry } = this.state;
         const previousProjectId = timeEntry.project.id;
@@ -661,6 +709,15 @@ var ClockifyEditForm = class {
         })        
     }
 
+    editTaskManualMode(task, project){
+        const { timeEntry } = this.state;
+        timeEntry.project.id = project.id;
+        timeEntry.projectId = project.id;
+        timeEntry.task.id = task.id;
+        timeEntry.taskId = task.id;
+        this.checkRequiredFields();
+    }
+
     async editTask(task, project) {
         const { timeEntry } = this.state;
         return new Promise(resolve => {
@@ -712,6 +769,23 @@ var ClockifyEditForm = class {
             : [];
     }
 
+    async editTagsManualMode(tag){
+        const { timeEntry } = this.state;
+        let tagIds = this.tagIds;
+        let tagList = this.state.tags;
+        if (tagIds.includes(tag.id)) {
+            tagIds.splice(tagIds.indexOf(tag.id), 1);
+            tagList = tagList.filter(t => t.id !== tag.id);
+        } else {
+            tagIds.push(tag.id);
+            tagList.push(tag);
+        }
+        this.setState({
+            timeEntry: {...timeEntry, tags: tagList},
+            tags: tagList
+        });
+        this.checkRequiredFields();
+    }
 
     async editTags(tag) {
         const { timeEntry } = this.state;
@@ -727,13 +801,22 @@ var ClockifyEditForm = class {
             tagIds.push(tag.id);
             tagList.push(tag);
         }
+        this.setState({
+            tags: tagList
+        });
+        this.checkRequiredFields();
+    }  
+
+    async editAllTags() {
+        const { timeEntry, tags } = this.state;
+
         return new Promise(resolve => {
             try {
                 aBrowser.runtime.sendMessage({
                     eventName: 'editTags',
                     options: {
                         id: timeEntry.id,
-                        tagIds
+                        tagIds: this.tagIds
                     }
                 }, (response) => {
                     if (!response || typeof response === 'string') {
@@ -752,17 +835,17 @@ var ClockifyEditForm = class {
                         timeEntryInProgress: Object.assign(timeEntry, { originPopupDlg: true })
                     });
                     
-                   this.setState({ // timeEntry,
-                        tags: tagList
-                    });
-                    this.checkRequiredFields();
-                    resolve({entry, tagList})
+                //    this.setState({
+                //         tags: tagList
+                //     });
+                    // this.checkRequiredFields();
+                    resolve({entry, tagList: tags})
                 });
             } catch (e) {
                 console.error(e);
             }        
-        })        
-    }  
+        })    
+    }
     
     async editBillable() {
         const { timeEntry } = this.state;
@@ -790,7 +873,7 @@ var ClockifyEditForm = class {
                     // this.setState({ 
                     //     timeEntry
                     // });
-                    timeEntry.billable = !timeEntry.billable;
+                    // timeEntry.billable = !timeEntry.billable;
 
                     aBrowser.storage.local.set({
                         timeEntryInProgress: Object.assign(timeEntry, { originPopupDlg: true })
@@ -799,19 +882,59 @@ var ClockifyEditForm = class {
                     //this.checkRequiredFields();
                     resolve({entry})
                 });
+                timeEntry.billable = !timeEntry.billable;
             } catch (e) {
                 console.error(e);
             }        
         })        
     }  
+
+    async editBillableManualMode(){
+        this.setState({timeEntry: {...this.state.timeEntry, billable: !this.state.timeEntry.billable}});
+    }
     
+    async onManualModeSubmit() {
+        const {timeEntry} = this.state;
+        this.manualEntryHeaderText(clockifyLocales.SUBMITTING);
+        return aBrowser.runtime.sendMessage({
+            eventName: 'submitTime',
+            options: {
+                totalMins: timeEntry.totalMins,
+                timeEntryOptions: {
+                    description: timeEntry.description,
+                    projectId: timeEntry.project.id,
+                    taskId: timeEntry.task?.id,
+                    tagNames: this.state.tags.map(tag => tag.name),
+                    billable: timeEntry.billable,
+                }
+            }
+        }).then((response) => {
+            if (!response) {
+                inputMessage(input, "Error: " + (response??''), "error");
+            }
+            else if (typeof response === "string") {
+                alert(response)
+            } else if (response.status !== 201) {
+                if (response.status === 400) {
+                    // project/task/etc. can be configured to be mandatory; this can result in a code 400 during
+                    // time entry creation
+                    if (response.endInProgressStatus) {
+                        alert(`${clockifyLocales.YOU_ALREADY_HAVE_ENTRY_WITHOUT}.\n${clockifyLocales.PLEASE_EDIT_YOUR_TIME_ENTRY}.`);
+                    }
+                }
+            } else {
+                alert("Time submitted!");
+                clockifyDestroyPopupDlg();
+            }
+        })
+    }
+
     async checkRequiredFields() {
         let descRequired = false;
         let projectRequired = false;
         let taskRequired = false;
         let tagsRequired = false;
         const isOnline = !(await isOffline());
-
         const { wsSettings } = this;
         if (wsSettings) {
             const { timeEntry } = this.state;
@@ -827,9 +950,8 @@ var ClockifyEditForm = class {
             ) {
                 projectRequired = true;
             }
-
             if (wsSettings.forceTasks &&
-                !timeEntry.task &&
+                !timeEntry.task?.id &&
                 !timeEntry.taskId &&
                 isOnline
             ) {

@@ -14,8 +14,9 @@ function sortArrayByStringProperty(array, prop) {
 
 var ClockifyTagList = class {
 
-    constructor(editForm, timeEntryInProgress) {
+    constructor(editForm, timeEntry, manualMode) {
         this.editForm = editForm;
+        this.manualMode = manualMode;
         this.elem = null;
         this.divDropDownPopup = null;
         this.state = {
@@ -177,6 +178,9 @@ var ClockifyTagList = class {
             break;
             
             default:
+                if (this.state.isOpen) {
+                    this.close();
+                }
                 break;
         }
     }
@@ -242,6 +246,7 @@ var ClockifyTagList = class {
     close(fromOtherDropDown) {
         if (fromOtherDropDown && !this.state.isOpen)
             return;
+        !this.manualMode && this.editForm.editAllTags();
         this.setState({ 
             isOpen: false,
             tagList: [],
@@ -399,12 +404,18 @@ var ClockifyTagList = class {
 
 
     selectTag(tag) {
-        this.editForm.editTags(tag)
-            .then(({entry, tagList}) => {
-                // this.setState({tagList});
-                this.redrawHeader();
-            }
-        );
+        if(this.manualMode){
+            this.editForm.editTagsManualMode(tag).then(()=> {
+                this.editForm.checkRequiredFields().then(() => this.redrawHeader());
+            })
+        }else{
+            this.editForm.editTags(tag)
+                .then(() => {
+                    // this.setState({tagList});
+                    this.editForm.checkRequiredFields().then(() => this.redrawHeader());
+                }
+            );
+        }
     }
 
 }

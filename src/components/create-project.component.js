@@ -9,10 +9,13 @@ import EditForm from "./edit-form.component";
 import EditFormManual from "./edit-form-manual.component";
 import {TimeEntryService} from "../services/timeEntry-service";
 import locales from "../helpers/locales";
+import { UserService } from "../services/user-service";
+import {LocalStorageService} from "../services/localStorage-service";
 
 const projectService = new ProjectService();
 const timeEntryService = new TimeEntryService();
-
+const userService = new UserService();
+const localStorageService = new LocalStorageService();
 class CreateProjectComponent extends React.Component {
     constructor(props) {
         super(props);
@@ -88,7 +91,7 @@ class CreateProjectComponent extends React.Component {
         }
 
         projectService.createProject(project)
-            .then(response => {
+            .then(async response => {
                 const timeEntry = Object.assign(this.props.timeEntry, {
                     projectId: response.data.id,
                     billable,
@@ -96,7 +99,23 @@ class CreateProjectComponent extends React.Component {
                     taskId: null,
                     task: null
                 });
-                this.goBackToEdit(timeEntry);
+                const userId = await localStorageService.get('userId');
+                const activeWorkspaceId = await localStorageService.get('activeWorkspaceId');
+                userService.getUserRoles(activeWorkspaceId, userId)
+                    .then(response => {
+                        if (response && response.data && response.data.userRoles) {
+                            const { userRoles } = response.data;
+                            localStorage.setItem('userRoles', userRoles);
+                        }
+                        else {
+                            console.log('getUserRoles problem')
+                        }
+                        this.goBackToEdit(timeEntry);
+                    })
+                    .catch((error) => {
+                        console.log("getUserRoles() failure");
+                        this.goBackToEdit(timeEntry);
+                    });
             })
             .catch(error => {
                 this.toaster.toast('error', locales.replaceLabels(error.response.data.message), 2);

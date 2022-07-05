@@ -134,7 +134,6 @@ export class ProjectService extends HttpWrapperService {
         const ws = str ? JSON.parse(str) : { projectFavorites: true }
 
         if (ws.projectFavorites) {
-            console.log('IMAMO FAVORITES');
             return this.dopuniFavs(alreadyIds, projectUrlFavs, [], 1, pageSize, forceTasks) // always go page:1
                 .then(data => {
                     if (data.length >= pageSize) {

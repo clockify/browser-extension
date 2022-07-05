@@ -181,6 +181,7 @@ var locales = {
 
     get BILLABLE_LABEL() { return this.getMessage('GLOBAL__BILLABLE_LABEL') },
     get TODAY_LABEL() { return this.getMessage('GLOBAL__TODAY_LABEL') },
+    get YESTERDAY_LABEL() { return this.getMessage('GLOBAL__YESTERDAY_LABEL') },
     get OK_BTN() { return this.getMessage('GLOBAL__CONFIRM_OK_BTN') },
 
     get MANUAL() { return this.getMessage('GLOBAL__MANUAL_LABEL') },
@@ -215,6 +216,7 @@ var locales = {
     get NO_PROJECT() { return this.replaceLabels(this.getMessage('GLOBAL__NO_PROJECT_LABEL')) },
     get MINUTES() { return this.getMessage('GLOBAL__MINUTES_LABEL') },
     get FAVORITES() { return this.getMessage('GLOBAL__FAVORITES_LABEL') },
+    get SAVE() {return this.getMessage('GLOBAL__SAVE_LABEL')},
     
 
     NO_MATCHING(entityInPlural) {
@@ -237,6 +239,7 @@ var locales = {
 
     get ARE_YOU_SURE_DELETE() { return this.getMessage('REPORTS__DETAILED_REPORT__DELETE_MODAL_BODY') },
     get DELETE() { return this.getMessage('GLOBAL__DELETE_BTN') },
+    get DUPLICATE() { return this.getMessage('GLOBAL__DUPLICATE_BTN') },
     get CANCEL() { return this.getMessage('GLOBAL__CANCEL_BTN') },
     get HOURS() { return this.getMessage('GLOBAL__HOURS_LABEL') },
     get DURATION_FORMAT() { return this.getMessage('WORKSPACE__GENERAL_SETTINGS__DURATION_FORMAT__TITLE') },
@@ -420,7 +423,12 @@ var locales = {
     get WORKSPACE__TWO_FACTOR__MODAL__ENABLE() { return this.getMessage('WORKSPACE__TWO_FACTOR__MODAL__ENABLE') },
     get SCREENSHOT_RECORDING() { return this.getMessage('EXTENSION__SCREENSHOT_RECORDING') },
     get DOWNLOAD_SCREENSHOTS_RECORDING_APP() { return this.getMessage('EXTENSION__DOWNLOAD_SREENSHOTS_RECORDING_APP') },
-    get TRACKER__ENTRY_MESSAGES__LOADING() { return this.getMessage('TRACKER__ENTRY_MESSAGES__LOADING') }
+    get TRACKER__ENTRY_MESSAGES__LOADING() { return this.getMessage('TRACKER__ENTRY_MESSAGES__LOADING') },
+    get THIS_WEEK() { return this.getMessage('TRACKER__APPROVAL__THIS_WEEK') },
+    get LAST_WEEK() { return this.getMessage('TRACKER__APPROVAL__LAST_WEEK') },
+    get WEEK_TOTAL() { return this.getMessage('TRACKER__TIME_TRACKER__WEEK_TOTAL') },
+    DESCRIPTION_LIMIT_ERROR_MSG(limit) { return this.getMessage('GLOBAL__DESCRIPTION_LIMIT_ERROR_MSG', [limit]) },
+    DELETE_MULTIPLE_ENTRIES(entries) {return this.getMessage('TRACKER__TIME_TRACKER__ENTRY__DELETE_ENTRIES_MODAL_BODY', [entries])}
 
 }
 

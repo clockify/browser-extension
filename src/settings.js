@@ -81,25 +81,30 @@ function initLoad() {
         localesScript.src = 'contentScripts/clockifyLocales.js';
         document.body.appendChild(localesScript);
         localesScript.onload = () => {
-            integrationsTab.innerText = clockifyLocales.INTEGRATIONS;
-    
-            document.getElementById('h11').innerText = `Clockify - ${clockifyLocales.INTEGRATIONS}`;
-            document.getElementById('h21').innerText = clockifyLocales.ENABLE_INTEGRATIONS;
-            document.getElementById('p11').innerText = clockifyLocales.ENABLE_TOOLS + "\n" + clockifyLocales.ENABLE_ALL_INTEGRATIONS;
-    
-            document.getElementById('enable-all').innerText = clockifyLocales.ENABLE_ALL;
-            document.getElementById('disable-all').innerText = clockifyLocales.DISABLE_ALL;
-    
-            document.getElementById('custom-domains').innerText = clockifyLocales.CUSTOM_DOMAINS;
-    
-            document.getElementById('tool-hosted').innerText = 
-                        clockifyLocales.HOSTED_ON_CUSTOM_DOMAIN + 
-                "\n" +  clockifyLocales.ENTER_DOMAIN_NAME +
-                "\n" +  clockifyLocales.PORTS_NOT_SUPPORTED;
-    
+            aBrowser.storage.local.get('token', (result) => {
+                if(result.token){
+                    integrationsTab.innerText = clockifyLocales.INTEGRATIONS;
             
-            document.getElementById('add-custom-domain').innerText = clockifyLocales.ADD;
-            document.getElementById('custom-domain-url').placeholder = clockifyLocales.CUSTOM_DOMAINS + " url";
+                    document.getElementById('h11').innerText = `Clockify - ${clockifyLocales.INTEGRATIONS}`;
+                    document.getElementById('h21').innerText = clockifyLocales.ENABLE_INTEGRATIONS;
+                    document.getElementById('p11').innerText = clockifyLocales.ENABLE_TOOLS + "\n" + clockifyLocales.ENABLE_ALL_INTEGRATIONS;
+            
+                    document.getElementById('enable-all').innerText = clockifyLocales.ENABLE_ALL;
+                    document.getElementById('disable-all').innerText = clockifyLocales.DISABLE_ALL;
+            
+                    document.getElementById('custom-domains').innerText = clockifyLocales.CUSTOM_DOMAINS;
+            
+                    document.getElementById('tool-hosted').innerText = 
+                                clockifyLocales.HOSTED_ON_CUSTOM_DOMAIN + 
+                        "\n" +  clockifyLocales.ENTER_DOMAIN_NAME +
+                        "\n" +  clockifyLocales.PORTS_NOT_SUPPORTED;
+            
+                    
+                    document.getElementById('add-custom-domain').innerText = clockifyLocales.ADD;
+                    document.getElementById('custom-domain-url').placeholder = clockifyLocales.CUSTOM_DOMAINS + " url";
+
+                }
+            });
 
         };
 

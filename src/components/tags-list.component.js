@@ -3,6 +3,7 @@ import {TagService} from "../services/tag-service";
 import {SortHepler} from "../helpers/sort-helper";
 import {debounce} from "lodash";
 import locales from "../helpers/locales";
+import onClickOutside from "react-onclickoutside";
 
 const tagService = new TagService();
 const sortHelpers = new SortHepler();
@@ -34,6 +35,10 @@ class TagsList extends React.Component {
 
     async setAsyncStateItems() {
         const isOffline = await localStorage.getItem('offline');
+        let userRoles =  await localStorage.getItem('userRoles') || [];
+        if(userRoles.length){
+            userRoles = userRoles.map(({role}) => role);
+        }
         let tagsList = await localStorage.getItem('preTagsList') || [];
         if(tagsList?.length){
             tagsList = sortHelpers.sortArrayByStringProperty(tagsList, 'name');
@@ -41,8 +46,9 @@ class TagsList extends React.Component {
         this.setState({
             isOffline: JSON.parse(isOffline),
             tagsList,
-            isEnabledCreateTag: !this.props.workspaceSettings.onlyAdminsCreateTag ||
-            (this.props.workspaceSettings.onlyAdminsCreateTag && this.props.isUserOwnerOrAdmin) ? true : false
+            // isEnabledCreateTag: !this.props.workspaceSettings.onlyAdminsCreateTag ||
+            // (this.props.workspaceSettings.onlyAdminsCreateTag && this.props.isUserOwnerOrAdmin) ? true : false
+            isEnabledCreateTag: this.props.workspaceSettings.entityCreationPermissions?.whoCanCreateTags === 'EVERYONE' || userRoles.includes('WORKSPACE_ADMIN')
         });
     }
 
@@ -50,6 +56,12 @@ class TagsList extends React.Component {
         // this.isEnabledCreateTag();
         this.setAsyncStateItems();
     }
+
+    handleClickOutside() {
+        if(this.state.isOpen){
+            this.toggleTagsList();
+        }
+    };
 
     isOpened() {
         return this.state.isOpen;
@@ -94,7 +106,9 @@ class TagsList extends React.Component {
     }
 
     async toggleTagsList(e) {
-        e.stopPropagation();
+        if(e){
+            e.stopPropagation();
+        }
         const offline = await localStorage.getItem('offline');
         if(!JSON.parse(offline)) {
             if (!this.state.isOpen && this.state.tagsList.length === 0) {
@@ -104,8 +118,9 @@ class TagsList extends React.Component {
                 isOpen: !this.state.isOpen
             }, () => {
                 if (this.state.isOpen) {
-                    this.props.tagListOpened(true);
                     document.getElementById('tag-filter').focus();
+                } else {
+                    this.props.onClose?.();
                 }
             });
         }
@@ -319,4 +334,4 @@ class TagsList extends React.Component {
     }
 }
 
-export default TagsList;
+export default onClickOutside(TagsList);

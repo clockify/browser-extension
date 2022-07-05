@@ -6,6 +6,7 @@ var ClockifyProjectItem = class {
 
     constructor(project, projectFavorites) {
         this.project = project;
+        this.loadingTasks = false;
         this.state = {
             name: project.name,
             projectId: project.id,
@@ -42,7 +43,8 @@ var ClockifyProjectItem = class {
                     const li = _clockifyProjectList.getDropDownPopupElem('#li_'+ this.project.id);
                     this.state.taskList.setItems(li.nextSibling, this.state.tasks);    
                 }
-                else {
+                else if (!this.loadingTasks) {
+                    this.loadingTasks = true;
                     this.loadProjectTasks();
                 }
             }
@@ -84,6 +86,7 @@ var ClockifyProjectItem = class {
                 page: this.page
             }
         }, (response) => {
+            this.loadingTasks = false;
             if (!response) {
                 alert(clockifyLocales.YOU_MUST_BE_LOGGED_IN_TO_START);
                 return;
@@ -98,6 +101,11 @@ var ClockifyProjectItem = class {
             } else {
                 if (_clockifyProjectList) {
                     const li = _clockifyProjectList.getDropDownPopupElem('#li_'+ this.project.id);
+                    const idList = [];
+                    li.nextSibling.querySelectorAll('ul > li').forEach(el => idList.push(el.id));
+                    if(idList.length){
+                        return;
+                    }
                     this.state.taskList.setItems(li.nextSibling, response.data.taskList);
                     this.page++;
                 }
@@ -162,12 +170,12 @@ var ClockifyProjectItem = class {
     }
 
  
-    render() {
+    render(isOpen = false) {
         const li1 = 
             `<li id='li_${this.project.id}' class='clockify-project-item'>` + 
                 this.InnerHTML +
             "</li>";
-        const li2 = this.state.taskList ? this.state.taskList.render() : ""
+        const li2 = this.state.taskList ? this.state.taskList.render(isOpen) : "";
         return li1 + li2
     }
 

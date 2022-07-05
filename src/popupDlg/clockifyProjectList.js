@@ -12,7 +12,7 @@ _clockifyNoProjectObj = () => ({
 
 var ClockifyProjectList = class {
 
-    constructor(editForm, timeEntry) {
+    constructor(editForm, timeEntry, manualMode) {
         this.editForm = editForm;
         this.elem = null;
         this.divDropDownPopup = null;
@@ -35,7 +35,9 @@ var ClockifyProjectList = class {
             isSpecialFilter: editForm.wsSettings.projectPickerSpecialFilter,
             isEnabledCreateProject: false,
             specFilterNoTasksOrProject: "",
-            cleanOnClose: false
+            cleanOnClose: false,
+            manualMode: manualMode,
+            timeEntry: timeEntry,
         }
         this.filterProjects = this.filterProjects.bind(this);
     }
@@ -159,6 +161,9 @@ var ClockifyProjectList = class {
             break;
             
             default:
+                if (this.state.isOpen) {
+                    this.close();
+                }
                 break;
         }
     }
@@ -290,7 +295,6 @@ var ClockifyProjectList = class {
                 this.getProjects();
             }
     
-            // this.props.projectListOpened();
         });
     }
 
@@ -468,11 +472,10 @@ var ClockifyProjectList = class {
     }
 
 
-    mapSelectedProject() {
-        const { SelectedProjectId, SelectedTaskId, SelectedTask: selectedTask } = this.editForm;
+    mapSelectedProject(projectId) {
+        const { SelectedProjectId = projectId, SelectedTaskId, SelectedTask: selectedTask } = this.editForm;
 
         const selectedProject = this.state.projectList.find(p => p.id === SelectedProjectId);
-
         if (SelectedProjectId && selectedProject) {
             this.setState({
                 selectedProject
@@ -637,6 +640,12 @@ var ClockifyProjectList = class {
 	}
 
     renderContent() {
+
+        let selectedItem = Object.entries(this.state.Items).find(([key, item]) => item.state.isOpen);
+        if (selectedItem) {
+            selectedItem = selectedItem[1];
+        }
+
         const { clientProjects } = this.state;
         const sortedClients = Object.keys(clientProjects).sort();
         const projectFavorites = this.editForm.isProjectFavorites;
@@ -647,9 +656,9 @@ var ClockifyProjectList = class {
             const arr = [];
             clientProjects['NO-PROJECT']              
                 .map(project => {
-                    const Item = new ClockifyProjectItem(project, projectFavorites);
+                    const Item = selectedItem && selectedItem.project.id === project.id ? selectedItem : new ClockifyProjectItem(project, projectFavorites);
                     this.state.Items[project.id] = Item;
-                    arr.push(Item.render());
+                    arr.push(Item.render(!!selectedItem));
                 })
             str += arr.join('');
             str += '</ul></li>';
@@ -661,9 +670,9 @@ var ClockifyProjectList = class {
             const arr = [];
             clientProjects['FAVORITES']              
                 .map(project => {
-                    const Item = new ClockifyProjectItem(project, projectFavorites);
+                    const Item = selectedItem && selectedItem.project.id === project.id ? selectedItem : new ClockifyProjectItem(project, projectFavorites);
                     this.state.Items[project.id] = Item;
-                    arr.push(Item.render());
+                    arr.push(Item.render(!!selectedItem));
                 })
             str += arr.join('');
             str += '</ul></li>';
@@ -675,9 +684,9 @@ var ClockifyProjectList = class {
             const arr = [];
             clientProjects['WITHOUT-CLIENT']              
                 .map(project => {
-                    const Item = new ClockifyProjectItem(project, projectFavorites);
+                    const Item = selectedItem && selectedItem.project.id === project.id ? selectedItem : new ClockifyProjectItem(project, projectFavorites);
                     this.state.Items[project.id] = Item;
-                    arr.push(Item.render());
+                    arr.push(Item.render(!!selectedItem));
                 })
             str += arr.join('');
             str += '</ul></li>';
@@ -689,9 +698,9 @@ var ClockifyProjectList = class {
             const arr = [];
             clientProjects[client]              
                 .map(project => {
-                    const Item = new ClockifyProjectItem(project, projectFavorites);
+                    const Item = selectedItem && selectedItem.project.id === project.id ? selectedItem : new ClockifyProjectItem(project, projectFavorites);
                     this.state.Items[project.id] = Item;
-                    arr.push(Item.render());
+                    arr.push(Item.render(!!selectedItem));
                 })
             str += arr.join('');
             str += '</ul></li>';
@@ -790,7 +799,24 @@ var ClockifyProjectList = class {
     }
 
     selectTask(task, project) {
-        this.editForm.editTask(task, project)
+        if(this.state.manualMode){
+            this.editForm.editProjectManualMode(project);
+            this.editForm.editTaskManualMode(task, project);
+            this.mapSelectedProject(project.id);
+                //this.redrawHeader();
+            this.setState({
+                selectedProject: project,
+                selectedTaskName: task.name, //task.props.name,
+                isOpen: false
+            });
+            this.setState({
+                title: this.createTitle()
+            });
+            this.redrawHeader();
+            this.close();
+            this.setState({cleanOnClose: true}, false);  
+        }else{
+            this.editForm.editTask(task, project)
             .then(timeEntry => {
                 //this.redrawHeader();
                 this.setState({
@@ -803,48 +829,83 @@ var ClockifyProjectList = class {
                 });
                 this.mapSelectedProject();
                 this.redrawHeader();
-                this.close();
-                this.setState({cleanOnClose: true}, false);         
+                // this.close();
+                // this.setState({cleanOnClose: true}, false);         
             }
         );
         
+        this.close();
+        this.setState({cleanOnClose: true}, false);   
+                this.setState({cleanOnClose: true}, false);         
+        this.setState({cleanOnClose: true}, false);   
+        
+        }
     }
 
     selectProject(project) {
-        this.editForm.editProject({
-                id: project.id === 'no-project' ? null : project.id, 
-                name: project.name
-            })
-            .then(timeEntry => {
-                //this.mapSelectedProject();
-                //this.redrawHeader();
-                let projectList; // = this.state.projectList;
-                if (project.id && !this.wsSettings.forceProjects) {
-                    if (this.state.projectList.find(project => project.id === "no-project")) {
-                        projectList = [_clockifyNoProjectObj(), ...this.state.projectList]
-                    } else {
-                        projectList = this.state.projectList
-                    }
+        if(this.state.manualMode){
+            this.editForm.editProjectManualMode(project);
+            let projectList; // = this.state.projectList;
+            if (project.id && !this.wsSettings.forceProjects) {
+                if (this.state.projectList.find(project => project.id === "no-project")) {
+                    projectList = [_clockifyNoProjectObj(), ...this.state.projectList]
                 } else {
-                    projectList = this.state.projectList.filter(project => project.id !== "no-project")
+                    projectList = this.state.projectList
                 }
-                this.setState({
-                    selectedProject: project,
-                    selectedTaskName: '',
-                    isOpen: false,
-                    projectList
-                });
-                this.setState({
-                    title: this.createTitle()
-                });
-                this.mapSelectedProject();
-                this.redrawHeader();
-                this.close();        
-
-                //if (project.id === 'no-project')
-                    this.setState({cleanOnClose: true}, false);
+            } else {
+                projectList = this.state.projectList.filter(project => project.id !== "no-project")
             }
-        );
+            this.setState({
+                selectedProject: project,
+                selectedTaskName: '',
+                isOpen: false,
+                projectList
+            });
+            this.setState({
+                title: this.createTitle()
+            });
+            this.mapSelectedProject(project.id);
+            this.redrawHeader();
+                    this.close();
+            this.setState({cleanOnClose: true}, false);
+        } else {
+                this.editForm.editProject({
+                    id: project.id === 'no-project' ? null : project.id, 
+                    name: project.name
+                })
+                .then(timeEntry => {
+                                //this.mapSelectedProject();
+                    //this.redrawHeader();
+                    let projectList; // = this.state.projectList;
+                    if (project.id && !this.wsSettings.forceProjects) {
+                        if (this.state.projectList.find(project => project.id === "no-project")) {
+                            projectList = [_clockifyNoProjectObj(), ...this.state.projectList]
+                        } else {
+                            projectList = this.state.projectList
+                        }
+                    } else {
+                        projectList = this.state.projectList.filter(project => project.id !== "no-project")
+                    }
+                                this.setState({
+                        selectedProject: project,
+                        selectedTaskName: '',
+                        isOpen: false,
+                        projectList
+                    });
+                    this.setState({
+                        title: this.createTitle()
+                    });
+                    this.mapSelectedProject();
+                    this.redrawHeader();
+                    // this.close();        
+
+                    //if (project.id === 'no-project')
+                    // this.setState({cleanOnClose: true}, false);
+                }
+            );
+            this.close();        
+            this.setState({cleanOnClose: true}, false);
+        }
     }
 
 

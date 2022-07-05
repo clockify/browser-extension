@@ -3,6 +3,7 @@ import moment, {duration} from 'moment';
 import {parseTimeEntryDuration} from './duration-input-converter';
 import EditForm from './edit-form.component';
 import * as ReactDOM from 'react-dom';
+import Autocomplete from './autocomplete.component';
 import EditFormManual from './edit-form-manual.component';
 import {isOffline} from "./check-connection";
 import {getIconStatus} from "../enums/browser-icon-status-enum";
@@ -13,9 +14,9 @@ import {getKeyCodes} from "../enums/key-codes.enum";
 import {getBrowser} from "../helpers/browser-helper";
 import {LocalStorageService} from "../services/localStorage-service";
 import { ProjectService } from '../services/project-service';
-import {DefaultProject} from '../helpers/storageUserWorkspace';
 import {offlineStorage} from '../helpers/offlineStorage';
 import locales from "../helpers/locales";
+import debounce from 'lodash.debounce';
 
 const timeEntryHelper = new TimeEntryHelper();
 const timeEntryService = new TimeEntryService();
@@ -32,11 +33,17 @@ class StartTimer extends React.Component {
             time: moment().hour(0).minute(0).second(0).format('HH:mm:ss'),
             interval: "",
             mode: this.props.mode,
-            stopDisabled: false
+            stopDisabled: false,
+            description: '',
+            autocompleteItems: [],
+            autocompleteItemsRecent: []
         };
         this.application = new Application();
         this.startNewEntry = this.startNewEntry.bind(this);
         this.setAsyncStateItems = this.setAsyncStateItems.bind(this);
+        this.setDescription = this.setDescription.bind(this);
+        this.handleInputChange = debounce(this.handleInputChange.bind(this), 200);
+        this.getRecentEntries = this.getRecentEntries.bind(this);
     }
 
     async setAsyncStateItems() {
@@ -54,12 +61,60 @@ class StartTimer extends React.Component {
 
     componentDidMount() {
         this.setAsyncStateItems();
+        this.getRecentEntries();
     }  
+
+    componentDidUpdate(prevProps, prevState) {
+        if(this.props.activeWorkspaceId !== prevProps.activeWorkspaceId) {
+            this.getRecentEntries();
+        }
+    }
 
     componentWillUnmount() {
         if (interval) {
             clearInterval(interval);
         }
+    }
+
+    getRecentEntries() {
+        timeEntryService.getRecentTimeEntries().then(res => {
+            this.setState({
+                autocompleteItemsRecent: res.data.map(entry => ({
+                    project: {
+                        clientName: entry.clientName,
+                        color: entry.projectColor,
+                        name: entry.projectName
+                    },
+                    task: {
+                        name: entry.taskName,
+                        id: entry.taskId
+                    },
+                    billable: entry.projectBillable,
+                    ...entry
+                }))
+            });
+        }).catch(err => console.log(err));
+    }
+
+    handleInputChange(inputValue) {
+        if(!inputValue) return;
+        timeEntryService.searchEntries(inputValue).then(res => {
+            this.setState({
+                autocompleteItems: res.data.map(entry => ({
+                    project: {
+                        clientName: entry.clientName,
+                        color: entry.projectColor,
+                        name: entry.projectName
+                    },
+                    task: {
+                        name: entry.taskName,
+                        id: entry.taskId
+                    },
+                    billable: entry.projectBillable,
+                    ...entry
+                }))
+            });
+        }).catch(err => console.log(err));
     }
 
     async getTimeEntryInProgress() {
@@ -171,14 +226,18 @@ class StartTimer extends React.Component {
         return {projectDB: null, taskDB: null};
     }
 
-    setDescription(event) {
-        let timeEntry = {
-            description: event.target.value
-        };
+    setDescription(description) {
+        if (description.length > 3000) {
+            description = description.slice(0, 3000);
+            this.props.toaster.toast('error', locales.DESCRIPTION_LIMIT_ERROR_MSG(3000), 2);
+        }
 
-        this.setState({
-            timeEntry: timeEntry
-        })
+        this.setState(state => ({
+            timeEntry: {
+                ...state.timeEntry,
+                description
+            }
+        }));
     }
    
     setDuration(event) {
@@ -227,7 +286,6 @@ class StartTimer extends React.Component {
             });
         } 
         else {
-
             let { projectId, billable, task, description, customFieldValues, tags } = this.state.timeEntry;
             let taskId = task ? task.id : null;
             const tagIds = tags ? tags.map(tag => tag.id) : [];
@@ -467,8 +525,8 @@ class StartTimer extends React.Component {
     }
 
     render() {
-        // console.log('this.state.timeEntry', this.state.timeEntry);
         const { id, description, task, project } = this.state.timeEntry;
+        
         return (
            <div id="start-timer">
                <div className="start-timer">
@@ -491,16 +549,41 @@ class StartTimer extends React.Component {
                                 </span>
                             </div>
                         </div>
-                        <input className={!id ? "start-timer_description-input" : "disabled"}
-                               placeholder={locales.WHAT_ARE_YOU_WORKING_ON}
-                               onChange={this.setDescription.bind(this)}
-                               id="description"
-                               onKeyDown={this.onKey.bind(this)}
+                        <Autocomplete
+                            items={this.state.timeEntry.description?.length >= 2 ? this.state.autocompleteItems : this.state.autocompleteItemsRecent}
+                            value={this.state.timeEntry.description}
+                            onChange={e => {
+                                this.setDescription(e.target.value);
+                                if(e.target.value.length >= 2) {
+                                    this.handleInputChange(e.target.value);
+                                } else {
+                                    this.handleInputChange(null);
+                                }
+                            }}
+                            onSelect={(item) => {
+                                const selected = this.props.timeEntries.find(entry => entry.id === item.id);
+                                if(selected){
+                                    this.setState({
+                                        timeEntry: selected
+                                    }, () => {
+                                        this.startNewEntry();
+                                    });
+                                }
+                            }}
+                            renderInput={(props) => (
+                                <input className={!id ? "start-timer_description-input" : "disabled"}
+                                    placeholder={locales.WHAT_ARE_YOU_WORKING_ON}
+                                    id="description"
+                                    {...props}
+                                    onKeyDown={this.onKey.bind(this)}
+                                />
+                            )}
                         />
                     </span>
                    <span className={this.props.mode === 'manual' ? 'start-timer-description' : 'disabled'}>
                         <input className={"start-timer_description-input" }
                                id="duration"
+                               autoComplete="off"
                                placeholder={locales.ENTER_TIME}
                                onChange={this.setDuration.bind(this)}
                                onKeyDown={this.onKey.bind(this)}/>

@@ -101,6 +101,38 @@ class ClockifyService {
         return JSON.parse(str);
     }
 
+    static async getCanCreateProjects(){
+        let workspaceSettings = await localStorage.getItem('workspaceSettings');
+        workspaceSettings = JSON.parse(workspaceSettings);
+        let userRoles = await localStorage.getItem('userRoles');
+        userRoles = userRoles.map(userRole => userRole.role);
+        const { whoCanCreateProjectsAndClients } = workspaceSettings?.entityCreationPermissions || {whoCanCreateProjectsAndClients: 'ADMINS'};
+        const isEnabledCreateProject = whoCanCreateProjectsAndClients === 'EVERYONE' || userRoles.includes('WORKSPACE_ADMIN') 
+        || (whoCanCreateProjectsAndClients === 'ADMINS_AND_PROJECT_MANAGERS' && userRoles.includes('PROJECT_MANAGER'));
+
+        return isEnabledCreateProject;
+    };
+
+    static async getCanCreateTasks(){
+        let workspaceSettings = await localStorage.getItem('workspaceSettings');
+        workspaceSettings = JSON.parse(workspaceSettings);
+        let userRoles = await localStorage.getItem('userRoles');
+        userRoles = userRoles.map(userRole => userRole.role);
+        const { whoCanCreateTasks } = workspaceSettings?.entityCreationPermissions || { whoCanCreateTasks: 'ADMINS'};
+        const isEnabledCreateTask = (whoCanCreateTasks === 'EVERYONE' || userRoles.includes('WORKSPACE_ADMIN')) || (whoCanCreateTasks === 'ADMINS_AND_PROJECT_MANAGERS' && userRoles.includes('PROJECT_MANAGER'));
+        return isEnabledCreateTask;
+    };
+
+    static async getCanCreateTags(){
+        let workspaceSettings = await localStorage.getItem('workspaceSettings');
+        workspaceSettings = JSON.parse(workspaceSettings);
+        let userRoles = await localStorage.getItem('userRoles');
+        userRoles = userRoles.map(userRole => userRole.role);
+        const { whoCanCreateTags } = workspaceSettings?.entityCreationPermissions || { whoCanCreateTags: 'ADMINS'};
+        const isEnabledCreateTags = (whoCanCreateTags === 'EVERYONE' || userRoles.includes('WORKSPACE_ADMIN')) || (whoCanCreateTags === 'ADMINS_AND_PROJECT_MANAGERS' && userRoles.includes('PROJECT_MANAGER'));
+        return isEnabledCreateTags;
+    };
+
     static async  setOnline() {
         const storageOffline = await localStorage.getItem('offline');
         if (!storageOffline || storageOffline === 'true') {

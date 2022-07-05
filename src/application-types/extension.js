@@ -8,9 +8,11 @@ import {LocalStorageService} from "../services/localStorage-service";
 import {getLocalStorageEnums} from "../enums/local-storage.enum";
 import {UserService} from "../services/user-service";
 import locales from "../helpers/locales";
+import {HtmlStyleHelper} from "../helpers/html-style-helper";
 
 const localStorageService = new LocalStorageService();
 const userService = new UserService();
+const htmlStyleHelper = new HtmlStyleHelper();
 
 export class Extension {
 
@@ -34,7 +36,8 @@ export class Extension {
         // }
         
         if (token) {
-            if (!JSON.parse(isOffline)) {
+            await htmlStyleHelper.addOrRemoveDarkModeClassOnBodyElement();
+            if (!JSON.parse(isOffline)) {                
                 ReactDOM.render(<HomePage/>, mountHtmlElem);
                 userService.getUser()
                     .then(async (response) => {
@@ -92,9 +95,9 @@ export class Extension {
                         }
                     });
             } else {
-                // if (mountHtmlElem) {
-                    // ReactDOM.render(<HomePage/>, mountHtmlElem);
-                // }
+                if (mountHtmlElem) {
+                    ReactDOM.render(<HomePage/>, mountHtmlElem);
+                }
             }
         } else {
             this.setIcon(getIconStatus().timeEntryEnded);

@@ -3,7 +3,7 @@ setTimeout(() => {
         const root = $('div[id="trello-root"]');
         const container = elem.lastChild.childNodes[1];
         const htmlTag = createTag('div', 'button-link');
-        const htmlTagInput = createTag('div', 'button-link');
+        const htmlTagInput = createTag('div', 'button-link input-button-link');
         const projectElem = $('.board-header-btn-text', root).textContent.trim();
         const desc = $('div[class="window-title"] > h2', root).textContent.trim();
         htmlTagInput.style.padding = "0px";

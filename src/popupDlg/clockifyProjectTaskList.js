@@ -55,8 +55,8 @@ var ClockifyTaskList = class {
         this.renderContent()
     }
     
-    render() {
-        return "<li class='clockify-project-item-2' style='display: none'><ul class='clockify-task-list'></ul></li>";
+    render(isOpen) {
+        return `<li class='clockify-project-item-2' style=${isOpen? 'display: block' : 'display: none'}><ul class='clockify-task-list'></ul></li>`;
     }
 
     renderContent() {

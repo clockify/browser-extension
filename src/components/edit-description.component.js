@@ -1,6 +1,5 @@
 import React from 'react'
 import debounce from 'lodash/debounce';
-import { locale } from 'moment';
 import locales from "../helpers/locales";
 
 class EditDescription extends React.Component {
@@ -16,6 +15,7 @@ class EditDescription extends React.Component {
         this.onChangeDescription = this.onChangeDescription.bind(this);
         this.onChangeDescriptionDelayed = debounce(this.onSetDescription, 500);
         this.onSetDescription = this.onSetDescription.bind(this);
+        this.handleOnBlur = this.handleOnBlur.bind(this);
     }
 
     componentDidMount() {
@@ -27,14 +27,24 @@ class EditDescription extends React.Component {
 
 
     onChangeDescription(e) {
-        const val = e.target.value;
-        this.setState({ description : val }, () => {
-            this.onChangeDescriptionDelayed()
-        })
+        let val = e.target.value;
+        // if(val[val.length-1] === '\n'){
+        //     this.descriptionRef.current.blur();
+        //     return;
+        // }
+        if (val.length > 3000) {
+            val = val.slice(0, 3000);
+            this.props.toaster.toast('error', locales.DESCRIPTION_LIMIT_ERROR_MSG(3000), 2);
+        }
+        this.setState({ description : val });
     }
 
     onSetDescription() {
         this.props.onSetDescription(this.state.description);
+    }
+    
+    handleOnBlur() {
+        this.onSetDescription();
     }
 
     render() {
@@ -47,6 +57,7 @@ class EditDescription extends React.Component {
                 className={"edit-form-description"}
                 placeholder={this.props.descRequired ? `${locales.DESCRIPTION_LABEL} ${locales.REQUIRED_LABEL}` : locales.DESCRIPTION_LABEL}
                 onChange={this.onChangeDescription}
+                onBlur={this.handleOnBlur}
             />            
         )
     }

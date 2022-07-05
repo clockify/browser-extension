@@ -238,6 +238,42 @@ export class TimeEntryService extends HttpWrapperService {
 
     }
 
+    async deleteMultipleTimeEntries(timeEntries) {
+        const activeWorkspaceId = await localStorageService.get('activeWorkspaceId');
+        const baseUrl = await localStorageService.get('baseUrl');
+        const userId = await localStorageService.get('userId');
+        const deleteUrl =
+            `${baseUrl}/v1/workspaces/${activeWorkspaceId}/user/${userId}/time-entries?time-entry-ids=${timeEntries.join(',')}`;
+        return super.delete(deleteUrl, addToken);
+    }
+
+    async duplicateTimeEntry(timeEntryId) {
+        const activeWorkspaceId = await localStorageService.get('activeWorkspaceId');
+        const baseUrl = await localStorageService.get('baseUrl');
+        const userId = await localStorageService.get('userId');
+        const duplicateUrl =
+            `${baseUrl}/v1/workspaces/${activeWorkspaceId}/user/${userId}/time-entries/${timeEntryId}/duplicate`;
+        return super.post(duplicateUrl, null, addToken);
+    }
+
+    async searchEntries(searchValue) {
+        const activeWorkspaceId = await localStorageService.get('activeWorkspaceId');
+        const baseUrl = await localStorageService.get('baseUrl');
+        const searchUrl =
+            `${baseUrl}/workspaces/${activeWorkspaceId}/timeEntries?searchValue=${searchValue}`;
+        return super.get(searchUrl, addToken);
+    }
+
+    async getRecentTimeEntries() {
+        const activeWorkspaceId = await localStorageService.get('activeWorkspaceId');
+        const baseUrl = await localStorageService.get('baseUrl');
+        const recentUrl =
+            `${baseUrl}/workspaces/${activeWorkspaceId}/timeEntries/recent?limit=8`;
+
+        return super.get(recentUrl, addToken);
+
+    }
+
     // createEntry(
     //     workspaceId,
     //     description,

@@ -2,32 +2,32 @@
   height: 60px;
   background: white;
   border-bottom: 1px solid $border;
+  display: flex;
+  align-items: center;
   cursor: pointer;
   font-size: 14px;
   color: $dark_text;
   position: relative;
   z-index: 1;
   transition: all 0.2s ease;
+  &--collapsed {
+    background: #f6fcff;
+  }
   &-group-number {
     position: relative;
     padding: 2px 6px;
-    float: left;
-    top: 50%;
     margin-left: 10px;
-    transform: translate(0, -50%);
     color: #02587f;
     background: #E1F5FE;
     &:hover{
       background: #B3E5FC;
     }
   }
+  
   &-description {
     display: inline-block;
-    margin-bottom: 2px;
     position: relative;
-    top: 50%;
-    max-width: 40%;
-    transform: translate(0, -50%);
+    max-width: 35%;
     margin-left: 10px;
   }
   &__project-wrapper{
@@ -51,17 +51,20 @@
   }
   &__right-side {
     display: flex;
-    float: right;
     align-items: center;
     position: relative;
-    top: 50%;
-    transform: translate(0, -50%);
+    margin-right: 10px;
+    margin-left: auto;
     &__tag_billable_and_lock {
       display: flex;
       margin-right: 10px;
       max-width: 100px;
       align-items: center;
       justify-content: space-between;
+    }
+    &__lock_and_play {
+      display: flex;
+      align-items: center;
     }
     &__billable {
       content: url("../assets/images/billable.png");
@@ -80,12 +83,8 @@
     &__lock {
       display: block;
     }
-    &--duration {
-      position: relative;
-      top: -11px;
-    }
   }
-  &:hover {
+  &:hover, &--focused {
     box-shadow: 0 0 20px rgba(0,0,0,0.1);
     z-index: 2;
   }
@@ -98,17 +97,49 @@
   cursor: not-allowed;
   font-size: 14px;
   color: $dark_text;
+
+  .time-entry-menu{
+    cursor: not-allowed;
+    &__icon {
+      cursor: not-allowed;
+    }
+  }
 }
+
 .time-entry-arrow {
   position:relative;
-  top: 3px;
-  padding: 10px;
+  padding-left: 10px;
   content: url("../assets/images/play-normal.png");
 }
 
 .time-entry-arrow:hover {
   content: url("../assets/images/play-hover.png");
   cursor: pointer;
+}
+
+.time-entry-menu {
+  &__icon {
+    cursor: pointer;
+    position: relative;
+    padding: 10px;
+  }
+
+  &__dropdown {
+    position: absolute;
+    width: 140px;
+    bottom: 0;
+    right: 0;
+    height: auto;
+    min-height: 100px;
+    top: 5px;
+    right: 12px;
+
+    .dropdown-menu {
+      width: 100%;
+      top: 0;
+      right: 0;
+    }
+  }
 }
 
 .time-entry-duration {

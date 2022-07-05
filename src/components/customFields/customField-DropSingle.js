@@ -1,17 +1,17 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import useCustomField from './useCustomField';
-import debounce from 'lodash/debounce';
 import {isOffline} from "../check-connection";
 import locales from "../../helpers/locales";
 
+import {useOnClickOutside} from "./useOnClickOutside";
+
 const CustomFieldDropSingle = ({ cf, closeOther, updateValue }) => {
     
-    //if (!cf.value)
-    //    cf.value = [];
+    const menuRef = useRef(null);
   
     const [ {id, index, value, isDisabled, placeHolder, placeHolderOrName, title, allowedValues, redrawCounter, manualMode}, 
             setValue,
-            storeValue ] = useCustomField(cf);
+            storeValue ] = useCustomField(cf, updateValue);
 
     const newList = (val) => {
         const items = allowedValues.map((name, id) => ({ id, name, isChecked: val === name }) );
@@ -27,26 +27,41 @@ const CustomFieldDropSingle = ({ cf, closeOther, updateValue }) => {
         setTagList(newList(value))
     }, [value])
 
-    useEffect(()=> {
-        setOpen(false)
-    }, [redrawCounter])
+    // useEffect(()=> {
+    //     setOpen(false)
+    // }, [redrawCounter])
+
+    useOnClickOutside(menuRef, () => setOpen(false));
     
 
     const tagsRequired = false;
 
-    const handleChangeDelayed = useRef(debounce(async val => {
-        updateValue(id, val);
-        const isOff = await isOffline();
-        if (!(manualMode || isOff)) {
-            storeValue(val);
-        }
-    }, 0));
+    // useEffect(() => {
+    //     if(!isOpen && !isDisabled){
+    //         hanldeChange();
+    //     }
+    // }, [isOpen]);
+
+    // const hanldeChange = async () => {
+    //     const isOff = await isOffline();
+    //     if (!(manualMode || isOff)) {
+    //         storeValue();
+    //     }
+    // };
+
+    // const handleChangeDelayed = useRef(debounce(async () => {
+        // updateValue(id, val);
+        // const isOff = await isOffline();
+        // if (!(manualMode || isOff)) {
+            // storeValue();
+        // }
+    // }, 0));
 
     const selectTag = (id) => {
         const tag = tagList.find(t => t.id === id);
         const val = id === -1 ? null : tag.name;
         setValue(val);
-        handleChangeDelayed.current(val);
+        // handleChangeDelayed.current(val);
         setOpen(false);
     };
 
@@ -55,8 +70,6 @@ const CustomFieldDropSingle = ({ cf, closeOther, updateValue }) => {
         if (!isDisabled) {
             const x = !isOpen;
             setOpen(x);
-            if (x)
-                closeOther(id);
         }
     }
 
@@ -78,7 +91,7 @@ const CustomFieldDropSingle = ({ cf, closeOther, updateValue }) => {
     let naslov = name + ":" + (value === null ? "" : value)
     return (
         <div key={id} index={index} className={`custom-field${isDisabled?'-disabled':''}`}>
-            <div className="tag-list" title={naslov}>
+            <div className="tag-list" title={naslov} ref={menuRef}>
                 <div className={  isDisabled
                         ? "tag-list-button-disabled" 
                         : tagsRequired

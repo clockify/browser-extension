@@ -33,10 +33,11 @@ class TagService extends ClockifyService {
         for (const tagName of tagNames) {
             const t = allTags.find(e => e.name.toUpperCase() === tagName.toUpperCase());
             const createObjects = await this.getCreateObjects();
+            const canCreateTags = await this.getCanCreateTags(); 
             if (t) {
                 tags.push(t);
             } 
-            else if (createObjects) {
+            else if (createObjects && canCreateTags) {
                 const { data: tag, error, status } = await this.createTag({ name: tagName });
                 if (status === 201) {
                     tags.push(tag);
@@ -47,7 +48,7 @@ class TagService extends ClockifyService {
             }
             else {
                 message += `\nCouldn't create tag: ${tagName}`;
-                notifyCanNotreateObjects = true;
+                if (!createObjects) notifyCanNotreateObjects = true;
             }
         }
         if (notifyCanNotreateObjects)

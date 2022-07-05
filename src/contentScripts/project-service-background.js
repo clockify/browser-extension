@@ -87,16 +87,21 @@ class ProjectService extends ClockifyService {
         let onlyAdminsCanCreateProjects = false;
         let projectArchived = false;
         const createObjects = await this.getCreateObjects();
+        const canCreateProject = await this.getCanCreateProjects();
         if (project) {
             if (!project.archived)
                 return { projectDB: project, found: true };
             projectArchived = true;
         }
         else if (createObjects) {
-            const { data: project, error, status } = await this.createProject({
-                    name: projectName
-                    // , clientId: ""
-                });
+            //get default billable property from workspace settings
+            let wsSettings = await this.wsSettings();
+            const requestBody = { name: projectName }
+            if( wsSettings?.defaultBillableProjects !== undefined && wsSettings?.defaultBillableProjects !== null ){
+                requestBody.billable = wsSettings.defaultBillableProjects;
+            };
+
+            const { data: project, error, status } = await this.createProject(requestBody);
             if (status === 201) {
                 return { projectDB: project, created: true };
             }

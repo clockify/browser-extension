@@ -118,10 +118,12 @@ class Menu extends React.Component {
     }
 
     openUrlPermissions() {
+        if(this.state.isOffline) return;
         getBrowser().runtime.openOptionsPage();
     }
 
     logout() {
+        if(this.state.isOffline) return;
         this.disconnectWebSocket();
         htmlStyleHelper.removeDarkModeClassFromBodyElement();
         tokenService.logout();
@@ -130,6 +132,7 @@ class Menu extends React.Component {
     }
 
     async openWebDashboard() {
+        if(this.state.isOffline) return;
         const homeUrl = await localStorageService.get('homeUrl') || environment.home
         window.open(`${homeUrl}/dashboard`, '_blank');   
         if(!isChrome()){
@@ -262,7 +265,7 @@ class Menu extends React.Component {
                         <a onClick={this.openSettings.bind(this)}
                            className="dropdown-item"
                            href="#">
-                            <span>{locales.SETTINGS}</span>
+                            <span className={this.state.isOffline ? "disable-manual" : ""}>{locales.SETTINGS}</span>
                         </a>
                         <a onClick={this.openUrlPermissions.bind(this)}
                            className="dropdown-item" href="#">

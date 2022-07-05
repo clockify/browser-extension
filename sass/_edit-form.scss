@@ -15,6 +15,10 @@
   font-size: 14px;
   outline: none;
   color: $dark_text;
+  & + div{
+    z-index: 20;
+    margin-left: -10px;
+  }
 }
 
 .description-textarea {

@@ -7,7 +7,14 @@ import {offlineStorage} from '../helpers/offlineStorage';
 import locales from "../helpers/locales";
 import {duration} from "moment";
 import 'moment-duration-format';
+import {toDecimalFormat} from "../helpers/time.helper";
+import TimeEntryDropdown from './time-entry-dropdown.component';
+import DeleteEntryConfirmationComponent from './delete-entry-confirmation.component';
+import {TimeEntryService} from "../services/timeEntry-service";
+import HomePage from './home-page.component';
+import Toaster from "./toaster-component";
 
+const timeEntryService = new TimeEntryService();
 class TimeEntry extends React.Component {
 
     constructor(props) {
@@ -17,11 +24,19 @@ class TimeEntry extends React.Component {
             ready: false,
             title: '',
             tagTitle: '',
-            showGroup: false
+            showGroup: false,
+            entryDropdownShown: false,
+            askToDeleteEntry: false,
         }
         this.createTitle = this.createTitle.bind(this);
         this.setAsyncStateItems = this.setAsyncStateItems.bind(this);
         this.handleGroupClick = this.handleGroupClick.bind(this);
+        this.toggleEntryDropdownMenu = this.toggleEntryDropdownMenu.bind(this);
+        this.toggleDeleteConfirmationModal = this.toggleDeleteConfirmationModal.bind(this);
+        this.deleteEntry = this.deleteEntry.bind(this);
+        this.offlineDeleteEntry = this.offlineDeleteEntry.bind(this);
+        this.onClickDeleteEntries = this.onClickDeleteEntries.bind(this);
+        this.onClickDuplicateEntry = this.onClickDuplicateEntry.bind(this);
     }
 
     async setAsyncStateItems() {
@@ -64,6 +79,13 @@ class TimeEntry extends React.Component {
     continueTimeEntry(e) {
         e.stopPropagation();
         this.props.playTimeEntry(this.props.timeEntry);
+    }
+
+    toggleEntryDropdownMenu(e){
+        e && e.stopPropagation();
+        if(this.props.timeEntry.approvalRequestId == null && (!this.props.timeEntry.isLocked || this.props.isUserOwnerOrAdmin)){
+            this.setState({entryDropdownShown: !this.state.entryDropdownShown})
+        }
     }
 
     createTitle() {
@@ -114,24 +136,105 @@ class TimeEntry extends React.Component {
         }));
     }
 
+    toggleDeleteConfirmationModal(e){
+        e && e.stopPropagation();
+        this.setState({askToDeleteEntry: !this.state.askToDeleteEntry});
+    }
+
+    onClickDuplicateEntry(e){
+        e.stopPropagation();
+        this.toggleEntryDropdownMenu();
+        timeEntryService.duplicateTimeEntry(this.props.timeEntry.id)
+        .then(() => {this.props.handleRefresh()})
+        .catch((error) => {
+            this.toaster.toast('error', locales.replaceLabels(error.response.data.message), 2);
+        });
+    }
+
+    onClickDeleteEntries(){
+        this.toggleEntryDropdownMenu();
+        if(this.props.groupedEntries?.length > 0){
+            this.deleteMultipleEntries(this.props.groupedEntries.map(entry => entry.id));
+        }else{
+            this.deleteEntry(this.props.timeEntry.id);
+        }
+    }
+
+    async deleteEntry(entryId) {
+        if(await isOffline()) {
+            this.offlineDeleteEntry(entryId)
+        } else {
+            timeEntryService.deleteTimeEntry(entryId)
+                .then(response => {
+                    this.toggleDeleteConfirmationModal();
+                    this.props.handleRefresh();
+                })
+                .catch(() => {
+                })
+        }
+    }
+
+    async deleteMultipleEntries(entryIds){
+        if(await isOffline()){
+            entryIds.forEach(entry => this.offlineDeleteEntry(entry));
+        }else{
+            timeEntryService.deleteMultipleTimeEntries(entryIds).then(response => {
+                this.toggleDeleteConfirmationModal();
+                this.props.handleRefresh()
+            }).catch(() => {});
+        }
+    }
+
+    offlineDeleteEntry(entryId){
+        let timeEntries = offlineStorage.timeEntriesOffline;
+        if(timeEntries.findIndex(entry => entry.id === entryId) > -1) {
+            timeEntries.splice( timeEntries.findIndex(entry => entry.id === entryId), 1);
+        }
+        offlineStorage.timeEntriesOffline = timeEntries;
+        this.toggleDeleteConfirmationModal();
+        this.props.handleRefresh();
+    }
+
+    async goBack() {
+        ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
+        ReactDOM.render(<HomePage />, document.getElementById('mount'));
+    }
+
     render() {
         const { timeEntry, project, groupedEntries } = this.props;
         if (project !== undefined && this.props.task !== undefined) {
             if (this.state.ready) {
                 let entryDuration = timeEntry.duration;
+                const decimalFormat = this.props.workspaceSettings?.decimalFormat;
                 if(!!groupedEntries?.length){
-                    entryDuration = groupedEntries.reduce((prev, curr) => duration(prev + duration(curr.timeInterval.duration)), duration(0)).format(
+                    entryDuration = groupedEntries.reduce((prev, curr) => duration(prev + duration(curr.timeInterval.duration)), duration(0));
+                    entryDuration = decimalFormat ? toDecimalFormat(entryDuration) : entryDuration.format(
                         this.props.workspaceSettings?.trackTimeDownToSecond ? 'HH:mm:ss' : 'h:mm', {trim: false}
                     );
                 }
+                const entryClassNames = [];
+                if ((timeEntry.isLocked && !this.props.isUserOwnerOrAdmin) || timeEntry.approvalRequestId) {
+                    entryClassNames.push('time-entry time-entry-locked');
+                } else {
+                    entryClassNames.push('time-entry');
+                }
+                if (this.props.collapsedEntry) {
+                    entryClassNames.push('time-entry--collapsed');
+                }
+                if(this.state.entryDropdownShown){
+                    entryClassNames.push('time-entry--focused');
+                }
+                
                 return (
+                    <React.Fragment>
+                    <Toaster
+                        ref={instance => {this.toaster = instance}}
+                    />
                     <div>
-                        <div className={((timeEntry.isLocked && !this.props.isUserOwnerOrAdmin) || timeEntry.approvalRequestId) ? "time-entry-locked" : "time-entry"}
+                        <div 
+                            className={entryClassNames.join(' ')}
                             title={this.state.title}
                             key={timeEntry.id}
-                            style={{
-                                backgroundColor: this.props.collapsedEntry ? '#f6fcff' : 'white'
-                            }}
                             onClick={this.goToEdit.bind(this)}
                         >
                             {!!groupedEntries?.length && 
@@ -140,7 +243,7 @@ class TimeEntry extends React.Component {
                                 </div>
                             }
                             <div className="time-entry-description">
-                                <div className={timeEntry.description ? "description" : locales.NO_DESCRIPTION}>
+                                <div className={timeEntry.description ? "description" : "no-description"}>
                                     {timeEntry.description ? timeEntry.description : locales.NO_DESCRIPTION}
                                 </div>
                                 <div style={project ? {color: project.color} : {}}
@@ -179,6 +282,21 @@ class TimeEntry extends React.Component {
                                         className="time-entry-arrow">
                                         <img id="play-icon" src="./assets/images/play-normal.png"/>
                                     </span>
+                                    <span className="time-entry-menu">
+                                        <img onClick={(e) => this.toggleEntryDropdownMenu(e)} className="time-entry-menu__icon" src="./assets/images/menu-dots-vertical.svg"/>
+                                        {
+                                        this.state.entryDropdownShown 
+                                            && <TimeEntryDropdown 
+                                                    entry={timeEntry} 
+                                                    group={groupedEntries}
+                                                    onDelete={(e)=>this.toggleDeleteConfirmationModal(e)}
+                                                    onDuplicate={(e) => this.onClickDuplicateEntry(e)}
+                                                    toggleDropdown={this.toggleEntryDropdownMenu}
+                                                    manualModeDisabled={this.props.manualModeDisabled}
+                                                     
+                                                />
+                                        }
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -196,9 +314,18 @@ class TimeEntry extends React.Component {
                                 isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}
                                 userSettings={this.props.userSettings}
                                 collapsedEntry={true}
+                                handleRefresh={this.props.handleRefresh}
+                                manualModeDisabled={this.props.manualModeDisabled} 
                             />
                         )}
                     </div>
+                    <DeleteEntryConfirmationComponent 
+                        askToDeleteEntry={this.state.askToDeleteEntry}
+                        canceled={this.toggleDeleteConfirmationModal}
+                        confirmed={this.onClickDeleteEntries}
+                        multiple={this.props.groupedEntries}
+                    />
+                    </React.Fragment>
                 )
             } else {
                 return null;

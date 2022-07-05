@@ -8,7 +8,6 @@ clockifyButton.render('.work-item-form-headerContent:not(.clockify,.flex-row)', 
       description: () => "#" + itemId() + " " + description(),
       projectName: project,
       taskName: () => description(),
-      tagNames: () => tagNames()
   });
   link.style.display = "block";
   link.style.paddingTop = "0";
@@ -27,7 +26,7 @@ clockifyButton.render('.work-item-form-header:not(.clockify,.flex-row)', {observ
   link = clockifyButton.createButton({
       description: () => "#" + itemId() + " " + description(),
       projectName: project,
-      taskName: () => description(),
+      taskName: () => description()
   });
   link.style.display = "block";
   link.style.paddingTop = "0";

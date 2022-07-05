@@ -428,11 +428,10 @@ class TimeEntry extends ClockifyService {
 
 
     static async integrationStartTimerWithDescription(description, timeEntryOptions) {
-        let { projectName, taskName, tagNames, billable, start=null, end=null, isSubmitTime=false } = timeEntryOptions;
-        let project = {id: null, name: projectName};
-        let task = {id: null, name: taskName??null};
+        let { projectName, projectId = null, taskName, taskId, tagNames, billable, start=null, end=null, isSubmitTime=false } = timeEntryOptions;
+        let project = {id: projectId, name: projectName};
+        let task = {id: taskId??null, name: taskName??null};
         const { forceDescription, forceProjects, forceTasks, forceTags } = await this.getForces();
-
 
         if (!!project.name) {
             const createObjects = await this.getCreateObjects();
@@ -452,7 +451,6 @@ class TimeEntry extends ClockifyService {
                 billable = projectDB ? projectDB.billable : false;
             }
         }    
-        
         let tags = null;
         if (tagNames && tagNames.length > 0) {
             const { tagovi, message: msg } = await TagService.getOrCreateTags(tagNames.map(tagName=>tagName.trim()));

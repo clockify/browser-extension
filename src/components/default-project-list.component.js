@@ -1,4 +1,5 @@
 import * as React from 'react';
+import onClickOutside from "react-onclickoutside";
 import ProjectItem from './project-item.component';
 import {ProjectService} from "../services/project-service";
 import _, {debounce} from "lodash";
@@ -198,11 +199,11 @@ class DefaultProjectList extends React.PureComponent {
         return this.state.isOpen;
     }
 
-    closeOpened() {
-        this.setState({
-            isOpen: false
-        });
-    }
+    // closeOpened() {
+    //     this.setState({
+    //         isOpen: false
+    //     });
+    // }
 
     async getProjects(pageSize) {
         const offline = await localStorage.getItem('offline');
@@ -377,6 +378,11 @@ class DefaultProjectList extends React.PureComponent {
                 .find(darkMode => darkMode.userId === userId && darkMode.enabled);
     }
 
+    handleClickOutside() {
+        if(this.state.isOpen){
+            this.closeProjectList();
+        }
+    }
 
     render() {
         const { 
@@ -553,4 +559,4 @@ class DefaultProjectList extends React.PureComponent {
     }
 }
 
-export default DefaultProjectList;
+export default onClickOutside(DefaultProjectList);

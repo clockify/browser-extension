@@ -1,31 +1,22 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React from 'react';
 import useCustomField from './useCustomField';
-import debounce from 'lodash/debounce';
-import {isOffline} from "../check-connection";
 
 const CustomFieldText = ({cf, updateValue}) => {
 
-    //useEffect(() => {
-        const [
-            {id, index, value, isDisabled, placeHolder, title, manualMode}, 
-            setValue,
-            storeValue
-        ] = useCustomField(cf);
-    //}, [cf]);
-
-    const handleChangeDelayed = useRef(debounce(async val => {
-        // updateValue(id, val);
-        const isOff = await isOffline();
-        if (!(manualMode || isOff)) {
-            storeValue(val);
-        }
-    }, manualMode ? 1000 : 1000));
+    const [
+        {id, index, value, isDisabled, placeHolder, title, manualMode}, 
+        setValue,
+        storeValue
+    ] = useCustomField(cf, updateValue);
 
     const handleChange = (e) => {
         const val = e.target.value;
         setValue(val);
-        updateValue(id, val);
-        handleChangeDelayed.current(val);
+    };
+
+    const handleBlur = (e) => {
+        e.preventDefault();
+        storeValue();
     };
 
     return (
@@ -39,6 +30,7 @@ const CustomFieldText = ({cf, updateValue}) => {
                 disabled={isDisabled}
                 value={!!value ? value : ''}
                 onChange={handleChange} 
+                onBlur={handleBlur}
             />
         </div>
     )

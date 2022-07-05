@@ -8,7 +8,7 @@ let targetForManifest =
 
 module.exports = {
     mode: 'production',
-    devtool: 'nosources-cheap-module-source-map',
+    devtool: DEV ? 'source-map' : 'nosources-cheap-module-source-map',
     entry: [
         '@babel/polyfill', './src/main.js'
     ],

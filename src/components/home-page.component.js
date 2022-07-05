@@ -30,6 +30,7 @@ import Logger from './logger-component'
 import {UserService} from "../services/user-service";
 import {offlineStorage} from '../helpers/offlineStorage';
 import locales from "../helpers/locales";
+import {toDecimalFormat} from "../helpers/time.helper";
 
 const projectService = new ProjectService();
 const userService = new UserService();
@@ -43,7 +44,8 @@ const messages = [
     'TIME_ENTRY_UPDATED',
     'TIME_ENTRY_CREATED',
     'WORKSPACE_SETTINGS_UPDATED',
-    'CHANGED_ADMIN_PERMISSION'
+    'CHANGED_ADMIN_PERMISSION',
+    'ACTIVE_WORKSPACE_CHANGED'
 ];
 const timeEntryService = new TimeEntryService();
 const workspaceService = new WorkspaceService();
@@ -52,8 +54,8 @@ let websocketHandlerListener = null;
 
 let _webSocketConnectExtensionDone = false;
 
-let _checkOfflineMS = 5000; 
-let _timeoutCheckOffline = null;
+// let _checkOfflineMS = 5000; 
+// let _timeoutCheckOffline = null;
 
 let _receiveOfflineEventsName;
 
@@ -94,9 +96,11 @@ class HomePage extends React.Component {
             tasks: [],
             userSettings: {},
             durationMap: {},
+            weekStatusMap: {},
             isUserOwnerOrAdmin: false,
             isOffline: null,
-            lang: 'en'
+            lang: 'en',
+            weeks: []
         };
 
         this.application = new Application();
@@ -109,8 +113,8 @@ class HomePage extends React.Component {
 
         this.connectionHandler = this.connectionHandler.bind(this);
         this.handleRefresh = this.handleRefresh.bind(this);
-        this.checkOffline = this.checkOffline.bind(this);
-        this.checkReload = this.checkReload.bind(this);
+        // this.checkOffline = this.checkOffline.bind(this);
+        // this.checkReload = this.checkReload.bind(this);
         this.reloadOnlineByEvent = debounce(this.reloadOnlineByEvent, 5000);
         this.reloadOnlineByChecking = debounce(this.reloadOnlineByChecking, 3000);
         this.reloadOffline = debounce(this.reloadOffline, 1000);
@@ -143,13 +147,15 @@ class HomePage extends React.Component {
 
         if(preData){
             let timeEntries = preData?.groupEntries;
-            if(!preData.groupEntries && preData.bgEntries){
-                timeEntries = await this.groupEntries(preData.bgEntries, preData.durationMap);
+            if(!preData.groupEntries && preData.bgEntries && preData.weekStatusMap){
+                timeEntries = await this.groupEntries(preData.bgEntries, preData.durationMap, preData.weekStatusMap);
             }
             this.setState(state => ({
                 timeEntries: timeEntries || state.timeEntries,
                 dates: preData?.dates || state.dates,
-                durationMap: preData?.durationMap || state.durationMap
+                durationMap: preData?.durationMap || state.durationMap,
+                weekStatusMap: preData?.weekStatusMap || state.weekStatusMap,
+                weeks: preData?.weeks || state.weeks
             }));
         }
 
@@ -157,7 +163,6 @@ class HomePage extends React.Component {
         localStorage.setItem('appVersion', packageJson.version);
         document.addEventListener('backbutton', this.handleBackButton, false);
         document.addEventListener('scroll', this.handleScroll, false);
-        htmlStyleHelper.addOrRemoveDarkModeClassOnBodyElement();
 
          _receiveOfflineEventsName = "receivingOfflineEvents";
         
@@ -220,12 +225,12 @@ class HomePage extends React.Component {
     async initialJob() {
         const receiveOfflineEventsName = await localStorageService.get(_receiveOfflineEventsName, 'false');
         const isOnline = !(await isOffline());
-        if ( receiveOfflineEventsName !== 'true') {
-            this.log('=> polling offline mode')
-            if (_timeoutCheckOffline)
-                clearTimeout(_timeoutCheckOffline);
-            _timeoutCheckOffline = setTimeout(() => this.checkOffline(), 3000);
-        }
+        // if ( receiveOfflineEventsName !== 'true') {
+        //     this.log('=> polling offline mode')
+        //     if (_timeoutCheckOffline)
+        //         clearTimeout(_timeoutCheckOffline);
+        //     _timeoutCheckOffline = setTimeout(() => this.checkOffline(), 3000);
+        // }
 
         if (!websocketHandlerListener)
             this.webSocketMessagesHandler();
@@ -269,10 +274,10 @@ class HomePage extends React.Component {
 
     componentWillUnmount() {
         this.log("componentWillUnmount");
-        if (_timeoutCheckOffline) {
-            clearTimeout(_timeoutCheckOffline);
-            _timeoutCheckOffline = null;
-        }
+        // if (_timeoutCheckOffline) {
+        //     clearTimeout(_timeoutCheckOffline);
+        //     _timeoutCheckOffline = null;
+        // }
 
         getBrowser().runtime.onMessage.removeListener(_networkHandlerListener);
         _networkHandlerListener = null;
@@ -313,10 +318,10 @@ class HomePage extends React.Component {
     }
 
     connectionHandler(event) {
-        if (_timeoutCheckOffline) {
-            clearTimeout(_timeoutCheckOffline);
-            _timeoutCheckOffline = null;
-        }
+        // if (_timeoutCheckOffline) {
+        //     clearTimeout(_timeoutCheckOffline);
+        //     _timeoutCheckOffline = null;
+        // }
         this.log(`handler event --------------> '${event.type}'`);
         localStorageService.set(_receiveOfflineEventsName, 'true', getLocalStorageEnums().PERMANENT_PREFIX);
         let isOff;
@@ -335,41 +340,41 @@ class HomePage extends React.Component {
             this.reloadOnlineByEvent();
     }
 
-    checkOffline() {
-       // axios call, just to check if online/offline
-       timeEntryService.healthCheck()
-            .then(response => {
-                this.checkReload()
-            })
-            .catch(error => {
-                this.checkReload()
-            });
-    }
+    // checkOffline() {
+    //    // axios call, just to check if online/offline
+    //    timeEntryService.healthCheck()
+    //         .then(response => {
+    //             this.checkReload()
+    //         })
+    //         .catch(error => {
+    //             this.checkReload()
+    //         });
+    // }
 
-    async checkReload() {
-        const isOff = await isOffline();
-        this.log('checkReload ' + (isOff ? 'offLine' : 'onLine'));
+    // async checkReload() {
+    //     const isOff = await isOffline();
+    //     this.log('checkReload ' + (isOff ? 'offLine' : 'onLine'));
 
-        if (this.state.isOffline !== isOff) {
-            if (isOff) {
-                this.reloadOffline();
-                if (_timeoutCheckOffline)
-                    clearTimeout(_timeoutCheckOffline);
-                _timeoutCheckOffline = setTimeout(() => this.checkOffline(), _checkOfflineMS);       
-            }
-            else {
-                this.reloadOnlineByChecking();
-                if (_timeoutCheckOffline)
-                    clearTimeout(_timeoutCheckOffline);
-                _timeoutCheckOffline = setTimeout(() => this.checkOffline(), _checkOfflineMS);
-            }
-        }
-        else {
-            if (_timeoutCheckOffline)
-                clearTimeout(_timeoutCheckOffline);
-            _timeoutCheckOffline = setTimeout(() => this.checkOffline(), _checkOfflineMS);       
-        }
-    }
+    //     if (this.state.isOffline !== isOff) {
+    //         if (isOff) {
+    //             this.reloadOffline();
+    //             if (_timeoutCheckOffline)
+    //                 clearTimeout(_timeoutCheckOffline);
+    //             _timeoutCheckOffline = setTimeout(() => this.checkOffline(), _checkOfflineMS);       
+    //         }
+    //         else {
+    //             this.reloadOnlineByChecking();
+    //             if (_timeoutCheckOffline)
+    //                 clearTimeout(_timeoutCheckOffline);
+    //             _timeoutCheckOffline = setTimeout(() => this.checkOffline(), _checkOfflineMS);
+    //         }
+    //     }
+    //     else {
+    //         if (_timeoutCheckOffline)
+    //             clearTimeout(_timeoutCheckOffline);
+    //         _timeoutCheckOffline = setTimeout(() => this.checkOffline(), _checkOfflineMS);       
+    //     }
+    // }
 
 
     getEntryFromPomodoroAndIdleEvents() {
@@ -468,6 +473,9 @@ class HomePage extends React.Component {
                         case getWebSocketEventsEnums().WORKSPACE_SETTINGS_UPDATED: 
                             this.workspaceChanged();
                             break;
+                        case getWebSocketEventsEnums().ACTIVE_WORKSPACE_CHANGED: 
+                            this.workspaceChanged();
+                            break;
                         case getWebSocketEventsEnums().CHANGED_ADMIN_PERMISSION:
                             this.setIsUserOwnerOrAdmin();
                             break;
@@ -502,9 +510,8 @@ class HomePage extends React.Component {
         if (!(await isOffline())) {
             let timeEntries = offlineStorage.timeEntriesOffline;
             timeEntries.map(entry => {
-
-                const cfs = customFieldValues && customFieldValues.length > 0
-                                ? customFieldValues.filter(cf => cf.customFieldDto.status === 'VISIBLE').map(({type, customFieldId, value}) => ({ 
+                const cfs = entry.customFieldValues && entry.customFieldValues.length > 0
+                                ? entry.customFieldValues.filter(cf => cf.customFieldDto.status === 'VISIBLE').map(({type, customFieldId, value}) => ({ 
                                     customFieldId,
                                     sourceType: 'TIMEENTRY',
                                     value: type === 'NUMBER' ? parseFloat(value) : value
@@ -613,15 +620,16 @@ class HomePage extends React.Component {
                 .then(async response => {
                     const timeEntries =
                         response.data.timeEntriesList.filter(entry => entry.timeInterval.end);
-                    const durationMap = response.data.durationMap;
-                    const groupEntries = await this.groupEntries(timeEntries, durationMap);
+                    const {durationMap, weekStatusMap} = response.data;
+                    const groupEntries = await this.groupEntries(timeEntries, durationMap, weekStatusMap);
                     this.setState({
                         timeEntries: groupEntries,
-                        durationMap: durationMap,
+                        durationMap,
+                        weekStatusMap,
                         ready: true,
                         isOffline: false   // should set isOffline here
                     }, () => {
-                        localStorage.setItem('preData', {groupEntries: groupEntries, durationMap, dates: this.state.dates});
+                        localStorage.setItem('preData', {groupEntries: groupEntries, durationMap, dates: this.state.dates, weekStatusMap, weeks: this.state.weeks});
                     });
                 })
                 .catch((error) => {
@@ -645,17 +653,41 @@ class HomePage extends React.Component {
     }
 
 
-    async groupEntries(timeEntries, durationMap) {
-        let dates = [];
+
+    async groupEntries(timeEntries, durationMap, weekStatusMap = {}) {
+        const wsSettings = JSON.parse(await localStorageService.get("workspaceSettings"));
+        const { timeZone } = JSON.parse(await localStorageService.get("userSettings")) || {};
+        const decimalFormat = wsSettings?.decimalFormat;
         const trackTimeDownToSeconds =
             typeof this.state.workspaceSettings.trackTimeDownToSecond !== "undefined" ?
                 this.state.workspaceSettings.trackTimeDownToSecond :
-                JSON.parse(await localStorageService.get("workspaceSettings")).trackTimeDownToSecond;
+                wsSettings?.trackTimeDownToSecond;
+        let dates = [];
+        let weeks = Object.values(weekStatusMap).sort((a, b) => {
+            return moment(b.dateRange.start, 'YYYY-MM-DD').tz(timeZone).diff(moment(a.dateRange.start, 'YYYY-MM-DD').tz(timeZone));
+        }).map((week) => {
+            const total = decimalFormat ? toDecimalFormat(duration(week.total)) : duration(week.total).format(trackTimeDownToSeconds ? 'HH:mm:ss' : 'h:mm', {trim: false});
+            let title = `${moment.utc(week.dateRange.start).format('MMM D')} - ${moment.utc(week.dateRange.end).format('MMM D')}`;
+
+            const dateA = moment.utc(week.dateRange.start);
+            const dateB = moment.utc(week.dateRange.end);
+
+            const today = moment.utc(moment().tz(timeZone).format('YYYY-MM-DD'));
+            
+            if (today.isBetween(dateA, dateB, undefined, '[]')) {
+                title = locales.THIS_WEEK;
+            }
+            else if (today.diff(dateB, 'days', true) <= 7 && today.diff(dateB, 'days', true) >= 0) {
+                title = locales.LAST_WEEK;
+            }
+            
+            return {dateRange: {...week.dateRange}, total, title, dates: []};
+        });
 
         if (timeEntries.length > 0) {
-            this.groupTimeEntriesByDays(timeEntries, trackTimeDownToSeconds, dates);
+            this.groupTimeEntriesByDays(timeEntries, decimalFormat, trackTimeDownToSeconds, dates, weeks, timeZone);
         }
-        const formatedDurationMap = this.formatDurationMap(durationMap);
+        const formatedDurationMap = this.formatDurationMap(durationMap, timeZone);
 
         dates = dates.map(day => {
             let dayDuration = duration(0);
@@ -668,51 +700,59 @@ class HomePage extends React.Component {
                     }
                 });
             }
-            return day + "-" + duration(dayDuration).format(
-                trackTimeDownToSeconds ? 'HH:mm:ss' : 'h:mm', {trim: false}
-            );
+            const format = decimalFormat ? toDecimalFormat(duration(dayDuration)) : duration(dayDuration).format(trackTimeDownToSeconds ? 'HH:mm:ss' : 'h:mm', {trim: false});
+            return day + "-" + format;
         });
 
         this.setState({
-            dates
+            dates,
+            weeks
         });
 
         return timeEntries;
     }
 
-    groupTimeEntriesByDays(timeEntries, trackTimeDownToSeconds, dates) {
+    groupTimeEntriesByDays(timeEntries, decimalFormat, trackTimeDownToSeconds, dates, weeks, timeZone) {
         timeEntries.forEach(timeEntry => {
-            if (moment(timeEntry.timeInterval.start).isSame(moment(), 'day')) {
+            if (moment(timeEntry.timeInterval.start).tz(timeZone).isSame(moment().tz(timeZone), 'day')) {
                 timeEntry.start = locales.TODAY_LABEL;
+            } else if (moment(timeEntry.timeInterval.start).tz(timeZone).isSame(moment().subtract(1, 'day').tz(timeZone), 'day')) {
+                timeEntry.start = locales.YESTERDAY_LABEL;
             } else {
-                timeEntry.start = moment(timeEntry.timeInterval.start).format('ddd, Do MMM');
+                timeEntry.start = moment(timeEntry.timeInterval.start).tz(timeZone).format('ddd, Do MMM');
             }
 
             if (!trackTimeDownToSeconds) {
-                const diffInSeconds = moment(timeEntry.timeInterval.end)
+                const diffInSeconds = moment(timeEntry.timeInterval.end).tz(timeZone)
                     .diff(timeEntry.timeInterval.start) / 1000;
                 if (diffInSeconds%60 > 0) {
                     timeEntry.timeInterval.end =
-                        moment(timeEntry.timeInterval.end).add(60 - diffInSeconds%60, 'seconds');
+                        moment(timeEntry.timeInterval.end).tz(timeZone).add(60 - diffInSeconds%60, 'seconds');
                 }
             }
-
-            timeEntry.duration =
-                duration(moment(timeEntry.timeInterval.end)
-                    .diff(timeEntry.timeInterval.start))
-                    .format(trackTimeDownToSeconds ? 'HH:mm:ss' : 'h:mm', {trim: false});
+            const durationDiff = duration(moment(timeEntry.timeInterval.end).tz(timeZone).diff(timeEntry.timeInterval.start));
+            timeEntry.duration = decimalFormat ? toDecimalFormat(durationDiff) : durationDiff.format(trackTimeDownToSeconds ? 'HH:mm:ss' : 'h:mm', {trim: false});
             if (dates.indexOf(timeEntry.start) === -1) {
                 dates.push(timeEntry.start);
+                const index = weeks.findIndex(week => {
+                    const dateA = moment.utc(week.dateRange.start);
+                    const dateB = moment.utc(week.dateRange.end);
+                    const dateC = moment.utc(moment(timeEntry.timeInterval.start).tz(timeZone).format('YYYY-MM-DD'));
+                    return dateC.isBetween(dateA, dateB, 'days', '[]');
+                });
+                if(index !== -1){
+                    weeks[index].dates.push(timeEntry.start);
+                }
             }
         });
     }
 
-    formatDurationMap(durationMap) {
+    formatDurationMap(durationMap, timeZone) {
         let formatedDurationMap = {};
         let formatedKey;
         for (let key in durationMap) {
-            formatedKey = moment(key).isSame(moment(), 'day') ?
-                locales.TODAY_LABEL : moment(key).format('ddd, Do MMM');
+            formatedKey = moment(key).tz(timeZone).isSame(moment(), 'day') ?
+                locales.TODAY_LABEL : moment(key).tz(timeZone).isSame(moment().subtract(1, 'day').tz(timeZone), 'day') ? locales.YESTERDAY_LABEL : moment(key).tz(timeZone).format('ddd, Do MMM');
             formatedDurationMap[formatedKey] = durationMap[key];
         }
 
@@ -726,7 +766,6 @@ class HomePage extends React.Component {
             event.srcElement.body.scrollHeight - 100 &&
             this.state.loadMore && !this.state.loading &&
             !isOff) {
-
             this.loadMoreEntries();
         }
     }
@@ -740,14 +779,17 @@ class HomePage extends React.Component {
                 .then(async response => {
                     const data = response.data;
                     const entries = data.timeEntriesList.filter(entry => entry.timeInterval.end);
-                    const durationMap = data.durationMap;
+                    const {durationMap, weekStatusMap} = data;
                     const newDurationMap = this.concatDurationMap(this.state.durationMap, durationMap);
+                    const newWeekStatusMap = this.concatDurationMap(this.state.weekStatusMap, weekStatusMap);
                     this.setState({
                         timeEntries: await this.groupEntries(
                             this.state.timeEntries.concat(entries),
-                            newDurationMap
+                            newDurationMap,
+                            newWeekStatusMap
                         ),
                         durationMap: newDurationMap,
+                        weekStatusMap: newWeekStatusMap,
                         loading: false
                     }, () => {
                         if (this.state.timeEntries.length === data.allEntriesCount) {
@@ -1111,7 +1153,7 @@ class HomePage extends React.Component {
                 timeEntries, 
                 userSettings, 
                 manualModeDisabled,
-                isUserOwnerOrAdmin, pullToRefresh, dates } = this.state;
+                isUserOwnerOrAdmin, pullToRefresh, dates, weeks } = this.state;
         return (
             <div className="home_page">
                 {_withLogger &&
@@ -1154,6 +1196,7 @@ class HomePage extends React.Component {
                         userSettings={userSettings}
                         toaster= {this.toaster}
                         log={this.log}
+                        activeWorkspaceId={this.state.activeWorkspaceId}
                     />
                 </div>
                 <div className={!isOffline && 
@@ -1169,6 +1212,7 @@ class HomePage extends React.Component {
                             timeFormat={userSettings.timeFormat}
                             userSettings={userSettings}
                             isUserOwnerOrAdmin={isUserOwnerOrAdmin}
+                            manualModeDisabled={this.state.manualModeDisabled}
                         />
                     }
                 </div>
@@ -1177,6 +1221,7 @@ class HomePage extends React.Component {
                         timeEntries={timeEntries}
                         isLoading={!this.state.ready}
                         dates={dates}
+                        weeks={weeks}
                         selectTimeEntry={this.continueTimeEntry.bind(this)}
                         pullToRefresh={pullToRefresh}
                         handleRefresh={this.handleRefresh}
@@ -1187,6 +1232,7 @@ class HomePage extends React.Component {
                         userSettings={userSettings}
                         isOffline={isOffline}
                         isUserOwnerOrAdmin={isUserOwnerOrAdmin}
+                        manualModeDisabled={this.state.manualModeDisabled}
                     />
                 </div>
             </div>

@@ -7,12 +7,12 @@ var ClockifyPopupDlg = class {
         this.userRoles = [];
     }    
 
-    create(timeEntry, msg) {
+    create(timeEntry, msg, manualMode) {
 
-        this.editForm = new ClockifyEditForm(timeEntry);
+        this.editForm = new ClockifyEditForm(timeEntry, manualMode);
 
-        _clockifyProjectList = new ClockifyProjectList(this.editForm, timeEntry);
-        _clockifyTagList = new ClockifyTagList(this.editForm, timeEntry);
+        _clockifyProjectList = new ClockifyProjectList(this.editForm, timeEntry, manualMode);
+        _clockifyTagList = new ClockifyTagList(this.editForm, timeEntry, manualMode);
 
         const popupDlg = document.createElement('div');
         popupDlg.setAttribute("id", 'divClockifyPopupDlg');
@@ -54,27 +54,14 @@ var ClockifyPopupDlg = class {
         while (el && !el.id) {
             el = el.parentNode;
         }
-        switch(el.id) {
-            case 'imgClockifyDropDown':
-            case 'liClockifyProjectDropDownHeader':
-                _clockifyProjectList.onClicked(el);
-                break;
-
-            case 'imgClockifyDropDownTags':
-            case 'liClockifyTagDropDownHeader':
-                _clockifyTagList.onClicked(el);
-                break;
-
-            case 'aEditCustomFieldLink':
-            case 'liClockifyCFDropHeader': {
-                const index = el.getAttribute('index');
-                try {
-                    this.editForm.customFields[index].onClicked(el);
-                } 
-                catch (e) {
-                    console.error(e);
-                }
+        _clockifyTagList.onClicked(el);
+        _clockifyProjectList.onClicked(el);
+        this.editForm.customFields.forEach(cf => {
+            if(cf.onClicked){
+                cf.onClicked(el);
             }
+        })
+        switch(el.id) {
 
             case 'divClockifyLinkModal':
                 break;

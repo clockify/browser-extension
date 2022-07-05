@@ -49,7 +49,6 @@
 
 .start-timer_description-input {
   height: 95%;
-  width: 57%;
   padding-left: 10px;
   border: 0;
   outline: none;
@@ -81,4 +80,85 @@
   font-size: 14px;
   color: $lighter_text;
   cursor: pointer;
+}
+
+.start-timer-description .react-autocomplete {
+  height: 100%;
+  width: auto;
+}
+
+.react-autocomplete {
+  display: inline-block;
+  position: relative;
+  width: 100%;
+}
+
+.react-autocomplete-menu {
+  box-sizing: border-box;
+  position: absolute;
+  max-height: 250px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: white;
+  box-shadow: 0 5px 10px #0000001a;
+  z-index: 25;
+  max-width: 314px;
+}
+
+.autocomplete-dropdown-item {
+  box-sizing: border-box;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  row-gap: 5px;
+  width: 314px;
+  font-size: 14px;
+  padding: 10px;
+  cursor: pointer;
+  background-color: white;
+  &:hover {
+    background-color: #eeeeee;
+  }
+  .dot {
+    margin-right: 5px;
+    margin-left: 5px;
+    align-self: center;
+  }
+  &__tag {
+    color: #02567e;
+    background: #E1F5FE;
+    padding: 2px 8px;
+    margin-left: 5px;
+    max-width: 136px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    &:hover {
+      background: #B3E5FC;
+    }
+    &-dots {
+      align-self: flex-end;
+    }
+  }
+  &__description, &__project-task > span, &__client-name { 
+      display: inline-block;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      min-width: 30px;
+  }
+  &__project-task {
+    display: flex;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    min-width: 80px;
+    > span:last-child {
+      min-width: 50px;
+    }
+  }
+  &__client-name {
+    color: #999;
+    margin-left: 5px;
+  }
 }

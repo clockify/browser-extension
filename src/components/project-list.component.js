@@ -8,6 +8,7 @@ import CreateProjectComponent from "./create-project.component";
 import CreateTask from "./create-task.component";
 import { offlineStorage } from '../helpers/offlineStorage';
 import locales from "../helpers/locales";
+import onClickOutside from "react-onclickoutside";
 
 const projectService = new ProjectService();
 const localStorageService = new LocalStorageService();
@@ -42,15 +43,18 @@ class ProjectList extends React.Component {
             title: '',
             filter: '',
             isSpecialFilter: null,
-            specFilterNoTasksOrProject: ""
+            specFilterNoTasksOrProject: "",
+            userRoles: [],
+            projectManagerFor: []
         };
         this.filterProjects = debounce(this.filterProjects, 500);
         this.openProjectDropdown = this.openProjectDropdown.bind(this);
-        this.mapSelectedTask = this.mapSelectedTask.bind(this);
+        // this.mapSelectedTask = this.mapSelectedTask.bind(this);
         this.createProject = this.createProject.bind(this);
         this.clearProjectFilter = this.clearProjectFilter.bind(this);
         this.openCreateTaskModal = this.openCreateTaskModal.bind(this);
         this.forceProjects = this.props.workspaceSettings.forceProjects;
+        this.closeProjectList = this.closeProjectList.bind(this);
     }
 
     get initialProjectList() {
@@ -61,6 +65,11 @@ class ProjectList extends React.Component {
     }
 
     async setAsyncStateItems() {
+        let userRoles =  await localStorageService.get('userRoles') || [];
+        let projectManagerFor = userRoles.find(({role}) => role === 'PROJECT_MANAGER')?.entities.map(({id}) => id);
+        if(userRoles.length){
+            userRoles = userRoles.map(({role}) => role);
+        }
         const workspaceSettings = await localStorageService.get('workspaceSettings');
         const isSpecialFilter = workspaceSettings ?
                 JSON.parse(workspaceSettings).projectPickerSpecialFilter : false;
@@ -77,25 +86,56 @@ class ProjectList extends React.Component {
                 color
             },
             projectList,
-            clientProjects
+            clientProjects,
+            userRoles,
+            projectManagerFor
         }));
     }
 
     componentDidMount() {
         this.setAsyncStateItems();
-        if (this.props.selectedProject) {
+        if (this.props.timeEntry?.project) {
             this.setState({
                 selectedProject: {
-                    name: this.props.selectedProject.name,
+                    id: this.props.timeEntry.project.id,
+                    name: this.props.timeEntry.project.name,
                     client: {
-                        name: this.props.selectedProject.clientName
+                        name: this.props.timeEntry.project.clientName
                     },
-                    color: this.props.selectedProject.color
+                    color: this.props.timeEntry.project.color
                 },
-                selectedTaskName: this.props.selectedTask ? this.props.selectedTask.name : ""
+                selectedTaskName: this.props.timeEntry.task?.name ?? ''
             })
         }
 
+    }
+
+    componentDidUpdate() {
+        if (this.props.timeEntry?.project && ((this.props.timeEntry.project.id !== this.state.selectedProject.id) || 
+            (this.props.timeEntry.task?.name && this.props.timeEntry.task.name !== this.state.selectedTaskName)
+        )) {
+            this.setState({
+                selectedProject: {
+                    id: this.props.timeEntry.project.id,
+                    name: this.props.timeEntry.project.name,
+                    client: {
+                        name: this.props.timeEntry.project.clientName
+                    },
+                    color: this.props.timeEntry.project.color
+                },
+                selectedTaskName: this.props.timeEntry.task?.name ?? ''
+            }, () => {
+                    this.setState({
+                        title: this.createTitle()
+                    });
+                });
+        }
+    }
+
+    handleClickOutside() {
+        if(this.state.isOpen){
+            this.closeProjectList();
+        }
     }
 
     isOpened() {
@@ -171,93 +211,97 @@ class ProjectList extends React.Component {
         return projectService.removeProjectAsFavorite(projectId);
     }
     
-    mapSelectedProject() {
-        const selectedProject = this.props.selectedProject
-            ? this.state.projectList.find(p => p.id === this.props.selectedProject.id)
-            : null;
+    // mapSelectedProject() {
+    //     const selectedProject = this.props.selectedProject
+    //         ? this.state.projectList.find(p => p.id === this.props.selectedProject.id)
+    //         : null;
 
-        if (this.props.selectedProject && selectedProject) {
-            this.setState({
-                selectedProject: selectedProject
-            }, () => {
+    //     console.log('SELECTOVANI PROJECT', selectedProject);
 
-                if (offlineStorage.userHasCustomFieldsFeature) {
-                    this.props.onChangeProjectRedrawCustomFields();
-                }
+    //     if (this.props.selectedProject && selectedProject) {
+    //         this.setState({
+    //             selectedProject: selectedProject
+    //         }, () => {
 
-                this.setState({
-                    title: this.createTitle()
-                });
-                const selectedTask = this.state.selectedProject.tasks && this.props.selectedTask 
-                    ? this.state.selectedProject.tasks.filter(t => t.id === this.props.selectedTask.id)[0]
-                    : null;
-                if (selectedTask) {
-                    this.setState({
-                        selectedTaskName: selectedTask.name
-                    }, () => {
-                        this.setState({
-                            title: this.createTitle()
-                        });
-                    });
-                }
-            })
-        } else {
-            if (this.props.selectedProject) {
-                projectService.getProjectsByIds([this.props.selectedProject.id])
-                    .then(response => {
-                        if (response.data.length > 0 && !response.data[0].archived) {
-                            this.setState({
-                                selectedProject: response.data[0]
-                            }, () => {
-                                if (offlineStorage.userHasCustomFieldsFeature) {
-                                    this.props.onChangeProjectRedrawCustomFields()
-                                }
-                                this.setState({
-                                    title: this.createTitle()
-                                });
-                                if (this.props.selectedTask) {
-                                    projectService.getAllTasks([this.props.selectedTask.id])
-                                        .then(response => {
-                                            const selectedTask = response.data[0];
-                                            if (selectedTask) {
-                                                this.setState({
-                                                    selectedTaskName: selectedTask.name
-                                                }, () => {
-                                                    this.setState({
-                                                        title: this.createTitle()
-                                                    });
-                                                });
-                                            }            
-                                        })
-                                        .catch(error => {
-                                        })
-                                }             
-                            });
-                        }
-                    });
-            } 
-            else {
-                this.setState({
-                    selectedProject: {
-                        name: this.createNameForSelectedProject(),
-                        color: this.getColorForProject()
-                    }
-                }, () => {
-                    this.setState({
-                        title: this.createTitle()
-                    });
-                });
-            }
-        }
-    }
+    //             // if (offlineStorage.userHasCustomFieldsFeature) {
+    //             //     this.props.onChangeProjectRedrawCustomFields();
+    //             // }
 
-    mapSelectedTask(selectedTaskName) {
-        if (this.state.selectedProject && this.state.selectedTaskName !== selectedTaskName) {
-            this.setState({
-                selectedTaskName
-            })
-        }
-    }
+    //             this.setState({
+    //                 title: this.createTitle()
+    //             });
+    //             const selectedTask = this.state.selectedProject.tasks && this.props.selectedTask 
+    //                 ? this.state.selectedProject.tasks.filter(t => t.id === this.props.selectedTask.id)[0]
+    //                 : null;
+    //             console.log('selectedTask', this.state.selectedProject.tasks, this.props.selectedTask);
+    //             if (selectedTask) {
+    //                 this.setState({
+    //                     selectedTaskName: selectedTask.name
+    //                 }, () => {
+    //                     this.setState({
+    //                         title: this.createTitle()
+    //                     });
+    //                 });
+    //             }
+    //         })
+    //     } else {
+    //         if (this.props.selectedProject) {
+    //             console.log('TAJ SAM');
+    //             projectService.getProjectsByIds([this.props.selectedProject.id])
+    //                 .then(response => {
+    //                     if (response.data.length > 0 && !response.data[0].archived) {
+    //                         this.setState({
+    //                             selectedProject: response.data[0]
+    //                         }, () => {
+    //                             // if (offlineStorage.userHasCustomFieldsFeature) {
+    //                             //     this.props.onChangeProjectRedrawCustomFields()
+    //                             // }
+    //                             this.setState({
+    //                                 title: this.createTitle()
+    //                             });
+    //                             if (this.props.selectedTask) {
+    //                                 projectService.getAllTasks([this.props.selectedTask.id])
+    //                                     .then(response => {
+    //                                         const selectedTask = response.data[0];
+    //                                         if (selectedTask) {
+    //                                             this.setState({
+    //                                                 selectedTaskName: selectedTask.name
+    //                                             }, () => {
+    //                                                 this.setState({
+    //                                                     title: this.createTitle()
+    //                                                 });
+    //                                             });
+    //                                         }            
+    //                                     })
+    //                                     .catch(error => {
+    //                                     })
+    //                             }             
+    //                         });
+    //                     }
+    //                 });
+    //         } 
+    //         else {
+    //             this.setState({
+    //                 selectedProject: {
+    //                     name: this.createNameForSelectedProject(),
+    //                     color: this.getColorForProject()
+    //                 }
+    //             }, () => {
+    //                 this.setState({
+    //                     title: this.createTitle()
+    //                 });
+    //             });
+    //         }
+    //     }
+    // }
+
+    // mapSelectedTask(selectedTaskName) {
+    //     if (this.state.selectedProject && this.state.selectedTaskName !== selectedTaskName) {
+    //         this.setState({
+    //             selectedTaskName
+    //         })
+    //     }
+    // }
 
 
     groupByClientName(objectArray) {
@@ -304,13 +348,11 @@ class ProjectList extends React.Component {
         }
 
         this.setState({
-                selectedProject: project,
-                selectedTaskName: '',
+                // selectedProject: project,
+                // selectedTaskName: '',
                 isOpen: false,
                 projectList: projectList
-            }, () => this.setState({
-                title: this.createTitle()
-            })
+            }
         );
     }
 
@@ -318,12 +360,10 @@ class ProjectList extends React.Component {
         this.props.selectTask(task, project);
 
         this.setState({
-                selectedProject: project,
-                selectedTaskName: task.name,
+                // selectedProject: project,
+                // selectedTaskName: task.name,
                 isOpen: false
-            }, () => this.setState({
-                title: this.createTitle()
-            })
+            }
         );
     }
 
@@ -338,13 +378,12 @@ class ProjectList extends React.Component {
                 document.getElementById('project-filter').value = null;
                 document.getElementById('project-filter').focus();
                 this.getProjects(this.state.page, pageSize, isEnabledCreateProject);
-                this.props.projectListOpened();
             });
         }
     }
 
     closeProjectList() {
-        document.getElementById('project-dropdown').scroll(0, 0);
+        document.getElementById('project-dropdown')?.scroll(0, 0);
         this.setState({
             isOpen: false,
             filter: '',
@@ -449,8 +488,25 @@ class ProjectList extends React.Component {
     }
 
     render() {
-        const isEnabledCreateProject = !this.props.workspaceSettings.onlyAdminsCreateProject || this.props.isUserOwnerOrAdmin ? true : false;
-        const { clientProjects } = this.state;
+        //tu logika
+        //role su u storage
+        //u ws settings pravila workspaceSettings.entityCreationPermissions
+        //whoCanCreateProjectsAndClients
+        //whoCanCreateTags
+        //whoCanCreateTasks
+        // "EVERYONE", "ADMINS", "ADMINS_AND_PROJECT_MANAGERS"
+
+        const { userRoles, clientProjects, projectManagerFor } = this.state;
+        const { whoCanCreateProjectsAndClients, whoCanCreateTasks } = this.props.workspaceSettings?.entityCreationPermissions || {whoCanCreateProjectsAndClients: 'ADMINS', whoCanCreateTasks: 'ADMINS'};
+        
+        const isEnabledCreateProject = whoCanCreateProjectsAndClients === 'EVERYONE' || userRoles.includes('WORKSPACE_ADMIN') 
+        || (whoCanCreateProjectsAndClients === 'ADMINS_AND_PROJECT_MANAGERS' && userRoles.includes('PROJECT_MANAGER'));
+
+        const isEnabledCreateTask = whoCanCreateTasks === 'EVERYONE' || userRoles.includes('WORKSPACE_ADMIN'); 
+        const isEnabledCreateTaskForPM = whoCanCreateTasks === 'ADMINS_AND_PROJECT_MANAGERS' && userRoles.includes('PROJECT_MANAGER');
+
+        // const isEnabledCreateProject = !this.props.workspaceSettings.onlyAdminsCreateProject || this.props.isUserOwnerOrAdmin ? true : false;
+        // const { clientProjects } = this.state;
         const sortedClients = Object.keys(clientProjects).sort();
         return (
             <div className="projects-list"
@@ -480,7 +536,7 @@ class ProjectList extends React.Component {
 
                 {this.state.isOpen &&
                     <div className="project-list-open">
-                    <div onClick={this.closeProjectList.bind(this)} className="invisible"></div>
+                    <div onClick={this.closeProjectList} className="invisible"></div>
                     <div className="project-list-dropdown"
                             id="project-dropdown">
                         <div className="project-list-dropdown--content">
@@ -513,6 +569,7 @@ class ProjectList extends React.Component {
                                             getProjectTasks={this.getProjectTasks}
                                             projectFavorites={false}
                                             openCreateTaskModal={this.openCreateTaskModal}
+                                            disableCreateTask={!(isEnabledCreateTask || (isEnabledCreateTaskForPM && projectManagerFor.includes(project.id)))}
                                         />
                                     )}
                                 </div>
@@ -536,6 +593,7 @@ class ProjectList extends React.Component {
                                                 removeProjectAsFavorite={this.removeProjectAsFavorite}
                                                 projectFavorites={this.props.workspaceSettings.projectFavorites}
                                                 openCreateTaskModal={this.openCreateTaskModal}
+                                                disableCreateTask={!(isEnabledCreateTask || (isEnabledCreateTaskForPM && projectManagerFor.includes(project.id)))}
                                             />
                                         </div>                            
                                     )}
@@ -560,6 +618,7 @@ class ProjectList extends React.Component {
                                                 removeProjectAsFavorite={this.removeProjectAsFavorite}
                                                 projectFavorites={this.props.workspaceSettings.projectFavorites}
                                                 openCreateTaskModal={this.openCreateTaskModal}
+                                                disableCreateTask={!(isEnabledCreateTask || (isEnabledCreateTaskForPM && projectManagerFor.includes(project.id)))}
                                             />
                                         </div>                            
                                     )}
@@ -583,6 +642,7 @@ class ProjectList extends React.Component {
                                                 removeProjectAsFavorite={this.removeProjectAsFavorite}
                                                 projectFavorites={this.props.workspaceSettings.projectFavorites}
                                                 openCreateTaskModal={this.openCreateTaskModal}
+                                                disableCreateTask={!(isEnabledCreateTask || (isEnabledCreateTaskForPM && projectManagerFor.includes(project.id)))}
                                             />
                                         )}
                                     </div>                            
@@ -614,4 +674,4 @@ class ProjectList extends React.Component {
     }
 }
 
-export default ProjectList;
+export default onClickOutside(ProjectList);

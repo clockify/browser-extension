@@ -2,6 +2,15 @@
   "APPROVAL__ENTRY_NO_DESCRIPTION": {
     "message": "Sin descripción"
   },
+  "TRACKER__APPROVAL__THIS_WEEK": {
+    "message": "Esta semana"
+  },
+  "TRACKER__APPROVAL__LAST_WEEK": {
+    "message": "La semana pasada"
+  },
+  "TRACKER__TIME_TRACKER__WEEK_TOTAL": {
+    "message": "Total de la semana:"
+  },
   "TRACKER__ENTRY_MESSAGES__LOADING": {
     "message": "Cargando por favor espere."
   },
@@ -167,6 +176,9 @@
   "GLOBAL__USERS_LABEL": {
     "message": "Usuarios"
   },
+  "GLOBAL__DUPLICATE_BTN": {
+    "message": "Duplicar"
+  },
   "GLOBAL__WITHOUT_PROJECT_LABEL": {
     "message": "Sin proyecto"
   },
@@ -331,6 +343,15 @@
   },
   "GLOBAL__PLACEHOLDER__ENTER_NAME": {
     "message": "Ingrese su nombre"
+  },
+  "GLOBAL__DESCRIPTION_LIMIT_ERROR_MSG": {
+    "message": "Descripción abreviada (longitud máxima $limit$ caracteres)",
+    "placeholders": {
+      "limit": {
+        "content": "$1",
+        "example": "3000"
+      }
+    }
   },
   "INSTAL_AND_TRACK_ANYWHERE": {
     "message": "Instale Clockify y realice un seguimiento del tiempo en cualquier lugar."
@@ -530,6 +551,9 @@
   },
   "GLOBAL__TODAY_LABEL": {
     "message": "Hoy dia"
+  },
+  "GLOBAL__YESTERDAY_LABEL": {
+    "message": "El dia de ayer"
   },
   "GLOBAL__TOTAL_TIME": {
     "message": "Total:"

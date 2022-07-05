@@ -2,9 +2,9 @@
 getProject = () =>  {
     //project = $('.TaskProjects .TokenizerPillBase-name').textContent,
     //let project = $('div.FullWidthPageStructureWithDetailsOverlay-detailsOverlay li.TaskProjectToken.TaskProjects-project');
-    let project = $('.SingleTaskPaneSpreadsheet .TaskProjects .TokenizerPillBase-name');
+    let project = $('.SingleTaskPaneSpreadsheet .LegacyTaskProjects .TokenizerPillBase-name');
     if (!project) { 
-        project = $('div.FullWidthPageStructureWithDetailsOverlay-detailsOverlay .TaskProjects .TokenizerPillBase-name');
+        project = $('div.FullWidthPageStructureWithDetailsOverlay-detailsOverlay .LegacyTaskProjects .TokenizerPillBase-name');
         if (!project)
             project = $('.SingleTaskPaneSpreadsheet .TaskAncestry-ancestorProjects');
         if (!project)

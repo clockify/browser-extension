@@ -37,7 +37,8 @@ class TaskService extends ClockifyService {
             error = err;
         }
         const createObjects = await this.getCreateObjects();
-        if (!task && createObjects) {
+        const canCreateTasks = await this.getCanCreateTasks();
+        if (!task && createObjects && canCreateTasks) {
             const { data, error: err, status } = await this.createTask(project.id, taskName);
             task = data;
             if (status === 201) {
