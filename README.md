@@ -30,7 +30,6 @@ If you need the fix quicker, feel free to update the integration yourself and se
 4. Build Chrome extension by running:<br>
  Linux: `npm run compile.dev.chrome`<br>
  Windows: `npm run compile.dev.chrome.win`
-
 5. Navigate to `chrome://extensions/`
 6. Enable "Developer mode" (located in the top right corner)
 7. Click "Load unpacked" and select the `www/chrome.dev/` folder that you've built
@@ -81,9 +80,12 @@ sudo npm install
 
 ## Setup (Mac)
 ```
+nvm install
+nvm use
 brew install rbenv ruby-build
 sudo gem install compass
 sudo npm install
+npm install -g webpack@4.46.0 webpack-cli@3.3.12 && npm link webpack
 npm install @popperjs/core
 ```
 
