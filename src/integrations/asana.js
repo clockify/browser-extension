@@ -1,10 +1,9 @@
-
 getProject = () =>  {
     //project = $('.TaskProjects .TokenizerPillBase-name').textContent,
     //let project = $('div.FullWidthPageStructureWithDetailsOverlay-detailsOverlay li.TaskProjectToken.TaskProjects-project');
-    let project = $('.SingleTaskPaneSpreadsheet .LegacyTaskProjects .TokenizerPillBase-name');
-    if (!project) { 
-        project = $('div.FullWidthPageStructureWithDetailsOverlay-detailsOverlay .LegacyTaskProjects .TokenizerPillBase-name');
+    let project = $('.TaskPane .TaskProjectToken .TokenizerPillBase-name');
+    if (!project) {
+        project = $('div.FullWidthPageStructureWithDetailsOverlay-detailsOverlay .TaskProjects .TokenizerPillBase-name');
         if (!project)
             project = $('.SingleTaskPaneSpreadsheet .TaskAncestry-ancestorProjects');
         if (!project)
@@ -18,12 +17,12 @@ getProject = () =>  {
 
 // New task pane list detail modal
 setTimeout(() => {
-    clockifyButton.render('.SingleTaskPaneSpreadsheet:not(.clockify)',
-        {observe: true}, 
+    clockifyButton.render('.TaskPane:not(.clockify)',
+        {observe: true},
         (elem) => {
-            const 
+            const
                 //descriptionSelector = $('.SingleTaskTitleInput-taskName textarea', elem),
-                taskSelector = $('.SingleTaskPaneSpreadsheet-titleRow textarea'),
+                taskSelector = $('.TaskPane-titleRow textarea'),
                 // descriptionSelector = $('div.FullWidthPageStructureWithDetailsOverlay-detailsOverlay div.TaskDescription', elem),
                 subTask = $('.TaskAncestry-ancestorLink.SecondaryNavigationLink', elem),
                 mainTask = taskSelector ? taskSelector.textContent : null,
@@ -32,10 +31,10 @@ setTimeout(() => {
                     //return (subTaskName??"") + (!!subTaskName && !!task ? " / " : "") + (task??"")
                     return subTaskName??mainTask
                 },
-                container = $('.SingleTaskPaneToolbarAnimation-row', elem),
+                container = $('.TaskPaneToolbarAnimation-row', elem),
                 description = () => mainTask??""// descriptionSelector && !descriptionSelector.textContent.startsWith("Add more detail") //&& !!descriptionSelector.textContent
                     //? descriptionSelector.textContent : ""
-                    ////: taskSelector 
+                    ////: taskSelector
                     ////    ? taskSelector.textContent :
                     ////    "",
                 const tags = () => Array.from($$("div.TaskTagTokenPills span.TokenizerPillBase-name", elem)).map(e => e.innerText)
