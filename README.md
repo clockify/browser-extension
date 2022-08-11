@@ -62,18 +62,18 @@ Before sending us a pull request, make sure you test the integration in both Chr
 ## Setup (Ubuntu)
 ```
 sudo apt-get install nodejs
-sudo npm install
+sudo npm install --legacy-peer-deps
 ```
 ## Setup (Windows)
 
 - Install/Update Node.js to Latest: https://nodejs.org/en/download/
 ```
-> npm install
+> npm install --legacy-peer-deps
 ```
 
 ## Setup (Mac)
 ```
-sudo npm install
+sudo npm install --legacy-peer-deps
 npm install @popperjs/core
 ```
 
