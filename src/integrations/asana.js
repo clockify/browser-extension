@@ -1,4 +1,4 @@
-getProject = () => {
+getProject = () =>  {
     //project = $('.TaskProjects .TokenizerPillBase-name').textContent,
     //let project = $('div.FullWidthPageStructureWithDetailsOverlay-detailsOverlay li.TaskProjectToken.TaskProjects-project');
     let project = $('.TaskPane .TaskProjectToken .TokenizerPillBase-name');
@@ -32,7 +32,7 @@ setTimeout(() => {
                     return subTaskName??mainTask
                 },
                 container = $('.TaskPaneToolbarAnimation-row', elem),
-                description = () => mainTask ?? ""// descriptionSelector && !descriptionSelector.textContent.startsWith("Add more detail") //&& !!descriptionSelector.textContent
+                description = () => mainTask??""// descriptionSelector && !descriptionSelector.textContent.startsWith("Add more detail") //&& !!descriptionSelector.textContent
                     //? descriptionSelector.textContent : ""
                     ////: taskSelector
                     ////    ? taskSelector.textContent :
