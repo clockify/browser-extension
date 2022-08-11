@@ -1,3 +1,5 @@
+@use "variables";
+
 .header_and_timer {
   position: fixed;
   width: 100vw;
@@ -8,7 +10,7 @@
 }
 
 .header-back {
-  color: $blue;
+  color: variables.$blue;
   cursor: pointer;
 }
 
@@ -69,11 +71,11 @@
 
 .header-offline {
   text-align: center;
-  background: $middle_light_text;
+  background: variables.$middle_light_text;
   color: white;
 }
 
-// background-color: $warning;
+// background-color: variables.$warning;
 
 .screenshot-notification {
   display: flex;
@@ -85,7 +87,7 @@
   &__info_and_close_button {
     display: flex;
     justify-content: space-between;
-    color: $middle_light_text;
+    color: variables.$middle_light_text;
   }
 
   &__action_buttons {
@@ -94,7 +96,7 @@
 
     &--help {
       cursor: pointer;
-      color: $blue;
+      color: variables.$blue;
       margin-left: 5px;
     }
 

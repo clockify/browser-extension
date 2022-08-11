@@ -128,7 +128,7 @@ var ClockifyTagList = class {
                     " class='clockify-tag-list-name'>" + 
                     (arr.length === 0
                         ? "<span class='clockify-tag-list-add'>" + 
-                            (this.editForm.isTagRequired ? `${clockifyLocales.ADD_TAGS} (required)` : clockifyLocales.ADD_TAGS) +
+                            (this.editForm.isTagRequired ? `${clockifyLocales.ADD_TAGS} ${clockifyLocales.REQUIRED_LABEL}` : clockifyLocales.ADD_TAGS) +
                         "</span>"
                         : "<span class='clockify-tag-list-selected'>" +
                             arr.join('') + 

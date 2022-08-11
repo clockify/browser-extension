@@ -16,24 +16,21 @@ clockifyButton.render(
       numElem.firstChild.textContent.trim() + ' ' + description.trim();
 
     const link = clockifyButton.createButton(description, projectElem.textContent);
-
     elem.insertBefore(link, titleElem);
   }
 );
 
 /* new view for single issues — obligatory since YouTrack 2018.3 */
 clockifyButton.render(
-  '.yt-issue-body:not(.clockify)',
+  '.yt-issue-view:not(.clockify)',
   { observe: true },
   function (elem) {
-    const parent = elem.closest('.yt-issue-view');
-    const issueId = parent.querySelector('.js-issue-id').textContent;
+    const issueId = elem.querySelector('.js-issue-id').textContent;
     const link = clockifyButton.createButton(issueId + ' ' + $('h1').textContent.trim(), issueId.split('-')[0]);
-    link.style.position = 'absolute';
-    link.style.right = '0px';
-    link.style.top = '-12px';
-    
-    elem.insertBefore(link, $('.yt-issue-view__star'));
+    const toolbar = $('.yt-issue-toolbar');
+    link.style.paddingLeft = "20px";
+    elem.style.display = "flex";  
+    toolbar.appendChild(link);
   }
 );
 
@@ -57,6 +54,7 @@ clockifyButton.render(
       return issueId() + ' ' + summary().textContent.trim()
     }
     const link = clockifyButton.createButton(desc, issueId().split('-')[0]);
+    link.style.paddingLeft = "15px";
     elem.parentElement.appendChild(link);
   }
 );
@@ -79,6 +77,6 @@ clockifyButton.render('.yt-agile-card:not(.clockify)', { observe: true }, functi
   }
 
   const link = clockifyButton.createButton(description, projectName.join(''));
-
+  link.style.paddingLeft = "15px";
   container.appendChild(link);
 });

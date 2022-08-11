@@ -14,7 +14,7 @@ var ClockifyCustomFieldDropSingle = class extends ClockifyCustomField {
         //this.id = `clockifyCustomFieldDropSingle${this.index}`;
         this.popupId = `${this.divId}Popup`;
 
-        this.liHeaderId = 'liClockifyCFDropHeader'
+        this.liHeaderId = `liClockifyCFDropHeader${this.index}`;
         
         const items = this.allowedValues.map((val, index) => ({ 
             id: index+1, 

@@ -35,7 +35,7 @@ export class HttpHeadersHelper {
         }
 
         headers['App-Name'] = appType;
-        const lang = localStorageService.get('lang');
+        const lang = await localStorageService.get('lang');
         if(lang){
             headers['accept-language'] = lang;
         }

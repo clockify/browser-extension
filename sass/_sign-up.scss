@@ -1,3 +1,5 @@
+@use "variables";
+
 .signup {
 
   &__disabled {
@@ -11,7 +13,7 @@
     line-height: 16px;
     position: relative;
     left: 20px;
-    background-color: $blue;
+    background-color: variables.$blue;
   }
   &-logo {
     text-align: center;
@@ -27,12 +29,12 @@
   &-title {
     font-size: 18px;
     line-height: 21px;
-    color: $dark_text;
+    color: variables.$dark_text;
   }
   &-text {
     font-size: 14px;
     line-height: 21px;
-    color: $dark_text;
+    color: variables.$dark_text;
   }
   &-form {
     margin-right: 20px;
@@ -58,7 +60,7 @@
       margin-left: 10px;
       font-size: 14px;
       line-height: 16px;
-      color: $dark_text;
+      color: variables.$dark_text;
       a {
         margin-left: 5px;
         color: #03a9f4;
@@ -91,7 +93,7 @@
     height: 16px;
     top: 13px;
     background: white;
-    border: 1px solid $border;
+    border: 1px solid variables.$border;
     border-radius: 2px;
     cursor: pointer;
     &-img {
@@ -108,7 +110,7 @@
   }
   &--divider {
     margin-bottom: 20px;
-    border-bottom: 1px dotted $disabled;
+    border-bottom: 1px dotted variables.$disabled;
     height: 1px;
   }
   &--login-url {
@@ -123,7 +125,7 @@
     p {
       font-size: 14px;
       line-height: 16px;
-      color: $dark_text;
+      color: variables.$dark_text;
     }
   }
 }

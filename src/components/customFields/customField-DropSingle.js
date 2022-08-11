@@ -1,17 +1,15 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import useCustomField from './useCustomField';
-import {isOffline} from "../check-connection";
 import locales from "../../helpers/locales";
 
 import {useOnClickOutside} from "./useOnClickOutside";
 
-const CustomFieldDropSingle = ({ cf, closeOther, updateValue }) => {
+const CustomFieldDropSingle = ({ cf, updateValue }) => {
     
     const menuRef = useRef(null);
   
-    const [ {id, index, value, isDisabled, placeHolder, placeHolderOrName, title, allowedValues, redrawCounter, manualMode}, 
-            setValue,
-            storeValue ] = useCustomField(cf, updateValue);
+    const [ {id, index, value, isDisabled, placeHolder, allowedValues}, 
+            setValue] = useCustomField(cf, updateValue);
 
     const newList = (val) => {
         const items = allowedValues.map((name, id) => ({ id, name, isChecked: val === name }) );

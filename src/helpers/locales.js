@@ -1,4 +1,4 @@
-var _supportedLanguages = ['en', 'fr', 'es', 'pt', 'ru', 'de'];
+var _supportedLanguages = ['en', 'fr', 'es', 'pt', 'ru', 'de', 'ko', 'ja'];
 
 var _isIntegration = typeof self._clockifyMessages !== 'undefined';
 
@@ -327,6 +327,7 @@ var locales = {
     get LONG_BREAK() { return this.getMessage('EXTENSION__LONG_BREAK') },
     get LONG_BREAK_STARTS_AFTER() { return this.getMessage('EXTENSION__LONG_BREAK_STARTS_AFTER') },
     get BREAKS() { return this.getMessage('EXTENSION__BREAKS') },
+    get BREAK() { return this.getMessage('AUDIT_LOG__KIOSK__BREAK_TYPE_LABEL') },
     get SOUND_NOTIFICATION() { return this.getMessage('EXTENSION__SOUND_NOTIFICATION') },
     get AUTOMATIC_BREAKS() { return this.getMessage('EXTENSION__AUTOMATIC_BREAKS') },
     get DEFAULT_BREAK_PROJECT() { return this.replaceLabels(this.getMessage('EXTENSION__DEFAULT_BREAK_PROJECT')) },

@@ -1,3 +1,5 @@
+@use "variables";
+
 .week-header {
     margin: 0 23px;
     display: flex;
@@ -15,24 +17,24 @@
 }
 
 .time-entries-list {
-    background: $background;
+    background: variables.$background;
     margin: 20px;
-    border: 1px solid $border;
+    border: 1px solid variables.$border;
     border-radius: 2px;
 }
 
 .time-entries-list-time {
-    background: $entries_header;
-    color: $lighter_text;
+    background: variables.$entries_header;
+    color: variables.$lighter_text;
     padding: 20px 10px;
-    border-bottom: 1px solid $border;
+    border-bottom: 1px solid variables.$border;
 }
 
 .time-entries-list-day {
     position: relative;
     top: -7px;
     float: left;
-    color: $dark_text;
+    color: variables.$dark_text;
     font-size: 12px;
     line-height: 14px;
 }
@@ -44,14 +46,14 @@
 }
 
 .time-entries-list-total-time {
-    color: $dark_text;
+    color: variables.$dark_text;
     font-size: 12px;
     line-height: 14px;
 }
 
 .time-entries-list-total {
     margin-right: 3px;
-    color: $lighter_text;
+    color: variables.$lighter_text;
     font-size: 12px;
     line-height: 14px;
 }

@@ -10,7 +10,6 @@ import EditForm from './edit-form.component';
 import RequiredFields from './required-fields.component';
 import {isOffline} from "./check-connection";
 import packageJson from '../../package';
-import '@babel/polyfill';
 import {getIconStatus} from "../enums/browser-icon-status-enum";
 import {Application} from "../application";
 import {TimeEntryService} from "../services/timeEntry-service";
@@ -549,8 +548,8 @@ class HomePage extends React.Component {
 
     handleBackButton() {
         if (!document.getElementById('description')) {
-            ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
-            ReactDOM.render(<HomePage/>, document.getElementById('mount'));
+            
+            window.reactRoot.render(<HomePage/>);
         } else {
             navigator.app.exitApp();
         }
@@ -648,7 +647,7 @@ class HomePage extends React.Component {
         }
         if (reload || this.state.pageCount === 0) {
             htmlStyleHelper.scrollToTop();
-            // ReactDOM.render(<HomePage/>, document.getElementById('mount'));
+            // window.reactRoot.render(<HomePage/>, document.getElementById('mount'));
         }
     }
 
@@ -928,41 +927,33 @@ class HomePage extends React.Component {
         } 
         else if (forceDescription &&
             (inProgress.description === "" || !inProgress.description)) {
-            ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
-            ReactDOM.render(
+            
+            window.reactRoot.render(
                 <RequiredFields field={"description"}
                                 mode={mode} 
-                                goToEdit={this.goToEdit.bind(this)}/>,
-                document.getElementById('mount')
-            );
+                                goToEdit={this.goToEdit.bind(this)}/>);
         }
         else if (forceProjects && !inProgress.projectId) {
-            ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
-            ReactDOM.render(
+            
+            window.reactRoot.render(
                 <RequiredFields field={"project"}
                                 mode={mode} 
-                                goToEdit={this.goToEdit.bind(this)}/>,
-                document.getElementById('mount')
-            );
+                                goToEdit={this.goToEdit.bind(this)}/>);
         }
         else if (forceTasks && !inProgress.task) {
-            ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
-            ReactDOM.render(
+            
+            window.reactRoot.render(
                 <RequiredFields field={"task"}
                                 mode={mode} 
-                                goToEdit={this.goToEdit.bind(this)}/>,
-                document.getElementById('mount')
-            );
+                                goToEdit={this.goToEdit.bind(this)}/>);
         }
         else if (forceTags &&
             (!this.state.timeEntry.tags || !this.state.timeEntry.tags.length > 0)) {
-            ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
-            ReactDOM.render(
+            
+            window.reactRoot.render(
                 <RequiredFields field={"tags"}
                                 mode={mode} 
-                                goToEdit={this.goToEdit.bind(this)}/>,
-                document.getElementById('mount')
-            );
+                                goToEdit={this.goToEdit.bind(this)}/>);
         }
         else {
             this.endStartedAndStart(timeEntry);
@@ -970,15 +961,14 @@ class HomePage extends React.Component {
     }
 
     goToEdit() {
-        ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
-        ReactDOM.render(
+        
+        window.reactRoot.render(
             <EditForm changeMode={this.changeMode}
                       timeEntry={this.state.inProgress}
                       workspaceSettings={this.state.workspaceSettings}
                       timeFormat={this.state.userSettings.timeFormat}
                       userSettings={this.state.userSettings}
-            />, document.getElementById('mount')
-        );
+            />);
     }
 
     async continueTimeEntry(timeEntry) {

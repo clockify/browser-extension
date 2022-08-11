@@ -1,10 +1,10 @@
-import * as React from 'react';
+import React from 'react';
 import {getBrowser, isChrome} from "../helpers/browser-helper";
 import Header from "./header.component";
 import {UserService} from "../services/user-service";
 import {LocalStorageService} from "../services/localStorage-service";
 import {getLocalStorageEnums} from "../enums/local-storage.enum";
-import TimePicker from 'antd/lib/time-picker';
+import {TimePicker} from 'antd';
 import moment from "moment";
 import {HtmlStyleHelper} from "../helpers/html-style-helper";
 import {getKeyCodes} from "../enums/key-codes.enum";
@@ -13,7 +13,6 @@ import DarkModeComponent from "./dark-mode.component";
 import DefaultProject from "./default-project.component";
 
 import Toaster from "./toaster-component";
-import * as ReactDOM from "react-dom";
 import HomePage from "./home-page.component";
 import locales from "../helpers/locales";
 
@@ -798,8 +797,8 @@ class Settings extends React.Component {
     }
 
     async goBackToHomePage() {
-        ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
-        ReactDOM.render(<HomePage />, document.getElementById('mount'));
+        
+        window.reactRoot.render(<HomePage />);
     }
 
     render(){
@@ -993,7 +992,7 @@ class Settings extends React.Component {
                                    onBlur={this.changeIdleCounter.bind(this)}
                                    onKeyDown={this.changeIdleCounterOnEnter.bind(this)}
                                    onChange={this.changeIdleDetectionCounterState.bind(this)}/>
-                            <p>minutes</p>
+                            <p>{locales.MINUTES}</p>
                         </div>
                     </div>
                     <Pomodoro

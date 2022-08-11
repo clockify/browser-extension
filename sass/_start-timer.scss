@@ -1,21 +1,24 @@
+@use "variables";
+
 .start-timer {
   position: relative;
+  display: flex;
+  justify-content: space-between;
   height: 50px;
   margin: 10px 20px;
   background: white;
-  border: 1px solid $border;
+  border: 1px solid variables.$border;
   border-radius: 2px;
 }
 
 .start-timer_button-red {
-  float: right;
   width: 110px;
   height: 40px;
   margin: 5px;
   border: none;
   border-radius: 2px;
-  background: $red;
-  color: $background;
+  background: variables.$red;
+  color: variables.$background;
   cursor: pointer;
 }
 
@@ -32,23 +35,23 @@
 }
 
 .start-timer_button-start {
-  float: right;
   width: 110px;
   height: 40px;
   margin: 5px;
   border: none;
   border-radius: 2px;
-  background: $blue;
-  color: $background;
+  background: variables.$blue;
+  color: variables.$background;
   cursor: pointer;
 }
 
 .start-timer_button-start:hover {
-  background: $blue_hover;
+  background: variables.$blue_hover;
 }
 
 .start-timer_description-input {
   height: 95%;
+  width: 100%;
   padding-left: 10px;
   border: 0;
   outline: none;
@@ -56,6 +59,18 @@
 
 .start-timer_description-input::-ms-clear {
   display: none;
+}
+
+.start-timer_placeholder {
+  position: absolute;
+  pointer-events: none;
+  top: 0;
+  bottom: 0;
+  height: fit-content;
+  font-size: 14px;
+  left: 10px;
+  margin: auto;
+  color: #777;
 }
 
 .start-timer_description {
@@ -78,13 +93,17 @@
   margin-bottom: 17px;
   margin-left: 17px;
   font-size: 14px;
-  color: $lighter_text;
+  color: variables.$lighter_text;
   cursor: pointer;
+}
+
+.start-timer-description {
+  flex: 1;
 }
 
 .start-timer-description .react-autocomplete {
   height: 100%;
-  width: auto;
+  width: 100%;
 }
 
 .react-autocomplete {

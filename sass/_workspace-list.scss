@@ -1,3 +1,5 @@
+@use "variables";
+
 .workspace-list {
   position: relative;
   cursor: default;
@@ -5,7 +7,7 @@
   &-selection {
     display: flex;
     align-items: center;
-    border: 1px solid $border;
+    border: 1px solid variables.$border;
     background: white;
     cursor: pointer;
     margin: 0 10px;
@@ -13,7 +15,7 @@
   &-default {
     display: inline-block;
     padding: 5px 10px;
-    color: $middle_light_text;
+    color: variables.$middle_light_text;
     width: 162px;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -37,7 +39,7 @@
     margin: 5px 20px;
     font-weight: bold;
     font-size: 14px;
-    color: $middle_light_text;
+    color: variables.$middle_light_text;
   }
   &-item {
     display: flex;
@@ -47,10 +49,10 @@
     flex-wrap: nowrap;
     justify-content: space-between;
     font-size: 13px;
-    color: $dark_text;
+    color: variables.$dark_text;
 
     &:hover {
-      background: $entries_header;
+      background: variables.$entries_header;
     }
 
     &--name {
@@ -63,7 +65,7 @@
   }
   &-active {
     margin-right: 15px;
-    color: $green;
+    color: variables.$green;
 
     &__img {
       display: inline-block;

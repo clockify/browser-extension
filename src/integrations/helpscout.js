@@ -7,7 +7,7 @@ clockifyButton.render('.convo-actions:not(.clockify)', { observe: true }, () => 
       $('#subjectLine').textContent;
 
     link = clockifyButton.createSmallButton(description);
-    link.style.marginTop = "10px";
+    link.style.marginTop = "3px";
 
     var listItem = document.createElement('li');
     listItem.appendChild(link);

@@ -133,13 +133,13 @@ class DefaultProjectList extends React.PureComponent {
     }
 
     async componentDidUpdate(prevProps, prevState) {
-        const offline =  await localStorage.getItem('offline');
+        const offline = await localStorage.getItem('offline');
         const projectsAreObjects = this.props.selectedProject && prevProps.selectedProject;
         const projectsAreDifferent = projectsAreObjects && (this.props.selectedProject.name !== prevProps.selectedProject.name ||
                                                             this.props.selectedProject.selectedTask && 
                                                             this.props.selectedProject.selectedTask.name !== prevProps.selectedProject.selectedTask.name);
-        if(projectsAreDifferent || (!projectsAreObjects && this.props.selectedProject)) {
-            let selectedProject = this.props.selectedProject;
+        if(projectsAreDifferent || (!projectsAreObjects && this.props.selectedProject && !this.state.selectedProject)) {
+            let selectedProject = {...this.props.selectedProject};
             if (this.props.selectedProject) {
                 if (this.props.selectedProject.id === _lastUsedProject.id) {
                     if(this.props.selectedProject.name.includes('task')){
@@ -154,7 +154,9 @@ class DefaultProjectList extends React.PureComponent {
                 selectedProject,
                 selectedTaskName: (this.props.selectedProject && this.props.selectedProject.selectedTask ? (this.props.selectedProject.selectedTask.name || null) : null)
             }, () => {
+                if(this.props.selectedProject.id !== _lastUsedProject.id){
                     this.checkDefaultProjectTask();
+                }
             });
         }
         if (offline !== prevState.offline) {
@@ -163,12 +165,13 @@ class DefaultProjectList extends React.PureComponent {
     }
 
     async checkDefaultProjectTask() {
+
         const { isPomodoro } = this.props;
         const { forceProjects, forceTasks, projectPickerSpecialFilter } = this.props.workspaceSettings;
-        const { storage, defaultProject } = await DefaultProject.getStorage(isPomodoro);
+        const { defaultProject } = await DefaultProject.getStorage(isPomodoro);
         if (!defaultProject)
             return;
-        const { projectDB, taskDB, msg, msgId } = await defaultProject.getProjectTaskFromDB(true);
+        const { taskDB, msg, msgId } = await defaultProject.getProjectTaskFromDB(true);
 
         const projectDoesNotExist = forceProjects && msgId === 'projectDoesNotExist';
         const projectArchived = forceProjects && msgId === 'projectArchived';
@@ -191,7 +194,9 @@ class DefaultProjectList extends React.PureComponent {
             msg,
             selectedTaskName: taskDB ? taskDB.name : ''
         }, () => {
-            title: this.createTitle()
+            this.setState({
+                title: this.createTitle()
+            });
         });
     }
 

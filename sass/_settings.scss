@@ -1,3 +1,5 @@
+@use "variables";
+
 .settings_page {
   padding-top: 60px;
 
@@ -23,20 +25,20 @@
   border: none;
   border-radius: 3px;
   color: white;
-  background: $blue;
+  background: variables.$blue;
   cursor: pointer;
 }
 
 .settings-button-cancel {
   margin-left: 20px;
-  color: $blue;
+  color: variables.$blue;
   cursor: pointer;
 }
 
 .user-settings {
   display: flex;
   padding: 20px;
-  border-bottom: 1px dotted $border;
+  border-bottom: 1px dotted variables.$border;
   align-items: center;
 }
 .user-settings span:first-child {
@@ -54,7 +56,7 @@
 
 .user-settings span:last-child {
   margin-left: 10px;
-  color: $middle_light_text;
+  color: variables.$middle_light_text;
   font-style: italic;
   font-size: 15px;
 }
@@ -64,7 +66,7 @@
   margin: 20px;
   bottom: 0;
   right: 0;
-  color: $dark_text;
+  color: variables.$dark_text;
   font-size: 12px;
 }
 
@@ -78,7 +80,7 @@
       display: inline-block;
       width: 16px;
       height: 16px;
-      border: 1px solid $border;
+      border: 1px solid variables.$border;
       position: relative;
       cursor: pointer;
       background: white;
@@ -101,19 +103,19 @@
       margin-left: 10px;
       font-size: 13px;
       font-weight: 400;
-      color: $middle_light_text;
+      color: variables.$middle_light_text;
 
       &--shortcut {
         margin-left: 3px;
         font-size: 13px;
         font-weight: 400;
-        color: $lighter_text;
+        color: variables.$lighter_text;
       }
     }
   }
 
   &__idle-detection {
-    diplay: flex;
+    display: flex;
     margin: 13px 20px 5px 20px;
     align-items: center;
 
@@ -121,7 +123,7 @@
       display: inline-block;
       width: 16px;
       height: 16px;
-      border: 1px solid $border;
+      border: 1px solid variables.$border;
       position: relative;
       cursor: pointer;
       background: white;
@@ -144,7 +146,7 @@
       margin-left: 10px;
       font-size: 13px;
       font-weight: 400;
-      color: $middle_light_text;
+      color: variables.$middle_light_text;
     }
 
     &__box {
@@ -156,6 +158,7 @@
       &__content {
         display: flex;
         margin: 20px;
+        align-items: center;
         justify-content: space-between;
         width: 85%;
 
@@ -164,6 +167,7 @@
           height: 40px;
           border: 1px solid #C6D2D9;
           border-radius: 5px;
+          margin: 0 5px;
           color: #999999;
           font-style: normal;
           font-weight: normal;
@@ -182,7 +186,7 @@
   }
 
   &__reminder {
-    background-color: $entries_header;
+    background-color: variables.$entries_header;
 
     &__section {
       diplay: flex;
@@ -193,7 +197,7 @@
         display: inline-block;
         width: 16px;
         height: 16px;
-        border: 1px solid $border;
+        border: 1px solid variables.$border;
         position: relative;
         cursor: pointer;
         background: white;
@@ -224,9 +228,9 @@
       &__day {
         width: 40px;
         height: 40px;
-        border: 1px solid $border;
+        border: 1px solid variables.$border;
         border-radius: 2px;
-        background-color: $input-background;
+        background-color: variables.$input-background;
         text-align: center;
 
         &:hover {
@@ -238,7 +242,7 @@
           top: 30%;
           font-size: 14px;
           line-height: 16px;
-          color: $dark_text;
+          color: variables.$dark_text;
           transform: translate(0, -50%);
           text-transform: uppercase;
         }
@@ -269,7 +273,7 @@
         p {
           font-size: 14px;
           line-height: 16px;
-          color: $middle_light_text
+          color: variables.$middle_light_text
         }
       }
 
@@ -293,7 +297,7 @@
         p {
           font-size: 14px;
           line-height: 16px;
-          color: $middle_light_text
+          color: variables.$middle_light_text
         }
       }
 
@@ -326,7 +330,7 @@
   }
 
   &__context_menu {
-    background-color: $entries_header;
+    background-color: variables.$entries_header;
 
     &__section {
       display: flex;
@@ -337,7 +341,7 @@
         display: inline-block;
         width: 16px;
         height: 16px;
-        border: 1px solid $border;
+        border: 1px solid variables.$border;
         position: relative;
         cursor: pointer;
         background: white;
@@ -367,7 +371,7 @@
       display: inline-block;
       width: 16px;
       height: 16px;
-      border: 1px solid $border;
+      border: 1px solid variables.$border;
       position: relative;
       cursor: pointer;
       background: white;
@@ -390,7 +394,7 @@
       margin-left: 10px;
       font-size: 13px;
       font-weight: 400;
-      color: $middle_light_text;
+      color: variables.$middle_light_text;
     }
   }
 
@@ -403,7 +407,7 @@
       display: inline-block;
       width: 16px;
       height: 16px;
-      border: 1px solid $border;
+      border: 1px solid variables.$border;
       position: relative;
       cursor: pointer;
       background: white;
@@ -426,7 +430,7 @@
       margin-left: 10px;
       font-size: 13px;
       font-weight: 400;
-      color: $middle_light_text;
+      color: variables.$middle_light_text;
     }
   }
 }

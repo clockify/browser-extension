@@ -29,16 +29,14 @@ class TimeEntryListNotsyncedComponent extends React.Component {
 
     syncEntry(event){
         let timeEntry = JSON.parse(event.target.getAttribute('value'));
-        ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
-        ReactDOM.render(
+        
+        window.reactRoot.render(
             <EditFormManual 
                 timeEntry={timeEntry}
                 workspaceSettings={this.props.workspaceSettings}
                 timeFormat={this.props.timeFormat}
                 userSettings={this.props.userSettings}
-            />,
-        document.getElementById('mount')
-        );
+            />);
     }
     formatDurationOnUnsyncedEntries() {
         if (!this.props.timeEntries) {

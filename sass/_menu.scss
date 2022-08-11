@@ -1,3 +1,5 @@
+@use "variables";
+
 .rectangle {
   position: relative;
   top: 24px;
@@ -23,7 +25,7 @@
 }
 .dropdown-header {
   padding: 10px 20px;
-  color: $lighter_text;
+  color: variables.$lighter_text;
 }
 .dropdown-item {
   display: flex;
@@ -31,10 +33,10 @@
   padding: 10px 20px;
   text-decoration: none;
   text-transform: uppercase;
-  color: $middle_light_text;
+  color: variables.$middle_light_text;
   font-size: 12px;
   &.active {
-    color: $blue;
+    color: variables.$blue;
     & .menu-manual-img {
       background: url("../assets/images/manual-hover.png");
     }
@@ -44,7 +46,7 @@
   }
 }
 .dropdown-item:hover {
-  background: $entries_header;
+  background: variables.$entries_header;
 }
 .menu-manual-img, .menu-timer-img {
   width: 20px;
@@ -63,7 +65,7 @@
   margin: 5px 0;
 }
 .disable-manual {
-  color: $lighter_text;
+  color: variables.$lighter_text;
   cursor: not-allowed;
 }
 .menu-img-right {

@@ -137,28 +137,26 @@ class CreateProjectComponent extends React.Component {
             if (timeEntry.projectId) {
                 timeEntryService.updateProject(timeEntry.projectId, timeEntry.id);
             }
-            ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
-            ReactDOM.render(
+            
+            window.reactRoot.render(
                 <EditForm
                     timeEntry={timeEntry}
                     workspaceSettings={this.props.workspaceSettings}
                     timeFormat={this.props.timeFormat}
                     userSettings={this.props.userSettings}
                     afterCreateProject={true}
-                />,
-                document.getElementById('mount')
+                />
             );
         } else {
-            ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
-            ReactDOM.render(
+            
+            window.reactRoot.render(
                 <EditFormManual
                     timeEntry={timeEntry}
                     workspaceSettings={this.props.workspaceSettings}
                     timeFormat={this.props.timeFormat}
                     userSettings={this.props.userSettings}
                     afterCreateProject={true}
-                />,
-                document.getElementById('mount')
+                />
             );
         }
     }

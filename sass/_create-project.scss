@@ -1,15 +1,17 @@
+@use "variables";
+
 .create-project, .create-task {
   &__project-name, &__task-name {
     margin-left: 20px;
     padding-left: 10px;
-    border: 1px solid $border;
+    border: 1px solid variables.$border;
     border-radius: 2px;
     width: 320px;
     height: 40px;
     &::placeholder {
       font-size: 14px;
       line-height: 16px;
-      color: $lighter_text;
+      color: variables.$lighter_text;
     }
   }
   &__client-list {
@@ -26,7 +28,7 @@
     align-items: center;
     &-title {
       margin-left: 10px;
-      color: $middle_light_text;
+      color: variables.$middle_light_text;
       font-size: 14px;
       cursor: pointer;
     }
@@ -46,7 +48,7 @@
     align-items: center;
     &-title {
       margin-left: 10px;
-      color: $middle_light_text;
+      color: variables.$middle_light_text;
       font-size: 14px;
       cursor: pointer;
     }
@@ -63,7 +65,7 @@
     width: 16px;
     height: 16px;
     background: white;
-    border: 1px solid $border;
+    border: 1px solid variables.$border;
     border-radius: 2px;
     cursor: pointer;
   }
@@ -79,7 +81,7 @@
     padding-top: 18px;
     width: 320px;
     height: 32px;
-    background-color: $blue;
+    background-color: variables.$blue;
     border-radius: 2px;
     text-transform: uppercase;
     text-align: center;
@@ -89,8 +91,8 @@
   &__cancel {
     display: block;
     margin: 19px auto;
-    width: 40px;
-    color: $blue;
+    width: fit-content;
+    color: variables.$blue;
     cursor: pointer;
   }
 }

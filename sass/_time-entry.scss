@@ -1,12 +1,14 @@
+@use "variables";
+
 .time-entry {
   height: 60px;
   background: white;
-  border-bottom: 1px solid $border;
+  border-bottom: 1px solid variables.$border;
   display: flex;
   align-items: center;
   cursor: pointer;
   font-size: 14px;
-  color: $dark_text;
+  color: variables.$dark_text;
   position: relative;
   z-index: 1;
   transition: all 0.2s ease;
@@ -16,11 +18,14 @@
   &-group-number {
     position: relative;
     padding: 2px 6px;
-    margin-left: 10px;
+    margin-left: 8px;
     color: #02587f;
     background: #E1F5FE;
     &:hover{
       background: #B3E5FC;
+    }
+    & + .time-entry-description {
+      max-width: 29%;
     }
   }
   
@@ -28,7 +33,7 @@
     display: inline-block;
     position: relative;
     max-width: 35%;
-    margin-left: 10px;
+    margin-left: 8px;
   }
   &__project-wrapper{
     display: flex;
@@ -47,17 +52,16 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    color: $lighter_text;
+    color: variables.$lighter_text;
   }
   &__right-side {
     display: flex;
     align-items: center;
     position: relative;
-    margin-right: 10px;
     margin-left: auto;
     &__tag_billable_and_lock {
       display: flex;
-      margin-right: 10px;
+      margin-right: 5px;
       max-width: 100px;
       align-items: center;
       justify-content: space-between;
@@ -70,9 +74,18 @@
       content: url("../assets/images/billable.png");
       margin-right: 5px;
     }
+    &__break {
+      content: url("../assets/images/break.png");
+      margin-right: 5px;
+      width: 12px;
+      margin-top: 1px;
+      padding: 0 3px;
+    }
+    &__approved {
+      margin-right: 5px;
+    }
     &__tag {
       content: url("../assets/images/tag.png");
-      margin-right: 5px;
       padding: 3px 5px;
     }
     &__duration_and_play {
@@ -92,11 +105,11 @@
 
 .time-entry-locked {
   height: 60px;
-  background: $background;
-  border-bottom: 1px solid $border;
+  background: variables.$background;
+  border-bottom: 1px solid variables.$border;
   cursor: not-allowed;
   font-size: 14px;
-  color: $dark_text;
+  color: variables.$dark_text;
 
   .time-entry-menu{
     cursor: not-allowed;
@@ -108,7 +121,7 @@
 
 .time-entry-arrow {
   position:relative;
-  padding-left: 10px;
+  padding-left: 6px;
   content: url("../assets/images/play-normal.png");
 }
 
@@ -145,7 +158,7 @@
 .time-entry-duration {
   position: relative;
   top: 22px;
-  margin-left: 10px;
+  margin-left: 5px;
 }
 
 .time-entry-project {
@@ -166,5 +179,5 @@
   color: #000;
 }
 .no-description {
-  color: $lighter_text;
+  color: variables.$lighter_text;
 }

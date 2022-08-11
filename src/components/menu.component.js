@@ -109,11 +109,9 @@ class Menu extends React.Component {
 
     async openSettings() {
         if(!JSON.parse(await localStorage.getItem('offline'))) {
-            ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
-            ReactDOM.render(
-                <Settings workspaceSettings={this.props.workspaceSettings}/>,
-                document.getElementById('mount')
-            );
+            
+            window.reactRoot.render(
+                <Settings workspaceSettings={this.props.workspaceSettings}/>);
         }
     }
 

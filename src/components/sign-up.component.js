@@ -106,7 +106,7 @@ class SignUp extends React.Component {
                     userSettings: JSON.stringify(data.settings)
                 });
                 disabledSignup = false;
-                ReactDOM.render(<HomePage/>, document.getElementById('mount'));
+                window.reactRoot.render(<HomePage/>);
             }).catch(error => {
         })
     }
@@ -128,8 +128,8 @@ class SignUp extends React.Component {
     }
 
     backToLogin() {
-        ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
-        ReactDOM.render(<Login/>, document.getElementById('mount'));
+        
+        window.reactRoot.render(<Login/>);
     }
 
     render() {

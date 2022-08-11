@@ -1,14 +1,16 @@
+@use "variables";
+
 .time-entries-list-not-synced {
   position: relative;
   top: 8px; /*-40px;*/
   margin: 20px;
-  border: 1px solid $border;
+  border: 1px solid variables.$border;
 }
 
 .time-entry-not-synced {
   background: white;
   padding: 15px;
-  border-bottom: 1px solid $border;
+  border-bottom: 1px solid variables.$border;
   cursor: pointer;
 }
 
@@ -40,10 +42,10 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    color: $lighter_text;
+    color: variables.$lighter_text;
   }
 }
 
 .time-entry-not-synced-time {
-  color: $dark_text;
+  color: variables.$dark_text;
 }

@@ -1,17 +1,17 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import useCustomField from './useCustomField';
-// import debounce from 'lodash/debounce';
 import {isOffline} from "../check-connection";
 import locales from "../../helpers/locales";
 import {useOnClickOutside} from "./useOnClickOutside";
 
-const CustomFieldDropMultiple = ({cf, closeOther, updateValue}) => {
+const CustomFieldDropMultiple = ({cf, updateValue}) => {
 
     if (!cf.value)
         cf.value = [];
 
     const menuRef = useRef(null);
-    const [ {id, index, value, isDisabled, placeHolder, placeHolderOrName, title, allowedValues, redrawCounter, manualMode}, 
+    const isMounted = useRef(false);
+    const [ {id, index, value, isDisabled, placeHolder, allowedValues, manualMode}, 
             setValue,
             storeValue ] = useCustomField(cf, updateValue);
 
@@ -37,8 +37,12 @@ const CustomFieldDropMultiple = ({cf, closeOther, updateValue}) => {
     };
 
     useEffect(() => {
-        if(!isOpen && !isDisabled){
-            hanldeChange();
+        if(isMounted.current) {
+            if(!isOpen && !isDisabled){
+                hanldeChange();
+            }
+        } else {
+            isMounted.current = true;
         }
     }, [isOpen]);
 
@@ -86,15 +90,15 @@ const CustomFieldDropMultiple = ({cf, closeOther, updateValue}) => {
     }
 
 
-    let naslov = '';
+    let title = '';
     if (value && value.length > 0) {
-        naslov = (value.length > 1 ? `${locales.TAGS}:\n` : `${locales.TAG}: `) + value.join('\n')
+        title = (value.length > 1 ? `${locales.TAGS}:\n` : `${locales.TAG}: `) + value.join('\n')
     }
     const noMatcingItems = locales.NO_MATCHING('items');
 
     return (
         <div key={id} index={index} className={`custom-field${isDisabled?'-disabled':''}`}>
-            <div className="tag-list" title={naslov} ref={menuRef}>
+            <div className="tag-list" title={title} ref={menuRef}>
                 <div className={isDisabled 
                         ? "tag-list-button-disabled" 
                         : tagsRequired

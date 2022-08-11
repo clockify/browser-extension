@@ -106,14 +106,15 @@ class DefaultProject {
         if (id === DefaultProjectEnums.LAST_USED_PROJECT) {
             // return ProjectService.getLastUsedProjectFromTimeEntries(forceTasks);
             const isLastUsedProjectWithTask = this.project.name.includes('task');
-            const lastEntry = await TimeEntry.getLastEntry();
+            let lastEntry = await ProjectService.getLastUsedProjectFromTimeEntries(isLastUsedProjectWithTask);
+            lastEntry = lastEntry?.projectDB && {project: lastEntry.projectDB, task: lastEntry.taskDB};
             let projectDB = null;
             let taskDB = null;
-            if(lastEntry.entry){
-                ({ projectDB, taskDB } = await ProjectService.getProjectsByIds([lastEntry.entry.projectId]));
+            if(lastEntry && lastEntry.project){
+                ({ projectDB, taskDB } = await ProjectService.getProjectsByIds([lastEntry.project.id]));
                 if (projectDB) {
-                    if (!projectDB.archived && isLastUsedProjectWithTask && lastEntry.entry.taskId) {
-                        taskDB = await TaskService.getTask(lastEntry.entry.taskId);
+                    if (!projectDB.archived && isLastUsedProjectWithTask && lastEntry.task.id) {
+                        taskDB = await TaskService.getTask(lastEntry.task.id);
                         if (taskDB) {
                             taskDB.isDone = taskDB.status === 'DONE';
                         }

@@ -1,3 +1,5 @@
+@use "variables";
+
 .login {
   width: 90%;
   margin: 5%;
@@ -7,10 +9,10 @@
       margin-bottom: 20px;
       width: 100%;
       height: 50px;
-      background: $input-background;
-      border: 1px solid $blue;
+      background: variables.$input-background;
+      border: 1px solid variables.$blue;
       border-radius: 2px;
-      color: $lighter_text;
+      color: variables.$lighter_text;
       font-size: 14px;
       cursor: pointer;
       justify-content: space-evenly;
@@ -19,7 +21,7 @@
         display: flex;
         align-items: center;
         p {
-          color: $blue;
+          color: variables.$blue;
           margin-right: 10px;
           margin-left: 10px;
         }
@@ -39,9 +41,9 @@
       width: 100%;
       height: 50px;
       background: white;
-      border: 1px solid $border;
+      border: 1px solid variables.$border;
       border-radius: 2px;
-      color: $lighter_text;
+      color: variables.$lighter_text;
       font-size: 14px;
       cursor: pointer;
       justify-content: space-evenly;
@@ -55,7 +57,7 @@
     font-size: 14px;
     text-decoration: none;
     cursor: pointer;
-    color: $blue;
+    color: variables.$blue;
   }
 }
 .login input {
@@ -64,7 +66,7 @@
   margin-bottom: 10px;
   padding: 10px;
   border-radius: 3px;
-  border: 1px solid $border;
+  border: 1px solid variables.$border;
 }
 .login-submit {
   display: block;
@@ -73,19 +75,19 @@
   font-size: 14px;
   width: 100%;
   height: 50px;
-  border: 1px solid  $blue;
+  border: 1px solid  variables.$blue;
   border-radius: 2px;
-  background-color: $blue;
+  background-color: variables.$blue;
   text-transform: uppercase;
   color: #ffffff;
 }
 .login p#info{
   font-size: 13px;
-  color: $red;
+  color: variables.$red;
 }
 .login input[type=submit]:hover {
-  background-color: $blue_hover;
-  border: 1px solid $blue_hover;
+  background-color: variables.$blue_hover;
+  border: 1px solid variables.$blue_hover;
 }
 .login a{
   display: block;
@@ -93,10 +95,10 @@
   font-size: 14px;
   text-decoration: none;
   cursor: pointer;
-  color: $blue;
+  color: variables.$blue;
 }
 .login a:hover {
-  color: $blue_hover;
+  color: variables.$blue_hover;
   text-decoration: underline;
 }
 .new-account{
@@ -111,30 +113,30 @@
 }
 .new-account p{
   font-size: 14px;
-  color: $lighter_text;
+  color: variables.$lighter_text;
   margin: 0;
 }
 .new-account a{
-  color: $blue;
+  color: variables.$blue;
   font-size: 14px;
   text-decoration: none;
   cursor: pointer;
 }
 .new-account a:hover {
-  color: $blue_hover;
+  color: variables.$blue_hover;
   text-decoration: underline;
 }
 .self-hosting-url {
   a {
     margin-top: 20px;
-    color: $blue;
+    color: variables.$blue;
     font-size: 14px;
     text-decoration: none;
     cursor: pointer;
     text-align: center;
 
     &:hover {
-      color: $blue_hover;
+      color: variables.$blue_hover;
       text-decoration: underline;
     }
   }
@@ -151,18 +153,18 @@
 
   p {
     font-size: 14px;
-    color: $lighter_text;
+    color: variables.$lighter_text;
     margin: 0;
   }
 
   a {
-    color: $blue;
+    color: variables.$blue;
     font-size: 14px;
     text-decoration: none;
     cursor: pointer;
 
     &:hover {
-      color: $blue_hover;
+      color: variables.$blue_hover;
       text-decoration: underline;
     }
   }
@@ -173,9 +175,9 @@
   width: 100%;
   height: 50px;
   background: white;
-  border: 1px solid $border;
+  border: 1px solid variables.$border;
   border-radius: 2px;
-  color: $lighter_text;
+  color: variables.$lighter_text;
   font-size: 14px;
   cursor: pointer;
 }

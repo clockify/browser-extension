@@ -1,62 +1,65 @@
+@use "variables";
+
 body.dark {
-  background-color: $bg-09;
+  background-color: variables.$bg-09;
   .logo {
     width: 98px;
     background-image: url("../assets/images/clockify_logo_dark.svg");
   }
   .header_and_timer {
-    background-color: $bg-09;
+    background-color: variables.$bg-09;
   }
   .settings_page__header {
-    background-color: $bg-09;
+    background-color: variables.$bg-09;
   }
   .start-timer {
-    background-color: $bg-11;
-    border: 1px solid $bg-12;
+    background-color: variables.$bg-11;
+    border: 1px solid variables.$bg-12;
   }
   .start-timer_description_grey {
-    color: $bg-04;
+    color: variables.$bg-04;
   }
   .start-timer_description {
-    color: $bg-02;
+    color: variables.$bg-02;
   }
   .start-timer_description-input {
-    background-color: $bg-11;
-    color: $bg-02;
+    background-color: variables.$bg-11;
+    color: variables.$bg-02;
   }
-  .start-timer_description-input::placeholder {
-    color: $bg-04;
+  .start-timer_description-input::placeholder, .start-timer_placeholder {
+    color: variables.$bg-04;
   }
+
   .dropdown-menu {
-    background-color: $bg-12;
+    background-color: variables.$bg-12;
     box-shadow: none;
   }
   .dropdown-header, .dropdown-item {
-    color: $bg-04;
+    color: variables.$bg-04;
   }
   .dropdown-divider {
-    border-bottom: 1px dotted $bg-10;
+    border-bottom: 1px dotted variables.$bg-10;
   }
   .rectangle {
-    background-color: $bg-12;
+    background-color: variables.$bg-12;
     box-shadow: none;
   }
   .time-entries-list {
-    border: 1px solid $bg-12;
+    border: 1px solid variables.$bg-12;
   }
   .time-entries-list-time {
-    background-color: $bg-12;
-    border-bottom: 1px solid $bg-12;
+    background-color: variables.$bg-12;
+    border-bottom: 1px solid variables.$bg-12;
   }
   .time-entries-list-total, .time-entries-list-day {
-    color: $bg-04;
+    color: variables.$bg-04;
   }
   .time-entries-list-total-time {
-    color: $bg-03;
+    color: variables.$bg-03;
   }
   .time-entry, .time-entry-locked {
-    background: $bg-11;
-    border: 1px solid $bg-12;
+    background: variables.$bg-11;
+    border: 1px solid variables.$bg-12;
   }
   .time-entry--collapsed {
     background-color: #36464f;
@@ -80,45 +83,45 @@ body.dark {
     }
 }
   .description {
-    color: $bg-02;
+    color: variables.$bg-02;
   }
   .time-entry__task-name, .time-entry__client-name, .time-entry__right-side--duration {
-    color: $bg-03;
+    color: variables.$bg-03;
   }
   .no-description {
-    color: $bg-04;
+    color: variables.$bg-04;
   }
   .dropdown-item:hover {
-    background: $bg-10;
+    background: variables.$bg-10;
   }
   .duration, .description-textarea {
-    border: 1px solid $bg-12;
-    background-color: $bg-10;
+    border: 1px solid variables.$bg-12;
+    background-color: variables.$bg-10;
   }
   .ant-time-picker-input {
-    background-color: $bg-10;
-    color: $bg-03;
+    background-color: variables.$bg-10;
+    color: variables.$bg-03;
   }
   .duration-duration {
-    background-color: $bg-10;
-    color: $bg-03;
+    background-color: variables.$bg-10;
+    color: variables.$bg-03;
   }
   .duration-label {
-    color: $bg-04;
+    color: variables.$bg-04;
   }
   .edit-form-description {
-    background-color: $bg-10;
-    color: $bg-03;
+    background-color: variables.$bg-10;
+    color: variables.$bg-03;
 
     &::placeholder {
-      color: $bg-04;
+      color: variables.$bg-04;
     }
   }
   
   textarea.custom-field-text {
     color: #C6D2D9;
     background-color: #263238;
-    border: 1px solid $bg-12;
+    border: 1px solid variables.$bg-12;
   
     &-disabled {
       border: 1px solid #12191D !important;
@@ -184,7 +187,7 @@ body.dark {
   .description-textarea-required,
   .project-list-button-required,
   .tag-list-button-required {
-    background-color: $bg-10;
+    background-color: variables.$bg-10;
   }
   .project-list-button,
   .tag-list-button,
@@ -200,7 +203,7 @@ body.dark {
   .settings__idle-detection__checkbox,
   .pomodoro__checkbox,
   .create-project__checkbox {
-    background-color: $bg-10;
+    background-color: variables.$bg-10;
     border: 1px solid #12191D;
     &-disabled{
       background-color: initial !important;
@@ -211,12 +214,12 @@ body.dark {
     }
   }
   .tag-list-add, .edit-form-billable {
-    color: $bg-04;
+    color: variables.$bg-04;
   }
   .checked {
     width: 18px;
     height: 18px;
-    background: $blue;
+    background: variables.$blue;
     border: none;
     img {
       margin-top: 3px;
@@ -224,59 +227,59 @@ body.dark {
     }
   }
   .delete-entry-confirmation-dialog {
-    background-color: $bg-10;
+    background-color: variables.$bg-10;
     &-open {
       background-color: rgba(0, 0, 0, 0.8);
     }
     &__question {
-      color: $bg-04;
+      color: variables.$bg-04;
     }
   }
   .project-list-dropdown, .tag-list-dropdown {
-    background: $bg-12;
+    background: variables.$bg-12;
     box-shadow: none;
   }
   .project-list-input, .tag-list-input {
-    background: $bg-12;
+    background: variables.$bg-12;
     input {
-      background: $bg-10;
-      border: 1px solid $bg-12;
-      color: $bg-04;
+      background: variables.$bg-10;
+      border: 1px solid variables.$bg-12;
+      color: variables.$bg-04;
 
       &::placeholder {
-        color: $bg-04;
+        color: variables.$bg-04;
       }
     }
   }
   .project-list-client {
-    color: $bg-04;
-    border-top: 1px dotted $bg-10;
+    color: variables.$bg-04;
+    border-top: 1px dotted variables.$bg-10;
   }
   .tag-list-item, .tag-list-load {
-    color: $bg-04;
+    color: variables.$bg-04;
   }
   hr {
-    border-bottom: 1px dotted $bg-12;
+    border-bottom: 1px dotted variables.$bg-12;
   }
   .user-settings:last-child {
-    color: $bg-04;
+    color: variables.$bg-04;
   }
   .time-entries-list-not-synced {
-    border: 1px solid $bg-12;
+    border: 1px solid variables.$bg-12;
     border-radius: 2px;
   }
   .time-entry-not-synced {
-    background: $bg-10;
-    border-bottom: 1px solid $bg-12;
+    background: variables.$bg-10;
+    border-bottom: 1px solid variables.$bg-12;
     span {
-      color: $bg-04;
+      color: variables.$bg-04;
     }
   }
   .user-settings {
-    border-top: 1px dotted $bg-12;
-    border-bottom: 1px dotted $bg-12;
+    border-top: 1px dotted variables.$bg-12;
+    border-bottom: 1px dotted variables.$bg-12;
     span {
-      color: $bg-04;
+      color: variables.$bg-04;
     }
   }
   .workspace-list-title,
@@ -287,98 +290,98 @@ body.dark {
   .settings__auto_start_on_browser_start__title,
   .settings__auto_stop_on_browser_close__title,
   .pomodoro__title {
-    color: $bg-02;
+    color: variables.$bg-02;
   }
   .workspace-list-selection {
-    background: $bg-10;
-    border: 1px solid $bg-12;
+    background: variables.$bg-10;
+    border: 1px solid variables.$bg-12;
   }
   .workspace-list-default {
-    color: $bg-04;
+    color: variables.$bg-04;
   }
   .settings__reminder {
-    background: $bg-12;
+    background: variables.$bg-12;
   }
   .settings__reminder__week__day {
-    background: $bg-10;
-    border: 1px solid $bg-10;
+    background: variables.$bg-10;
+    border: 1px solid variables.$bg-10;
     span {
-      color: $bg-04;
+      color: variables.$bg-04;
     }
   }
   .day-active {
-    background: $blue;
+    background: variables.$blue;
     border: 1px solid #03A9F4;
     span {
-      color: $input-background;
+      color: variables.$input-background;
     }
   }
   .settings__reminder__times--from,
   .settings__reminder__times--to {
     p {
-      color: $bg-04;
+      color: variables.$bg-04;
     }
   }
   .settings__reminder__time_picker {
     .ant-time-picker-input {
-      border: 1px solid $bg-12;
+      border: 1px solid variables.$bg-12;
     }
   }
   .settings__reminder__times--minutes_since_last_entry {
     input {
-      background: $bg-10;
-      border: 1px solid $bg-12;
-      color: $bg-02;
+      background: variables.$bg-10;
+      border: 1px solid variables.$bg-12;
+      color: variables.$bg-02;
     }
     p {
-      color: $bg-04;
+      color: variables.$bg-04;
     }
   }
   .settings__idle-detection__box {
-    background-color: $bg-12;
+    background-color: variables.$bg-12;
   }
   .settings__idle-detection__box__content {
     p {
-      color: $bg-04;
+      color: variables.$bg-04;
     }
     input {
-      background: $bg-10;
-      border: 1px solid $bg-12;
-      color: $bg-02;
+      background: variables.$bg-10;
+      border: 1px solid variables.$bg-12;
+      color: variables.$bg-02;
     }
   }
   .pomodoro__content {
-    background: $bg-12;
+    background: variables.$bg-12;
   }
   .pomodoro__border {
-    border-bottom: 1px solid $bg-10;
+    border-bottom: 1px solid variables.$bg-10;
   }
   .pomodoro__switch {
-    background-color: $bg-10;
-    border: 1px solid $bg-12;
+    background-color: variables.$bg-10;
+    border: 1px solid variables.$bg-12;
     &::after {
-      background-color: $bg-04;
+      background-color: variables.$bg-04;
     }
   }
   .ant-switch-checked {
-    background-color: $blue;
+    background-color: variables.$blue;
 
     &::after {
-      background-color: $input-background;
+      background-color: variables.$input-background;
     }
   }
   .pomodoro__box__content {
     p {
-      color: $bg-04;
+      color: variables.$bg-04;
     }
     input {
-      background: $bg-10;
-      border: 1px solid $bg-12;
-      color: $bg-02;
+      background: variables.$bg-10;
+      border: 1px solid variables.$bg-12;
+      color: variables.$bg-02;
     }
   }
   .default-project__project-list {
-    background: $bg-12;
+    background: variables.$bg-12;
   }
   .project-list-arrow,
   .tag-list-arrow {
@@ -393,117 +396,117 @@ body.dark {
     content: url("../assets/images/arrow-dark-mode-up.png");
   }
   .dropdown-item:hover {
-    background: $bg-10;
+    background: variables.$bg-10;
   }
   .workspace-list-item:hover {
-    background-color: $bg-10;
+    background-color: variables.$bg-10;
   }
   .workspace-list-dropdown {
-    background: $bg-12;
+    background: variables.$bg-12;
     box-shadow: 0 5px 7px #000;
   }
   .workspace-list-item--name {
-    color: $bg-04;
+    color: variables.$bg-04;
   }
   .duration-divider {
-    border-left: 1px dotted $bg-12;
-    background-color: $bg-12;
+    border-left: 1px dotted variables.$bg-12;
+    background-color: variables.$bg-12;
   }
   .project-item:hover{
-    background-color: $bg-10;
+    background-color: variables.$bg-10;
   }
   li.project-item-name {
     color: white;
   }
   .project-list-name {
-    color: $bg-04;
+    color: variables.$bg-04;
   }
   .project-name {
-    color: $bg-04;
+    color: variables.$bg-04;
   }
   .task-item {
-    color: $bg-04;
-    background-color: $bg-10;
+    color: variables.$bg-04;
+    background-color: variables.$bg-10;
     &:hover {
-      background-color: $bg-09;
+      background-color: variables.$bg-09;
     }
   }
   .tag-list-item {
-    color: $bg-04;
+    color: variables.$bg-04;
     &-row:hover {
-      background-color: $bg-10;
+      background-color: variables.$bg-10;
     }
   }
   .tag-list-selected-item {
-    color: $bg-03;
+    color: variables.$bg-03;
   }
 
   .projects-list__create-task{
-    background-color: $bg-10;
+    background-color: variables.$bg-10;
   }
   .projects-list__create-project,
   .tag-list__create-tag,
   .client-list__create-client,
   .client-list-dropdown {
-    background-color: $bg-12;
+    background-color: variables.$bg-12;
     box-shadow: none;
   }
   .create-project__project-name, .create-task__task-name {
-    border: 1px solid $bg-12;
-    background-color: $bg-10;
-    color: $bg-03;
+    border: 1px solid variables.$bg-12;
+    background-color: variables.$bg-10;
+    color: variables.$bg-03;
     &::placeholder {
-      color: $bg-04;
+      color: variables.$bg-04;
     }
   }
   .color-picker__title,
   .create-project__billable-title,
   .create-project__public-title  {
-    color: $bg-04;
+    color: variables.$bg-04;
   }
   .create-project__divider {
-    border-bottom: 1px dotted $bg-12;
+    border-bottom: 1px dotted variables.$bg-12;
   }
   .client-list-button {
-    border: 1px solid $bg-12;
-    background-color: $bg-10;
+    border: 1px solid variables.$bg-12;
+    background-color: variables.$bg-10;
   }
   .client-list-name {
-    color: $bg-04;
+    color: variables.$bg-04;
   }
   .client-list-arrow {
     content: url("/assets/images/arrow-dark-mode.png");
   }
   .client-list-input {
-    background: $bg-12;
+    background: variables.$bg-12;
   }
   .client-list-filter {
-    background-color: $bg-10;
+    background-color: variables.$bg-10;
     border: none;
     &::placeholder {
-      color: $bg-03;
+      color: variables.$bg-03;
     }
   }
   .client-list-client {
-    color: $bg-04;
+    color: variables.$bg-04;
   }
   .client-list__create-form {
-    background-color: $bg-09;
+    background-color: variables.$bg-09;
     &--open {
       background-color: rgba(0, 0, 0, 0.5);
     }
     &--divider {
-      border-bottom: 1px dotted $bg-12;
+      border-bottom: 1px dotted variables.$bg-12;
     }
     &--title {
-      color: $bg-03;
+      color: variables.$bg-03;
     }
     &--client-name {
-      border: 1px solid $bg-12;
-      background-color: $bg-10;
-      color: $bg-03;
+      border: 1px solid variables.$bg-12;
+      background-color: variables.$bg-10;
+      color: variables.$bg-03;
       &::placeholder {
-        color: $bg-04;
+        color: variables.$bg-04;
       }
     }
   }
@@ -511,22 +514,22 @@ body.dark {
     color: #8c9fa9;
   }
   .tag-list__create-form, .poppup-modal {
-    background-color: $bg-09;
+    background-color: variables.$bg-09;
     &--open {
       background-color: rgba(0, 0, 0, 0.5);
     }
     &--divider {
-      border-bottom: 1px dotted $bg-12;
+      border-bottom: 1px dotted variables.$bg-12;
     }
     &--title, p {
-      color: $bg-03;
+      color: variables.$bg-03;
     }
     &--tag-name {
-      border: 1px solid $bg-12;
-      background-color: $bg-10;
-      color: $bg-03;
+      border: 1px solid variables.$bg-12;
+      background-color: variables.$bg-10;
+      color: variables.$bg-03;
       &::placeholder {
-        color: $bg-04;
+        color: variables.$bg-04;
       }
     }
   }
@@ -557,13 +560,13 @@ body.dark {
   }
 
   // .tag-list-selected {
-  //   background-color: $bg-12;
+  //   background-color: variables.$bg-12;
   // }
   .tag-list-item--comma {
     color: white;
   }
   .app-version {
-    color: $bg-03;
+    color: variables.$bg-03;
   }
   .error {
     color: red;
@@ -589,5 +592,10 @@ body.dark {
   }
   .react-autocomplete > div {
     background: #1d272c !important;
+  }
+
+  .edit-form__break-label {
+    background: variables.$bg-10;
+    color: variables.$bg-03;
   }
 }

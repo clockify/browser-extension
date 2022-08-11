@@ -1,3 +1,5 @@
+@use "variables";
+
 .pomodoro {
   diplay: flex;
   margin: 10px 20px;
@@ -12,7 +14,7 @@
     display: inline-block;
     width: 16px;
     height: 16px;
-    border: 1px solid $border;
+    border: 1px solid variables.$border;
     position: relative;
     cursor: pointer;
     background: white;
@@ -35,13 +37,13 @@
     margin-left: 10px;
     font-size: 13px;
     font-weight: 400;
-    color: $middle_light_text;
+    color: variables.$middle_light_text;
 
     &--shortcut {
       margin-left: 3px;
       font-size: 13px;
       font-weight: 400;
-      color: $lighter_text;
+      color: variables.$lighter_text;
     }
   }
 

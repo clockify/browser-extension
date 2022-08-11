@@ -11,7 +11,6 @@ class DefaultProjectComponent extends React.Component {
         this.state = {
             defaultProjectEnabled: false,
             selectedProject: null,
-            defaultProjectStyles: {}
         };
         this.setAsyncStateItems = this.setAsyncStateItems.bind(this);
         this.setDefaultProject = this.setDefaultProject.bind(this);
@@ -27,36 +26,18 @@ class DefaultProjectComponent extends React.Component {
     }
 
     componentDidMount() {
-        this.onMountOrUpdate();
         this.setAsyncStateItems();
     }
 
-    onMountOrUpdate() {
-        if (this.state.defaultProjectEnabled) {
-            this.setState({defaultProjectStyles: {
-                padding: '10px 20px',
-                maxHeight: '360px'
-            }});
-        }  
-        else {
-            this.setState({defaultProjectStyles: {
-                padding: '0 20px',
-                maxHeight: '0'
-            }});
-        }
-    }
-
-    async componentDidUpdate(prevProps, prevState) {
-        if (prevState.defaultProjectEnabled !== this.state.defaultProjectEnabled) {
-            const { storage, defaultProject } = await DefaultProject.getStorage();
-            this.setState({
-                defaultProjectEnabled: defaultProject ? defaultProject.enabled : false,
-                selectedProject: defaultProject ? defaultProject.project : null
-            }, () => {
-                this.onMountOrUpdate();
-            });
-        }
-    }
+    // async componentDidUpdate(prevProps, prevState) {
+    //     if (prevState.defaultProjectEnabled !== this.state.defaultProjectEnabled) {
+    //         const { storage, defaultProject } = await DefaultProject.getStorage();
+    //         this.setState({
+    //             defaultProjectEnabled: defaultProject ? defaultProject.enabled : false,
+    //             selectedProject: defaultProject ? defaultProject.project : null
+    //         });
+    //     }
+    // }
 
     async toggleDefaultProjectEnabled() {
         let { storage, defaultProject } = await DefaultProject.getStorage();
@@ -78,13 +59,12 @@ class DefaultProjectComponent extends React.Component {
 
 
     async setDefaultProject(project) {
+        console.log('SELECT PROJECT', project);
         const { storage } = await DefaultProject.getStorage();
         storage.setDefaultProject(project);
 
         this.setState({
             selectedProject: project
-        }, () => {
-            this.onMountOrUpdate();
         });
 
         this.props.changeSaved();
@@ -116,7 +96,17 @@ class DefaultProjectComponent extends React.Component {
                 </div>
                 <div id="defaultProject"
                     className="default-project__project-list expandContainer"
-                    style={this.state.defaultProjectStyles}
+                    style={this.state.defaultProjectEnabled ? 
+                            {
+                                padding: '10px 20px',
+                                maxHeight: '360px'
+                            } 
+                            : 
+                            {
+                                padding: '0 20px',
+                                maxHeight: '0'
+                            }
+                        }
                     >
                     <DefaultProjectList
                         ref={instance => {

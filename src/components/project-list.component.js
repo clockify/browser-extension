@@ -463,7 +463,7 @@ class ProjectList extends React.Component {
     }
 
     createProject() {
-        ReactDOM.render(<CreateProjectComponent
+        window.reactRoot.render(<CreateProjectComponent
             timeEntry={this.props.timeEntry}
             editForm={this.props.editForm}
             workspaceSettings={this.props.workspaceSettings}
@@ -471,11 +471,11 @@ class ProjectList extends React.Component {
             isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}
             userSettings={this.props.userSettings}
             projectName={this.state.filter} 
-        />, document.getElementById('mount'));
+        />);
     }
 
     openCreateTaskModal(project) {
-        ReactDOM.render(<CreateTask
+        window.reactRoot.render(<CreateTask
             timeEntry={this.props.timeEntry}
             editForm={this.props.editForm}
             workspaceSettings={this.props.workspaceSettings}
@@ -483,7 +483,7 @@ class ProjectList extends React.Component {
             isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}
             userSettings={this.props.userSettings}
             project={project}
-        />, document.getElementById('mount'));
+        />);
         
     }
 

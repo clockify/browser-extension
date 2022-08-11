@@ -274,7 +274,7 @@ class Duration extends React.Component {
                     </span>
                     <span style={{ paddingRight: this.state.end ? '' : '3px', position: 'relative'}}>
                         {!this.state.end
-                            ? <span style={{position: 'absolute', right: '5px', bottom: '-9px'}}>{locales.TODAY_LABEL}</span>
+                            ? <span style={{position: 'absolute', right: '5px', bottom: '-9px', wordBreak: 'keep-all'}}>{locales.TODAY_LABEL}</span>
                             : <DatePicker
                                 selected={new Date(this.state.start)} //moment(this.state.start)}
                                 onChange={this.selectDate.bind(this)}

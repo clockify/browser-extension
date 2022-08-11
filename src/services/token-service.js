@@ -74,8 +74,8 @@ export class TokenService {
 
     logout() {
         if (!document.getElementById('mount')) return
-        ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
-        ReactDOM.render(<Login logout={true}/>, document.getElementById('mount'));
+        
+        window.reactRoot.render(<Login logout={true}/>);
     }
 
     async isLoggedIn() {

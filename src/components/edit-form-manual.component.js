@@ -11,6 +11,7 @@ import HomePage from './home-page.component';
 import {isOffline} from "./check-connection";
 // import {TimeEntryHelper} from "../helpers/timeEntry-helper";
 import {TimeEntryService} from "../services/timeEntry-service";
+import {ProjectService} from "../services/project-service";
 import DeleteEntryConfirmationComponent from "./delete-entry-confirmation.component";
 // import {LocalStorageService} from "../services/localStorage-service";
 import Toaster from "./toaster-component";
@@ -22,6 +23,7 @@ import Autocomplete from './autocomplete.component';
 
 // const timeEntryHelper = new TimeEntryHelper();
 const timeEntryService = new TimeEntryService();
+const projectService = new ProjectService();
 // const localStorageService = new LocalStorageService();
 
 class EditFormManual extends React.Component {
@@ -52,6 +54,7 @@ class EditFormManual extends React.Component {
         this.updateCustomFields = this.updateCustomFields.bind(this);
         this.setAsyncStateItems = this.setAsyncStateItems.bind(this);
         this.handleInputChange = debounce(this.handleInputChange.bind(this), 200);
+        this.checkIfTaskBillable = this.checkIfTaskBillable.bind(this);
     }
 
     async setAsyncStateItems() {
@@ -86,7 +89,8 @@ class EditFormManual extends React.Component {
                     project: {
                         clientName: entry.clientName,
                         color: entry.projectColor,
-                        name: entry.projectName
+                        name: entry.projectName,
+                        id: entry.projectId,
                     },
                     task: {
                         name: entry.taskName,
@@ -169,7 +173,8 @@ class EditFormManual extends React.Component {
                     project: {
                         clientName: entry.clientName,
                         color: entry.projectColor,
-                        name: entry.projectName
+                        name: entry.projectName,
+                        id: entry.projectId,
                     },
                     task: {
                         name: entry.taskName,
@@ -222,11 +227,12 @@ class EditFormManual extends React.Component {
 
     async checkDefaultProjectTask(forceTasks) {
         const { defaultProject } = await DefaultProject.getStorage();
-        const lastEntry = this.props.timeEntries && this.props.timeEntries[0];
 
         if(defaultProject && defaultProject.enabled){
             const isLastUsedProject = defaultProject.project.id === 'lastUsedProject';
             const isLastUsedProjectWithoutTask = defaultProject.project.id === 'lastUsedProject' && !defaultProject.project.name.includes('task');
+            let lastEntry = await projectService.getLastUsedProject(!isLastUsedProjectWithoutTask);
+            lastEntry = lastEntry?.data ? {project: lastEntry.data.project || lastEntry.data, task: lastEntry.data.task} : this.props.timeEntries?.[0];
             if (!isLastUsedProject) {
                 const { projectDB, taskDB, msg } = await defaultProject.getProjectTaskFromDB(forceTasks);
                 if (msg) {
@@ -348,7 +354,6 @@ class EditFormManual extends React.Component {
                     task: null
                 }
             }), () => {
-                // this.projectList.mapSelectedProject()
                 this.checkRequiredFields()
             });            
         }
@@ -361,13 +366,14 @@ class EditFormManual extends React.Component {
                 ...state.timeEntry, 
                 projectId: project.id, 
                 billable: project.billable,
-                project, 
+                project,
+                taskId: task.id, 
                 task 
             }
         })
         , () => { 
-            // this.projectList.mapSelectedProject();
-            this.checkRequiredFields() ;
+            this.checkIfTaskBillable();
+            this.checkRequiredFields();
         });
     }
 
@@ -470,6 +476,17 @@ class EditFormManual extends React.Component {
             forceTasks,
             ready: true
         });
+    }
+
+    async checkIfTaskBillable(){
+        if(this.state.timeEntry.taskId){
+            const wsSettings = await localStorage.getItem('workspaceSettings');
+            const tasksBillable = wsSettings ? JSON.parse(wsSettings).taskBillableEnabled : false;
+            if(tasksBillable){
+                let projectTask = await projectService.getTaskOfProject(this.state.timeEntry.project.id, this.state.timeEntry.task.name);
+                    projectTask.data && this.setState({timeEntry: { ...this.state.timeEntry, billable: projectTask.data[0].billable }})
+            }
+        }
     }
 
     async done() {
@@ -592,9 +609,9 @@ class EditFormManual extends React.Component {
         });
     }
 
-    async goBack() {
-        ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
-        ReactDOM.render(<HomePage />, document.getElementById('mount'));
+    goBack() {
+        
+        window.reactRoot.render(<HomePage />);
     }
 
     notifyAboutError(message, type='error', n=2) {
@@ -654,7 +671,10 @@ class EditFormManual extends React.Component {
                                     }
                                 }}
                                 onSelect={(item) => {
-                                    let selected = this.props.timeEntries.find(entry => entry.id === item.id);
+                                    const selected = this.state.timeEntry.description?.length >= 2 
+                                    ? this.state.autocompleteItems.find(entry => entry.id === item.id) 
+                                    : this.state.autocompleteItemsRecent.find(entry => entry.id === item.id);
+                                    console.log("selected", selected)
                                     if(selected){
                                         this.setState(state => ({
                                             timeEntry: {
@@ -665,9 +685,8 @@ class EditFormManual extends React.Component {
                                             },
                                             tags: selected.tags
                                         }), () => {
-                                            // this.projectList.mapSelectedProject();
+                                            this.checkIfTaskBillable();
                                             this.checkRequiredFields();
-                                            // this.onChangeProjectRedrawCustomFields();
                                         });
                                     }
                                 }}

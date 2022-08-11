@@ -44,6 +44,8 @@ class StartTimer extends React.Component {
         this.setDescription = this.setDescription.bind(this);
         this.handleInputChange = debounce(this.handleInputChange.bind(this), 200);
         this.getRecentEntries = this.getRecentEntries.bind(this);
+        this.showManualInputPlaceholder = this.showManualInputPlaceholder.bind(this);
+        this.showTimerPlaceHolder = this.showTimerPlaceHolder.bind(this);
     }
 
     async setAsyncStateItems() {
@@ -61,11 +63,11 @@ class StartTimer extends React.Component {
 
     componentDidMount() {
         this.setAsyncStateItems();
-        this.getRecentEntries();
+        this.getRecentEntries();        
     }  
 
     componentDidUpdate(prevProps, prevState) {
-        if(this.props.activeWorkspaceId !== prevProps.activeWorkspaceId) {
+        if(this.props.activeWorkspaceId !== prevProps.activeWorkspaceId || this.props.timeEntries !== prevProps.timeEntries) {
             this.getRecentEntries();
         }
     }
@@ -241,12 +243,12 @@ class StartTimer extends React.Component {
     }
    
     setDuration(event) {
+        this.setState({manualInputValue: event.target.value});
         let duration = parseTimeEntryDuration(event.target.value);
 
         if (!duration) {
             return;
         }
-
         let start = moment().add(-parseInt(duration.split(':')[0]), 'hours')
                             .add(-parseInt(duration.split(':')[1]), 'minutes')
                             .add(-parseInt(duration.split(':')[2]), 'seconds');
@@ -313,7 +315,7 @@ class StartTimer extends React.Component {
             timeEntryService.startNewEntry(
                 projectId,
                 description,
-                billable,
+                null,
                 moment(),
                 null,
                 taskId,
@@ -367,10 +369,10 @@ class StartTimer extends React.Component {
                 if (inProgress && JSON.parse(inProgress)) {
                     this.setTimeEntryInProgress(null);
                 }
+                this.props.endStarted();
                 return;
             }
         }
-
         this.setState({
             stopDisabled: true
         })
@@ -418,10 +420,10 @@ class StartTimer extends React.Component {
             });
             document.getElementById('description').value = '';
             this.props.setTimeEntryInProgress(null);
-            this.props.endStarted();
         } else {
             timeEntryService.stopEntryInProgress(moment())
                 .then(() => {
+                    this.props.endStarted();
                     clearInterval(interval);
                     interval = null
                     this.setState({
@@ -431,7 +433,6 @@ class StartTimer extends React.Component {
                     });
                     document.getElementById('description').value = '';
                     this.props.setTimeEntryInProgress(null);
-                    this.props.endStarted();
                     
                     getBrowser().runtime.sendMessage({
                         eventName: 'removeIdleListenerIfIdleIsEnabled'
@@ -458,15 +459,15 @@ class StartTimer extends React.Component {
     }
 
     goToEdit() {
-        ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
-        ReactDOM.render(
+        
+        window.reactRoot.render(
             <EditForm changeMode={this.changeMode.bind(this)}
                       timeEntry={this.state.timeEntry}
                       timeEntries={this.props.timeEntries}
                       workspaceSettings={this.props.workspaceSettings}
                       timeFormat={this.props.timeFormat}
                       userSettings={this.props.userSettings}
-            />, document.getElementById('mount')
+            />
         );
     }
 
@@ -482,8 +483,8 @@ class StartTimer extends React.Component {
                     }
                 }
             }, () => {
-                ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
-                ReactDOM.render(
+                
+                window.reactRoot.render(
                     <EditFormManual 
                         changeMode={this.changeMode.bind(this)}
                         workspaceSettings={this.props.workspaceSettings}
@@ -491,7 +492,7 @@ class StartTimer extends React.Component {
                         timeEntries={this.props.timeEntries}
                         timeFormat={this.props.timeFormat}
                         userSettings={this.props.userSettings}
-                    />, document.getElementById('mount')
+                    />
                 );
             })
         } 
@@ -499,8 +500,8 @@ class StartTimer extends React.Component {
             const { timeEntry } = this.state;
             if (!timeEntry.workspaceId)
                 timeEntry.workspaceId = activeWorkspaceId;
-            ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
-            ReactDOM.render(
+            
+            window.reactRoot.render(
                 <EditFormManual
                     changeMode={this.changeMode.bind(this)}
                     workspaceSettings={this.props.workspaceSettings}
@@ -508,7 +509,7 @@ class StartTimer extends React.Component {
                     timeEntries={this.props.timeEntries}
                     timeFormat={this.props.timeFormat}
                     userSettings={this.props.userSettings}
-                />, document.getElementById('mount'));
+                />);
         }
     }
 
@@ -522,6 +523,13 @@ class StartTimer extends React.Component {
                 this.goToEditManual();
             }
         }
+    }
+
+    showTimerPlaceHolder(){
+        return this.props.mode === "timer" && (!this.state.timeEntry.description || this.state.timeEntry?.description?.length === 0) && !this.state.timeEntry.id
+    }
+    showManualInputPlaceholder(){
+        return this.props.mode==="manual" && (!this.state.manualInputValue || this.state.manualInputValue?.length === 0) 
     }
 
     render() {
@@ -549,44 +557,52 @@ class StartTimer extends React.Component {
                                 </span>
                             </div>
                         </div>
-                        <Autocomplete
-                            items={this.state.timeEntry.description?.length >= 2 ? this.state.autocompleteItems : this.state.autocompleteItemsRecent}
-                            value={this.state.timeEntry.description}
-                            onChange={e => {
-                                this.setDescription(e.target.value);
-                                if(e.target.value.length >= 2) {
-                                    this.handleInputChange(e.target.value);
-                                } else {
-                                    this.handleInputChange(null);
-                                }
-                            }}
-                            onSelect={(item) => {
-                                const selected = this.props.timeEntries.find(entry => entry.id === item.id);
-                                if(selected){
-                                    this.setState({
-                                        timeEntry: selected
-                                    }, () => {
-                                        this.startNewEntry();
-                                    });
-                                }
-                            }}
-                            renderInput={(props) => (
-                                <input className={!id ? "start-timer_description-input" : "disabled"}
-                                    placeholder={locales.WHAT_ARE_YOU_WORKING_ON}
-                                    id="description"
-                                    {...props}
-                                    onKeyDown={this.onKey.bind(this)}
-                                />
-                            )}
-                        />
+                        {!id && 
+                            <Autocomplete
+                                items={this.state.timeEntry.description?.length >= 2 ? this.state.autocompleteItems : this.state.autocompleteItemsRecent}
+                                value={this.state.timeEntry.description}
+                                onChange={e => {
+                                    this.setDescription(e.target.value);
+                                    if(e.target.value.length >= 2) {
+                                        this.handleInputChange(e.target.value);
+                                    } else {
+                                        this.handleInputChange(null);
+                                    }
+                                }}
+                                onSelect={(item) => {
+                                    const selected = this.state.timeEntry.description?.length >= 2 
+                                    ? this.state.autocompleteItems.find(entry => entry.id === item.id) 
+                                    : this.state.autocompleteItemsRecent.find(entry => entry.id === item.id);
+                                    if(selected){
+                                        this.setState({
+                                            timeEntry: selected
+                                        }, () => {
+                                            this.startNewEntry();
+                                        });
+                                    }
+                                }}
+                                renderInput={(props) => (
+                                    <>
+                                    <input className={!id ? "start-timer_description-input" : "disabled"}
+                                        id="description"
+                                        type="text"
+                                        {...props}
+                                        onKeyDown={this.onKey.bind(this)}
+                                    ></input>
+                                    {this.showTimerPlaceHolder() && <span className='start-timer_placeholder'>{locales.WHAT_ARE_YOU_WORKING_ON}</span>}
+                                    </>
+                                )}
+                            />
+                        }
                     </span>
                    <span className={this.props.mode === 'manual' ? 'start-timer-description' : 'disabled'}>
                         <input className={"start-timer_description-input" }
                                id="duration"
                                autoComplete="off"
-                               placeholder={locales.ENTER_TIME}
                                onChange={this.setDuration.bind(this)}
-                               onKeyDown={this.onKey.bind(this)}/>
+                               onKeyDown={this.onKey.bind(this)}
+                               />
+                        {this.showManualInputPlaceholder() && <span className='start-timer_placeholder'>{locales.ENTER_TIME}</span>}
                    </span>
                    <button className={!id && this.props.mode === 'timer' ?
                                         "start-timer_button-start" : "disabled"}

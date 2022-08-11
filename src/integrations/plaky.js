@@ -1,6 +1,6 @@
 removeAllButtons();
 
-clockifyButton.render('.offcanvas-header > div > .offcanvas-title:not(.clockify)', {observe: true}, function (elem) {
+clockifyButton.render('.offcanvas-header .walkthrough-board-title > .h4:not(.clockify)', {observe: true}, function (elem) {
     let projectElem = $(".main-wrapper > .sticky-header div[role=textbox]");
 
     const {project, task} = getProjectTask(projectElem);
@@ -9,8 +9,7 @@ clockifyButton.render('.offcanvas-header > div > .offcanvas-title:not(.clockify)
         elem.style.setProperty('margin-right', '10rem', 'important');
         const description = elem ? elem.textContent : "";
         const link = clockifyButton.createButton(description, project, task);
-        link.style.position = "absolute";
-        link.style.right = "55px";
+        link.style.marginLeft = "15px";
         const theme = document.querySelector('.offcanvas-end');
           if (window.getComputedStyle(theme).backgroundColor.includes('255')) {
             link.style.color = "#444444";

@@ -1,3 +1,5 @@
+@use "variables";
+
 .toaster__container {
   position: fixed;
   width: calc(100% - 30px);
@@ -12,7 +14,7 @@
     padding: 15px;
     margin-top: 5px;
     box-sizing: border-box;
-    color: $input-background;
+    color: variables.$input-background;
     border-radius: 2px;
     font-size: 14px;
     line-height: 16px;
@@ -21,13 +23,13 @@
     left: 0;
   }
   &--container_success {
-    background-color: $green;
+    background-color: variables.$green;
   }
   &--container_error {
-    background-color: $red;
+    background-color: variables.$red;
   }
   &--container_info {
-    background-color: $orange;
+    background-color: variables.$orange;
   }
 }
 @keyframes toaster-fadein {

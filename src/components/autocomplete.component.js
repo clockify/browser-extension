@@ -8,22 +8,12 @@ const Autocomplete = (props) => {
 
     useOnClickOutside(menuRef, () => setIsDropdownOpen(false));
 
-    const handleInputChange = (e) => {
-        // const {value} = e.target;
-        // if(value[value.length-1] === '\n'){
-        //     inputRef.current.blur();
-        //     setIsDropdownOpen(false);
-        //     return;
-        // }
-        props.onChange(e);
-    }
-
     return (
         <div className="react-autocomplete">
             {
                 props.renderInput({
-                    value: props.value,
-                    onChange: handleInputChange,
+                    value: props.value || '',
+                    onChange: props.onChange,
                     onClick: () => setIsDropdownOpen(true),
                     autoComplete: "off",
                     ref: inputRef

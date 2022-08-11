@@ -59,11 +59,11 @@ class TimeEntry extends ClockifyService {
     }
 
     
-    static async getLastEntry() {
+    static async getLastPomodoroEntry() {
         const apiEndpoint = await this.apiEndpoint;
         const userId = await this.userId;
         const workspaceId = await this.workspaceId;
-        const endPoint = `${apiEndpoint}/v1/workspaces/${workspaceId}/user/${userId}/time-entries?page-size=2`;
+        const endPoint = `${apiEndpoint}/v1/workspaces/${workspaceId}/user/${userId}/time-entries?page-size=10`;
         const { data: timeEntries, error } = await this.apiCall(endPoint);
         let entry = null;
         if (error) {
@@ -71,7 +71,10 @@ class TimeEntry extends ClockifyService {
         }
         else {
             if (timeEntries && timeEntries.length > 0) {
-                entry = timeEntries.find(entry => !!entry.timeInterval.end);
+                const pomodoroBreakIndex = timeEntries.findIndex(entry => entry.description === 'Pomodoro break');
+                if(pomodoroBreakIndex > -1){
+                    entry = timeEntries[pomodoroBreakIndex + 1];
+                }
             } 
         }
         return { entry, error }

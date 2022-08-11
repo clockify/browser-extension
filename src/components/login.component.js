@@ -128,15 +128,15 @@ class Login extends React.Component {
     }
 
     signup() {
-        ReactDOM.render(<SignUp/>, document.getElementById('mount'));
+        window.reactRoot.render(<SignUp/>);
     }
 
     enterBaseUrl() {
-        ReactDOM.render(<SelfHostedUrl/>, document.getElementById('mount'));
+        window.reactRoot.render(<SelfHostedUrl/>);
     }
 
     enterSubDomainName() {
-        ReactDOM.render(<SubDomainName/>, document.getElementById('mount'));
+        window.reactRoot.render(<SubDomainName/>);
     }
 
     backToCloudVersion() {

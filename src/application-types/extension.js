@@ -29,7 +29,6 @@ export class Extension {
     async afterLoad() {
         const token = await localStorageService.get("token");
         const isOffline = await localStorageService.get("offline");
-        const mountHtmlElem = document.getElementById('mount');
         // if (mountHtmlElem) {
         //     mountHtmlElem.style.width = '360px';
         //     mountHtmlElem.style.minHeight = '430px';
@@ -38,7 +37,7 @@ export class Extension {
         if (token) {
             await htmlStyleHelper.addOrRemoveDarkModeClassOnBodyElement();
             if (!JSON.parse(isOffline)) {                
-                ReactDOM.render(<HomePage/>, mountHtmlElem);
+                window.reactRoot.render(<HomePage/>);
                 userService.getUser()
                     .then(async (response) => {
                         let data = response.data;
@@ -73,39 +72,36 @@ export class Extension {
                                         getLocalStorageEnums().PERMANENT_PREFIX);
                                 }
                                 // if (mountHtmlElem) {
-                                    // ReactDOM.render(<HomePage/>, mountHtmlElem);
+                                    // window.reactRoot.render(<HomePage/>, mountHtmlElem);
                                 // }
                             })
                             .catch( err => {
                                 console.log(err);
                                 // if (mountHtmlElem) {
-                                    // ReactDOM.render(<HomePage/>, mountHtmlElem);
+                                    // window.reactRoot.render(<HomePage/>, mountHtmlElem);
                                 // }
                             })
                     })
                     .catch(async (error) => {
-                        if (mountHtmlElem) {
+                        if (window.mountHtmlElement) {
                             const isOffline = await localStorage.getItem('offline');
                             if (isOffline === 'true') {
-                                // ReactDOM.render(<HomePage/>, mountHtmlElem);
+                                // window.reactRoot.render(<HomePage/>, mountHtmlElem);
                             }
                             else {
-                                ReactDOM.render(<Login logout={true}/>, mountHtmlElem);
+                                window.reactRoot.render(<Login logout={true}/>);
                             }
                         }
                     });
             } else {
-                if (mountHtmlElem) {
-                    ReactDOM.render(<HomePage/>, mountHtmlElem);
+                if (window.mountHtmlElement) {
+                    window.reactRoot.render(<HomePage/>);
                 }
             }
         } else {
             this.setIcon(getIconStatus().timeEntryEnded);
-            if (mountHtmlElem) {
-                ReactDOM.render(
-                    <Login/>,
-                    mountHtmlElem
-                );
+            if (window.mountHtmlElement) {
+                window.reactRoot.render(<Login/>);
             }
         }
 

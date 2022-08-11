@@ -1143,6 +1143,9 @@
   "EXTENSION__DOWNLOAD_SREENSHOTS_RECORDING_APP": {
     "message": "Baixe o aplicativo de gravação de screenshots"
   },
+  "AUDIT_LOG__KIOSK__BREAK_TYPE_LABEL": {
+    "message": "Pausa"
+  },
   "appName": {
     "message": "Clockify Rastreador de Tempo",
     "description": "O título do aplicativo, exibido na loja da web."

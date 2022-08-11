@@ -24,13 +24,13 @@ class TimeEntryList extends React.Component {
     }
 
     isSimilarEntry(entry1, entry2) {
-        const { billable, isLocked, start, description, tags, projectId, taskId, customFieldValues } = entry1;
+        const { billable, isLocked, start, description, tags, projectId, taskId, customFieldValues, type: type1 } = entry1;
         const { billable: billable2, isLocked: isLocked2, start: start2,
-                description: description2, tags: tags2, projectId: projectId2, taskId: taskId2, customFieldValues: customFieldValues2 } = entry2;
+                description: description2, tags: tags2, projectId: projectId2, taskId: taskId2, customFieldValues: customFieldValues2, type: type2 } = entry2;
                 
         if(billable === billable2 && isLocked === isLocked2 && 
             start === start2 && description === description2 && projectId === projectId2 &&
-            taskId === taskId2 && tags.length === tags2.length && isEqual(tags, tags2) &&
+            taskId === taskId2 && tags.length === tags2.length && type1 === type2 && isEqual(tags, tags2) &&
             customFieldValues.every(cf => {
                 const cf2 = customFieldValues2.find(cf2 => cf.customFieldId === cf2.customFieldId);
                 return cf && cf2 && isEqual(cf.value, cf2.value)

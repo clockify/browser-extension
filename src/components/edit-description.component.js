@@ -11,11 +11,11 @@ class EditDescription extends React.Component {
             description: this.props.description
         };
 
+        this.prevDescription = null;
         this.descriptionRef = React.createRef();
         this.onChangeDescription = this.onChangeDescription.bind(this);
-        this.onChangeDescriptionDelayed = debounce(this.onSetDescription, 500);
-        this.onSetDescription = this.onSetDescription.bind(this);
         this.handleOnBlur = this.handleOnBlur.bind(this);
+        this.handleOnFocus = this.handleOnFocus.bind(this);
     }
 
     componentDidMount() {
@@ -28,10 +28,6 @@ class EditDescription extends React.Component {
 
     onChangeDescription(e) {
         let val = e.target.value;
-        // if(val[val.length-1] === '\n'){
-        //     this.descriptionRef.current.blur();
-        //     return;
-        // }
         if (val.length > 3000) {
             val = val.slice(0, 3000);
             this.props.toaster.toast('error', locales.DESCRIPTION_LIMIT_ERROR_MSG(3000), 2);
@@ -39,12 +35,14 @@ class EditDescription extends React.Component {
         this.setState({ description : val });
     }
 
-    onSetDescription() {
-        this.props.onSetDescription(this.state.description);
-    }
-    
     handleOnBlur() {
-        this.onSetDescription();
+        if(this.prevDescription !== this.state.description){
+            this.props.onSetDescription(this.state.description);
+        }
+    }
+
+    handleOnFocus() {
+        this.prevDescription = this.state.description;
     }
 
     render() {
@@ -58,6 +56,7 @@ class EditDescription extends React.Component {
                 placeholder={this.props.descRequired ? `${locales.DESCRIPTION_LABEL} ${locales.REQUIRED_LABEL}` : locales.DESCRIPTION_LABEL}
                 onChange={this.onChangeDescription}
                 onBlur={this.handleOnBlur}
+                onFocus={this.handleOnFocus}
             />            
         )
     }

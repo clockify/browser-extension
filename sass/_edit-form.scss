@@ -1,8 +1,28 @@
+@use "variables";
+
 .edit-form {
   padding: 20px;
 
   &__project_list {
     margin-bottom: 10px;
+  }
+
+  &__break-label {
+    background: #c6d2d9;
+    color: #333333;
+    padding: 14px 21px;
+    font-size: 14px;
+    .break-icon {
+      display: inline-block;
+      position: relative;
+      top: 2px;
+      background: url("../assets/images/break.png");
+      margin-right: 10px;
+      width: 14px;
+      height: 14px;
+      background-repeat: no-repeat;
+      background-size: 14px 14px;
+    }
   }
 }
 
@@ -14,7 +34,7 @@
   resize: none;
   font-size: 14px;
   outline: none;
-  color: $dark_text;
+  color: variables.$dark_text;
   & + div{
     z-index: 20;
     margin-left: -10px;
@@ -23,14 +43,14 @@
 
 .description-textarea {
   margin-bottom: 10px;
-  border: 1px solid $border;
+  border: 1px solid variables.$border;
   padding: 10px;
   background: white;
   border-radius: 2px;
 
   &-required {
     margin-bottom: 10px;
-    border: 1px solid $red;
+    border: 1px solid variables.$red;
     padding: 10px;
     background: white;
     border-radius: 2px;
@@ -43,7 +63,7 @@
   height: 16px;
   top: 13px;
   background: white;
-  border: 1px solid $border;
+  border: 1px solid variables.$border;
   border-radius: 2px;
   cursor: pointer;
 }
@@ -72,7 +92,7 @@
 .edit-form-billable {
   top: 13px;
   margin-left: 10px;
-  color: $middle_light_text;
+  color: variables.$middle_light_text;
   font-size: 14px;
   cursor: pointer;
 }
@@ -87,7 +107,7 @@
   }
 
   &__back {
-    color: $blue;
+    color: variables.$blue;
     cursor: pointer;
   }
 }
@@ -103,7 +123,7 @@
   border: none;
   border-radius: 3px;
   color: white;
-  background: $blue;
+  background: variables.$blue;
   cursor: pointer;
 
   &-disabled {
@@ -112,7 +132,7 @@
     border: none;
     border-radius: 3px;
     color: white;
-    background: $lighter_text;
+    background: variables.$lighter_text;
   }
 }
 

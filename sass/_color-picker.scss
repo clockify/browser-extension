@@ -1,10 +1,12 @@
+@use "variables";
+
 .color-picker {
   margin-top: 20px;
   &__title {
     margin-left: 20px;
     font-size: 14px;
     line-height: 16px;
-    color: $middle_light_text;
+    color: variables.$middle_light_text;
   }
   &__container {
     display: flex;

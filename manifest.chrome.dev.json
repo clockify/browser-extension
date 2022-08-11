@@ -7,7 +7,7 @@
   "background": {
     "service_worker": "sw.js"
   },
-  "version": "2.6.1",
+  "version": "2.6.8",
   "action": {
     "default_popup": "index.html",
     "default_title": "Clockify"

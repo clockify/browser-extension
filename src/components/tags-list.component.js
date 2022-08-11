@@ -184,7 +184,7 @@ class TagsList extends React.Component {
         tag.name = this.state.tagName;
 
         tagService.createTag(tag).then(response => {
-            this.props.editTag(response.data);
+            this.props.editTag(response.data, true);
 
             this.setState({
                 tagsList: this.state.tagsList.concat(response.data),

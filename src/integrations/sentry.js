@@ -1,10 +1,10 @@
 clockifyButton.render('.group-detail:not(.clockify)', { observe: true }, () => {
   var link,
-      issueNo = $('.short-id-box > div').textContent.trim(),
-      detail = $('.group-detail h3 > span').textContent.trim(),
-      project = $('[data-test-id="global-header-project-selector"] > div').textContent.trim();
+      issueNo = $('.group-detail .auto-select-text > span').textContent.split("-")[1].trim(),
+      detailTitle = $('.group-detail .ejrtwu50').innerHTML.split("<")[0].trim(),
+      detailDescription = $('.e1rp796r0').textContent.trim(),
+      project = $('.group-detail .auto-select-text > span').textContent.split("-")[0].trim();
 
-  link = clockifyButton.createButton(issueNo + ': ' + detail, project);
-
+  link = clockifyButton.createButton("#" + issueNo + ': ' + detailTitle + "-" + detailDescription, project);
   $('.group-detail .nav-tabs').appendChild(link);
 });

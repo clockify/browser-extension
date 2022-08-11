@@ -1,3 +1,5 @@
+@use "variables";
+
 .tag-list {
 
   box-sizing: border-box;
@@ -18,7 +20,7 @@
     // padding: 6px 0;
     padding: 0px 6px;
     background: white;
-    border: 1px solid $border;
+    border: 1px solid variables.$border;
     border-radius: 2px;
     cursor: pointer;
     box-sizing: border-box;
@@ -30,7 +32,7 @@
       //padding: 5px 0;
       padding: 0px 6px;
       background: white;
-      border: 1px solid $red;
+      border: 1px solid variables.$red;
       border-radius: 2px;
       cursor: pointer;
       box-sizing: border-box;
@@ -44,7 +46,7 @@
       height: 38px;
       // height: 40px;
       background: disabled;
-      border: 1px solid $border;
+      border: 1px solid variables.$border;
       border-radius: 2px;
       cursor: not-allowed;
       box-sizing: border-box;
@@ -58,7 +60,7 @@
       // height: 40px;
       height: 38px;
       background: #eff4f7;
-      border: 1px solid $border;
+      border: 1px solid variables.$border;
       border-radius: 2px;
       cursor: not-allowed;
       padding: 0px 6px;
@@ -102,7 +104,7 @@
     display: inline-block;
     padding: 5px 10px 5px 0px;
     font-size: 14px;
-    color: $lighter_text;
+    color: variables.$lighter_text;
   }
  
   &-selected {
@@ -110,7 +112,7 @@
     max-width: 260px;
     //margin-left: 10px;
     border-radius: 2px;
-    // background-color: $tags;
+    // background-color: variables.$tags;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -119,7 +121,7 @@
       display: inline-block;
       padding: 5px 2px;
       border-radius: 3px;
-      // color: $blue_tag;
+      // color: variables.$blue_tag;
       font-size: 14px;
       font-weight: 400;
       color: #333;
@@ -141,7 +143,7 @@
     text-align: center;
     margin-top: 15px;
     margin-bottom: 10px;
-    color: $middle_light_text;
+    color: variables.$middle_light_text;
     cursor: pointer;
   }
   &-dropdown {
@@ -162,7 +164,7 @@
     width: 100%;
     height: 40px;
     padding: 10px 32px 10px 10px;
-    border: 1px solid $border;
+    border: 1px solid variables.$border;
     border-radius: 2px;
 
     &__clear {
@@ -190,13 +192,13 @@
     display: inline-block;
     width: 16px;
     height: 16px;
-    border: 1px solid $border;
+    border: 1px solid variables.$border;
   }
   &-item {
     font-size: 14px;
     line-height: 16px;
     margin-left: 10px;
-    color: $middle_light_text;
+    color: variables.$middle_light_text;
     &-row {
       padding: 7px 15px;
       cursor: pointer;
@@ -204,7 +206,7 @@
       overflow: hidden;
       white-space: nowrap;
       &:hover {
-        background-color: $entries_header;
+        background-color: variables.$entries_header;
       }
     }
   }
@@ -230,7 +232,7 @@
       content: url("/assets/images/create.png");
     }
     &--text {
-      color: $blue;
+      color: variables.$blue;
       font-size: 14px;
       line-height: 16px;
     }
@@ -248,7 +250,7 @@
     transform: translate(-50%, -50%);
     width: 320px;
     height: 240px;
-    background: $input-background;
+    background: variables.$input-background;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
     border-radius: 2px;
     text-align: center;
@@ -279,7 +281,7 @@
     &--divider {
       width: 100%;
       height: 1px;
-      border-bottom: 1px dotted $border;
+      border-bottom: 1px dotted variables.$border;
       margin-bottom: 20px;
     }
     &--title {
@@ -287,17 +289,17 @@
       margin-left: 20px;
       font-size: 18px;
       line-height: 21px;
-      color: $middle_light_text;
+      color: variables.$middle_light_text;
     }
     &--tag-name {
       margin-bottom: 20px;
       padding-left: 10px;
-      border: 1px solid $border;
+      border: 1px solid variables.$border;
       border-radius: 2px;
       width: 280px;
       height: 40px;
       &::placeholder {
-        color: $lighter_text;
+        color: variables.$lighter_text;
       }
     }
     &--confirmation_button {
@@ -306,8 +308,8 @@
       width: 280px;
       height: 28px;
       border-radius: 2px;
-      background: $blue;
-      color: $input-background;
+      background: variables.$blue;
+      color: variables.$input-background;
       font-size: 14px;
       line-height: 16px;
       text-transform: uppercase;
@@ -317,7 +319,7 @@
     &--cancel {
       font-size: 14px;
       line-height: 16px;
-      color: $blue;
+      color: variables.$blue;
       cursor: pointer;
     }
   }

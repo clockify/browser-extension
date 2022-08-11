@@ -1,3 +1,5 @@
+@use "variables";
+
 .delete-entry-confirmation-dialog {
     position: relative;
     display: flex;
@@ -7,7 +9,7 @@
     transform: translate(-50%, -50%);
     width: 318px;
     height: 153px;
-    background: $input-background;
+    background: variables.$input-background;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
     border-radius: 2px;
     text-align: center;
@@ -27,7 +29,7 @@
         margin-top: 20px;
         font-size: 14px;
         line-height: 16px;
-        color: $middle_light_text;
+        color: variables.$middle_light_text;
     }
 
     &__confirmation_button {
@@ -37,8 +39,8 @@
         width: 260px;
         height: 28px;
         border-radius: 2px;
-        background: $red;
-        color: $input-background;
+        background: variables.$red;
+        color: variables.$input-background;
         font-size: 14px;
         line-height: 16px;
         text-transform: uppercase;
@@ -48,7 +50,7 @@
     &__cancel {
         font-size: 14px;
         line-height: 16px;
-        color: $blue;
+        color: variables.$blue;
         cursor: pointer;
     }
 }

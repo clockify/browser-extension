@@ -18,18 +18,15 @@ Just fork the repo, make your changes, and send us a pull request.
 
 If you need the fix quicker, feel free to update the integration yourself and send us a pull request. We typically take care of them within a few days.
 
-
-
 ## Building and testing
 
 ### Chrome extension
 
-1. Make sure you have Node, NPM, Ruby, and Compass installed on your system (see setup instructions below)
-2. Clone the repository `git clone git@github.com:clockify/browser-extension.git`
-3. Run `npm install`
+1. Make sure you have Node and NPM installed on your system (see setup instructions below)
+2. Clone the repository
+3. Run `npm install --legacy-peer-deps`
 4. Build Chrome extension by running:<br>
- Linux: `npm run compile.dev.chrome`<br>
- Windows: `npm run compile.dev.chrome.win`
+ `npm run compile.dev.chrome`<br>
 
 5. Navigate to `chrome://extensions/`
 6. Enable "Developer mode" (located in the top right corner)
@@ -38,12 +35,11 @@ If you need the fix quicker, feel free to update the integration yourself and se
 
 ### Firefox extension
 
-1. Make sure you have Node, NPM, Ruby, and Compass installed on your system (see setup instructions below)
-2. Clone the repository `git clone git@github.com:clockify/browser-extension.git`
+1. Make sure you have Node and NPM installed on your system (see setup instructions below)
+2. Clone the repository
 3. Run `npm install`
 4. Build Firefox add-on by running:<br>
-Linux: `npm run compile.dev.firefox`<br>
-Windows: `npm run compile.dev.firefox.win`
+ `npm run compile.dev.firefox`<br>
 
 5. Navigate to `about:debugging`
 6. Click "Load Temporary Add-on"
@@ -66,23 +62,17 @@ Before sending us a pull request, make sure you test the integration in both Chr
 ## Setup (Ubuntu)
 ```
 sudo apt-get install nodejs
-sudo apt-get install ruby-dev
-sudo gem install compass
 sudo npm install
 ```
 ## Setup (Windows)
 
 - Install/Update Node.js to Latest: https://nodejs.org/en/download/
-- Install Ruby: https://rubyinstaller.org/downloads/
 ```
-> gem install compass
 > npm install
 ```
 
 ## Setup (Mac)
 ```
-brew install rbenv ruby-build
-sudo gem install compass
 sudo npm install
 npm install @popperjs/core
 ```
@@ -90,13 +80,5 @@ npm install @popperjs/core
 ## Compile
 ```
 npm run compile.dev.chrome
-npm run compile.prod.chrome
 npm run compile.dev.firefox
-npm run compile.prod.firefox
-```
-
-## Compile (Windows)
-```
-> npm run compile.dev.chrome.win
-> npm run compile.dev.firefox.win
 ```

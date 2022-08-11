@@ -31,14 +31,12 @@ class SelfHostedUrl extends React.Component {
 
     submitUrl() {
         let url = document.getElementById('selfHostedurl').value;
-        ReactDOM.render(
-            <SelfHostedBootSettings url={url}/>,
-            document.getElementById("mount")
-        );
+        window.reactRoot.render(
+            <SelfHostedBootSettings url={url}/>);
     }
 
     cancel() {
-        ReactDOM.render(<Login/>, document.getElementById('mount'));
+        window.reactRoot.render(<Login/>);
     }
 
     render() {

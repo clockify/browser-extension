@@ -1,3 +1,5 @@
+@use "variables";
+
 .required-fields {
   text-align: center;
 }
@@ -5,9 +7,9 @@
 .required-fields button {
   width: 105px;
   height: 45px;
-  background-color: $red;
+  background-color: variables.$red;
   color: #ffffff;
-  border: 1px solid $red;
+  border: 1px solid variables.$red;
   text-transform: uppercase;
   border-radius: 2px;
   cursor: pointer;

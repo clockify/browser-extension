@@ -1143,6 +1143,9 @@
   "EXTENSION__DOWNLOAD_SREENSHOTS_RECORDING_APP": {
     "message": "Télécharger l'application d'enregistrement de captures d'écran"
   },
+  "AUDIT_LOG__KIOSK__BREAK_TYPE_LABEL": {
+    "message": "Pause"
+  },
   "appName": {
     "message": "Clockify Suivi du temps",
     "description": "Le titre de l'application, affiché dans la boutique en ligne."

@@ -12,18 +12,17 @@ import {TimeEntryService} from "../services/timeEntry-service";
 import {getBrowser} from "../helpers/browser-helper";
 import DeleteEntryConfirmationComponent from "./delete-entry-confirmation.component";
 import Toaster from "./toaster-component";
-import {LocalStorageService} from "../services/localStorage-service";
+import {ProjectService} from "../services/project-service";
 import EditDescription from './edit-description.component'
 import {DefaultProject} from '../helpers/storageUserWorkspace';
 import { CustomFieldsContainer } from './customFields/customFields-Container';
 import { offlineStorage, getWSCustomFields } from '../helpers/offlineStorage';
 import locales from "../helpers/locales";
-import { registerLocale } from "react-datepicker";
 //import en from 'date-fns/locale/fr-CH'
 
 const timeEntryHelper = new TimeEntryHelper();
 const timeEntryService = new TimeEntryService();
-const localStorageService = new LocalStorageService();
+const projectService = new ProjectService();
 
 class EditForm extends React.Component {
 
@@ -130,6 +129,7 @@ class EditForm extends React.Component {
         else {
             this.checkRequiredFields();
         }
+
     }
 
 
@@ -184,11 +184,12 @@ class EditForm extends React.Component {
 
     async checkDefaultProjectTask(forceTasks) {
         const { defaultProject } = await DefaultProject.getStorage();
-        const lastEntry = this.props.timeEntries && this.props.timeEntries[0];
 
         if(defaultProject && defaultProject.enabled){
             const isLastUsedProject = defaultProject.project.id === 'lastUsedProject';
             const isLastUsedProjectWithoutTask = defaultProject.project.id === 'lastUsedProject' && !defaultProject.project.name.includes('task');
+            let lastEntry = await projectService.getLastUsedProject(!isLastUsedProjectWithoutTask);
+            lastEntry = lastEntry?.data ? {project: lastEntry.data.project || lastEntry.data, task: lastEntry.data.task} : this.props.timeEntries?.[0];
             if (!isLastUsedProject) {
                 const { projectDB, taskDB, msg } = await defaultProject.getProjectTaskFromDB(forceTasks);
                 if (msg) {
@@ -531,7 +532,7 @@ class EditForm extends React.Component {
                 .then(() => this.checkRequiredFields())
                 .catch(() => {
                 });
-        } else {
+        }else {
             timeEntryService.updateTask(task.id, project.id, this.state.timeEntry.id)
                 .then(response => {
                     this.setState({
@@ -543,10 +544,10 @@ class EditForm extends React.Component {
                 })
                 .catch(() => {
                 });
-        }
+            }
     }
 
-    async editTags(tag) {
+    async editTags(tag, saveAfterEdit) {
         let tagIds = this.state.tags ? this.state.tags.map(it => it.id) : [];
         let tagList = this.state.tags;
 
@@ -591,7 +592,14 @@ class EditForm extends React.Component {
         else {
             this.setState({
                 tags: tagList
-            }, () => this.checkRequiredFields());
+            }, () => {
+                if (saveAfterEdit) {
+                    this.onTagListClose();
+                } else {
+                    this.checkRequiredFields();
+                }
+            });
+            
             // timeEntryService.updateTags(tagIds, this.state.timeEntry.id)
             //     .then(response => {
             //         let data = response.data;
@@ -842,9 +850,9 @@ class EditForm extends React.Component {
         });
     }
 
-    async goBack() {
-        ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
-        ReactDOM.render(<HomePage />, document.getElementById('mount'));
+    goBack() {
+        
+        window.reactRoot.render(<HomePage />);
     }
 
     notifyAboutError(message, type='error', n=2) {
@@ -871,6 +879,11 @@ class EditForm extends React.Component {
                             this.toaster = instance
                         }}
                     />
+                    {timeEntry.type === 'BREAK' && 
+                    <div className="edit-form__break-label">
+                        <span className="break-icon" />
+                        <span>{locales.BREAK}</span>
+                    </div>}
                     <Duration
                         ref={instance => {
                             this.duration = instance;

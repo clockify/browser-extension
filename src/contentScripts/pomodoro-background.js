@@ -595,7 +595,7 @@ async function startNewEntryTimer(isWebSocketHeader) {
 }
 
 async function continueLastEntryByPomodoro(endDate) {
-    const { entry: lastEntry, error: err } = await TimeEntry.getLastEntry();
+    const { entry: lastEntry, error: err } = await TimeEntry.getLastPomodoroEntry();
     const isWebSocketHeader = true;
     const { error } = await TimeEntry.endInProgress(Object.assign(lastEntry, {isWebSocketHeader}), endDate);
     this.clearNotification('breakOver');

@@ -37,10 +37,7 @@ class DefaultPomodoroBreakProject extends React.Component {
         elem.style.maxHeight = '360px';
         this.props.resizeHeight();
     }
-
-    componentDidUpdate(prevProps, prevState) {
-    }
-
+    
     async setDefaultProject(project) {
         const { storage } = await DefaultProject.getStorage(_isPomodoro);
         storage.setDefaultProject(project);

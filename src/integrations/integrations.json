@@ -263,7 +263,7 @@
     "script": "meistertask.js",
     "clone": false
   },
-  "microsoft-planner": {
+  "tasks.office.com": {
     "name": "Microsoft Planner",
     "link": "*://tasks.office.com/*",
     "script": "microsoft-planner.js",
@@ -275,9 +275,9 @@
     "script": "monday.js",
     "clone": false
   },
-  "myjetbrains.com": {
-    "name": "Myjetbrains",
-    "link": "*://*.myjetbrains.com/*",
+  "youtrack.": {
+    "name": "Youtrack",
+    "link": "*://*youtrack.*/*",
     "script": "youtrack.js",
     "clone": false
   },
@@ -541,5 +541,10 @@
     "name": "Zoho Desk",
     "link": "*://desk.zoho.com/*",
     "script": "zohodesk.js"
+  },
+  "sentry.io": {
+    "name": "Sentry",
+    "link": "*://sentry.io/*",
+    "script": "sentry.js"
   }
 }

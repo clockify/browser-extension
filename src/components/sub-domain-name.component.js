@@ -36,14 +36,14 @@ class SubDomainName extends React.Component {
         let domainName = document.getElementById('domainName').value;
         // settingsService.setSubDomainName(domainName);
         // settingsService.setHomeUrl(`https://${domainName}.clockify.me`)
-        ReactDOM.render(
+        window.reactRoot.render(
             <SelfHostedBootSettings url={`https://${domainName}.clockify.me`}/>,
             document.getElementById("mount")
         );
     }
 
     cancel() {
-        ReactDOM.render(<Login/>, document.getElementById('mount'));
+        window.reactRoot.render(<Login/>);
     }
 
     render() {

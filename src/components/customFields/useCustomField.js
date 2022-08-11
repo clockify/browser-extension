@@ -28,7 +28,6 @@ const useCustomField = (cf, updateValue) => {
 
 
     const storeValue = useCallback(() => {
-        console.log('store value', value);
         getBrowser().runtime.sendMessage({
             eventName: 'submitCustomField',
             options: {

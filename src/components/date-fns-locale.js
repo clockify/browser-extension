@@ -1,4 +1,4 @@
-import { enUS, es, fr, pt, ru, de } from 'date-fns/locale';
+import { enUS, es, fr, pt, ru, de, ko, ja } from 'date-fns/locale';
 
 import  { registerLocale } from "react-datepicker";
 
@@ -25,6 +25,12 @@ var dateFnsLocale = {
             case 'ru':
                 registerLocale('ru', ru);
                 break;
+            case 'ko':
+                registerLocale('ko', ko);
+                break;
+            case 'ja':
+                registerLocale('ja', ja);
+                break;
             default:
                 registerLocale('en', enUS);
                 break;
@@ -46,6 +52,10 @@ var dateFnsLocale = {
                 return pt.localize;
             case 'ru':
                 return ru.localize;
+            case 'ko':
+                return ko.localize;
+            case 'ja':
+                return ja.localize;
             default:
                 return enUS.localize;
         }

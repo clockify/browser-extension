@@ -17,7 +17,7 @@ var ClockifyCustomFieldDropMultiple = class extends ClockifyCustomField {
         //this.id = `clockifyCustomFieldDropMultiple${this.index}`;
         this.popupId = `${this.divId}Popup`;
 
-        this.liHeaderId = 'liClockifyCFDropHeaderMultiple'
+        this.liHeaderId = `liClockifyCFDropHeaderMultiple${this.index}`;
         
         this.elem = null;
         this.divDropDownPopup = null;

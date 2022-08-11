@@ -61,17 +61,17 @@ class TimeEntry extends React.Component {
 
     async goToEdit() {
         if(!this.props.groupedEntries?.length && (!this.props.timeEntry.isLocked || this.props.isUserOwnerOrAdmin) && this.props.timeEntry.approvalRequestId == null) {
-            ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
+            
             if (await isOffline()) {
-                ReactDOM.render(<Login/>, document.getElementById('mount'));
+                window.reactRoot.render(<Login/>);
             }
-            ReactDOM.render(
+            window.reactRoot.render(
                 <EditForm changeMode={this.changeMode.bind(this)}
                         timeEntry={this.props.timeEntry}
                         workspaceSettings={this.props.workspaceSettings}
                         timeFormat={this.props.timeFormat}
                         userSettings={this.props.userSettings}
-                />, document.getElementById('mount')
+                />
             );
         }
     }
@@ -196,8 +196,8 @@ class TimeEntry extends React.Component {
     }
 
     async goBack() {
-        ReactDOM.unmountComponentAtNode(document.getElementById('mount'));
-        ReactDOM.render(<HomePage />, document.getElementById('mount'));
+        
+        window.reactRoot.render(<HomePage />);
     }
 
     render() {
@@ -264,6 +264,9 @@ class TimeEntry extends React.Component {
                                         "time-entry__right-side__tag" : "disabled"}></span>
                                     <span className={timeEntry.billable && !this.state.hideBillable
                                         ? "time-entry__right-side__billable"
+                                        : "disabled"}></span>
+                                    <span className={timeEntry.type === 'BREAK'
+                                        ? "time-entry__right-side__break"
                                         : "disabled"}></span>
                                     <span className={timeEntry.approvalRequestId ?
                                         "time-entry__right-side__approved" : "disabled"}>

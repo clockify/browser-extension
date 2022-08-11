@@ -1,0 +1,1157 @@
+{
+  "APPROVAL__ENTRY_NO_DESCRIPTION": {
+    "message": "설명 없음"
+  },
+  "TRACKER__APPROVAL__THIS_WEEK": {
+    "message": "이번 주"
+  },
+  "TRACKER__APPROVAL__LAST_WEEK": {
+    "message": "지난주"
+  },
+  "TRACKER__TIME_TRACKER__WEEK_TOTAL": {
+    "message": "주 총계:"
+  },
+  "TRACKER__ENTRY_MESSAGES__LOADING": {
+    "message": "로딩 중 기다려주세요."
+  },
+  "TRACKER__DEFAULT": {
+    "message": "기본"
+  },
+  "TRACKER__STOP": {
+    "message": "중지"
+  },
+  "TRACKER__START": {
+    "message": "시작"
+  },
+  "TRACKER__CONFIRM_ACTION": {
+    "message": "확실합니까?"
+  },
+  "TRACKER__TIME_TRACKER__DESCRIPTION_TOOLTIP": {
+    "message": "작업 중인 항목 입력"
+  },
+  "TRACKER__TIME_TRACKER__START_TIMER_TOOLTIP": {
+    "message": "타이머 시작"
+  },
+  "TRACKER__TIME_TRACKER__ENTRY__TRACK__MANUAL_M": {
+    "message": "수동(m)"
+  },
+  "TRACKER__TIME_TRACKER__ENTRY__TRACK__TIMER_N": {
+    "message": "타이머(n)"
+  },
+  "TRACKER__TIME_TRACKER__ENTRY__TRACK__TIMER": {
+    "message": "시간제 노동자"
+  },
+  "TRACKER__TIME_TRACKER__ENTRY__TRACK__PLACEHOLDER__TIMER": {
+    "message": "무슨 일을하고 있니?"
+  },
+  "TRACKER__TIME_TRACKER__ENTRY__DESCRIPTION": {
+    "message": "설명 추가"
+  },
+  "TRACKER__TIME_TRACKER__ENTRY__CONTINUE": {
+    "message": "이 활동에 대한 계속 타이머"
+  },
+  "TRACKER__TIME_TRACKER__ENTRY__DELETE_ENTRIES_MODAL_BODY": {
+    "message": "$entries$개 항목을 삭제하시겠습니까?",
+    "placeholders": {
+      "entries": {
+        "content": "$1",
+        "example": "label"
+      }
+    }
+  },
+  "TRACKER__TIME_TRACKER__ENTRY__DELETE__CONFIRM": {
+    "message": "$value$ 시간 항목을 삭제하시겠습니까?",
+    "placeholders": {
+      "value": {
+        "content": "$1",
+        "example": "label"
+      }
+    }
+  },
+  "REPORTS__DETAILED_REPORT__DELETE_MODAL_BODY": {
+    "message": "항목을 삭제하시겠습니까?"
+  },
+  "TRACKER__TIME_TRACKER__RECORDER__ADD_TIME_MANUALLY_TOOLTIP": {
+    "message": "여기에 수동으로 시간 추가"
+  },
+  "GLOBAL__BILLABLE_LABEL": {
+    "message": "청구 가능"
+  },
+  "GLOBAL__BILLING_CHANGE_SUCCESS_MESSAGE": {
+    "message": "결제 정보가 변경됨"
+  },
+  "GLOBAL__CANCEL_BTN": {
+    "message": "취소"
+  },
+  "GLOBAL__CLIENT_LABEL": {
+    "message": "고객"
+  },
+  "GLOBAL__DATE_LABEL": {
+    "message": "날짜"
+  },
+  "GLOBAL__DELETE_BTN": {
+    "message": "삭제"
+  },
+  "GLOBAL__DELETE_ERROR_MESSAGE": {
+    "message": "삭제 실패"
+  },
+  "GLOBAL__DESCRIPTION_LABEL": {
+    "message": "설명"
+  },
+  "GLOBAL__EDIT_LABEL": {
+    "message": "편집하다"
+  },
+  "GLOBAL__EVERYONE_LABEL": {
+    "message": "모든 사람"
+  },
+  "GLOBAL__GET_PERMISSIONS_ERROR_MESSAGE": {
+    "message": "권한 가져오기 실패"
+  },
+  "GLOBAL__GROUPS_LABEL": {
+    "message": "여러 떼"
+  },
+  "GLOBAL__LOADER_WAIT_MOMENT": {
+    "message": "잠시만 기다려주세요"
+  },
+  "GLOBAL__LOADER_LOADING": {
+    "message": "로딩..."
+  },
+  "GLOBAL__NAME_LABEL": {
+    "message": "이름"
+  },
+  "GLOBAL__NO_CLIENT_LABEL": {
+    "message": "클라이언트 없음"
+  },
+  "GLOBAL__NO_PROJECT_LABEL": {
+    "message": "프로젝트 없음"
+  },
+  "GLOBAL__NON_BILLABLE_LABEL": {
+    "message": "청구 불가"
+  },
+  "GLOBAL__PROJECT_LABEL": {
+    "message": "프로젝트"
+  },
+  "GLOBAL__ROLE_LABEL": {
+    "message": "역할"
+  },
+  "GLOBAL__SELECT_ALL_LABEL": {
+    "message": "모두 선택"
+  },
+  "GLOBAL__ADD_PROJECT_LABEL": {
+    "message": "프로젝트 선택"
+  },
+  "GLOBAL__MINUTES_LABEL": {
+    "message": "분"
+  },
+  "GLOBAL__FAVORITES_LABEL": {
+    "message": "즐겨찾기"
+  },
+  "GLOBAL__SELECT_LABEL": {
+    "message": "선택 $label$",
+    "placeholders": {
+      "label": {
+        "content": "$1",
+        "example": "label"
+      }
+    }
+  },
+  "GLOBAL__SHOW_ALL_LABEL": {
+    "message": "모두 표시"
+  },
+  "GLOBAL__STATUS_LABEL": {
+    "message": "상태"
+  },
+  "GLOBAL__TAGS_LABEL": {
+    "message": "태그"
+  },
+  "GLOBAL__TIME_ROUNDING_TITLE": {
+    "message": "시간 반올림"
+  },
+  "GLOBAL__UPDATE_FAILED_ERROR_MESSAGE": {
+    "message": "업데이트가 실패"
+  },
+  "GLOBAL__USER_LABEL": {
+    "message": "사용자"
+  },
+  "GLOBAL__USERS_LABEL": {
+    "message": "사용자"
+  },
+  "GLOBAL__DUPLICATE_BTN": {
+    "message": "복제"
+  },
+  "GLOBAL__WITHOUT_PROJECT_LABEL": {
+    "message": "프로젝트 없이"
+  },
+  "GLOBAL__CREATE_NEW_PROJECT_TITLE": {
+    "message": "새 프로젝트 만들기"
+  },
+  "SHARED_MODULES__SHARED__CREATE_NEW_TASK_LABEL": {
+    "message": "새 작업 만들기"
+  },
+  "GLOBAL__WITHOUT_TASK_LABEL": {
+    "message": "작업 없이"
+  },
+  "GLOBAL__CONFIRM_LABEL": {
+    "message": "예"
+  },
+  "GLOBAL__TASK_LABEL": {
+    "message": "일"
+  },
+  "GLOBAL__ACCESS_LABEL": {
+    "message": "입장"
+  },
+  "GLOBAL__ADD_LABEL": {
+    "message": "추가하다"
+  },
+  "GLOBAL__ADD_TAGS_LABEL": {
+    "message": "태그 추가"
+  },
+  "GLOBAL__ADMINS_LABEL": {
+    "message": "관리자"
+  },
+  "GLOBAL__BILLING_LABEL": {
+    "message": "청구"
+  },
+  "GLOBAL__CHANGE_LABEL": {
+    "message": "변화"
+  },
+  "GLOBAL__CHANGE_NAME_LABEL": {
+    "message": "이름을 바꿔라"
+  },
+  "GLOBAL__CLOSE_BTN": {
+    "message": "닫기"
+  },
+  "GLOBAL__CREATE_LABEL": {
+    "message": "창조하다"
+  },
+  "GLOBAL__CREATE_NEW_TITLE": {
+    "message": "새로 만들기"
+  },
+  "GLOBAL__FAILED_MESSAGE": {
+    "message": "실패한"
+  },
+  "GLOBAL__FILTER_LABEL": {
+    "message": "필터"
+  },
+  "GLOBAL__HOURS_LABEL": {
+    "message": "시간"
+  },
+  "GLOBAL__LOG_IN_LABEL": {
+    "message": "로그인"
+  },
+  "GLOBAL__MANAGE_LABEL": {
+    "message": "관리하다"
+  },
+  "GLOBAL__MANUAL_LABEL": {
+    "message": "수동"
+  },
+  "GLOBAL__NO_LABEL": {
+    "message": "아니요"
+  },
+  "GLOBAL__NONE_LABEL": {
+    "message": "없음"
+  },
+  "GLOBAL__CONFIRM_OK_BTN": {
+    "message": "확인"
+  },
+  "GLOBAL__PRIVATE_LABEL": {
+    "message": "사적인"
+  },
+  "GLOBAL__PROJECTS_LABEL": {
+    "message": "프로젝트"
+  },
+  "GLOBAL__PUBLIC_LABEL": {
+    "message": "공공의"
+  },
+  "GLOBAL__REMOVE_LABEL": {
+    "message": "삭제"
+  },
+  "GLOBAL__SAVE_LABEL": {
+    "message": "구하다"
+  },
+  "GLOBAL__SHOW_LABEL": {
+    "message": "보여주다"
+  },
+  "GLOBAL__FORM_LABEL_START_TIME": {
+    "message": "시작 시간"
+  },
+  "GLOBAL__SUCCESS_MSG": {
+    "message": "성공!"
+  },
+  "GLOBAL__TAG_LABEL": {
+    "message": "태그"
+  },
+  "GLOBAL__TASKS_LABEL": {
+    "message": "작업"
+  },
+  "GLOBAL__TIME_LABEL": {
+    "message": "시간"
+  },
+  "GLOBAL__FORM_LABEL_DESCRIPTION_PLACEHOLDER": {
+    "message": "당신은 무엇을 작업 했습니까?"
+  },
+  "GLOBAL__WORKSPACE_LABEL": {
+    "message": "작업 공간"
+  },
+  "GLOBAL__WORKSPACES_LABEL": {
+    "message": "작업 공간"
+  },
+  "GLOBAL__ADMIN_LABEL": {
+    "message": "관리자"
+  },
+  "GLOBAL__CLEAR_FILTERS_LABEL": {
+    "message": "필터 지우기"
+  },
+  "GLOBAL__DASHBOARD_LABEL": {
+    "message": "계기반"
+  },
+  "GLOBAL__LABEL_TEXT": {
+    "message": "라벨"
+  },
+  "GLOBAL__APPLY_FILTER_LABEL": {
+    "message": "필터 적용"
+  },
+  "GLOBAL__SUBMIT": {
+    "message": "제출하다"
+  },
+  "GLOBAL__PROJECT_FIND": {
+    "message": "프로젝트 찾기..."
+  },
+  "GLOBAL__FIND_TASKS_LABEL": {
+    "message": "작업 찾기..."
+  },
+  "GLOBAL__FIND_TAGS_LABEL": {
+    "message": "태그 찾기..."
+  },
+  "GLOBAL__ENTER_DESCRIPTION_PLACEHOLDER": {
+    "message": "설명 입력..."
+  },
+  "GLOBAL__WITHOUT_DESCRIPTION_LABEL": {
+    "message": "설명 없음"
+  },
+  "GLOBAL__SEARCH_PLACEHOLDER": {
+    "message": "검색..."
+  },
+  "GLOBAL__NOW_LABEL": {
+    "message": "지금"
+  },
+  "GLOBAL__IN_PROGRESS_LABEL": {
+    "message": "진행 중"
+  },
+  "GLOBAL__SELECT_RANGEE_LABEL": {
+    "message": "범위 선택"
+  },
+  "GLOBAL__PLACEHOLDER__ENTER_NAME": {
+    "message": "이름을 입력하시오"
+  },
+  "GLOBAL__DESCRIPTION_LIMIT_ERROR_MSG": {
+    "message": "설명 단축(최대 길이 $limit$자)",
+    "placeholders": {
+      "limit": {
+        "content": "$1",
+        "example": "3000"
+      }
+    }
+  },
+  "INSTAL_AND_TRACK_ANYWHERE": {
+    "message": "Clockify을 설치하고 어디서나 시간을 추적하십시오."
+  },
+  "TEMPLATE_WITH_NAME_EXISTS_PART_TWO": {
+    "message": "이미 존재 함"
+  },
+  "PROJECTS__MESSAGES__PROJECT_NAME_LENGTH_ERROR": {
+    "message": "프로젝트 이름은 2~250자 사이여야 합니다"
+  },
+  "PROJECTS__EDIT_PROJECT_SETTINGS__PROJECT_COLOR_EXPLANATION": {
+    "message": "색상을 사용하여 프로젝트를 시각적으로 구분합니다."
+  },
+  "PROJECTS__EDIT_PROJECT_SETTINGS__DEFAULT_BILLABLE_STATUS_LABEL": {
+    "message": "기본적으로 청구 가능"
+  },
+  "PROJECTS__EDIT_PROJECT_SETTINGS__TASK_BASED_LABEL": {
+    "message": "작업 기반"
+  },
+  "PROJECTS__NEW_PROJECT__CUSTOM_COLOR_LABEL": {
+    "message": "사용자 정의 색상"
+  },
+  "PROJECTS__EDIT_PROJECT_PAGE__PROJECT_SETTINGS": {
+    "message": "프로젝트 설정"
+  },
+  "PROJECTS__EDIT_PROJECT_PAGE__DELETE_PROJECT_WARNING": {
+    "message": "$projectName$ 프로젝트를 삭제하시겠습니까?",
+    "placeholders": {
+      "projectName": {
+        "content": "$1",
+        "example": "Project1"
+      }
+    }
+  },
+  "PROJECTS__SHARED__COLOR_LABEL": {
+    "message": "색깔"
+  },
+  "PROJECTS__SHARED__ENTER_PROJECT_NAME_PLACEHOLDER": {
+    "message": "프로젝트 이름 입력"
+  },
+  "PROJECTS__SHARED__WITHOUT_CLIENT_PLACEHOLDER": {
+    "message": "고객 없이"
+  },
+  "SHARED_MODULES__CUSTOM_FIELD__ENTER_DROPDOWN_VALUES_MSG": {
+    "message": "드롭다운 값을 입력하세요."
+  },
+  "SHARED_MODULES__CUSTOM_FIELD__EMPTY_NAME_ERROR_MSG": {
+    "message": "이름은 비워둘 수 없습니다."
+  },
+  "SHARED_MODULES__CUSTOM_FIELD__TYPE_TEXT_LABEL": {
+    "message": "텍스트"
+  },
+  "SHARED_MODULES__CUSTOM_FIELD__TYPE_NUMBER_LABEL": {
+    "message": "숫자"
+  },
+  "SHARED_MODULES__CUSTOM_FIELD__TYPE_LINK_LABEL": {
+    "message": "링크"
+  },
+  "SHARED_MODULES__CUSTOM_FIELD__TYPE_SWITCH_LABEL": {
+    "message": "스위치"
+  },
+  "SHARED_MODULES__CUSTOM_FIELD__TYPE_SELECT_LABEL": {
+    "message": "고르다"
+  },
+  "SHARED_MODULES__CUSTOM_FIELD__OPTION_PART_LABEL": {
+    "message": "옵션"
+  },
+  "SHARED_MODULES__CUSTOM_FIELD__TYPE_SELECT_MULTIPLE_LABEL": {
+    "message": "여러 개 선택"
+  },
+  "SHARED_MODULES__CUSTOM_FIELD__DROPDOWN_DEFAULT_VALUE_INFO": {
+    "message": "기본 상태 및 옵션 값"
+  },
+  "SHARED_MODULES__CUSTOM_FIELD__ON_LABEL": {
+    "message": "켜짐"
+  },
+  "PROJECTS__SHARED__SELECT_CLIENT_PLACEHOLDER": {
+    "message": "클라이언트 선택"
+  },
+  "SHARED_MODULES__CUSTOM_FIELD__ADD_OPTION_LABEL": {
+    "message": "옵션 추가"
+  },
+  "SHARED_MODULES__CUSTOM_FIELD__PLACEHOLDER_LABEL": {
+    "message": "자리 표시자"
+  },
+  "SHARED_MODULES__CUSTOM_FIELD__VALUE_LABEL": {
+    "message": "값"
+  },
+  "SHARED_MODULES__CUSTOM_FIELD__DEFAULT_LABEL": {
+    "message": "기본: "
+  },
+  "SHARED_MODULES__CUSTOM_FIELD__AVAILABLE_FIELD_INFO_HEADER": {
+    "message": "사용 가능한 필드"
+  },
+  "SHARED_MODULES__PROJECT_PICKER__FIND_TASK_LABEL": {
+    "message": "작업 @project 찾기 또는 $projectGroupingLabel$",
+    "placeholders": {
+      "projectGroupingLabel": {
+        "content": "$1",
+        "example": "Client"
+      }
+    }
+  },
+  "SHARED_MODULES__PROJECT_PICKER__FIND_PROJECT_LABEL": {
+    "message": "프로젝트 찾기 또는 $projectGroupingLabel$",
+    "placeholders": {
+      "projectGroupingLabel": {
+        "content": "$1",
+        "example": "Client"
+      }
+    }
+  },
+  "SHARED_MODULES__PROJECT_PICKER__CREATE_PROJECT_WITH_PARAM_LABEL": {
+    "message": "$project$ 프로젝트를 생성합니다.",
+    "placeholders": {
+      "project": {
+        "content": "$1",
+        "example": "Client"
+      }
+    }
+  },
+  "SHARED_MODULES__PROJECT_PICKER__CREATE_TASK_WITH_PARAM_LABEL": {
+    "message": "$project$ 프로젝트에서 $task$ 작업을 만듭니다.",
+    "placeholders": {
+      "project": {
+        "content": "$1",
+        "example": "Project1"
+      },
+      "task": {
+        "content": "$2",
+        "example": "Task1"
+      }
+    }
+  },
+  "SHARED_MODULES__PROJECT_PICKER__TYPE_TO_CREATE_PROJECT_PLACEHOLDER": {
+    "message": "task@project를 입력하여 생성합니다."
+  },
+  "SHARED_MODULES__PROJECT_PICKER__FILTER_BY_PROJECT_INFO": {
+    "message": "프로젝트별로 필터링하려면 @ 접두사를 추가하세요(예: @myproject)."
+  },
+  "SHARED_MODULES__PROJECT_PICKER__COUNT_TASKS_LABEL": {
+    "message": "$count$ 작업",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "3"
+      }
+    }
+  },
+  "SHARED_MODULES__PROJECT_PICKER__CREATE_NEW_PROJ_TASK_LABEL": {
+    "message": "새 프로젝트 및 작업 만들기"
+  },
+  "SHARED_MODULES__INPUT_NUMBER__NUMBER_INVALID_ERROR_MSG": {
+    "message": "유효한 숫자를 입력하세요."
+  },
+  "SHARED_MODULES__INPUT_NUMBER__NUMBER_TOO_SMALL_ERROR_MSG": {
+    "message": "숫자는 $minNumber$보다 커야 합니다.",
+    "placeholders": {
+      "minNumber": {
+        "content": "$1",
+        "example": "5"
+      }
+    }
+  },
+  "SHARED_MODULES__INPUT_NUMBER__NUMBER_TOO_BIG_ERROR_MSG": {
+    "message": "숫자는 $maxNumber$보다 작아야 합니다.",
+    "placeholders": {
+      "maxNumber": {
+        "content": "$1",
+        "example": "15"
+      }
+    }
+  },
+  "SHARED_MODULES__INPUT_STRING__VALUE_TOO_LONG_ERROR_MSG": {
+    "message": "값은 $maxLength$자보다 짧아야 합니다.",
+    "placeholders": {
+      "maxLength": {
+        "content": "$1",
+        "example": "15"
+      }
+    }
+  },
+  "SHARED_MODULES__INPUT_STRING__VALUE_REQUIRED_ERROR_MESSAGE": {
+    "message": "값은 필수 항목입니다."
+  },
+  "PAGES__DASHBOARD__TEAM_ACTIVITIES__ACTIVITY__NO_DESCRIPTION": {
+    "message": "(설명 없음)"
+  },
+  "PAGES__DASHBOARD__TEAM_ACTIVITIES__ACTIVITY__NO_PROJECT": {
+    "message": "(프로젝트 없음)"
+  },
+  "SHARED_MODULES__STRIPE__REQUIRED": {
+    "message": "필수의"
+  },
+  "SHARED_MODULES__STRIPE__REQUIRED_LABEL": {
+    "message": "(필수의)"
+  },
+  "GLOBAL__TODAY_LABEL": {
+    "message": "오늘"
+  },
+  "GLOBAL__YESTERDAY_LABEL": {
+    "message": "어제"
+  },
+  "GLOBAL__TOTAL_TIME": {
+    "message": "총:"
+  },
+  "CALENDAR__INTEGRATIONS__DISABLED_MANUAL_MODE_TOOLTIP": {
+    "message": "수동 모드 비활성화됨"
+  },
+  "LAYOUT__SIDEBAR__NAVIGATION__SETTINGS_LABEL": {
+    "message": "설정"
+  },
+  "WORKSPACE__SETTINGS__TABS__INTEGRATIONS_TITLE": {
+    "message": "통합"
+  },
+  "LAYOUT__DEFAULT_LAYOUT__LOG_OUT_BTN": {
+    "message": "로그 아웃"
+  },
+  "TIMESHEET2__MESSAGES__SAVE_ERROR_MISSING_FIELDS": {
+    "message": "필수 입력란 없이 저장할 수 없습니다."
+  },
+  "SERVICES__TAG__GET__ERROR_MESSAGE": {
+    "message": "태그 가져오기 실패"
+  },
+  "GLOBAL__CUSTOM_FIELDS_LABEL": {
+    "message": "사용자 정의 필드"
+  },
+  "WORKSPACE__GENERAL_SETTINGS__DURATION_FORMAT__TITLE": {
+    "message": "기간 형식"
+  },
+  "WORKSPACE__SUBDOMAIN__PLACEHOLDER_FOR_NAME": {
+    "message": "하위 도메인 이름"
+  },
+  "TEAMS__REMINDERS__WEEKDAYS__MONDAY": {
+    "message": "월요일"
+  },
+  "TEAMS__REMINDERS__WEEKDAYS__MODAY_SHORT": {
+    "message": "월"
+  },
+  "TEAMS__REMINDERS__WEEKDAYS__TUESDAY": {
+    "message": "화요일"
+  },
+  "TEAMS__REMINDERS__WEEKDAYS__TUESDAY_SHORT": {
+    "message": "화요일"
+  },
+  "TEAMS__REMINDERS__WEEKDAYS__WEDNESDAY": {
+    "message": "수요일"
+  },
+  "TEAMS__REMINDERS__WEEKDAYS__WEDNESDAY_SHORT": {
+    "message": "수"
+  },
+  "TEAMS__REMINDERS__WEEKDAYS__THURSDAY": {
+    "message": "목요일"
+  },
+  "TEAMS__REMINDERS__WEEKDAYS__THURSDAY_SHORT": {
+    "message": "목"
+  },
+  "TEAMS__REMINDERS__WEEKDAYS__FRIDAY": {
+    "message": "금요일"
+  },
+  "TEAMS__REMINDERS__WEEKDAYS__FRIDAY_SHORT": {
+    "message": "금"
+  },
+  "TEAMS__REMINDERS__WEEKDAYS__SATURDAY": {
+    "message": "토요일"
+  },
+  "TEAMS__REMINDERS__WEEKDAYS__SATURDAY_SHORT": {
+    "message": "앉았다"
+  },
+  "TEAMS__REMINDERS__WEEKDAYS__SUNDAY": {
+    "message": "일요일"
+  },
+  "TEAMS__REMINDERS__WEEKDAYS__SUNDAY_SHORT": {
+    "message": "해"
+  },
+  "PROJECTS__FILTER_DROPDOWN__NO_MATCHING_ENTITIES_LABEL": {
+    "message": "일치하는 항목이 없습니다 $entityInPlural$",
+    "placeholders": {
+      "entityInPlural": {
+        "content": "$1",
+        "example": "No matching tags"
+      }
+    }
+  },
+  "REPORTS__MODELS__CUSTOM_FIELD_FILTER_LABEL": {
+    "message": "필터 $name$",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "Filter tags"
+      }
+    }
+  },
+  "EXTENSION__ADD_PROJECT": {
+    "message": "프로젝트 추가"
+  },
+  "EXTENSION__ADD_TASK": {
+    "message": "작업 추가"
+  },
+  "EXTENSION__ADD_TIME_MANUAL": {
+    "message": "시간 추가(예: 15m)"
+  },
+  "EXTENSION__SHORTCUT": {
+    "message": "지름길"
+  },
+  "EXTENSION__START_TIMER_WHEN_BROWSER_STARTS": {
+    "message": "브라우저 시작 시 타이머 시작"
+  },
+  "EXTENSION__STOP_TIMER_WHEN_BROWSER_CLOSES": {
+    "message": "브라우저가 닫힐 때 타이머 중지"
+  },
+  "EXTENSION__STOP_TIMER": {
+    "message": "타이머 중지"
+  },
+  "EXTENSION__DESCRIPTION_REQUIRED": {
+    "message": "설명(필수)"
+  },
+  "EXTENSION__START_STOP_TIME_SHORTCUT": {
+    "message": "타이머 시작/중지 단축키"
+  },
+  "EXTENSION__DEFAULT_PROJECT_ARCHIVED": {
+    "message": "기본 프로젝트가 보관됩니다."
+  },
+  "EXTENSION__DEFAULT_TASK_DONE": {
+    "message": "기본 작업은 완료이며 더 이상 사용할 수 없습니다."
+  },
+  "EXTENSION__DEFAULT_TASK_DOES_NOT_EXIST": {
+    "message": "기본 작업이 존재하지 않습니다."
+  },
+  "EXTENSION__DEFAULT_PROJECT_NOT_AVAILABLE": {
+    "message": "기본 프로젝트는 더 이상 사용할 수 없습니다."
+  },
+  "EXTENSION__YOU_CAN_SET_A_NEW_ONE_IN_SETTINGS": {
+    "message": "설정에서 새로 설정할 수 있습니다."
+  },
+  "EXTENSION__COMPLETE_CURRENT_ENTRY": {
+    "message": "먼저 현재 항목을 완료하십시오!"
+  },
+  "EXTENSION__ENTER_REQUIRED_FIELDS": {
+    "message": "필수 필드를 입력하거나 선택적으로 작업 공간 설정을 편집하십시오."
+  },
+  "EXTENSION__CANNOT_START_ENTRY_WITHOUT_PROJECT": {
+    "message": "프로젝트, 작업, 설명 또는 태그 없이 항목을 시작할 수 없습니다."
+  },
+  "EXTENSION__EDIT_YOUR_TIME_ENTRY": {
+    "message": "시간 입력을 수정하세요."
+  },
+  "EXTENSION__CREATE_TIME_ENTRY_USING_DASHBOARD": {
+    "message": "대시보드를 사용하여 시간 항목을 생성하거나 작업 공간 설정을 편집하십시오."
+  },
+  "EXTENSION__ENABLE_INTEGRATIONS": {
+    "message": "통합 활성화"
+  },
+  "EXTENSION__ENABLE_TOOLS": {
+    "message": "Clockify 확장과 함께 사용하려는 도구를 활성화합니다."
+  },
+  "EXTENSION__ENABLE_ALL": {
+    "message": "모두 활성화"
+  },
+  "EXTENSION__DISABLE_ALL": {
+    "message": "모두 비활성화"
+  },
+  "EXTENSION__CUSTOM_DOMAINS": {
+    "message": "사용자 정의 도메인"
+  },
+  "EXTENSION__HOSTED_ON_CUSTOM_DOMAIN": {
+    "message": "사용자 지정 도메인에서 호스팅되는 도구를 사용하는 경우 여기에서 활성화할 수 있습니다."
+  },
+  "EXTENSION__ENTER_DOMAIN_NAME": {
+    "message": "'mydomain.com' 형식으로 도메인 이름을 입력하고 드롭다운에서 통합을 선택합니다."
+  },
+  "EXTENSION__PORTS_NOT_SUPPORTED": {
+    "message": "포트는 지원되지 않습니다"
+  },
+  "EXTENSION__NO_RECENT_ENTRIES_TO_SHOW": {
+    "message": "표시할 최근 항목이 없습니다."
+  },
+  "EXTENSION__YOU_HAVE_NOT_TRACKED": {
+    "message": "최근에 추적하지 않은 것 같습니다."
+  },
+  "EXTENSION__GET_ONLINE": {
+    "message": "항목을 보려면 온라인에 접속하세요."
+  },
+  "EXTENSION__YOU_CAN_STILL_TRACK_TIME": {
+    "message": "그동안 오프라인 상태에서도 시간을 추적할 수 있습니다."
+  },
+  "EXTENSION__ENABLE_DARK_MODE": {
+    "message": "다크 모드 활성화"
+  },
+  "EXTENSION__DEFAULT_PROJECT": {
+    "message": "기본 프로젝트"
+  },
+  "EXTENSION__DEFAULT_PROJECT_AND_TASK": {
+    "message": "기본 프로젝트 및 작업"
+  },
+  "EXTENSION__LAST_USED_PROJECT": {
+    "message": "마지막으로 사용한 프로젝트"
+  },
+  "EXTENSION__LAST_USED_PROJECT_AND_TASK": {
+    "message": "마지막으로 사용한 프로젝트 및 작업"
+  },
+  "EXTENSION__INTEGRATIONS_CAN_CREATE_PROJECTS": {
+    "message": "통합으로 프로젝트/작업/태그 생성 가능"
+  },
+  "EXTENSION__SHOW_POST_START_POPUP": {
+    "message": "시작 후 팝업 표시"
+  },
+  "EXTENSION__REMIND_ME_TO_TRACK_TIME": {
+    "message": "시간을 추적하도록 본인에게 알림"
+  },
+  "EXTENSION__MINUTES_SINCE_LAST_ENTRY": {
+    "message": "마지막 입력 이후 분"
+  },
+  "EXTENSION__ENABLE_CONTEXT_MENU": {
+    "message": "상황에 맞는 메뉴 사용"
+  },
+  "EXTENSION__IDLE_DETECTION": {
+    "message": "유휴 감지"
+  },
+  "EXTENSION__DETECT_IDLE_TIME": {
+    "message": "다음이 비활성화된 경우 유휴 시간을 감지 :"
+  },
+  "EXTENSION__CANT_START_ENTRY_WITHOUT_PROJECT": {
+    "message": "프로젝트, 작업, 설명 또는 태그 없이 항목을 시작할 수 없습니다."
+  },
+  "EXTENSION__PLEASE_EDIT_YOUR_TIME_ENTRY": {
+    "message": "시간 입력을 수정하세요."
+  },
+  "EXTENSION__CANNOT_END_ENTRY": {
+    "message": "프로젝트, 작업, 설명 또는 태그 없이 항목을 종료할 수 없습니다."
+  },
+  "EXTENSION__YOU_MUST_BE_LOGGED_IN_TO_START": {
+    "message": "시간 입력을 시작하려면 로그인해야 합니다."
+  },
+  "EXTENSION__YOU_ALREADY_HAVE_ENTRY_WITHOUT": {
+    "message": "프로젝트/작업/설명 또는 태그 없이 이미 진행 중인 항목이 있습니다."
+  },
+  "EXTENSION__ENTER_REQUIRED_FIELDS_OR_EDIT_WORKSPACE_SETTINGS": {
+    "message": "필수 필드를 입력하거나 선택적으로 작업 공간 설정을 편집하십시오."
+  },
+  "EXTENSION__EXT_RELOADED": {
+    "message": "확장 프로그램이 다시 로드되었습니다."
+  },
+  "EXTENSION__EXT_CONTEXT_INVALIDATED": {
+    "message": "확장 컨텍스트가 무효화됨"
+  },
+  "EXTENSION__REFRESH_THE_PAGE": {
+    "message": "페이지를 새로고침하세요!"
+  },
+  "EXTENSION__WORKSPACE_NOT_AUTHORIZED_FOR_CUSTOM_FIELDS": {
+    "message": "작업 공간이 사용자 정의 필드에 대해 승인되지 않았습니다."
+  },
+  "EXTENSION__TIME_ADDED": {
+    "message": "시간이 추가되었습니다!"
+  },
+  "EXTENSION__CUSTOM_DOMAIN_ENABLE": {
+    "message": "사용자 지정 도메인에서 호스팅되는 도구를 사용하는 경우 여기에서 활성화할 수 있습니다."
+  },
+  "EXTENSION__ENTER_TIME": {
+    "message": "시간 입력(예: 1.5)"
+  },
+  "EXTENSION__ENTRY_MODE": {
+    "message": "진입 모드"
+  },
+  "REFRESH": {
+    "message": "새로 고치다"
+  },
+  "EXTENSION__LOGIN_TO_CUSTOM_DOMAIN": {
+    "message": "사용자 정의 도메인에 로그인"
+  },
+  "EXTENSION__LOGIN_TO_SUB_DOMAIN": {
+    "message": "하위 도메인에 로그인"
+  },
+  "EXTENSION__RETURN_TO_CLOCKIFY_CLOUD": {
+    "message": "Clockify 클라우드로 돌아가기"
+  },
+  "EXTENSION__CREATE_AN_ACCOUNT": {
+    "message": "계정 만들기"
+  },
+  "EXTENSION__NEW_HERE": {
+    "message": "여기 새로운"
+  },
+  "EXTENSION__NAME_AND_COLOR_ARE_REQUIRED": {
+    "message": "이름과 색상은 필수 항목입니다."
+  },
+  "EXTENSION__ENABLE_POMODORO_TIMER": {
+    "message": "뽀모도로 타이머 활성화"
+  },
+  "EXTENSION__TIMER_INTERVAL": {
+    "message": "타이머 간격"
+  },
+  "EXTENSION__SHORT_BREAK": {
+    "message": "짧은 휴식"
+  },
+  "EXTENSION__LONG_BREAK": {
+    "message": "긴 휴식"
+  },
+  "EXTENSION__LONG_BREAK_STARTS_AFTER": {
+    "message": "긴 휴식이 다음 이후에 시작됩니다."
+  },
+  "EXTENSION__BREAKS": {
+    "message": "휴식"
+  },
+  "EXTENSION__SOUND_NOTIFICATION": {
+    "message": "소리 알림"
+  },
+  "EXTENSION__AUTOMATIC_BREAKS": {
+    "message": "자동 중단"
+  },
+  "EXTENSION__DEFAULT_BREAK_PROJECT": {
+    "message": "기본 휴식 프로젝트"
+  },
+  "EXTENSION__AND_TASK": {
+    "message": "및 작업"
+  },
+  "EXTENSION__SELECT_COLOR": {
+    "message": "색상 선택"
+  },
+  "EXTENSION__ADD_TIME": {
+    "message": "시간 추가"
+  },
+  "EXTENSION__BACK": {
+    "message": "뒤"
+  },
+  "EXTENSION__CHANGE_SAVED": {
+    "message": "변경 사항이 저장되었습니다."
+  },
+  "EXTENSION__CREATE_NEW_CLIENT": {
+    "message": "새 클라이언트 만들기"
+  },
+  "EXTENSION__NAME_IS_REQUIRED": {
+    "message": "이름은 필수 항목입니다."
+  },
+  "EXTENSION__FROM": {
+    "message": "에서"
+  },
+  "EXTENSION__TO": {
+    "message": "에게"
+  },
+  "EXTENSION__CREATE_NEW_TAG": {
+    "message": "새 태그 만들기"
+  },
+  "ENABLE_ALL_INTEGRATIONS": {
+    "message": "'모두 활성화' 버튼을 클릭하여 모든 것을 활성화할 수 있습니다."
+  },
+  "AUDIT_LOG__TABLE_COLUMNS__PROJECT__NAME": {
+    "message": "프로젝트 이름"
+  },
+  "AUDIT_LOG__TABLE_COLUMNS__CLIENT__NAME": {
+    "message": "클라이언트 이름"
+  },
+  "AUDIT_LOG__TABLE_COLUMNS__TAG__NAME": {
+    "message": "태그 이름"
+  },
+  "PROJECTS__PROJECTS_TABLE__ADD_TASK_PLACEHOLDER": {
+    "message": "새 작업 추가"
+  },
+  "AUDIT_LOG__TABLE_COLUMNS__TASK__NAME": {
+    "message": "작업명"
+  },
+  "SHARED_MODULES__SHARED__CREATE_TASK_LABEL": {
+    "message": "작업 만들기"
+  },
+  "SERVICES__AUTHENTIFICATION__EMAIL__VALIDATION__ERROR_MESSAGE": {
+    "message": "이메일 주소가 이미 사용 중이거나 유효하지 않습니다!"
+  },
+  "REGISTER__SIGNUP__AGREE_LABEL": {
+    "message": "나는 동의합니다"
+  },
+  "GLOBAL__TOS": {
+    "message": "이용약관"
+  },
+  "EXTENSION__ALREADY_HAVE_AN_ACCOUNT": {
+    "message": "이미 계정이 있습니다."
+  },
+  "REGISTER__SHARED__TOS_ACCEPT_ERROR": {
+    "message": "서비스 약관에 동의해야 합니다."
+  },
+  "REGISTER__SHARED__PASSWORD_MIN_LENGTH_ERROR_MSG": {
+    "message": "비밀번호는 $minLength$자 이상이어야 합니다.",
+    "placeholders": {
+      "minLength": {
+        "content": "$1",
+        "example": "6"
+      }
+    }
+  },
+  "GLOBAL__EMAIL_LABEL": {
+    "message": "이메일"
+  },
+  "GLOBAL__PASSWORD_LABEL": {
+    "message": "비밀번호"
+  },
+  "GLOBAL__DONE_LABEL": {
+    "message": "완료"
+  },
+  "REGISTER__SIGNUP__TITLE": {
+    "message": "시작하기 Clockify"
+  },
+  "REGISTER__SIGNUP__CREATE_ACCOUNT_EXPLANATION": {
+    "message": "무료 계정을 만들어 시간 추적을 시작하고 생산성을 극대화하십시오."
+  },
+  "EXTENSION__CUSTOM_DOMAIN_URL": {
+    "message": "맞춤 도메인 URL"
+  },
+  "EXTENSION__CUSTOM_DOMAIN_DESCRIPTION": {
+    "message": "Clockify 도메인을 입력합니다. 귀하의 도메인은 귀하가 브라우저에서 Clockify에 액세스하는 URL입니다."
+  },
+  "GLOBAL__SIGNUP_LABEL": {
+    "message": "가입하기"
+  },
+  "ACTIVITY_TABS__LOCATIONS__LOAD_MORE_BTN": {
+    "message": "더 내려받기"
+  },
+  "EXTENSION__SUBMITTING": {
+    "message": "제출 중…"
+  },
+  "EXTENSION__EXPAND": {
+    "message": "확장하다"
+  },
+  "EXTENSION__FAVORITE": {
+    "message": "가장 좋아하는"
+  },
+  "EXTENSION__POMODORO_BREAK_STARTED": {
+    "message": "$breakMinutes$분간의 휴식이 시작되었습니다.",
+    "placeholders": {
+      "breakMinutes": {
+        "content": "$1",
+        "example": "5"
+      }
+    }
+  },
+  "EXTENSION__POMODORO_BREAK_ENDED": {
+    "message": "휴식이 끝났습니다. 작업 타이머가 다시 시작되었습니다."
+  },
+  "EXTENSION__POMODORO_TAKE_BREAK": {
+    "message": "$minLength$분 동안 일하셨습니다. 휴식 시간!",
+    "placeholders": {
+      "minLength": {
+        "content": "$1",
+        "example": "30"
+      }
+    }
+  },
+  "EXTENSION__POMODORO_TIME_TO_WORK": {
+    "message": "휴식을 취하세요. 일할 시간!"
+  },
+  "EXTENSION__CLICK_HERE_TO_START_TIMER": {
+    "message": "타이머를 시작하려면 여기를 클릭하십시오."
+  },
+  "EXTENSION__CLICK_HERE_TO_START_BREAK": {
+    "message": "휴식을 시작하려면 여기를 클릭하세요."
+  },
+  "EXTENSION__POMODORO_SESSION": {
+    "message": "(세션 $number$).",
+    "placeholders": {
+      "number": {
+        "content": "$1",
+        "example": "1"
+      }
+    }
+  },
+  "EXTENSION__POMODORO_TAKE_LONG_BREAK": {
+    "message": "$minLength$분 동안 일하셨습니다. 긴 휴식 시간!",
+    "placeholders": {
+      "minLength": {
+        "content": "$1",
+        "example": "30"
+      }
+    }
+  },
+  "EXTENSION__CLICK_HERE_TO_START_LONG_BREAK": {
+    "message": "긴 휴식을 시작하려면 여기를 클릭하세요."
+  },
+  "EXTENSION__POMODORO_TIMER": {
+    "message": "뽀모도로 타이머"
+  },
+  "EXTENSION__REMINDER_MESSAGE": {
+    "message": "시간을 추적하는 것을 잊지 마십시오! ( 마지막 활동 이후 $minutes$m 경과 )",
+    "placeholders": {
+      "minutes": {
+        "content": "$1",
+        "example": "15"
+      }
+    }
+  },
+  "EXTENSION__ADD_MISSING_TIME": {
+    "message": "누락된 시간 추가"
+  },
+  "EXTENSION__DISCARD_IDLE_TIME": {
+    "message": "유휴 시간 버리기"
+  },
+  "EXTENSION__DISCARD_AND_CONTINUE": {
+    "message": "버리고 계속"
+  },
+  "EXTENSION__IDLE_TIME_DETECTED": {
+    "message": "유휴 시간 감지됨"
+  },
+  "EXTENSION__CLICK_HERE_TO_DISCARD_IDLE": {
+    "message": "유휴 상태를 버리고 항목을 중지하려면 여기를 클릭하십시오."
+  },
+  "EXTENSION__IDLE_MESSAGE": {
+    "message": "$desc$ 추적하는 동안 $hours$h $minutes$m 동안 비활성 상태였습니다.",
+    "placeholders": {
+      "hours": {
+        "content": "$1",
+        "example": "1"
+      },
+      "minutes": {
+        "content": "$2",
+        "example": "15"
+      },
+      "desc": {
+        "content": "$3",
+        "example": "Project:task"
+      }
+    }
+  },
+  "EXTENSION__IDLE_MESSAGE_MINUTES": {
+    "message": "$desc$을(를) 추적하는 동안 $minutes$분 동안 비활성 상태였습니다.",
+    "placeholders": {
+      "minutes": {
+        "content": "$1",
+        "example": "15"
+      },
+      "desc": {
+        "content": "$2",
+        "example": "Project:task"
+      }
+    }
+  },
+  "GLOBAL__CLIENTS_LABEL": {
+    "message": "클라이언트"
+  },
+  "GLOBAL__DEPARTMENT_LABEL": {
+    "message": "부서"
+  },
+  "GLOBAL__DEPARTMENTS_LABEL": {
+    "message": "부서"
+  },
+  "GLOBAL__CATEGORY_LABEL": {
+    "message": "범주"
+  },
+  "GLOBAL__CATEGORIES_LABEL": {
+    "message": "카테고리"
+  },
+  "GLOBAL__LOCATION_LABEL": {
+    "message": "위치"
+  },
+  "GLOBAL__LOCATIONS_LABEL": {
+    "message": "위치"
+  },
+  "GLOBAL__JOB_LABEL": {
+    "message": "직업"
+  },
+  "GLOBAL__JOBS_LABEL": {
+    "message": "채용 정보"
+  },
+  "GLOBAL__ACTIVITY_LABEL": {
+    "message": "활동"
+  },
+  "GLOBAL__ACTIVITIES_LABEL": {
+    "message": "활동"
+  },
+  "GLOBAL__JOB_AREA_LABEL": {
+    "message": "작업 영역"
+  },
+  "GLOBAL__JOB_AREAS_LABEL": {
+    "message": "작업 영역"
+  },
+  "EXTENSION__START_TIMER_WITH_DESCRIPTION": {
+    "message": "설명과 함께 타이머 시작"
+  },
+  "WORKSPACE__TWO_FACTOR__MODAL__TITLE": {
+    "message": "보안 강화 필요"
+  },
+  "WORKSPACE__TWO_FACTOR__MODAL__INFO_MESSAGE": {
+    "message": "이중 인증(2FA)이 필요합니다. 활성화되면 로그인할 때 이메일을 확인해야 합니다."
+  },
+  "WORKSPACE__TWO_FACTOR__MODAL__ENABLE": {
+    "message": "2FA 활성화"
+  },
+  "EXTENSION__SCREENSHOT_RECORDING": {
+    "message": "스크린샷 녹화가 활성화되었습니다. 이 앱은 스크린샷을 찍을 수 없습니다."
+  },
+  "EXTENSION__REMINDER": {
+    "message": "알림"
+  },
+  "EXTENSION__DOWNLOAD_SREENSHOTS_RECORDING_APP": {
+    "message": "스크린샷 녹화 앱 다운로드"
+  },
+  "AUDIT_LOG__KIOSK__BREAK_TYPE_LABEL": {
+    "message": "부서지다"
+  },
+  "appName": {
+    "message": "Clockify 시간 추적기",
+    "description": "웹 스토어에 표시되는 애플리케이션의 제목입니다."
+  },
+  "appDesc": {
+    "message": "웹 어디에서나 시간을 추적하고 생산성을 향상시킵니다.",
+    "description": "웹 스토어에 표시되는 애플리케이션에 대한 설명입니다."
+  }
+}

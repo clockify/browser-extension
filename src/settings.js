@@ -290,7 +290,7 @@ function removeCustomDomain(e) {
             const permissionsByUser = result.permissions
                 .filter(permissionByUser => permissionByUser.userId === userId)[0].permissions;
             permissionsByUser.splice(permissionsByUser
-                .findIndex(p => p.isCustom && p.domain === domain), 1);
+                .findIndex(p => p.isCustom && domain.includes(p.domain)), 1);
 
             aBrowser.storage.local.set({"permissions": permissionsForStorage}, () => {
                 showCustomDomains();

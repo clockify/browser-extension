@@ -86,7 +86,7 @@ export class TimeEntryService extends HttpWrapperService {
         return super.get(url, addToken);
     }
 
-    async startNewEntry(projectId, description, billable, start, end = null, taskId = null, tagIds, customFields) {
+    async startNewEntry(projectId, description, billable = null, start, end = null, taskId = null, tagIds, customFields) {
         const activeWorkspaceId = await localStorageService.get('activeWorkspaceId');
         const baseUrl = await localStorageService.get('baseUrl');
         const startEntryUrl =
@@ -106,9 +106,10 @@ export class TimeEntryService extends HttpWrapperService {
             description,
             start,
             end,
-            billable,
             customFields
         };
+
+        if(billable !== null) body.billable = billable;
 
         return super.post(startEntryUrl, body, addToken);
     }
@@ -125,10 +126,10 @@ export class TimeEntryService extends HttpWrapperService {
         const activeWorkspaceId = await localStorageService.get('activeWorkspaceId');
         const baseUrl = await localStorageService.get('baseUrl');
 
-        if(moment(start).date() !== moment(end).date()){
-            start = moment(start).add(1, 'day');
-            end = moment(end).add(1, 'day');
-        }
+        // if(moment(start).date() !== moment(end).date()){
+        //     start = moment(start).add(1, 'day');
+        //     end = moment(end).add(1, 'day');
+        // }
 
         const stopEntryUrl =
             `${baseUrl}/workspaces/${activeWorkspaceId}/timeEntries/${id}/full`;

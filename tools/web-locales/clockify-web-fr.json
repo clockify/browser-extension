@@ -477,7 +477,62 @@
         "LOGIN_CODE_SENT_TO": "Votre code de connexion a été envoyé à",
         "ENTER_SIX_DIGIT": "Entrez le code à 6 chiffres",
         "ENTER_LABEL_NAME": "Entrez le nom de l'étiquette",
-        "TASK_RATES_TITLE_CUSTOM_LABEL": "{ taskLabel } tarifs"
+        "TASK_RATES_TITLE_CUSTOM_LABEL": "{ taskLabel } tarifs",
+        "EXTRA_FEATURES": "Fonctionnalités supplémentaires",
+        "FINISH": "Finir",
+        "COMPANY_LABEL": "Société",
+        "COMPANY_ADDRESS": "Entrez l'adresse de l'entreprise",
+        "CUSTOM_FIELDS_ENTRY_LABEL": "Champs personnalisés de saisie de temps",
+        "CUSTOM_FIELDS_USER_LABEL": "Champs personnalisés de l'utilisateur",
+        "FIELDS": "Des champs",
+        "LIMITED_LABEL": "Limité",
+        "USER_FIELDS": "Champs utilisateur",
+        "LOCK_TIMESHEET_TITLE": "Verrouiller la feuille de temps",
+        "ROUNDING_TITLE": "Arrondi",
+        "FORCE_2FA_TITLE": "Forcer 2FA",
+        "LOCK_TIME_AND_EXPENSES": "Verrouiller le temps et les dépenses",
+        "NEW": {
+            "ADD_BTN": "Ajouter nouveau"
+        },
+        "APPROVAL_TITLE": "Approbation",
+        "WITHDRAW_MESSAGE_WITH_EXPENSES": "Si vous vous retirez, l'administrateur ne pourra pas approuver votre temps et vos dépenses à moins que vous ne les soumettiez à nouveau.",
+        "DEACTIVATE_BTN": "Désactiver",
+        "KIOSK_LABEL": "Kiosque",
+        "COMPANY_NAME": "Entrez le nom de l'entreprise",
+        "LIMITED_USER_SEATS_TITLE": "Places limitées",
+        "REGULAR_USER_SEATS_TITLE": "Sièges réguliers",
+        "EXPORT_ASSIGNEES": "Exporter les cessionnaires",
+        "LAUNCH_LABEL": "Lancer",
+        "ARCHIVE_PROJECT_LABEL": "Projet d'archivage",
+        "ARCHIVE_TASK_LABEL": "Tâche d'archivage",
+        "SEAT": "siège",
+        "DEFAULT_PROJECT_LABEL": "Projet par défaut",
+        "PER_SEAT": "par siège",
+        "PER_REGULAR_SEAT": "par siège régulier",
+        "PER_LIMITED_SEAT": "par siège limité",
+        "APPROVED_EXPENSE_ERROR_MESSAGE": "Impossible de modifier les dépenses approuvées.",
+        "NO_REGULAR_SEATS_LEFT": "Il ne reste plus de places régulières.",
+        "NO_LIMITED_SEATS_LEFT": "Il ne reste plus de places limitées.",
+        "EMPLOYEE_NAME": "Nom de l'employé",
+        "ADD_EMAIL_LABEL": "Ajouter un e-mail",
+        "KIOSKS_LABEL": "Kiosques",
+        "DEFAULT_LABEL": "Défaut",
+        "ENABLE_LABEL": "Activer",
+        "FULL_LABEL": "plein",
+        "FULL_MEMBERS_LABEL": "Membres à part entière",
+        "NO_FULL_SEATS_LEFT": "Il ne reste plus de places complètes.",
+        "REGULAR_LABEL": "Habituel",
+        "REGULAR_MEMBER_LABEL": "Membre régulier",
+        "REGULAR_MEMBERS_LABEL": "Membres réguliers",
+        "DELETE_USER_TITLE": "Supprimer l'utilisateur",
+        "DELETE_LIMITED_USER_INFO_MESSAGE": "L'utilisateur limité ne pourra pas pointer via le kiosque, mais ses données suivies resteront. Cette action est irréversible.",
+        "FULL_USER_SEATS_TITLE": "Sièges complets",
+        "PER_FULL_SEAT": "par siège complet",
+        "TOS_PART1": "j'ai lu et accepté les",
+        "NO_SEATS_LEFT": "Il ne reste plus de places.",
+        "TOS_PART2": "Conditions d'utilisation",
+        "BUY_LABEL": "Acheter",
+        "FULL_MEMBER_LABEL": "Membre à part entière"
     },
     "ACTIVITY_TABS": {
         "SCREENSHOTS": {
@@ -630,10 +685,10 @@
         },
         "SIDEBAR": {
             "CONTACT_SUPPORT": {
-                "CONTACT_FOR_DEMO_LABEL": "Contact pour démonstration",
+                "CONTACT_FOR_DEMO_LABEL": "Demander une démo",
                 "TRIAL_EXPIRATION_NOTIFICATION": "Votre période d’essai expire dans { remainingTrialDays } jours.",
                 "TRIAL_EXPIRING_TODAY_NOTIFICATION": "Votre période d’essai expire aujourd’hui.",
-                "CONTACT_SALES_LABEL": "Contacter le service commercial pour prolonger",
+                "CONTACT_SALES_LABEL": "Contact pour prolongation",
                 "TRIAL_EXPIRING_TOMORROW_NOTIFICATION": "L'essai expire demain."
             },
             "PROFILE_DROPDOWN": {
@@ -653,7 +708,8 @@
                 "SETTINGS_LABEL": "Paramètres",
                 "TIMESHEET_LABEL": "FEUILLE HORAIRE"
             },
-            "SWITCH_WORKSPACE_TOOLTIP": "Vous pouvez basculer entre vos espaces de travail ici !"
+            "SWITCH_WORKSPACE_TOOLTIP": "Vous pouvez basculer entre vos espaces de travail ici !",
+            "TRIAL_LEFT": "laissé en procès."
         },
         "SHARED": {
             "WAIT_TEXT": "Veuillez patienter"
@@ -757,7 +813,10 @@
             "EDIT_SETTING_SUCCESS": "Paramètres de facturation mis à jour.",
             "EDIT_SETTING_FAIL": "Impossible de modifier les paramètres de facturation.",
             "DUPLICATE_SUCCESS": "Facture dupliquée avec succès.",
-            "DUPLICATE_FAIL": "Échec de la duplication de la facture."
+            "DUPLICATE_FAIL": "Échec de la duplication de la facture.",
+            "CONFIRM_MULTIPLE_ITEMS_DELETE": "Êtes-vous sûr de vouloir supprimer { count } { count, plural, =0{} one{élément} other{éléments} } ?",
+            "DELETE_ITEMS_FAIL": "Échec de la suppression des éléments de facture.",
+            "DELETE_ITEMS_SUCCESS": "Éléments supprimés avec succès."
         },
         "SHARED": {
             "CREATE_INVOICE": "Créer une facture",
@@ -823,7 +882,42 @@
         },
         "SHOW_COLUMNS_IN_PDF": "Afficher les colonnes en pdf",
         "ITEM_ORDER_CHANGED": "L'ordre des articles de la facture a été modifié",
-        "ITEM_ORDER_CANT_BE_CHANGED": "L'ordre des articles de la facture ne peut pas être modifié"
+        "ITEM_ORDER_CANT_BE_CHANGED": "L'ordre des articles de la facture ne peut pas être modifié",
+        "COMPANY": {
+            "GET": {
+                "FAILED_MESSAGE": "Get entreprises a échoué."
+            },
+            "NAME": "Nom de l'entreprise",
+            "EDIT": {
+                "MODAL": {
+                    "TITLE": "Modifier les sociétés",
+                    "SUCCESS_MESSAGE": "La liste des entreprises a été mise à jour avec succès.",
+                    "FAILED_MESSAGE": "La société de mise à jour a échoué.",
+                    "DELETE_TOOLTIP": "Impossible de supprimer les données d'entreprise par défaut.",
+                    "MAX_TOOLTIP": "Ne peut pas avoir plus de 50 entreprises"
+                }
+            },
+            "CREATE": {
+                "MODAL": {
+                    "FAILED_MESSAGE": "La création de l'entreprise a échoué.",
+                    "ADDRESS": {
+                        "FAILED_MESSAGE": "L'adresse de l'entreprise ne peut pas dépasser 3000.",
+                        "SUCCESS_MESSAGE": "L'adresse de l'entreprise a été ajoutée"
+                    },
+                    "NAME": {
+                        "FAILED_MESSAGE": "Le nom de l'entreprise doit comporter entre 2 et 250 caractères",
+                        "SAME_NAME": "La société avec le nom { name } existe déjà"
+                    },
+                    "SUCCESS_MESSAGE": "La société a été créée."
+                }
+            },
+            "DELETE": {
+                "MODAL": {
+                    "FAILED_MESSAGE": "La suppression de l'entreprise a échoué."
+                }
+            },
+            "ADDRESS": "Adresse de la société"
+        }
     },
     "PAYMENT_INFO": {
         "ALERT_PERMISSION": "Vous n’êtes pas autorisé à ajouter ou à modifier les informations de paiement pour cet espace de travail !",
@@ -937,7 +1031,9 @@
             "REMOVE_TASK_WARNING": "La tâche { taskName } sera également retirée de tous les créneaux auxquels elle a été assignée. Cette action est irréversible.",
             "MARK_AS_ACTIVE_LABEL": "Marquer comme actif",
             "MARK_AS_DONE_LABEL": "Marque comme terminé",
-            "SET_LABEL": "Régler"
+            "SET_LABEL": "Régler",
+            "MARK_AS_DONE_LIST_KIOSKS": "Pour archiver { taskName }, supprimez-le d'abord de chaque kiosque",
+            "MARK_AS_DONE_WARNING": "Impossible d'archiver ce { taskLabel } car il est utilisé par défaut { taskLabel } sur le kiosque"
         },
         "FILTER_DROPDOWN": {
             "NO_ENTITY_LABEL": "Aucun { entity }",
@@ -1005,7 +1101,10 @@
             "PROJECT_TIME_INFO_LOSS_WARNING_CUSTOM": "Avertissement : Les horaires approuvés pour { projectName } perdront les informations du { projectLabel }.",
             "TIME_ENTRIES_INFO_LOSS_WARNING_CUSTOM": "Le { projectLabel } { projectName } sera également retiré de tous les créneaux auxquels il est assigné. Cette action est irréversible.",
             "TIME_ENTRIES_AND_EXPENSES_INFO_LOSS_WARNING_CUSTOM": "Le { projectLabel } { projectName } sera également supprimé de toutes les entrées de temps et dépenses auxquelles il est affecté. Cette action ne peut pas être annulée.",
-            "CUSTOM_BUDGET_LABEL": "{ projectLabel } budget"
+            "CUSTOM_BUDGET_LABEL": "{ projectLabel } budget",
+            "ARCHIVE_ONE_WARNING": "Impossible d'archiver ce {projectLabel} car il est utilisé comme {projectLabel} par défaut sur le kiosque",
+            "ARCHIVE_ONE_LIST_KIOSKS": "Pour archiver { projectName }, supprimez-le d'abord de chaque kiosque",
+            "ARCHIVE_CLIENT_PROJECTS_TOOLTIP": "Impossible d'archiver { projectLabel } (certains kiosques les utilisent)"
         },
         "PROJECTS_CUSTOM_PAGE": {
             "DELETE_MULTIPLE_PROJECTS_WARNING": "Voulez-vous vraiment supprimer { listLength } { projectLabel } ?",
@@ -1273,7 +1372,12 @@
             "EDIT_REPORT_TOOLTIP": "Modifier le rapport de partage",
             "EXPORT_LONGER_THAN_INFO": "Cela peut prendre quelques minutes, veuillez ne pas quitter l’écran",
             "LOCK_DATES_LABEL": "Verrouiller les dates",
-            "EXPORT_IN_PROGRESS": "Exportation du rapport { type }"
+            "EXPORT_IN_PROGRESS": "Exportation du rapport { type }",
+            "FILTER": {
+                "ALL_REPORTS": "Tous les rapports",
+                "MY_REPORTS": "Mes rapports",
+                "SHARED_WITH_ME": "Partagé avec moi"
+            }
         },
         "SUMMARY": {
             "SORT_BY_TITLE_ASC_LABEL": "Titre (haut)",
@@ -1399,7 +1503,8 @@
             "SELECT_ALL_WITH_COUNT_TEXT": "Sélectionnez toutes les { count } dépenses",
             "SELECT_ALL_ENTRIES_TEXT": "Sélectionner toutes mes dépenses"
         },
-        "PROFIT_LABEL": "Profit :"
+        "PROFIT_LABEL": "Profit :",
+        "NOTES": "Notes"
     },
     "SHARED_MODULES": {
         "CUSTOM_FIELD": {
@@ -1441,7 +1546,12 @@
             "TYPE_ENTER_LABEL": "Entrer",
             "OPTION_PART_LABEL": "Option",
             " DESCRIPTION_INFO_TEXT": "Explicateur qui clarifie comment utiliser le champ et pourquoi. Apparaît dans les infobulles (au survol).",
-            "DESCRIPTION_INFO_TEXT": "Explicateur qui clarifie comment utiliser le champ et pourquoi. Apparaît dans les infobulles (au survol)."
+            "DESCRIPTION_INFO_TEXT": "Explicateur qui clarifie comment utiliser le champ et pourquoi. Apparaît dans les infobulles (au survol).",
+            "AVAILABLE_FIELD_INFO_BODY_USER": "Activez pour ajouter des informations supplémentaires aux utilisateurs.",
+            "FIELDS_IN_ALL_ENTRIES_LABEL_USER": "Champs dont disposent tous les utilisateurs.",
+            "CREATE_CUSTOM_FIELD_TITLE_USER": "Créer un champ personnalisé utilisateur",
+            "CREATE_CUSTOM_FIELD_TITLE_TIME_ENTRY": "Créer un champ personnalisé d'entrée de temps",
+            "DEFAULT_VALUE_LABEL": "Valeur par défaut"
         },
         "BTN_UPLOAD_FILE_CONTENT": {
             "UPLOAD_FILE_BTN_DEFAULT": "Téléverser un fichier CSV",
@@ -1534,7 +1644,7 @@
                 "DESCRIPTION": "Au lieu de faire de quelqu'un un administrateur, faites de quelqu'un un <b>responsable d'équipe</b> afin qu'il puisse voir tout le temps et les dépenses que les membres de l'équipe ont suivis, et approuver leurs feuilles de temps. <br><br> Ou, donnez à quelqu'un un rôle de <b>chef de projet</b> sur plusieurs projets afin qu'il puisse voir tout le temps et les dépenses suivis sur les projets qu'il gère et modifier lesdits projets (par exemple, créer des tâches, ajouter des membres au projet, définir des estimations, etc.)."
             },
             "TIMESHEET_REMINDERS": {
-                "TITLE": "Rappels des feuilles horaires",
+                "TITLE": "Cibles & rappels",
                 "DESCRIPTION": "Définissez des rappels de suivi des horaires pour votre équipe et Clockify leur enverra un courriel automatique s’ils ne sont pas connectés pendant suffisamment d’heures ce jour ou cette semaine-là."
             },
             "IMPORT_TIMESHEETS": {
@@ -1618,6 +1728,36 @@
             },
             "SCHEDULING": {
                 "DESCRIPTION": "La planification vous aide à visualiser les affectations et les quarts de travail des projets afin que vous sachiez en un coup d'œil à quel point votre équipe est occupée. Planifiez les projets selon un calendrier, attribuez qui doit travailler sur quoi et quand, voyez qui est en surcapacité ou en sous-capacité et laissez votre équipe voir ses tâches dans le calendrier."
+            },
+            "USER_FIELDS": {
+                "DESCRIPTION": "Les champs utilisateur vous permettent d'ajouter des informations supplémentaires aux membres de l'équipe (comme le titre du poste, le poste, le téléphone, le service, l'ID utilisateur) et de les exporter ultérieurement avec l'heure."
+            },
+            "MULTI_FACTOR_AUTHENTICATION": {
+                "DESCRIPTION": "Sécurisez votre espace de travail en exigeant une authentification à deux facteurs pour tous vos utilisateurs. <br>\nTous les utilisateurs qui n'ont pas activé 2FA dans leur profil seront obligés de l'activer pour accéder à l'espace de travail. Une fois 2FA activé, en plus du mot de passe, les utilisateurs devront vérifier leur courrier électronique pour obtenir un code à usage unique pour se connecter."
+            },
+            "APPROVAL": {
+                "DESCRIPTION": "Votre équipe peut soumettre ses feuilles de temps hebdomadaires et ses dépenses pour examen, que vous pouvez approuver ou rejeter. Une fois approuvés, le temps et les dépenses ne peuvent plus être modifiés sans une trace écrite permanente."
+            },
+            "PIN": {
+                "TITLE": "PIN (kiosque)",
+                "DESCRIPTION": "Exigez des employés qu'ils saisissent leur code PIN pour pointer via le kiosque.<br><br>Chaque employé reçoit un code PIN personnel afin que les autres ne puissent pointer à sa place. Les administrateurs obtiennent également un code PIN universel qui leur permet de pointer pour n'importe quel membre de l'équipe."
+            },
+            "LIMITED_USER_SEATS": {
+                "DESCRIPTION": "Chaque utilisateur limité actif dans votre espace de travail occupe un siège limité (ce qui coûte moins cher qu'un siège standard).<br><br>Les utilisateurs limités n'ont pas d'e-mail et peuvent suivre le temps uniquement via le kiosque (vous pouvez convertir un utilisateur limité en un utilisateur régulier en ajoutant son adresse e-mail).<br><br>Les utilisateurs désactivés ne prennent pas de siège, ce qui signifie que vous pouvez désactiver quelqu'un et occuper son siège avec quelqu'un d'autre à la place.<br><br>Vous pouvez acheter ou supprimer sièges à tout moment sur votre page d'abonnement."
+            },
+            "REGULAR_USER_SEATS": {
+                "DESCRIPTION": "Chaque utilisateur régulier actif dans votre espace de travail occupe un poste régulier.<br><br>Les utilisateurs réguliers (y compris les gestionnaires et les administrateurs) sont des utilisateurs qui disposent d'une adresse e-mail et peuvent se connecter directement à Clockify.<br><br>Les utilisateurs désactivés ne vous ne prenez pas de siège, ce qui signifie que vous pouvez désactiver quelqu'un et occuper son siège avec quelqu'un d'autre à la place.<br><br>Vous pouvez acheter ou supprimer des sièges à tout moment sur votre page d'abonnement."
+            },
+            "BREAKS": {
+                "DESCRIPTION": "Autorisez les employés à indiquer quand ils sont en pause via un kiosque.<br><br> Pendant qu'ils sont pointés, ils peuvent taper le début et la fin de la pause à l'aide de votre terminal de kiosque.<br><br>Plus tard, les administrateurs et les managers peuvent voir quand chaque employé était en pause et combien dans les rapports.",
+                "TITLE": "Pause (kiosque)"
+            },
+            "FULL_USER_SEATS": {
+                "DESCRIPTION": "Chaque utilisateur complet actif dans votre espace de travail occupe un siège complet.<br><br>Les utilisateurs complets (y compris les gestionnaires et les administrateurs) sont des utilisateurs qui disposent d'une adresse e-mail et peuvent se connecter directement à Clockify.<br><br>Les utilisateurs désactivés ne vous ne prenez pas de siège, ce qui signifie que vous pouvez désactiver quelqu'un et occuper son siège avec quelqu'un d'autre à la place.<br><br>Vous pouvez acheter ou supprimer des sièges à tout moment sur votre page d'abonnement."
+            },
+            "CUSTOMIZE_KIOSK": {
+                "DESCRIPTION": "Lorsque vous ouvrez le kiosque, il reste ouvert pendant 24h. Après cela, la session expire et l'administrateur doit se reconnecter. Si vous souhaitez qu'il reste ouvert plus ou moins longtemps, vous pouvez définir le nombre d'heures que vous souhaitez.<br><br>Vous pouvez également télécharger le logo de l'entreprise pour remplacer le logo Clockify sur l'écran du kiosque.",
+                "TITLE": "Personnaliser le kiosque"
             }
         },
         "PROJECT_PICKER": {
@@ -1679,7 +1819,7 @@
             },
             "GET_MORE_PROMO": "Obtenez plus de Clockify !",
             "CHOOSE_YEARLY_PLAN_INFO": "Choisissez une de nos formules mensuelles ou annuelles pour optimiser votre productivité avec des fonctionnalités et des composants additionnels.",
-            "UPGRADE_WORKSPACE_WITH_PARAM_INFO": "Mettez à niveau l’espace de travail { name } et obtenez encore plus de fonctionnalités.",
+            "UPGRADE_WORKSPACE_WITH_PARAM_INFO": "Mettez à niveau votre espace de travail {name} pour obtenir plus de fonctionnalités.",
             "BASIC_LABEL": "BASIC",
             "ADMIN_LABEL": "Administration",
             "PER_SEAT_MONTH_LABEL": "par place/mois",
@@ -2088,12 +2228,21 @@
                     "UPDATE_SUCCESS": "Le profil a été mis à jour avec succès"
                 },
                 "WORKING_DAYS_MESSAGE": "Définissez les jours de travail de cet utilisateur.",
-                "SELECT_DAYS": "Sélectionnez des jours"
+                "SELECT_DAYS": "Sélectionnez des jours",
+                "WILL_BE_CONVERTED": "sera converti en utilisateur régulier.",
+                "WILL_BE_CONVERTED_WARNING": "L'ajout d'un e-mail convertira { userName } en utilisateur à part entière"
             },
             "USER_STATUS": {
                 "ACTIVATED": "Utilisateur activé",
                 "DEACTIVATED": "Utilisateur désactivé"
-            }
+            },
+            "LIMITED_USER_STATUS": {
+                "DEACTIVATED": "Utilisateur limité désactivé",
+                "ACTIVATED": "Utilisateur limité activé"
+            },
+            "NO_SEATS_PAID_PLAN": "Vous avez besoin de { seatsLeft } sièges supplémentaires pour ajouter tous les membres.",
+            "NO_SEATS_FREEE_PLAN": "Impossible d'ajouter plus de { seatsLeft } membres à la fois.",
+            "NO_SEAT_PAID_PLAN": "Il vous faut 1 siège supplémentaire pour ajouter tous les membres."
         },
         "SEATS": {
             "NO_AVAILABLE": {
@@ -2118,7 +2267,15 @@
         },
         "SHARED": {
             "LESS_LABEL": "Moins"
-        }
+        },
+        "LIMITED_MEMBERS": {
+            "EMPTY_STATE": "Les membres limités ne peuvent entrer et sortir que via le kiosque.",
+            "EMPTY_STATE_LINK": "En savoir plus sur les utilisateurs réguliers et limités"
+        },
+        "LIMITED_SEATS": {
+            "UPGRADE_INFO_MESSAGE": "Pour activer des utilisateurs limités supplémentaires, vous devez mettre à jour votre abonnement et acheter plus de postes d'utilisateur."
+        },
+        "NO_FULL_SEATS": "Il ne reste plus de places complètes."
     },
     "SUBSCRIPTION_TABS": {
         "SUBSCRIPTION_PAYMENT": {
@@ -2169,7 +2326,8 @@
                 "OPTIONAL_PART_2": "les paiements annuels",
                 "PART_3": "continueront et vous pourrez continuer à utiliser les fonctionnalités supplémentaires."
             },
-            "UPGRADED_SUCCES_TEXT": "Vous pouvez dès maintenant utiliser toutes les fonctionnalités supplémentaires dans l’espace de travail { name }, sans aucune limitation."
+            "UPGRADED_SUCCES_TEXT": "Vous pouvez dès maintenant utiliser toutes les fonctionnalités supplémentaires dans l’espace de travail { name }, sans aucune limitation.",
+            "ANNUAL_APPLIED": "20% de réduction annuelle appliquée"
         },
         "INVOICES": {
             "PAST_BILLING_HEADER": "Relevés de facturation passés",
@@ -2189,12 +2347,30 @@
             "NUMBER_OF_ADDITIONAL_SEATS_LABEL_PART_1": "Nombre de places additionnelles :",
             "NUMBER_OF_ADDITIONAL_SEATS_LABEL_PART_2": "{ count } places",
             "EST_PRICE_LABEL": "Prix estimé au prorata qui sera appliqué :",
-            "PAY_SAVE_BTN": "Payez et économisez"
+            "PAY_SAVE_BTN": "Payez et économisez",
+            "FULL": {
+                "NUMBER_OF_ADDITIONAL_SEATS_LABEL_PART_2": "{ count } sièges complets"
+            },
+            "LIMITED": {
+                "NUMBER_OF_ADDITIONAL_SEATS_LABEL_PART_2": "{ count } places limitées"
+            }
         },
         "PAYMENT_LABEL": "Paiement",
         "PLANS_LABEL": "Formules",
         "SHARED": {
             "PAY_ANNUAL_LABEL": "les paiements annuels"
+        },
+        "FULL_USER_SEATS": {
+            "REMOVE_SEATS_TITLE": "Supprimer les sièges complets inutilisés",
+            "BUY_SEATS_TITLE": "Achetez des sièges complets"
+        },
+        "REGULAR_USER_SEATS": {
+            "BUY_SEATS_TITLE": "Achetez des sièges réguliers",
+            "REMOVE_SEATS_TITLE": "Supprimer les sièges réguliers inutilisés"
+        },
+        "LIMITED_USER_SEATS": {
+            "BUY_SEATS_TITLE": "Achetez des places limitées",
+            "REMOVE_SEATS_TITLE": "Supprimer les sièges limités inutilisés"
         }
     },
     "TIMESHEET2": {
@@ -2207,7 +2383,8 @@
                 "BILLABLE": "Remplacer le facturable",
                 "TAGS": "Remplacer les balises",
                 "DESCRIPTION": "Remplacer les descriptions"
-            }
+            },
+            "BREAK_TITLE": "Modifier la pause"
         },
         "TIME_ENTRY": {
             "TAGS": {
@@ -2460,7 +2637,8 @@
                 "ZONE": {
                     "TITLE": "Fuseau horaire",
                     "PLACEHOLDER": "Rechercher un fuseau horaire...",
-                    "INFO_MESSAGE": "Avant de pouvoir changer de fuseau horaire, vous devez d’abord annuler tous vos horaires soumis en attente d’approbation :"
+                    "INFO_MESSAGE": "Avant de pouvoir changer de fuseau horaire, vous devez d’abord annuler tous vos horaires soumis en attente d’approbation :",
+                    "INFO_MESSAGE_WITH_EXPENSES": "Avant de pouvoir changer de fuseau horaire, vous devez d'abord annuler la soumission de tous vos temps et dépenses soumis en attente d'approbation :"
                 },
                 "CHANGE": {
                     "ZONE": "Changer le Fuseau horaire",
@@ -2474,7 +2652,8 @@
                 },
                 "WEEK": {
                     "START": "Démarrage de la semaine",
-                    "INFO_MESSAGE": "Avant de pouvoir changer vos démarrages de semaine, vous devez d’abord annuler tous vos horaires soumis en attente d’approbation :"
+                    "INFO_MESSAGE": "Avant de pouvoir changer vos démarrages de semaine, vous devez d’abord annuler tous vos horaires soumis en attente d’approbation :",
+                    "INFO_MESSAGE_WITH_EXPENSES": "Avant de pouvoir modifier la date de début de votre semaine, vous devez d'abord annuler la soumission de tous vos temps et dépenses soumis en attente d'approbation :"
                 },
                 "DAY": {
                     "START": "Démarrage du jour"
@@ -2572,7 +2751,10 @@
         },
         "CLIENT": {
             "EDIT": {
-                "PLACEHOLDER": "Saisir l’adresse"
+                "PLACEHOLDER": "Saisir l’adresse",
+                "NOTE": {
+                    "PLACEHOLDER": "Saisir une note"
+                }
             }
         },
         "ARCHIVE": {
@@ -2768,6 +2950,10 @@
             "CAN_SEE_PROJECT_STATUS_CUSTOM_LABEL": {
                 "RULE_TITLE": "Qui peut voir le statut { projectLabel }",
                 "INFO_MESSAGE": "Permettez aux gens de voir le statut sur leur { projectLabelPlural } afin qu'ils sachent combien il reste d'estimation."
+            },
+            "WHO_CAN_CREATE_ASSIGNMENTS": {
+                "DESCRIPTION": "Autorisez les chefs de projet à créer des affectations pour leurs projets.",
+                "TITLE": "Qui peut créer des devoirs"
             }
         },
         "DELETE": {
@@ -2801,7 +2987,8 @@
             "MANY": {
                 "STANDARD": "Fonctionnalités STANDARD",
                 "PRO": "Fonctionnalités PRO",
-                "BASIC": "Fonctionnalités BASIC"
+                "BASIC": "Fonctionnalités BASIC",
+                "FEATURE": "Fonction {featureType}"
             }
         },
         "ALERT": {
@@ -2954,6 +3141,9 @@
                     },
                     "ISSUER_URL": {
                         "LABEL": "URL de l'émetteur"
+                    },
+                    "DEFAULT": {
+                        "RELAY": "État du relais par défaut"
                     }
                 },
                 "SECURITY": {
@@ -3058,7 +3248,8 @@
             "CONSENT_MSG_PART5": "Politique de confidentialité",
             "CONSENT_MSG_PART6": "et toutes les lois applicables en matière de protection des données et autres à l'Entreprise.",
             "CATEGORY_LABEL": "Catégorie",
-            "MAKE_CUSTOM_LABEL": "Personnalisé..."
+            "MAKE_CUSTOM_LABEL": "Personnalisé...",
+            "WORKING_DAYS_ERROR_TOAST": "Doit avoir au moins un jour ouvrable"
         },
         "AUTH_TAB": {
             "LOADER_MESSAGE": "Redirection vers le sous-domaine"
@@ -3143,7 +3334,8 @@
             "USER_NAME_UPDATE_FAILED": "Échec de la mise à jour du nom d’utilisateur.",
             "DEACTIVATE_API_KEY_SUCCESS": "La clé API a été désactivée.",
             "DEACTIVATE_API_KEY_FAILED": "Échec de la désactivation de la clé Api.",
-            "PASSWORD_RESET_LINK_SENT": "Lien de réinitialisation du mot de passe envoyé à { email }."
+            "PASSWORD_RESET_LINK_SENT": "Lien de réinitialisation du mot de passe envoyé à { email }.",
+            "REMOVE_LIMITED_USER_SUCCESS": "L'utilisateur limité a été supprimé"
         },
         "GENERAL_SETTINGS": {
             "LOGO": {
@@ -3232,7 +3424,8 @@
             "TIME_APPROVAL": {
                 "INFO_MESSAGE": "Votre équipe peut soumettre pour révision ses feuilles horaires hebdomadaires, que vous pouvez approuver ou refuser.",
                 "TOGGLE": "Activer l’approbation du temps",
-                "WARNING_FOR_TAG": "Avertissement : Le temps approuvé pour { value } perdra les informations sur la tâche."
+                "WARNING_FOR_TAG": "Avertissement : Le temps approuvé pour { value } perdra les informations sur la tâche.",
+                "INFO_MESSAGE_EXPENSES_ACTIVE": "Votre équipe peut soumettre ses feuilles de temps hebdomadaires et ses dépenses pour examen, que vous pouvez approuver ou rejeter."
             },
             "TRACK_LOCATION": {
                 "TITLE": "Suivi de l’emplacement",
@@ -3261,6 +3454,22 @@
             "WORKING_DAYS_INFO_MESSAGE_2": "Jours ouvrables par défaut pour tous les nouveaux membres (vous pouvez remplacer les jours ouvrables sur le profil du membre).",
             "ORGANIZE_TIME_ONLY": {
                 "INFO_MESSAGE": "Choisissez comment vous souhaitez regrouper le temps et configurez des termes et une hiérarchie personnalisés."
+            },
+            "ENABLE_KIOSK_MESSAGE": "Permettez aux employés de pointer à l'arrivée et au départ à partir d'appareils désignés.",
+            "KIOSK_ENABLED": {
+                "REQUIRE_TAGS_MESSAGE": "Impossible d'exiger des balises ou une description lorsque le kiosque est activé."
+            },
+            "ACTIVATE_KIOSK": "Activer le kiosque",
+            "ENABLE_BREAKS": "Activer les pauses",
+            "BREAKS_UPGRADE_MESSAGE": "permettre des pauses",
+            "ENABLE_DESCRIPTION_KIOSK_ACTIVE_MESSAGE": "Pour activer la description requise, le kiosque doit être désactivé",
+            "APPROVAL": {
+                "TOGGLE": "Activer l'approbation"
+            },
+            "ENABLE_TAG_KIOSK_ACTIVE_MESSAGE": "Pour activer la sélection de balises requises, le kiosque doit être désactivé",
+            "TIMETRACKER_SETTING": {
+                "INFO_MESSAGE": "Suivez le temps à l'aide d'une minuterie et consultez toutes vos entrées de temps.",
+                "ACTIVATE": "Activer le suivi"
             }
         },
         "SHARED": {
@@ -3307,6 +3516,24 @@
             "TIMESHEET_SETTING": {
                 "INFO_MESSAGE": "Entrez l'heure sur { taskLabelPlural } et { projectLabelPlural } en utilisant une vue de feuille de temps hebdomadaire. Lorsqu'il est activé, { projectLabel } est un champ obligatoire pour l'ensemble de l'espace de travail.",
                 "ACTIVATED_MESSAGE": "Impossible de créer du temps sans { projectLabel } lorsque la feuille de temps est activée."
+            },
+            "KIOSKS_WITHOUT_DEFAULTS": {
+                "INFO": "Pour activer le kiosque, sélectionnez la valeur par défaut { projectLabel } pour chaque kiosque",
+                "BREAKS_INFO": "Pour activer les pauses, sélectionnez la pause par défaut { projectLabel } pour chaque kiosque",
+                "TASK_INFO": "Pour activer le kiosque, sélectionnez la valeur par défaut { taskLabel } pour chaque kiosque",
+                "TASK_BREAK_INFO": "Pour activer les pauses, sélectionnez la pause par défaut { taskLabel } pour chaque kiosque"
+            },
+            "FORCE_PROJECT": {
+                "KIOSKS_WITHOUT_DEFAULTS_TOOLTIP": "Pour activer la sélection requise { projectLabel }, tous les kiosques doivent avoir { projectLabel } par défaut",
+                "KIOSKS_WITHOUT_BREAK_DEFAULTS_TOOLTIP": "Pour activer la sélection requise { projectLabel }, tous les kiosques doivent avoir par défaut { projectLabel } et pause par défaut { projectLabel }",
+                "KIOSKS_WITHOUT_BREAK_PROJECTS_DEFAULTS_TOOLTIP": "Pour utiliser la feuille de temps, tous les kiosques doivent avoir par défaut { projectLabel } et pause par défaut { projectLabel }"
+            },
+            "FORCE_TASK": {
+                "KIOSKS_WITHOUT_DEFAULTS_TOOLTIP": "Pour activer la sélection { taskLabel } requise, tous les kiosques doivent avoir { taskLabel } par défaut",
+                "KIOSKS_WITHOUT_BREAK_DEFAULTS_TOOLTIP": "Pour activer la sélection requise { taskLabel }, tous les kiosques doivent avoir la valeur par défaut { taskLabel } et la pause par défaut { taskLabel }"
+            },
+            "TIMESHEET": {
+                "KIOSKS_WITHOUT_DEFAULTS_TOOLTIP": "Pour utiliser la feuille de temps, tous les kiosques doivent avoir la valeur par défaut { projectLabel }"
             }
         },
         "GENERAL_SETTINGS_CUSTOM_SETTINGS": {
@@ -3516,6 +3743,17 @@
                 "ADD": "Les nouvelles places ont été ajoutées avec succès",
                 "REMOVE": "Les places ont été supprimées avec succès",
                 "NOT_CHANGED": "Les places n’ont pas changé"
+            },
+            "UPDATE_REGULAR_QUANTITY_SEATS": {
+                "ADD": "Nouveaux sièges ajoutés",
+                "REMOVE": "Sièges réguliers supprimés"
+            },
+            "UPDATE_LIMITED_QUANTITY_SEATS": {
+                "REMOVE": "Places limitées supprimées",
+                "ADD": "Nouveaux sièges limités ajoutés"
+            },
+            "UPDATE_QUANTITY_SEATS_REGULAR": {
+                "ADD": "Nouveaux sièges ajoutés avec succès"
             }
         },
         "PROJECT": {
@@ -3697,6 +3935,12 @@
                         "SUCCESS_MESSAGE": "Le fuseau horaire a été mis à jour avec succès",
                         "ERROR_MESSAGE": "Échec de la mise à jour du fuseau horaire"
                     }
+                },
+                "ADD_EMAIL": {
+                    "UPDATE": {
+                        "SUCCESS_MESSAGE": "L'utilisateur régulier a été ajouté à l'espace de travail.",
+                        "ERROR_MESSAGE": "L'utilisateur régulier n'a pas pu être ajouté à l'espace de travail."
+                    }
                 }
             },
             "GET_IDS": {
@@ -3743,6 +3987,15 @@
                 "TRANSFER_OWNER_ROLE": {
                     "SUCCESS_MESSAGE": "Le transfert du rôle de propriétaire a été effectué avec succès",
                     "ERROR_MESSAGE": "Le rôle de propriétaire n’a pas été transféré"
+                },
+                "INVITE_REGULAR": {
+                    "SUCCESS_MESSAGE": "Les utilisateurs réguliers ont été invités à l'espace de travail"
+                },
+                "INVITE_LIMITED": {
+                    "SUCCESS_MESSAGE": "Des utilisateurs limités ont été ajoutés à l'espace de travail"
+                },
+                "INVITE_FULL": {
+                    "SUCCESS_MESSAGE": "Les utilisateurs complets ont été invités à l'espace de travail"
                 }
             }
         },
@@ -3753,7 +4006,8 @@
             "UPDATE": {
                 "SUCCESS_MESSAGE": "{ label } mis à jour avec succès",
                 "ERROR_MESSAGE": "{ label } non mis à jour",
-                "SUCCESS_MESSAGE_WITH_NAME": "{ label } { name } a été mis à jour"
+                "SUCCESS_MESSAGE_WITH_NAME": "{ label } { name } a été mis à jour",
+                "SUCCESS_MESSAGE_USER": "Champs personnalisés de l'utilisateur mis à jour avec succès"
             },
             "DELETE": {
                 "SUCCESS_MESSAGE": "{ label } supprimé avec succès",
@@ -3835,7 +4089,7 @@
         "FEATURES": {
             "PLAN": {
                 "FREE": {
-                    "INFO_MESSAGE": "Vous utilisez actuellement la version gratuite."
+                    "INFO_MESSAGE": "Vous utilisez actuellement la version GRATUITE."
                 },
                 "LEGACY": {
                     "INFO_MESSAGE": "Vous utilisez actuellement la formule tarifaire héritée. Une fois que vous avez changé les formules, impossible de revenir à votre ancienne formule tarifaire."
@@ -3846,14 +4100,15 @@
                 "ACTIVATE": "Activer la version d’essai gratuite",
                 "HAD_ALREADY": "La version d’essai gratuite a déjà été activée pour cet espace de travail. Si vous avez besoin de plus de temps pour tester les choses, n’hésitez pas à activer un autre essai dans un nouvel espace de travail.",
                 "TITLE": "Démarrer la version d’essai gratuite",
-                "INFO_MESSAGE": "Essayez toutes les fonctionnalités supplémentaires pendant une semaine, aucune carte de crédit requise !",
+                "INFO_MESSAGE": "Essayez gratuitement toutes les fonctionnalités supplémentaires pendant 14 jours (aucune carte de crédit requise), puis décidez si vous souhaitez mettre à niveau ou rester sur le plan toujours GRATUIT.",
                 "SUCCESS": {
                     "INFO_MESSAGE": "Votre période d’essai de 7 jours a été activée. Allez aux paramètres pour activer et tester toutes les fonctionnalités supplémentaires.",
                     "SEE_SETTINGS": "Aller aux paramètres"
                 },
                 "EXPIRED": "La version d’essai a expiré",
                 "MORE_TIME": "La version d’essai gratuite a déjà été activée pour cet espace de travail. Si vous avez besoin de plus de temps, activez l’essai dans un nouvel espace de travail.",
-                "NAME": "essai"
+                "NAME": "essai",
+                "BUTTON": "Commencer procès"
             },
             "FOR_WORKSPACE": "pour { value } espace de travail",
             "SUBSCRIPTION": {
@@ -3866,7 +4121,10 @@
                 "TITLE": "Questions fréquemment posées",
                 "TRY_FIRST": {
                     "Q": "Puis-je essayer d’abord ?",
-                    "A": "Vous pouvez essayer toutes les fonctionnalités additionnelles (à l’exception du SSO, du sous-domaine personnalisé et de l’importation des feuilles horaires) gratuitement pendant une semaine entière, sans carte de crédit requise."
+                    "A": "Absolument! Vous pouvez essayer gratuitement des fonctionnalités supplémentaires pendant 14 jours, sans carte de crédit.",
+                    "A_ABSOLUTELY": "Absolument! Tu peux",
+                    "A_START_TRIAL": "commencer procès",
+                    "A_PRO": "et essayez toutes les fonctionnalités PRO gratuitement pendant 7 jours, sans carte de crédit."
                 },
                 "SEAT": {
                     "Q": "Qu’est-ce qu’une place ?",
@@ -3888,7 +4146,8 @@
                     "A_SECOND_PART": "ENTREPRISE",
                     "A_THIRD_PART": "formule (facturation annuelle, plus de 50 places) et",
                     "A_FORTH_PART": "SERVEUR",
-                    "A_FIFTH_PART": " formule."
+                    "A_FIFTH_PART": " formule.",
+                    "A_THIRD_PART_2": "plan (facturation annuelle, plus de 50 postes)."
                 },
                 "TAXES": {
                     "Q": "Y a-t-il des taxes additionnelles ?",
@@ -4021,7 +4280,11 @@
         "FILE_DOWNLOAD": {
             "FAILED_MESSAGE": "Le reçu de téléchargement a échoué."
         },
-        "MANAGE_CATEGORIES": "Gérer les catégories"
+        "MANAGE_CATEGORIES": "Gérer les catégories",
+        "APPROVAL_MODAL": {
+            "TITLE": "Soumettre pour approbation",
+            "MESSAGE": "Prêt à soumettre { from } - { to } pour approbation ?"
+        }
     },
     "INVOICE": {
         "ITEM_TYPE": {
@@ -4046,7 +4309,8 @@
                     "PERSONAL_MANUAL": "Temps créé (personnel, manuel)",
                     "IMPORT": "Heure de création (importation)",
                     "PERSONAL_TIMER": "Temps créé (personnel, minuteur)",
-                    "FOR_OTHER": "Temps créé (pour les autres)"
+                    "FOR_OTHER": "Temps créé (pour les autres)",
+                    "KIOSK": "Temps créé (kiosque)"
                 },
                 "UPDATE": {
                     "FOR_OTHER": "Heure mise à jour (pour les autres)",
@@ -4149,7 +4413,9 @@
                 "CUSTOMFIELDS": "Champs personnalisés",
                 "PROJECT": "Projet:Tâche - { groupingLabelName }",
                 "USER": "Utilisateur",
-                "DESCRIPTION": "Description"
+                "DESCRIPTION": "Description",
+                "KIOSK_NAME": "Nom du kiosque",
+                "KIOSK_ENTRY_TYPE": "Taper"
             },
             "PROJECT": {
                 "CLIENT": "Client",
@@ -4240,7 +4506,11 @@
             }
         },
         "RECORD_ALL_CHANGES": "Enregistrez toutes les modifications (créer, mettre à jour et supprimer) apportées à :",
-        "OLD_LOGS_AUTO_DELETED_LABEL": "Les journaux de plus d'un an sont automatiquement supprimés. Nous vous recommandons de les exporter régulièrement."
+        "OLD_LOGS_AUTO_DELETED_LABEL": "Les journaux de plus d'un an sont automatiquement supprimés. Nous vous recommandons de les exporter régulièrement.",
+        "KIOSK": {
+            "BREAK_TYPE_LABEL": "Pause",
+            "NON_BREAK_TYPE_LABEL": "Sans interruption"
+        }
     },
     "EMAIL_PREFERENCES": {
         "MANAGE_NOTIFICATIONS": {
@@ -4424,7 +4694,8 @@
             "DAY_DIFF": "{count} { count, plural, =0{} one{heure} other{les heures} }",
             "CONFIRM_SHIFT": "Confirmer le quart de travail"
         },
-        "PM_ME": "(moi)"
+        "PM_ME": "(moi)",
+        "MILESTONE_NESTO": "Test"
     },
     "FAILED_TO_COPY_TIME": "Certaines entrées n'ont pas pu être copiées",
     "COPY_ACTIVITIES_ONLY": "Copier uniquement les activités",
@@ -4695,8 +4966,229 @@
     "REFRESH": "Rafraîchir",
     "TRIAL": {
         "SUCCESS": {
-            "TITLE": "Le procès a commencé !"
+            "TITLE": "Le procès a commencé !",
+            "TRY_OUT": "Quelles fonctionnalités aimeriez-vous essayer ?"
         }
     },
-    "GLOBAL_FINISH": "terminer"
+    "GLOBAL_FINISH": "terminer",
+    "UPGRADE": {
+        "SUCCESS": {
+            "MODAL": {
+                "TITLE": "Espace de travail mis à niveau",
+                "TEXT": "Quelles { plan } fonctionnalités souhaitez-vous activer maintenant ?"
+            }
+        }
+    },
+    "NOTIFICATION": {
+        "TRIAL": {
+            "LINK": "Fonctionnement des fonctionnalités PRO"
+        }
+    },
+    "KIOSK": {
+        "EMPTY_COMPONENT": {
+            "NO_KIOSKS": "Pas encore de kiosques",
+            "INFO": "Créez votre premier kiosque et affectez-y des personnes afin qu'elles puissent entrer et sortir."
+        },
+        "CREATE_KIOSK_BUTTON": "Créer un kiosque",
+        "MODAL": {
+            "DELETE": {
+                "TITLE": "Supprimer le kiosque",
+                "INFO": "Voulez-vous vraiment supprimer ce kiosque ?"
+            },
+            "DEACTIVATE": {
+                "TITLE": "Désactiver le kiosque",
+                "INFO": "Les utilisateurs ne pourront pas pointer à partir de ce kiosque",
+                "INFO_RUNNING_ENTRIES": "Certains utilisateurs sont toujours enregistrés. Une fois que vous avez désactivé, ils ne pourront plus sortir de ce kiosque."
+            },
+            "EDIT": {
+                "TITLE": "Modifier le kiosque"
+            },
+            "LAUNCH": {
+                "INFO": "Déconnectez-vous de Clockify et connectez-vous à",
+                "TITLE": "Kiosque de lancement"
+            },
+            "CREATE": {
+                "TITLE": "Créer un kiosque",
+                "NAME_PLACEHOLDER": "Entrez le nom du kiosque",
+                "INACTIVE_LABEL": "Kiosque créé (inactif)"
+            },
+            "KIOSK_NAME_IN_USE": "Le nom du kiosque existe déjà"
+        },
+        "TOASTER": {
+            "CREATE": {
+                "SUCCESS": "Kiosque créé"
+            },
+            "EDIT": {
+                "SUCCESS": "Kiosque mis à jour"
+            },
+            "DELETE": {
+                "SUCCESS": "Kiosque supprimé"
+            },
+            "STATUS": {
+                "DEACTIVATED": {
+                    "SUCCESS": "Kiosque désactivé"
+                },
+                "ACTIVATED": {
+                    "SUCCESS": "Kiosque activé"
+                }
+            }
+        },
+        "CREATE": {
+            "INFO": "Pour lancer le kiosque, ouvrez son lien dans n'importe quel navigateur.",
+            "FORM": {
+                "DURATION": {
+                    "LABEL": "Le kiosque se déconnecte après"
+                },
+                "REQUIRE_PIN": {
+                    "LABEL": "NIP requis"
+                },
+                "UNIVERSAL_PIN": {
+                    "LABEL": "NIP universel"
+                },
+                "FIND_USERS_OR_GROUPS": "Rechercher des utilisateurs ou des groupes..."
+            }
+        },
+        "PIN": {
+            "UPDATED": "NIP mis à jour",
+            "UNAVAILABLE": "Ce NIP n'est pas disponible"
+        },
+        "EDIT": {
+            "MEMBER": {
+                "PIN": "Modifier le code PIN du kiosque",
+                "EDIT_PIN": "Modifier le NIP"
+            }
+        },
+        "UPGRADE_MESSAGE": {
+            "PART_2": "avoir plus d'un kiosque actif"
+        },
+        "POPUP": {
+            "REQUIRE_PIN": {
+                "INFO": "Remplace le code PIN de n'importe qui afin que vous puissiez pointer pour eux.",
+                "UPGRADE_INFO": "exiger le code PIN"
+            },
+            "DURATION": {
+                "INFO": "pour modifier la durée de connexion"
+            }
+        },
+        "MEMBER": {
+            "PIN": {
+                "UPGRADE": {
+                    "ADMIN": "Le NIP du membre n'est pas unique. Pour désigner { name } comme administrateur, modifiez le code PIN du kiosque."
+                },
+                "DOWNGRADE": {
+                    "ADMIN": "Pour rétrograder le rôle de { name }, modifiez le code PIN du kiosque."
+                },
+                "ALREADY_IN_USE": "Ce code PIN est déjà utilisé"
+            }
+        },
+        "DEFAULT_BREAK_PROJECT": "Projet de pause par défaut",
+        "DEFAULT_TASK": "Tâche par défaut",
+        "DEFAULT_BREAK_TASK": "Tâche de pause par défaut",
+        "EMPTY_TABLE_INFO": "Aucun kiosque trouvé",
+        "FILTER_EMPTY_TABLE_INFO": "Aucun kiosque {value}.",
+        "SELECT_BREAK_PROJECT_LABEL": "Sélectionnez pause {projectLabel}",
+        "SELECT_BREAK_TASK_LABEL": "Sélectionnez pause {taskLabel}",
+        "DEFAULT_ENTITY": "Par défaut { label }",
+        "DEFAULT_BREAK_ENTITY": "Pause par défaut { label }"
+    },
+    "KIOSK_MEMBER_PIN_NOT_UNIQUE_1": "Le PIN du membre n'est pas unique.",
+    "KIOSK_MEMBER_PIN_NOT_UNIQUE_2": "Faire",
+    "KIOSK_MEMBER_PIN_NOT_UNIQUE_3": "un administrateur",
+    "KIOSK_MEMBER_PIN_NOT_UNIQUE_4": "modifier le code PIN du kiosque",
+    "KIOSK_ADMIN_PIN_NOT_UNIQUE_1": "Pour rétrograder",
+    "KIOSK_ADMIN_PIN_NOT_UNIQUE_2": "rôle",
+    "KIOSK_ADMIN_PIN_NOT_UNIQUE_3": "modifier le code PIN du kiosque",
+    "UPGRADE_PAGE": {
+        "TITLE": "Obtenez plus de fonctionnalités",
+        "SUBTITLE": "Mettez à niveau votre espace de travail { name } pour utiliser des fonctionnalités avancées.",
+        "TRIAL_MODAL": {
+            "TEXT": "Essayez gratuitement toutes les fonctionnalités PRO pendant 7 jours !"
+        }
+    },
+    "GLOBALSTART": "Démarrer",
+    "GLOBAL_LIMITED_SEAT_LEFT": "siège limité à gauche.",
+    "GLOBAL_LIMITED_SEATS_LEFT": "siège limité à gauche.",
+    "GLOBAL_REGULAR_SEAT_LEFT": "siège régulier à gauche.",
+    "GLOBAL_REGULAR_SEATS_LEFT": "places restantes.",
+    "GLOBAL_FULL_SEAT_LEFT": "siège complet à gauche.",
+    "GLOBAL_FULL_SEATS_LEFT": "siège complet à gauche.",
+    "I have read and agree to the": "GLOBAL.TOS_PART1",
+    "PROMO": {
+        "SCHEDULING": {
+            "TITLE": "Horaire Employés & Projets",
+            "LIST": {
+                "FIRST": "Planifier des projets et des jalons sur une chronologie",
+                "THIRD": "Attribuez qui doit travailler sur quoi et quand",
+                "FOURTH": "Publier des devoirs pour que les gens puissent voir leur emploi du temps",
+                "SECOND": "Voyez qui est occupé et qui est disponible en un coup d'œil"
+            },
+            "LINK_TITLE": "Comment fonctionne la planification"
+        },
+        "EXPENSES": {
+            "TITLE": "Suivre les dépenses professionnelles",
+            "LIST": {
+                "SECOND": "Enregistrer par prix ou unité (par exemple miles)",
+                "THIRD": "Joindre et télécharger des reçus",
+                "FOURTH": "Approuver et facturer les dépenses",
+                "FIFTH": "Inclure les dépenses dans les budgets des projets",
+                "FIRST": "Suivre et classer les dépenses",
+                "SIXTH": "Exécuter et exporter des notes de frais"
+            },
+            "LINK_TITLE": "Comment fonctionnent les dépenses"
+        },
+        "TIME_OFF": {
+            "TITLE": "Gérer les congés & jours fériés",
+            "LIST": {
+                "FIRST": "Créer des politiques de congés et de congés",
+                "SECOND": "Demander des congés et des congés",
+                "THIRD": "Voir qui a du temps libre sur une chronologie",
+                "FOURTH": "Voir le solde accumulé, utilisé et disponible"
+            },
+            "LINK_TITLE": "Comment fonctionne le temps libre"
+        },
+        "APPROVAL": {
+            "TITLE": "Approuver formellement les feuilles de temps",
+            "LIST": {
+                "FIRST": "Soumettre les feuilles de temps pour approbation",
+                "SECOND": "Rappelez aux gens de soumettre des feuilles de temps",
+                "THIRD": "Autoriser les gestionnaires à approuver (ou rejeter) les feuilles de temps",
+                "FOURTH": "Empêcher les modifications des feuilles de temps approuvées"
+            },
+            "LINK_TITLE": "Comment fonctionne l'approbation"
+        },
+        "ACTIVITY": {
+            "LOCATION": {
+                "LINK_TITLE": "Comment fonctionne le suivi GPS",
+                "LIST": {
+                    "FIRST": "Enregistrer l'emplacement pendant que la minuterie fonctionne",
+                    "SECOND": "Voir qui est où actuellement sur une carte",
+                    "THIRD": "Voir tous les sites que votre équipe a visités pendant la journée"
+                }
+            },
+            "SCREENSHOT": {
+                "LINK_TITLE": "Comment fonctionnent les captures d'écran",
+                "LIST": {
+                    "FIRST": "Enregistrez des captures d'écran toutes les 5 minutes pendant que la minuterie fonctionne",
+                    "SECOND": "Rappelez-vous ce sur quoi vous avez travaillé pendant la journée",
+                    "THIRD": "Voir toutes les captures d'écran générées en un seul endroit"
+                }
+            },
+            "TITLE": "Emplacements de capture & captures d'écran"
+        },
+        "INVOICING": {
+            "TITLE": "Créer & gérer les factures",
+            "LIST": {
+                "FIRST": "Créer des factures à partir du temps suivi",
+                "SECOND": "Modifier et personnaliser les factures",
+                "THIRD": "Envoyez des factures aux clients et suivez leur statut",
+                "FOURTH": "Gardez une trace de ce qui a été facturé"
+            },
+            "LINK_TITLE": "Comment fonctionne la facturation"
+        }
+    },
+    "TRANSFER": {
+        "OWNERSHIP": {
+            "PIN": "Le NIP du membre n'est pas unique. Pour transférer la propriété à { name }, modifiez le code PIN du kiosque."
+        }
+    }
 }

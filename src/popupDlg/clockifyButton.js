@@ -95,13 +95,10 @@ var clockifyButton = {
     
         button.addEventListener('click', (e) => {
             e.stopPropagation();
-        });
-
-        button.onclick = () => {
             if (button.canClose && !button.canClose())
                 return;
             this.buttonClicked(button, options)
-        }
+        });
         
         return button;
     },
@@ -143,6 +140,7 @@ var clockifyButton = {
             const timeEntryOptionsInvoked = objInvokeIfFunction(options);
             try {
                 const time = input.value;
+                input.value = clockifyLocales.SUBMITTING;
                 const m = time.match(/(?=.{2,})^(\d+d)?\s*(\d+h)?\s*(\d+m)?$/);
                 if (m) {
                     var totalMins = 8 * 60 * parseInt(m[1] || 0, 10) +
@@ -156,7 +154,6 @@ var clockifyButton = {
 
                                 if(timeEntryOptionsInvoked.projectName){  
                                     aBrowser.runtime.sendMessage({eventName: 'generateManualEntryData', options: timeEntryOptionsInvoked }).then((response) => {
-                                        inputMessage(input, "Input details:",  "error", true);
                                         let timeEntry = {
                                             ...timeEntryOptionsInvoked, 
                                             totalMins,
@@ -167,6 +164,7 @@ var clockifyButton = {
                                             tags: response?.tags
                                         }
                                         OpenPostStartPopupDlg(timeEntry, "", true);
+                                        input.value = "";
                                     })
                                 }else{
                                     aBrowser.runtime.sendMessage({
@@ -181,6 +179,7 @@ var clockifyButton = {
                                             billable : response.projectDB?.billable,
                                         }
                                         OpenPostStartPopupDlg(timeEntry, "", true);
+                                        input.value = "";
                                     });
                                 }    
                             } else {
@@ -782,7 +781,7 @@ function getDefaultProjectData(wsData){
     return defaultProjectData;
 }
 
-aBrowser.storage.onChanged.addListener((changes, area) => {
+function onChangedListener(changes) {
     const changedItems = Object.keys(changes);
     if (changedItems.find(item => item === 'timeEntryInProgress')) {       
         aBrowser.storage.local.get(["timeEntryInProgress"], (result) => {
@@ -817,8 +816,8 @@ aBrowser.storage.onChanged.addListener((changes, area) => {
 
     if (changedItems.find(item => item === 'workspaceSettings')) {
         aBrowser.storage.local.get(["workspaceSettings"], (result) => {
-           const settings = JSON.parse(result.workspaceSettings);
-           if(settings.timeTrackingMode === "STOPWATCH_ONLY"){
+            const settings = JSON.parse(result.workspaceSettings);
+            if(settings.timeTrackingMode === "STOPWATCH_ONLY"){
                 const manualInputForm = $("#clockify-manual-input-form");
                 const manualInputBackgroundTrello = $(".input-button-link");
                 if(manualInputForm) manualInputForm.style.display = "none";
@@ -841,5 +840,19 @@ aBrowser.storage.onChanged.addListener((changes, area) => {
         })
     }
 
-});
+}
 
+aBrowser.storage.onChanged.addListener(onChangedListener);
+
+function cleanup () {
+    aBrowser.storage.onChanged.removeListener(onChangedListener);
+    aBrowser.runtime.onMessage.removeListener(onMessageListener);
+}
+
+function onMessageListener (request) {
+    if (request.eventName === 'cleanup') {
+        cleanup();
+    }
+}
+
+aBrowser.runtime.onMessage.addListener(onMessageListener)

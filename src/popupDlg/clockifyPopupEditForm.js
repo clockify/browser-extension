@@ -533,7 +533,15 @@ var ClockifyEditForm = class {
             case 'clockifyButton':
             //case 'clockifySmallButton':
                 if (this.canClose())
-                    buttonClicked(el, this.options);
+                {
+                    if(clockifyButton.inProgressDescription === ''){
+                        setTimeout(() => {
+                            buttonClicked(el, this.options);
+                        }, 1000);
+                    } else {
+                        buttonClicked(el, this.options);
+                    }
+                }
                 break;
 
             default:

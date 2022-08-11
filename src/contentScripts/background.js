@@ -297,6 +297,9 @@ aBrowser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
             const isLoggedIn = await TokenService.isLoggedIn();
             if (!tab.url.includes("chrome://") && isLoggedIn) {
                 if (!!domain.file) {
+                    aBrowser.tabs.sendMessage(tabId, {
+                        eventName: 'cleanup'
+                    });
                     aBrowser.scripting.insertCSS({target: {tabId}, files: ["integrations/style.css"]});
                     const userId = await localStorage.getItem('userId');
                     const darkMode = await localStorage.getItem("permanent_darkMode");
@@ -440,7 +443,6 @@ async function extractDomain(url, permissions) {
     } else {
         domain = url.split('/')[0];
     }
-
     domain = domain.split('/*')[0];
     domain = domain.split('/')[0];
     file = await getOriginFileName(domain, permissions);
@@ -529,14 +531,14 @@ async function getOriginFileName(domain, permissionsFromStorage) {
     const enabledPermissions = permissionsByUser.permissions.filter(p => p.isEnabled);
     if (
         enabledPermissions
-            .filter(enabledPermission => enabledPermission.domain === domain)
+            .filter(enabledPermission => domain.includes(enabledPermission.domain))
             .length === 0
     ) {
         domain = domain.split(".");
 
         while (
             domain.length > 0 && enabledPermissions
-                        .filter(enabledPermission => enabledPermission.domain === domain.join("."))
+                        .filter(enabledPermission => domain.join(".").includes(enabledPermission.domain))
                         .length === 0
             ) {
             domain.shift();
@@ -545,7 +547,7 @@ async function getOriginFileName(domain, permissionsFromStorage) {
 
         if (
             enabledPermissions
-            .filter(enabledPermission => enabledPermission.domain === domain)
+            .filter(enabledPermission => domain.includes(enabledPermission.domain))
             .length === 0
         ) {
             return null
@@ -553,7 +555,7 @@ async function getOriginFileName(domain, permissionsFromStorage) {
     }
 
     return enabledPermissions
-        .filter(enabledPermission => enabledPermission.domain === domain)[0].script;
+        .filter(enabledPermission => domain.includes(enabledPermission.domain))[0].script;
 }
 
 

@@ -312,7 +312,7 @@
     "message": "Filter anwenden"
   },
   "GLOBAL__SUBMIT": {
-    "message": "einreichen"
+    "message": "Einreichen"
   },
   "GLOBAL__PROJECT_FIND": {
     "message": "Projekte finden..."
@@ -1142,6 +1142,9 @@
   },
   "EXTENSION__DOWNLOAD_SREENSHOTS_RECORDING_APP": {
     "message": "Laden Sie die Screenshot-Aufzeichnungs-App herunter"
+  },
+  "AUDIT_LOG__KIOSK__BREAK_TYPE_LABEL": {
+    "message": "Brechen"
   },
   "appName": {
     "message": "Clockify Zeiterfassung",

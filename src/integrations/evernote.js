@@ -9,8 +9,9 @@ clockifyButton.render('#qa-NOTE_HEADER:not(.clockify)', { observe: true }, funct
   };
 
   const descriptionFunc = function () {
-    const descriptionElem = $('.qC87s8opH1X3hjuzPoKrl span span');
-    return descriptionElem ? descriptionElem.textContent.trim() : '';
+    const descriptionElem = $('#qa-COMMON_EDITOR_IFRAME');
+    const descriptionText = descriptionElem ? $(".AZVFJ.s9EjL", descriptionElem?.contentDocument) : "";
+    return descriptionText ? descriptionText.textContent.trim() : '';
   };
 
   const link = clockifyButton.createButton({
@@ -18,5 +19,7 @@ clockifyButton.render('#qa-NOTE_HEADER:not(.clockify)', { observe: true }, funct
     description: descriptionFunc
   });
 
-  elem.querySelector('#qa-SHARE_BUTTON').parentNode.prepend(link);
+  link.style.marginRight = "10px";
+
+  elem.querySelector('.O_cOhBpiRJTtr_RB3iHv').prepend(link);
 });

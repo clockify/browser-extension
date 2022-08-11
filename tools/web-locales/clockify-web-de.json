@@ -191,7 +191,10 @@
             "EDIT_SETTING_SUCCESS": "Rechnungseinstellungen aktualisiert.",
             "EDIT_SETTING_FAIL": "Rechnungseinstellungen bearbeiten fehlgeschlagen.",
             "DUPLICATE_SUCCESS": "Rechnung erfolgreich dupliziert.",
-            "DUPLICATE_FAIL": "Doppelte Rechnung fehlgeschlagen."
+            "DUPLICATE_FAIL": "Doppelte Rechnung fehlgeschlagen.",
+            "CONFIRM_MULTIPLE_ITEMS_DELETE": "Sind Sie sicher, dass Sie { count } { count, plural, =0{} one{Element} other{Elemente} } löschen möchten?",
+            "DELETE_ITEMS_SUCCESS": "Elemente erfolgreich gelöscht.",
+            "DELETE_ITEMS_FAIL": "Löschen von Rechnungspositionen fehlgeschlagen."
         },
         "SHARED": {
             "SEARCH": "Suche",
@@ -288,6 +291,41 @@
                 "FAILED_MESSAGE": "Abrufen von Artikeltypen fehlgeschlagen."
             },
             "TITLE": "Artikeltyp"
+        },
+        "COMPANY": {
+            "GET": {
+                "FAILED_MESSAGE": "Holen Sie sich Unternehmen gescheitert."
+            },
+            "NAME": "Name der Firma",
+            "EDIT": {
+                "MODAL": {
+                    "TITLE": "Unternehmen bearbeiten",
+                    "SUCCESS_MESSAGE": "Firmenliste erfolgreich aktualisiert.",
+                    "FAILED_MESSAGE": "Firma aktualisieren ist fehlgeschlagen.",
+                    "DELETE_TOOLTIP": "Standard-Unternehmensdaten können nicht gelöscht werden.",
+                    "MAX_TOOLTIP": "Kann nicht mehr als 50 Unternehmen haben"
+                }
+            },
+            "CREATE": {
+                "MODAL": {
+                    "NAME": {
+                        "FAILED_MESSAGE": "Der Firmenname muss zwischen 2 und 250 Zeichen lang sein",
+                        "SAME_NAME": "Das Unternehmen mit dem Namen { name } existiert bereits"
+                    },
+                    "SUCCESS_MESSAGE": "Unternehmen wurde erstellt.",
+                    "FAILED_MESSAGE": "Das Erstellen des Unternehmens ist fehlgeschlagen.",
+                    "ADDRESS": {
+                        "FAILED_MESSAGE": "Firmenadresse darf nicht länger als 3000 sein.",
+                        "SUCCESS_MESSAGE": "Firmenadresse wurde hinzugefügt"
+                    }
+                }
+            },
+            "DELETE": {
+                "MODAL": {
+                    "FAILED_MESSAGE": "Das Löschen des Unternehmens ist fehlgeschlagen."
+                }
+            },
+            "ADDRESS": "Firmenanschrift"
         }
     },
     "AUDIT_LOG": {
@@ -306,7 +344,8 @@
                     "PERSONAL_TIMER": "Erstellte Zeit (persönlich, Timer)",
                     "IMPORT": "Erstellte Zeit (Import)",
                     "FOR_OTHER": "Erstellte Zeit (für andere)",
-                    "PERSONAL_MANUAL": "Erstellte Zeit (persönlich, manuell)"
+                    "PERSONAL_MANUAL": "Erstellte Zeit (persönlich, manuell)",
+                    "KIOSK": "Erstellungszeit (Kiosk)"
                 },
                 "UPDATE": {
                     "PERSONAL": "Aktualisierte Zeit (persönlich)",
@@ -420,7 +459,9 @@
                 "INVOICED": "Fakturiert",
                 "CUSTOMFIELDS": "Benutzerdefinierte Felder",
                 "USER": "Benutzer",
-                "DESCRIPTION": "Beschreibung"
+                "DESCRIPTION": "Beschreibung",
+                "KIOSK_NAME": "Kioskname",
+                "KIOSK_ENTRY_TYPE": "Typ"
             },
             "TASK": {
                 "NAME": "Aufgabennname",
@@ -491,7 +532,11 @@
         "DESCRIPTION": "Verfolgen Sie, wer was wann getan hat, und erhalten Sie ein detailliertes Protokoll aller Systemaktivitäten.",
         "ACTIVATE_AUDIT_LOG_LABEL": "Audit-Log aktivieren",
         "RECORD_ALL_CHANGES": "Zeichnen Sie alle Änderungen (erstellen, aktualisieren und löschen) auf, die an Folgendem vorgenommen wurden:",
-        "OLD_LOGS_AUTO_DELETED_LABEL": "Protokolle, die älter als ein Jahr sind, werden automatisch gelöscht. Wir empfehlen, sie regelmäßig zu exportieren."
+        "OLD_LOGS_AUTO_DELETED_LABEL": "Protokolle, die älter als ein Jahr sind, werden automatisch gelöscht. Wir empfehlen, sie regelmäßig zu exportieren.",
+        "KIOSK": {
+            "BREAK_TYPE_LABEL": "Brechen",
+            "NON_BREAK_TYPE_LABEL": "Unterbrechungsfrei"
+        }
     },
     "WORKSPACE": {
         "INTEGRATION": {
@@ -658,7 +703,8 @@
             "TIME_APPROVAL": {
                 "INFO_MESSAGE": "Ihr Team kann seine wöchentlichen Arbeitszeittabellen zur Überprüfung einreichen, die Sie genehmigen oder ablehnen können.",
                 "TOGGLE": "Zeitfreigabe aktivieren",
-                "WARNING_FOR_TAG": "Warnung: Bei der genehmigten Zeit für { value } gehen Tag-Informationen verloren."
+                "WARNING_FOR_TAG": "Warnung: Bei der genehmigten Zeit für { value } gehen Tag-Informationen verloren.",
+                "INFO_MESSAGE_EXPENSES_ACTIVE": "Ihr Team kann seine wöchentlichen Stundenzettel und Ausgaben zur Überprüfung einreichen, die Sie genehmigen oder ablehnen können."
             },
             "INVOICING": {
                 "INFO_MESSAGE": "Erstellen und laden Sie Rechnungen für Kunden basierend auf der erfassten Zeit herunter.",
@@ -694,6 +740,22 @@
             "WORKING_DAYS_INFO_MESSAGE_2": "Standard-Arbeitstage für alle neuen Mitglieder (Sie können Arbeitstage im Mitgliedsprofil überschreiben).",
             "ORGANIZE_TIME_ONLY": {
                 "INFO_MESSAGE": "Wählen Sie aus, wie Sie Zeit gruppieren möchten, und richten Sie benutzerdefinierte Begriffe und Hierarchien ein."
+            },
+            "ENABLE_KIOSK_MESSAGE": "Ermöglichen Sie Mitarbeitern, sich von bestimmten Geräten aus ein- und auszustempeln.",
+            "KIOSK_ENABLED": {
+                "REQUIRE_TAGS_MESSAGE": "Tags oder Beschreibungen können nicht erforderlich sein, wenn Kiosk aktiviert ist."
+            },
+            "ACTIVATE_KIOSK": "Kiosk aktivieren",
+            "ENABLE_BREAKS": "Pausen ermöglichen",
+            "BREAKS_UPGRADE_MESSAGE": "Pausen zu ermöglichen",
+            "ENABLE_DESCRIPTION_KIOSK_ACTIVE_MESSAGE": "Um die erforderliche Beschreibung zu aktivieren, muss der Kiosk ausgeschaltet sein",
+            "APPROVAL": {
+                "TOGGLE": "Genehmigung aktivieren"
+            },
+            "ENABLE_TAG_KIOSK_ACTIVE_MESSAGE": "Um die erforderliche Tag-Auswahl zu aktivieren, muss der Kiosk ausgeschaltet sein",
+            "TIMETRACKER_SETTING": {
+                "INFO_MESSAGE": "Verfolgen Sie die Zeit mit einem Timer und sehen Sie alle Ihre Zeiteinträge.",
+                "ACTIVATE": "Tracker aktivieren"
             }
         },
         "PERMISSIONS": {
@@ -779,6 +841,10 @@
             "CAN_SEE_PROJECT_STATUS_CUSTOM_LABEL": {
                 "RULE_TITLE": "Wer kann den { projectLabel }-Status sehen",
                 "INFO_MESSAGE": "Lassen Sie die Leute den Status auf ihrem { projectLabelPlural } sehen, damit sie wissen, wie viel von der Schätzung noch übrig ist."
+            },
+            "WHO_CAN_CREATE_ASSIGNMENTS": {
+                "DESCRIPTION": "Ermöglichen Sie Projektmanagern, Aufgaben für ihre Projekte zu erstellen.",
+                "TITLE": "Wer kann Aufgaben erstellen?"
             }
         },
         "SUBDOMAIN": {
@@ -862,7 +928,10 @@
         },
         "CLIENT": {
             "EDIT": {
-                "PLACEHOLDER": "Adresse eingeben"
+                "PLACEHOLDER": "Adresse eingeben",
+                "NOTE": {
+                    "PLACEHOLDER": "Notiz eingeben"
+                }
             }
         },
         "ARCHIVE": {
@@ -926,7 +995,8 @@
             "MANY": {
                 "STANDARD": "Standartfunktionen",
                 "BASIC": "Grundfunktionen",
-                "PRO": "PRO Funktionen"
+                "PRO": "PRO Funktionen",
+                "FEATURE": "{featureType}-Funktion"
             }
         },
         "ALERT": {
@@ -1075,10 +1145,13 @@
                         "LABEL": "SAML-SSO-URL"
                     },
                     "ISSUER_URL": {
-                        "LABEL": "Aussteller-URL"
+                        "LABEL": "Zielgruppe (Element-ID)"
                     },
                     "SSO_LOGOUT_URL": {
                         "LABEL": "Remote-Logout-URL"
+                    },
+                    "DEFAULT": {
+                        "RELAY": "Standard-Relaisstatus"
                     }
                 },
                 "SECURITY": {
@@ -1143,7 +1216,8 @@
                 "GENERAL_TITLE": "Allgemein",
                 "PERMISSIONS_TITLE": "Berechtigungen",
                 "INTEGRATIONS_TITLE": "Integrationen"
-            }
+            },
+            "WORKING_DAYS_ERROR_TOAST": "Muss mindestens einen Werktag haben"
         },
         "AUTH_TAB": {
             "LOADER_MESSAGE": "Weiterleitung auf Subdomain"
@@ -1228,7 +1302,8 @@
             "USER_NAME_UPDATE_SUCCESS": "Benutzername wurde aktualisiert.",
             "USER_NAME_UPDATE_FAILED": "Aktualisierung des Benutzernamens fehlgeschlagen.",
             "DEACTIVATE_API_KEY_SUCCESS": "API-Taste ist deaktiviert.",
-            "DEACTIVATE_API_KEY_FAILED": "Deaktivieren des API-Schlüssels fehlgeschlagen."
+            "DEACTIVATE_API_KEY_FAILED": "Deaktivieren des API-Schlüssels fehlgeschlagen.",
+            "REMOVE_LIMITED_USER_SUCCESS": "Eingeschränkter Benutzer wurde gelöscht"
         },
         "GENERAL_SETTINGS_CUSTOM_LABEL": {
             "TIMESHEET_SETTING": {
@@ -1258,6 +1333,24 @@
             },
             "SAVING_TIME": {
                 "DISABLE_PROJECT_TOOLTIP": "Um die erforderliche Auswahl { projectLabel } zu deaktivieren, muss die Arbeitszeittabelle deaktiviert sein"
+            },
+            "KIOSKS_WITHOUT_DEFAULTS": {
+                "INFO": "Um den Kiosk zu aktivieren, wählen Sie für jeden Kiosk die Standardeinstellung { projectLabel }.",
+                "BREAKS_INFO": "Um Pausen zu aktivieren, wählen Sie für jeden Kiosk die Standardpause { projectLabel } aus",
+                "TASK_INFO": "Um den Kiosk zu aktivieren, wählen Sie für jeden Kiosk die Standardeinstellung { projectLabel }.",
+                "TASK_BREAK_INFO": "Um Pausen zu aktivieren, wählen Sie für jeden Kiosk die Standardpause { projectLabel } aus"
+            },
+            "FORCE_PROJECT": {
+                "KIOSKS_WITHOUT_DEFAULTS_TOOLTIP": "Um die erforderliche { projectLabel }-Auswahl zu aktivieren, müssen alle Kioske die Standardeinstellung { projectLabel } haben.",
+                "KIOSKS_WITHOUT_BREAK_DEFAULTS_TOOLTIP": "Um die erforderliche Auswahl { projectLabel } zu aktivieren, müssen alle Kioske über Standard { projectLabel } und Standardpause { projectLabel } verfügen.",
+                "KIOSKS_WITHOUT_BREAK_PROJECTS_DEFAULTS_TOOLTIP": "Um Arbeitszeittabellen zu verwenden, müssen alle Kioske Standard { projectLabel } und Standardpause { projectLabel } haben"
+            },
+            "FORCE_TASK": {
+                "KIOSKS_WITHOUT_DEFAULTS_TOOLTIP": "Um die erforderliche { taskLabel }-Auswahl zu aktivieren, müssen alle Kioske die Standardeinstellung { taskLabel } haben.",
+                "KIOSKS_WITHOUT_BREAK_DEFAULTS_TOOLTIP": "Um die erforderliche Auswahl { taskLabel } zu aktivieren, müssen alle Kioske über Standard { taskLabel } und Standardpause { taskLabel } verfügen."
+            },
+            "TIMESHEET": {
+                "KIOSKS_WITHOUT_DEFAULTS_TOOLTIP": "Um Arbeitszeittabellen verwenden zu können, müssen alle Kioske standardmäßig { projectLabel } haben."
             }
         },
         "GENERAL_SETTINGS_CUSTOM_SETTINGS": {
@@ -1522,7 +1615,7 @@
         "EXPENSE_DETAILED_REPORT": {
             "SELECT_ALL_WITH_COUNT_TEXT": "Alle { count } Ausgaben auswählen",
             "ALL_SELECTED_INFO_WITH_COUNT": "Alle { value } Ausgaben sind ausgewählt.",
-            "SELECT_ALL_ENTRIES_TEXT": "Wählen Sie alle meine Ausgaben aus",
+            "SELECT_ALL_ENTRIES_TEXT": "Alle meine Ausgaben auswählen",
             "ALL_SELECTED_INFO": "Alle meine Ausgaben sind ausgewählt."
         },
         "SUMMARY": {
@@ -1580,7 +1673,7 @@
             "UPDATE_REPORT_SUCCESS": "Bericht erfolgreich aktualisiert",
             "DELETE_REPORT_SUCCES": "Bericht gelöscht",
             "SYNC_SUCCESS": "Alle Einträge wurden erfolgreich synchronisiert.",
-            "SYNC_FAIL": "Synchronisierung mit Quickbooks fehlgeschlagen.",
+            "SYNC_FAIL": "Synchronisierung mit QuickBooks fehlgeschlagen.",
             "GET_ENTRIES_FAIL": "Abrufen von Zeiteinträgen fehlgeschlagen.",
             "GET_ENTRY_IDS_FAIL": "Abrufen der Eintrags-IDs fehlgeschlagen.",
             "GET_WEEKLY_FAIL": "Abrufen der wöchentlichen Daten fehlgeschlagen.",
@@ -1636,7 +1729,7 @@
             "DELETE_MODAL_BODY": "Möchten Sie den Eintrag wirklich löschen?",
             "QUICKBOOKS": {
                 "RECONNECT_INFO": "Ihre QuickBooks-Autorisierung ist abgelaufen. Um die Zeiteinträge zu senden, verbinden Sie sich bitte erneut.",
-                "RECCONECT_BTN": "Quickbooks erneut verbinden",
+                "RECCONECT_BTN": "QuickBooks erneut verbinden",
                 "SYNC_INCOMPLETED_MSG": "Synchronisierung unvollständig",
                 "SYNC_ERROR_INFO_2_PART_1": "Einige Einträge konnten nicht an QuickBooks gesendet werden. Um sie zu senden, erstellen Sie die fehlenden Kunden in QuickBooks,",
                 "SYNC_ERROR_INFO_2_PART_2": "Clockify mit QuickBooks synchronisieren",
@@ -1710,9 +1803,9 @@
             "CREATE_LINK_BTN": "Link erstellen",
             "FEATURES_LABEL": "Merkmale",
             "REDIRECT_TRACKER_BRN": "Gehe zum Tracker",
-            "VIEW_PERMIT_TOOLTIP": "Angemeldete Mitglieder, die ansehen dürfen",
+            "VIEW_PERMIT_TOOLTIP": "Wer kann sehen",
             "VISIBILITY_OPTIONS_LABELS": {
-                "PRIVATE": "Privat - Nur angemeldete Mitglieder dürfen ansehen",
+                "PRIVATE": "Privat - Nur ausgewählte Mitglieder können sehen",
                 "PUBLIC": "Öffentlich – Jeder mit dem Link kann ansehen"
             },
             "SHEDULED_REPORT_TYPES_LABELS": {
@@ -1749,14 +1842,19 @@
                 "APPLY_FILTER_INFO_PART_1": "Wenden Sie Filter auf einen Bericht an und klicken Sie auf Teilen, um einen Link zum gefilterten Bericht zu erhalten,"
             },
             "SHARING_DISABLED_TOOLTIP": "Die öffentliche Freigabe ist deaktiviert",
-            "MY_REPORTS_HEADER": "Meine Berichte",
+            "MY_REPORTS_HEADER": "Geteilte Berichte",
             "DELETE_REPORT_INFO_PART_1": "Sie sind dabei zu löschen ",
             "DELETE_REPORT_INFO_PART_2": "Bericht. Sobald er gelöscht wurde, funktioniert der Link nicht mehr.",
             "DELETE_REPORT_TOOLTIP": "Geteilten Bericht löschen",
             "EDIT_REPORT_TOOLTIP": "Freigabebericht bearbeiten",
             "EXPORT_LONGER_THAN_INFO": "Dies kann einige Minuten dauern, bitte verlassen Sie diese Seite nicht",
             "EXPORT_IN_PROGRESS": "Exportieren des { type } Berichts",
-            "UPGRADE_TO_SCEDULE_REPORT_PART_2": "um Berichte zu planen"
+            "UPGRADE_TO_SCEDULE_REPORT_PART_2": "um Berichte zu planen",
+            "FILTER": {
+                "ALL_REPORTS": "Alle Berichte",
+                "MY_REPORTS": "Meine Berichte",
+                "SHARED_WITH_ME": "Mit mir geteilt"
+            }
         },
         "WEEKLY": {
             "WITHOUT_LABELS": {
@@ -1796,7 +1894,8 @@
             "DELETE_MODAL_BODY_INFO_WITH_PARAM": "Möchten Sie wirklich { count } Ausgaben löschen?",
             "DELETE_MODAL_BODY_INFO": "Sind Sie sicher, dass Sie alle meine Ausgaben löschen möchten?"
         },
-        "PROFIT_LABEL": "Profitieren:"
+        "PROFIT_LABEL": "Profitieren:",
+        "NOTES": "Anmerkungen"
     },
     "TEAMS": {
         "MEMBERS": {
@@ -1901,12 +2000,21 @@
                     "UPDATE_SUCCESS": "Profil wurde erfolgreich aktualisiert"
                 },
                 "WORKING_DAYS_MESSAGE": "Legen Sie fest, an welchen Tagen dieser Benutzer arbeitet.",
-                "SELECT_DAYS": "Tage auswählen"
+                "SELECT_DAYS": "Tage auswählen",
+                "WILL_BE_CONVERTED": "wird in einen vollwertigen Benutzer umgewandelt.",
+                "WILL_BE_CONVERTED_WARNING": "Durch das Hinzufügen von E-Mail wird { userName } in einen vollwertigen Benutzer umgewandelt"
             },
             "USER_STATUS": {
                 "ACTIVATED": "Benutzer aktiviert",
                 "DEACTIVATED": "Benutzer deaktiviert"
-            }
+            },
+            "NO_SEATS_PAID_PLAN": "Sie benötigen { seatsLeft } weitere Plätze, um alle Mitglieder hinzuzufügen.",
+            "LIMITED_USER_STATUS": {
+                "ACTIVATED": "Eingeschränkter Benutzer aktiviert",
+                "DEACTIVATED": "Eingeschränkter Benutzer deaktiviert"
+            },
+            "NO_SEATS_FREEE_PLAN": "Es können nicht mehr als { seatsLeft } Mitglieder auf einmal hinzugefügt werden.",
+            "NO_SEAT_PAID_PLAN": "Sie benötigen 1 weiteren Arbeitsplatz, um alle Mitglieder hinzuzufügen."
         },
         "REMINDERS": {
             "MORE_LABEL": "Mehr",
@@ -1985,14 +2093,22 @@
         },
         "SHARED": {
             "LESS_LABEL": "Weniger"
-        }
+        },
+        "LIMITED_MEMBERS": {
+            "EMPTY_STATE": "Limited-Mitglieder können sich nur über den Kiosk ein- und ausstempeln.",
+            "EMPTY_STATE_LINK": "Erfahren Sie mehr über vollständige und eingeschränkte Benutzer"
+        },
+        "LIMITED_SEATS": {
+            "UPGRADE_INFO_MESSAGE": "Um zusätzliche eingeschränkte Benutzer zu aktivieren, müssen Sie Ihr Abonnement aktualisieren und weitere Benutzerplätze kaufen."
+        },
+        "NO_FULL_SEATS": "Keine vollen Plätze mehr."
     },
     "PAGES": {
         "FEATURES": {
             "DEMO": "Live-Demo planen",
             "PLAN": {
                 "FREE": {
-                    "INFO_MESSAGE": "Sie verwenden derzeit die kostenlose Preismodell."
+                    "INFO_MESSAGE": "Sie verwenden derzeit die KOSTENLOSE Version."
                 },
                 "LEGACY": {
                     "INFO_MESSAGE": "Sie verwenden derzeit den Legacy-Preismodell. Sobald Sie den Preismodell wechseln, können Sie nicht mehr zu Ihrem alten Preismodell zurückkehren."
@@ -2001,7 +2117,7 @@
             "TRIAL": {
                 "ACTIVATE": "Jetzt kostenlose Testversion aktivieren",
                 "HAD_ALREADY": "Die kostenlose Testversion wurde bereits auf diesem Arbeitsbereich aktiviert. Wenn Sie jedoch mehr Zeit zum Testen benötigen, können Sie eine weitere Testversion in einem neuen Arbeitsbereich aktivieren.",
-                "INFO_MESSAGE": "Probieren Sie alle Zusatzfunktionen eine Woche lang aus, keine Kreditkarte erforderlich!",
+                "INFO_MESSAGE": "Probieren Sie alle zusätzlichen Funktionen 14 Tage lang kostenlos aus (keine Kreditkarte erforderlich) und entscheiden Sie dann, ob Sie ein Upgrade durchführen oder im Abonnement für immer KOSTENLOS bleiben möchten.",
                 "SUCCESS": {
                     "INFO_MESSAGE": "Ihre kostenlose 7-Tage-Testversion wurde aktiviert. Gehen Sie zu den Arbeitsbereichseinstellungen, um alle zusätzlichen Funktionen zu aktivieren, damit Sie sie ausprobieren können.",
                     "SEE_SETTINGS": "Gehe zu den Einstellungen"
@@ -2009,7 +2125,8 @@
                 "EXPIRED": "Probezeit abgelaufen",
                 "MORE_TIME": "Die kostenlose Testversion wurde bereits auf diesem Arbeitsbereich aktiviert. Wenn Sie mehr Zeit benötigen, aktivieren Sie die Testversion in einem neuen Arbeitsbereich.",
                 "TITLE": "Kostenlos testen",
-                "NAME": "Probe"
+                "NAME": "Probe",
+                "BUTTON": "Testversion starten"
             },
             "FOR_WORKSPACE": "für { value } Arbeitsbereich",
             "SUBSCRIPTION": {
@@ -2022,7 +2139,10 @@
                 "TITLE": "Häufig gestellte Fragen",
                 "TRY_FIRST": {
                     "Q": "Kann ich es erstmal ausprobieren?",
-                    "A": "Sie können alle zusätzlichen Funktionen (außer SSO, benutzerdefinierte Unterdomäne, Benutzerkonto kontrollieren und Arbeitszeittabellen importieren) eine ganze Woche lang kostenlos testen, keine Kreditkarte erforderlich."
+                    "A": "Absolut! Sie können zusätzliche Funktionen 14 Tage lang kostenlos testen, keine Kreditkarte erforderlich.",
+                    "A_ABSOLUTELY": "Absolut! Sie können",
+                    "A_START_TRIAL": "Testversion starten",
+                    "A_PRO": "und testen Sie alle PRO-Funktionen 7 Tage lang kostenlos, keine Kreditkarte erforderlich."
                 },
                 "SEAT": {
                     "Q": "Was ist ein Benutzer?",
@@ -2044,7 +2164,8 @@
                     "A_SECOND_PART": "UNTERNEHMEN",
                     "A_THIRD_PART": "(jährliche Abrechnung, über 50 Plätze) und",
                     "A_FORTH_PART": "SERVER",
-                    "A_FIFTH_PART": " planen."
+                    "A_FIFTH_PART": " planen.",
+                    "A_THIRD_PART_2": "Plan (jährliche Abrechnung, über 50 Arbeitsplätze)."
                 },
                 "TAXES": {
                     "Q": "Gibt es zusätzliche Steuern?",
@@ -2265,10 +2386,10 @@
         "INTEGRATION": {
             "QUICKBOOK": {
                 "GET": {
-                    "ERROR_MESSAGE": "Die Integration von Quickbook ist fehlgeschlagen."
+                    "ERROR_MESSAGE": "Die Integration von QuickBooks ist fehlgeschlagen."
                 },
                 "CHECK_TOKEN": {
-                    "ERROR_MESSAGE": "Prüfung des Quickbook-Integrationstokens fehlgeschlagen."
+                    "ERROR_MESSAGE": "Prüfung des Integrations-Tokens für QuickBooks fehlgeschlagen."
                 }
             },
             "CONNECT": {
@@ -2298,9 +2419,17 @@
                 "ERROR_MESSAGE": "Rechnungsinformationen abrufen fehlgeschlagen"
             },
             "UPDATE_QUANTITY_SEATS": {
-                "ADD": "Neue Plätze erfolgreich hinzugefügt",
+                "ADD": "Neue Vollplätze hinzugefügt",
                 "REMOVE": "Sitze erfolgreich entfernt",
                 "NOT_CHANGED": "Sitzplätze werden nicht geändert"
+            },
+            "UPDATE_REGULAR_QUANTITY_SEATS": {
+                "REMOVE": "Reguläre Sitze entfernt",
+                "ADD": "Neue Plätze hinzugefügt"
+            },
+            "UPDATE_LIMITED_QUANTITY_SEATS": {
+                "REMOVE": "Begrenzte Plätze entfernt",
+                "ADD": "Neue begrenzte Plätze hinzugefügt"
             }
         },
         "PROJECT": {
@@ -2482,6 +2611,12 @@
                         "SUCCESS_MESSAGE": "Zeitzone erfolgreich aktualisiert",
                         "ERROR_MESSAGE": "Aktualisierte Zeitzone fehlgeschlagen"
                     }
+                },
+                "ADD_EMAIL": {
+                    "UPDATE": {
+                        "SUCCESS_MESSAGE": "Vollständiger Benutzer wurde zum Arbeitsbereich hinzugefügt.",
+                        "ERROR_MESSAGE": "Regulärer Benutzer konnte nicht zum Arbeitsbereich hinzugefügt werden."
+                    }
                 }
             },
             "GET_IDS": {
@@ -2528,6 +2663,15 @@
                 "TRANSFER_OWNER_ROLE": {
                     "SUCCESS_MESSAGE": "Inhaberrolle erfolgreich übertragen",
                     "ERROR_MESSAGE": "Inhaberrolle nicht übertragen"
+                },
+                "INVITE_REGULAR": {
+                    "SUCCESS_MESSAGE": "Normale Benutzer wurden zu Workspace eingeladen"
+                },
+                "INVITE_LIMITED": {
+                    "SUCCESS_MESSAGE": "Dem Workspace wurden eingeschränkte Benutzer hinzugefügt"
+                },
+                "INVITE_FULL": {
+                    "SUCCESS_MESSAGE": "Vollständige Benutzer wurden zum Workspace eingeladen"
                 }
             }
         },
@@ -2535,7 +2679,8 @@
             "UPDATE": {
                 "SUCCESS_MESSAGE": "{ label } erfolgreich aktualisiert",
                 "ERROR_MESSAGE": "{ label } nicht aktualisiert",
-                "SUCCESS_MESSAGE_WITH_NAME": "{ label } { name } wurde aktualisiert"
+                "SUCCESS_MESSAGE_WITH_NAME": "{ label } { name } wurde aktualisiert",
+                "SUCCESS_MESSAGE_USER": "Benutzerdefinierte Benutzerfelder erfolgreich aktualisiert"
             },
             "DELETE": {
                 "SUCCESS_MESSAGE": "{ label } erfolgreich gelöscht",
@@ -2639,7 +2784,7 @@
         "CLOSE_BTN": "Schließen",
         "EMAIL_CONFIRM_LABEL": "Bestätigen Sie",
         "CONNECTED_BADGE": "In Verbindung gebracht",
-        "CONTINUE_BTN": "Weitermachen",
+        "CONTINUE_BTN": "Fortsetzen",
         "COPY_LABEL": "Kopieren",
         "COST_RATE_LABEL": "Kostensatz",
         "CREATE_LABEL": "Erstellen",
@@ -2765,7 +2910,7 @@
         "COMPANY_NAME_LABEL": "Name der Firma",
         "SEND_EMAIL_TO_LABEL": "E-Mails senden an",
         "TAX_ID_LABEL": "Steuer ID",
-        "SUBMIT": "einreichen",
+        "SUBMIT": "Einreichen",
         "NEED_HELP": "Brauchen Sie Hilfe",
         "PAY_YEARLY_LABEL": "jährlich",
         "PROJECT_FIND": "Projekte finden...",
@@ -2955,7 +3100,62 @@
         "LOGIN_CODE_SENT_TO": "Ihr Anmeldecode wurde an gesendet",
         "ENTER_SIX_DIGIT": "6-stelligen Code eingeben",
         "ENTER_LABEL_NAME": "Labelnamen eingeben",
-        "TASK_RATES_TITLE_CUSTOM_LABEL": "{ taskLabel } Preise"
+        "TASK_RATES_TITLE_CUSTOM_LABEL": "{ taskLabel } Preise",
+        "EXTRA_FEATURES": "Zusätzliche Funktionen",
+        "FINISH": "Ziel",
+        "COMPANY_LABEL": "Unternehmen",
+        "COMPANY_ADDRESS": "Firmenadresse eingeben",
+        "CUSTOM_FIELDS_ENTRY_LABEL": "Benutzerdefinierte Felder für die Zeiteingabe",
+        "CUSTOM_FIELDS_USER_LABEL": "Benutzerdefinierte Felder des Benutzers",
+        "FIELDS": "Felder",
+        "LIMITED_LABEL": "Begrenzt",
+        "USER_FIELDS": "Benutzerfelder",
+        "LOCK_TIMESHEET_TITLE": "Stundenzettel sperren",
+        "ROUNDING_TITLE": "Rundung",
+        "FORCE_2FA_TITLE": "2FA erzwingen",
+        "LOCK_TIME_AND_EXPENSES": "Zeit und Kosten sperren",
+        "NEW": {
+            "ADD_BTN": "Neue hinzufügen"
+        },
+        "KIOSK_LABEL": "Kiosk",
+        "APPROVAL_TITLE": "Die Genehmigung",
+        "WITHDRAW_MESSAGE_WITH_EXPENSES": "Wenn Sie sich zurückziehen, kann der Administrator Ihre Zeit und Ausgaben nicht genehmigen, es sei denn, Sie reichen sie erneut ein.",
+        "DEACTIVATE_BTN": "Deaktivieren",
+        "COMPANY_NAME": "Geben Sie den Firmennamen ein",
+        "LIMITED_USER_SEATS_TITLE": "Begrenzte Plätze",
+        "REGULAR_USER_SEATS_TITLE": "Regelmäßige Sitzplätze",
+        "EXPORT_ASSIGNEES": "Beauftragte exportieren",
+        "ARCHIVE_PROJECT_LABEL": "Projekt archivieren",
+        "ARCHIVE_TASK_LABEL": "Aufgabe archivieren",
+        "LAUNCH_LABEL": "Starten",
+        "SEAT": "Sitz",
+        "DEFAULT_PROJECT_LABEL": "Standardprojekt",
+        "PER_SEAT": "je Platz",
+        "PER_REGULAR_SEAT": "pro regulärem Sitzplatz",
+        "PER_LIMITED_SEAT": "pro begrenztem Sitzplatz",
+        "APPROVED_EXPENSE_ERROR_MESSAGE": "Genehmigte Ausgaben können nicht bearbeitet werden.",
+        "BUY_LABEL": "Besorgen",
+        "NO_REGULAR_SEATS_LEFT": "Keine regulären Plätze mehr vorhanden.",
+        "NO_LIMITED_SEATS_LEFT": "Keine begrenzten Plätze mehr.",
+        "EMPLOYEE_NAME": "Mitarbeitername",
+        "ADD_EMAIL_LABEL": "E-Mail hinzufügen",
+        "KIOSKS_LABEL": "Kioske",
+        "DEFAULT_LABEL": "Standard",
+        "ENABLE_LABEL": "Ermöglichen",
+        "FULL_LABEL": "voll",
+        "NO_FULL_SEATS_LEFT": "Keine vollen Plätze mehr.",
+        "REGULAR_MEMBER_LABEL": "Ordentliches Mitglied",
+        "REGULAR_MEMBERS_LABEL": "Ordentliche Mitglieder",
+        "DELETE_USER_TITLE": "Benutzer löschen",
+        "DELETE_LIMITED_USER_INFO_MESSAGE": "Eingeschränkte Benutzer können sich nicht über den Kiosk anmelden, aber ihre nachverfolgten Daten bleiben erhalten. Diese Aktion kann nicht rückgängig gemacht werden.",
+        "FULL_USER_SEATS_TITLE": "Volle Sitze",
+        "PER_FULL_SEAT": "pro Vollplatz",
+        "NO_SEATS_LEFT": "Keine Sitzplätze mehr.",
+        "FULL_MEMBERS_LABEL": "Vollmitglieder",
+        "REGULAR_LABEL": "Regulär",
+        "TOS_PART2": "Nutzungsbedingungen",
+        "TOS_PART1": "Ich habe die ... gelesen und stimme ihnen zu",
+        "FULL_MEMBER_LABEL": "Vollmitglied"
     },
     "PROJECTS": {
         "EDIT_PROJECT_SETTINGS": {
@@ -3052,7 +3252,9 @@
             "REMOVE_TASK_WARNING": "Die Aufgabe { taskName } wird auch aus allen Zeiteinträgen entfernt, denen sie zugewiesen ist. Diese Aktion kann nicht rückgängig gemacht werden.",
             "MARK_AS_ACTIVE_LABEL": "Als aktiv markieren",
             "MARK_AS_DONE_LABEL": "als erledigt markieren",
-            "SET_LABEL": "Setzen"
+            "SET_LABEL": "Setzen",
+            "MARK_AS_DONE_LIST_KIOSKS": "Um { taskName } zu archivieren, entfernen Sie es zuerst von jedem Kiosk.",
+            "MARK_AS_DONE_WARNING": "Kann dies { taskLabel } nicht archivieren, da es als Standard { taskLabel } auf dem Kiosk verwendet wird"
         },
         "FILTER_DROPDOWN": {
             "NO_MATCHING_ENTITIES_LABEL": "Keine Übereinstimmung { entityInPlural }",
@@ -3127,7 +3329,10 @@
             "PROJECT_TIME_INFO_LOSS_WARNING_CUSTOM": "Warnung: Genehmigte Zeit für { projectName } verliert { projectLabel }-Informationen.",
             "TIME_ENTRIES_AND_EXPENSES_INFO_LOSS_WARNING_CUSTOM": "Die { projectName } { projectLabel } wird auch von allen Zeiteinträgen und Ausgaben entfernt, denen sie zugeordnet ist. Diese Aktion kann nicht rückgängig gemacht werden.",
             "TIME_ENTRIES_INFO_LOSS_WARNING_CUSTOM": "Die { projectName } { projectLabel } wird auch von allen Zeiteinträgen entfernt, denen sie zugewiesen ist. Diese Aktion kann nicht rückgängig gemacht werden.",
-            "CUSTOM_BUDGET_LABEL": "{ projectLabel } Budget"
+            "CUSTOM_BUDGET_LABEL": "{ projectLabel } Budget",
+            "ARCHIVE_ONE_WARNING": "Dieses {projectLabel} kann nicht archiviert werden, da es als Standard-{projectLabel} im Kiosk verwendet wird",
+            "ARCHIVE_ONE_LIST_KIOSKS": "Um { projectName } zu archivieren, entfernen Sie es zuerst von jedem Kiosk.",
+            "ARCHIVE_CLIENT_PROJECTS_TOOLTIP": "Kann nicht archivieren { projectLabel } (einige Kioske verwenden sie)"
         },
         "PROJECTS_CUSTOM_PAGE": {
             "DELETE_MULTIPLE_PROJECTS_WARNING": "Möchten Sie { listLength } { projectLabel } wirklich löschen?",
@@ -3175,7 +3380,7 @@
             "CREATE_CUSTOM_LABEL": "Erstellt { label }"
         },
         "BTN_UPLOAD_FILE_CONTENT": {
-            "UPLOAD_FILE_BTN_DEFAULT": "Csv-Datei hochladen",
+            "UPLOAD_FILE_BTN_DEFAULT": "CSV-Datei hochladen",
             "UPLOAD_IMG_BTN_DEFAULT": "Bild hochladen",
             "EMPTY_FILE_ERROR_MSG": "Datei ist leer."
         },
@@ -3209,7 +3414,7 @@
             "EMPTY_NAME_ERROR_MSG": "Name darf nicht leer sein.",
             "CHOOSE_TYPE_ERROR_MSG": "Ein Typ muss gewählt werden.",
             "CREATE_CUSTOM_FIELD_TITLE": "Benutzerdefiniertes Feld erstellen",
-            "NAME_INFO_TEXT": "Kurze Kennung dessen, was Sie verfolgen möchten.",
+            "NAME_INFO_TEXT": "Kurze Bezeichnung für das benutzerdefinierte Attribut.",
             "TYPE_TEXT_LABEL": "Text",
             "TYPE_NUMBER_LABEL": "Nummer",
             "TYPE_LINK_LABEL": "Verknüpfung",
@@ -3239,9 +3444,14 @@
             "FIELDS_IN_ALL_ENTRIES_LABEL": "Felder, die alle Zeiteinträge haben.",
             "FIELDS_USERS_CAN_SEE_LABEL": "Felder, die Benutzer sehen und verfolgen können.",
             "FIELDS_INVISIBLE_LABEL": "Unsichtbar",
-            "FIELDS_INVISIBLE_BUT_THERE_LABEL": "Felder, die Benutzer nicht sehen können, aber immer vorhanden sind (Metadaten)",
-            "DESCRIPTION_INFO_TEXT": "Erklärung, wie das Feld verwendet wird und warum. Erscheint in Tooltips (bei Mauszeiger).",
-            "CLEAR_LABEL": "Leeren"
+            "FIELDS_INVISIBLE_BUT_THERE_LABEL": "Felder, die Benutzer exportieren, aber nicht sehen können (Metadaten)",
+            "DESCRIPTION_INFO_TEXT": "Erklärung, die erscheint, wenn man mit der Maus über das Feld fährt.",
+            "CLEAR_LABEL": "Leeren",
+            "AVAILABLE_FIELD_INFO_BODY_USER": "Aktivieren, um Benutzern zusätzliche Informationen hinzuzufügen.",
+            "FIELDS_IN_ALL_ENTRIES_LABEL_USER": "Felder, die alle Benutzer haben.",
+            "CREATE_CUSTOM_FIELD_TITLE_USER": "Erstellen Sie ein benutzerdefiniertes Benutzerfeld",
+            "CREATE_CUSTOM_FIELD_TITLE_TIME_ENTRY": "Erstellen Sie ein benutzerdefiniertes Zeiteintragsfeld",
+            "DEFAULT_VALUE_LABEL": "Standardwert"
         },
         "DROPDOWN_CHECKBOX_LITE": {
             "FILTER_LIMIT": "Max { filterLimit } aktive Filter"
@@ -3251,7 +3461,7 @@
         },
         "FEATURES_INFO_TYPES": {
             "USER_SEATS": {
-                "DESCRIPTION": "Benutzerplätze stellen die Anzahl der aktiven Benutzer dar, die Sie in Ihrem Arbeitsbereich haben können.<br><br>Jedes Mal, wenn jemand Ihrem Arbeitsbereich beitritt, nimmt er einen Benutzerplatz ein. Wenn Sie keinen freien Platz haben, können diese Ihrem Workspace nicht beitreten und die Zeit in Ihrem Arbeitsbereich nicht erfassen.<br>Wenn Sie in Zukunft viele Benutzer hinzufügen möchten, können Sie zusätzliche Plätze im Voraus bezahlen, damit Sie Es wird nicht für jeden Benutzer separat in Rechnung gestellt.<br><br>Sie können jederzeit auf Ihrer Abonnementseite zusätzliche Lizenzen kaufen oder ungenutzte entfernen."
+                "DESCRIPTION": "Jeder aktive Benutzer in Ihrem Arbeitsbereich nimmt einen Benutzerplatz in Anspruch.<br><br>Deaktivierte Benutzer belegen keinen Platz, d. h. Sie können einen Benutzer deaktivieren und seinen Platz stattdessen mit einem anderen Benutzer besetzen.<br><br>Sie können auf Ihrer Abonnement-Seite jederzeit Plätze kaufen oder entfernen."
             },
             "ADD_TIME_FOR_OTHERS": {
                 "DESCRIPTION": "Sehen Sie sich die Arbeitszeittabellen Ihrer Teammitglieder an und fügen Sie Zeit für sie hinzu oder bearbeiten Sie sie. Oder fügen Sie manuell Zeiteinträge für andere direkt aus dem Bericht hinzu. Sie müssen Ihr Team nicht mehr verfolgen und warten, bis es die fehlende Zeit hinzugefügt hat."
@@ -3283,7 +3493,7 @@
                 "DESCRIPTION": "Wenn Sie einen Bericht exportieren, können Sie auswählen, welche Spalten Sie in CSV und Excel erhalten möchten, und steuern, welche Daten in PDF-Exporten sichtbar sein sollen, einschließlich des Berichtsnamens."
             },
             "TIMESHEET_REMINDERS": {
-                "TITLE": "Erinnerungen an Arbeitszeittabellen",
+                "TITLE": "Ziele & Erinnerungen",
                 "DESCRIPTION": "Legen Sie Zeiterfassungserinnerungen für Ihr Team fest, und Clockify sendet ihnen automatisch eine E-Mail, wenn sie an diesem Tag oder in der Woche nicht genügend Stunden protokolliert haben."
             },
             "IMPORT_TIMESHEETS": {
@@ -3388,6 +3598,36 @@
             },
             "AUDIT_LOG": {
                 "DESCRIPTION": "Zeichnen Sie in Clockify alles auf, was Ihre Benutzer tun, und führen Sie später einen Audit-Bericht aus, um zu sehen, wer was wann getan hat (z. B. wenn jemand einen Zeiteintrag bearbeitet, ein Projekt gelöscht hat usw.).<br><br> Sie können Exportieren Sie auch die Protokolle und analysieren Sie Daten in Excel oder speichern Sie sie als Backup."
+            },
+            "USER_FIELDS": {
+                "DESCRIPTION": "Benutzerfelder ermöglichen es Ihnen, zusätzliche Informationen zu Teammitgliedern hinzuzufügen (wie Berufsbezeichnung, Position, Telefon, Abteilung, Benutzer-ID) und diese später zusammen mit der Zeit zu exportieren."
+            },
+            "MULTI_FACTOR_AUTHENTICATION": {
+                "DESCRIPTION": "Sichern Sie Ihren Arbeitsbereich, indem Sie für alle Ihre Benutzer eine Zwei-Faktor-Authentifizierung verlangen. <br>\nAlle Benutzer, die 2FA nicht in ihrem Profil aktiviert haben, werden gezwungen, es zu aktivieren, um auf den Workspace zugreifen zu können. Sobald 2FA aktiviert ist, müssen Benutzer zusätzlich zum Passwort ihre E-Mails nach einem einmaligen Code zum Anmelden durchsuchen."
+            },
+            "APPROVAL": {
+                "DESCRIPTION": "Ihr Team kann seine wöchentlichen Stundenzettel und Ausgaben zur Überprüfung einreichen, die Sie genehmigen oder ablehnen können. Nach der Genehmigung können Zeit und Kosten nicht mehr ohne einen dauerhaften schriftlichen Nachweis geändert werden."
+            },
+            "BREAKS": {
+                "DESCRIPTION": "Lassen Sie Mitarbeiter über einen Kiosk angeben, wann sie in einer Pause sind.<br><br> Während sie eingestempelt sind, können sie den Beginn und das Ende der Pause über Ihr Kiosk-Terminal eingeben.<br><br>Später, Administratoren und Manager können sehen, wann jeder Mitarbeiter eine Pause hatte und wie viel in den Berichten.",
+                "TITLE": "Pause (Kiosk)"
+            },
+            "PIN": {
+                "TITLE": "PIN (Kiosk)",
+                "DESCRIPTION": "Fordern Sie Mitarbeiter auf, eine PIN einzugeben, um sich über den Kiosk einzustempeln.<br><br>Jeder Mitarbeiter erhält eine persönliche PIN, damit andere nicht für ihn einstempeln können. Administratoren erhalten außerdem eine universelle PIN, mit der sie sich für jedes Teammitglied ein- und ausstempeln können."
+            },
+            "LIMITED_USER_SEATS": {
+                "DESCRIPTION": "Jeder aktive eingeschränkte Benutzer in deinem Workspace belegt einen eingeschränkten Arbeitsplatz (der weniger kostet als ein vollständiger Arbeitsplatz).<br><br>Eingeschränkte Nutzer haben keine E-Mail-Adresse und können die Zeit nur über einen Kiosk erfassen (du kannst einen eingeschränkten Nutzer in einen eingeschränkten Arbeitsplatz umwandeln). ein vollwertiger Benutzer, indem Sie ihre E-Mail-Adresse hinzufügen).<br><br>Deaktivierte Benutzer nehmen keinen Platz ein, was bedeutet, dass Sie jemanden deaktivieren und seinen Platz stattdessen mit jemand anderem füllen können.<br><br>Sie können kaufen oder entfernen Sitzplätze jederzeit auf Ihrer Abonnementseite."
+            },
+            "REGULAR_USER_SEATS": {
+                "DESCRIPTION": "Jeder aktive normale Benutzer in deinem Workspace belegt einen regulären Arbeitsplatz.<br><br>Normale Benutzer (einschließlich Manager und Administratoren) sind Benutzer, die über E-Mail verfügen und sich direkt bei Clockify anmelden können.<br><br>Deaktivierte Benutzer don keinen Platz einnehmen, d. h. Sie können jemanden deaktivieren und seinen Platz stattdessen mit jemand anderem füllen.<br><br>Sie können Plätze jederzeit auf Ihrer Abonnementseite kaufen oder entfernen."
+            },
+            "FULL_USER_SEATS": {
+                "DESCRIPTION": "Jeder aktive Vollbenutzer in Ihrem Workspace belegt einen Vollplatz.<br><br>Vollständige Benutzer (einschließlich Manager und Administratoren) sind Benutzer, die über eine E-Mail-Adresse verfügen und sich direkt bei Clockify anmelden können.<br><br>Deaktivierte Benutzer nicht nehmen Sie keinen Platz ein, was bedeutet, dass Sie jemanden deaktivieren und seinen Platz stattdessen mit jemand anderem füllen können.<br><br>Sie können Plätze jederzeit auf Ihrer Abonnementseite kaufen oder entfernen."
+            },
+            "CUSTOMIZE_KIOSK": {
+                "TITLE": "Kiosk anpassen",
+                "DESCRIPTION": "Wenn Sie den Kiosk öffnen, bleibt er 24 Stunden lang geöffnet. Danach läuft die Sitzung ab und der Administrator muss sich erneut anmelden. Wenn Sie möchten, dass es länger oder kürzer geöffnet bleibt, können Sie eine beliebige Anzahl von Stunden festlegen.<br><br>Sie können auch ein Firmenlogo hochladen, um das Clockify-Logo auf dem Kioskbildschirm zu ersetzen."
             }
         },
         "PROJECT_PICKER": {
@@ -3449,7 +3689,7 @@
             },
             "GET_MORE_PROMO": "Holen Sie mehr aus Clockify!",
             "CHOOSE_YEARLY_PLAN_INFO": "Wählen Sie einen unserer monatlichen oder jährlichen Preispläne, um Ihre Produktivität mit zusätzlichen Funktionen und Add-Ons zu steigern.",
-            "UPGRADE_WORKSPACE_WITH_PARAM_INFO": "Aktualisieren Sie den Arbeitsbereich { name } und erhalten Sie noch mehr Funktionen.",
+            "UPGRADE_WORKSPACE_WITH_PARAM_INFO": "Aktualisieren Sie Ihren {name}-Arbeitsbereich, um weitere Funktionen zu erhalten.",
             "BASIC_LABEL": "BASIC",
             "ADMIN_LABEL": "Verwaltung",
             "STANDARD_LABEL": "STANDARD",
@@ -3646,7 +3886,8 @@
                 "PART_2": "Hilfezentrum",
                 "PART_3": "oder kontaktieren Sie uns unter"
             },
-            "UPGRADED_SUCCES_TEXT": "Sie können jetzt alle zusätzlichen Funktionen des Arbeitsbereichs { name } ohne Einschränkungen verwenden."
+            "UPGRADED_SUCCES_TEXT": "Sie können jetzt alle zusätzlichen Funktionen des Arbeitsbereichs { name } ohne Einschränkungen verwenden.",
+            "ANNUAL_APPLIED": "20 % Jahresrabatt angewendet"
         },
         "INVOICES": {
             "PAST_BILLING_HEADER": "Vergangene Abrechnungen",
@@ -3666,12 +3907,30 @@
             "NUMBER_OF_ADDITIONAL_SEATS_LABEL_PART_1": "Anzahl zusätzlicher Sitzplätze:",
             "NUMBER_OF_ADDITIONAL_SEATS_LABEL_PART_2": "{ count } Sitzplätze",
             "EST_PRICE_LABEL": "Geschätzter anteiliger Preis, der angewendet wird:",
-            "PAY_SAVE_BTN": "Bezahlen & sparen"
+            "PAY_SAVE_BTN": "Bezahlen & sparen",
+            "FULL": {
+                "NUMBER_OF_ADDITIONAL_SEATS_LABEL_PART_2": "{ count } volle Plätze"
+            },
+            "LIMITED": {
+                "NUMBER_OF_ADDITIONAL_SEATS_LABEL_PART_2": "{ count } begrenzte Plätze"
+            }
         },
         "PAYMENT_LABEL": "Zahlung",
         "PLANS_LABEL": "Preismodelle",
         "SHARED": {
             "PAY_ANNUAL_LABEL": "jährlich"
+        },
+        "FULL_USER_SEATS": {
+            "REMOVE_SEATS_TITLE": "Unbenutzte Vollsitze entfernen",
+            "BUY_SEATS_TITLE": "Kaufen Sie volle Plätze"
+        },
+        "LIMITED_USER_SEATS": {
+            "REMOVE_SEATS_TITLE": "Entfernen Sie unbenutzte begrenzte Plätze",
+            "BUY_SEATS_TITLE": "Kaufen Sie begrenzte Plätze"
+        },
+        "REGULAR_USER_SEATS": {
+            "BUY_SEATS_TITLE": "Kaufen Sie reguläre Plätze",
+            "REMOVE_SEATS_TITLE": "Entfernen Sie unbenutzte normale Sitze"
         }
     },
     "TIMESHEET2": {
@@ -3690,7 +3949,8 @@
                 "BILLABLE": "Abrechnungspflichtig überschreiben",
                 "TAGS": "Tags überschreiben",
                 "DESCRIPTION": "Beschreibungen überschreiben"
-            }
+            },
+            "BREAK_TITLE": "Pause bearbeiten"
         },
         "TIME_ENTRY": {
             "TAGS": {
@@ -3829,7 +4089,8 @@
                 "ZONE": {
                     "TITLE": "Zeitzone",
                     "PLACEHOLDER": "Zeitzone suchen...",
-                    "INFO_MESSAGE": "Bevor Sie die Zeitzone ändern können, müssen Sie zunächst die gesamte eingereichte Zeit, die auf Genehmigung wartet, zurücknehmen:"
+                    "INFO_MESSAGE": "Bevor Sie die Zeitzone ändern können, müssen Sie zunächst die gesamte eingereichte Zeit, die auf Genehmigung wartet, zurücknehmen:",
+                    "INFO_MESSAGE_WITH_EXPENSES": "Bevor Sie die Zeitzone ändern können, müssen Sie zuerst alle Ihre eingereichten Zeiten und Ausgaben zurückziehen, die auf Genehmigung warten:"
                 },
                 "CHANGE": {
                     "ZONE": "Zeitzone ändern",
@@ -3843,7 +4104,8 @@
                 },
                 "WEEK": {
                     "START": "Wochenstart",
-                    "INFO_MESSAGE": "Bevor Sie ändern können, wann Ihre Woche beginnt, müssen Sie zunächst alle Ihre eingereichten Zeitangaben zurücknehmen, die auf Genehmigung warten:"
+                    "INFO_MESSAGE": "Bevor Sie ändern können, wann Ihre Woche beginnt, müssen Sie zunächst alle Ihre eingereichten Zeitangaben zurücknehmen, die auf Genehmigung warten:",
+                    "INFO_MESSAGE_WITH_EXPENSES": "Bevor Sie den Beginn Ihrer Woche ändern können, müssen Sie zuerst alle Ihre eingereichten Zeiten und Ausgaben zurückziehen, die auf Genehmigung warten:"
                 },
                 "DAY": {
                     "START": "Tagesbeginn"
@@ -4015,7 +4277,11 @@
         "FILE_DOWNLOAD": {
             "FAILED_MESSAGE": "Der Download-Empfang ist fehlgeschlagen."
         },
-        "MANAGE_CATEGORIES": "Kategorien verwalten"
+        "MANAGE_CATEGORIES": "Kategorien verwalten",
+        "APPROVAL_MODAL": {
+            "TITLE": "Zur Genehmigung einreichen",
+            "MESSAGE": "Bereit, { from } - { to } zur Genehmigung einzureichen?"
+        }
     },
     "IN_PROGRESS": "Import läuft. Sie erhalten eine Benachrichtigung, sobald dies erledigt ist.",
     "FIFTY_PLUS_INTEGRATIONS": "50+ Integrationen",
@@ -4255,7 +4521,7 @@
             },
             "NO_RECORDED_LOCATIONS": "Keine aufgezeichneten Orte für diesen Tag.",
             "HOW_TO_TRACK_LOCATION": "So verfolgen Sie den Standort",
-            "GET_MOBILE_APP": "Holen Sie sich mobile APP"
+            "GET_MOBILE_APP": "Holen Sie sich die mobile APP"
         },
         "SHARED": {
             "RECORDED_AT": "Aufgenommen am"
@@ -4324,10 +4590,10 @@
         },
         "SIDEBAR": {
             "CONTACT_SUPPORT": {
-                "CONTACT_FOR_DEMO_LABEL": "Kontakt für Demo",
+                "CONTACT_FOR_DEMO_LABEL": "Demo anfordern",
                 "TRIAL_EXPIRATION_NOTIFICATION": "Testversion läuft in { remainingTrialDays } Tagen ab.",
                 "TRIAL_EXPIRING_TODAY_NOTIFICATION": "Testversion läuft heute ab.",
-                "CONTACT_SALES_LABEL": "Kontaktieren Sie den Vertrieb, um zu verlängern",
+                "CONTACT_SALES_LABEL": "Kontakt für Verlängerung",
                 "TRIAL_EXPIRING_TOMORROW_NOTIFICATION": "Test läuft morgen ab."
             },
             "PROFILE_DROPDOWN": {
@@ -4347,7 +4613,8 @@
                 "TEAMS_LABEL": "Teams",
                 "TIMESHEET_LABEL": "STUNDENZETTEL"
             },
-            "SWITCH_WORKSPACE_TOOLTIP": "Hier können Sie zwischen Ihren Arbeitsbereichen wechseln!"
+            "SWITCH_WORKSPACE_TOOLTIP": "Hier können Sie zwischen Ihren Arbeitsbereichen wechseln!",
+            "TRIAL_LEFT": "vor Gericht gelassen."
         },
         "SHARED": {
             "WAIT_TEXT": "Bitte warten"
@@ -4670,8 +4937,229 @@
     "REFRESH": "Aktualisierung",
     "TRIAL": {
         "SUCCESS": {
-            "TITLE": "Versuch gestartet!"
+            "TITLE": "Versuch gestartet!",
+            "TRY_OUT": "Welche Funktionen möchten Sie ausprobieren?"
         }
     },
-    "GLOBAL_FINISH": "Ziel"
+    "GLOBAL_FINISH": "Ziel",
+    "UPGRADE": {
+        "SUCCESS": {
+            "MODAL": {
+                "TITLE": "Arbeitsbereich hochgestuft!",
+                "TEXT": "Welche { plan } Funktionen möchten Sie jetzt aktivieren?"
+            }
+        }
+    },
+    "NOTIFICATION": {
+        "TRIAL": {
+            "LINK": "Wie PRO-Funktionen funktionieren"
+        }
+    },
+    "KIOSK": {
+        "EMPTY_COMPONENT": {
+            "NO_KIOSKS": "Noch keine Kioske",
+            "INFO": "Erstellen Sie Ihren ersten Kiosk und weisen Sie ihm Personen zu, damit sie sich ein- und ausstempeln können."
+        },
+        "CREATE_KIOSK_BUTTON": "Kiosk erstellen",
+        "MODAL": {
+            "DELETE": {
+                "TITLE": "Kiosk löschen",
+                "INFO": "Möchten Sie diesen Kiosk wirklich löschen?"
+            },
+            "DEACTIVATE": {
+                "TITLE": "Kiosk deaktivieren",
+                "INFO": "Benutzer können sich nicht von diesem Kiosk aus einstempeln",
+                "INFO_RUNNING_ENTRIES": "Einige Benutzer sind immer noch eingestempelt. Nach der Deaktivierung können sie sich nicht mehr von diesem Kiosk ausstempeln."
+            },
+            "LAUNCH": {
+                "INFO": "Melden Sie sich von Clockify ab und wieder an",
+                "TITLE": "Kiosk starten"
+            },
+            "EDIT": {
+                "TITLE": "Kiosk bearbeiten"
+            },
+            "CREATE": {
+                "TITLE": "Kiosk erstellen",
+                "NAME_PLACEHOLDER": "Name eingeben",
+                "INACTIVE_LABEL": "Kiosk erstellt (inaktiv)"
+            },
+            "KIOSK_NAME_IN_USE": "Der Kioskname ist bereits vorhanden"
+        },
+        "TOASTER": {
+            "CREATE": {
+                "SUCCESS": "Kiosk erstellt"
+            },
+            "EDIT": {
+                "SUCCESS": "Kiosk aktualisiert"
+            },
+            "DELETE": {
+                "SUCCESS": "Kiosk gelöscht"
+            },
+            "STATUS": {
+                "DEACTIVATED": {
+                    "SUCCESS": "Kiosk deaktiviert"
+                },
+                "ACTIVATED": {
+                    "SUCCESS": "Kiosk aktiviert"
+                }
+            }
+        },
+        "CREATE": {
+            "INFO": "Um den Kiosk zu starten, öffnen Sie den Link in einem beliebigen Browser.",
+            "FORM": {
+                "UNIVERSAL_PIN": {
+                    "LABEL": "Universal-PIN"
+                },
+                "DURATION": {
+                    "LABEL": "Kiosk meldet sich danach ab"
+                },
+                "REQUIRE_PIN": {
+                    "LABEL": "PIN erforderlich"
+                },
+                "FIND_USERS_OR_GROUPS": "Benutzer oder Gruppen finden..."
+            }
+        },
+        "PIN": {
+            "UPDATED": "PIN aktualisiert",
+            "UNAVAILABLE": "Diese PIN ist nicht verfügbar"
+        },
+        "EDIT": {
+            "MEMBER": {
+                "PIN": "Kiosk-PIN bearbeiten",
+                "EDIT_PIN": "PIN bearbeiten"
+            }
+        },
+        "MEMBER": {
+            "PIN": {
+                "ALREADY_IN_USE": "Diese PIN wird bereits verwendet",
+                "UPGRADE": {
+                    "ADMIN": "Die PIN des Mitglieds ist nicht eindeutig. Bearbeiten Sie die Kiosk-PIN, um { name } zum Administrator zu machen."
+                },
+                "DOWNGRADE": {
+                    "ADMIN": "Um die Rolle von { name } herunterzustufen, bearbeiten Sie die Kiosk-PIN."
+                }
+            }
+        },
+        "UPGRADE_MESSAGE": {
+            "PART_2": "mehr als einen aktiven Kiosk zu haben"
+        },
+        "POPUP": {
+            "REQUIRE_PIN": {
+                "INFO": "Überschreibt die PIN jeder Person, damit Sie sich für sie einstempeln können.",
+                "UPGRADE_INFO": "PIN zu verlangen"
+            },
+            "DURATION": {
+                "INFO": "um die Anmeldedauer zu bearbeiten"
+            }
+        },
+        "DEFAULT_BREAK_PROJECT": "Standardunterbrechungsprojekt",
+        "DEFAULT_TASK": "Standardaufgabe",
+        "DEFAULT_BREAK_TASK": "Standardpausenaufgabe",
+        "EMPTY_TABLE_INFO": "Keine Kioske gefunden",
+        "FILTER_EMPTY_TABLE_INFO": "Keine {value} Kioske.",
+        "SELECT_BREAK_PROJECT_LABEL": "Pause {projectLabel} auswählen",
+        "SELECT_BREAK_TASK_LABEL": "Pause {taskLabel} auswählen",
+        "DEFAULT_BREAK_ENTITY": "Standardpause { label }",
+        "DEFAULT_ENTITY": "Standard { label }"
+    },
+    "KIOSK_ADMIN_PIN_NOT_UNIQUE_3": "Kiosk-PIN bearbeiten",
+    "KIOSK_MEMBER_PIN_NOT_UNIQUE_1": "Die PIN des Mitglieds ist nicht eindeutig.",
+    "KIOSK_MEMBER_PIN_NOT_UNIQUE_2": "Zu machen",
+    "KIOSK_MEMBER_PIN_NOT_UNIQUE_3": "ein Administrator",
+    "KIOSK_MEMBER_PIN_NOT_UNIQUE_4": "Kiosk-PIN bearbeiten",
+    "KIOSK_ADMIN_PIN_NOT_UNIQUE_1": "Herabstufen",
+    "KIOSK_ADMIN_PIN_NOT_UNIQUE_2": "Rolle",
+    "UPGRADE_PAGE": {
+        "TITLE": "Holen Sie sich mehr Funktionen",
+        "TRIAL_MODAL": {
+            "TEXT": "Probieren Sie alle PRO-Funktionen 7 Tage lang kostenlos aus!"
+        },
+        "SUBTITLE": "Rüsten Sie Ihren { name }-Arbeitsbereich auf, um erweiterte Funktionen zu nutzen."
+    },
+    "GLOBALSTART": "Anfang",
+    "GLOBAL_LIMITED_SEAT_LEFT": "begrenzter Sitzplatz übrig.",
+    "GLOBAL_LIMITED_SEATS_LEFT": "begrenzter Sitzplatz übrig.",
+    "GLOBAL_REGULAR_SEAT_LEFT": "Sitze frei.",
+    "GLOBAL_REGULAR_SEATS_LEFT": "Sitze frei.",
+    "GLOBAL_FULL_SEAT_LEFT": "voller Sitzplatz übrig.",
+    "GLOBAL_FULL_SEATS_LEFT": "voller Sitzplatz übrig.",
+    "I have read and agree to the": "GLOBAL.TOS_PART1",
+    "PROMO": {
+        "SCHEDULING": {
+            "TITLE": "Mitarbeiter planen & Projekte",
+            "LIST": {
+                "SECOND": "Sehen Sie auf einen Blick, wer beschäftigt und wer verfügbar ist",
+                "FOURTH": "Veröffentlichen Sie Aufgaben, damit andere ihren Zeitplan sehen können",
+                "FIRST": "Planen Sie Projekte und Meilensteine auf einer Zeitleiste",
+                "THIRD": "Weisen Sie zu, wer an was und wann arbeiten muss"
+            },
+            "LINK_TITLE": "So funktioniert die Terminplanung"
+        },
+        "EXPENSES": {
+            "TITLE": "Verfolgen Sie Geschäftsausgaben",
+            "LIST": {
+                "SECOND": "Erfassung nach Preis oder Einheit (z. B. Meilen)",
+                "FOURTH": "Ausgaben genehmigen und in Rechnung stellen",
+                "FIFTH": "Nehmen Sie Ausgaben in Projektbudgets auf",
+                "FIRST": "Verfolgen und kategorisieren Sie Ausgaben",
+                "THIRD": "Quittungen anhängen und herunterladen",
+                "SIXTH": "Ausführen und Exportieren von Spesenabrechnungen"
+            },
+            "LINK_TITLE": "Wie Spesen funktionieren"
+        },
+        "TIME_OFF": {
+            "TITLE": "Urlaub verwalten & Feiertage",
+            "LIST": {
+                "FIRST": "Erstellen Sie Urlaubs- und Freizeitrichtlinien",
+                "SECOND": "Urlaub und Freizeit beantragen",
+                "FOURTH": "Aufgelaufenes, verwendetes und verfügbares Guthaben anzeigen",
+                "THIRD": "Sehen Sie auf einer Zeitleiste, wer frei hat"
+            },
+            "LINK_TITLE": "Wie die Auszeit funktioniert"
+        },
+        "APPROVAL": {
+            "TITLE": "Arbeitszeittabellen offiziell genehmigen",
+            "LIST": {
+                "FIRST": "Arbeitszeittabellen zur Genehmigung einreichen",
+                "SECOND": "Erinnern Sie die Leute daran, Arbeitszeittabellen einzureichen",
+                "THIRD": "Ermöglichen Sie Managern, Arbeitszeittabellen zu genehmigen (oder abzulehnen).",
+                "FOURTH": "Verhindern Sie Änderungen an genehmigten Arbeitszeittabellen"
+            },
+            "LINK_TITLE": "So funktioniert die Zulassung"
+        },
+        "ACTIVITY": {
+            "TITLE": "Erfassen Sie Screenshots von Standorten &.",
+            "LOCATION": {
+                "LIST": {
+                    "FIRST": "Nehmen Sie den Standort auf, während der Timer läuft",
+                    "THIRD": "Zeigen Sie alle Websites an, die Ihr Team im Laufe des Tages besucht hat",
+                    "SECOND": "Sehen Sie auf einer Karte, wer sich gerade wo befindet"
+                },
+                "LINK_TITLE": "So funktioniert GPS-Tracking"
+            },
+            "SCREENSHOT": {
+                "LIST": {
+                    "FIRST": "Nehmen Sie alle 5 Minuten Screenshots auf, während der Timer läuft",
+                    "SECOND": "Erinnere dich daran, woran du tagsüber gearbeitet hast",
+                    "THIRD": "Sehen Sie alle generierten Screenshots an einem Ort"
+                },
+                "LINK_TITLE": "So funktionieren Screenshots"
+            }
+        },
+        "INVOICING": {
+            "TITLE": "Rechnungen erstellen & verwalten",
+            "LIST": {
+                "FIRST": "Erstellen Sie Rechnungen aus erfasster Zeit",
+                "SECOND": "Rechnungen bearbeiten und anpassen",
+                "FOURTH": "Verfolgen Sie, was in Rechnung gestellt wurde",
+                "THIRD": "Senden Sie Rechnungen an Kunden und verfolgen Sie deren Status"
+            },
+            "LINK_TITLE": "So funktioniert die Rechnungsstellung"
+        }
+    },
+    "TRANSFER": {
+        "OWNERSHIP": {
+            "PIN": "Die PIN des Mitglieds ist nicht eindeutig. Bearbeiten Sie die Kiosk-PIN, um das Eigentum an { name } zu übertragen."
+        }
+    }
 }

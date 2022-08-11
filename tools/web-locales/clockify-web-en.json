@@ -84,7 +84,7 @@
             "WITHDRAW_FAIL": "Withdraw failed",
             "WEEK_STATUS_FAIL": "Get Approval Week status failed",
             "PENDING_FAIL": "Get pending requests failed",
-            "WITHDRAW_ALL_FAIL": "Withdrawn all pending requests failed",
+            "WITHDRAW_ALL_FAIL": "Withdraw all pending requests failed",
             "REMINDERS": {
                 "SUCCESS_MESSAGE": "Reminders sent",
                 "ERROR_MESSAGE": "Reminders not sent"
@@ -269,7 +269,10 @@
             "EDIT_SETTING_SUCCESS": "Invoice settings updated.",
             "EDIT_SETTING_FAIL": "Edit invoice settings failed.",
             "DUPLICATE_SUCCESS": "Invoice successfully duplicated.",
-            "DUPLICATE_FAIL": "Duplicate invoice failed."
+            "DUPLICATE_FAIL": "Duplicate invoice failed.",
+            "CONFIRM_MULTIPLE_ITEMS_DELETE": "Are you sure you want to delete { count } { count, plural, =0{} one{item} other{items} }?",
+            "DELETE_ITEMS_SUCCESS": "Items successfully deleted.",
+            "DELETE_ITEMS_FAIL": "Deleting invoice items failed."
         },
         "SHARED": {
             "CREATE_INVOICE": "Create invoice",
@@ -334,7 +337,47 @@
         },
         "SHOW_COLUMNS_IN_PDF": "Show columns in pdf",
         "ITEM_ORDER_CHANGED": "Invoice item order changed",
-        "ITEM_ORDER_CANT_BE_CHANGED": "Invoice item order cannot be changed"
+        "ITEM_ORDER_CANT_BE_CHANGED": "Invoice item order cannot be changed",
+        "COMPANY": {
+            "GET": {
+                "FAILED_MESSAGE": "Get companies failed."
+            },
+            "NAME": "Company name",
+            "ADDRESS": "Company address",
+            "EDIT": {
+                "MODAL": {
+                    "TITLE": "Edit companies",
+                    "SUCCESS_MESSAGE": "Company list successfully updated.",
+                    "FAILED_MESSAGE": "Update company has been failed.",
+                    "DELETE_TOOLTIP": "Can’t delete default company data.",
+                    "MAX_TOOLTIP": "Can't have more than 50 companies"
+                }
+            },
+            "CREATE": {
+                "MODAL": {
+                    "NAME": {
+                        "FAILED_MESSAGE": "Company name has to be between 2 and 250 characters long",
+                        "SAME_NAME": "Company with name { name } already exists"
+                    },
+                    "SUCCESS_MESSAGE": "Company has been created.",
+                    "FAILED_MESSAGE": "Create company has been failed.",
+                    "ADDRESS": {
+                        "FAILED_MESSAGE": "Company address can not be longer than 3000.",
+                        "SUCCESS_MESSAGE": "Company address has been added"
+                    }
+                }
+            },
+            "DELETE": {
+                "MODAL": {
+                    "FAILED_MESSAGE": "Delete company has been failed."
+                }
+            }
+        },
+        "PERMISSIONS": {
+            "SELECT_WHO_CAN_MANAGE": "Select members who can manage",
+            "WHO_CAN_MANAGE": "Who can manage invoices",
+            "ALLOW_PEOPLE": "Allow people to create and edit all invoices"
+        }
     },
     "LAYOUT": {
         "DOCUMENTATION": "Documentation",
@@ -387,10 +430,10 @@
         },
         "SIDEBAR": {
             "CONTACT_SUPPORT": {
-                "CONTACT_FOR_DEMO_LABEL": "Contact for demo",
+                "CONTACT_FOR_DEMO_LABEL": "Request demo",
                 "TRIAL_EXPIRATION_NOTIFICATION": "Trial expires in { remainingTrialDays } days.",
                 "TRIAL_EXPIRING_TODAY_NOTIFICATION": "Trial expires today.",
-                "CONTACT_SALES_LABEL": "Contact sales to extend",
+                "CONTACT_SALES_LABEL": "Contact for extension",
                 "TRIAL_EXPIRING_TOMORROW_NOTIFICATION": "Trial expires tomorrow."
             },
             "PROFILE_DROPDOWN": {
@@ -410,7 +453,8 @@
                 "TEAMS_LABEL": "Teams",
                 "TIMESHEET_LABEL": "TIMESHEET"
             },
-            "SWITCH_WORKSPACE_TOOLTIP": "You can switch between your workspaces here!"
+            "SWITCH_WORKSPACE_TOOLTIP": "You can switch between your workspaces here!",
+            "TRIAL_LEFT": "left in trial."
         },
         "SHARED": {
             "WAIT_TEXT": "Please wait"
@@ -518,7 +562,9 @@
             "REMOVE_TASK_WARNING": "The { taskName } task will also be removed from all time entries it is assigned to. This action cannot be reversed.",
             "MARK_AS_ACTIVE_LABEL": "Mark as active",
             "MARK_AS_DONE_LABEL": "Mark as done",
-            "SET_LABEL": "Set"
+            "SET_LABEL": "Set",
+            "MARK_AS_DONE_LIST_KIOSKS": "To archive { taskName }, first remove it from each kiosk.",
+            "MARK_AS_DONE_WARNING": "Can’t archive this { taskLabel } because it’s used as a default { taskLabel } on kiosk"
         },
         "FILTER_DROPDOWN": {
             "NO_ENTITY_LABEL": "No { entity }",
@@ -593,7 +639,10 @@
             "PROJECT_TIME_INFO_LOSS_WARNING_CUSTOM": "Warning: Approved time for { projectName } will lose { projectLabel } information.",
             "TIME_ENTRIES_INFO_LOSS_WARNING_CUSTOM": "The { projectName } { projectLabel } will also be removed from all time entries it is assigned to. This action cannot be reversed.",
             "TIME_ENTRIES_AND_EXPENSES_INFO_LOSS_WARNING_CUSTOM": "The { projectName } { projectLabel } will also be removed from all time entries and expenses it is assigned to. This action cannot be reversed.",
-            "CUSTOM_BUDGET_LABEL": "{ projectLabel } budget"
+            "CUSTOM_BUDGET_LABEL": "{ projectLabel } budget",
+            "ARCHIVE_ONE_WARNING": "Can't archive this {projectLabel} because it's used as a default {projectLabel} on kiosk",
+            "ARCHIVE_ONE_LIST_KIOSKS": "To archive { projectName }, first remove it from each kiosk.",
+            "ARCHIVE_CLIENT_PROJECTS_TOOLTIP": "Can't archive { projectLabel } (some kiosks use them)"
         },
         "PROJECTS_CUSTOM_PAGE": {
             "DELETE_MULTIPLE_PROJECTS_WARNING": "Are you sure you want to delete { listLength } { projectLabel }?",
@@ -741,10 +790,10 @@
             "DELETE_MODAL_BODY": "Are you sure you want to delete entry?",
             "QUICKBOOKS": {
                 "RECONNECT_INFO": "Your QuickBooks authorization has expired. To send time, please reconnect.",
-                "RECCONECT_BTN": "Reconnect quickbooks",
+                "RECCONECT_BTN": "Reconnect QuickBooks",
                 "ALL_SENT_SUCCESS_MSG": "All time entries have been sent to QuickBooks.",
                 "SYNC_INCOMPLETED_MSG": "Sync incomplete",
-                "SYNC_INCOMPLETED_INFO_1": "{ count } (out of { length }) entries have been succesfully sent to QuickBooks.",
+                "SYNC_INCOMPLETED_INFO_1": "{ count } (out of { length }) entries have been successfully sent to QuickBooks.",
                 "SYNC_INCOMPLETED_INFO_2_PART_1": "To send the rest, please ",
                 "SYNC_INCOMPLETED_INFO_2_PART_2": "and try again.",
                 "SYNC_ERROR_MSG": "Transfer incomplete",
@@ -815,10 +864,10 @@
             "CREATE_LINK_BTN": "Create Link",
             "FEATURES_LABEL": "Features",
             "REDIRECT_TRACKER_BRN": "Go to tracker",
-            "VIEW_PERMIT_TOOLTIP": "Logged-in members who can view",
+            "VIEW_PERMIT_TOOLTIP": "Who can view",
             "VISIBILITY_OPTIONS_LABELS": {
                 "PUBLIC": "Public - Anyone with the link can view",
-                "PRIVATE": "Private - Only logged-in members can view"
+                "PRIVATE": "Private - Only selected members can view"
             },
             "SHEDULED_REPORT_TYPES_LABELS": {
                 "DAILY_REPORT_LABEL": "Daily"
@@ -855,13 +904,18 @@
                 "FILTER_TOOLTIP": "Links to your shared reports will appear here"
             },
             "SHARING_DISABLED_TOOLTIP": "Public sharing is disabled",
-            "MY_REPORTS_HEADER": "My reports",
+            "MY_REPORTS_HEADER": "Shared reports",
             "DELETE_REPORT_INFO_PART_1": "You are about to delete ",
             "DELETE_REPORT_INFO_PART_2": "report. Once it's deleted, the link to it will stop working.",
             "DELETE_REPORT_TOOLTIP": "Delete shared report",
             "EDIT_REPORT_TOOLTIP": "Edit sharing report",
             "EXPORT_LONGER_THAN_INFO": "This can take a few minutes, please don't leave the screen",
-            "EXPORT_IN_PROGRESS": "Exporting { type } report"
+            "EXPORT_IN_PROGRESS": "Exporting { type } report",
+            "FILTER": {
+                "ALL_REPORTS": "All reports",
+                "MY_REPORTS": "My reports",
+                "SHARED_WITH_ME": "Shared with me"
+            }
         },
         "SUMMARY": {
             "SORT_BY_TITLE_ASC_LABEL": "Title (up)",
@@ -956,7 +1010,7 @@
             "UPDATE_REPORT_SUCCESS": "Report successfully updated",
             "DELETE_REPORT_SUCCES": "Report deleted",
             "SYNC_SUCCESS": "All entries are successfully synced.",
-            "SYNC_FAIL": "Sync to quickbooks failed."
+            "SYNC_FAIL": "Sync to QuickBooks failed."
         },
         "SHARED": {
             "REPORT_NAME_LABEL": "Report name",
@@ -985,13 +1039,14 @@
             "ALL_SELECTED_INFO_WITH_COUNT": "All { value } expenses are selected.",
             "ALL_SELECTED_INFO": "All my expenses are selected.",
             "SELECT_ALL_WITH_COUNT_TEXT": "Select all { count } expenses",
-            "SELECT_ALL_ENTRIES_TEXT": "Select all my expense"
+            "SELECT_ALL_ENTRIES_TEXT": "Select all my expenses"
         },
-        "PROFIT_LABEL": "Profit:"
+        "PROFIT_LABEL": "Profit:",
+        "NOTES": "Notes"
     },
     "SHARED_MODULES": {
         "BTN_UPLOAD_FILE_CONTENT": {
-            "UPLOAD_FILE_BTN_DEFAULT": "Upload Csv file",
+            "UPLOAD_FILE_BTN_DEFAULT": "Upload CSV file",
             "UPLOAD_IMG_BTN_DEFAULT": "Upload Image",
             "EMPTY_FILE_ERROR_MSG": "File is empty."
         },
@@ -1025,7 +1080,7 @@
             "EMPTY_NAME_ERROR_MSG": "Name can't be empty.",
             "CHOOSE_TYPE_ERROR_MSG": "Must choose type.",
             "CREATE_CUSTOM_FIELD_TITLE": "Create custom field",
-            "NAME_INFO_TEXT": "Short identifier of what you wish to track.",
+            "NAME_INFO_TEXT": "Short identifier for the custom attribute.",
             "TYPE_TEXT_LABEL": "Text",
             "TYPE_NUMBER_LABEL": "Number",
             "TYPE_LINK_LABEL": "Link",
@@ -1056,8 +1111,13 @@
             "FIELDS_IN_ALL_ENTRIES_LABEL": "Fields all time entries have.",
             "FIELDS_USERS_CAN_SEE_LABEL": "Fields users can see and track.",
             "FIELDS_INVISIBLE_LABEL": "Invisible",
-            "FIELDS_INVISIBLE_BUT_THERE_LABEL": "Fields users can't see, but are always there (metadata)",
-            "DESCRIPTION_INFO_TEXT": "Explainer that clarifies how to use the field and why. Appears in tooltips (on hover)."
+            "FIELDS_INVISIBLE_BUT_THERE_LABEL": "Fields users can export, but can’t see (metadata)",
+            "DESCRIPTION_INFO_TEXT": "Explanation that appears when hovering over the field.",
+            "AVAILABLE_FIELD_INFO_BODY_USER": "Activate to add additional information to users.",
+            "FIELDS_IN_ALL_ENTRIES_LABEL_USER": "Fields all users have.",
+            "CREATE_CUSTOM_FIELD_TITLE_USER": "Create user custom field",
+            "CREATE_CUSTOM_FIELD_TITLE_TIME_ENTRY": "Create time entry custom field",
+            "DEFAULT_VALUE_LABEL": "Default value"
         },
         "DROPDOWN_CHECKBOX_LITE": {
             "FILTER_LIMIT": "Max { filterLimit } active filters"
@@ -1067,7 +1127,7 @@
         },
         "FEATURES_INFO_TYPES": {
             "USER_SEATS": {
-                "DESCRIPTION": "User seats represent the number of active users you can have in your workspace.<br><br>Every time someone joins your workspace, they take up one user seat. If you don't have an available seat, they won’t be able to join and track time in your workspace.<br>If you plan on adding a lot of users in the future, you can prepay additional seats so you don’t get billed separately for each user.<br><br>You can buy additional seats or remove unused ones at any time in your Subscription page."
+                "DESCRIPTION": "Each active user in your workspace takes up one user seat.<br><br>Deactivated users don’t take up a seat, meaning you can deactivate someone and fill their seat with someone else instead.<br><br>You can buy or remove seats at any time on your Subscription page."
             },
             "ADD_TIME_FOR_OTHERS": {
                 "DESCRIPTION": "See your team members' timesheets and add/edit time for them. Or, manually add time entries for others right from the report. No need to chase your team anymore and wait for them to add the missing time."
@@ -1120,7 +1180,7 @@
                 "DESCRIPTION": "Instead of making someone an admin, make someone a <b>team manager</b> so they can see all the time and expenses their team members have tracked, and approve their timesheets. <br><br> Or, give someone a <b>project manager</b> role on multiple projects so they can see all the tracked time and expenses on the projects they manage and edit the said projects (eg. create tasks, add members to project, set estimates, etc)."
             },
             "TIMESHEET_REMINDERS": {
-                "TITLE": "Timesheet reminders",
+                "TITLE": "Targets & reminders",
                 "DESCRIPTION": "Set time tracking reminders for your team, and Clockify will automatically send them an email if they haven't logged enough hours that day or week."
             },
             "IMPORT_TIMESHEETS": {
@@ -1204,6 +1264,36 @@
             },
             "SCHEDULING": {
                 "DESCRIPTION": "Scheduling helps you visualize projects assignments and shifts so you know how busy your team is at a glance. <br> Plan projects on a timeline, assign who needs to work on what and when, see who's over or under capacity, and let your team see their assignments in the calendar."
+            },
+            "APPROVAL": {
+                "DESCRIPTION": "Your team can submit their weekly timesheets and expenses for review, which you can approve or reject. Once approved, the time and expenses can no longer be changed without a permanent written trail."
+            },
+            "USER_FIELDS": {
+                "DESCRIPTION": "User fields allow you to add additional information to team members (like job title, position, phone, department, user ID), and later export it along with time."
+            },
+            "MULTI_FACTOR_AUTHENTICATION": {
+                "DESCRIPTION": "Secure your workspace by requiring two-factor authentication for all your users. <br>\nAll users that don’t have 2FA enabled in their profile will be forced to enable it in order to access the workspace. Once 2FA is enabled, in addition to password, users will have to check their email for a one-time code to log in."
+            },
+            "BREAKS": {
+                "TITLE": "Break (kiosk)",
+                "DESCRIPTION": "Allow employees to indicate when they’re on a break via a kiosk.<br><br> While they’re clocked in, they can punch start and end break using your kiosk terminal.<br><br>Later, admins and managers can see when each employee was on a break and how much in reports."
+            },
+            "PIN": {
+                "TITLE": "PIN (kiosk)",
+                "DESCRIPTION": "Require employees to enter PIN to clock in via kiosk.<br><br>Each employee gets a personal PIN so others can’t clock for them. Admins also get universal PIN that lets them clock in and out for any team member."
+            },
+            "LIMITED_USER_SEATS": {
+                "DESCRIPTION": "Each active limited user in your workspace takes up one limited seat (which costs less than a full seat).<br><br>Limited users don’t have email and can track time only via kiosk (you can convert a limited user to a full user by adding their email).<br><br>Deactivated users don’t take up a seat, meaning you can deactivate someone and fill their seat with someone else instead.<br><br>You can buy or remove seats at any time on your Subscription page."
+            },
+            "REGULAR_USER_SEATS": {
+                "DESCRIPTION": "Each active regular user in your workspace takes up one regular seat.<br><br>Regular users (including managers and admins) are users that have email and can log into Clockify directly.<br><br>Deactivated users don’t take up a seat, meaning you can deactivate someone and fill their seat with someone else instead.<br><br>You can buy or remove seats at any time on your Subscription page."
+            },
+            "FULL_USER_SEATS": {
+                "DESCRIPTION": "Each active full user in your workspace takes up one full seat.<br><br>Full users (including managers and admins) are users that have email and can log into Clockify directly.<br><br>Deactivated users don’t take up a seat, meaning you can deactivate someone and fill their seat with someone else instead.<br><br>You can buy or remove seats at any time on your Subscription page."
+            },
+            "CUSTOMIZE_KIOSK": {
+                "TITLE": "Customize kiosk",
+                "DESCRIPTION": "When you open kiosk, it stays open for 24h. After that, the session expires and admin needs to log in again. If you want it to stay open longer or shorter, you can set any number of hours you like.<br><br>You can also upload company logo to replace Clockify logo on the kiosk screen."
             }
         },
         "PROJECT_PICKER": {
@@ -1265,7 +1355,7 @@
             },
             "GET_MORE_PROMO": "Get more from Clockify!",
             "CHOOSE_YEARLY_PLAN_INFO": "Choose one of our monthly or yearly plans to boost your productivity with extra features and add-ons.",
-            "UPGRADE_WORKSPACE_WITH_PARAM_INFO": "Upgrade { name } workspace and get even more features.",
+            "UPGRADE_WORKSPACE_WITH_PARAM_INFO": "Upgrade your {name} workspace to get more features.",
             "BASIC_LABEL": "BASIC",
             "ADMIN_LABEL": "Administration",
             "PER_SEAT_MONTH_LABEL": "per seat / month",
@@ -1474,7 +1564,8 @@
                 "OPTIONAL_PART_2": "annual",
                 "PART_3": "payments will continue and you'll be able to continue using the extra features."
             },
-            "UPGRADED_SUCCES_TEXT": "You can now start using all the extra features on { name } workspace, without any limitation."
+            "UPGRADED_SUCCES_TEXT": "You can now start using all the extra features on { name } workspace, without any limitation.",
+            "ANNUAL_APPLIED": "20% annual discount applied"
         },
         "INVOICES": {
             "PAST_BILLING_HEADER": "Past billing statements",
@@ -1494,12 +1585,30 @@
             "NUMBER_OF_ADDITIONAL_SEATS_LABEL_PART_1": "Number of additional seats:",
             "NUMBER_OF_ADDITIONAL_SEATS_LABEL_PART_2": "{ count } seats",
             "EST_PRICE_LABEL": "Estimated prorated price that will be applied:",
-            "PAY_SAVE_BTN": "Pay & save"
+            "PAY_SAVE_BTN": "Pay & save",
+            "FULL": {
+                "NUMBER_OF_ADDITIONAL_SEATS_LABEL_PART_2": "{ count } full seats"
+            },
+            "LIMITED": {
+                "NUMBER_OF_ADDITIONAL_SEATS_LABEL_PART_2": "{ count } limited seats"
+            }
         },
         "PAYMENT_LABEL": "Payment",
         "PLANS_LABEL": "Plans",
         "SHARED": {
             "PAY_ANNUAL_LABEL": "annual"
+        },
+        "REGULAR_USER_SEATS": {
+            "BUY_SEATS_TITLE": "Buy regular seats",
+            "REMOVE_SEATS_TITLE": "Remove unused regular seats"
+        },
+        "LIMITED_USER_SEATS": {
+            "BUY_SEATS_TITLE": "Buy limited seats",
+            "REMOVE_SEATS_TITLE": "Remove unused limited seats"
+        },
+        "FULL_USER_SEATS": {
+            "REMOVE_SEATS_TITLE": "Remove unused full seats",
+            "BUY_SEATS_TITLE": "Buy full seats"
         }
     },
     "TEAMS": {
@@ -1606,12 +1715,21 @@
                     "UPDATE_SUCCESS": "Profile was updated successfully"
                 },
                 "WORKING_DAYS_MESSAGE": "Define on which days this user works.",
-                "SELECT_DAYS": "Select days"
+                "SELECT_DAYS": "Select days",
+                "WILL_BE_CONVERTED": "will be converted to a full user.",
+                "WILL_BE_CONVERTED_WARNING": "Adding email will convert { userName } to a full user"
             },
             "USER_STATUS": {
                 "ACTIVATED": "User activated",
                 "DEACTIVATED": "User deactivated"
-            }
+            },
+            "LIMITED_USER_STATUS": {
+                "ACTIVATED": "Limited user activated",
+                "DEACTIVATED": "Limited user deactivated"
+            },
+            "NO_SEATS_PAID_PLAN": "You need { seatsLeft } more seats to add all members.",
+            "NO_SEATS_FREEE_PLAN": "Can’t add more than { seatsLeft } members at once.",
+            "NO_SEAT_PAID_PLAN": "You need 1 more seat to add all members."
         },
         "REMINDERS": {
             "DATE_RANGE": {
@@ -1689,7 +1807,15 @@
         },
         "SHARED": {
             "LESS_LABEL": "Less"
-        }
+        },
+        "LIMITED_MEMBERS": {
+            "EMPTY_STATE": "Limited members can only clock in and out via kiosk.",
+            "EMPTY_STATE_LINK": "Learn more about full and limited users"
+        },
+        "LIMITED_SEATS": {
+            "UPGRADE_INFO_MESSAGE": "To activate additional limited users, you need to update your subscription and buy more user seats."
+        },
+        "NO_FULL_SEATS": "No full seats left."
     },
     "TIMESHEET2": {
         "FIX": "Fix",
@@ -1701,7 +1827,8 @@
                 "BILLABLE": "Override billable",
                 "TAGS": "Override tags",
                 "DESCRIPTION": "Override descriptions"
-            }
+            },
+            "BREAK_TITLE": "Edit break"
         },
         "TIME_ENTRY": {
             "TAGS": {
@@ -1953,7 +2080,8 @@
                 "ZONE": {
                     "TITLE": "Time zone",
                     "PLACEHOLDER": "Search time zone...",
-                    "INFO_MESSAGE": "Before you can change time zone you first have to unsubmit all your submitted time that's waiting for approval:"
+                    "INFO_MESSAGE": "Before you can change time zone you first have to unsubmit all your submitted time that's waiting for approval:",
+                    "INFO_MESSAGE_WITH_EXPENSES": "Before you can change time zone you first have to unsubmit all your submitted time and expenses that's waiting for approval:"
                 },
                 "CHANGE": {
                     "ZONE": "Change Time zone",
@@ -1967,7 +2095,8 @@
                 },
                 "WEEK": {
                     "START": "Week start",
-                    "INFO_MESSAGE": "Before you can change when your week starts you first have to unsubmit all your submitted time that's waiting for approval:"
+                    "INFO_MESSAGE": "Before you can change when your week starts you first have to unsubmit all your submitted time that's waiting for approval:",
+                    "INFO_MESSAGE_WITH_EXPENSES": "Before you can change when your week starts you first have to unsubmit all your submitted time and expenses that's waiting for approval:"
                 },
                 "DAY": {
                     "START": "Day start"
@@ -2160,7 +2289,10 @@
         },
         "CLIENT": {
             "EDIT": {
-                "PLACEHOLDER": "Enter address"
+                "PLACEHOLDER": "Enter address",
+                "NOTE": {
+                    "PLACEHOLDER": "Enter note"
+                }
             }
         },
         "ARCHIVE": {
@@ -2356,6 +2488,10 @@
             "CAN_SEE_PROJECT_STATUS_CUSTOM_LABEL": {
                 "RULE_TITLE": "Who can see { projectLabel } status",
                 "INFO_MESSAGE": "Allow people to see status on their { projectLabelPlural } so they can know how much of the estimate is left."
+            },
+            "WHO_CAN_CREATE_ASSIGNMENTS": {
+                "TITLE": "Who can create assignments",
+                "DESCRIPTION": "Allow project managers to create assignments for their projects."
             }
         },
         "TIME_ROUNDING_MODAL": {
@@ -2383,7 +2519,8 @@
             "MANY": {
                 "STANDARD": "STANDARD features",
                 "PRO": "PRO features",
-                "BASIC": "BASIC features"
+                "BASIC": "BASIC features",
+                "FEATURE": "{featureType} feature"
             }
         },
         "ALERT": {
@@ -2536,6 +2673,9 @@
                     },
                     "ISSUER_URL": {
                         "LABEL": "Audience (Entity Id)"
+                    },
+                    "DEFAULT": {
+                        "RELAY": "Default Relay State"
                     }
                 },
                 "SECURITY": {
@@ -2646,7 +2786,8 @@
                 "GENERAL_TITLE": "General",
                 "PERMISSIONS_TITLE": "Permissions",
                 "INTEGRATIONS_TITLE": "Integrations"
-            }
+            },
+            "WORKING_DAYS_ERROR_TOAST": "Must have at least one working day"
         },
         "AUTH_TAB": {
             "LOADER_MESSAGE": "Redirecting to subdomain"
@@ -2731,7 +2872,8 @@
             "USER_NAME_UPDATE_SUCCESS": "User name has been updated.",
             "USER_NAME_UPDATE_FAILED": "User name updated failed.",
             "DEACTIVATE_API_KEY_SUCCESS": "API key is deactivated.",
-            "DEACTIVATE_API_KEY_FAILED": "Deactivate Api key failed."
+            "DEACTIVATE_API_KEY_FAILED": "Deactivate Api key failed.",
+            "REMOVE_LIMITED_USER_SUCCESS": "Limited user has been deleted"
         },
         "GENERAL_SETTINGS": {
             "LOGO": {
@@ -2798,7 +2940,8 @@
             "TIME_APPROVAL": {
                 "INFO_MESSAGE": "Your team can submit their weekly timesheets for review, which you can approve or reject.",
                 "TOGGLE": "Enable time approval",
-                "WARNING_FOR_TAG": "Warning: Approved time for { value } will lose tag information."
+                "WARNING_FOR_TAG": "Warning: Approved time for { value } will lose tag information.",
+                "INFO_MESSAGE_EXPENSES_ACTIVE": "Your team can submit their weekly timesheets and expenses for review, which you can approve or reject."
             },
             "INVOICING": {
                 "INFO_MESSAGE": "Create and download invoices for clients based on tracked time.",
@@ -2849,6 +2992,22 @@
             "WORKING_DAYS_INFO_MESSAGE_2": "Default working days for all new members (you can override working days on member profile).",
             "ORGANIZE_TIME_ONLY": {
                 "INFO_MESSAGE": "Choose how you wish to group time, and set up custom terms and hierarchy."
+            },
+            "ENABLE_KIOSK_MESSAGE": "Allow employees to clock in and out from designated devices.",
+            "KIOSK_ENABLED": {
+                "REQUIRE_TAGS_MESSAGE": "Can't require tags or description when kiosk is enabled."
+            },
+            "ACTIVATE_KIOSK": "Activate kiosk",
+            "ENABLE_BREAKS": "Enable breaks",
+            "BREAKS_UPGRADE_MESSAGE": "to enable breaks",
+            "ENABLE_TAG_KIOSK_ACTIVE_MESSAGE": "To enable required tag selection, kiosk must be off",
+            "ENABLE_DESCRIPTION_KIOSK_ACTIVE_MESSAGE": "To enable required description, kiosk must be off",
+            "APPROVAL": {
+                "TOGGLE": "Enable approval"
+            },
+            "TIMETRACKER_SETTING": {
+                "INFO_MESSAGE": "Track time using a timer and see all your time entries.",
+                "ACTIVATE": "Activate tracker"
             }
         },
         "SHARED": {
@@ -2892,6 +3051,24 @@
             "SCHEDULING": {
                 "TOGGLE": "Activate { projectLabel } and team scheduling",
                 "INFO_MESSAGE": "Plan { projectLabelPlural }, define team capacity, and assign who works on what, when, and for how long."
+            },
+            "KIOSKS_WITHOUT_DEFAULTS": {
+                "INFO": "To activate kiosk, select default { projectLabel } for each kiosk",
+                "BREAKS_INFO": "To enable breaks, select default break { projectLabel } for each kiosk",
+                "TASK_INFO": "To activate kiosk, select default { taskLabel } for each kiosk",
+                "TASK_BREAK_INFO": "To enable breaks, select default break { taskLabel } for each kiosk"
+            },
+            "FORCE_PROJECT": {
+                "KIOSKS_WITHOUT_DEFAULTS_TOOLTIP": "To enable required { projectLabel } selection, all kiosks must have default { projectLabel }",
+                "KIOSKS_WITHOUT_BREAK_DEFAULTS_TOOLTIP": "To enable required { projectLabel } selection, all kiosks must have default { projectLabel } and default break { projectLabel }",
+                "KIOSKS_WITHOUT_BREAK_PROJECTS_DEFAULTS_TOOLTIP": "To use timesheet, all kiosks must have default { projectLabel } and default break { projectLabel }"
+            },
+            "FORCE_TASK": {
+                "KIOSKS_WITHOUT_DEFAULTS_TOOLTIP": "To enable required { taskLabel } selection, all kiosks must have default { taskLabel }",
+                "KIOSKS_WITHOUT_BREAK_DEFAULTS_TOOLTIP": "To enable required { taskLabel } selection, all kiosks must have default { taskLabel } and default break { taskLabel }"
+            },
+            "TIMESHEET": {
+                "KIOSKS_WITHOUT_DEFAULTS_TOOLTIP": "To use timesheet, all kiosks must have default { projectLabel }"
             }
         },
         "GENERAL_SETTINGS_CUSTOM_SETTINGS": {
@@ -2984,7 +3161,7 @@
         "FEATURES": {
             "PLAN": {
                 "FREE": {
-                    "INFO_MESSAGE": "You're currently using the free version."
+                    "INFO_MESSAGE": "You're currently using the FREE version."
                 },
                 "LEGACY": {
                     "INFO_MESSAGE": "You are currently using legacy pricing plan. Once you switch plans, it's impossible to go back to your old pricing plan."
@@ -2995,14 +3172,15 @@
                 "ACTIVATE": "Activate free trial now",
                 "HAD_ALREADY": "The free trial was already activated on this workspace. But, if you need more time to test things out, feel free to activate another trial in a new workspace.",
                 "TITLE": "Start free trial",
-                "INFO_MESSAGE": "Try out all the additional features for one week, no credit card required!",
+                "INFO_MESSAGE": "Try out all the extra features for free for 14 days (no credit card required) and then decide if you wish to upgrade or remain on the forever FREE plan.",
                 "SUCCESS": {
                     "INFO_MESSAGE": "Your free 7-day trial has been activated. Go to workspace settings to enable all the extra features so you can try them out.",
                     "SEE_SETTINGS": "Go to settings"
                 },
                 "EXPIRED": "Trial expired",
                 "MORE_TIME": "The free trial was already activated on this workspace. If you need more time, activate trial in a new workspace.",
-                "NAME": "trial"
+                "NAME": "trial",
+                "BUTTON": "Start trial"
             },
             "FOR_WORKSPACE": "for { value } workspace",
             "SUBSCRIPTION": {
@@ -3015,7 +3193,10 @@
                 "TITLE": "Frequently asked questions",
                 "TRY_FIRST": {
                     "Q": "Can I try it out first?",
-                    "A": "You can try out all the extra features (except for SSO, Custom subdomain, Control user account, and Import timesheets) for free for one whole week, no credit card required."
+                    "A": "Absolutely! You can try out extra features for free for 14 days, no credit card required.",
+                    "A_ABSOLUTELY": "Absolutely! You can",
+                    "A_START_TRIAL": "start trial",
+                    "A_PRO": "and try out all the PRO features for free for 7 days, no credit card required."
                 },
                 "SEAT": {
                     "Q": "What is a seat?",
@@ -3037,7 +3218,8 @@
                     "A_SECOND_PART": "ENTERPRISE",
                     "A_THIRD_PART": "plan (annual billing, over 50 seats) and",
                     "A_FORTH_PART": "SERVER",
-                    "A_FIFTH_PART": " plan."
+                    "A_FIFTH_PART": " plan.",
+                    "A_THIRD_PART_2": "plan (annual billing, over 50 seats)."
                 },
                 "TAXES": {
                     "Q": "Are there any additional taxes?",
@@ -3193,10 +3375,10 @@
         "INTEGRATION": {
             "QUICKBOOK": {
                 "GET": {
-                    "ERROR_MESSAGE": "Get Quickbook integration failed."
+                    "ERROR_MESSAGE": "Get QuickBooks integration failed."
                 },
                 "CHECK_TOKEN": {
-                    "ERROR_MESSAGE": "Quickbook integration token check failed."
+                    "ERROR_MESSAGE": "QuickBooks integration token check failed."
                 }
             },
             "CONNECT": {
@@ -3226,9 +3408,20 @@
                 "ERROR_MESSAGE": "Get invoice information failed"
             },
             "UPDATE_QUANTITY_SEATS": {
-                "ADD": "New seats added successfully",
+                "ADD": "New full seats added",
                 "REMOVE": "Seats removed successfully",
                 "NOT_CHANGED": "Seats are not changed"
+            },
+            "UPDATE_REGULAR_QUANTITY_SEATS": {
+                "ADD": "New seats added",
+                "REMOVE": "Regular seats removed"
+            },
+            "UPDATE_LIMITED_QUANTITY_SEATS": {
+                "REMOVE": "Limited seats removed",
+                "ADD": "New limited seats added"
+            },
+            "UPDATE_QUANTITY_SEATS_REGULAR": {
+                "ADD": "New seats added successfully"
             }
         },
         "PROJECT": {
@@ -3410,6 +3603,12 @@
                         "SUCCESS_MESSAGE": "Successfully updated timezone",
                         "ERROR_MESSAGE": "Updated timezone failed"
                     }
+                },
+                "ADD_EMAIL": {
+                    "UPDATE": {
+                        "SUCCESS_MESSAGE": "Full user has been added to workspace.",
+                        "ERROR_MESSAGE": "Regular user couldn't be added to workspace."
+                    }
                 }
             },
             "GET_IDS": {
@@ -3456,6 +3655,15 @@
                 "TRANSFER_OWNER_ROLE": {
                     "SUCCESS_MESSAGE": "Owner role transferred successfully",
                     "ERROR_MESSAGE": "Owner role not transferred"
+                },
+                "INVITE_REGULAR": {
+                    "SUCCESS_MESSAGE": "Regular users have been invited to workspace"
+                },
+                "INVITE_LIMITED": {
+                    "SUCCESS_MESSAGE": "Limited users have been added to workspace"
+                },
+                "INVITE_FULL": {
+                    "SUCCESS_MESSAGE": "Full users have been invited to workspace"
                 }
             }
         },
@@ -3466,7 +3674,8 @@
             "UPDATE": {
                 "SUCCESS_MESSAGE": "{ label } successfully updated",
                 "ERROR_MESSAGE": "{ label } not updated",
-                "SUCCESS_MESSAGE_WITH_NAME": "{ label } { name } has been updated"
+                "SUCCESS_MESSAGE_WITH_NAME": "{ label } { name } has been updated",
+                "SUCCESS_MESSAGE_USER": "User custom fields successfully updated"
             },
             "DELETE": {
                 "SUCCESS_MESSAGE": "{ label } successfully deleted",
@@ -3899,7 +4108,62 @@
         "LOGIN_CODE_SENT_TO": "Your login code was sent to",
         "ENTER_SIX_DIGIT": "Enter 6-digit code",
         "ENTER_LABEL_NAME": "Enter label name",
-        "TASK_RATES_TITLE_CUSTOM_LABEL": "{ taskLabel } rates"
+        "TASK_RATES_TITLE_CUSTOM_LABEL": "{ taskLabel } rates",
+        "NEW": {
+            "ADD_BTN": "Add new"
+        },
+        "KIOSK_LABEL": "Kiosk",
+        "APPROVAL_TITLE": "Approval",
+        "EXTRA_FEATURES": "Extra Features",
+        "FINISH": "Finish",
+        "COMPANY_LABEL": "Company",
+        "COMPANY_ADDRESS": "Enter company address",
+        "CUSTOM_FIELDS_ENTRY_LABEL": "Time entry custom fields",
+        "CUSTOM_FIELDS_USER_LABEL": "User custom fields",
+        "FIELDS": "Fields",
+        "LIMITED_LABEL": "Limited",
+        "USER_FIELDS": "User fields",
+        "LOCK_TIMESHEET_TITLE": "Lock timesheet",
+        "ROUNDING_TITLE": "Rounding",
+        "FORCE_2FA_TITLE": "Force 2FA",
+        "WITHDRAW_MESSAGE_WITH_EXPENSES": "If you withdraw, admin won't be able to approve your time and expenses unless you submit them again.",
+        "LOCK_TIME_AND_EXPENSES": "Lock time and expenses",
+        "DEACTIVATE_BTN": "Deactivate",
+        "EXPORT_ASSIGNEES": "Export assignees",
+        "LAUNCH_LABEL": "Launch",
+        "ARCHIVE_PROJECT_LABEL": "Archive project",
+        "ARCHIVE_TASK_LABEL": "Archive task",
+        "APPROVED_EXPENSE_ERROR_MESSAGE": "Can't edit approved expenses.",
+        "COMPANY_NAME": "Enter company name",
+        "LIMITED_USER_SEATS_TITLE": "Limited seats",
+        "REGULAR_USER_SEATS_TITLE": "Regular seats",
+        "SEAT": "seat",
+        "DEFAULT_PROJECT_LABEL": "Default project",
+        "PER_SEAT": "per seat",
+        "PER_REGULAR_SEAT": "per regular seat",
+        "PER_LIMITED_SEAT": "per limited seat",
+        "BUY_LABEL": "Buy",
+        "NO_REGULAR_SEATS_LEFT": "No regular seats left.",
+        "NO_LIMITED_SEATS_LEFT": "No limited seats left.",
+        "EMPLOYEE_NAME": "Employee name",
+        "ADD_EMAIL_LABEL": "Add email",
+        "KIOSKS_LABEL": "Kiosks",
+        "REGULAR_LABEL": "Regular",
+        "REGULAR_MEMBER_LABEL": "Regular member",
+        "REGULAR_MEMBERS_LABEL": "Regular members",
+        "DELETE_USER_TITLE": "Delete user",
+        "DEFAULT_LABEL": "Default",
+        "DELETE_LIMITED_USER_INFO_MESSAGE": "Limited user won’t be able to clock in via kiosk, but their tracked data will remain. This action can't be reversed.",
+        "ENABLE_LABEL": "Enable",
+        "FULL_USER_SEATS_TITLE": "Full seats",
+        "PER_FULL_SEAT": "per full seat",
+        "FULL_LABEL": "full",
+        "FULL_MEMBERS_LABEL": "Full members",
+        "NO_FULL_SEATS_LEFT": "No full seats left.",
+        "TOS_PART2": "Terms of Use",
+        "TOS_PART1": "I have read and agree to the",
+        "NO_SEATS_LEFT": "No seats left.",
+        "FULL_MEMBER_LABEL": "Full member"
     },
     "EXPENSES": {
         "TITLE": "Expenses",
@@ -4007,7 +4271,11 @@
         "FILE_DOWNLOAD": {
             "FAILED_MESSAGE": "Download receipt has failed."
         },
-        "MANAGE_CATEGORIES": "Manage categories"
+        "MANAGE_CATEGORIES": "Manage categories",
+        "APPROVAL_MODAL": {
+            "TITLE": "Submit for approval",
+            "MESSAGE": "Ready to submit { from } - { to } for approval?"
+        }
     },
     "IN_PROGRESS": "Import in progress. You'll get a notification once it's done.",
     "LETS_START_TRACKING": "Let’s start tracking!",
@@ -4023,7 +4291,8 @@
                     "PERSONAL_MANUAL": "Created time (personal, manual)",
                     "PERSONAL_TIMER": "Created time (personal, timer)",
                     "IMPORT": "Created time (import)",
-                    "FOR_OTHER": "Created time (for other)"
+                    "FOR_OTHER": "Created time (for other)",
+                    "KIOSK": "Created time (kiosk)"
                 },
                 "UPDATE": {
                     "PERSONAL": "Updated time (personal)",
@@ -4132,7 +4401,9 @@
                 "DURATION": "Duration",
                 "APPROVED": "Approved",
                 "INVOICED": "Invoiced",
-                "CUSTOMFIELDS": "Custom fields"
+                "CUSTOMFIELDS": "Custom fields",
+                "KIOSK_NAME": "Kiosk name",
+                "KIOSK_ENTRY_TYPE": "Type"
             },
             "PROJECT": {
                 "NAME": "Project name",
@@ -4217,7 +4488,11 @@
             }
         },
         "RECORD_ALL_CHANGES": "Record all changes (create, update, and delete) made to:",
-        "OLD_LOGS_AUTO_DELETED_LABEL": "Logs older than one year are automatically deleted. We recommend exporting them regularly."
+        "OLD_LOGS_AUTO_DELETED_LABEL": "Logs older than one year are automatically deleted. We recommend exporting them regularly.",
+        "KIOSK": {
+            "BREAK_TYPE_LABEL": "Break",
+            "NON_BREAK_TYPE_LABEL": "Non-break"
+        }
     },
     "EMAIL_PREFERENCES": {
         "MANAGE_NOTIFICATIONS": {
@@ -4663,8 +4938,228 @@
     "REFRESH": "Refresh",
     "TRIAL": {
         "SUCCESS": {
-            "TITLE": "Trial started!"
+            "TITLE": "Trial started!",
+            "TRY_OUT": "Which features would you like to try out?"
         }
     },
-    "GLOBAL_FINISH": "finish"
+    "GLOBAL_FINISH": "finish",
+    "KIOSK": {
+        "EMPTY_COMPONENT": {
+            "NO_KIOSKS": "No kiosks yet",
+            "INFO": "Create your first kiosk and assign people to it so they can clock in and out."
+        },
+        "CREATE_KIOSK_BUTTON": "Create kiosk",
+        "MODAL": {
+            "DELETE": {
+                "TITLE": "Delete kiosk",
+                "INFO": "Are you sure you want to delete this kiosk?"
+            },
+            "DEACTIVATE": {
+                "TITLE": "Deactivate kiosk",
+                "INFO": "Users won’t be able to clock in from this kiosk",
+                "INFO_RUNNING_ENTRIES": "Some users are still clocked in. Once you deactivate, they won’t be able to clock out from this kiosk."
+            },
+            "LAUNCH": {
+                "INFO": "Log out from Clockify and log in to",
+                "TITLE": "Launch kiosk"
+            },
+            "EDIT": {
+                "TITLE": "Edit kiosk"
+            },
+            "CREATE": {
+                "TITLE": "Create kiosk",
+                "NAME_PLACEHOLDER": "Enter name",
+                "INACTIVE_LABEL": "Kiosk created (inactive)"
+            },
+            "KIOSK_NAME_IN_USE": "Kiosk name already exists"
+        },
+        "TOASTER": {
+            "CREATE": {
+                "SUCCESS": "Kiosk created"
+            },
+            "EDIT": {
+                "SUCCESS": "Kiosk updated"
+            },
+            "DELETE": {
+                "SUCCESS": "Kiosk deleted"
+            },
+            "STATUS": {
+                "DEACTIVATED": {
+                    "SUCCESS": "Kiosk deactivated"
+                },
+                "ACTIVATED": {
+                    "SUCCESS": "Kiosk activated"
+                }
+            }
+        },
+        "CREATE": {
+            "INFO": "To launch kiosk, open its link in any browser.",
+            "FORM": {
+                "DURATION": {
+                    "LABEL": "Kiosk logs out after"
+                },
+                "REQUIRE_PIN": {
+                    "LABEL": "Requires PIN"
+                },
+                "UNIVERSAL_PIN": {
+                    "LABEL": "Universal PIN"
+                },
+                "FIND_USERS_OR_GROUPS": "Find users or groups..."
+            }
+        },
+        "PIN": {
+            "UPDATED": "PIN updated",
+            "UNAVAILABLE": "This PIN is not available"
+        },
+        "EDIT": {
+            "MEMBER": {
+                "PIN": "Edit kiosk PIN",
+                "EDIT_PIN": "Edit PIN"
+            }
+        },
+        "UPGRADE_MESSAGE": {
+            "PART_2": "to have more than one active kiosk"
+        },
+        "POPUP": {
+            "REQUIRE_PIN": {
+                "INFO": "Overrides anyone's PIN so you can clock in for them.",
+                "UPGRADE_INFO": "to require PIN"
+            },
+            "DURATION": {
+                "INFO": "to edit login duration"
+            }
+        },
+        "MEMBER": {
+            "PIN": {
+                "UPGRADE": {
+                    "ADMIN": "Member’s PIN isn’t unique. To make { name } an admin, edit kiosk PIN."
+                },
+                "DOWNGRADE": {
+                    "ADMIN": "To downgrade { name }’s role, edit kiosk PIN."
+                },
+                "ALREADY_IN_USE": "This PIN is already in use"
+            }
+        },
+        "DEFAULT_BREAK_PROJECT": "Default break project",
+        "DEFAULT_TASK": "Default task",
+        "DEFAULT_BREAK_TASK": "Default break task",
+        "DEFAULT_ENTITY": "Default { label }",
+        "DEFAULT_BREAK_ENTITY": "Default break { label }",
+        "EMPTY_TABLE_INFO": "No kiosks found",
+        "FILTER_EMPTY_TABLE_INFO": "No {value} kiosks.",
+        "SELECT_BREAK_PROJECT_LABEL": "Select break {projectLabel}",
+        "SELECT_BREAK_TASK_LABEL": "Select break {taskLabel}"
+    },
+    "UPGRADE": {
+        "SUCCESS": {
+            "MODAL": {
+                "TITLE": "Workspace upgraded!",
+                "TEXT": "Which { plan } features would you like to enable now?"
+            }
+        }
+    },
+    "NOTIFICATION": {
+        "TRIAL": {
+            "LINK": "How PRO features work"
+        }
+    },
+    "KIOSK_MEMBER_PIN_NOT_UNIQUE_1": "Member's PIN isn't unique.",
+    "KIOSK_MEMBER_PIN_NOT_UNIQUE_2": "To make",
+    "KIOSK_MEMBER_PIN_NOT_UNIQUE_3": "an admin",
+    "KIOSK_MEMBER_PIN_NOT_UNIQUE_4": "edit kiosk PIN",
+    "KIOSK_ADMIN_PIN_NOT_UNIQUE_1": "To downgrade",
+    "KIOSK_ADMIN_PIN_NOT_UNIQUE_2": "role",
+    "KIOSK_ADMIN_PIN_NOT_UNIQUE_3": "edit kiosk PIN",
+    "UPGRADE_PAGE": {
+        "TITLE": "Get more features",
+        "SUBTITLE": "Upgrade your { name } workspace to use advanced features.",
+        "TRIAL_MODAL": {
+            "TEXT": "Try out all the PRO features for free for 7 days!"
+        }
+    },
+    "GLOBALSTART": "start",
+    "GLOBAL_LIMITED_SEAT_LEFT": "limited seat left.",
+    "GLOBAL_LIMITED_SEATS_LEFT": "limited seats left.",
+    "GLOBAL_REGULAR_SEAT_LEFT": "seat left.",
+    "GLOBAL_REGULAR_SEATS_LEFT": "seats left.",
+    "GLOBAL_FULL_SEAT_LEFT": "full seat left.",
+    "GLOBAL_FULL_SEATS_LEFT": "full seats left.",
+    "PROMO": {
+        "SCHEDULING": {
+            "TITLE": "Schedule Employees & Projects",
+            "LIST": {
+                "FIRST": "Plan projects and milestones on a timeline",
+                "SECOND": "See who’s busy and who’s available at a glance",
+                "THIRD": "Assign who needs to work on what and when",
+                "FOURTH": "Publish assignments so people can see their schedule"
+            },
+            "LINK_TITLE": "How scheduling works"
+        },
+        "EXPENSES": {
+            "TITLE": "Track business expenses",
+            "LIST": {
+                "FIRST": "Track and categorize expenses",
+                "SECOND": "Record by price or unit (e.g. miles)",
+                "THIRD": "Attach and download receipts",
+                "FOURTH": "Approve and invoice expenses",
+                "FIFTH": "Include expenses in project budgets",
+                "SIXTH": "Run and export expense reports"
+            },
+            "LINK_TITLE": "How expenses work"
+        },
+        "TIME_OFF": {
+            "TITLE": "Manage leaves & holidays",
+            "LIST": {
+                "FIRST": "Create holidays and time off policies",
+                "SECOND": "Request leave and time off",
+                "THIRD": "See who has time off on a timeline",
+                "FOURTH": "See accrued, used, and available balance"
+            },
+            "LINK_TITLE": "How time off works"
+        },
+        "APPROVAL": {
+            "TITLE": "Formally approve timesheets",
+            "LIST": {
+                "FIRST": "Submit timesheets for approval",
+                "SECOND": "Remind people to submit timesheets",
+                "THIRD": "Allow managers to approve (or reject) timesheets",
+                "FOURTH": "Prevent changes to approved timesheets"
+            },
+            "LINK_TITLE": "How approval works"
+        },
+        "ACTIVITY": {
+            "TITLE": "Capture locations & screenshots",
+            "LOCATION": {
+                "LIST": {
+                    "FIRST": "Record location while the timer is running",
+                    "SECOND": "See who’s where currently on a map",
+                    "THIRD": "See all sites your team visited during the day"
+                },
+                "LINK_TITLE": "How GPS tracking works"
+            },
+            "SCREENSHOT": {
+                "LIST": {
+                    "FIRST": "Record screenshots every 5 min while the timer is running",
+                    "SECOND": "Remind yourself what you’ve worked on during the day",
+                    "THIRD": "See all the generated screenshots in one place"
+                },
+                "LINK_TITLE": "How screenshots work"
+            }
+        },
+        "INVOICING": {
+            "TITLE": "Create & manage invoices",
+            "LIST": {
+                "FIRST": "Create invoices from tracked time",
+                "SECOND": "Edit and customize invoices",
+                "THIRD": "Send invoices to clients and track their status",
+                "FOURTH": "Keep track of what was invoiced"
+            },
+            "LINK_TITLE": "How invoicing works"
+        }
+    },
+    "TRANSFER": {
+        "OWNERSHIP": {
+            "PIN": "Member’s PIN isn’t unique. To transfer ownership to { name }, edit kiosk PIN."
+        }
+    }
 }
