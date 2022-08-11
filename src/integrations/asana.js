@@ -33,18 +33,18 @@ setTimeout(() => {
                 },
                 container = $('.TaskPaneToolbarAnimation-row', elem),
                 description = () => mainTask ?? ""// descriptionSelector && !descriptionSelector.textContent.startsWith("Add more detail") //&& !!descriptionSelector.textContent
-            //? descriptionSelector.textContent : ""
-            ////: taskSelector
-            ////    ? taskSelector.textContent :
-            ////    "",
-            const tags = () => Array.from($$("div.TaskTagTokenPills span.TokenizerPillBase-name", elem)).map(e => e.innerText)
-            project = getProject()
-            link = clockifyButton.createButton({
-                description,
-                projectName: project ? project.textContent : null,
-                taskName,
-                tagNames: tags
-            });
+                    //? descriptionSelector.textContent : ""
+                    ////: taskSelector
+                    ////    ? taskSelector.textContent :
+                    ////    "",
+                const tags = () => Array.from($$("div.TaskTagTokenPills span.TokenizerPillBase-name", elem)).map(e => e.innerText)
+                project = getProject()
+                link = clockifyButton.createButton({
+                    description,
+                    projectName: project ? project.textContent : null,
+                    taskName,
+                    tagNames: tags
+                });
             link.style.marginLeft = "10px";
             container.appendChild(link);
 
