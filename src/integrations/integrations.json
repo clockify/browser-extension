@@ -131,6 +131,12 @@
     "script": "front.js",
     "clone": false
   },
+  "generic-integration": {
+    "name": "Generic Integration",
+    "link": "*://*/*",
+    "script": "generic-integration.js",
+    "clone": false
+  },
   "getflow.com": {
     "name": "Getflow",
     "link": "*://app.getflow.com/*",
