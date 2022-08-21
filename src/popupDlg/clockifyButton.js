@@ -10,7 +10,12 @@ var clockifyButton = {
     render: (selector, opts, renderer, mutationSelector) => {
         if (opts.observe) { 
             if (!clockifyButton.observer) {
-                clockifyButton.observer = new MutationObserver(clockifyDebounce(clockifyButton.callback, 1000));
+                if (opts.noDebounce) {
+                  clockifyButton.observer = new MutationObserver(clockifyButton.callback);
+                } else {
+                  clockifyButton.observer = new MutationObserver(clockifyDebounce(clockifyButton.callback, 1000));
+                }
+                
                 clockifyButton.observer.observe(
                     document,
                     {childList: true, subtree: true}
