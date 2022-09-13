@@ -383,6 +383,12 @@
     "script": "scoro.js",
     "clone": false
   },
+  "jetbrains.space": {
+    "name": "JetBrains Space",
+    "link": "*://*.jetbrains.space/*",
+    "script": "space.js",
+    "clone": false
+  },
   "sprint.ly": {
     "name": "Sprint",
     "link": "*://sprint.ly/*",
