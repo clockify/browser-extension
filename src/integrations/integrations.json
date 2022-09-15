@@ -82,7 +82,7 @@
     "link": "*://app.shortcut.com/*",
     "script": "clubhouse.js",
     "clone": false
-  },  
+  },
   "coda.io": {
     "name": "Coda",
     "link": "*://*.coda.io/*",
@@ -413,6 +413,12 @@
     "script": "teamwork.js",
     "clone": true
   },
+  "teamwave.com": {
+    "name": "Teamwave",
+    "link": "*://*.teamwave.com/*",
+    "script": "teamwave.js",
+    "clone": false
+  },
   "ticktick.com": {
     "name": "TickTick",
     "link": "*://*.ticktick.com/*",
@@ -523,12 +529,12 @@
   },
   "usepixie.net": {
     "name": "Pixie",
-    "link": "*://*.usepixie.net/*", 
+    "link": "*://*.usepixie.net/*",
     "script": "usepixie.js"
   },
   "pureworkflow.io": {
     "name": "Pureworkflow",
-    "link": "*://*.pureworkflow.io/*", 
+    "link": "*://*.pureworkflow.io/*",
     "script": "usepixie.js",
     "clone": true
   },
