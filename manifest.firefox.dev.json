@@ -66,10 +66,9 @@
   "web_accessible_resources" : [
     "assets/images/*.png",
     "assets/images/*.svg",
-	 "assets/images/ui-icons/*.svg"
+	  "assets/images/ui-icons/*.svg"
   ],   
   "permissions": [
-    "background",
     "contextMenus",
     "*://*.clockify.me/*",
     "*://*/",
