@@ -25,6 +25,21 @@ setTimeout(() => {
 
     });
 
+    /* List cards */
+    clockifyButton.render('.list-cards .list-card:not(.clockify)', {observe: true}, (elem) => {
+        elem.style.minHeight = '60px';
+        elem.style.paddingRight = '15px';
+        const root = $('div[id="trello-root"]');
+
+        const projectElem = $('.board-header-btn-text', root).textContent.trim();
+        const link = clockifyButton.createButton({description: () => $('.list-card-title', elem).innerText.trim(), projectName: projectElem, small: true});
+        link.style.position = 'absolute';
+        link.style.right = '2px';
+        link.style.bottom = '8px';
+        link.style.zIndex = '9999';
+        elem.prepend(link);
+    });
+
     /* Checklist buttons */
     clockifyButton.render('.checklist-item-details:not(.clockify)', {observe: true}, (elem) => {
         const root = $('div[id="trello-root"]');

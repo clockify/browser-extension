@@ -1,5 +1,6 @@
 try {
     importScripts(
+      "contentScripts/URLPatternHelper.js",
       "contentScripts/service-localstorage.js",
       "contentScripts/defaultProject.js",
       "contentScripts/service-background.js",

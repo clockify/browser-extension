@@ -1047,6 +1047,9 @@
   "EXTENSION__DISCARD_AND_CONTINUE": {
     "message": "Discard and continue"
   },
+  "EXTENSION__FOCUS_MODE": {
+    "message": "Focus mode"
+  },
   "EXTENSION__IDLE_TIME_DETECTED": {
     "message": "Idle time detected"
   },
@@ -1122,6 +1125,12 @@
   "GLOBAL__JOB_AREAS_LABEL": {
     "message": "Job areas"
   },
+  "GLOBAL__SUBSCRIPTION_EXPIRED": {
+    "message": "Your subscription has expired."
+  },
+  "GLOBAL__FEATURE_DISABLED_CONTACT_ADMIN": {
+    "message": "Feature disabled. Please contact your administrator for more information."
+  },
   "EXTENSION__START_TIMER_WITH_DESCRIPTION": {
     "message": "Start timer with description"
   },
@@ -1145,6 +1154,9 @@
   },
   "AUDIT_LOG__KIOSK__BREAK_TYPE_LABEL": {
     "message": "Break"
+  },
+  "EXTENSION__UPGRADE_TO_USE_THIS_FEATURE": {
+    "message": "Upgrade to use this feature"
   },
   "appName": {
     "message": "Clockify Time Tracker",

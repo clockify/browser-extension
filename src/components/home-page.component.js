@@ -5,7 +5,6 @@ import moment, {duration} from 'moment';
 import TimeEntryList from './time-entry-list.component';
 import TimeEntryListNotSynced from './time-entry-list-notsynced.component';
 import 'moment-duration-format';
-import * as ReactDOM from 'react-dom';
 import EditForm from './edit-form.component';
 import RequiredFields from './required-fields.component';
 import {isOffline} from "./check-connection";
@@ -17,7 +16,7 @@ import {WorkspaceService} from "../services/workspace-service";
 import {ProjectService} from "../services/project-service";
 import {getBrowser} from "../helpers/browser-helper";
 import {getWebSocketEventsEnums} from "../enums/web-socket-events.enum";
-//import {WebSocketClient} from "../web-socket/web-socket-client";
+import CountdownTimer from "./countdown-timer.component";
 import {LocalStorageService} from "../services/localStorage-service";
 import {getWorkspacePermissionsEnums} from "../enums/workspace-permissions.enum";
 import {getLocalStorageEnums} from "../enums/local-storage.enum";
@@ -30,6 +29,7 @@ import {UserService} from "../services/user-service";
 import {offlineStorage} from '../helpers/offlineStorage';
 import locales from "../helpers/locales";
 import {toDecimalFormat} from "../helpers/time.helper";
+
 
 const projectService = new ProjectService();
 const userService = new UserService();
@@ -87,7 +87,7 @@ class HomePage extends React.Component {
                 projectPickerSpecialFilter : false,
                 forceProjects: false
             },
-            features: [],
+            features: null,
             mode: 'timer',
             manualModeDisabled: false,
             pullToRefresh: false,
@@ -96,10 +96,14 @@ class HomePage extends React.Component {
             userSettings: {},
             durationMap: {},
             weekStatusMap: {},
-            isUserOwnerOrAdmin: false,
+            isUserOwnerOrAdmin: null,
             isOffline: null,
             lang: 'en',
-            weeks: []
+            weeks: [],
+            pomodoroTimeInterval: 5,
+            pomodoroShortBreak: 5,
+            pomodoroLongBreak: 15,
+            wasRegionalEverAllowed: null
         };
 
         this.application = new Application();
@@ -219,10 +223,29 @@ class HomePage extends React.Component {
                 this.setState({activeWorkspaceId});
             }
         }).catch(error => console.log(error));
+        
+        this.getPomodoroForUser().then(pomodoroForUser => {
+            if(!pomodoroForUser) return;
+            if (pomodoroForUser.enabled !== this.state.pomodoroEnabled) {
+                this.setState({pomodoroEnabled: pomodoroForUser.enabled});
+            }
+            if (pomodoroForUser.isFocusModeEnabled !== this.state.isFocusModeEnabled) {
+                this.setState({isFocusModeEnabled: pomodoroForUser.isFocusModeEnabled});
+            }
+            if (pomodoroForUser.timerInterval && pomodoroForUser.timerInterval !== this.state.pomodoroTimeInterval) {
+                this.setState({pomodoroTimeInterval: pomodoroForUser.timerInterval});
+            }
+            if (pomodoroForUser.shortBreak && pomodoroForUser.shortBreak !== this.state.pomodoroShortBreak) {
+                this.setState({pomodoroShortBreak: pomodoroForUser.shortBreak});
+            }
+            if (pomodoroForUser.longBreak && pomodoroForUser.longBreak !== this.state.pomodoroLongBreak) {
+                this.setState({pomodoroLongBreak: pomodoroForUser.longBreak});
+            }
+        })
     }
 
     async initialJob() {
-        const receiveOfflineEventsName = await localStorageService.get(_receiveOfflineEventsName, 'false');
+        // const receiveOfflineEventsName = await localStorageService.get(_receiveOfflineEventsName, 'false');
         const isOnline = !(await isOffline());
         // if ( receiveOfflineEventsName !== 'true') {
         //     this.log('=> polling offline mode')
@@ -578,24 +601,27 @@ class HomePage extends React.Component {
         }
 
         return workspaceService.getWorkspaceSettings()
-            .then(response => {
+            .then(async response => {
                 let { workspaceSettings, features } = response.data;
                 workspaceSettings.projectPickerSpecialFilter = this.state.userSettings.projectPickerTaskFilter;
                 if (!workspaceSettings.hasOwnProperty('timeTrackingMode')) {
                     workspaceSettings.timeTrackingMode = getManualTrackingModeEnums().DEFAULT;
                 }
                 const manualModeDisabled = workspaceSettings.timeTrackingMode === getManualTrackingModeEnums().STOPWATCH_ONLY;
+                const wasRegionalEverAllowed = await workspaceService.getWasRegionalEverAllowed();
                 this.setState({
                     workspaceSettings,
                     features,
                     manualModeDisabled,
                     mode: manualModeDisabled ? 'timer' : this.state.mode,
+                    wasRegionalEverAllowed
                 }, () => {
                     localStorageService.set('mode', this.state.mode); // for usage in edit-forms
                     localStorageService.set('manualModeDisabled', JSON.stringify(this.state.manualModeDisabled)); // for usage in header
-                    workspaceSettings = Object.assign(workspaceSettings, { 
+                    workspaceSettings = Object.assign({}, workspaceSettings, { 
                         features: { 
-                            customFields: features.some(feature => feature === "CUSTOM_FIELDS")
+                            customFields: features?.includes('CUSTOM_FIELDS'),
+                            timeTracking: features?.includes('TIME_TRACKING')
                         }
                     });
                     localStorageService.set("workspaceSettings",  JSON.stringify(workspaceSettings));
@@ -993,7 +1019,7 @@ class HomePage extends React.Component {
                 const { projectId, billable, task, description, tags } = timeEntry;
                 const taskId = task ? task.id : null;
                 const tagIds = tags ? tags.map(tag => tag.id) : [];
-                const { customFieldValues } = offlineStorage;
+                const { customFieldValues } = timeEntry;
 
                 const cfs = customFieldValues && customFieldValues.length > 0
                                 ? customFieldValues.filter(cf => cf.customFieldDto.status === 'VISIBLE').map(({type, customFieldId, value}) => ({ 
@@ -1015,17 +1041,15 @@ class HomePage extends React.Component {
                 ).then(response => {
                     let data = response.data;
                     this.start.getTimeEntryInProgress();
-                    // getBrowser().extension.getBackgroundPage().addIdleListenerIfIdleIsEnabled();
                     getBrowser().runtime.sendMessage({
                         eventName: 'addIdleListenerIfIdleIsEnabled'
                     });
-                    // getBrowser().extension.getBackgroundPage().addPomodoroTimer();
-                    getBrowser().runtime.sendMessage({
-                        eventName: 'pomodoroTimer'
-                    });
-                    // getBrowser().extension.getBackgroundPage().setTimeEntryInProgress(data);
                     localStorage.setItem('timeEntryInProgress', data);
                     this.application.setIcon(getIconStatus().timeEntryStarted);
+
+                    getBrowser().runtime.sendMessage({
+                        eventName: 'addPomodoroTimer'
+                    });
                 }).catch(() => {});
             }
         }
@@ -1133,23 +1157,51 @@ class HomePage extends React.Component {
         });
     }
 
+    async getPomodoroForUser() {
+        const userId = await localStorage.getItem('userId');
+        const permanent_pomodoro = await localStorage.getItem('permanent_pomodoro');
+        return permanent_pomodoro 
+            ? JSON.parse(permanent_pomodoro).find(item => item.userId === userId)
+            : null;
+    }
+
     render() {        
-        const {activeWorkspaceId} = this.state;
-        const timeEntriesOffline = offlineStorage.timeEntriesOffline
-                .filter(timeEntry => !timeEntry.workspaceId || timeEntry.workspaceId === activeWorkspaceId);
         const { inProgress, isOffline, mode, 
+                ready,
+                activeWorkspaceId,
+                isFocusModeEnabled,
                 workspaceSettings,
                 features,
                 timeEntries, 
                 userSettings, 
                 manualModeDisabled,
-                isUserOwnerOrAdmin, pullToRefresh, dates, weeks } = this.state;
+                isUserOwnerOrAdmin, pullToRefresh, dates, weeks,
+                pomodoroTimeInterval,
+                pomodoroShortBreak,
+                pomodoroLongBreak,
+                pomodoroEnabled,
+                wasRegionalEverAllowed
+            } = this.state;
+
+        const timeEntriesOffline = offlineStorage.timeEntriesOffline
+                .filter(timeEntry => !timeEntry.workspaceId || timeEntry.workspaceId === activeWorkspaceId);
+
+        const isTrackingDisabled = ready && isUserOwnerOrAdmin !== null && features && !features.includes('TIME_TRACKING');
         return (
             <div className="home_page">
                 {_withLogger &&
                     <Logger ref={this.loggerRef} />
                 }
+
+                { isTrackingDisabled && 
+                    <div className="clockify-subscription-expired-overlay">
+                    </div>
+                }
                 <div className="header_and_timer">
+                    { isTrackingDisabled && 
+                        <div className="clockify-subscription-expired-overlay">
+                        </div>
+                    }
                     <Header 
                             ref={instance => {this.header = instance}}
                             showActions={true}
@@ -1166,7 +1218,14 @@ class HomePage extends React.Component {
                             mode={mode}
                             manualModeDisabled={manualModeDisabled}
                             clearEntries={this.clearEntries}
+                            isTrackingDisabled={isTrackingDisabled}
                     />
+                    { isTrackingDisabled && 
+                        <div className="clockify-subscription-expired-message">
+                            <img src="../assets/images/warning_24px.png" />
+                            <p>{!wasRegionalEverAllowed ? locales.UPGRADE_TO_USE_THIS_FEATURE : isUserOwnerOrAdmin ? locales.SUBSCRIPTION_EXPIRED : locales.FEATURE_DISABLED_CONTACT_ADMIN}</p>
+                        </div>
+                    }
                     <Toaster
                         ref={instance => {this.toaster = instance}}
                     />
@@ -1192,7 +1251,7 @@ class HomePage extends React.Component {
                 <div className={!isOffline && 
                                 timeEntriesOffline && 
                                 timeEntriesOffline.length > 0 ? "" : "disabled"}>
-                    {!isOffline && 
+                    {!isOffline && !(pomodoroEnabled && isFocusModeEnabled && inProgress) &&
                         <TimeEntryListNotSynced
                             timeEntries={timeEntriesOffline}
                             pullToRefresh={pullToRefresh}
@@ -1206,6 +1265,15 @@ class HomePage extends React.Component {
                         />
                     }
                 </div>
+                {pomodoroEnabled && isFocusModeEnabled && inProgress ?
+                <div>
+                    <CountdownTimer 
+                        interval={inProgress.description === 'Pomodoro break' ? pomodoroShortBreak : inProgress.description === 'Pomodoro long break' ? pomodoroLongBreak : pomodoroTimeInterval}
+                        currentTime={inProgress?.timeInterval?.start ? moment(inProgress.timeInterval.start) : moment()}
+                        isBreak={inProgress.description === 'Pomodoro break' || inProgress.description === 'Pomodoro long break' }
+                    />
+                </div>
+                :
                 <div className={(timeEntries.length===0 ? "time-entry-list__offline" : "time-entry-list")}>
                     <TimeEntryList
                         timeEntries={timeEntries}
@@ -1224,7 +1292,7 @@ class HomePage extends React.Component {
                         isUserOwnerOrAdmin={isUserOwnerOrAdmin}
                         manualModeDisabled={this.state.manualModeDisabled}
                     />
-                </div>
+                </div>}
             </div>
         )
     }

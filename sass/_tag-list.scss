@@ -138,6 +138,13 @@
     &--border {
       position: relative;
     }
+    .tag-list-filter {
+      &:focus {
+        outline: none;
+        border: 2px solid #0f3beb;
+        border-radius: 5px;
+      }
+    }
   }
   &-load {
     text-align: center;
@@ -180,11 +187,11 @@
   &-checked {
     margin-top: 2px;
     margin-left: 1px;
-    content: url("../assets/images/checked.png");
+    // content: url("../assets/images/checked.png");
     &-hidden {
       margin-top: 2px;
       margin-left: 1px;
-      content: url("../assets/images/checked.png");
+      // content: url("../assets/images/checked.png");
       visibility: hidden;
     }
   }
@@ -196,7 +203,7 @@
   }
   &-item {
     font-size: 14px;
-    line-height: 16px;
+    // line-height: 16px;
     margin-left: 10px;
     color: variables.$middle_light_text;
     &-row {
@@ -205,6 +212,7 @@
       text-overflow: ellipsis;
       overflow: hidden;
       white-space: nowrap;
+      line-height: 1;
       &:hover {
         background-color: variables.$entries_header;
       }
@@ -229,12 +237,12 @@
       height: 19px;
       margin-right: 7px;
       margin-left: 10px;
-      content: url("/assets/images/create.png");
+      // content: url("/assets/images/create.png");
     }
     &--text {
       color: variables.$blue;
       font-size: 14px;
-      line-height: 16px;
+      // line-height: 16px;
     }
   }
   &__bottom-padding {
@@ -288,7 +296,7 @@
       margin-top: 20px;
       margin-left: 20px;
       font-size: 18px;
-      line-height: 21px;
+      // line-height: 21px;
       color: variables.$middle_light_text;
     }
     &--tag-name {
@@ -301,6 +309,11 @@
       &::placeholder {
         color: variables.$lighter_text;
       }
+      &:focus {
+        outline: none;
+        border: 2px solid #0f3beb;
+        border-radius: 5px;
+      }
     }
     &--confirmation_button {
       margin-bottom: 20px;
@@ -311,14 +324,14 @@
       background: variables.$blue;
       color: variables.$input-background;
       font-size: 14px;
-      line-height: 16px;
+      // line-height: 16px;
       text-transform: uppercase;
       cursor: pointer;
     }
 
     &--cancel {
       font-size: 14px;
-      line-height: 16px;
+      // line-height: 16px;
       color: variables.$blue;
       cursor: pointer;
     }

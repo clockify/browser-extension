@@ -811,7 +811,7 @@
     "message": "Если вы используете инструмент, размещенный в личном домене, вы можете включить его здесь"
   },
   "EXTENSION__ENTER_TIME": {
-    "message": "Введите время (например, 1,5)"
+    "message": "Введите время (нпр. 1,5)"
   },
   "EXTENSION__ENTRY_MODE": {
     "message": "Режим входа"
@@ -1047,6 +1047,9 @@
   "EXTENSION__DISCARD_AND_CONTINUE": {
     "message": "Отменить и продолжить"
   },
+  "EXTENSION__FOCUS_MODE": {
+    "message": "Режим фокусировки"
+  },
   "EXTENSION__IDLE_TIME_DETECTED": {
     "message": "Обнаружено время простоя"
   },
@@ -1122,6 +1125,12 @@
   "GLOBAL__JOB_AREAS_LABEL": {
     "message": "Области работы"
   },
+  "GLOBAL__SUBSCRIPTION_EXPIRED": {
+    "message": "Срок действия вашей подписки истек."
+  },
+  "GLOBAL__FEATURE_DISABLED_CONTACT_ADMIN": {
+    "message": "Функция отключена. Пожалуйста, свяжитесь с вашим администратором для получения дополнительной информации."
+  },
   "EXTENSION__START_TIMER_WITH_DESCRIPTION": {
     "message": "Таймер запуска с описанием"
   },
@@ -1145,6 +1154,9 @@
   },
   "AUDIT_LOG__KIOSK__BREAK_TYPE_LABEL": {
     "message": "Перерыв"
+  },
+  "EXTENSION__UPGRADE_TO_USE_THIS_FEATURE": {
+    "message": "Обновите, чтобы использовать эту функцию"
   },
   "appName": {
     "message": "Clockify Отслеживание времени",

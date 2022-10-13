@@ -1,21 +1,21 @@
 var aBrowser = chrome || browser;
 var _clockifyPopupDlg;
 var _waitingForResponse = false;
-
+removeAllButtons();
 var clockifyButton = {
     links: [],
     observer: null,
     titleObserver: null,
     inProgressDescription: "",
+    nextIndex: 0,
     render: (selector, opts, renderer, mutationSelector) => {
         if (opts.observe) { 
             if (!clockifyButton.observer) {
                 if (opts.noDebounce) {
-                  clockifyButton.observer = new MutationObserver(clockifyButton.callback);
-                } else {
-                  clockifyButton.observer = new MutationObserver(clockifyDebounce(clockifyButton.callback, 1000));
-                }
-                
+                    clockifyButton.observer = new MutationObserver(clockifyButton.callback);
+                  } else {
+                    clockifyButton.observer = new MutationObserver(clockifyDebounce(clockifyButton.callback, 1000));
+                  }               
                 clockifyButton.observer.observe(
                     document,
                     {childList: true, subtree: true}
@@ -23,16 +23,14 @@ var clockifyButton = {
             }
             clockifyButton.allSelectors.push({selector, renderer, mutationSelector})
         }
-        // else {
-            // console.log('RENDER ELSE');
-            clockifyButton.renderTo(selector, renderer);
-        // }
+        clockifyButton.renderTo(selector, renderer); 
     },
     renderTo: (selector, renderer) => {
         const elements = document.querySelectorAll(selector);
         if (elements && elements.length > 0) {
             for (let i = 0; i < elements.length; i++) {
                 elements[i].classList.add('clockify');
+                elements[i].classList.add('clockifyId' + i);
                 renderer(elements[i]);
             }
         }
@@ -55,27 +53,30 @@ var clockifyButton = {
     },
 
     disconnectObserver: () => {
-        clockifyButton.observer.disconnect()
-        clockifyButton.titleObserver.disconnect()
+        clockifyButton.observer?.disconnect()
+        clockifyButton.titleObserver?.disconnect()
     },
 
-    createButton: (description, project, task, canClose) => {
+    createButton: (description, project, task) => {
+       
+        // const allContainers = document.querySelectorAll('.clockifyButton');
+        // if (allContainers.length < clockifyButton.nextIndex) {
+        //     clockifyButton.nextIndex = allContainers.length;            
+        // } else {
+        //     clockifyButton.nextIndex = 0;
+        // }
+
+        const currIndex = clockifyButton.nextIndex++;
+        
+        window.updateButtonProperties({newRoot: true, buttonId: currIndex}, {isPopupOpen: false});
+        
         const options = objectFromParams(description, project, task);
-        const button = document.createElement('a');
+        clockifyButton.options = options;
+        const button = document.createElement('div');
         if (invokeIfFunction(options.small)) {
             button.classList.add('small');
         }
 
-        if (options.observeTitle) {
-            clockifyButton.titleObserver = new MutationObserver(clockifyDebounce(() => {
-                const title = options.observeTitle.value || options.observeTitle.innerText;
-                const active = button.title === clockifyButton.inProgressDescription;
-
-                setButtonProperties(button, title, active);
-            }, 600));
-            clockifyButton.titleObserver.observe(options.observeTitle,
-                {characterData: true, subtree: true});
-        }
         const title = invokeIfFunction(options.description);
         aBrowser.storage.local.get(["timeEntryInProgress"], (result) => {
             const entry = result.timeEntryInProgress;
@@ -90,21 +91,25 @@ var clockifyButton = {
             }
 
             let active = title && title === clockifyButton.inProgressDescription;
-            setButtonProperties(button, title, active);
-            
-            if (options.canClose)
-                button.canClose = options.canClose;
+            setButtonProperties(button, title, active, currIndex);
 
-            this.setClockifyButtonLinks(button)
+            this.setClockifyButtonLinks(button);
+            window.updateButtonProperties({
+                options, 
+                title, 
+                active, 
+                small: !!options.small,
+                buttonId: currIndex
+            }, {
+                inProgressDescription: clockifyButton.inProgressDescription, 
+            });
         });
     
-        button.addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (button.canClose && !button.canClose())
-                return;
-            this.buttonClicked(button, options)
-        });
-        
+        // button.addEventListener('click', (e) => {
+        //     e.stopPropagation();
+        //     this.buttonClicked(button, options)
+        // });
+
         return button;
     },
 
@@ -127,18 +132,27 @@ var clockifyButton = {
         aBrowser.storage.local.get(["workspaceSettings"], (result) => {
             result = JSON.parse(result.workspaceSettings);
             if(result.timeTrackingMode === "STOPWATCH_ONLY"){
-                    form.style.display = "none";
-                    const manualInputBackgroundTrello = $(".input-button-link");
-                    if(manualInputBackgroundTrello) manualInputBackgroundTrello.style.display = "none";    
-                }else{
-                    form.style.display = "inline-block";
-                    const manualInputBackgroundTrello = $(".input-button-link");
-                    if(manualInputBackgroundTrello) manualInputBackgroundTrello.style.display = "inline-block";    
-                }
+                form.style.display = "none";
+                const manualInputBackgroundTrello = $(".input-button-link");
+                if(manualInputBackgroundTrello) manualInputBackgroundTrello.style.display = "none";    
+            }else{
+                form.style.display = "inline-block";
+                const manualInputBackgroundTrello = $(".input-button-link");
+                if(manualInputBackgroundTrello) manualInputBackgroundTrello.style.display = "inline-block";    
+            }
             }
         )
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            let workspaceSettings = await localStorage.getItem('workspaceSettings');
+            workspaceSettings = JSON.parse(workspaceSettings);
+            if (!workspaceSettings?.features?.timeTracking) {
+                const isUserOwnerOrAdmin = await localStorage.getItem('isUserOwnerOrAdmin');
+                const wasRegionalEverAllowed = await localStorage.getItem('wasRegionalEverAllowed');
+                alert(!wasRegionalEverAllowed ? clockifyLocales.UPGRADE_TO_USE_THIS_FEATURE : isUserOwnerOrAdmin ? clockifyLocales.SUBSCRIPTION_EXPIRED : clockifyLocales.FEATURE_DISABLED_CONTACT_ADMIN);
+                return;
+            }
 
-        form.onsubmit = (a) => {
             //remove form if force timer enabled
             // format options so that if a function is passed we get its return value 
             // as part of the options objects key value pairs
@@ -163,12 +177,16 @@ var clockifyButton = {
                                             ...timeEntryOptionsInvoked, 
                                             totalMins,
                                             originalInput : time,
-                                            projectId : response.project?.id, 
+                                            projectId : !response.task?.id && wsSettings.forceTasks ? null : response.project?.id, 
                                             taskId: response.task?.id,
                                             billable : response.project?.billable,
-                                            tags: response?.tags
+                                            tags: response.tags,
+                                            tagIds: response.tags?.map(tag => tag.id) ?? [],
+                                            project: response.project,
+                                            task: response.task
                                         }
-                                        OpenPostStartPopupDlg(timeEntry, "", true);
+                                        // OpenPostStartPopupDlg(timeEntry, "", true);
+                                        window.updateButtonProperties(null, {timeEntry, manualMode: true, isPopupOpen: true});
                                         input.value = "";
                                     })
                                 }else{
@@ -182,8 +200,11 @@ var clockifyButton = {
                                             projectId : response.projectDB?.id, 
                                             taskId: response.taskDB?.id,
                                             billable : response.projectDB?.billable,
+                                            project: response.projectDB,
+                                            task: response.taskDB
                                         }
-                                        OpenPostStartPopupDlg(timeEntry, "", true);
+                                        // OpenPostStartPopupDlg(timeEntry, "", true);
+                                        window.updateButtonProperties(null, {timeEntry, manualMode: true, isPopupOpen: true});
                                         input.value = "";
                                     });
                                 }    
@@ -222,17 +243,16 @@ var clockifyButton = {
                                 });
                             }
                         })
-                } else {
-                    inputMessage(input, "Format: 1d 2h 30m", "error");
+                    } else {
+                        inputMessage(input, "Format: 1d 2h 30m", "error");
+                    }
+                } catch (e) {
+                    console.error(e);
                 }
-            } catch (e) {
-                console.error(e);
-            }
-
-            // don't reload the page
-            return false;
-        };
-
+    
+                // don't reload the page
+                return false;
+            };
         return form;
     }
 };
@@ -307,41 +327,52 @@ function inputMessage(input, msg, type, clearInput = false) {
     }, 1500);
 }
 
-function setButtonProperties(button, title, active) {
-    while(button.firstChild) {
-        button.removeChild(button.firstChild)
-    }
+function setButtonProperties(button, title, active, buttonId = 0) {
+    // while(button.firstChild) {
+    //     button.removeChild(button.firstChild)
+    // }
     
-    const span = document.createElement('span');
+    // const span = document.createElement('span');
     button.title = title;
+    button.classList.add('clockifyButton');
+    button.classList.add('clockifyButtonId' + buttonId);
     
     if (active) {
-        button.classList.remove('clockify-button-inactive');
-        button.classList.add('clockify-button-active');
-        button.innerHTML = getActiveIcon();
+        // button.classList.remove('clockify-button-inactive');
+        // button.classList.add('clockify-button-active');
+        // button.innerHTML = getActiveIcon();
         if (!button.classList.contains('small')) {
-            span.innerHTML = clockifyLocales.STOP_TIMER;
-            span.classList.remove('clockify-button-inactive-span');
-            span.classList.add('clockify-button-active-span');
-            button.appendChild(span);
+            // span.innerHTML = clockifyLocales.STOP_TIMER;
+            // span.classList.remove('clockify-button-inactive-span');
+            // span.classList.add('clockify-button-active-span');
+            // button.appendChild(span);
             button.setAttribute('id', 'clockifyButton');
         } else {
             button.setAttribute('id', 'clockifySmallButton');
         }
     } else {
-        button.classList.remove('clockify-button-active');
-        button.classList.add('clockify-button-inactive');
-        button.innerHTML = getInactiveIcon();
+        // button.classList.remove('clockify-button-active');
+        // button.classList.add('clockify-button-inactive');
+        // button.innerHTML = getInactiveIcon();
         if (!button.classList.contains('small')) {
-            span.innerHTML = clockifyLocales.START_TIMER;
-            span.classList.remove('clockify-button-active-span');
-            span.classList.add('clockify-button-inactive-span');
-            button.appendChild(span);
+            // span.innerHTML = clockifyLocales.START_TIMER;
+            // span.classList.remove('clockify-button-active-span');
+            // span.classList.add('clockify-button-inactive-span');
+            // button.appendChild(span);
             button.setAttribute('id', 'clockifyButton');
         } else {
             button.setAttribute('id', 'clockifySmallButton');
         }
     }
+
+    window.updateButtonProperties({ 
+        title, 
+        active, 
+        small: button.classList.contains('small'),
+        buttonId
+    }, {
+        inProgressDescription: clockifyButton.inProgressDescription
+    });
 }
 
 function updateButtonState(entry) {
@@ -353,8 +384,10 @@ function updateButtonState(entry) {
 
     for (let i = 0; i < document.clockifyButtonLinks.length; i++) {
         button = document.clockifyButtonLinks[i];
-        const active = entry && button.title === entry.description;
-        this.setButtonProperties(button, button.title, active);
+        const buttonId = button.className.match(/clockifyButtonId(\d+)/)[1];
+        const title = button.title || button.dataset.title; // fix for Zoho Desk bug with disappearing title atributte
+        const active = entry && title === entry.description;
+        this.setButtonProperties(button, title, active, buttonId);
         if (button.onEntryChanged)
             button.onEntryChanged(entry);
     }
@@ -362,7 +395,7 @@ function updateButtonState(entry) {
 }
 
 async function hideClockifyButtonLinks() {
-    const styles = '#clockifyButton{ display: none; }';
+    const styles = '#clockifyButton,#clockify-manual-input-form{ display: none !important; }';
     const styleSheet = document.createElement("style");
     styleSheet.innerText = styles;
     document.head.appendChild(styleSheet);
@@ -373,251 +406,225 @@ function setClockifyButtonLinks(button) {
     document.clockifyButtonLinks.push(button)
 }
 
-function buttonClicked(button,  options) {
-    if (_waitingForResponse) {
-        return;
-    }
-    const timeEntryOptionsInvoked = objInvokeIfFunction(options);
-    const title = button.title || timeEntryOptionsInvoked.description;
+// function buttonClicked(button,  options) {
+//     if (_waitingForResponse) {
+//         return;
+//     }
+//     const timeEntryOptionsInvoked = objInvokeIfFunction(options);
+//     const title = button.title || timeEntryOptionsInvoked.description;
 
-    _waitingForResponse = true;
-    try {
-        if (title === clockifyButton.inProgressDescription) {
-            aBrowser.runtime.sendMessage({
-                eventName: 'endInProgress'
-            }, (response) => {
-                if (!response) {
-                    _waitingForResponse = false;
-                    alert(clockifyLocales.YOU_MUST_BE_LOGGED_IN_TO_START);
-                    // this.hideClockifyButtonLinks();
-                    return;
-                }
-                else if (typeof response === 'string') {
-                    //alert("ClockifyService is temporarily unavailable.");
-                    _waitingForResponse = false;
-                    alert(response);
-                    return;
-                }
-                if (response.status === 400) {
-                    //const msg = "Can't end entry without project, task, description or tags. Please edit your time entry.";
-                    const msg = clockifyLocales.CANNOT_END_ENTRY;
-                    if (_clockifyShowPostStartPopup) {
-                        // aBrowser.storage.local.get(["timeEntryInProgress"], (result) => {
-                        //     const {timeEntryInProgress} = result;
-                        //     if (timeEntryInProgress) {
-                        //         if (!_clockifyPopupDlg) {
-                        //             OpenPostStartPopupDlg(timeEntryInProgress, msg);
-                        //         } 
-                        //         else {
-                        //             alert(msg)
-                        //         }
-                        //     }
-                        //     else {
-                        //         alert('Please, enter required fields and end current Entry!')
-                        //     }
-                        //     _waitingForResponse = false;
-                        // });
+//     _waitingForResponse = true;
+//     try {
+//         if (title === clockifyButton.inProgressDescription) {
+//             aBrowser.runtime.sendMessage({
+//                 eventName: 'endInProgress'
+//             }, (response) => {
+//                 if (!response) {
+//                     _waitingForResponse = false;
+//                     alert(clockifyLocales.YOU_MUST_BE_LOGGED_IN_TO_START);
+//                     // this.hideClockifyButtonLinks();
+//                     return;
+//                 }
+//                 else if (typeof response === 'string') {
+//                     //alert("ClockifyService is temporarily unavailable.");
+//                     _waitingForResponse = false;
+//                     alert(response);
+//                     return;
+//                 }
+//                 if (response.status === 400) {
+//                     const msg = clockifyLocales.CANNOT_END_ENTRY;
+//                     if (_clockifyShowPostStartPopup) {
 
-                        aBrowser.runtime.sendMessage({
-                            eventName: 'fetchEntryInProgress'  
-                        }, (response) => {
-                            if (!response) {
-                                alert(clockifyLocales.TAG__GET__ERROR);
-                                _waitingForResponse = false;
-                                return;
-                            }
-                            if (typeof response === 'string') {
-                                alert(response);
-                                _waitingForResponse = false;
-                                return;
-                            }
-                            const { status, entry: hydratedEntry } = response;
-                            //entry.tags = [...hydratedEntry.tags]
-                            aBrowser.storage.local.set({
-                                timeEntryInProgress: hydratedEntry
-                            });
-                            if (hydratedEntry) {
-                                if (!_clockifyPopupDlg) {
-                                    OpenPostStartPopupDlg(hydratedEntry, msg);
-                                } 
-                                else {
-                                    alert(msg)
-                                }
-                            }
-                            else {
-                                //alert('Please, enter required fields and end current Entry!')
-                            }                           
-                            _waitingForResponse = false;
-                        });
-                    }
-                    else {
-                        _waitingForResponse = false;
-                        alert(msg);
-                    }
-                } else {
-                    clockifyButton.inProgressDescription = null;
-                    active = false;
-                    setButtonProperties(button, title, active);
-                    aBrowser.storage.local.set({
-                        timeEntryInProgress: null
-                    });
-                    _waitingForResponse = false;
-                }
-            });    
-        } 
-        else {
-            if (timeEntryOptionsInvoked.description === "") {
-                alert(clockifyLocales.ENTER_DESCRIPTION);
-                _waitingForResponse = false; // ?
-                return;
-            }
-            aBrowser.runtime.sendMessage({
-                eventName: 'startWithDescription',
-                timeEntryOptions: timeEntryOptionsInvoked
-            }, (response) => {
-                if (!response) {
-                    _waitingForResponse = false;
-                    alert(clockifyLocales.YOU_MUST_BE_LOGGED_IN_TO_START);
-                    // this.hideClockifyButtonLinks();
-                    return;
-                }
-                else if (typeof response === 'string') {
-                    _waitingForResponse = false;
-                    alert(response);
-                    return;
-                }
-                if (response.status === 400) {
-                    if (_clockifyShowPostStartPopup) {
-                        const msg = `${clockifyLocales.COMPLETE_CURRENT_ENTRY}!<br/>${clockifyLocales.ENTER_REQUIRED_FIEEDS_OR_EDIT_WORKSPACE_SETTINGS}`;
-                        aBrowser.storage.local.get(["timeEntryInProgress"], (result) => {
-                            const {timeEntryInProgress} = result;
-                            if (timeEntryInProgress) {
-                                if (!_clockifyPopupDlg) {
-                                    OpenPostStartPopupDlg(timeEntryInProgress, msg);
-                                }
-                            }
-                            else {
-                                alert(msg.replaceAll('<br/>', '\n'));
-                            }
-                            _waitingForResponse = false;
-                        });
-                    }
-                    else {
-                        // const msg = "Can't start entry without project, task, description or tags. Please edit your time entry. Please create your time entry using the dashboard or edit your workspace settings.";
-                        msg = clockifyLocales.CANNOT_START_ENTRY_WITHOUT_PROJECT +
-                        ". " + clockifyLocales.EDIT_YOUR_TIME_ENTRY + 
-                        ". " + clockifyLocales.CREATE_TIME_ENTRY_USING_DASHBOARD + ".";
-                        alert(msg);
-                        _waitingForResponse = false;
-                    }
-                } 
-                else {
-                    let doNow = true;
-                    active = true;
-                    setButtonProperties(button, title, active);
-                    clockifyButton.inProgressDescription = title;
-                    const entry = response.data;
-                    const {tagNames} = timeEntryOptionsInvoked;
-                    if (tagNames && tagNames.length > 0 && entry.tags.length > 0) {
-                        doNow = false;
-                        aBrowser.runtime.sendMessage({
-                            eventName: 'fetchEntryInProgress'  
-                        }, (response) => {
-                            if (!response) {
-                                alert(clockifyLocales.TAG__GET__ERROR);
-                                _waitingForResponse = false;
-                                return;
-                            }
-                            if (typeof response === 'string') {
-                                alert(response);
-                                _waitingForResponse = false;
-                                return;
-                            }
-                            const { status, entry: hydratedEntry } = response;
-                            entry.tags = [...hydratedEntry.tags]
-                            doTheJob(entry) // hydrated
-                            _waitingForResponse = false;
-                        });
-                    }                    
+//                         aBrowser.runtime.sendMessage({
+//                             eventName: 'fetchEntryInProgress'  
+//                         }, (response) => {
+//                             if (!response) {
+//                                 alert(clockifyLocales.TAG__GET__ERROR);
+//                                 _waitingForResponse = false;
+//                                 return;
+//                             }
+//                             if (typeof response === 'string') {
+//                                 alert(response);
+//                                 _waitingForResponse = false;
+//                                 return;
+//                             }
+//                             const { status, entry: hydratedEntry } = response;
+                            
+//                             aBrowser.storage.local.set({
+//                                 timeEntryInProgress: hydratedEntry
+//                             });
+//                             if (hydratedEntry) {
+//                                 if (!_clockifyPopupDlg) {
+//                                     OpenPostStartPopupDlg(hydratedEntry, msg);
+//                                 } 
+//                                 else {
+//                                     alert(msg)
+//                                 }
+//                             }                          
+//                             _waitingForResponse = false;
+//                         });
+//                     }
+//                     else {
+//                         _waitingForResponse = false;
+//                         alert(msg);
+//                     }
+//                 } else {
+//                     clockifyButton.inProgressDescription = null;
+//                     active = false;
+//                     setButtonProperties(button, title, active);
+//                     aBrowser.storage.local.set({
+//                         timeEntryInProgress: null
+//                     });
+//                     _waitingForResponse = false;
+//                 }
+//             });    
+//         } 
+//         else {
+//             if (timeEntryOptionsInvoked.description === "") {
+//                 alert(clockifyLocales.ENTER_DESCRIPTION);
+//                 _waitingForResponse = false; // ?
+//                 return;
+//             }
+//             aBrowser.runtime.sendMessage({
+//                 eventName: 'startWithDescription',
+//                 timeEntryOptions: timeEntryOptionsInvoked
+//             }, (response) => {
+//                 if (!response) {
+//                     _waitingForResponse = false;
+//                     alert(clockifyLocales.YOU_MUST_BE_LOGGED_IN_TO_START);
+//                     return;
+//                 }
+//                 else if (typeof response === 'string') {
+//                     _waitingForResponse = false;
+//                     alert(response);
+//                     return;
+//                 }
+//                 if (response.status === 400) {
+//                     if (_clockifyShowPostStartPopup) {
+//                         const msg = `${clockifyLocales.COMPLETE_CURRENT_ENTRY}!<br/>${clockifyLocales.ENTER_REQUIRED_FIEEDS_OR_EDIT_WORKSPACE_SETTINGS}`;
+//                         aBrowser.storage.local.get(["timeEntryInProgress"], (result) => {
+//                             const {timeEntryInProgress} = result;
+//                             if (timeEntryInProgress) {
+//                                 if (!_clockifyPopupDlg) {
+//                                     OpenPostStartPopupDlg(timeEntryInProgress, msg);
+//                                 }
+//                             }
+//                             else {
+//                                 alert(msg.replaceAll('<br/>', '\n'));
+//                             }
+//                             _waitingForResponse = false;
+//                         });
+//                     }
+//                     else {
+//                         msg = clockifyLocales.CANNOT_START_ENTRY_WITHOUT_PROJECT +
+//                         ". " + clockifyLocales.EDIT_YOUR_TIME_ENTRY + 
+//                         ". " + clockifyLocales.CREATE_TIME_ENTRY_USING_DASHBOARD + ".";
+//                         alert(msg);
+//                         _waitingForResponse = false;
+//                     }
+//                 } 
+//                 else {
+//                     let doNow = true;
+//                     active = true;
+//                     setButtonProperties(button, title, active);
+//                     clockifyButton.inProgressDescription = title;
+//                     const entry = response.data;
+//                     const {tagNames} = timeEntryOptionsInvoked;
+//                     if (tagNames && tagNames.length > 0 && entry.tags.length > 0) {
+//                         doNow = false;
+//                         aBrowser.runtime.sendMessage({
+//                             eventName: 'fetchEntryInProgress'  
+//                         }, (response) => {
+//                             if (!response) {
+//                                 alert(clockifyLocales.TAG__GET__ERROR);
+//                                 _waitingForResponse = false;
+//                                 return;
+//                             }
+//                             if (typeof response === 'string') {
+//                                 alert(response);
+//                                 _waitingForResponse = false;
+//                                 return;
+//                             }
+//                             const { status, entry: hydratedEntry } = response;
+//                             entry.tags = [...hydratedEntry.tags]
+//                             doTheJob(entry) // hydrated
+//                             _waitingForResponse = false;
+//                         });
+//                     }                    
     
-                    if (doNow) {
-                        _waitingForResponse = false;
-                        doTheJob(entry)
-                    }
-                }
-            });
-        }
-    }
-    catch(error) {
-        if (error.toString().toLowerCase().includes("extension context invalidated")) {
-            alert(`${clockifyLocales.EXT_RELOADED}.\n${clockifyLocales.REFRESH_THE_PAGE}!`)
-        }
-        else {
-            alert(`${clockifyLocales.EXT_CONTEXT_INVALIDATED}.\n${clockifyLocales.REFRESH_THE_PAGE}!`)
-        }
-    }
-    finally{
-        _waitingForResponse = false;
-    }
-}
+//                     if (doNow) {
+//                         _waitingForResponse = false;
+//                         doTheJob(entry)
+//                     }
+//                 }
+//             });
+//         }
+//     }
+//     catch(error) {
+//         if (error.toString().toLowerCase().includes("extension context invalidated")) {
+//             alert(`${clockifyLocales.EXT_RELOADED}.\n${clockifyLocales.REFRESH_THE_PAGE}!`)
+//         }
+//         else {
+//             alert(`${clockifyLocales.EXT_CONTEXT_INVALIDATED}.\n${clockifyLocales.REFRESH_THE_PAGE}!`)
+//         }
+//     }
+//     finally{
+//         _waitingForResponse = false;
+//     }
+// }
 
-function doTheJob(entry) {
-    aBrowser.storage.local.set({
-        timeEntryInProgress: entry
-    });
-    if (_clockifyShowPostStartPopup)
-        OpenPostStartPopupDlg(entry);   
-}
+// function doTheJob(entry) {
+//     aBrowser.storage.local.set({
+//         timeEntryInProgress: entry
+//     });
+//     if (_clockifyShowPostStartPopup)
+//         OpenPostStartPopupDlg(entry);   
+// }
 
 
-function OpenPostStartPopupDlg(timeEntry, msg, manualMode = false) {
-    if (timeEntry) {
-        if (timeEntry.message)
-            alert(timeEntry.message)
-        _clockifyPopupDlg = new ClockifyPopupDlg();
-        aBrowser.storage.local.get(['userRoles'], (result) => {
-             _clockifyPopupDlg.userRoles = result.userRoles;
-             // console.log('OpenPostStartPopupDlg result.userRoles', result.userRoles, new Date().toISOString())
-        })
+// function OpenPostStartPopupDlg(timeEntry, msg, manualMode = false) {
+//     if (timeEntry) {
+//         if (timeEntry.message)
+//             alert(timeEntry.message)
+//         _clockifyPopupDlg = new ClockifyPopupDlg();
+//         aBrowser.storage.local.get(['userRoles'], (result) => {
+//              _clockifyPopupDlg.userRoles = result.userRoles;
+//         })
 
-        _clockifyPopupDlg.wsCustomFields = [];     
-        if (ClockifyEditForm.userHasCustomFieldsFeature) {
-            aBrowser.runtime.sendMessage({
-                eventName: 'getWSCustomField',
-                options: {}
-            }, (response) => {
-                if (response) {
-                    const { data, status } = response;
-                    if (status !== 200) {
-                        if (status === 403) {
-                            alert(clockifyLocales.WORKSPACE_NOT_AUTHORIZED_FOR_CUSTOM_FIELDS)
-                        }
-                    } 
-                    else {
-                        _clockifyPopupDlg.wsCustomFields = data;
-                        _clockifyPopupDlg.injectLinkModal();
-                    }
-                }
-                document.body.appendChild(_clockifyPopupDlg.create(timeEntry, msg, manualMode));
-            });           
-        }
-        else {
-            document.body.appendChild(_clockifyPopupDlg.create(timeEntry, msg, manualMode));
-        }
+//         _clockifyPopupDlg.wsCustomFields = [];     
+//         if (ClockifyEditForm.userHasCustomFieldsFeature) {
+//             aBrowser.runtime.sendMessage({
+//                 eventName: 'getWSCustomField',
+//                 options: {}
+//             }, (response) => {
+//                 if (response) {
+//                     const { data, status } = response;
+//                     if (status !== 200) {
+//                         if (status === 403) {
+//                             alert(clockifyLocales.WORKSPACE_NOT_AUTHORIZED_FOR_CUSTOM_FIELDS)
+//                         }
+//                     } 
+//                     else {
+//                         _clockifyPopupDlg.wsCustomFields = data;
+//                         _clockifyPopupDlg.injectLinkModal();
+//                     }
+//                 }
+//                 document.body.appendChild(_clockifyPopupDlg.create(timeEntry, msg, manualMode));
+//             });           
+//         }
+//         else {
+//             document.body.appendChild(_clockifyPopupDlg.create(timeEntry, msg, manualMode));
+//         }
         
-        //window.addEventListener('keydown', clockifyKeydowns, true);
-        if(window.clockifyListeners){
-            window.addEventListener('click', window.clockifyListeners.clockifyClicks, true);
-            window.addEventListener('change', window.clockifyListeners.clockifyChanges, true);
-            document.addEventListener('click', window.clockifyListeners.clockifyRemovePopupDlg, true);
-            window.addEventListener('resize', window.clockifyListeners.clockifyTrackResize, true);
-            window.addEventListener('scroll', window.clockifyListeners.clockifyTrackScroll, true); 
-        }
-
-        //document.addEventListener('selectionchange', clockifySelectionChange, true);
-        //document.addEventListener('mouseup', clockifyMouseUp, true);
-    }    
-} 
+//         if(window.clockifyListeners){
+//             window.addEventListener('click', window.clockifyListeners.clockifyClicks, true);
+//             window.addEventListener('change', window.clockifyListeners.clockifyChanges, true);
+//             document.addEventListener('click', window.clockifyListeners.clockifyRemovePopupDlg, true);
+//             window.addEventListener('resize', window.clockifyListeners.clockifyTrackResize, true);
+//             window.addEventListener('scroll', window.clockifyListeners.clockifyTrackScroll, true); 
+//         }
+//     }    
+// } 
 
 if(!window.clockifyListeners) {
     window.clockifyListeners = {
@@ -705,10 +712,9 @@ if(!window.clockifyListeners) {
 }
 
 function removeAllButtons(wrapperClass) {
-    document.querySelectorAll(wrapperClass || '#clockifyButton').forEach(el => {
+    document.querySelectorAll(wrapperClass || '.clockifyButton, #clockify-manual-input-form').forEach(el => {
         el.parentNode.removeChild(el);
-        
-        });
+    });
 
     document.querySelectorAll('.clockify').forEach(el => {
         el.classList.remove('clockify');
@@ -727,16 +733,10 @@ function clockifyDestroyPopupDlg() {
             _clockifyPopupDlg.destroy();
             document.body.removeChild(divPopupDlg);
             document.removeEventListener('click', window.clockifyListeners.clockifyRemovePopupDlg, true);
-            //document.removeEventListener('selectionchange', clockifySelectionChange, true);
-            //document.removeEventListener('mouseup', clockifyMouseUp, true);
             
             _clockifyPopupDlg = null;
         }
     }
-}
-
-function clockifyMouseWheel(e) {
-    e.stopPropagation();
 }
 
 function clockifyRepositionDropDown() {
@@ -755,35 +755,6 @@ function clockifyRepositionDropDown() {
             }
         }        
     }
-}
-
-function getActiveIcon() {
-    return '<svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="16" width="16"><path d="m 10.461549,5.5284395 3.642277,-3.6422765 1.040649,1.0406505 -3.642276,3.642309 z M 8.9656137,9.3008298 c -0.7154471,0 -1.300813,-0.5853659 -1.300813,-1.300813 0,-0.7154472 0.5853659,-1.300813 1.300813,-1.300813 0.7154472,0 1.3008133,0.5853658 1.3008133,1.300813 0,0.7154471 -0.5853661,1.300813 -1.3008133,1.300813 z m 6.2439023,3.7723572 -1.04065,1.04065 -3.642276,-3.642276 1.04065,-1.0407149 z" fill="#03A9F4"></path><path d="m 9.0306543,13.593496 c 0.7154472,0 1.4308947,-0.130081 2.0813017,-0.390244 l 1.821138,1.821139 C 11.762362,15.674797 10.461549,16 9.095695,16 4.6729307,16 1.0956949,12.422765 1.0956949,8.0000004 1.0956949,3.5772361 4.6729307,3.65e-7 9.095695,3.65e-7 c 1.430895,0 2.731708,0.390243865 3.837399,0.975609665 L 11.176996,2.7317077 C 10.52659,2.4715451 9.8111421,2.3414637 9.095695,2.3414637 c -3.1219513,0 -5.593496,2.5365854 -5.593496,5.593496 -0.06504,3.1219513 2.4065041,5.6585363 5.5284553,5.6585363 z" fill="#03A9F4"></path></svg>'
-}
-
-function getInactiveIcon() {
-    return '<svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="16" width="16"><path d="m 10.461549,5.5284395 3.642277,-3.6422765 1.040649,1.0406505 -3.642276,3.642309 z M 8.9656137,9.3008298 c -0.7154471,0 -1.300813,-0.5853659 -1.300813,-1.300813 0,-0.7154472 0.5853659,-1.300813 1.300813,-1.300813 0.7154472,0 1.3008133,0.5853658 1.3008133,1.300813 0,0.7154471 -0.5853661,1.300813 -1.3008133,1.300813 z m 6.2439023,3.7723572 -1.04065,1.04065 -3.642276,-3.642276 1.04065,-1.0407149 z" fill="#5A6B7B"></path><path d="m 9.0306543,13.593496 c 0.7154472,0 1.4308947,-0.130081 2.0813017,-0.390244 l 1.821138,1.821139 C 11.762362,15.674797 10.461549,16 9.095695,16 4.6729307,16 1.0956949,12.422765 1.0956949,8.0000004 1.0956949,3.5772361 4.6729307,3.65e-7 9.095695,3.65e-7 c 1.430895,0 2.731708,0.390243865 3.837399,0.975609665 L 11.176996,2.7317077 C 10.52659,2.4715451 9.8111421,2.3414637 9.095695,2.3414637 c -3.1219513,0 -5.593496,2.5365854 -5.593496,5.593496 -0.06504,3.1219513 2.4065041,5.6585363 5.5284553,5.6585363 z" fill="#5A6B7B"></path></svg>'
-}
-
-function getDefaultProjectData(wsData){
-    function parseString(string){
-        return JSON.parse(string);
-    }
-
-    function parseObject(object){
-        if(Object.keys(object)[0] === "defaultProject"){
-            return Object.values(object)[0];
-        }else{
-            return parseObject(object[Object.keys(object)[0]]);
-        }
-    }
-    let defaultProjectData;
-    if (typeof wsData === "string"){
-        defaultProjectData = parseObject(parseString(wsData));
-    }else{
-        defaultProjectData = parseObject(wsData);
-    }
-    return defaultProjectData;
 }
 
 function onChangedListener(changes) {
@@ -821,17 +792,19 @@ function onChangedListener(changes) {
 
     if (changedItems.find(item => item === 'workspaceSettings')) {
         aBrowser.storage.local.get(["workspaceSettings"], (result) => {
-            const settings = JSON.parse(result.workspaceSettings);
-            if(settings.timeTrackingMode === "STOPWATCH_ONLY"){
-                const manualInputForm = $("#clockify-manual-input-form");
-                const manualInputBackgroundTrello = $(".input-button-link");
-                if(manualInputForm) manualInputForm.style.display = "none";
-                if(manualInputBackgroundTrello) manualInputBackgroundTrello.style.display = "none";
-            }else{
-                const manualInputForm = $("#clockify-manual-input-form");
-                if(manualInputForm) manualInputForm.style.display = "inline-block";
-                const manualInputBackgroundTrello = $(".input-button-link");
-                if(manualInputBackgroundTrello) manualInputBackgroundTrello.style.display = "inline-block";
+            if(result.workspaceSettings){
+                const settings = JSON.parse(result.workspaceSettings);
+                if(settings.timeTrackingMode === "STOPWATCH_ONLY"){
+                    const manualInputForm = $("#clockify-manual-input-form");
+                    const manualInputBackgroundTrello = $(".input-button-link");
+                    if(manualInputForm) manualInputForm.style.display = "none";
+                    if(manualInputBackgroundTrello) manualInputBackgroundTrello.style.display = "none";
+                }else{
+                    const manualInputForm = $("#clockify-manual-input-form");
+                    if(manualInputForm) manualInputForm.style.display = "inline-block";
+                    const manualInputBackgroundTrello = $(".input-button-link");
+                    if(manualInputBackgroundTrello) manualInputBackgroundTrello.style.display = "inline-block";
+                }
             }
         })
     }

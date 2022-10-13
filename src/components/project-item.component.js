@@ -1,5 +1,6 @@
 import * as React from 'react';
 import locales from '../helpers/locales';
+import { getBrowser } from '../helpers/browser-helper';
 
 const pageSize = 50;
 
@@ -17,7 +18,8 @@ class ProjectItem extends React.Component {
             client: props.project.client,
             projectFavorites: props.projectFavorites,
             page: 1,
-            loadMore: false
+            loadMore: false,
+            favHovered: false
         }
 
         this.chooseProject = this.chooseProject.bind(this);
@@ -101,7 +103,7 @@ class ProjectItem extends React.Component {
 
     render(){
         const {project, noTasks} = this.props;
-        const { taskCount, isTaskOpen, favorite, client, projectFavorites } = this.state;
+        const { taskCount, isTaskOpen, favorite, client, projectFavorites, favHovered } = this.state;
         let name = project.name;
         let locale = project.getLocale && project.getLocale();
         let title = locale || project.name;
@@ -140,11 +142,11 @@ class ProjectItem extends React.Component {
                     }
                     { !noTasks && taskCount > 0 &&
                         <li className="project-item-tasks" onClick={this.openTasks} title={locales.EXPAND}>
-                                <span style={{float: 'right', paddingRight: '5px'}}>
+                                <span style={{display: 'flex', float: 'right', paddingRight: '5px', alignItems: 'center'}}>
                                     {locales.TASKS_NUMBER(taskCount)}
                                     { isTaskOpen 
-                                        ? <img src="./assets/images/filter-arrow-down.png" className="tasks-arrow-down" />
-                                        : <img src="./assets/images/filter-arrow-right.png" className="tasks-arrow-right" />
+                                        ? <img style={{height: "fit-content"}} src={getBrowser().runtime.getURL("assets/images/filter-arrow-down.png")} className="tasks-arrow-down" />
+                                        : <img style={{height: "fit-content"}} src={getBrowser().runtime.getURL("assets/images/filter-arrow-right.png")} className="tasks-arrow-right" />
                                     }
                                 </span>
                         </li>
@@ -153,8 +155,13 @@ class ProjectItem extends React.Component {
                     {projectFavorites &&
                         <li className='project-item-favorite' title={locales.FAVORITE}>
                             { project.id !== 'no-project' &&
-                                <a style={{display: 'inline-block'}}
-                                    className={`cl-dropdown-star ${favorite ? 'cl-active' : ''}`} onClick={this.toggleFavorite}>
+                                <a 
+                                    style={{display: 'inline-block', background: `url(${getBrowser().runtime.getURL(favorite ? 'assets/images/ui-icons/favorites-active.svg' : favHovered ? 'assets/images/ui-icons/favorites-hover.svg' : 'assets/images/ui-icons/favorites-normal.svg')})`}}
+                                    className={`cl-dropdown-star ${favorite ? 'cl-active' : ''}`} 
+                                    onClick={this.toggleFavorite}    
+                                    onMouseEnter={() => this.setState({favHovered: true})}
+                                    onMouseLeave={() => this.setState({favHovered: false})}
+                                >
                                 </a>
                             }
                         </li>

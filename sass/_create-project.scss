@@ -13,6 +13,11 @@
       line-height: 16px;
       color: variables.$lighter_text;
     }
+    &:focus {
+      outline: none;
+      border: 2px solid #0f3beb;
+      border-radius: 5px;
+    }
   }
   &__client-list {
     position: relative;

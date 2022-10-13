@@ -20,6 +20,7 @@
 @use "time-entry-list-not-synced";
 @use "self-hosting";
 @use "pomodoro";
+@use "countdown-timer";
 @use "dark-mode-settings";
 @use "delete-entry-confirmation-dialog";
 @use "workspace-change-confirmation-dialog";
@@ -30,5 +31,6 @@
 @use "client-list";
 @use "color-picker";
 @use "sub-domain";
+@use "integration";
 @use "global";
 @use "dark-mode";

@@ -1047,6 +1047,9 @@
   "EXTENSION__DISCARD_AND_CONTINUE": {
     "message": "破棄して続行"
   },
+  "EXTENSION__FOCUS_MODE": {
+    "message": "フォーカスモード"
+  },
   "EXTENSION__IDLE_TIME_DETECTED": {
     "message": "アイドル時間が検出されました"
   },
@@ -1122,6 +1125,12 @@
   "GLOBAL__JOB_AREAS_LABEL": {
     "message": "仕事の分野"
   },
+  "GLOBAL__SUBSCRIPTION_EXPIRED": {
+    "message": "サブスクリプションの有効期限が切れています。"
+  },
+  "GLOBAL__FEATURE_DISABLED_CONTACT_ADMIN": {
+    "message": "機能が無効になっています。詳細については、管理者にお問い合わせください。"
+  },
   "EXTENSION__START_TIMER_WITH_DESCRIPTION": {
     "message": "説明付きのタイマーを開始"
   },
@@ -1145,6 +1154,9 @@
   },
   "AUDIT_LOG__KIOSK__BREAK_TYPE_LABEL": {
     "message": "壊す"
+  },
+  "EXTENSION__UPGRADE_TO_USE_THIS_FEATURE": {
+    "message": "この機能を使用するにはアップグレードしてください"
   },
   "appName": {
     "message": "Clockifyタイムトラッカー",

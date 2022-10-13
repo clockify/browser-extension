@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import Settings from './settings.component';
 import {TokenService} from "../services/token-service";
 import {getBrowser, isChrome} from "../helpers/browser-helper";
@@ -92,7 +91,7 @@ class Menu extends React.Component {
     }
 
     changeModeToManual() {
-        if (this.props.mode === 'manual' || this.props.manualModeDisabled)
+        if (this.props.mode === 'manual' || this.props.manualModeDisabled || this.props.isTrackingDisabled)
             return;
         if(!JSON.parse(this.props.disableManual)) {
             this.props.changeModeToManual();
@@ -108,6 +107,9 @@ class Menu extends React.Component {
     }
 
     async openSettings() {
+        if(this.props.isTrackingDisabled) {
+            return;
+        }
         if(!JSON.parse(await localStorage.getItem('offline'))) {
             
             window.reactRoot.render(
@@ -116,7 +118,7 @@ class Menu extends React.Component {
     }
 
     openUrlPermissions() {
-        if(this.state.isOffline) return;
+        if(this.state.isOffline || this.props.isTrackingDisabled) return;
         getBrowser().runtime.openOptionsPage();
     }
 
@@ -130,7 +132,7 @@ class Menu extends React.Component {
     }
 
     async openWebDashboard() {
-        if(this.state.isOffline) return;
+        if(this.state.isOffline || this.props.isTrackingDisabled) return;
         const homeUrl = await localStorageService.get('homeUrl') || environment.home
         window.open(`${homeUrl}/dashboard`, '_blank');   
         if(!isChrome()){
@@ -234,7 +236,7 @@ class Menu extends React.Component {
                     <div className="dropdown-menu">
                         <div className="dropdown-header">{locales.ENTRY_MODE}</div>
                         <a id="manual"
-                           className={JSON.parse(this.props.disableManual) || this.props.manualModeDisabled ?
+                           className={JSON.parse(this.props.disableManual) || this.props.manualModeDisabled  || this.props.isTrackingDisabled  ?
                                "dropdown-item disable-manual" : this.props.mode === "manual" ?
                                    "dropdown-item active" : "dropdown-item"}
                            href="#"
@@ -242,7 +244,7 @@ class Menu extends React.Component {
                            title={title}
                         >
                             <span className="menu-manual-img"></span>
-                            <span className={JSON.parse(this.props.disableManual) ? "disable-manual" : ""}>{locales.MANUAL}</span>
+                            <span className={JSON.parse(this.props.disableManual) || this.props.isTrackingDisabled  ? "disable-manual" : ""}>{locales.MANUAL}</span>
                         </a>
                         <a id="timer"
                            className={this.props.mode === 'timer' ?
@@ -263,17 +265,17 @@ class Menu extends React.Component {
                         <a onClick={this.openSettings.bind(this)}
                            className="dropdown-item"
                            href="#">
-                            <span className={this.state.isOffline ? "disable-manual" : ""}>{locales.SETTINGS}</span>
+                            <span className={this.state.isOffline || this.props.isTrackingDisabled  ? "disable-manual" : ""}>{locales.SETTINGS}</span>
                         </a>
                         <a onClick={this.openUrlPermissions.bind(this)}
                            className="dropdown-item" href="#">
-                            <span className={this.state.isOffline ? "disable-manual" : ""}>
+                            <span className={this.state.isOffline || this.props.isTrackingDisabled ? "disable-manual" : ""}>
                             {locales.INTEGRATIONS}
                             </span>
                         </a>
                         <a onClick={this.openWebDashboard.bind(this)}
                            className="dropdown-item" href="#">
-                            <span className={this.state.isOffline ? "disable-manual" : ""}>
+                            <span className={this.state.isOffline || this.props.isTrackingDisabled  ? "disable-manual" : ""}>
                             {locales.DASHBOARD}
                             </span>
                             <span className="menu-img-right"></span>

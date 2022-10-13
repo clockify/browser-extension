@@ -73,7 +73,8 @@ class UserWorkspaceStorage {
             const { workspaceSettings, features } = data;
             workspaceSettings.projectPickerSpecialFilter = projectPickerTaskFilter;
             workspaceSettings.features = { 
-                customFields: features.some(feature => feature === "CUSTOM_FIELDS")
+                customFields: features.includes('CUSTOM_FIELDS'),
+                timeTracking: features.includes('TIME_TRACKING')
             }
             localStorage.setItem('workspaceSettings', JSON.stringify(workspaceSettings));
             const { forceDescription,
@@ -92,11 +93,23 @@ class UserWorkspaceStorage {
                     projectPickerSpecialFilter,
                     projectFavorites,
                     features: { 
-                        customFields: features.some(feature => feature === "CUSTOM_FIELDS")
+                        customFields: features.includes('CUSTOM_FIELDS'),
+                        timeTracking: features.includes('TIME_TRACKING')
                     }
                 }
             });
         }
+    }
+
+    static async getPermissionsForUser() {
+        const activeWorkspaceId = await this.workspaceId;
+        const userId = await this.userId;
+        const baseUrl = await this.apiEndpoint;
+        const workspacePermissionsUrl =
+            `${baseUrl}/workspaces/${activeWorkspaceId}/users/${userId}/permissions`;
+
+        return ClockifyService.apiCall(workspacePermissionsUrl)
+            .then(response => response.data);
     }
 
 
@@ -180,6 +193,14 @@ class UserWorkspaceStorage {
             JSON.stringify(this.storage),
             this.isPermanent ? 'permanent_' : null
         );
+    }
+
+    static async getWasRegionalEverAllowed() {
+        const baseUrl = await this.apiEndpoint;
+        const workspaceId = await this.workspaceId;
+        const workspaceRegionalUrl =
+            `${baseUrl}/workspaces/${workspaceId}/payments/was-regional-ever-allowed`;
+        return await ClockifyService.apiCall(workspaceRegionalUrl).then(response => response.data);
     }
 
 }

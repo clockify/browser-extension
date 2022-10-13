@@ -6,6 +6,7 @@
   "default_locale": "en",
   "background": {
     "scripts": [
+      "contentScripts/URLPatternHelper.js",
       "contentScripts/service-localstorage.js",
       "contentScripts/defaultProject.js",
       "contentScripts/userWorkspaceStorage.js",
@@ -34,11 +35,17 @@
       "strict_min_version": "57.0a1"
     }
   },
-  "version": "2.6.8",
+  "version": "2.8.3",
   "browser_action": {
     "default_popup": "index.html",
     "default_title": "Clockify"
   },
+  "content_scripts": [
+    {
+      "matches": ["https://*/*", "http://*/*"],
+      "js": ["contentScripts/service-localstorage.js", "vendors.bundle.js", "main.bundle.js"]
+    }
+  ],
   "options_ui": {
     "page": "settings.html",
     "open_in_tab": true

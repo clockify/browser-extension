@@ -151,7 +151,7 @@ var ClockifyTagList = class {
 
     create() {
         //this.mapSelectedTag();
-        
+        this.editForm.checkRequiredFields().then(() => this.redrawHeader()); // Without this line, even if tags input is necessary it does not have red border
         const divTag = document.createElement('div');
         divTag.setAttribute("id", 'divClockifyTagDropDown');
         divTag.setAttribute('class', 'clockify-form-div');
@@ -161,7 +161,7 @@ var ClockifyTagList = class {
             "</ul>";
         
         this.setElem(divTag);      
-
+        
         return divTag;
     }
 

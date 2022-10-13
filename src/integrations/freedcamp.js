@@ -25,7 +25,6 @@ clockifyButton.render('.ItemBasicFields--fk-ItemBasicFields-Title-Wrap:not(.cloc
         const description = descriptionElem ? descriptionElem.textContent.trim() : "";
 
         let link = clockifyButton.createSmallButton(description, project);
-        link.style.paddingTop = "8px";
         link.style.paddingRight = "10px";
         //elem.parentNode.prepend(link);
         //elem.parentNode.insertBefore(link, elem);

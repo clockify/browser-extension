@@ -84,7 +84,7 @@ class TimeEntry extends React.Component {
     toggleEntryDropdownMenu(e){
         e && e.stopPropagation();
         if(this.props.timeEntry.approvalRequestId == null && (!this.props.timeEntry.isLocked || this.props.isUserOwnerOrAdmin)){
-            this.setState({entryDropdownShown: !this.state.entryDropdownShown})
+            this.setState(state => ({entryDropdownShown: !state.entryDropdownShown}));
         }
     }
 
@@ -138,7 +138,10 @@ class TimeEntry extends React.Component {
 
     toggleDeleteConfirmationModal(e){
         e && e.stopPropagation();
-        this.setState({askToDeleteEntry: !this.state.askToDeleteEntry});
+        this.setState({
+            askToDeleteEntry: !this.state.askToDeleteEntry,
+            entryDropdownShown: false
+        });
     }
 
     onClickDuplicateEntry(e){

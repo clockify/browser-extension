@@ -47,9 +47,9 @@ export class Extension {
                         localStorage.setItem('userSettings', JSON.stringify(data.settings));
                         const lang = data.settings.lang ? data.settings.lang.toLowerCase() : null;
                         locales.onProfileLangChange(lang);
-                        getBrowser().runtime.sendMessage({
-                            eventName: "pomodoroTimer"
-                        });
+                        // getBrowser().runtime.sendMessage({
+                        //     eventName: "pomodoroTimer"
+                        // });
                         userService.getBoot()
                             .then(response => {
                                 const { data } = response;

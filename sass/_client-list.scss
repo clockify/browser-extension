@@ -91,6 +91,11 @@
       content: url("../assets/images/x.png");
       cursor: pointer;
     }
+    &:focus {
+      outline: none;
+      border: 2px solid #0f3beb;
+      border-radius: 5px;
+    }
   }
   &-client {
     margin: 10px;
@@ -192,6 +197,11 @@
       height: 40px;
       &::placeholder {
         color: variables.$lighter_text;
+      }
+      &:focus {
+        outline: none;
+        border: 2px solid #0f3beb;
+        border-radius: 5px;
       }
     }
     &--confirmation_button {

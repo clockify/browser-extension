@@ -32,6 +32,8 @@
   height: 65px;
   border: none;
   resize: none;
+  box-shadow: none;
+  background: none;
   font-size: 14px;
   outline: none;
   color: variables.$dark_text;
@@ -73,17 +75,18 @@
 
   &__billable {
     margin-bottom: 20px;
+    line-height: 1;
   }
 }
 
 .edit-form-billable-img {
-  content: url("../assets/images/checked.png");
+  // content: url("../assets/images/checked.png");
   margin-top: 2px;
   margin-left: 1px;
 }
 
 .edit-form-billable-img-hidden {
-  content: url("../assets/images/checked.png");
+  // content: url("../assets/images/checked.png");
   margin-top: 2px;
   margin-left: 1px;
   visibility: hidden;
@@ -136,6 +139,44 @@
   }
 }
 
+.shake-heartache {
+  animation: kf_shake 0.5s 1 linear;
+  -webkit-animation: kf_shake 0.5s 1 linear;
+  -moz-animation: kf_shake 0.5s 1 linear;
+  -o-animation: kf_shake 0.5s 1 linear;
+}
 
+@keyframes kf_shake {
+  0% { -webkit-transform: translate(20px); }
+  20% { -webkit-transform: translate(-20px); }
+  40% { -webkit-transform: translate(10px); }
+  60% { -webkit-transform: translate(-10px); }
+  80% { -webkit-transform: translate(8px); }
+  100% { -webkit-transform: translate(0px); }
+}
 
+@-webkit-keyframes kf_shake {
+  0% { -webkit-transform: translate(00px); }
+  20% { -webkit-transform: translate(-00px); }
+  40% { -webkit-transform: translate(10px); }
+  60% { -webkit-transform: translate(-10px); }
+  80% { -webkit-transform: translate(8px); }
+  100% { -webkit-transform: translate(0px); }
+}
 
+@-moz-keyframes kf_shake {
+  0% { -moz-transform: translate(20px); }
+  20% { -moz-transform: translate(-20px); }
+  40% { -moz-transform: translate(10px); }
+  60% { -moz-transform: translate(-10px); }
+  80% { -moz-transform: translate(8px); }
+  100% { -moz-transform: translate(0px); }
+}
+@-o-keyframes kf_shake {
+  0% { -o-transform: translate(20px); }
+  20% { -o-transform: translate(-20px); }
+  40% { -o-transform: translate(10px); }
+  60% { -o-transform: translate(-10px); }
+  80% { -o-transform: translate(8px); }
+  100% { -o-origin-transform: translate(0px); }
+}

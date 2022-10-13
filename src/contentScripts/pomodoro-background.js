@@ -1,7 +1,8 @@
 const breakButtons = [clockifyLocales.STOP_TIMER, 'Start break'];
 const longBreakButtons = [clockifyLocales.STOP_TIMER, 'Start long break'];
 const breakOverButtons = [clockifyLocales.START_TIMER, 'Continue last'];
-const minutesSymbol = this.isChrome() ? "m" : "'";
+const minutesSymbol = "m";
+let lastIntervalId = null;
 
 async function breakIntervalAlarm () {
     const { start, pomodoroBreakLength, pomodoroForUser, description } = await localStorage.getItem('breakIntervalProps');
@@ -15,6 +16,7 @@ async function breakIntervalAlarm () {
         const diff = currDate.getTime() - startDate.getTime();
         updateBadgeTime(diff, pomodoroBreakLength);  
         if (diff >= pomodoroBreakLength) {
+            clearInterval(breakInterval);
             if (pomodoroForUser.isAutomaticStartStop) {
                 continueLastEntryAndNotify(pomodoroForUser, currDate);
             } else {
@@ -23,14 +25,38 @@ async function breakIntervalAlarm () {
             description === 'Pomodoro break' && pomodoroForUser.isLongBreakEnabled ?
                 breakCounter++ : breakCounter = 0;
             localStorage.setItem('breakCounter', breakCounter);
-            clearInterval(breakInterval);
+            
         }
-        else if(counter > 20) {
+        else if(counter > 40) {
             clearInterval(breakInterval);
         }
     }, 1000);  
-
+    lastIntervalId = breakInterval;
 }
+
+// aBrowser.storage.onChanged.addListener((changes) => {
+//     if ('inProgress' in changes) {
+//         if(!changes.inProgress?.newValue) {
+//             // this.restartPomodoro();
+//             this.removeBadge();
+//         }
+//     }
+
+//     if('timeEntryInProgress' in changes){
+//         if(!changes.timeEntryInProgress?.newValue) {
+//             // this.restartPomodoro();
+//             this.removeBadge();
+//         }
+//     }
+
+//     if ('token' in changes) {
+//         if (!changes.token.newValue) {
+//             this.restartPomodoro();
+//             this.removeBadge();
+//         };
+//     }
+// });
+
 
 async function pomodoroIntervalAlarm () {
     const { start, pomodoroForUser } = await localStorage.getItem('pomodoroIntervalProps');
@@ -44,6 +70,7 @@ async function pomodoroIntervalAlarm () {
         const diff = currDate.getTime() - startDate.getTime();
         updateBadgeTime(diff, pomodoroForUser.timerInterval * 60 * 1000);
         if (diff >= pomodoroForUser.timerInterval * 60 * 1000) {
+            clearInterval(pomodoroInterval);
             if (pomodoroForUser.isLongBreakEnabled && breakCounter >= pomodoroForUser.breakCounter) {
                 if (pomodoroForUser.isAutomaticStartStop) {
                     startBreakAndNotify('Pomodoro long break', pomodoroForUser, currDate);
@@ -57,16 +84,19 @@ async function pomodoroIntervalAlarm () {
                     createBreakNotification(pomodoroForUser);
                 }
             }
-            clearInterval(pomodoroInterval);
         }
-        else if(counter > 20) {
+        else if(counter > 40) {
             clearInterval(pomodoroInterval);
         }
     }, 1000);
-    
+    lastIntervalId = pomodoroInterval;
 }
 
 aBrowser.alarms.onAlarm.addListener(async (alarm) => {
+    if(lastIntervalId){
+        clearInterval(lastIntervalId);
+        lastIntervalId = null;
+    }
     switch (alarm.name) {
         case 'breakInterval':
             breakIntervalAlarm();
@@ -80,11 +110,8 @@ aBrowser.alarms.onAlarm.addListener(async (alarm) => {
 });
 
 aBrowser.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request.eventName === 'pomodoroTimer') {
+    if (request.eventName === 'addPomodoroTimer') {
         this.addPomodoroTimer();
-    }
-    else if (request.eventName === 'removeAllPomodoroTimers') {
-        this.removeAllPomodoroTimers();
     }
     else if (request.eventName === 'restartPomodoro') {
         this.restartPomodoro();
@@ -92,9 +119,9 @@ aBrowser.runtime.onMessage.addListener((request, sender, sendResponse) => {
     else if (request.eventName === 'removeBadge') {
         this.removeBadge();
     }
-    else if (request.eventName === 'resetBadge') {
-        this.resetBadge();
-    }
+    // else if (request.eventName === 'resetBadge') {
+    //     this.resetBadge();
+    // }
 });
 
 
@@ -123,9 +150,11 @@ function setBreakBadge(pomodoroForUser, description) {
 }
 
 function setActiveBadge(minutes) {
-    aBrowser.action.setBadgeText({
-        text: `${minutes}${minutesSymbol}`
-    });
+    if(minutes){
+        aBrowser.action.setBadgeText({
+            text: `${minutes}${minutesSymbol}`
+        });
+    }
     if(!this.isChrome()){
         aBrowser.action.setBadgeTextColor({
             color: '#FFFFFF'
@@ -152,18 +181,18 @@ function removeBadge() {
     });
 }
 
-async function resetBadge() {
-    const userId = await localStorage.getItem('userId');
-    const str = await localStorage.getItem('permanent_pomodoro');
-    const pomodoroForUser = str
-        ? JSON.parse(str).find(pomodoro => pomodoro.userId === userId)
-        : false;
-    if(pomodoroForUser && pomodoroForUser.enabled){
-        this.setActiveBadge(pomodoroForUser.timerInterval);
-    }else {
-        this.removeBadge();
-    }
-}
+// async function resetBadge() {
+//     const userId = await localStorage.getItem('userId');
+//     const str = await localStorage.getItem('permanent_pomodoro');
+//     const pomodoroForUser = str
+//         ? JSON.parse(str).find(pomodoro => pomodoro.userId === userId)
+//         : false;
+//     if(pomodoroForUser && pomodoroForUser.enabled){
+//         this.setActiveBadge(pomodoroForUser.timerInterval);
+//     }else {
+//         this.removeBadge();
+//     }
+// }
 
 async function addPomodoroTimer() {
     const userId = await localStorage.getItem('userId');
@@ -181,89 +210,41 @@ async function addPomodoroTimer() {
             timeEntryInProgress: entry
         });
 
-        if (!entry) {
-            if(pomodoroForUser.enabled){
-                this.setActiveBadge(pomodoroForUser.timerInterval);
-            }
-            return;
-        }
+        if (!entry) return;
 
-        if (entry.description === 'Pomodoro break' || entry.description === 'Pomodoro long break') {
-            this.removeBreakInterval();
-            const pomodoroBreakLength = entry.description === 'Pomodoro break' ?
-                pomodoroForUser.shortBreak * 60 * 1000 : pomodoroForUser.longBreak * 60 * 1000;
+        // if (entry.description === 'Pomodoro break' || entry.description === 'Pomodoro long break') {
+        //     this.removeBreakInterval();
+        //     const pomodoroBreakLength = entry.description === 'Pomodoro break' ?
+        //         pomodoroForUser.shortBreak * 60 * 1000 : pomodoroForUser.longBreak * 60 * 1000;
 
-            localStorage.setItem('breakIntervalProps', {start: entry.timeInterval.start, pomodoroBreakLength, pomodoroForUser, description: entry.description});
+        //     localStorage.setItem('breakIntervalProps', {start: entry.timeInterval.start, pomodoroBreakLength, pomodoroForUser, description: entry.description});
 
-            aBrowser.alarms.create('breakInterval', {
-                periodInMinutes: 1,
-                when: Date.now() + 45000
-            }); 
-
-            // breakInterval = setInterval(() => {
-            //     const currDate = new Date();
-            //     diff = currDate.getTime() - start.getTime();
-            //     if (diff >= pomodoroBreakLength) {
-            //         if (pomodoroForUser.isAutomaticStartStop) {
-            //             this.continueLastEntryAndNotify(pomodoroForUser, currDate);
-            //         } else {
-            //             this.createBreakOverNotification(pomodoroForUser);
-            //         }
-            //         entry.description === 'Pomodoro break' && pomodoroForUser.isLongBreakEnabled ?
-            //             breakCounter++ : breakCounter = 0;
-            //     }
-
-            //     this.updateBadgeTime(diff, pomodoroBreakLength);
-            // }, 1000);
-        } else {
+        //     aBrowser.alarms.create('breakInterval', {
+        //         periodInMinutes: 1,
+        //         when: Date.now()
+        //     }); 
+        // } else {
             this.setActiveBadge(pomodoroForUser.timerInterval);
-            this.removePomodoroInterval();
+            // this.restartPomodoro();
+            // this.removePomodoroInterval();
 
             localStorage.setItem('pomodoroIntervalProps', {start: entry.timeInterval.start, pomodoroForUser});
 
             aBrowser.alarms.create('pomodoroInterval', {
                 periodInMinutes: 1,
-                when: Date.now() + 45000
+                when: Date.now() + 30000
             });
-
-            // pomodoroInterval = setInterval(() => {
-            //     const currDate = new Date();
-            //     diff = currDate.getTime() - start.getTime();
-            //     if (diff >= pomodoroForUser.timerInterval * 60 * 1000) {
-            //         console.log('IM HERE', breakCounter, pomodoroForUser.breakCounter);
-            //         if (pomodoroForUser.isLongBreakEnabled && breakCounter >= pomodoroForUser.breakCounter) {
-            //             if (pomodoroForUser.isAutomaticStartStop) {
-            //                 this.startBreakAndNotify('Pomodoro long break', pomodoroForUser, currDate);
-            //             } else {
-            //                 this.createLongBreakNotification(pomodoroForUser);
-            //             }
-            //         } else {
-            //             if (pomodoroForUser.isAutomaticStartStop) {
-            //                 this.startBreakAndNotify('Pomodoro break', pomodoroForUser, currDate);
-            //             } else {
-            //                 this.createBreakNotification(pomodoroForUser);
-            //             }
-            //         }
-            //     }
-            //     this.updateBadgeTime(diff, pomodoroForUser.timerInterval * 60 * 1000);
-            // }, 1000);
-        }
+        // }
     } else {
         this.removeBadge();
     }
 }
 
 function removePomodoroInterval() {
-    // if (pomodoroInterval) {
-    //     clearInterval(pomodoroInterval);
-    // }
     aBrowser.alarms.clear('pomodoroInterval');
 }
 
 function removeBreakInterval() {
-    // if (breakInterval) {
-    //     clearInterval(breakInterval);
-    // }
     aBrowser.alarms.clear('breakInterval');
 }
 
@@ -281,6 +262,9 @@ function removeAllPomodoroTimers() {
     this.clearBreakOverNotification();
     this.clearBreakNotification();
     this.clearLongBreakNotification();
+    if (lastIntervalId) {
+        clearInterval(lastIntervalId);
+    }
 }
 
 function clearBreakOverNotification() {
@@ -445,14 +429,15 @@ async function startBreak(description, endDate) {
             }        
         }
         else {
-            projectId = null;
-            task = null;
+            // projectId = null;
+            // task = null;
             // Although start-timer-component will set DeafultPoject (if defined)
         }
 
-        const { error } = await TimeEntry.endInProgress(Object.assign(timeEntryInProgress, {isWebSocketHeader}), endDate);
+        const res = await TimeEntry.endInProgress(Object.assign({}, timeEntryInProgress, {isWebSocketHeader}), endDate);
+        const error = res && res.error;
 
-        this.sendPomodoroEvent(null);
+        //this.sendPomodoroEvent(null);
         description === 'Pomodoro break' 
             ? this.clearBreakNotification() : this.clearLongBreakNotification();
 
@@ -475,12 +460,12 @@ async function startBreakTimer(description, isWebSocketHeader, options) {
     const isPomodoro = true;
     const { entry, error } = await TimeEntry.startTimer(
                     description, 
-                    Object.assign(options, {isWebSocketHeader}), 
+                    Object.assign({}, options, {isWebSocketHeader}), 
                     isPomodoro
                 );
 
     if (entry && entry.id) {
-        this.sendPomodoroEvent(entry);
+        //this.sendPomodoroEvent(entry);
         aBrowser.storage.local.set({
             timeEntryInProgress: entry
         });
@@ -494,23 +479,8 @@ async function startBreakTimer(description, isWebSocketHeader, options) {
 
         aBrowser.alarms.create('breakInterval', {
             periodInMinutes: 1,
-            when: Date.now() + 45000
+            when: Date.now() + 30000
         });
-
-        // breakInterval = setInterval(() => {
-        //     const currDate = new Date();
-        //     const diff = currDate.getTime() - start.getTime();
-        //     if (diff >= pomodoroBreakLength) {
-        //         if (pomodoroForUser.isAutomaticStartStop) {
-        //             this.continueLastEntryAndNotify(pomodoroForUser, currDate);
-        //         } else {
-        //             this.createBreakOverNotification(pomodoroForUser);
-        //         }
-        //         description === 'Pomodoro break' && pomodoroForUser.isLongBreakEnabled ?
-        //             breakCounter++ : breakCounter = 0;
-        //     }
-        //     this.updateBadgeTime(diff, pomodoroBreakLength);
-        // }, 1000);
     }
     else {
         aBrowser.storage.local.set({
@@ -520,8 +490,9 @@ async function startBreakTimer(description, isWebSocketHeader, options) {
 }
 
 async function stopTimerByPomodoro() {
-    const { error } = await TimeEntry.endInProgress();
-    this.sendPomodoroEvent(null);
+    const res = await TimeEntry.endInProgress();
+    const error = res && res.error;
+    //this.sendPomodoroEvent(null);
     this.clearNotification('pomodoroBreak');
     this.clearNotification('pomodoroLongBreak');
     this.restartPomodoro();
@@ -542,8 +513,9 @@ async function stopTimerByPomodoro() {
 async function startTimerByPomodoro() {
     const isWebSocketHeader = true;
 
-    const { error } = await TimeEntry.endInProgress();
-    this.sendPomodoroEvent(null);
+    const res = await TimeEntry.endInProgress();
+    const error = res && res.error;
+    //this.sendPomodoroEvent(null);
     this.clearNotification('breakOver');
 
     if (error && error.status === 400) {
@@ -560,46 +532,38 @@ async function startTimerByPomodoro() {
 }
 
 async function startNewEntryTimer(isWebSocketHeader) {
-    const isPomodoro = true;
+    const pomodoroForUser = await getPomodoroForUser();
+    this.setActiveBadge(pomodoroForUser.timerInterval);
     const { entry, error } = await TimeEntry.startTimer(
         '', 
-        isWebSocketHeader,
-        isPomodoro
+        isWebSocketHeader
     );
 
     if (entry && entry.id) {
         const pomodoroForUser = await getPomodoroForUser();
-        aBrowser.storage.local.set({ // TODO ?
+        aBrowser.storage.local.set({
             timeEntryInProgress: entry
         });
-        this.sendPomodoroEvent(entry);
+        //this.sendPomodoroEvent(entry);
 
         localStorage.setItem('pomodoroIntervalProps', {start: entry.timeInterval.start, pomodoroForUser});
         aBrowser.alarms.create('pomodoroInterval', {
             periodInMinutes: 1,
-            when: Date.now() + 45000
+            when: Date.now() + 30000
         });
-
-        // pomodoroInterval = setInterval(() => {
-        //     const currDate = new Date();
-        //     const diff = currDate.getTime() - start.getTime();
-        //     if (diff >= pomodoroForUser.timerInterval * 60 * 1000) {
-        //         if (pomodoroForUser.isLongBreakEnabled && breakCounter === pomodoroForUser.breakCounter) {
-        //             this.createLongBreakNotification(pomodoroForUser);
-        //         } else {
-        //             this.createBreakNotification(pomodoroForUser);
-        //         }
-        //     }
-        // }, 1000);
     }
 }
 
 async function continueLastEntryByPomodoro(endDate) {
+    const pomodoroForUser = await getPomodoroForUser();
+    this.setActiveBadge(pomodoroForUser.timerInterval);
+
     const { entry: lastEntry, error: err } = await TimeEntry.getLastPomodoroEntry();
     const isWebSocketHeader = true;
-    const { error } = await TimeEntry.endInProgress(Object.assign(lastEntry, {isWebSocketHeader}), endDate);
+    const res = await TimeEntry.endInProgress(Object.assign({}, lastEntry, {isWebSocketHeader}), endDate);
+    const error = res && res.error;
     this.clearNotification('breakOver');
-    this.sendPomodoroEvent(null);
+    //this.sendPomodoroEvent(null);
     if (error && error.status === 400) {
         aBrowser.storage.local.get(["timeEntryInProgress"], async (result) => {
             const {entry: ent, error: err} = 
@@ -632,46 +596,26 @@ async function continueLastEntryTimer(timeEntry, isWebSocketHeader) {
         aBrowser.storage.local.set({
             timeEntryInProgress: entry
         });
-        this.sendPomodoroEvent(entry);
+        //this.sendPomodoroEvent(entry);
 
         localStorage.setItem('pomodoroIntervalProps', {start: entry.timeInterval.start, pomodoroForUser});
         aBrowser.alarms.create('pomodoroInterval', {
             periodInMinutes: 1,
-            when: Date.now() + 45000
+            when: Date.now() + 30000
         });
-
-        // pomodoroInterval = setInterval(() => {
-        //     const currDate = new Date();
-        //     const diff = currDate.getTime() - start.getTime();
-        //     if (diff >= pomodoroForUser.timerInterval * 60 * 1000) {
-        //         if (pomodoroForUser.isLongBreakEnabled && breakCounter === pomodoroForUser.breakCounter) {
-        //             if (pomodoroForUser.isAutomaticStartStop) {
-        //                 this.startBreakAndNotify('Pomodoro long break', pomodoroForUser, currDate);
-        //             } else {
-        //                 this.createLongBreakNotification(pomodoroForUser);
-        //             }
-        //         } else {
-        //             if (pomodoroForUser.isAutomaticStartStop) {
-        //                 this.startBreakAndNotify('Pomodoro break', pomodoroForUser, currDate);
-        //             } else {
-        //                 this.createBreakNotification(pomodoroForUser);
-        //             }
-        //         }
-        //     }
-        // }, 1000);
     }
 }
 
 function restartPomodoro() {
     this.removeAllPomodoroTimers();
-    // breakCounter = 0;
+    this.removeBadge();
     localStorage.setItem('breakCounter', 0);
 }
 
-function sendPomodoroEvent(timeEntry) {
-    aBrowser.runtime.sendMessage({
-        eventName: 'pomodoroEvent',
-        timeEntry: timeEntry
-    });
-}
+// function sendPomodoroEvent(timeEntry) {
+    // aBrowser.runtime.sendMessage({
+    //     eventName: 'pomodoroEvent',
+    //     timeEntry: timeEntry
+    // });
+// }
 

@@ -7,11 +7,17 @@
   "background": {
     "service_worker": "sw.js"
   },
-  "version": "2.6.8",
+  "version": "2.8.3",
   "action": {
     "default_popup": "index.html",
     "default_title": "Clockify"
   },
+  "content_scripts": [
+    {
+      "matches": ["https://*/*", "http://*/*"],
+      "js": ["contentScripts/service-localstorage.js", "vendors.bundle.js", "main.bundle.js"]
+    }
+  ],
   "options_page": "settings.html",
   "commands": {
     "quick-start-stop-entry": {

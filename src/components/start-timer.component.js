@@ -330,20 +330,15 @@ class StartTimer extends React.Component {
                     this.props.setTimeEntryInProgress(data);
                     this.application.setIcon(getIconStatus().timeEntryStarted);
                     
-                    // const backgroundPage = getBrowser().extension.getBackgroundPage();
-                    // backgroundPage.addIdleListenerIfIdleIsEnabled();
                     getBrowser().runtime.sendMessage({
                         eventName: 'addIdleListenerIfIdleIsEnabled'
                     });
-                    // backgroundPage.removeReminderTimer();
                     getBrowser().runtime.sendMessage({
                         eventName: 'removeReminderTimer'
                     });
-                    // backgroundPage.addPomodoroTimer();
                     getBrowser().runtime.sendMessage({
-                        eventName: 'pomodoroTimer'
+                        eventName: 'addPomodoroTimer'
                     });
-                    // backgroundPage.setTimeEntryInProgress(data);
                     localStorage.setItem({
                         timeEntryInProgress: data
                     });
@@ -423,6 +418,10 @@ class StartTimer extends React.Component {
         } else {
             timeEntryService.stopEntryInProgress(moment())
                 .then(() => {
+                    localStorage.setItem('timeEntryInProgress', null);
+                    getBrowser().runtime.sendMessage({
+                        eventName: 'restartPomodoro'
+                    });
                     this.props.endStarted();
                     clearInterval(interval);
                     interval = null
@@ -442,9 +441,6 @@ class StartTimer extends React.Component {
                         eventName: 'reminder'
                     });
                     
-                    getBrowser().runtime.sendMessage({
-                        eventName: 'removeAllPomodoroTimers'
-                    });
                     
                     this.application.setIcon(getIconStatus().timeEntryEnded);
                 })

@@ -85,7 +85,7 @@ var ClockifyPopupDlg = class {
                 _clockifyProjectList.onClickedProjectDropDown(el);
                 break;
             default:
-                if (el.nodeName === 'LI' && el.id.startsWith('task_li_')) {
+                if (el.nodeName === 'LI' && (el.id.startsWith('task_li_') || el.id.startsWith('li_'))) {
                     _clockifyProjectList.onClickedProjectDropDown(el);
                 }
                 break;

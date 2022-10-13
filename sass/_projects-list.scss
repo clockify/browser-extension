@@ -3,8 +3,8 @@
 $spacer: 1rem !default;
 
 .project-list-button {
-  //padding: 6px 0;
-  padding-right: 6px;
+  padding: 0 6px;
+  // padding-right: 6px;
   background: white;
   border: 1px solid variables.$border;
   border-radius: 2px;
@@ -52,9 +52,9 @@ $spacer: 1rem !default;
 
 
 .project-list-name {
-  display: inline-block;
+  display: inline-flex;
   //padding: 5px 10px;
-  padding: 0px 7px !important;
+  // padding: 0px 7px !important;
   width: 85%;
   font-size: 14px;
   overflow: hidden;
@@ -139,18 +139,24 @@ span.project-list-name-client {
     content: url("../assets/images/x.png");
     cursor: pointer;
   }
+  &:focus {
+    outline: none;
+    border: 2px solid #0f3beb;
+    border-radius: 5px;
+  }
 }
 
 .tasks-arrow-down {
-  content: url("../assets/images/filter-arrow-down.png");
+  // content: url("../assets/images/filter-arrow-down.png");
   margin-left: 5px;
 }
 
 .tasks-arrow-right {
-  content: url("../assets/images/filter-arrow-right.png");
+  // content: url("../assets/images/filter-arrow-right.png");
   position: relative;
-  top: 2px;
+  top: -1px;
   margin-left: 5px;
+  vertical-align: middle;
 }
 
 ul.project-item {
@@ -185,15 +191,20 @@ li.project-item-name {
   text-overflow: ellipsis;
   overflow: hidden;
   font-size: 14px;
-  line-height: 16px;
+  // line-height: 16px;
   white-space: nowrap;
   color: variables.$dark_text;
 }
 
 li.project-item-tasks {
+  display: flex;
   color: variables.$lighter_text;
   font-size: 13px;
   flex: 0 0 90px;
+}
+
+li.project-item-tasks > span {
+  color: variables.$lighter_text;
 }
 
 li.project-item-favorite {
@@ -215,7 +226,7 @@ li.project-item-favorite {
   background-color: variables.$task-background;
   color: variables.$dark_text;
   font-size: 14px;
-  line-height: 16px;
+  // line-height: 16px;
   &:hover {
     background-color: variables.$entries_header;
     cursor: pointer;
@@ -260,16 +271,16 @@ li.project-item-favorite {
       height: 19px;
       margin-right: 7px;
       margin-left: 10px;
-      content: url("/assets/images/create.png");
+      // content: url("/assets/images/create.png");
     }
     &--text {
       color: variables.$blue;
       font-size: 14px;
-      line-height: 16px;
+      // line-height: 16px;
     }
   }
   &__bottom-padding {
-    padding-bottom: 39px;
+    padding-bottom: 54px;
     width: 100%;
   }
   &__create-task{
@@ -280,7 +291,7 @@ li.project-item-favorite {
   }
 }
 
-.error {
+.clockify-error {
   color: red;
   font-size: 14px;
 }
@@ -290,11 +301,11 @@ li.project-item-favorite {
   width: 16px;
   height: 16px;
   margin: 5px 3px 0px 5px;
-  background: url(../assets/images/ui-icons/favorites-normal.svg);
-  &:hover {
-    background: url(../assets/images/ui-icons/favorites-hover.svg);
-  }
-  &.cl-active {
-    background: url(../assets/images/ui-icons/favorites-active.svg);
-  }
+  // background: url(../assets/images/ui-icons/favorites-normal.svg);
+  // &:hover {
+  //   background: url(../assets/images/ui-icons/favorites-hover.svg);
+  // }
+  // &.cl-active {
+  //   background: url(../assets/images/ui-icons/favorites-active.svg);
+  // }
 }

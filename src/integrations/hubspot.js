@@ -1,15 +1,15 @@
 // Inbox
-clockifyButton.render('[data-test-id="sticky-subject-header"]:not(.clockify)', { observe: true }, elem => {
+clockifyButton.render('[class*="InboxColumnHeader"] [class*="UIBox"]:last-child:not(.clockify)', { observe: true }, elem => {
 setTimeout(function(){ 
-  const subject = document.querySelector('[data-test-id="sticky-subject-header"]').textContent;
-  const contact = document.querySelector('[data-test-id="known-contact-info-highlight"]').textContent;
-  const ticketId = window.location.href.split('/')[6].replace("#reply-editor", "");
+  const subjectEl = document.querySelector('[data-test-id="thread-list-member-row"][data-selected="true"]');
+  const subject = subjectEl && subjectEl.getAttribute('aria-label') && subjectEl.getAttribute('aria-label').split('with subject ')[1];
+  const contact = document.querySelector('[data-test-id="thread-list-member-row"][data-selected="true"] .private-truncated-string__inner').textContent;
+  const ticketId = window.location.href.match(/inbox\/(.*)#email/)[1];
   const description = "[#" + ticketId + "] " + subject + " [" + contact + "]";
-
   const link = clockifyButton.createButton(description);
-  link.style.position = 'absolute';
-  link.style.right = '10px';
-  link.style.top = '65px';
+  link.style.position = 'relative';
+  link.style.order = '-1';
+  link.style.marginRight = '11px';
 
   elem.appendChild(link);
   }, 500);
@@ -20,7 +20,13 @@ clockifyButton.render('[data-selenium-test="highlightTitle"]:not(.clockify)', { 
 
 setTimeout(function(){ 
 
-  const container = elem.parentElement;
+  let container = elem.parentElement;
+  for(let i = 0; i = 3; i++){
+    if(container.tagName.match(/H[1-4]/)){
+      break;
+    }
+    container = container.parentElement;
+  }
   const ticketId = window.location.href.split('/')[6].replace("/", "");
 
 if (document.querySelector(".width-100 a.private-link.uiLinkWithoutUnderline.uiLinkDark")) {

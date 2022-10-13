@@ -54,24 +54,32 @@ function createOriginList() {
                     permContainer.appendChild(checkbox);
                 }
 
-                createOriginListForCustomDomain(data, key, option, origins);
+                createOriginListForCustomDomain(data, key, option, origins);                
             }
+            addGenericIntegrationToList(option, origins)
+
             replaceContent('#settings__custom-domains__origins-container', origins);
             setTimeout(() => restore_options(), 0)
         });
 }
 
 function createOriginListForCustomDomain(data, key, option, origins) {
-    if (!data[key].clone) {
-        option = document.createElement('option');
-        option.id = 'origin';
-        option.value = key;
-        option.setAttribute('data-id', key);
-        option.textContent = data[key].name;
-
-        origins.appendChild(option);
-    }
+    option = document.createElement('option');
+    option.id = 'origin';
+    option.value = key;
+    option.setAttribute('data-id', key);
+    option.textContent = data[key].name;
+    origins.appendChild(option);
 }
+
+function addGenericIntegrationToList(option, origins){
+    option = document.createElement('option');
+    option.id = 'origin';
+    option.value = "generic-integration";
+    option.setAttribute('data-id', "generic-integration");
+    option.textContent = "Generic integration";
+    origins.appendChild(option);
+};
 
 function initLoad() {
 
@@ -212,10 +220,23 @@ function addCustomDomain() {
                     newPermission['script'] = clockifyOrigins[key].script;
                     newPermission['name'] = clockifyOrigins[key].name;
                     newPermission['isCustom'] = true;
+                    newPermission['urlPattern'] = `*://${customDomain}/*`
 
-                    permissionsByUser.permissions.push(newPermission);
+                    permissionsByUser.permissions.unshift(newPermission);
                     break;
                 }
+            }
+
+            // check if custom domain has chosen a generic integration file
+            if(selectedOrigin === "generic-integration"){
+                newPermission['domain'] = customDomain;
+                newPermission['isEnabled'] = true;
+                newPermission['script'] = "generic-integration.js";
+                newPermission['name'] = customDomain;
+                newPermission['isCustom'] = true;
+                newPermission['urlPattern'] = `*://${customDomain}/*`
+
+                permissionsByUser.permissions.unshift(newPermission);
             }
         }
 
@@ -290,7 +311,7 @@ function removeCustomDomain(e) {
             const permissionsByUser = result.permissions
                 .filter(permissionByUser => permissionByUser.userId === userId)[0].permissions;
             permissionsByUser.splice(permissionsByUser
-                .findIndex(p => p.isCustom && domain.includes(p.domain)), 1);
+                .findIndex(p => p.isCustom && isMatchingURL(p.urlPattern, domain)), 1);
 
             aBrowser.storage.local.set({"permissions": permissionsForStorage}, () => {
                 showCustomDomains();

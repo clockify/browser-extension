@@ -144,7 +144,7 @@ var ClockifyProjectList = class {
                     " alt='open' class='clockify-project-list-arrow' />" + 
                 "</span>" + 
             "</div>" +
-            (this.editForm.isTaskRequired ? `<div className='error'>${clockifyLocales.CANT_SAVE_WITHOUT_REQUIRED_FIELDS} (${clockifyLocales.TASK})</div>` : "")
+            (this.editForm.isTaskRequired ? `<div className='clokify-error'>${clockifyLocales.CANT_SAVE_WITHOUT_REQUIRED_FIELDS} (${clockifyLocales.TASK})</div>` : "")
         return str;
     }
 
@@ -221,6 +221,14 @@ var ClockifyProjectList = class {
                         this.loadMoreTasks(el);
                     else 
                         this.chooseTask(el);
+                } else if( el.nodeName === 'LI' && el.id.startsWith('li_')){
+                    const id = el.id.replace("li_", "");
+                    if (this.editForm.isForceTasks) {
+                        this.toggleProjectItem(id);
+                    }
+                    else {
+                        this.selectProjectItem(null, id);
+                    }
                 }
                 break;
         }

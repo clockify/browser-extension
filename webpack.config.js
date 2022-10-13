@@ -14,19 +14,19 @@ module.exports = {
     output: {
         path: path.join(__dirname, `${process.env.TARGET}`),
         filename: '[name].bundle.js',
+        publicPath: ''
     },
     optimization: {
         minimize: DEV ? false : true,
-        
         splitChunks: {
             cacheGroups: {
                 defaultVendors: {
-                  test: /[\\/]node_modules[\\/]/,
-                  name: 'vendors',
-                  chunks: 'all',
-                  automaticNameDelimiter: '.',
+                    test: /[\\/]node_modules[\\/]/,
+                    name: 'vendors',
+                    chunks: 'all',
+                    automaticNameDelimiter: '.'
                 }
-              },
+            }
         }
     },
     module: {
@@ -50,7 +50,6 @@ module.exports = {
                   // Translates CSS into CommonJS
                   "css-loader",
                   // Compiles Sass to CSS
-                  "resolve-url-loader",
                   "sass-loader",
                 ],
               },

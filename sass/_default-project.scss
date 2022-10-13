@@ -1,7 +1,7 @@
 @use "variables";
 
 .default-project {
-  margin: 20px 20px 10px 20px;
+  margin: 20px 20px 0px 20px;
 
   &-checkbox {
     display: inline-block;
@@ -28,7 +28,7 @@
 
   &-title {
     position: relative;
-    bottom: 3px;
+    //bottom: 1px;
     margin-left: 10px;
     font-size: 13px;
     font-weight: 400;

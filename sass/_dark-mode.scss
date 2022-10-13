@@ -1,6 +1,6 @@
 @use "variables";
 
-body.dark {
+body.dark, .clockify-dark-mode {
   background-color: variables.$bg-09;
   .logo {
     width: 98px;
@@ -141,7 +141,7 @@ body.dark {
     color: #8fa2ad !important;
   }
 
-  .custom-field-inner-checkbox{
+  div.custom-field-inner-checkbox{
     background-color: #36464f !important;
     &-disabled{
       border: none !important;
@@ -458,6 +458,11 @@ body.dark {
     &::placeholder {
       color: variables.$bg-04;
     }
+    &:focus {
+      outline: none;
+      border: 2px solid #0f3beb;
+      border-radius: 5px;
+    }
   }
   .color-picker__title,
   .create-project__billable-title,
@@ -568,7 +573,7 @@ body.dark {
   .app-version {
     color: variables.$bg-03;
   }
-  .error {
+  .clockify-error {
     color: red;
     font-size: 14px;
   }
@@ -598,4 +603,8 @@ body.dark {
     background: variables.$bg-10;
     color: variables.$bg-03;
   }
+  &.clockify-integration-popup{
+    color: variables.$light_text;
+  }
+
 }

@@ -119,10 +119,10 @@ var locales = {
                      match.toLowerCase() === this.CLIENTS_DEFAULT.toLowerCase()) {
                 label = projectGroupingLabel;
             }
-            if (/[A-Z][a-z]+/.test(match)) {
+            if (match[0] === match[0].toUpperCase() && match[1] && match[1] === match[1].toLowerCase()) {
                 return this.CUSTOM_LABEL(label, plural, 'capital');
             }
-            else if (/[a-z]+/.test(match)) {
+            else if (match[0] === match[0].toLowerCase()) {
                 return this.CUSTOM_LABEL(label, plural, 'lowercase');
             }
             else {
@@ -259,6 +259,9 @@ var locales = {
     get SATURDAY_SHORT() { return this.getMessage('TEAMS__REMINDERS__WEEKDAYS__SATURDAY_SHORT') },
     get SUNDAY() { return this.getMessage('TEAMS__REMINDERS__WEEKDAYS__SUNDAY') },
     get SUNDAY_SHORT() { return this.getMessage('TEAMS__REMINDERS__WEEKDAYS__SUNDAY_SHORT') },
+    get SUBSCRIPTION_EXPIRED() { return this.getMessage('GLOBAL__SUBSCRIPTION_EXPIRED') },
+    get FEATURE_DISABLED_CONTACT_ADMIN() { return this.getMessage('GLOBAL__FEATURE_DISABLED_CONTACT_ADMIN') },
+
 
     ///////////////
     // EXTENSION__
@@ -429,7 +432,9 @@ var locales = {
     get LAST_WEEK() { return this.getMessage('TRACKER__APPROVAL__LAST_WEEK') },
     get WEEK_TOTAL() { return this.getMessage('TRACKER__TIME_TRACKER__WEEK_TOTAL') },
     DESCRIPTION_LIMIT_ERROR_MSG(limit) { return this.getMessage('GLOBAL__DESCRIPTION_LIMIT_ERROR_MSG', [limit]) },
-    DELETE_MULTIPLE_ENTRIES(entries) {return this.getMessage('TRACKER__TIME_TRACKER__ENTRY__DELETE_ENTRIES_MODAL_BODY', [entries])}
+    DELETE_MULTIPLE_ENTRIES(entries) {return this.getMessage('TRACKER__TIME_TRACKER__ENTRY__DELETE_ENTRIES_MODAL_BODY', [entries])},
+    get FOCUS_MODE() { return this.getMessage('EXTENSION__FOCUS_MODE') },
+    get UPGRADE_TO_USE_THIS_FEATURE() { return this.getMessage('EXTENSION__UPGRADE_TO_USE_THIS_FEATURE') },
 
 }
 

@@ -81,13 +81,10 @@ class ClockifyIntegrationBase {
         }
         else {
             if (status === 201) {
-                // proveri afterStartTimer
-                // window.inProgress = true;
                 aBrowser.action.setIcon({
                     path: iconPathStarted
                 });
                 addPomodoroTimer();
-                // localStorage.setItem('timeEntryInProgress', JSON.stringify(ent));
                 aBrowser.storage.local.set({'timeEntryInProgress': ent});
             }   
             sendResponse({ status: status, data: ent });

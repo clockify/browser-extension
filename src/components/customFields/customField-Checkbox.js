@@ -10,6 +10,7 @@ const CustomFieldCheckbox = ({cf, updateValue}) => {
 
     const handleChange = (e) => {
         setValue(e);
+        manualMode && updateValue(id, e);
     };
 
     return (

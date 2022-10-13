@@ -36,7 +36,7 @@ export function CustomFieldsContainer({
                     arr.push({
                         customFieldId, 
                         wsCustomField,
-                        timeEntryId,  // assert eq item.timeEntryId
+                        timeEntryId: timeEntry.id,  // assert eq item.timeEntryId
                         value,
                         index: arr.length,
                         isUserOwnerOrAdmin,

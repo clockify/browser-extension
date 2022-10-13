@@ -5,7 +5,12 @@
   border: 0px solid #C6D2D9 !important; 
   background-color: #eff4f7 !important;
   margin: 0 !important;
-  width: 320px !important;
+  width: 100%;
+  input:focus {
+    outline: none;
+    border: 2px solid #0f3beb;
+    border-radius: 5px;
+  }
 }
 
 .custom-field {
@@ -362,6 +367,10 @@ input.clockify-link-input {
     border: 1px solid #C6D2D9 !important; 
     background-color: #eff4f7 !important;  
   }
+  &:focus {
+    border: 2px solid #0f3beb !important;
+    border-radius: 5px !important;
+  }
 }
 
 input.clockify-link-input-modal {
@@ -380,6 +389,10 @@ input.clockify-link-input-modal {
   border-radius: 2px;
   transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out !important;
   box-shadow: none !important;
+  &:focus {
+    border: 2px solid #0f3beb !important;
+    border-radius: 5px !important;
+  }
 }
 
 
