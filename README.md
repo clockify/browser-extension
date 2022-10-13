@@ -25,25 +25,25 @@ If you need the fix quicker, feel free to update the integration yourself and se
 1. Make sure you have Node and NPM installed on your system (see setup instructions below)
 2. Clone the repository
 3. Run `npm install --legacy-peer-deps`
-4. Build Chrome extension by running:<br>
- `npm run compile.dev.chrome`<br>
-
+4. Build Chrome extension and watch for changes by running: `npm run compile.dev.chrome`
 5. Navigate to `chrome://extensions/`
 6. Enable "Developer mode" (located in the top right corner)
-7. Click "Load unpacked" and select the `www/chrome.dev/` folder that you've built
+7. Click "Load unpacked" and select the `chrome.dev/` folder that you've built
 
 
 ### Firefox extension
 
 1. Make sure you have Node and NPM installed on your system (see setup instructions below)
 2. Clone the repository
-3. Run `npm install`
-4. Build Firefox add-on by running:<br>
- `npm run compile.dev.firefox`<br>
+3. Run `npm install --legacy-peer-deps`
+4. Build Firefox add-on and watch for changes by running: `npm run compile.dev.firefox`
+5. Open a second terminal window and run `npm run run.dev.firefox` to load the extension into a temporary Firefox browser profile. This uses [`web-ext run`](https://extensionworkshop.com/documentation/develop/web-ext-command-reference/#web-ext-run) to open a new Firefox window with the extension loaded as a temporary addon and reloads the extension when changes are made to the compiled extension files.
 
-5. Navigate to `about:debugging`
-6. Click "Load Temporary Add-on"
-7. Select the `www/firefox.dev/manifest.json` file
+You can also load the compiled extension into any Firefox profile by following these steps:
+
+1. Navigate to `about:debugging`
+2. Click "Load Temporary Add-on"
+3. Select the `firefox.dev/manifest.json` file
 
 ### How adding an integration works
 
