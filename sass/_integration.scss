@@ -1,0 +1,107 @@
+@use "variables";
+
+.clockify-integration-popup {
+    background: #eff4f7;
+    box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
+    width: 350px;
+    position: fixed;
+    top: 3vh;
+    right: 3vw;
+    z-index: 9999999999;
+    color: variables.$dark_text;
+    font-size: 14px;
+
+    *::selection {
+        background: highlight;
+        color: highlighttext;
+    }
+
+    img, svg {
+        vertical-align: inherit;
+    }
+
+    input:not([type="image"i]) {
+        box-sizing: border-box;
+    }
+    input, textarea {
+        box-shadow: none;
+    }
+    label {
+        display: inline-block;
+        font-weight: normal;
+    }
+    span {
+        float: none;
+    }
+    
+    &-close-icon {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+        position: absolute;
+        top: 16px;
+        right: 20px;
+    }
+    &-header {
+        height: 20px;
+    }
+
+    .toaster__container {
+        position: absolute !important;
+    }
+}
+
+#clockifyButton, #clockifySmallButton {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+    img, svg {
+        vertical-align: inherit;
+    }
+}
+
+.clockify-button-active {
+    color: #03A9F4;
+}
+
+.clockify-button-inactive {
+    color: #444444;
+}
+
+.clockify-input {
+    border: 1px solid #c6d2d9;
+    border-radius: 2px;
+    width: 134px;
+    padding-left: 7px;
+    height: 30px;
+}
+
+.clockify-input:focus, .clockify-input:hover {
+    outline: none;
+    box-shadow: 0 0 4px rgba(0,0,0,.05);
+    border:1px solid #03A9F4;
+    background-color: #fff ;
+}
+
+.clockify-input.clockify-input-default {
+    border-color: #c6d2d9;
+    color: #333;
+    background-color: #fff;
+}
+
+.clockify-input.clockify-input-success {
+    border-color: #CDE9CE ;
+    color: #285B2A ;
+    background-color: #DBEFDC ;
+}
+
+.clockify-input.clockify-input-error {
+    border-color: #FCCAC7 ;
+    color: #7F231C ;
+    background-color: #FDD9D7 ;
+}
+
+.clockify-manual-entry-header-text {
+    margin-left: 20px;
+}

@@ -1047,6 +1047,9 @@
   "EXTENSION__DISCARD_AND_CONTINUE": {
     "message": "버리고 계속"
   },
+  "EXTENSION__FOCUS_MODE": {
+    "message": "초점 모드"
+  },
   "EXTENSION__IDLE_TIME_DETECTED": {
     "message": "유휴 시간 감지됨"
   },
@@ -1122,6 +1125,12 @@
   "GLOBAL__JOB_AREAS_LABEL": {
     "message": "작업 영역"
   },
+  "GLOBAL__SUBSCRIPTION_EXPIRED": {
+    "message": "구독이 만료되었습니다."
+  },
+  "GLOBAL__FEATURE_DISABLED_CONTACT_ADMIN": {
+    "message": "기능이 비활성화되었습니다. 자세한 내용은 관리자에게 문의하십시오."
+  },
   "EXTENSION__START_TIMER_WITH_DESCRIPTION": {
     "message": "설명과 함께 타이머 시작"
   },
@@ -1145,6 +1154,9 @@
   },
   "AUDIT_LOG__KIOSK__BREAK_TYPE_LABEL": {
     "message": "부서지다"
+  },
+  "EXTENSION__UPGRADE_TO_USE_THIS_FEATURE": {
+    "message": "이 기능을 사용하려면 업그레이드하세요"
   },
   "appName": {
     "message": "Clockify 시간 추적기",

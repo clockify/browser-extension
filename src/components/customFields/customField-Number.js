@@ -10,8 +10,10 @@ const CustomFieldNumber = ({cf, updateValue}) => {
         const val = e.target.value;
         if(val){
             setValue(parseFloat(val));
+        }else{
+            setValue('');
         }
-        // updateValue(id, val);
+        manualMode && updateValue(id, val);
         // handleChangeDelayed.current(parseFloat(val));
     };
 

@@ -4,7 +4,9 @@
         "SUBTITLE": "고급 기능을 사용하려면 { name } 작업 공간을 업그레이드하십시오.",
         "TRIAL_MODAL": {
             "TEXT": "7일 동안 모든 PRO 기능을 무료로 사용해 보세요!"
-        }
+        },
+        "SUBTITLE_REGION": "귀하의 계정과 데이터는 { region } 서버에 있습니다. Clockify를 사용하려면 { workspace }를 업그레이드하십시오.",
+        "TITLE_REGIONAL": "요금제 선택"
     },
     "INVOICES": {
         "IMPORT": {
@@ -35,8 +37,8 @@
             },
             "DESCRIPTION_PLACEHOLDER": "항목 설명 입력",
             "ISSUE": "발행일",
-            "DAY_AGO": "{value}일 전",
-            "DAYS_AGO": "{value}일 전"
+            "DAY_AGO": "{ value } 일 전",
+            "DAYS_AGO": "{ value }일 전"
         },
         "DETAILS": {
             "ADD_LABEL": "{ label } 추가",
@@ -61,27 +63,33 @@
                         "FAILED_MESSAGE": "회사 이름은 2~250자 사이여야 합니다."
                     },
                     "SUCCESS_MESSAGE": "회사가 생성되었습니다.",
-                    "FAILED_MESSAGE": "회사 만들기에 실패했습니다."
+                    "FAILED_MESSAGE": "회사 만들기에 실패했습니다.",
+                    "SUCCESS_MESSAGE_TWO": "회사가 성공적으로 생성되었습니다"
                 }
             },
             "NAME": "회사명",
             "ADDRESS": "회사 주소",
             "EDIT": {
                 "MODAL": {
-                    "TITLE": "회사 편집",
+                    "TITLE": "회사 수정",
                     "SUCCESS_MESSAGE": "회사 목록이 성공적으로 업데이트되었습니다.",
-                    "FAILED_MESSAGE": "회사 업데이트에 실패했습니다.",
-                    "DELETE_TOOLTIP": "기본 회사 데이터를 삭제할 수 없습니다.",
-                    "MAX_TOOLTIP": "50개 이상의 회사를 가질 수 없습니다."
+                    "MAX_TOOLTIP": "50개 이상의 회사를 가질 수 없습니다"
                 }
             },
             "GET": {
                 "FAILED_MESSAGE": "기업 확보에 실패했습니다."
             },
-            "DELETE": {
-                "MODAL": {
-                    "FAILED_MESSAGE": "회사 삭제에 실패했습니다."
-                }
+            "DELETE": "회사 삭제",
+            "ADD": "회사 추가",
+            "COMPANIES": "회사",
+            "DELETE_INFO": "인보이스의 \"청구서\" 필드에서 { value }이(가) 제거됩니다.",
+            "DELETE_MODAL": {
+                "SUCCESS_MESSAGE": "회사가 성공적으로 삭제되었습니다.",
+                "FAILED_MESSAGE": "회사를 삭제하지 못했습니다."
+            },
+            "EDIT_MODAL": {
+                "SUCCESS_MESSAGE": "회사가 성공적으로 업데이트되었습니다",
+                "FAILED_MESSAGE": "회사 수정에 실패했습니다."
             }
         },
         "MESSAGES": {
@@ -195,7 +203,9 @@
             },
             "DEFAULTS_LABEL": "기본값",
             "TRANSLATIONS_LABEL": "번역",
-            "APPEARANCE_LABEL": "모습"
+            "APPEARANCE_LABEL": "모습",
+            "EMAILS_LABEL": "이메일",
+            "REQUIRED_LABEL": "값은 필수 항목입니다"
         },
         "MANUALLY": {
             "TOOLTIP": "수동으로 인보이스로 표시됨"
@@ -218,6 +228,47 @@
             "GROUPING_CATEGORY": "카테고리별로 그룹화",
             "GROUPING_HOURS_GROUPED_CUSTOM_LABEL": "그룹화({ label }, 사용자 또는 날짜별로 시간 결합)",
             "GROUPING_PROJECT_CUSTOM_LABEL": "그룹화 기준 { label }"
+        },
+        "EMAILS": {
+            "PARAMETERS": {
+                "DESCRIPTION": "이것을 이메일 템플릿에 넣으면 송장을 보낼 때 실제 값으로 대체됩니다.",
+                "INVOICE": {
+                    "TITLE_LABEL": "인보이스 이메일 템플릿",
+                    "LABEL": "이 이메일은 Clockify를 통해 고객에게 인보이스를 보내면 고객에게 전송됩니다."
+                },
+                "REMINDER": {
+                    "TITLE_LABEL": "알림 이메일 템플릿",
+                    "LABEL": "이 이메일은 인보이스 지불을 상기시키기 위해 고객에게 전송됩니다."
+                },
+                "INVOICE_ID": {
+                    "LABEL": "인보이스 ID 번호"
+                },
+                "INVOICE_SUBJECT": {
+                    "LABEL": "송장 제목"
+                },
+                "INVOICE_NOTE": {
+                    "LABEL": "인보이스 메모"
+                },
+                "CLIENT_NAME": {
+                    "LABEL": "고객의 이름"
+                },
+                "COMPANY_NAME": {
+                    "LABEL": "회사 이름"
+                },
+                "INVOICE_ISSUE_DATE": {
+                    "LABEL": "인보이스 발행일"
+                },
+                "INVOICE_AMOUNT": {
+                    "LABEL": "인보이스 총액"
+                },
+                "INVOICE_DUE_DATE": {
+                    "LABEL": "인보이스 만기일"
+                },
+                "DAYS_PAST_DUE_DATE": {
+                    "LABEL": "연체 일수"
+                },
+                "TITLE": "이메일 매개변수"
+            }
         }
     },
     "APPROVAL": {
@@ -289,7 +340,9 @@
         "SORT_BY": {
             "WEEK": "정렬 기준: 주",
             "PEOPLE": "정렬 기준: 사람"
-        }
+        },
+        "NO_TIMESHEETS_AND_EXPENSES_ON_LABEL": "{ value } 시간표 및 경비 없음",
+        "NO_TIMESHEETS_AND_EXPENSES_ON_UNSUBMITTED_LABEL": "{ label }에 대한 { value } 작업표 및 비용 없음"
     },
     "CALENDAR": {
         "LOCKED_DATE_TOOLTIP": "날짜가 잠겨 있습니다. 새로운 시간 항목을 추가할 수 없습니다.\n자세한 내용은 관리자에게 문의하세요.",
@@ -305,7 +358,14 @@
             "DISABLED_MANUAL_MODE_TOOLTIP": "수동 모드 비활성화됨",
             "CONNECT_TEXT_2": "계정",
             "CONNECT_TO_TOOLTIP": "Google 캘린더 또는 MS Outlook에 연결",
-            "COPY_BTN_TOOLTIP": "시간 항목으로 복사"
+            "COPY_BTN_TOOLTIP": "시간 항목으로 복사",
+            "CALENDAR_REMOVED_MSG": "캘린더가 성공적으로 제거되었습니다.",
+            "CALENDAR_CONNECTED_MSG": "캘린더가 성공적으로 연결되었습니다",
+            "SHOW_ONLY_WORKING_DAYS": "근무일만 표시",
+            "CALENDAR_SETTINGS_UPDATED_MSG": "캘린더 설정 업데이트됨",
+            "CALENDAR_ADDED_MSG": "캘린더가 성공적으로 추가되었습니다",
+            "CALENDAR_DISCONNECTED_MSG": "캘린더가 성공적으로 연결 해제되었습니다.",
+            "CALENDAR_SETTINGS_LABEL": "캘린더 설정"
         },
         "SHARED": {
             "CONNECT_BTN": "연결하기",
@@ -324,7 +384,8 @@
         },
         "TIME_ENTRIES": {
             "STOP_TOOLTIP": "시간 입력 중지"
-        }
+        },
+        "LOCKED_DATE_TOOLTIP_SHORT": "잠긴 날짜"
     },
     "DELETE_ACCOUNT": {
         "WORKSPACE_NOT_EMPTY_WARNING": "당신의 작업 공간을 참조하는 사람들이 있습니다",
@@ -384,9 +445,9 @@
                     "HIDE": "누락 숨기기",
                     "SEE": "누락 참조",
                     "INFO_MSG_PART1": "시간 ",
-                    "INFO_MSG_PART2": "{ count, plural, =0{} =1{user} other{users} } { count, plural, =0{} =1{he} other{그들} } 가져오기가 수행되지 않습니다. t 당신의 작업 공간에 존재합니다.",
+                    "INFO_MSG_PART2": "{ count, plural, =0{} =1{사용자} other{사용자} } { count, plural, =0{} =1{당국자} other{당국자} } 가져오기가 수행되지 않습니다. t 당신의 작업 공간에 존재합니다.",
                     "INVITE_MSG_PART1": "초대 누락 { count, plural, =0{} =1{user} other{users} }",
-                    "INVITE_MSG_PART2": "그리고 { count, plural, =0{} =1{he} other{그들이 } } 초대를 수락하면 { count, plural, =0{} =1{him} other{의 시간을 가져올 수 있습니다. 그들을} }.",
+                    "INVITE_MSG_PART2": "일단 그들이 초대를 수락하면 당신은 그들을 위해 시간을 가져올 수 있습니다 .",
                     "TITLE_PLURAL_HANDLING": "누락 { count, plural, =0{} =1{user} other{users} }",
                     "HIDE_PLURAL_HANDLING": "누락된 항목 숨기기 { count, plural, =0{} =1{user} other{users} }",
                     "SEE_PLURAL_HANDLING": "누락된 { count, plural, =0{} =1{사용자} other{사용자} } 참조"
@@ -596,7 +657,8 @@
                 "INFO_MESSAGE": "사용자 또는 프로젝트 시간당 요금이 없을 때 청구 가능한 각 시간의 기본값입니다."
             },
             "CURRENCY": {
-                "INFO_MESSAGE": "청구 가능 및 비용 금액이 보고서에 표시되는 통화입니다."
+                "INFO_MESSAGE": "청구 가능 및 비용 금액이 보고서에 표시되는 통화입니다.",
+                "CHANGED_SUCCESSFULY": "통화가 업데이트되었습니다."
             },
             "SAVING_TIME": {
                 "TITLE": "시간 절약을 허용하지 마십시오.",
@@ -635,7 +697,8 @@
             "CAPTURE_SCREENSHOT": {
                 "TITLE": "스크린샷 캡처",
                 "INFO_MESSAGE": "타이머가 실행되는 동안 5분마다 스크린샷을 생성합니다(데스크톱 앱만 해당).",
-                "TOGGLE": "스크린샷 캡처 활성화"
+                "TOGGLE": "스크린샷 캡처 활성화",
+                "HIGH_RESOLUTION_TOGGLE": "고해상도 스크린샷"
             },
             "PRIVACY_CONFIRM_MODAL": {
                 "TEXT": {
@@ -676,7 +739,11 @@
                 "ACTIVATE": "트래커 활성화"
             },
             "ACTIVATE_KIOSK": "키오스크 활성화",
-            "REGULAR_USER_ASSIGNMENTS": "일반 사용자는 모든 사람의 과제를 볼 수 있습니다."
+            "REGULAR_USER_ASSIGNMENTS": "일반 사용자는 모든 사람의 과제를 볼 수 있습니다.",
+            "APPROVAL_PERIOD": {
+                "TOOLTIP": "사용 가능한 옵션 중에서 선택하십시오: 매주, 반개월 (1-15 및 16월 말) 및 매월",
+                "TITLE": "승인 기간"
+            }
         },
         "PTO": {
             "UPGRADE_MESSAGE": {
@@ -736,7 +803,8 @@
         },
         "ARCHIVE": {
             "CHECK_FOR_PROJECT": "또한 이 프로젝트에 할당된 모든 프로젝트를 보관합니다.",
-            "CONFIRM_ACTION": "아카이브하시겠습니까?"
+            "CONFIRM_ACTION": "아카이브하시겠습니까?",
+            "CHECK_FOR_PROJECT_CUSTOM": "또한 여기에 할당된 모든 { projectLabel }을 아카이브합니다."
         },
         "RESTORE": {
             "CONFIRM_ACTION": "복원하시겠습니까?"
@@ -1070,7 +1138,8 @@
         "ENTITY_TABLE": {
             "LABEL_NAME_EXISTS_ERROR_MSG": "이름이 { newLabelName }인 { labelName }이(가) 이미 있습니다.",
             "DELETE_TAG_MSG": "{ tagName } 태그는 할당된 모든 시간 항목에서도 제거됩니다. 이 작업은 되돌릴 수 없습니다.",
-            "DELETE_CLIENT_MSG": "{ clientName } { clientLabel }도 할당된 프로젝트에서 제거됩니다. 이 작업은 되돌릴 수 없습니다."
+            "DELETE_CLIENT_MSG": "{ clientName } { clientLabel }도 할당된 프로젝트에서 제거됩니다. 이 작업은 되돌릴 수 없습니다.",
+            "DELETE_CLIENT_MSG_CUSTOM": "{ clientName } { clientLabel }도 할당된 { projectLabel }에서 제거됩니다. 이 작업은 되돌릴 수 없습니다."
         },
         "IMPORT_CSV": {
             "VALIDATING_DATA_LOADER_MSG": "데이터 검증...",
@@ -1200,7 +1269,10 @@
                 "PROFILE_SETTINGS": "프로필 설정",
                 "ERROR_MESSAGE": "{ workspace }의 소유자는 이중 인증 요구 사항을 활성화했습니다. 다시 로그인하십시오."
             }
-        }
+        },
+        "GENERAL_SETTINGS_DATA_FORMAT_INFO_MESSAGE": "전체 작업 공간에 대해 선호하는 숫자와 통화 형식을 선택하십시오.",
+        "GENERAL_SETTINGS_DATA_FORMAT_TYPE_NUMBER": "숫자 형식",
+        "GENERAL_SETTINGS_DATA_FORMAT_TYPE_CURRENCY": "통화 형식"
     },
     "PAGES": {
         "FEATURES": {
@@ -1223,7 +1295,8 @@
                     "A_ACTIVATE_FREE_FIRST": "저희는 환불을 제공하지 않습니다. 단, 시스템 오류로 인해 착오로 청구된 경우에는 당사에 연락해 주시면 즉시 환불에 대응합니다. 추가 기능을 테스트하려면",
                     "A_THEN_PAYMENT": "지불 완료 전에 먼저 활성화하는 것을 추천합니다.",
                     "Q": "환불은 가능한가요?",
-                    "A_FREE_TRIAL": "평가판을"
+                    "A_FREE_TRIAL": "평가판을",
+                    "A": "우리는 환불을 제공하지 않습니다. 하지만 시스템 오류로 인해 실수로 청구된 경우 저희에게 연락하시면 즉시 환불해 드리겠습니다. "
                 },
                 "PAYMENT_TYPES": {
                     "A_THIRD_PART": "요금제(연간 금액, 50시트 이상) 및",
@@ -1242,7 +1315,11 @@
                     "A": "네. 상위 요금제로 전환하는 경우 즉시 새 기능을 사용할 수 있으며 해당 월에 대해 비례 배분된 요금이 청구됩니다. 하위 요금제로 전환하는 경우, 현재(상위) 요금제가 종료되는 대로 선택된 하위 요금제로 전환됩니다.",
                     "Q": "요금제를 전환할 수 있습니까?"
                 },
-                "TITLE": "자주 묻는 질문"
+                "TITLE": "자주 묻는 질문",
+                "UPGRADE_PER_WORKSPACE": {
+                    "Q": "업그레이드는 작업 공간당 또는 계정당입니까?",
+                    "A": "업그레이드는 작업 공간을 기준으로 하고 업그레이드 가격은 해당 작업 공간에 대한 시트당입니다."
+                }
             },
             "PLAN": {
                 "FREE": {
@@ -1265,7 +1342,8 @@
                 "MORE_TIME": "무료 평가판은 이 작업 공간에서 이미 활성화되었습니다. 시간이 더 필요하면 새 작업 공간에서 평가판을 활성화하십시오.",
                 "BUTTON": "재판을 시작하다",
                 "EXPIRED": "평가판 만료",
-                "NAME": "재판"
+                "NAME": "재판",
+                "HAD_ALREADY_CUSTOM": "무료 평가판은 이 작업 공간에서 이미 활성화되었습니다."
             },
             "FOR_WORKSPACE": "{ value } 작업 공간용",
             "SUBSCRIPTION": {
@@ -1458,6 +1536,14 @@
             "UPDATE_LIMITED_QUANTITY_SEATS": {
                 "REMOVE": "제한된 좌석이 제거됨",
                 "ADD": "새로운 제한된 좌석이 추가되었습니다."
+            },
+            "UPDATE_FULL_QUANTITY_SEATS": {
+                "ADD": "새로운 전체 좌석이 추가되었습니다.",
+                "REMOVE": "전체 좌석 제거됨"
+            },
+            "UPDATE_GENERAL_QUANTITY_SEATS": {
+                "ADD": "새로운 좌석이 추가됨",
+                "REMOVE": "좌석이 성공적으로 제거되었습니다."
             }
         },
         "WORKSPACE": {
@@ -1970,7 +2056,7 @@
         "LABEL_COUNTRY": "국가",
         "DASHBOARD_LABEL": "계기반",
         "DISCONNECT_BTN": "연결 해제",
-        "ENTERPRISE_LABEL_PART": "기업",
+        "ENTERPRISE_LABEL_PART": "ENTERPRISE",
         "LABEL_EXPIRATION_DATE": "만료일",
         "GO_TO_SUBSCRIPTION_LABEL": "구독하러 가기",
         "MINUTES_LABEL": "분",
@@ -2012,7 +2098,7 @@
         "DEPARTMENT_LABEL": "부서",
         "NOW_LABEL": "지금",
         "SELECT_RANGEE_LABEL": "범위 선택",
-        "ADD_FIND_PLACEHOLDER_LABEL": "추가/찾기 { entity }",
+        "ADD_FIND_PLACEHOLDER_LABEL": "추가/찾기 { entity }…",
         "LEAVE_LABEL": "떠나다",
         "DAYS_LABEL": "날",
         "WEEKS_LABEL": "주",
@@ -2263,7 +2349,27 @@
         "YES_LABEL": "예",
         "FIND_PLACEHOLDER_LABEL": "찾기 { entity }",
         "SELECT_ISSUE_DATE": "발행일 선택",
-        "FIND_COMPANIES_LABEL": "회사 찾기..."
+        "FIND_COMPANIES_LABEL": "회사 찾기...",
+        "ALL_TIME_LABEL": "항상",
+        "NO_MATCHING_ITEMS": "일치하는 항목이 없습니다",
+        "NO_YET_FILTER_NAME": "아직 { filterName }이 없습니다.",
+        "NO_FILTER_RESULT": "{filterName } {pickerName} 없음 ",
+        "FIND_USERS_OR_GROUPS": "사용자 또는 그룹 찾기…",
+        "NO_CLIENT_LABEL_CUSTOM": "아니요 { clientLabel }",
+        "UPGRADE_TO_USE_FEATURE_PART_2": "{ feature }을 사용하거나 평가판을 시작하려면",
+        "INVALID_PASSWORD_LABEL": "유효하지 않은 비밀번호",
+        "ACTIVATING_LABEL": "활성화",
+        "SCHEDULED_VS_TRACKED_LABEL": "예약됨 vs 추적됨",
+        "DATA_REGION_PART_1": "데이터 영역",
+        "FORECAST_LABEL": "예측",
+        "FEATURE_DISABLED_CONTACT_ADMIN": "기능이 비활성화되었습니다. 자세한 내용은 관리자에게 문의하십시오.",
+        "SUBSCRIPTION_EXPIRED": "구독이 만료되었습니다.",
+        "ABOUT_DATA_REGIONS_LABEL": "데이터 영역 정보",
+        "AVAILABLE_AT": "이용 가능",
+        "DATA_FORMAT_TITLE": "데이터 형식",
+        "ADDON_WEBHOOKS_TITLE": "애드온 웹훅",
+        "NO_ADDON_WEBHOOKS_INSTALLED": "설치된 웹훅이 없습니다",
+        "RESUBSCRIBE_BUTTON": "재구독"
     },
     "PTO": {
         "REQUESTS_TAB": {
@@ -2327,7 +2433,10 @@
             "TITLE": "휴가 요청",
             "TIME_OFF_POLICY": "휴가 정책",
             "SELECT_TIME_OFF_TYPE": "휴가 유형 선택",
-            "BUTTON": "휴가 요청"
+            "BUTTON": "휴가 요청",
+            "NON_WORKING_DAYS_HOLIDAYS_WONT_COUNT": "휴무일 및 공휴일은 휴무일에 포함되지 않습니다.",
+            "NON_WORKING_DAYS_WONT_COUNT": "휴무일은 휴무일로 계산되지 않습니다.",
+            "CREATE_REQUEST_SUCCESS": "요청이 성공적으로 생성되었습니다."
         },
         "HOME": {
             "MANAGE_HOLIDAY_SELECT": "휴일 관리",
@@ -2387,8 +2496,10 @@
         "TIMELINE_LABEL": "타임라인",
         "HALF_DAY_LABEL": "반나절",
         "USERS": {
-            "FIND": "사용자 찾기"
-        }
+            "FIND": "사용자 찾기…"
+        },
+        "NEGATIVE_BALANCE_SPENT": "마이너스 잔액이 지출되었습니다.",
+        "NO_ARCHIVED_POLICIES": "보관된 정책 없음"
     },
     "PUMBLE_COUPON": {
         "EXCLUSIVE_OFFER": "독점적인 제공",
@@ -2500,7 +2611,9 @@
             "NO_SCREENSHOTS_PROMO_INFO": "타이머가 실행되는 동안 5분마다 스크린샷 캡처를 시작하려면 데스크톱 앱을 다운로드하세요.",
             "NO_SCREENSHOTS_PROMO_BTN": "스크린샷 녹화 앱 받기",
             "DELETE_SCREENSHOT_WARNING_MESSAGE_ADMIN": "이 스크린샷을 삭제하시겠습니까?",
-            "DELETE_SCREENSHOT_WARNING_MESSAGE": "이 스크린샷을 삭제하면 해당 시간 항목이 작업표에서 삭제됩니다."
+            "DELETE_SCREENSHOT_WARNING_MESSAGE": "이 스크린샷을 삭제하면 해당 시간 항목이 작업표에서 삭제됩니다.",
+            "SCREENSHOT_WITHOUT_DESCRIPTION": "(설명 없음)",
+            "SCREENSHOT_WITHOUT_PROJECT": "(프로젝트 없이)"
         },
         "SHARED": {
             "RECORDED_AT": "녹음 시간"
@@ -2521,7 +2634,7 @@
             "VIEW_PERMIT_TOOLTIP": "볼 수 있는 사람",
             "VISIBILITY_OPTIONS_LABELS": {
                 "PUBLIC": "공개 - 링크가 있는 모든 사용자가 볼 수 있음",
-                "PRIVATE": "비공개 - 선택한 회원만 볼 수 있습니다."
+                "PRIVATE": "비공개 - 선택한 사용자만 볼 수 있습니다."
             },
             "SHEDULED_REPORT_TYPES_LABELS": {
                 "DAILY_REPORT_LABEL": "일일"
@@ -2583,7 +2696,10 @@
             "SHARE_LINK_BTN": "링크 공유",
             "CREATE_LINK_INFO": "공유 보고서 페이지에서 이 링크를 보고 업데이트할 수 있습니다.",
             "WITHOUT_SOMETHING_LABEL_PART_1": "없이",
-            "EXPORT_REPORT_WITH_PARAM": "{ type } 보고서 내보내기"
+            "EXPORT_REPORT_WITH_PARAM": "{ type } 보고서 내보내기",
+            "ROUNDING_FEATURE": "반올림",
+            "LABOR_COST_FEATURE": "인건비 및 이익",
+            "BULK_ACTIONS_FEATURE": "일괄 수정"
         },
         "QUICK_BOOKS": {
             "UPGRADE_MESSAGE": {
@@ -2681,12 +2797,12 @@
                 "SYNC_INCOMPLETED_MSG": "동기화가 완료되지 않았습니다.",
                 "SYNC_INCOMPLETED_INFO_1": "{ count }({ length } 중) 항목이 QuickBooks에 성공적으로 전송되었습니다.",
                 "SYNC_INCOMPLETED_INFO_2_PART_1": "나머지는 보내주세요 ",
-                "SYNC_INCOMPLETED_INFO_2_PART_2": "그리고 다시 시도하십시오.",
+                "SYNC_INCOMPLETED_INFO_2_PART_2": ", 다시 시도하십시오. 활성 사용자만 동기화할 수 있습니다.",
                 "SYNC_ERROR_MSG": "전송이 완료되지 않음",
-                "SYNC_ERROR_INFO_1": "일부 항목을 QuickBooks로 보낼 수 없습니다. Clockify을 QuickBooks와 동기화하고 다시 시도하십시오.",
+                "SYNC_ERROR_INFO_1": "일부 항목을 QuickBooks로 보낼 수 없습니다. 활성 사용자만 동기화할 수 있습니다. Clockify를 QuickBooks와 동기화하고 다시 시도하십시오.",
                 "SYNC_ERROR_INFO_2_PART_1": "일부 항목은 QuickBooks로 보낼 수 없습니다. 보내려면 QuickBooks에서 누락된 고객을 생성하고,",
                 "SYNC_ERROR_INFO_2_PART_2": "Clockify를 QuickBooks와 동기화",
-                "SYNC_ERROR_INFO_2_PART_3": ", 그리고 다시 시도",
+                "SYNC_ERROR_INFO_2_PART_3": ", 다시 시도하십시오. 활성 사용자만 동기화할 수 있습니다.",
                 "SYNC_ERROR_INFO_3_PART_1": "있다 ",
                 "SYNC_ERROR_INFO_3_PART_2": "QuickBooks에 존재하지 않는 Clockify의 사용자.",
                 "SYNC_ERROR_INFO_4_PART_1": "있다 ",
@@ -2778,7 +2894,8 @@
         },
         "TYPE": {
             "TIME": "시간 보고",
-            "EXPENSES": "경비 보고서"
+            "EXPENSES": "경비 보고서",
+            "TEAM": "팀 보고서"
         },
         "DETAILED_EXPENSES_REPORT": {
             "DELETE_MODAL_BODY_INFO_WITH_PARAM": "{ count } 비용을 삭제하시겠습니까?",
@@ -2788,7 +2905,8 @@
             "ALL_SELECTED_INFO_WITH_COUNT": "모든 { value } 비용이 선택됩니다.",
             "ALL_SELECTED_INFO": "내 모든 비용이 선택됩니다.",
             "SELECT_ALL_WITH_COUNT_TEXT": "비용 { count }개 모두 선택",
-            "SELECT_ALL_ENTRIES_TEXT": "내 모든 비용 선택"
+            "SELECT_ALL_ENTRIES_TEXT": "내 모든 비용 선택",
+            "ENABLE_EXPENSE_TO_SEE": "경비 보고서를 보려면 경비를 활성화하십시오."
         },
         "PROFIT_LABEL": "이익:",
         "ADD_TIME": {
@@ -2801,7 +2919,19 @@
             "EXPENSE_DETAILED": "Clockify_비용_보고서_상세",
             "DETAILED": "Clockify_시간_보고서_상세",
             "WEEKLY": "Clockify_시간_보고서_주간",
-            "SUMMARY": "Clockify_시간_보고서_요약"
+            "SUMMARY": "Clockify_시간_보고서_요약",
+            "SCHEDULED_VS_TRACKED": "Clockify_Scheduled_vs_Tracked"
+        },
+        "NO_INACTIVE_USERS": "비활성 사용자 없음",
+        "NO_ARCHIVED_CLIENTS": "보관된 클라이언트 없음",
+        "NO_ARCHIVED_PROJECTS": "보관된 프로젝트 없음",
+        "NO_COMPLETED_TASKS": "완료된 작업 없음",
+        "NO_ARCHIVED_CATEGORIES": "보관된 카테고리 없음",
+        "NO_ARCHIVED_TAGS": "보관된 태그 없음",
+        "SCHEDULED_VS_TRACKED": {
+            "ENABLE_SCHEDULING_TO_SEE": "예약된 시간과 추적된 시간을 보려면 예약을 활성화하세요.",
+            "DIFFERENCE_LABEL": "차이점",
+            "PERFORMANCE_LABEL": "성능"
         }
     },
     "PROJECTS": {
@@ -2828,7 +2958,9 @@
             "PROJECT_NAME_LENGTH_ERROR": "프로젝트 이름은 2~250자 사이여야 합니다",
             "NO_RESULT": "남은 회원이 없습니다",
             "UPDATE_PROJECT_NOTE_SUCCESS_WITH_LIMIT": "프로젝트 메모 단축 및 업데이트(최대 { limit }자)",
-            "SUCCESSFULLY_UPDATED": "{ length } 프로젝트를 성공적으로 업데이트했습니다."
+            "SUCCESSFULLY_UPDATED": "{ length } 프로젝트를 성공적으로 업데이트했습니다.",
+            "NO_CLIENTS_LEFT": "남은 고객이 없습니다",
+            "NO_CLIENTS_LEFT_CUSTOM_LABEL": "{ label } 남음 없음"
         },
         "SHARED": {
             "SELECT_CLIENT_PLACEHOLDER": "클라이언트 선택",
@@ -2881,7 +3013,8 @@
             "PROJECT_NAME_ACCESS": "{ name } - 액세스",
             "PROJECT_NAME_STATUS": "{ name } - 상태",
             "PROJECT_NAME_TASKS": "{ name } - 작업",
-            "PROJECT_NAME_SETTINGS": "{ name } - 설정"
+            "PROJECT_NAME_SETTINGS": "{ name } - 설정",
+            "PROJECT_NAME_TASKS_CUSTOM": "{ name } - { taskLabel }"
         },
         "DROPDOWN": {
             "NO_ESTIMATE": "견적 없음",
@@ -3303,6 +3436,12 @@
             },
             "TIME_OFF": {
                 "DESCRIPTION": "휴가 정책 및 휴일을 정의하고, 휴가 요청을 제출 및 승인하고, 누가 언제 부재 중인지 확인하고, 적치휴가 및 남은 잔액을 추적합니다."
+            },
+            "FORECAST": {
+                "DESCRIPTION": "추적된 시간을 기반으로 프로젝트 진행 상황을 시각화하고, 예약된 할당을 기반으로 예측을 보고, 예상을 추가하여 프로젝트가 초과 또는 미달하는지 확인합니다. 또한 매월 반복되는 프로젝트에서 어떻게 수행했는지 확인하십시오."
+            },
+            "DATA_REGION": {
+                "TITLE": "데이터 영역"
             }
         },
         "BTN_UPLOAD_FILE_CONTENT": {
@@ -3368,7 +3507,8 @@
             "MESSAGES": {
                 "ENTRY_LOCKED_ADD_TIME_FAIL": "잠긴 기간에 시간을 추가할 수 없습니다.",
                 "SET_TIME_AFTER_PARAM_FAIL": "{ timeLimit } 이후에는 시간을 설정할 수 없습니다."
-            }
+            },
+            "MAX_PTO_DATE_RANGE_INFO": "최대 기간은 1년입니다."
         },
         "SUBSCRIPTION_INCOMPLETE_MODAL": {
             "MODAL_TITLE": "업그레이드 실패",
@@ -3467,7 +3607,7 @@
         "TAG_DROPDOWN": {
             "NO_MATCHING_TAGS_INFO": "일치하는 태그가 없습니다.",
             "CREATE_TAG": "{ search } 태그를 생성합니다.",
-            "PLACEHOLDER_LABEL": "태그 추가/찾기",
+            "PLACEHOLDER_LABEL": "태그 추가/찾기…",
             "NO_TAGS_LABEL": "아직 태그 없음"
         },
         "STRIPE_INVOICE": {
@@ -3486,6 +3626,11 @@
         },
         "CHART": {
             "LOAD_MORE_WITH_COUNT_LABEL": "더 로드({ count } 남음)"
+        },
+        "DROPDOWN_CHECKBOX": {
+            "NO_GROUPS_LABEL": "아직 그룹이 없습니다.",
+            "NO_MATCHING_GROUP_LABEL": "일치하는 그룹이 없습니다",
+            "CREATE_GROUP": "{ search } 그룹을 만듭니다."
         }
     },
     "TEAMS": {
@@ -3546,7 +3691,8 @@
                 "ADD": {
                     "PLACEHOLDER": "새 사용자 그룹 추가"
                 },
-                "FIND": "사용자 또는 그룹 찾기"
+                "FIND": "사용자 또는 그룹 찾기",
+                "ADD_GROUP_PLACEHOLDER": "새 그룹 추가"
             },
             "SEARCH": "이름 또는 이메일로 검색",
             "ADD": {
@@ -3606,7 +3752,7 @@
                     }
                 },
                 "GROUP": {
-                    "PLACEHOLDER": "사용자 그룹 찾기..."
+                    "PLACEHOLDER": "그룹 찾기..."
                 }
             },
             "USER_STATUS": {
@@ -3692,7 +3838,8 @@
         "USERS": {
             "SELECT": "사용자 선택",
             "FIND": "사용자 찾기..."
-        }
+        },
+        "FIND_MEMBERS": "회원 찾기…"
     },
     "TIMESHEET2": {
         "WITHDRAW": "취소",
@@ -3764,7 +3911,8 @@
             "TEMPLATE_EDIT_FAIL_HEADER": "템플릿이 수정되지 않았습니다.",
             "TEMPLATE_CREATE_FAIL_HEADER": "템플릿이 생성되지 않았습니다.",
             "TEMPLATE_MANIPULATION_FAIL_BODY": "템플릿에는 이름이 있어야 합니다.",
-            "SWITCHED_TIMESHEET_SUCCESS": "{ name }의 작업표로 전환됨"
+            "SWITCHED_TIMESHEET_SUCCESS": "{ name }의 작업표로 전환됨",
+            "ENTRIES_COPY_LAST_WEEK_ALERT": "일부 활동을 복사할 수 없습니다"
         },
         "ADD": {
             "TITLE": "시간 추가"
@@ -3862,7 +4010,10 @@
             "DELETE_TEMPLATE_SUCCESS": "템플릿을 성공적으로 삭제했습니다!",
             "UPDATE_TEMPLATE_SUCCESS_HEADER": "템플릿이 업데이트되었습니다!",
             "UPDATE_TEMPLATE_SUCCESS_BODY": "템플릿을 업데이트했습니다!",
-            "UPDATE_ENTRY_SUCCESS": "시간 항목을 성공적으로 업데이트했습니다!"
+            "UPDATE_ENTRY_SUCCESS": "시간 항목을 성공적으로 업데이트했습니다!",
+            "DATE_LOCKED": "이 날짜는 잠겨 있습니다.",
+            "ERROR_MISSING_FIELDS_CANT_SAVE": "저장할 수 없음, 필드 누락: { fields }",
+            "ERROR_MISSING_FIELD_CANT_SAVE": "저장할 수 없음, 필드 누락: { fields }"
         },
         "APPROVALS": {
             "ZONE": {
@@ -4099,7 +4250,10 @@
                 "SHARED_REPORTS_LABEL": "공유",
                 "SUBSCRIPTION_LABEL": "신청",
                 "TEAMS_LABEL": "팀",
-                "TIMESHEET_LABEL": "작업표"
+                "TIMESHEET_LABEL": "작업표",
+                "SHOW_MORE_LABEL": "자세히보기",
+                "SHOW_LESS_LABEL": "적게 표시",
+                "PTO_LABEL": "시간이 끝나다"
             },
             "CONTACT_SUPPORT": {
                 "CONTACT_FOR_DEMO_LABEL": "데모 요청",
@@ -4154,7 +4308,12 @@
             "CREATE_ACCOUNT_LABEL": "계정 만들기",
             "CREATE_FREE_ACCOUNT_LABEL": "무료 계정 만들기",
             "META_TITLE_LABEL": "계정 만들기 - Clockify",
-            "META_DESCRIPTION_LABEL": "무료 계정을 만들고 시간 추적을 시작하세요."
+            "META_DESCRIPTION_LABEL": "무료 계정을 만들고 시간 추적을 시작하세요.",
+            "DATA_HOSTING_FEATURE_NOTICE": "{ region } 데이터 호스팅은 유료 { feature }입니다. 가입하고 나면 업그레이드해야 합니다. 나중에 데이터 영역을 변경할 수 없습니다.",
+            "TITLE_REGIONAL": "유료 계정 만들기",
+            "CREATE_ACCOUNT_EXPLANATION_REGIONAL": "시간 추적을 시작하려면 등록하고 업그레이드하세요.",
+            "CREDIT_CARD_REQUIREMENT_REGIONAL": "{ location }에서 호스팅되는 데이터",
+            "CREDIT_CARD_REQUIREMENT_REGIONAL_PART_2": "신용카드 필요"
         },
         "SHARED": {
             "PASSWORD_INPUT_PLACEHOLDER": "암호를 선택",
@@ -4222,7 +4381,8 @@
         "NO_REFUNDS": "환불이 없습니다.",
         "SAVE_PERCENT": "(20% 절약).",
         "KEEP_SUBSCRIPTION": "구독 유지",
-        "CANCEL_REASON_LABEL": "때문에 취소합니다"
+        "CANCEL_REASON_LABEL": "때문에 취소합니다",
+        "SUBSCRIPTION_END_CANT_TRACK_TIME_WARNING": "구독이 종료되면 시간을 추적할 수 없습니다."
     },
     "EXPENSES": {
         "TITLE": "경비",
@@ -4386,7 +4546,11 @@
             "PRICE_TOTAL_MONTH": "총 월간 가격",
             "PRICE_TOTAL_YEAR": "총 연간 가격",
             "VISA_LABEL": "비자",
-            "ANNUAL_APPLIED": "연간 20% 할인 적용"
+            "ANNUAL_APPLIED": "연간 20% 할인 적용",
+            "WIRE_TRANSFER_TEXT_PART_1": "좌석을 추가/제거하려면",
+            "WIRE_TRANSFER_TEXT_PART_2": "문의하기",
+            "WIRE_TRANSFER_TEXT_PART_3": "결제 수단을 추가합니다.",
+            "WIRE_TRANSFER_TEXT_PART_4": "좌석을 추가하려면"
         },
         "USER_SEATS": {
             "BUY_SEATS_TITLE": "좌석 추가 구매",
@@ -4406,7 +4570,8 @@
             "PER_SEAT_MONTH_LABEL": "좌석당/월",
             "PER_SEAT_YEAR_LABEL": "좌석당/년",
             "REMOVE_SEAT_NO_REFUND_WARNING": " 제거된 좌석은 환불되지 않습니다.",
-            "PRICE_CHANGE_WARNING": "나머지 청구 주기 동안 추가 시트에 대해 비례 배분된 가격이 즉시 청구됩니다. 새 청구 주기가 되면 전체 가격에 따라 청구됩니다."
+            "PRICE_CHANGE_WARNING": "나머지 청구 주기 동안 추가 시트에 대해 비례 배분된 가격이 즉시 청구됩니다. 새 청구 주기가 되면 전체 가격에 따라 청구됩니다.",
+            "PAY_BTN": "지불"
         },
         "INVOICES": {
             "PAST_BILLING_HEADER": "과거 청구서",
@@ -4430,7 +4595,8 @@
         "FULL_USER_SEATS": {
             "REMOVE_SEATS_TITLE": "사용하지 않은 전체 좌석 제거",
             "BUY_SEATS_TITLE": "전체 좌석 구매"
-        }
+        },
+        "WIRE_TRANSFER_INFO": "(현재 전신환 사용 중)"
     },
     "AUDIT_LOG": {
         "TABLE_COLUMNS": {
@@ -4810,7 +4976,11 @@
         "DEFAULT_BREAK_PROJECT": "기본 휴식 프로젝트",
         "START_TIMER_WITH_DESCRIPTION": "설명과 함께 타이머 시작",
         "DOWNLOAD_SREENSHOTS_RECORDING_APP": "스크린샷 녹화 앱 다운로드",
-        "NEW_HERE": "여기 새로운"
+        "NEW_HERE": "여기 새로운",
+        "FOCUS_MODE": "초점 모드",
+        "APPEND_THE_WEBSITE_URL": "웹사이트 URL 추가",
+        "FEATURE_DISABLED": "기능 비활성화됨",
+        "UPGRADE_TO_USE_THIS_FEATURE": "이 기능을 사용하려면 업그레이드하세요"
     },
     "REFRESH": "새로 고치다",
     "KIOSK": {
@@ -4876,7 +5046,8 @@
                     "LABEL": "범용 PIN"
                 },
                 "FIND_USERS_OR_GROUPS": "사용자 또는 그룹 찾기..."
-            }
+            },
+            "UPGRADE_MESSAGE": "Standard 로 업그레이드"
         },
         "PIN": {
             "UNAVAILABLE": "이 PIN은 사용할 수 없습니다.",
@@ -5008,7 +5179,12 @@
             "APPROVAL_REQUEST_STATUS_UPDATED": "승인 요청 상태 업데이트됨",
             "APPROVAL_REQUEST_STATUS_UPDATED_EVERYONE": "승인 요청 상태 업데이트됨(모두)",
             "NEW_APPROVAL_REQUEST_EVERYONE": "새 승인 요청(모두)",
-            "PROJECT_CREATED_LABEL": "프로젝트 생성됨"
+            "PROJECT_CREATED_LABEL": "프로젝트 생성됨",
+            "BALANCE_UPDATED": "휴가 잔액이 업데이트되었습니다.",
+            "TIME_OFF_REQUESTED": "휴가 요청",
+            "TIME_OFF_REQUEST_REJECTED": "휴가 요청 거부됨",
+            "TIME_OFF_REQUEST_APPROVED": "휴가 요청 승인됨",
+            "TIME_OFF_REQUEST_WITHDRAWN": "휴가 요청 철회"
         },
         "WEBHOOK_CREATED": "Webhook 이 생성되었습니다.",
         "OUT_OF": "밖으로"
@@ -5038,17 +5214,25 @@
                 "ADD_NOTE": "메모 추가",
                 "SUCCESS_MESSAGE": "과제가 성공적으로 생성되었습니다.",
                 "FAILED_MESSAGE": "과제를 저장하지 못했습니다.",
-                "NO_START_TIME_LABEL": "시작 시간 없음"
+                "NO_START_TIME_LABEL": "시작 시간 없음",
+                "REPEAT_PART_1": "매주 반복",
+                "LONG_ASSIGNMENT": "매주 반복하려면 과제가 1주일 미만이어야 합니다",
+                "SUCCESS_MESSAGE_PLURAL": "과제가 성공적으로 생성되었습니다.",
+                "FAILED_MESSAGE_PLURAL": "과제를 저장하지 못했습니다."
             },
             "EDIT_MODAL": {
                 "TITLE": "과제 수정",
                 "START_TIME": "시작 시간 없음",
                 "SUCCESS_MESSAGE": "과제가 성공적으로 업데이트되었습니다.",
-                "FAILED_MESSAGE": "할당 업데이트 실패"
+                "FAILED_MESSAGE": "할당 업데이트 실패",
+                "SUCCESS_MESSAGE_PLURAL": "과제가 성공적으로 업데이트되었습니다.",
+                "FAILED_MESSAGE_PLURAL": "과제 업데이트 실패"
             },
             "DELETE": {
                 "SUCCESS": "과제가 성공적으로 삭제되었습니다.",
-                "ERROR": "할당을 삭제하지 못했습니다."
+                "ERROR": "할당을 삭제하지 못했습니다.",
+                "ERROR_PLURAL": "과제를 삭제하지 못했습니다.",
+                "SUCCESS_PLURAL": "과제가 성공적으로 삭제되었습니다."
             },
             "DELETE_MODAL": {
                 "TITLE": "과제 삭제",
@@ -5067,7 +5251,9 @@
             "SPLIT_MODAL": {
                 "TITLE": "분할 할당",
                 "DESCRIPTION": "이 작업은 선택한 날짜를 중심으로 두 개의 할당을 만듭니다.",
-                "SPLIT": "나뉘다"
+                "SPLIT": "나뉘다",
+                "SPLIT_REPEAT": "시리즈에서 분할하고 제거하시겠습니까?",
+                "SPLIT_NON_REPEAT": "과제를 둘로 나누시겠습니까?"
             },
             "MY_ASSIGNMENTS": "내 과제",
             "GET_USER_ASSIGNMENTS": {
@@ -5109,7 +5295,8 @@
                 "EXPLANATION_PART_3": "{ count, plural, =0{} =1{주} other{주} } ?",
                 "ASSIGNMENT_DELETE_WARRNING": "지난 주의 과제가 삭제됩니다.",
                 "ASSIGNMENT_MULTIPLE_DELETE_WARRNING": "이렇게 하면 지난 { weekCount }주의 할당이 삭제됩니다.",
-                "ASSIGNMENT_CREATE_WARRNING": "그러면 앞으로 새 할당이 생성됩니다."
+                "ASSIGNMENT_CREATE_WARRNING": "그러면 앞으로 새 할당이 생성됩니다.",
+                "EXPLANATION_PART_2_MODIFIED": "{ count, plural, =0{} =1{주} other{주} } ~"
             }
         },
         "ADD_MEMBERS_TO_PROJECT": {
@@ -5226,5 +5413,29 @@
         "OWNERSHIP": {
             "PIN": "멤버의 PIN이 고유하지 않습니다. 소유권을 { name }에게 이전하는 경우, 키오스크 PIN을 수정하세요."
         }
+    },
+    "TEST": {
+        "TEST": "테스트"
+    },
+    "FORECAST": {
+        "SCHEDULING": {
+            "SCHEDULING_DISABLED": "프로젝트 예측을 만들고 예측을 보려면 다음을 켜야 합니다."
+        },
+        "INFO_MESSAGE": "프로젝트 진행 상황을 시각화하고 예정된 시간과 추적된 시간을 비교하고 프로젝트가 예상을 초과하는지 확인합니다."
+    },
+    "ACTIVITY-TABS": {
+        "SCREENSHOTS": {
+            "SCREENSHOT-WITHOUT-PROJECT": "(프로젝트 없이)",
+            "SCREENSHOT-WITHOUT-DESCRIPTION": "(설명 없음)",
+            "SCREENSHOT_WITHOUT_PROJECT": "(프로젝트 없이)"
+        }
+    },
+    "APPROVALS": {
+        "ARCHIVE_LABEL": "보관소"
+    },
+    "AUDITLOG": {
+        "AUTHORS": "저자",
+        "SELECT_AUTHOR": "작성자 선택",
+        "FIND_AUTHORS": "저자 찾기"
     }
 }

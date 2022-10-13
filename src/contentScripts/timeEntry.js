@@ -65,13 +65,13 @@ class TimeEntry extends ClockifyService {
         const workspaceId = await this.workspaceId;
         const endPoint = `${apiEndpoint}/v1/workspaces/${workspaceId}/user/${userId}/time-entries?page-size=10`;
         const { data: timeEntries, error } = await this.apiCall(endPoint);
-        let entry = null;
+        let entry = timeEntries && timeEntries[0];
         if (error) {
             console.error('oh no, failed', error);
         }
         else {
             if (timeEntries && timeEntries.length > 0) {
-                const pomodoroBreakIndex = timeEntries.findIndex(entry => entry.description === 'Pomodoro break');
+                const pomodoroBreakIndex = timeEntries.findIndex(entry => entry.description === 'Pomodoro break' || entry.description === 'Pomodoro long break');
                 if(pomodoroBreakIndex > -1){
                     entry = timeEntries[pomodoroBreakIndex + 1];
                 }
@@ -101,21 +101,19 @@ class TimeEntry extends ClockifyService {
         let timeEntryInProgress = inProgress.entry;
         
         if(inProgress.error){
-            console.log(inProgress.error);
             return;
         }
-
         if (timeEntry) {
-            const {projectId, task} = timeEntry;
+            const {projectId, taskId} = timeEntry;
             const { forceProjects, forceTasks } = await this.getForces();
-            if (!projectId || forceTasks && !task) {
+            if ((forceProjects && !projectId) || (forceTasks && !taskId)) {
                 const { projectDB, taskDB, msg, msgId } = await DefaultProject.getProjectTaskFromDB();
                 if (projectDB) {
                     timeEntryInProgress = await this.updateProjectTask(timeEntry, projectDB, taskDB);
                 }
             }
         }
-        if(!timeEntryInProgress){
+        if(!timeEntryInProgress){        
             return;
         }
         const { id, projectId, billable, taskId, description, timeInterval, customFieldValues, tagIds  } = timeEntryInProgress;

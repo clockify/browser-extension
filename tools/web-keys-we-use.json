@@ -789,6 +789,7 @@
   "EXTENSION__ADD_MISSING_TIME": { "message": "Add missing time" },
   "EXTENSION__DISCARD_IDLE_TIME": { "message": "Discard idle time" },
   "EXTENSION__DISCARD_AND_CONTINUE": { "message": "Discard and continue" },
+  "EXTENSION__FOCUS_MODE": { "message": "Focus mode" },
   "EXTENSION__IDLE_TIME_DETECTED": { "message": "Idle time detected" },
   "EXTENSION__CLICK_HERE_TO_DISCARD_IDLE": { "message": "Click here to discard idle and stop entry." },
   "EXTENSION__IDLE_MESSAGE": { 
@@ -834,6 +835,8 @@
   "GLOBAL__ACTIVITIES_LABEL": { "message": "Activities" },
   "GLOBAL__JOB_AREA_LABEL": { "message": "Job area" },
   "GLOBAL__JOB_AREAS_LABEL": { "message": "Job areas" },
+  "GLOBAL__SUBSCRIPTION_EXPIRED": { "message": "Your subscription has expired." },
+  "GLOBAL__FEATURE_DISABLED_CONTACT_ADMIN": { "message": "Feature disabled. Please contact your administrator for more information." },
   "EXTENSION__START_TIMER_WITH_DESCRIPTION": { "message": "Start timer with description" },
   "WORKSPACE__TWO_FACTOR__MODAL__TITLE": { "message": "Enhanced security required" },
   "WORKSPACE__TWO_FACTOR__MODAL__INFO_MESSAGE": { "message": "requires two-factor authentication (2FA). Once enabled, you’ll need to check your email when logging in." },
@@ -841,7 +844,8 @@
   "EXTENSION__SCREENSHOT_RECORDING": { "message": "Screenshot recording is enabled. This app can't take screenshots." },
   "EXTENSION__REMINDER": { "message": "Reminder" },
   "EXTENSION__DOWNLOAD_SREENSHOTS_RECORDING_APP": { "message": "Download screenshots recording app" },
-  "AUDIT_LOG__KIOSK__BREAK_TYPE_LABEL": { "message": "Break" }
+  "AUDIT_LOG__KIOSK__BREAK_TYPE_LABEL": { "message": "Break" },
+  "EXTENSION__UPGRADE_TO_USE_THIS_FEATURE": { "message": "Upgrade to use this feature" }
   
 }
 

@@ -63,15 +63,11 @@ class Login extends React.Component {
     }
 
     clearAllActiveTimers() {
-        // const backgroundPage = getBrowser().extension.getBackgroundPage();
-        // backgroundPage.removeIdleListenerIfIdleIsEnabled();
-        // backgroundPage.removeAllPomodoroTimers();
-        // backgroundPage.removeReminderTimer();
         getBrowser().runtime.sendMessage({
             eventName: 'removeIdleListenerIfIdleIsEnabled'
         });
         getBrowser().runtime.sendMessage({
-            eventName: 'removeAllPomodoroTimers'
+            eventName: 'restartPomodoro'
         });
         getBrowser().runtime.sendMessage({
             eventName: 'removeReminderTimer'
@@ -81,21 +77,6 @@ class Login extends React.Component {
     removeDarkMode() {
         htmlStyleHelper.removeDarkModeClassFromBodyElement();
     }
-
-    // setAppType() {
-    //     const storageAppType = localStorage.getItem('appType');
-    //     let appType;
-
-    //     if (!storageAppType || storageAppType === '') {
-    //         appType = determineAppType();
-    //     } else {
-    //         appType = storageAppType;
-    //     }
-
-    //     this.setState({
-    //         appType: appType
-    //     });
-    // }
 
     setAppVersionToStorage() {
         localStorageService.set('appVersion', packageJson.version);

@@ -24,11 +24,10 @@ getProject = () => {
 
 function createClockifyElements() {
   const containerElem = $(".TaskPane");
-  //remove existing buttons before creating new ones
   const clockifyButtonElement = $("#clockifyButton");
   const clockifyInputElement = $(".clockify-input-container");
   if (clockifyButtonElement) clockifyButtonElement.remove();
-  if(clockifyInputElement) clockifyInputElement.remove();
+  if (clockifyInputElement) clockifyInputElement.remove();
 
   const taskSelector = $(".TaskPane-titleRow textarea"),
         subTask = $(".TaskAncestry-ancestorLink.SecondaryNavigationLink", containerElem),
@@ -37,12 +36,14 @@ function createClockifyElements() {
           const subTaskName = subTask ? subTask.textContent : null;
           return subTaskName ?? mainTask;
         },
-        container = $(".TaskPaneToolbarAnimation-row", containerElem),
+        container = $(".TaskPane-body", containerElem),
         description = () => mainTask ?? "";
       const tags = () =>
         Array.from(
           $$("ul.TaskTagTokenPills span.TokenizerPillBase-name", containerElem)
         ).map((e) => e.innerText);
+
+      const clockifyContainer = createTag('div', 'clockify-widget-container');
       project = getProject();
       link = clockifyButton.createButton({
         description,
@@ -50,8 +51,7 @@ function createClockifyElements() {
         taskName,
         tagNames: tags,
       });
-      link.style.marginLeft = "10px";
-      container.appendChild(link);
+      clockifyContainer.appendChild(link);
 
       const htmlTagInput = createTag("div", "clockify-input-container");
       const inputForm = clockifyButton.createInput({
@@ -61,7 +61,12 @@ function createClockifyElements() {
         tagNames: tags,
       });
       htmlTagInput.append(inputForm);
-      container.appendChild(htmlTagInput);
+      clockifyContainer.appendChild(htmlTagInput);
+      container.prepend(clockifyContainer);
+      $(".clockify-widget-container").style.display = "flex";
+      $(".clockify-widget-container").style.margin = "10px 0px -10px 0px";
+      $(".clockify-widget-container").style.height = "34px";
+
       $(".clockify-input").style.width = "100%";
       $(".clockify-input").style.boxShadow = "none";
       $(".clockify-input").style.border = "1px solid #eaecf0";
@@ -97,44 +102,40 @@ setTimeout(() => {
 
 // subtasks
 setTimeout(() => {
-  clockifyButton.render(
-    ".TaskPane:not(.clockify)",
-    { observe: true },
-    (elem) => {
-      const //maintaskSelector = $('.SingleTaskTitleInput-taskName textarea'),
-        maintaskSelector = $(
-          ".TaskPane-titleRow textarea"
-        ),
-        parentElem = $(
-          "div.ShadowScrollable-body.TaskPane-body"
-        ),
-        subTask = $(
-          ".TaskAncestry-ancestorLink.SecondaryNavigationLink",
-          parentElem
-        ),
-        subTaskName = subTask ? subTask.textContent : null,
-        maintask = maintaskSelector ? maintaskSelector.textContent : "",
-        project = getProject(),
-        tags = () =>
-          Array.from(
-            $$(
-              "div.TaskTagTokenPills span.TokenizerPillBase-name",
-              $(".TaskPane")
-            )
-          ).map((e) => e.innerText),
-        description = () =>
-          $(".simpleTextarea.AutogrowTextarea-input", elem).textContent.trim(),
-        link = clockifyButton.createButton({
-          description,
-          projectName: project ? project.textContent : null,
-          taskName: () => subTaskName ?? maintask, // subTaskName ? subTaskName + " / " + maintask : maintask,
-          tagNames: tags,
-          small: true,
-        });
-      elem.parentNode.appendChild(link);
+  clockifyButton.render(".SubtaskTaskRow:not(.clockify)", {observe: true}, (elem) => {
+    let appendElementsTo = $(".ItemRowTwoColumnStructure-left", elem);
+    const containerElem = $(".TaskPane");
+    const taskSelector = $(".TaskPane-titleRow textarea");
+    const mainTask = taskSelector ? taskSelector.textContent : null;
+    const subTask = $("textarea", appendElementsTo).textContent;
+    const clockifyElements = createTag("div", "clockify-elements-container");
+    description = () => subTask ?? "";
+    project = getProject();
+    taskName = () => {
+      const subTaskName = subTask || null;
+      return subTaskName ?? mainTask;
+    };
+    const tags = () =>
+        Array.from(
+          $$("ul.TaskTagTokenPills span.TokenizerPillBase-name", containerElem)
+        ).map((e) => e.innerText);
+    const link = clockifyButton.createButton({
+      description,
+      projectName: project ? project.textContent : null,
+      taskName,
+      tagNames: tags,
+    });
+
+    appendElementsTo.style.width = "100%";
+    clockifyElements.style.marginLeft = "auto";
+    clockifyElements.appendChild(link);
+    const clockifyElementsContainer = $(".clockify-elements-container", elem)
+    if  (clockifyElementsContainer) {
+      clockifyElementsContainer.remove();
     }
-  );
-}, 500);
+    appendElementsTo.appendChild(clockifyElements);
+  })
+}, 500)
 
 if(window.observeProjectsTimeout)
   clearTimeout(window.observeProjectsTimeout);

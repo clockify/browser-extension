@@ -84,7 +84,7 @@
     "message": "Abbrechen"
   },
   "GLOBAL__CLIENT_LABEL": {
-    "message": "Klient"
+    "message": "Kunde"
   },
   "GLOBAL__DATE_LABEL": {
     "message": "Datum"
@@ -162,7 +162,7 @@
     "message": "Status"
   },
   "GLOBAL__TAGS_LABEL": {
-    "message": "Etiketten"
+    "message": "Tags"
   },
   "GLOBAL__TIME_ROUNDING_TITLE": {
     "message": "Zeitrundung"
@@ -192,7 +192,7 @@
     "message": "Ohne Aufgabe"
   },
   "GLOBAL__CONFIRM_LABEL": {
-    "message": "Jawohl"
+    "message": "Ja"
   },
   "GLOBAL__TASK_LABEL": {
     "message": "Aufgabe"
@@ -204,7 +204,7 @@
     "message": "Hinzufügen"
   },
   "GLOBAL__ADD_TAGS_LABEL": {
-    "message": "Etiketten hinzufügen"
+    "message": "Typ hinzufügen"
   },
   "GLOBAL__ADMINS_LABEL": {
     "message": "Administratoren"
@@ -279,7 +279,7 @@
     "message": "Erfolg!"
   },
   "GLOBAL__TAG_LABEL": {
-    "message": "Etikett"
+    "message": "Typ"
   },
   "GLOBAL__TASKS_LABEL": {
     "message": "Aufgaben"
@@ -306,7 +306,7 @@
     "message": "Dashboard"
   },
   "GLOBAL__LABEL_TEXT": {
-    "message": "Etikett"
+    "message": "Typ"
   },
   "GLOBAL__APPLY_FILTER_LABEL": {
     "message": "Filter anwenden"
@@ -321,7 +321,7 @@
     "message": "Aufgaben suchen..."
   },
   "GLOBAL__FIND_TAGS_LABEL": {
-    "message": "Etiketten suchen..."
+    "message": "Typ suchen..."
   },
   "GLOBAL__ENTER_DESCRIPTION_PLACEHOLDER": {
     "message": "Beschreibung eingeben..."
@@ -1047,6 +1047,9 @@
   "EXTENSION__DISCARD_AND_CONTINUE": {
     "message": "Verwerfen und fortfahren"
   },
+  "EXTENSION__FOCUS_MODE": {
+    "message": "Fokus Modus"
+  },
   "EXTENSION__IDLE_TIME_DETECTED": {
     "message": "Leerlaufzeit erkannt"
   },
@@ -1122,6 +1125,12 @@
   "GLOBAL__JOB_AREAS_LABEL": {
     "message": "Arbeitsbereiche"
   },
+  "GLOBAL__SUBSCRIPTION_EXPIRED": {
+    "message": "Ihr Abonnement ist abgelaufen."
+  },
+  "GLOBAL__FEATURE_DISABLED_CONTACT_ADMIN": {
+    "message": "Funktion deaktiviert. Bitte kontaktieren Sie Ihren Administrator für weitere Informationen."
+  },
   "EXTENSION__START_TIMER_WITH_DESCRIPTION": {
     "message": "Timer mit Beschreibung starten"
   },
@@ -1145,6 +1154,9 @@
   },
   "AUDIT_LOG__KIOSK__BREAK_TYPE_LABEL": {
     "message": "Brechen"
+  },
+  "EXTENSION__UPGRADE_TO_USE_THIS_FEATURE": {
+    "message": "Führen Sie ein Upgrade durch, um diese Funktion zu verwenden"
   },
   "appName": {
     "message": "Clockify Zeiterfassung",

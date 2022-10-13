@@ -1,12 +1,11 @@
-import * as React from 'react';
+import React from 'react';
 import ProjectItem from './project-item.component';
 import {ProjectService} from "../services/project-service";
-import {debounce, reduce} from "lodash";
+import {debounce} from "lodash";
 import {LocalStorageService} from "../services/localStorage-service";
-import * as ReactDOM from "react-dom";
+import { getBrowser } from '../helpers/browser-helper';
 import CreateProjectComponent from "./create-project.component";
 import CreateTask from "./create-task.component";
-import { offlineStorage } from '../helpers/offlineStorage';
 import locales from "../helpers/locales";
 import onClickOutside from "react-onclickoutside";
 
@@ -45,9 +44,12 @@ class ProjectList extends React.Component {
             isSpecialFilter: null,
             specFilterNoTasksOrProject: "",
             userRoles: [],
-            projectManagerFor: []
+            projectManagerFor: [],
+            projectFilterValue: ''
         };
-        this.filterProjects = debounce(this.filterProjects, 500);
+        this.projectListDropdownRef = React.createRef();
+        this.projectFilterRef = React.createRef();
+        this.filterProjects = this.filterProjects.bind(this);
         this.openProjectDropdown = this.openProjectDropdown.bind(this);
         // this.mapSelectedTask = this.mapSelectedTask.bind(this);
         this.createProject = this.createProject.bind(this);
@@ -55,6 +57,7 @@ class ProjectList extends React.Component {
         this.openCreateTaskModal = this.openCreateTaskModal.bind(this);
         this.forceProjects = this.props.workspaceSettings.forceProjects;
         this.closeProjectList = this.closeProjectList.bind(this);
+        this.getProjects = debounce(this.getProjects.bind(this), 500);
     }
 
     get initialProjectList() {
@@ -367,23 +370,22 @@ class ProjectList extends React.Component {
         );
     }
 
-    async openProjectDropdown(e, isEnabledCreateProject) {
+    async openProjectDropdown(e) {
         e.stopPropagation();
         if (!JSON.parse(await localStorage.getItem('offline'))) {
-            this.setState({
-                isOpen: true,
+            this.setState(state => ({
+                isOpen: !state.isOpen,
                 filter: '',
                 page: 1
-            }, () => {
-                document.getElementById('project-filter').value = null;
-                document.getElementById('project-filter').focus();
-                this.getProjects(this.state.page, pageSize, isEnabledCreateProject);
+            }), () => {
+                this.projectFilterRef.current?.focus();
+                this.getProjects(this.state.page, pageSize);
             });
         }
     }
 
     closeProjectList() {
-        document.getElementById('project-dropdown')?.scroll(0, 0);
+        this.projectListDropdownRef.current?.scroll(0, 0);
         this.setState({
             isOpen: false,
             filter: '',
@@ -392,10 +394,10 @@ class ProjectList extends React.Component {
         });
     }
 
-    filterProjects() {
+    filterProjects(e) {
         this.setState({
             projectList: this.initialProjectList,
-            filter: document.getElementById('project-filter').value.toLowerCase(),
+            filter: e.target.value.toLowerCase(),
             page: 1,
         }, () => {
             this.getProjects(this.state.page, pageSize);
@@ -443,7 +445,6 @@ class ProjectList extends React.Component {
             page: 1,
         }, () => {
             this.getProjects(this.state.page, pageSize);
-            document.getElementById('project-filter').value = null
         });
     }
 
@@ -499,11 +500,11 @@ class ProjectList extends React.Component {
         const { userRoles, clientProjects, projectManagerFor } = this.state;
         const { whoCanCreateProjectsAndClients, whoCanCreateTasks } = this.props.workspaceSettings?.entityCreationPermissions || {whoCanCreateProjectsAndClients: 'ADMINS', whoCanCreateTasks: 'ADMINS'};
         
-        const isEnabledCreateProject = whoCanCreateProjectsAndClients === 'EVERYONE' || userRoles.includes('WORKSPACE_ADMIN') 
-        || (whoCanCreateProjectsAndClients === 'ADMINS_AND_PROJECT_MANAGERS' && userRoles.includes('PROJECT_MANAGER'));
+        const isEnabledCreateProject = !this.props.integrationMode && (whoCanCreateProjectsAndClients === 'EVERYONE' || userRoles.includes('WORKSPACE_ADMIN') 
+        || (whoCanCreateProjectsAndClients === 'ADMINS_AND_PROJECT_MANAGERS' && userRoles.includes('PROJECT_MANAGER')));
 
-        const isEnabledCreateTask = whoCanCreateTasks === 'EVERYONE' || userRoles.includes('WORKSPACE_ADMIN'); 
-        const isEnabledCreateTaskForPM = whoCanCreateTasks === 'ADMINS_AND_PROJECT_MANAGERS' && userRoles.includes('PROJECT_MANAGER');
+        const isEnabledCreateTask = !this.props.integrationMode && (whoCanCreateTasks === 'EVERYONE' || userRoles.includes('WORKSPACE_ADMIN')); 
+        const isEnabledCreateTaskForPM = !this.props.integrationMode && (whoCanCreateTasks === 'ADMINS_AND_PROJECT_MANAGERS' && userRoles.includes('PROJECT_MANAGER'));
 
         // const isEnabledCreateProject = !this.props.workspaceSettings.onlyAdminsCreateProject || this.props.isUserOwnerOrAdmin ? true : false;
         // const { clientProjects } = this.state;
@@ -520,25 +521,28 @@ class ProjectList extends React.Component {
                                 "project-list-button-required" : "project-list-button"}>
                     <span className="project-list-name" style={{color: this.state.selectedProject ? this.state.selectedProject.color : "#333"}}>
                         {this.state.selectedProject ? this.state.selectedProject.name : locales.ADD_PROJECT}
-                        <span className={this.state.selectedTaskName === "" ? "disabled" : ""}>
+                        <span style={{color: this.state.selectedProject ? this.state.selectedProject.color : "#333"}} className={this.state.selectedTaskName === "" ? "disabled" : ""}>
                             {": " + this.state.selectedTaskName}
                         </span>
                         <span className="project-list-name-client">
                             {this.state.selectedProject && this.state.selectedProject.client && this.state.selectedProject.client.name && this.state.selectedProject.client.name !== 'NO-PROJECT' ? " - " + this.state.selectedProject.client.name : ""}
                         </span>
                     </span>
-                    <span className={this.state.isOpen ? 'project-list-arrow-up' : 'project-list-arrow'} >
+                    <span className={this.state.isOpen ? 'project-list-arrow-up' : 'project-list-arrow'}
+                    style={{content: `url(${getBrowser().runtime.getURL('assets/images/' + (this.state.isOpen ? 'arrow-light-mode-up.png' : 'arrow-light-mode.png'))})`}} >
                     </span>
                 </div>
                 {this.props.taskRequired && 
-                    <div className='error'>{locales.CANT_SAVE_WITHOUT_REQUIRED_FIELDS} ({locales.TASK})</div>
+                    <div className='clokify-error'>{locales.CANT_SAVE_WITHOUT_REQUIRED_FIELDS} ({locales.TASK})</div>
                 }
 
                 {this.state.isOpen &&
                     <div className="project-list-open">
                     <div onClick={this.closeProjectList} className="invisible"></div>
                     <div className="project-list-dropdown"
-                            id="project-dropdown">
+                         id="project-dropdown"
+                         ref={this.projectListDropdownRef}
+                        >
                         <div className="project-list-dropdown--content">
                             <div className="project-list-input">
                                 <div className="project-list-input--border">
@@ -548,8 +552,11 @@ class ProjectList extends React.Component {
                                                 locales.MONKEY_SEARCH : locales.FIND_PROJECTS
                                         }
                                         className="project-list-filter"
-                                        onChange={this.filterProjects.bind(this)}
+                                        onChange={e => this.filterProjects(e)}
+                                        ref={this.projectFilterRef}
                                         id="project-filter"
+                                        value={this.state.filter}
+                                        autoComplete="off"
                                     />
                                     <span className={!!this.state.filter ? "project-list-filter__clear" : "disabled"}
                                             onClick={this.clearProjectFilter}></span>
@@ -656,15 +663,19 @@ class ProjectList extends React.Component {
                                     {locales.LOAD_MORE}
                                 </div>
                             }
-                            <div className={isEnabledCreateProject ?
-                                    "projects-list__bottom-padding" : "disabled"}>
-                            </div>
-                            <div className={isEnabledCreateProject ?
-                                    "projects-list__create-project" : "disabled"}
-                                    onClick={this.createProject}>
-                                <span className="projects-list__create-project--icon"></span>
-                                <span className="projects-list__create-project--text">{locales.CREATE_NEW_PROJECT}</span>
-                            </div>
+                            {
+                                isEnabledCreateProject &&
+                                <>
+                                <div className="projects-list__bottom-padding">
+                                </div>
+                                <div className="projects-list__create-project"
+                                        onClick={this.createProject}>
+                                    <span className="projects-list__create-project--icon"
+                                    style={{content: `url(${getBrowser().runtime.getURL('assets/images/create.png')})`}}></span>
+                                    <span className="projects-list__create-project--text">{locales.CREATE_NEW_PROJECT}</span>
+                                </div>
+                                </>
+                            }                            
                         </div>
                     </div>
                 </div>

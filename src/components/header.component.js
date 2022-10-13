@@ -319,6 +319,7 @@ class Header extends React.Component {
                                 workspaceChanged={this.workspaceChange.bind(this)}
                                 toaster={this.props.toaster}
                                 clearEntries={this.props.clearEntries}
+                                isTrackingDisabled={this.props.isTrackingDisabled}
                             />
                         </div>
                         }

@@ -8,21 +8,16 @@ clockifyButton.render('.offcanvas-header .walkthrough-board-title > .h4:not(.clo
     if (elem) {
         elem.style.setProperty('margin-right', '10rem', 'important');
         const description = elem ? elem.textContent : "";
-        const link = clockifyButton.createButton(description, project, task);
-        link.style.marginLeft = "15px";
+        let inactiveButtonColor = '';
         const theme = document.querySelector('.offcanvas-end');
-          if (window.getComputedStyle(theme).backgroundColor.includes('255')) {
-            link.style.color = "#444444";
+        if (window.getComputedStyle(theme).backgroundColor.includes('255')) {
+            inactiveButtonColor = "#444444";
         } else {
-            link.style.color = "#f2f2f8de";
+            inactiveButtonColor = "#f2f2f8de";
         }
-        document.getElementsByClassName('icon-sun')[0].parentNode.addEventListener('click', () => {
-            link.style.color = "#444444";
-        });
-            
-        document.getElementsByClassName('icon-moon')[0].parentNode.addEventListener('click', () => {
-            link.style.color = "#f2f2f8de";
-        });
+        const link = clockifyButton.createButton({description, projectName: project, taskName: task, inactiveButtonColor});
+        link.style.marginLeft = "15px";
+          
         elem.appendChild(link);
     }
 });

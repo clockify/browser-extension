@@ -205,9 +205,8 @@ var offlineStorage = {
     updateCustomFieldValues(timeEntry, customFields) {
         if (timeEntry.customFieldValues) {
             customFields.forEach(({ value, customFieldId }) => {
-                const cf = timeEntry.customFieldValues.find(item => item.customFieldId === customFieldId);
-                if (cf) 
-                    cf.value = value
+                const cfIndex = timeEntry.customFieldValues.findIndex(item => item.customFieldId === customFieldId);
+                if (cfIndex !== undefined && cfIndex !== null ) timeEntry.customFieldValues[cfIndex].value = value;
             });
         }
         else {

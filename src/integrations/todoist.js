@@ -11,6 +11,8 @@ clockifyButton.render('.project_editor_instance [data-action-hint="task-root"]:n
       tagNames: tags
   });
   link.style.paddingRight = "10px";
+  link.style.marginTop = "12px";
+  link.style.height = "fit-content";
   elem.prepend(link);
 });
 
@@ -45,6 +47,8 @@ clockifyButton.render('#agenda_view [data-action-hint="task-root"]:not(.clockify
       tagNames: tags
   });
   link.style.paddingRight = "10px";
+  link.style.marginTop = "12px";
+  link.style.height = "fit-content";
   elem.prepend(link);
 });
 
@@ -61,6 +65,8 @@ clockifyButton.render('.upcoming_view__list [data-action-hint="task-root"]:not(.
       tagNames: tags
   });
   link.style.paddingRight = "10px";
+  link.style.marginTop = "12px";
+  link.style.height = "fit-content";
   elem.prepend(link);
 });
 
@@ -77,5 +83,31 @@ clockifyButton.render('.filter_view .task_list_item__body:not(.clockify)', {obse
       tagNames: tags
   });
   link.style.paddingRight = "10px";
+  link.style.marginTop = "12px";
+  link.style.height = "fit-content";
   elem.prepend(link);
+});
+
+clockifyButton.render('[data-testid="task-details-sidebar"] > div:not(.clockify)', {observe: true}, function (elem) {
+  description = $('.task-overview-header > div > div.markdown_content.task_content').textContent;
+  project = $('.task-overview-header > div > div.markdown_content.task_content').textContent;
+  // var tags = () => Array.from($$(".task_list_item__info_tags__label")).map(e => e.innerText);
+
+  link = clockifyButton.createButton({
+      description: description,
+      projectName: project,
+      small: true,
+      //tagNames: tags
+  });
+
+  const inputForm = clockifyButton.createInput({
+    description: description,
+    projectName: project
+  });
+
+  link.style.paddingRight = "10px";
+  link.style.marginRight = "10px";
+  link.style.height = "fit-content";
+  elem.append(link);
+  elem.append(inputForm);
 });

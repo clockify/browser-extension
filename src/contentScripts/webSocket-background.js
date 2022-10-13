@@ -1,5 +1,3 @@
-// const aBrowser = chrome || browser
-
 const webSocketEventsEnums = {
     TIME_ENTRY_STARTED: 'TIME_ENTRY_STARTED',
     TIME_ENTRY_STOPPED: 'TIME_ENTRY_STOPPED',
@@ -114,8 +112,8 @@ async function messageHandler(event) {
             this.sendWebSocketEventToExtension(event.data);
             this.addIdleListenerIfIdleIsEnabled();
             this.removeReminderTimer();
-            this.restartPomodoro();
-            this.addPomodoroTimer();
+            // this.restartPomodoro();
+            // this.addPomodoroTimer();
             break;
         }
 
@@ -132,7 +130,7 @@ async function messageHandler(event) {
             this.removeIdleListenerIfIdleIsEnabled();
             this.addReminderTimer();
             this.restartPomodoro();
-            this.resetBadge();
+            // this.removeBadge();
             break;
 
         case webSocketEventsEnums.TIME_ENTRY_UPDATED: {
@@ -155,7 +153,7 @@ async function messageHandler(event) {
                 });
                 this.removeIdleListenerIfIdleIsEnabled();
                 this.addReminderTimer();
-                this.restartPomodoro();
+                // this.restartPomodoro();
             }
             else {
                 setTimeEntryInProgress(entry);

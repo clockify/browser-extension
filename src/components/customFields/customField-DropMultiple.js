@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import useCustomField from './useCustomField';
 import {isOffline} from "../check-connection";
 import locales from "../../helpers/locales";
 import {useOnClickOutside} from "./useOnClickOutside";
+import { getBrowser } from '../../helpers/browser-helper';
 
 const CustomFieldDropMultiple = ({cf, updateValue}) => {
 
@@ -46,31 +47,19 @@ const CustomFieldDropMultiple = ({cf, updateValue}) => {
         }
     }, [isOpen]);
 
-    // const handleChangeDelayed = useRef(debounce(hanldeChange, manualMode ? 0 : 1000));
-
-    // useEffect(()=> {
-    //     setOpen(false)
-    // }, [redrawCounter])
-
-
     const selectTag = (tagId) => {
         const tag = tagList.find(t => t.id === tagId);
         const val = value.includes(tag.name) 
             ? value.filter(name => name !== tag.name)
             : [...value, tag.name]
         setValue(val);
-        // updateValue(id, val);
+        manualMode && updateValue(id, val);
         // handleChangeDelayed.current(val);
     };
 
     const toggleTagList = (e) => {
         e.stopPropagation();
         if (!isDisabled) {
-            // if (!isOpen && tagList.length === 0) {
-            //     setTagList(value);
-            // }
-            //if (!isOpen)
-            //    dropMultipleOpened();
             const x = !isOpen;
             setOpen(x);
         }
@@ -126,7 +115,9 @@ const CustomFieldDropMultiple = ({cf, updateValue}) => {
                         }
                     </span>
 
-                    <span className={isOpen ? 'tag-list-arrow-up' : 'tag-list-arrow'} ></span>
+                    <span className={isOpen ? 'tag-list-arrow-up' : 'tag-list-arrow'}
+                    style={{content: `url(${getBrowser().runtime.getURL('assets/images/' + (isOpen ? 'arrow-light-mode-up.png' : 'arrow-light-mode.png'))})`}}
+                    ></span>
                 </div>
                 <div id="tagListDropdown" className={isOpen ? "tag-list-dropdown" : "disabled"}>
                     <div className="tag-list-dropdown--content">
@@ -146,7 +137,7 @@ const CustomFieldDropMultiple = ({cf, updateValue}) => {
                                                     ? "tag-list-checkbox checked"
                                                     : "tag-list-checkbox"
                                             }>
-                                                <img src="../assets/images/checked.png"
+                                                <img src={getBrowser().runtime.getURL("assets/images/checked.png")}
                                                         value={tag.name}
                                                         className={tag.isChecked 
                                                             ? "tag-list-checked"

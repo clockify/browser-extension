@@ -1,0 +1,21 @@
+@use "sass:meta";
+@use "integration";
+.clockify-integration-popup {
+    @include meta.load-css("~antd/lib/switch/style/index");
+    @include meta.load-css("header");
+    @include meta.load-css("start-timer");
+    @include meta.load-css("menu");
+    @include meta.load-css("time-entry");
+    @include meta.load-css("time-entry-list");
+    @include meta.load-css("duration");
+    @include meta.load-css("edit-form");
+    @include meta.load-css("projects-list");
+    @include meta.load-css("tag-list");
+    @include meta.load-css("poppup-modal");
+    @include meta.load-css("custom-fields");
+    @include meta.load-css("required-fields");
+    @include meta.load-css("time-entry-list-not-synced");
+    @include meta.load-css("toaster");
+    @include meta.load-css("global");
+}
+@include meta.load-css("dark-mode");

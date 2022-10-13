@@ -1047,6 +1047,9 @@
   "EXTENSION__DISCARD_AND_CONTINUE": {
     "message": "Descartar e continuar"
   },
+  "EXTENSION__FOCUS_MODE": {
+    "message": "Modo de fóco"
+  },
   "EXTENSION__IDLE_TIME_DETECTED": {
     "message": "Tempo ocioso detectado"
   },
@@ -1122,6 +1125,12 @@
   "GLOBAL__JOB_AREAS_LABEL": {
     "message": "Áreas de trabalho"
   },
+  "GLOBAL__SUBSCRIPTION_EXPIRED": {
+    "message": "Sua assinatura expirou."
+  },
+  "GLOBAL__FEATURE_DISABLED_CONTACT_ADMIN": {
+    "message": "Recurso desativado. Entre em contato com o administrador para obter mais informações."
+  },
   "EXTENSION__START_TIMER_WITH_DESCRIPTION": {
     "message": "Iniciar temporizador com descrição"
   },
@@ -1145,6 +1154,9 @@
   },
   "AUDIT_LOG__KIOSK__BREAK_TYPE_LABEL": {
     "message": "Pausa"
+  },
+  "EXTENSION__UPGRADE_TO_USE_THIS_FEATURE": {
+    "message": "Atualize para usar este recurso"
   },
   "appName": {
     "message": "Clockify Rastreador de Tempo",

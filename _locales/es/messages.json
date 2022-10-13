@@ -297,7 +297,7 @@
     "message": "Espacios de trabajo"
   },
   "GLOBAL__ADMIN_LABEL": {
-    "message": "Administración"
+    "message": "Administrador"
   },
   "GLOBAL__CLEAR_FILTERS_LABEL": {
     "message": "Borrar filtros"
@@ -490,7 +490,7 @@
     "message": "Escribe tarea@proyecto para crear una."
   },
   "SHARED_MODULES__PROJECT_PICKER__FILTER_BY_PROJECT_INFO": {
-    "message": "Para filtrar por proyecto, añade el prefijo @ (p. ej., @myproject)"
+    "message": "Para filtrar por proyecto, añade el prefijo @ (p. ej., @miproyecto)"
   },
   "SHARED_MODULES__PROJECT_PICKER__COUNT_TASKS_LABEL": {
     "message": "$count$ Tareas",
@@ -889,7 +889,7 @@
     "message": "Desde"
   },
   "EXTENSION__TO": {
-    "message": "A"
+    "message": "Hasta"
   },
   "EXTENSION__CREATE_NEW_TAG": {
     "message": "Crear nueva etiqueta"
@@ -1047,6 +1047,9 @@
   "EXTENSION__DISCARD_AND_CONTINUE": {
     "message": "Descartar y continuar"
   },
+  "EXTENSION__FOCUS_MODE": {
+    "message": "Modo de enfoque"
+  },
   "EXTENSION__IDLE_TIME_DETECTED": {
     "message": "Tiempo de inactividad detectado"
   },
@@ -1122,6 +1125,12 @@
   "GLOBAL__JOB_AREAS_LABEL": {
     "message": "Áreas de trabajo"
   },
+  "GLOBAL__SUBSCRIPTION_EXPIRED": {
+    "message": "Tu suscripción ha expirado."
+  },
+  "GLOBAL__FEATURE_DISABLED_CONTACT_ADMIN": {
+    "message": "Función deshabilitada. Ponte en contacto con tu administrador para obtener más información."
+  },
   "EXTENSION__START_TIMER_WITH_DESCRIPTION": {
     "message": "Iniciar temporizador con descripción"
   },
@@ -1145,6 +1154,9 @@
   },
   "AUDIT_LOG__KIOSK__BREAK_TYPE_LABEL": {
     "message": "Descanso"
+  },
+  "EXTENSION__UPGRADE_TO_USE_THIS_FEATURE": {
+    "message": "Actualice para usar esta función"
   },
   "appName": {
     "message": "Clockify Rastreador de tiempo",

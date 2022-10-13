@@ -1047,6 +1047,9 @@
   "EXTENSION__DISCARD_AND_CONTINUE": {
     "message": "Jeter et continuer"
   },
+  "EXTENSION__FOCUS_MODE": {
+    "message": "Mode de mise au point"
+  },
   "EXTENSION__IDLE_TIME_DETECTED": {
     "message": "Temps d'inactivité détecté"
   },
@@ -1122,6 +1125,12 @@
   "GLOBAL__JOB_AREAS_LABEL": {
     "message": "Domaines d'emploi"
   },
+  "GLOBAL__SUBSCRIPTION_EXPIRED": {
+    "message": "Votre abonnement a expiré."
+  },
+  "GLOBAL__FEATURE_DISABLED_CONTACT_ADMIN": {
+    "message": "Fonctionnalité désactivée. Veuillez contacter votre administrateur pour plus d'informations."
+  },
   "EXTENSION__START_TIMER_WITH_DESCRIPTION": {
     "message": "Démarrer la minuterie avec description"
   },
@@ -1145,6 +1154,9 @@
   },
   "AUDIT_LOG__KIOSK__BREAK_TYPE_LABEL": {
     "message": "Pause"
+  },
+  "EXTENSION__UPGRADE_TO_USE_THIS_FEATURE": {
+    "message": "Mettez à niveau pour utiliser cette fonctionnalité"
   },
   "appName": {
     "message": "Clockify Suivi du temps",

@@ -3,6 +3,7 @@ clockifyButton.render('.lhs-ticket-dtls:not(.clockify)', { observe: true }, func
     const desc = $("#caseSubjectText").innerText;
     const ticket = $("#caseNum").innerText;
     const link = clockifyButton.createButton("[#" + ticket + "##] " + desc);    
+    link.dataset.title = "[#" + ticket + "##] " + desc;
     elem.append(link);
 });
 

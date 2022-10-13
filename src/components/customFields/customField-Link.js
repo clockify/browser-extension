@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import useCustomField from './useCustomField';
-import debounce from 'lodash/debounce';
 import { useOnClickOutside } from './useOnClickOutside'
-import {isOffline} from "../check-connection";
+import { getBrowser } from '../../helpers/browser-helper';
 import locales from "../../helpers/locales";
 
 const CustomFieldLink = ({cf, updateValue}) => {
@@ -11,31 +10,10 @@ const CustomFieldLink = ({cf, updateValue}) => {
             setValue,
             storeValue ] = useCustomField(cf, updateValue);
 
-    // const handleChangeDelayed = useRef(debounce(async val => {
-    //     updateValue(id, val);
-    //     const isOff = await isOffline();
-    //     if (!(manualMode || isOff)) {
-    //         storeValue(val);
-    //     }
-    // }, manualMode ? 0 : 1000));
-
-    // const handleChangeStore = (e) => {
-    //     const val = e.target.value;
-    //     setValue(val);
-    //     handleChangeDelayed.current(val);
-    // };
-
-    // const handleChange = (e) => {
-    //     const val = e.target.value;
-    //     setValue(val);
-    //     // handleChangeDelayed.current(val);
-    // };
-
     const [valueTemp, setValueTemp] = useState(null);
     const handleChangeTemp = (e) => {
         const val = e.target.value;
         setValueTemp(val);
-        // handleChangeDelayed.current(val);
     };
 
     
@@ -43,11 +21,11 @@ const CustomFieldLink = ({cf, updateValue}) => {
     const handleChangeStay = (e) => {
         const val = e.target.value;
         setValueStay(val);
-        // handleChangeDelayed.current(val);
     };
 
     const storeStay = () => {
         setValue(valueStay);
+        manualMode && updateValue(id, valueStay);
         // handleChangeDelayed.current(valueStay);
     }
 
@@ -73,7 +51,6 @@ const CustomFieldLink = ({cf, updateValue}) => {
         }
         setValue(valueTemp);
         setValueStay(valueTemp);
-        // handleChangeDelayed.current(valueTemp);
         setModalOpen(false);
     }
 
@@ -87,7 +64,7 @@ const CustomFieldLink = ({cf, updateValue}) => {
                         <img 
                             index={index}
                             title={title}
-                            src="../../../assets/images/edit-unsynced.png"
+                            src={getBrowser().runtime.getURL('assets/images/edit-unsynced.png')}
                             style={{marginLeft: '8px', width:'14px', height:'14px',cursor:'pointer'}}
                             className={isDisabled?'':'clockify-close-dlg-icon'}
                             onClick={() => openModal()}
@@ -95,7 +72,6 @@ const CustomFieldLink = ({cf, updateValue}) => {
                     }
                 </div>
                 ) : (
-                // <div className={`custom-field-inner${isDisabled?'-disabled':''}`}>
                     <input 
                         name={`txtCustomField${index}`}
                         type="url"
@@ -108,7 +84,6 @@ const CustomFieldLink = ({cf, updateValue}) => {
                         disabled={isDisabled}
                         value={!!valueStay ? valueStay : ''}
                     />
-                // </div>
                 )
             } 
         </div>

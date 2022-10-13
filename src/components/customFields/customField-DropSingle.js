@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import useCustomField from './useCustomField';
 import locales from "../../helpers/locales";
-
+import { getBrowser } from '../../helpers/browser-helper';
 import {useOnClickOutside} from "./useOnClickOutside";
 
 const CustomFieldDropSingle = ({ cf, updateValue }) => {
     
     const menuRef = useRef(null);
   
-    const [ {id, index, value, isDisabled, placeHolder, allowedValues}, 
+    const [ {id, index, value, isDisabled, placeHolder, allowedValues, manualMode}, 
             setValue] = useCustomField(cf, updateValue);
 
     const newList = (val) => {
@@ -55,10 +55,11 @@ const CustomFieldDropSingle = ({ cf, updateValue }) => {
         // }
     // }, 0));
 
-    const selectTag = (id) => {
-        const tag = tagList.find(t => t.id === id);
-        const val = id === -1 ? null : tag.name;
+    const selectTag = (tagId) => {
+        const tag = tagList.find(t => t.id === tagId);
+        const val = tagId === -1 ? null : tag.name;
         setValue(val);
+        manualMode && updateValue(id, val);
         // handleChangeDelayed.current(val);
         setOpen(false);
     };
@@ -117,7 +118,9 @@ const CustomFieldDropSingle = ({ cf, updateValue }) => {
                         }
                     </span>
                         
-                    <span className={isOpen ? `tag-list-arrow-up` : `tag-list-arrow`} ></span>
+                    <span className={isOpen ? `tag-list-arrow-up` : `tag-list-arrow`} 
+                    style={{content: `url(${getBrowser().runtime.getURL('assets/images/' + (isOpen ? 'arrow-light-mode-up.png' : 'arrow-light-mode.png'))})`}}
+                    ></span>
                 </div>
                 <div id="tagListDropdown" className={isOpen ? "tag-list-dropdown" : "disabled"}>
                     <div className="tag-list-dropdown--content">

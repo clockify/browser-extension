@@ -34,4 +34,15 @@ export class WorkspaceService extends HttpWrapperService {
 
         return super.get(workspacesUrl, addToken);
     }
+
+    async getWasRegionalEverAllowed() {
+        const activeWorkspaceId = await localStorageService.get('activeWorkspaceId');
+        const baseUrl = await localStorageService.get('baseUrl');
+        const workspaceRegionalUrl =
+            `${baseUrl}/workspaces/${activeWorkspaceId}/payments/was-regional-ever-allowed`;
+        return super.get(workspaceRegionalUrl, addToken).then(response => {
+            localStorageService.set('wasRegionalEverAllowed', response.data);
+            return response.data;
+        });
+    }
 }

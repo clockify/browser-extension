@@ -26,7 +26,7 @@ class LocalStorage {
                         resolve(value || null);
                     }
                     else {
-                        resolve((response && response[key]) || null);
+                        resolve(response?.[key] ?? null);
                     }
                 });
             } catch (error) { 

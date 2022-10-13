@@ -4,6 +4,7 @@ import {SortHepler} from "../helpers/sort-helper";
 import {debounce} from "lodash";
 import locales from "../helpers/locales";
 import onClickOutside from "react-onclickoutside";
+import { getBrowser } from '../helpers/browser-helper';
 
 const tagService = new TagService();
 const sortHelpers = new SortHepler();
@@ -27,7 +28,11 @@ class TagsList extends React.Component {
             isOffline: null
         };
 
-        this.filterTags = debounce(this.filterTags, 500);
+        this.tagFilterRef = React.createRef();
+        this.tagListDropdownRef = React.createRef();
+
+        this.filterTags = this.filterTags.bind(this);
+        this.getTags = debounce(this.getTags.bind(this), 500);
         this.selectTag = this.selectTag.bind(this);
         this.toggleTagsList = this.toggleTagsList.bind(this);
         this.setAsyncStateItems = this.setAsyncStateItems.bind(this);
@@ -46,14 +51,11 @@ class TagsList extends React.Component {
         this.setState({
             isOffline: JSON.parse(isOffline),
             tagsList,
-            // isEnabledCreateTag: !this.props.workspaceSettings.onlyAdminsCreateTag ||
-            // (this.props.workspaceSettings.onlyAdminsCreateTag && this.props.isUserOwnerOrAdmin) ? true : false
-            isEnabledCreateTag: this.props.workspaceSettings.entityCreationPermissions?.whoCanCreateTags === 'EVERYONE' || userRoles.includes('WORKSPACE_ADMIN')
+            isEnabledCreateTag: !this.props.integrationMode && (this.props.workspaceSettings.entityCreationPermissions?.whoCanCreateTags === 'EVERYONE' || userRoles.includes('WORKSPACE_ADMIN'))
         });
     }
 
     componentDidMount(){
-        // this.isEnabledCreateTag();
         this.setAsyncStateItems();
     }
 
@@ -94,13 +96,13 @@ class TagsList extends React.Component {
     }
 
     closeTagsList() {
-        document.getElementById('tagListDropdown').scroll(0, 0);
+        this.tagListDropdownRef.current.scroll(0, 0);
         this.setState({
             isOpen: false,
             tagsList: [],
-            page: 1
+            page: 1,
+            filter: ''
         }, () => {
-            document.getElementById('tag-filter').value = "";
             this.getTags(this.state.page, pageSize);
         })
     }
@@ -118,7 +120,7 @@ class TagsList extends React.Component {
                 isOpen: !this.state.isOpen
             }, () => {
                 if (this.state.isOpen) {
-                    document.getElementById('tag-filter').focus();
+                    this.tagFilterRef.current.focus();
                 } else {
                     this.props.onClose?.();
                 }
@@ -126,11 +128,11 @@ class TagsList extends React.Component {
         }
     }
 
-    filterTags() {
+    filterTags(e) {
         this.setState({
             tagsList: [],
             tagsListBackUp: [],
-            filter: document.getElementById('tag-filter').value.toLowerCase(),
+            filter: e.target.value.toLowerCase(),
             page: 1
         }, () => {
             this.getTags(this.state.page, pageSize);
@@ -145,7 +147,6 @@ class TagsList extends React.Component {
             page: 1
         }, () => {
             this.getTags(this.state.page, pageSize);
-            document.getElementById('tag-filter').value = null;
         });
     }
 
@@ -248,9 +249,12 @@ class TagsList extends React.Component {
                         })
                     }
                     </span>
-                    <span className={this.state.isOpen ? 'tag-list-arrow-up' : 'tag-list-arrow'} ></span>
+                    <span className={this.state.isOpen ? 'tag-list-arrow-up' : 'tag-list-arrow'} 
+                    style={{content: `url(${getBrowser().runtime.getURL('assets/images/' + (this.state.isOpen ? 'arrow-light-mode-up.png' : 'arrow-light-mode.png'))})`}}
+                    ></span>
                 </div>
                 <div id="tagListDropdown"
+                    ref={this.tagListDropdownRef}
                      className={this.state.isOpen ? "tag-list-dropdown" : "disabled"}>
                     <div className="tag-list-dropdown--content">
                         <div className="tag-list-input">
@@ -259,7 +263,9 @@ class TagsList extends React.Component {
                                     placeholder={locales.FIND_TAGS}
                                     className="tag-list-filter"
                                     onChange={this.filterTags.bind(this)}
+                                    value={this.state.filter}
                                     id="tag-filter"
+                                    ref={this.tagFilterRef}
                                 />
                                 <span className={!!this.state.filter ? "tag-list-filter__clear" : "disabled"}
                                       onClick={this.clearTagFilter.bind(this)}></span>
@@ -280,7 +286,7 @@ class TagsList extends React.Component {
                                                 <span  value={JSON.stringify(tag)}
                                                    className={this.props.tagIds.includes(tag.id) ?
                                                        "tag-list-checkbox checked" : "tag-list-checkbox"}>
-                                                <img src="./assets/images/checked.png"
+                                                <img src={getBrowser().runtime.getURL("assets/images/checked.png")}
                                                      value={JSON.stringify(tag)}
                                                      className={this.props.tagIds.includes(tag.id) ?
                                                          "tag-list-checked" : "tag-list-checked-hidden"}/>
@@ -300,7 +306,9 @@ class TagsList extends React.Component {
                         </div>
                         <div className={this.state.isEnabledCreateTag ?
                             "tag-list__create-tag" : "disabled"}>
-                            <span className="tag-list__create-tag--icon"></span>
+                            <span className="tag-list__create-tag--icon"
+                                style={{content: `url(${getBrowser().runtime.getURL('assets/images/create.png')})`}}
+                            ></span>
                             <span onClick={this.openCreateTag.bind(this)}
                                   className="tag-list__create-tag--text">{locales.CREATE_NEW_TAG}</span>
                         </div>

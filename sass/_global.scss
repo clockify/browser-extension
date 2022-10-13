@@ -17,6 +17,7 @@
     overflow-y: overlay;
     overflow-x: hidden;
     user-select: none;
+    font-size: 12px;
   }
   * {
     font-family: 'Roboto', Arial, sans-serif !important;
@@ -40,6 +41,32 @@
   
   .home_page {
     padding-top: 134px;
+    .clockify-subscription-expired-overlay {
+      position: fixed;
+      top: 50px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(198, 210, 217, 0.2);
+      z-index: 1110;
+    }
+    .clockify-subscription-expired-message {
+      background: #FFEACC;
+      color: #854F00;
+      font-size: 14px;
+      border: 1px solid #FFE2B8;
+      border-radius: 8px;
+      width: 320px;
+      margin: auto;
+      img {
+        float: left;
+        padding: 7px 8px;
+      }
+      p {
+        margin-top: 5px;
+        margin-bottom: 5px;
+      }
+    }
   }
   
   .modalBackground {

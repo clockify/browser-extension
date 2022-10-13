@@ -17,6 +17,7 @@ const CustomFieldText = ({cf, updateValue}) => {
     const handleBlur = (e) => {
         e.preventDefault();
         storeValue();
+        manualMode && updateValue(id, e.target.value);
     };
 
     return (

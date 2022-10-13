@@ -435,7 +435,7 @@ class DefaultProjectList extends React.PureComponent {
                     <span style={{color: selectedProject ? selectedProject.color : "#999999"}}
                             className="project-list-name">
                         {selectedProject ? (selectedProject.getLocale && selectedProject.getLocale()) || selectedProject.name : locales.ADD_PROJECT}
-                        <span className={isLastUsed || selectedTaskName === "" ? "disabled" : ""}>
+                        <span style ={{color: selectedProject ? selectedProject.color : "#999999"}} className={isLastUsed || selectedTaskName === "" ? "disabled" : ""}>
                             {": " + selectedTaskName}
                         </span>
                         <span className="project-list-name-client">
@@ -445,16 +445,16 @@ class DefaultProjectList extends React.PureComponent {
                     </span>
                 </div>
                 {projectDoesNotExist &&
-                    <div className='error'>{locales.DEFAULT_PROJECT_NOT_AVAILABLE}</div>
+                    <div className='clokify-error'>{locales.DEFAULT_PROJECT_NOT_AVAILABLE}</div>
                 }
                 {projectArchived &&
-                    <div className='error'>{locales.DEFAULT_PROJECT_ARCHIVED}</div>
+                    <div className='clokify-error'>{locales.DEFAULT_PROJECT_ARCHIVED}</div>
                 }
                 {taskDoesNotExist && 
-                    <div className='error'>{locales.CANT_SAVE_WITHOUT_REQUIRED_FIELDS} ({locales.TASK})</div>
+                    <div className='clokify-error'>{locales.CANT_SAVE_WITHOUT_REQUIRED_FIELDS} ({locales.TASK})</div>
                 }
                 {taskDone &&
-                    <div className='error'>{locales.DEFAULT_TASK_DONE}!</div>
+                    <div className='clokify-error'>{locales.DEFAULT_TASK_DONE}!</div>
                 }
 
                 {isOpen &&

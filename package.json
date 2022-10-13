@@ -1,6 +1,6 @@
 {
   "name": "Clockify",
-  "version": "2.6.8",
+  "version": "2.8.3",
   "description": "Clockify App 100% Free Time Tracker",
   "main": "./main.js",
   "productName": "Clockify",
@@ -44,8 +44,10 @@
     "react-datepicker": "^4.6.0",
     "react-dom": "^18.2.0",
     "react-http-request": "^2.0.0",
+    "react-modal": "^3.15.1",
     "react-onclickoutside": "^6.12.1",
     "react-popper": "^2.2.5",
+    "react-shadow": "^19.0.3",
     "url-parse": "^1.4.3"
   },
   "devDependencies": {
@@ -74,6 +76,7 @@
     "stream-browserify": "^3.0.0",
     "style-loader": "^3.3.1",
     "web-ext": "^7.2.0",
+    "to-string-loader": "^1.2.0",
     "webpack": "^5.74.0",
     "webpack-cli": "^4.10.0",
     "webpack-dev-middleware": "^4.3.0",

@@ -642,7 +642,8 @@ var ClockifyEditForm = class {
         timeEntry.billable = project.billable;
         timeEntry.task.id = null;
         timeEntry.taskId = null;
-        $('#spanClockifyBillable', this.editFormElem).innerHTML = this.billableContent;
+        let billableElement = $('#spanClockifyBillable', this.editFormElem)
+        if (billableElement) billableElement.innerHTML = this.billableContent;
         this.checkRequiredFields();
     }
 

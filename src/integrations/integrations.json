@@ -2,547 +2,437 @@
   "airtable.com": {
     "name": "Airtable",
     "link": "*://airtable.com/*",
-    "script": "airtable.js",
-    "clone": false
+    "script": "airtable.js"
   },
   "ambra.app": {
     "name": "Ambra",
     "link": "*://ambra.app/project/*",
-    "script": "ambra.js",
-    "clone": false
+    "script": "ambra.js"
   },
   "asana.com": {
     "name": "Asana",
-    "link": "app.asana.com",
-    "script": "asana.js",
-    "clone": false
+    "link": "*://app.asana.com",
+    "script": "asana.js"
   },
   "axosoft.com": {
     "name": "Axosoft",
-    "link": "axosoft.com/",
-    "script": "axosoft.js",
-    "clone": false
+    "link": "*://axosoft.com/",
+    "script": "axosoft.js"
   },
   "azure.com": {
     "name": "Azure",
     "link": "*://*.azure.*/*",
-    "script": "azure.js",
-    "clone": false
+    "script": "azure.js"
   },
   "basecamp.com": {
     "name": "Basecamp",
-    "link": "*://*.basecamp.com/*",
-    "script": "basecamp.js",
-    "clone": false
-  },
-  "basecamphq.com": {
-    "name": "BasecampHQ",
-    "link": "*://*.basecamphq.com/*",
-    "script": "basecamp.js",
-    "clone": true
+    "link": "*://*.basecamp.com/*,*://*.basecamphq.com/*",
+    "script": "basecamp.js"
   },
   "bitbucket.org": {
     "name": "Bitbucket",
     "link": "*://bitbucket.org/*",
-    "script": "bitbucket.js",
-    "clone": false
+    "script": "bitbucket.js"
   },
   "breeze.pm": {
     "name": "Breeze",
     "link": "*://app.breeze.pm/*",
-    "script": "breeze.js",
-    "clone": false
+    "script": "breeze.js"
   },
   "capsulecrm.com": {
     "name": "CapsuleCRM",
     "link": "*://*.capsulecrm.com/*",
-    "script": "capsulecrm.js",
-    "clone": false
+    "script": "capsulecrm.js"
   },
   "clickup.com": {
     "name": "ClickUp",
     "link": "*://*.clickup.com/*",
-    "script": "clickup.js",
-    "clone": false
+    "script": "clickup.js"
   },
   "clubhouse.io": {
     "name": "Clubhouse",
     "link": "*://app.clubhouse.io/*",
-    "script": "clubhouse.js",
-    "clone": false
+    "script": "clubhouse.js"
   },
   "crowdin.com": {
     "name": "Crowdin",
     "link": "*://*.crowdin.com/*",
-    "script": "crowdin.js",
-    "clone": false
+    "script": "crowdin.js"
   },
   "shortcut.com": {
     "name": "Shortcut",
     "link": "*://app.shortcut.com/*",
-    "script": "clubhouse.js",
-    "clone": false
-  },
+    "script": "clubhouse.js"
+  },  
   "coda.io": {
     "name": "Coda",
     "link": "*://*.coda.io/*",
-    "script": "coda.js",
-    "clone": false
+    "script": "coda.js"
   },
   "conectohub.com": {
     "name": "ConectoHub",
     "link": "*://*.conectohub.com/*",
-    "script": "conectohub.js",
-    "clone": false
+    "script": "conectohub.js"
   },
   "dixa.com": {
     "name": "Dixa",
     "link": "*://*.dixa.com/*",
-    "script": "dixa.js",
-    "clone": false
+    "script": "dixa.js"
   },
   "evernote.com": {
     "name": "Evernote",
     "link": "*://*.evernote.com/*",
-    "script": "evernote.js",
-    "clone": false
+    "script": "evernote.js"
   },
   "freedcamp.com": {
     "name": "FreedCamp",
-    "link": "*://*.freedcamp.com/*",
-    "script": "freedcamp.js",
-    "clone": false
+    "link": "*://freedcamp.com/*",
+    "script": "freedcamp.js"
   },
   "freshdesk.com": {
     "name": "Freshdesk",
     "link": "*://*.freshdesk.com/*",
-    "script": "freshdesk.js",
-    "clone": false
+    "script": "freshdesk.js"
   },
   "freshservice.com": {
     "name": "Freshservice",
     "link": "*://*.freshservice.com/*",
-    "script": "freshservice.js",
-    "clone": false
+    "script": "freshservice.js"
   },
   "frontapp.com": {
     "name": "Front",
     "link": "*://*.frontapp.com/*",
-    "script": "front.js",
-    "clone": false
-  },
-  "generic-integration": {
-    "name": "Generic Integration",
-    "link": "*://*/*",
-    "script": "generic-integration.js",
-    "clone": false
+    "script": "front.js"
   },
   "getflow.com": {
     "name": "Getflow",
     "link": "*://app.getflow.com/*",
-    "script": "flow.js",
-    "clone": false
+    "script": "flow.js"
   },
   "gitea.io": {
     "name": "Gitea",
     "link": "*://try.gitea.io/*",
-    "script": "gitea.js",
-    "clone": false
+    "script": "gitea.js"
   },
   "groupnwork.com": {
     "name": "Group&Work",
     "link": "*://*.groupnwork.com/*",
-    "script": "groupnwork.js",
-    "clone": false
+    "script": "groupnwork.js"
   },
   "github.com": {
     "name": "Github",
     "link": "*://github.com/*",
-    "script": "github.js",
-    "clone": false
+    "script": "github.js"
   },
   "gitlab.com": {
     "name": "Gitlab",
-    "link": "*://*.gitlab.com/*",
-    "script": "gitlab.js",
-    "clone": false
+    "link": "*://gitlab.com/*",
+    "script": "gitlab.js"
   },
   "calendar.google.com": {
     "name": "Google calendar",
     "link": "*://calendar.google.com/*",
-    "script": "google-calendar.js",
-    "clone": false
+    "script": "google-calendar.js"
   },
   "docs.google.com": {
     "name": "Google Docs",
     "link": "*://docs.google.com/*",
-    "script": "google-docs.js",
-    "clone": false
+    "script": "google-docs.js"
   },
   "kanbanize.com": {
     "name": "Kanbanize",
     "link": "*://*.kanbanize.com/*",
-    "script": "kanbanize.js",
-    "clone": false
+    "script": "kanbanize.js"
   },
   "keep.google.com": {
     "name": "Google Keep",
     "link": "*://keep.google.com/*",
-    "script": "google-keep.js",
-    "clone": false
+    "script": "google-keep.js"
   },
   "mail.google.com": {
     "name": "Google Mail",
     "link": "*://mail.google.com/*",
-    "script": "google-mail.js",
-    "clone": false
+    "script": "google-mail.js"
   },
   "helpscout.net": {
     "name": "Helpscout",
     "link": "*://*.helpscout.net/*",
-    "script": "helpscout.js",
-    "clone": false
+    "script": "helpscout.js"
   },
   "helprace.com": {
     "name": "Helprace",
     "link": "*://*.helprace.com/*",
-    "script": "helprace.js",
-    "clone": false
+    "script": "helprace.js"
   },
   "hillia.app": {
     "name": "Hillia",
     "link": "*://hillia.app/*",
-    "script": "hillia.js",
-    "clone": false
+    "script": "hillia.js"
   },
   "hubspot.com": {
     "name": "Hubspot",
-    "link": "*://app.hubspot.com/*",
-    "script": "hubspot.js",
-    "clone": false
+    "link": "*://*.hubspot.com/*",
+    "script": "hubspot.js"
   },
   "huskymarketingplanner.com": {
     "name": "Husky Marketing Planner",
     "link": "*://*.huskymarketingplanner.com/*",
-    "script": "husky-marketing-planner.js",
-    "clone": false
+    "script": "husky-marketing-planner.js"
   },
   "linear.app": {
     "name": "Linear",
     "link": "*://*.linear.app/*",
-    "script": "linear.js",
-    "clone": false
+    "script": "linear.js"
   },
   "liquidplanner.com": {
     "name": "Liquidplanner",
     "link": "*://*.liquidplanner.com/*",
-    "script": "liquidplanner.js",
-    "clone": false
+    "script": "liquidplanner.js"
   },
   "manageengine.com": {
     "name": "ManageEngine",
     "link": "*://*.manageengine.com/*",
-    "script": "manageengine.js",
-    "clone": false
+    "script": "manageengine.js"
   },
   "mantishub.io": {
     "name": "Mantishub",
-    "link": "*://*.mantishub.io/*",
-    "script": "mantishub.js",
-    "clone": false
-  },
-  "mantishub.com": {
-    "name": "Mantishub",
-    "link": "*://*.mantishub.com/*",
-    "script": "mantishub.js",
-    "clone": true
+    "link": "*://*.mantishub.io/*,*://*.mantishub.com/*",
+    "script": "mantishub.js"
   },
   "manuscript.com": {
     "name": "Manuscript",
     "link": "*://*.manuscript.com/*",
-    "script": "manuscript.js",
-    "clone": false
+    "script": "manuscript.js"
   },
   "meistertask.com": {
     "name": "Meistertask",
     "link": "*://www.meistertask.com/*",
-    "script": "meistertask.js",
-    "clone": false
+    "script": "meistertask.js"
   },
   "tasks.office.com": {
     "name": "Microsoft Planner",
     "link": "*://tasks.office.com/*",
-    "script": "microsoft-planner.js",
-    "clone": false
+    "script": "microsoft-planner.js"
   },
   "monday.com": {
     "name": "Monday",
     "link": "*://*.monday.com/*",
-    "script": "monday.js",
-    "clone": false
+    "script": "monday.js"
   },
   "youtrack.": {
     "name": "Youtrack",
-    "link": "*://*youtrack.*/*",
-    "script": "youtrack.js",
-    "clone": false
+    "link": "*://youtrack.*/*,*://*.youtrack.*/*",
+    "script": "youtrack.js"
   },
   "myfocusspace.com": {
     "name": "MyFocusSpace",
     "link": "*://*.myfocusspace.com/*",
-    "script": "myfocusspace.js",
-    "clone": false
+    "script": "myfocusspace.js"
   },
   "notion.so": {
     "name": "Notion",
     "link": "*://*.notion.so/*",
-    "script": "notion.js",
-    "clone": false
+    "script": "notion.js"
   },
   "nozbe.com": {
     "name": "Nozbe",
     "link": "*://*.nozbe.com/*",
-    "script": "nozbe.js",
-    "clone": false
+    "script": "nozbe.js"
   },
   "openproject.com": {
     "name": "Openproject",
     "link": "*://*.openproject.com/*",
-    "script": "openproject.js",
-    "clone": false
+    "script": "openproject.js"
   },
   "osticket.com": {
     "name": "osTicket",
     "link": "*://*.supportsystem.com/*",
-    "script": "osticket.js",
-    "clone": false
+    "script": "osticket.js"
   },
   "outlook.live.com": {
     "name": "Outlook",
     "link": "*://outlook.*/*",
-    "script": "outlook.js",
-    "clone": false
+    "script": "outlook.js"
   },
   "phacility.com": {
     "name": "Phabricator",
-    "link": "*://*.phacility.com/*,*://phabricator.*",
-    "script": "phabricator.js",
-    "clone": false
+    "link": "*://*.phacility.com/*,*://phabricator.*/*",
+    "script": "phabricator.js"
   },
   "pipefy.com": {
     "name": "Pipefy",
     "link": "*://app.pipefy.com/*",
-    "script": "pipefy.js",
-    "clone": false
+    "script": "pipefy.js"
   },
   "produck.io": {
     "name": "Produck",
     "link": "*://*.produck.io/*",
-    "script": "produck.js",
-    "clone": false
+    "script": "produck.js"
   },
   "pivotaltracker.com": {
     "name": "PivotalTracker",
     "link": "*://*.pivotaltracker.com/*",
-    "script": "pivotaltracker.js",
-    "clone": false
+    "script": "pivotaltracker.js"
   },
   "podio.com": {
     "name": "Podio",
     "link": "*://*.podio.com/*",
-    "script": "podio.js",
-    "clone": false
+    "script": "podio.js"
   },
   "pipedrive.com": {
     "name": "Pipedrive",
     "link": "*://*.pipedrive.com/*",
-    "script": "pipedrive.js",
-    "clone": false
+    "script": "pipedrive.js"
   },
   "plaky.com": {
     "name": "Plaky",
     "link": "*://*.plaky.com/*",
-    "script": "plaky.js",
-    "clone": false
+    "script": "plaky.js"
   },
   "redbooth.com": {
     "name": "Redbooth",
     "link": "*://*.redbooth.com/*",
-    "script": "redbooth.js",
-    "clone": false
+    "script": "redbooth.js"
   },
   "redmine.org": {
     "name": "Redmine",
     "link": "*://*.redmine.org/*",
-    "script": "redmine.js",
-    "clone": false
+    "script": "redmine.js"
   },
   "lightning.force.com": {
     "name": "Salesforce Lightning",
-    "link": "*://*.salesforce.com/*,*://*.my.salesforce.com/*, *://*.lightning.force.com/*",
-    "script": "salesforce.js",
-    "clone": false
+    "link": "*://*.salesforce.com/*,*://*.my.salesforce.com/*,*://*.lightning.force.com/*",
+    "script": "salesforce.js"
   },
   "scoro.com": {
     "name": "Scoro",
     "link": "*://*.scoro.com/*",
-    "script": "scoro.js",
-    "clone": false
+    "script": "scoro.js"
   },
   "sprint.ly": {
     "name": "Sprint",
     "link": "*://sprint.ly/*",
-    "script": "sprintly.js",
-    "clone": false
+    "script": "sprintly.js"
   },
   "app.startinfinity.com": {
     "name": "Infinity",
     "link": "*://app.startinfinity.com/*",
-    "script": "infinity.js",
-    "clone": false
+    "script": "infinity.js"
   },
   "taiga.io": {
     "name": "Taiga",
     "link": "*://*.taiga.io/*",
-    "script": "taiga.js",
-    "clone": false
-  },
-  "teamwork.com": {
-    "name": "Teamwork",
-    "link": "*://*.teamwork.com/*",
-    "script": "teamwork.js",
-    "clone": true
+    "script": "taiga.js"
   },
   "teamwave.com": {
     "name": "Teamwave",
     "link": "*://*.teamwave.com/*",
-    "script": "teamwave.js",
-    "clone": false
+    "script": "teamwave.js"
+  },
+  "teamwork.com": {
+    "name": "Teamwork",
+    "link": "*://*.teamwork.com/*",
+    "script": "teamwork.js"
   },
   "ticktick.com": {
     "name": "TickTick",
-    "link": "*://*.ticktick.com/*",
-    "script": "ticktick.js",
-    "clone": false
+    "link": "*://ticktick.com/*",
+    "script": "ticktick.js"
   },
   "todoist.com": {
     "name": "Todoist",
-    "link": "*://*.todoist.com/app*",
-    "script": "todoist.js",
-    "clone": false
+    "link": "*://todoist.com/*",
+    "script": "todoist.js"
   },
   "toodledo.com": {
     "name": "Toodledo",
     "link": "*://*.toodledo.com/*",
-    "script": "toodledo.js",
-    "clone": false
+    "script": "toodledo.js"
   },
   "trello.com": {
     "name": "Trello",
-    "link": "trello.com/c/",
-    "script": "trello.js",
-    "clone": false
+    "link": "*://trello.com/*",
+    "script": "trello.js"
   },
   "unfuddle.com": {
     "name": "Unfuddle",
     "link": "*://*.unfuddle.com/*",
-    "script": "unfuddle.js",
-    "clone": false
+    "script": "unfuddle.js"
   },
   "visualstudio.com": {
     "name": "VisualStudio",
     "link": "*://*.visualstudio.com/*",
-    "script": "azure.js",
-    "clone": false
+    "script": "azure.js"
   },
   "wekan.github.io": {
     "name": "Wekan",
-    "link": "*://*.wekan*/*",
-    "script": "wekan.js",
-    "clone": false
+    "link": "*://*.wekan.*/*",
+    "script": "wekan.js"
   },
   "wrike.com": {
     "name": "Wrike",
     "link": "*://*.wrike.com/*",
-    "script": "wrike.js",
-    "clone": false
+    "script": "wrike.js"
   },
   "wunderlist.com": {
     "name": "Wunderlist",
     "link": "*://*.wunderlist.com/*",
-    "script": "wunderlist.js",
-    "clone": false
+    "script": "wunderlist.js"
   },
   "zammad.com": {
     "name": "Zammad",
     "link": "*://*.zammad.com/*",
-    "script": "zammad.js",
-    "clone": false
+    "script": "zammad.js"
   },
   "zendesk.com": {
     "name": "Zendesk",
     "link": "*://*.zendesk.com/*",
-    "script": "zendesk.js",
-    "clone": false
+    "script": "zendesk.js"
   },
   "zenkit.com": {
     "name": "Zenkit",
-    "link": "*://zenkit.com/*",
-    "script": "zenkit.js",
-    "clone": false
+    "link": "*://*.zenkit.com/*",
+    "script": "zenkit.js"
   },
   "rallydev.com": {
     "name": "Rally",
-    "link": "*://*.rallydev.com/#/*/detail/*",
-    "script": "rallydev.js",
-    "clone": false
+    "link": "*://*.rallydev.com/*",
+    "script": "rallydev.js"
   },
   "ladesk.com": {
     "name": "LiveAgent",
     "link": "*://*.ladesk.com/*",
-    "script": "liveagent.js",
-    "clone": false
+    "script": "liveagent.js"
   },
   "nela.com.br": {
     "name": "Nela",
     "link": "*://*.nela.com.br/*",
-    "script": "nela.js",
-    "clone": false
+    "script": "nela.js"
   },
   "intercom.com": {
     "name": "Rally",
     "link": "*://*.intercom.com/*",
-    "script": "intercom.js",
-    "clone": false
+    "script": "intercom.js"
   },
   "to-do.live.com": {
     "name": "Microsoft To-Do",
     "link": "*://to-do.live.com/*",
-    "script": "microsoft-todo.js",
-    "clone": false
+    "script": "microsoft-todo.js"
   },
   "cerb.ai": {
     "name": "Cerb",
     "link": "*://*.cerb.ai/*",
-    "script": "cerb.js",
-    "clone": false
+    "script": "cerb.js"
   },
   "usepixie.net": {
     "name": "Pixie",
-    "link": "*://*.usepixie.net/*",
+    "link": "*://*.usepixie.net/*,*://pureworkflow.io/*", 
     "script": "usepixie.js"
-  },
-  "pureworkflow.io": {
-    "name": "Pureworkflow",
-    "link": "*://*.pureworkflow.io/*",
-    "script": "usepixie.js",
-    "clone": true
   },
   "figma.com": {
     "name": "Figma",
     "link": "*://*.figma.com/*",
-    "script": "figma.js",
-    "clone": false
+    "script": "figma.js"
   },
   "freshrelease.com": {
     "name": "Freshrelease",
@@ -551,7 +441,7 @@
   },
   "desk.zoho.com": {
     "name": "Zoho Desk",
-    "link": "*://desk.zoho.com/*",
+    "link": "*://desk.zoho.*/*",
     "script": "zohodesk.js"
   },
   "sentry.io": {

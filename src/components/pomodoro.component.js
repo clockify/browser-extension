@@ -25,6 +25,7 @@ class Pomodoro extends React.Component {
             isAutomaticStartStop: false,
             isLongBreakEnabled: false,
             isDefaultProjectEnabled: false,
+            isFocusModeEnabled: false,
             defaultProjectForUserOnWorkspace: ""
         };
 
@@ -86,7 +87,8 @@ class Pomodoro extends React.Component {
                 breakCounter,
                 isSoundNotification, 
                 isAutomaticStartStop, 
-                isDefaultProjectEnabled } = pomodoroForUser;
+                isDefaultProjectEnabled,
+                isFocusModeEnabled } = pomodoroForUser;
 
         this.setState({
             enabled,
@@ -97,7 +99,8 @@ class Pomodoro extends React.Component {
             breakCounter,
             isSoundNotification,
             isAutomaticStartStop,
-            isDefaultProjectEnabled
+            isDefaultProjectEnabled,
+            isFocusModeEnabled
         }, () => {
             if (this.state.enabled) {
                 setTimeout(() => {
@@ -133,7 +136,8 @@ class Pomodoro extends React.Component {
                 breakCounter: 3,
                 isSoundNotification: false,
                 isAutomaticStartStop: false,
-                isDefaultProjectEnabled: false
+                isDefaultProjectEnabled: false,
+                isFocusModeEnabled: false
             }
 
             pomodoroStorage = [obj];
@@ -141,7 +145,7 @@ class Pomodoro extends React.Component {
             const { enabled, timerInterval, shortBreak, 
                     longBreak, isLongBreakEnabled,
                     breakCounter, isSoundNotification, isAutomaticStartStop, 
-                    isDefaultProjectEnabled } = obj;
+                    isDefaultProjectEnabled, isFocusModeEnabled } = obj;
 
             this.setState({
                 enabled,
@@ -152,7 +156,8 @@ class Pomodoro extends React.Component {
                 breakCounter,
                 isSoundNotification,
                 isAutomaticStartStop,
-                isDefaultProjectEnabled
+                isDefaultProjectEnabled,
+                isFocusModeEnabled
             }, () => {
                 htmlStyleHelper.enableDisableElements(false, elementsIds);
                 pomodoroElem.style.maxHeight = pomodoroElem.scrollHeight + 'px'
@@ -180,25 +185,25 @@ class Pomodoro extends React.Component {
         this.store(pomodoroStorage)
 
         if (isEnabled) {
-            getBrowser().runtime.sendMessage({
-                eventName: 'pomodoroTimer'
-            });
+            // getBrowser().runtime.sendMessage({
+            //     eventName: 'pomodoroTimer'
+            // });
         } else {
             getBrowser().runtime.sendMessage({
                 eventName: 'restartPomodoro'
             });
-            getBrowser().runtime.sendMessage({
-                eventName: "removeBadge"
-            });
+            // getBrowser().runtime.sendMessage({
+            //     eventName: "removeBadge"
+            // });
         }
         
     }
 
     sendPomodoroRequest() {
         
-        getBrowser().runtime.sendMessage({
-            eventName: "pomodoroTimer"
-        });
+        // getBrowser().runtime.sendMessage({
+        //     eventName: "pomodoroTimer"
+        // });
         
     }
 
@@ -220,10 +225,9 @@ class Pomodoro extends React.Component {
         this.store(pomodoroStorage);
         this.props.changeSaved();
         
-        // getBrowser().extension.getBackgroundPage().addPomodoroTimer();
-        getBrowser().runtime.sendMessage({
-            eventName: 'pomodoroTimer'
-        });
+        // getBrowser().runtime.sendMessage({
+        //     eventName: 'pomodoroTimer'
+        // });
         
     }
 
@@ -275,6 +279,16 @@ class Pomodoro extends React.Component {
             isDefaultProjectEnabled: event
         });
     }    
+
+    async changeIsFocusModeEnabled(event) {
+        const { pomodoroForUser, pomodoroStorage } = await this.getPomodoroStorage();
+        pomodoroForUser.isFocusModeEnabled = event;
+        this.store(pomodoroStorage);
+        this.props.changeSaved();
+        this.setState({
+            isFocusModeEnabled: event
+        });
+    }
 
     async toggleLongBreakEnabled(event) {
         const { pomodoroForUser, pomodoroStorage } = await this.getPomodoroStorage();
@@ -369,6 +383,13 @@ class Pomodoro extends React.Component {
                             <Switch className="pomodoro__switch"
                                     checked={this.state.isAutomaticStartStop}
                                     onChange={this.changeIsAutomaticStartStop.bind(this)}/>
+                        </div>
+                        <div className="pomodoro__border"></div>
+                        <div className="pomodoro__box__content">
+                            <p>{locales.FOCUS_MODE}</p>
+                            <Switch className="pomodoro__switch"
+                                    checked={this.state.isFocusModeEnabled}
+                                    onChange={this.changeIsFocusModeEnabled.bind(this)}/>
                         </div>
                         <div className="pomodoro__border"></div>
                         <div className="pomodoro__box__content">

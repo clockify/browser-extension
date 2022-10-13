@@ -1,4 +1,4 @@
-clockifyButton.render('.IZ65Hb-TBnied:not(.clockify)', { observe: true }, (elem) => {
+clockifyButton.render('.gkA7Yd-sKfxWe .IZ65Hb-TBnied:not(.clockify)', { observe: true }, (elem) => {
     var link,
         toolbar = $('.IZ65Hb-INgbqf', elem),
         description = $('.IZ65Hb-YPqjbf:not(.LwH6nd)', elem).textContent;

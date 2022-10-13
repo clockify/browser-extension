@@ -33,26 +33,9 @@ function createButton(elem, titleEl) {
     root.prepend(wrapper);
   }
 }
-// Button renders in popup/dialog view
-clockifyButton.render(
-  '.notion-peek-renderer:not(.clockify)',
-  { observe: true },
-  function (elem) {
-    setTimeout(() => {
-      const titleEl = elem.querySelector('.notion-scroller .notion-selectable div[contenteditable="true"]');
-      if(!titleEl){
-        return;
-      }
-      const desc = titleEl.textContent.trim();
-      if(desc){
-        createButton(elem, titleEl);
-      }
-      titleObserver.observe(titleEl, {subtree: true, characterData: true});
-    }, 2000);
-  }
-);
+
 // Button renders in page view
-if(!document.querySelector('.notion-peek-renderer')){
+if(!document.querySelector('.notion-peek-renderer') || document.querySelector('.notion-peek-renderer').childElementCount === 0){
   clockifyButton.render(
     '.notion-topbar-action-buttons:not(.clockify)',
     { observe: true },
@@ -67,7 +50,26 @@ if(!document.querySelector('.notion-peek-renderer')){
           createButton(elem, titleEl);
         }
         // titleObserver.observe(titleEl, {subtree: true, characterData: true});
-      }, 2000);
+      }, 500);
+    }
+  );
+} else {
+// Button renders in popup/dialog view
+  clockifyButton.render(
+    '.notion-peek-renderer:not(.clockify)',
+    { observe: true },
+    function (elem) {
+      setTimeout(() => {
+        const titleEl = elem.querySelector('.notion-scroller .notion-selectable div[contenteditable="true"]');
+        if(!titleEl){
+          return;
+        }
+        const desc = titleEl.textContent.trim();
+        if(desc){
+          createButton(elem, titleEl);
+        }
+        titleObserver.observe(titleEl, {subtree: true, characterData: true});
+      }, 500);
     }
   );
 }
