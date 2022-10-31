@@ -448,5 +448,11 @@
     "name": "Sentry",
     "link": "*://sentry.io/*",
     "script": "sentry.js"
+  },
+  "jetbrains.space": {
+    "name": "JetBrains Space",
+    "link": "*://*.jetbrains.space/*",
+    "script": "space.js",
+    "clone": false
   }
 }
