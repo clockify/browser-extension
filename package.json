@@ -1,6 +1,6 @@
 {
   "name": "Clockify",
-  "version": "2.8.3",
+  "version": "2.8.5",
   "description": "Clockify App 100% Free Time Tracker",
   "main": "./main.js",
   "productName": "Clockify",
