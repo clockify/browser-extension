@@ -27,6 +27,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@fontsource/roboto": "^4.5.8",
     "@popperjs/core": "^2.11.0",
     "antd": "^4.21.7",
     "axios": "^0.27.2",
@@ -75,8 +76,8 @@
     "stream": "npm:stream-browserify",
     "stream-browserify": "^3.0.0",
     "style-loader": "^3.3.1",
-    "web-ext": "^7.2.0",
     "to-string-loader": "^1.2.0",
+    "web-ext": "^7.2.0",
     "webpack": "^5.74.0",
     "webpack-cli": "^4.10.0",
     "webpack-dev-middleware": "^4.3.0",
