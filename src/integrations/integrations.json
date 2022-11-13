@@ -63,7 +63,7 @@
     "name": "Shortcut",
     "link": "*://app.shortcut.com/*",
     "script": "clubhouse.js"
-  },  
+  },
   "coda.io": {
     "name": "Coda",
     "link": "*://*.coda.io/*",
@@ -326,7 +326,7 @@
   },
   "teamwave.com": {
     "name": "Teamwave",
-    "link": "*://*.teamwave.com/*",
+    "link": "*://*.teamwave.com/*","*://*.goteamwave.com/*",
     "script": "teamwave.js"
   },
   "teamwork.com": {
@@ -426,7 +426,7 @@
   },
   "usepixie.net": {
     "name": "Pixie",
-    "link": "*://*.usepixie.net/*,*://pureworkflow.io/*", 
+    "link": "*://*.usepixie.net/*,*://pureworkflow.io/*",
     "script": "usepixie.js"
   },
   "figma.com": {
