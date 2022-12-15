@@ -454,5 +454,10 @@
     "link": "*://*.jetbrains.space/*",
     "script": "space.js",
     "clone": false
+  },
+  "plutio.com": {
+    "name": "Plutio",
+    "link": "*://*.plutio.com/*",
+    "script": "plutio.js"
   }
 }
