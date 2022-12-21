@@ -1,13 +1,16 @@
 clockifyButton.render('.issue-details .detail-page-description:not(.clockify)', {observe: true}, (elem) => {
     var link, description,
+        projectLinkElem = $('.breadcrumbs-links li:nth-last-child(3) a'),
         numElem = $(".identifier") || $(".breadcrumbs-links li:last-child a"),
         titleElem = $(".title", elem),
         projectElem = $(".title .project-item-select-holder") || $(".breadcrumbs-list li:nth-last-child(3) .breadcrumb-item-text"),
         actionsElem = $(".detail-page-header-actions");
-    description = titleElem.textContent.trim();
-    if (numElem !== null) {
-        description = numElem.textContent.split(" ").pop().trim() + " " + description;
-    }
+
+    var title = titleElem.textContent.trim();
+    var projectRef = projectLinkElem ? projectLinkElem.href.trim().replace(location.origin + '/', '') : '';
+    var projectNum = numElem ? numElem.textContent.split(" ").pop().trim() : '';
+
+    description = (projectRef + projectNum + ' ' + title).trim();
 
     var tags = () => Array.from($$("div.labels .gl-label-text")).map(e => e.innerText);
 
@@ -33,16 +36,17 @@ clockifyButton.render('.issue-details .detail-page-description:not(.clockify)', 
 
 clockifyButton.render('.merge-request-details.issuable-details > .detail-page-description:not(.clockify)', {observe: true}, (elem) => {
     var link, description,
+        projectLinkElem = $('.breadcrumbs-links li:nth-last-child(3) a'),
         numElem = $(".identifier") || $(".breadcrumbs-links li:last-child a"),
         titleElem = $("h1.title"),
         projectElem = $(".title .project-item-select-holder") || $(".breadcrumbs-list li:nth-last-child(3) .breadcrumb-item-text"),
         actionsElem = $(".detail-page-header-actions");
 
-    description = titleElem.textContent.trim();
-
-    if (numElem !== null) {
-        description = "MR" + numElem.textContent.split(" ").pop().trim().replace("!", "") + "::" + description;
-    }
+    var title = titleElem.textContent.trim();
+    var projectRef = projectLinkElem ? projectLinkElem.href.trim().replace(location.origin + '/', '') : '';
+    var projectNum = numElem ? numElem.textContent.split(" ").pop().trim() : '';
+    
+    description = (projectRef + projectNum + ' ' + title).trim();
 
     var tags = Array.from($$("div.labels .gl-label-text")).map(e => e.innerText);
 
