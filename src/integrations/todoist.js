@@ -90,7 +90,7 @@ clockifyButton.render('.filter_view .task_list_item__body:not(.clockify)', {obse
 
 clockifyButton.render('[data-testid="task-details-sidebar"] > div:not(.clockify)', {observe: true}, function (elem) {
   description = $('.task-overview-header > div > div.markdown_content.task_content').textContent;
-  project = $('.task-overview-header > div > div.markdown_content.task_content').textContent;
+  project = $('button[aria-label="Select a project"] span').textContent;
   // var tags = () => Array.from($$(".task_list_item__info_tags__label")).map(e => e.innerText);
 
   link = clockifyButton.createButton({
