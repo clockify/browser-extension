@@ -11,9 +11,6 @@ style.innerHTML = `
         margin-right: 8px;
         margin-left: 12px;
     }
-    .clockify-integration-popup {
-        visibility: hidden;
-    }
 `;
 document.head.appendChild(style);
 
@@ -53,13 +50,6 @@ function renderCardButton() {
             tags: tagNames.length > 0 ? tagNames : null
         });
         elem.append(btn);
-        
-        btn.addEventListener('click', () => {
-            let interval = setInterval(() => {
-                let button = document.querySelector('.clockify-integration-popup .edit-form-done');
-                if (button) { button.click(); clearInterval(interval); }
-            }, 100);
-        });
     });
 }
         
