@@ -214,6 +214,11 @@
     "link": "*://tasks.office.com/*",
     "script": "microsoft-planner.js"
   },
+  "miro.com": {
+    "name": "Miro (Kanban)",
+    "link": "*://miro.com/*",
+    "script": "miro.js"
+  },
   "monday.com": {
     "name": "Monday",
     "link": "*://*.monday.com/*",
