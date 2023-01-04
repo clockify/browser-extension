@@ -1,101 +1,101 @@
-@use "variables";
+@use 'variables';
 
 .week-header {
-    margin: 0 23px;
-    display: flex;
-    justify-content: space-between;
-    font-size: 14px;
-    &-total {
-        &-time{
-            font-weight: bold;
-        }
-        &-label{
-            font-size: 12px;
-            color: #999;
-        }
-    }
+	margin: 0 23px;
+	display: flex;
+	justify-content: space-between;
+	font-size: 14px;
+	&-total {
+		&-time {
+			font-weight: bold;
+		}
+		&-label {
+			font-size: 12px;
+			color: #999;
+		}
+	}
 }
 
 .time-entries-list {
-    background: variables.$background;
-    margin: 20px;
-    border: 1px solid variables.$border;
-    border-radius: 2px;
+	background: variables.$background;
+	margin: 20px;
+	border: 1px solid variables.$border;
+	border-radius: 2px;
 }
 
 .time-entries-list-time {
-    background: variables.$entries_header;
-    color: variables.$lighter_text;
-    padding: 20px 10px;
-    border-bottom: 1px solid variables.$border;
+	background: variables.$entries_header;
+	color: variables.$lighter_text;
+	padding: 20px 10px;
+	border-bottom: 1px solid variables.$border;
 }
 
 .time-entries-list-day {
-    position: relative;
-    top: -7px;
-    float: left;
-    color: variables.$dark_text;
-    font-size: 12px;
-    line-height: 14px;
+	position: relative;
+	top: -7px;
+	float: left;
+	color: variables.$dark_text;
+	font-size: 12px;
+	line-height: 14px;
 }
 
 .time-entries-total-and-time {
-    position: relative;
-    top: -7px;
-    float: right;
+	position: relative;
+	top: -7px;
+	float: right;
 }
 
 .time-entries-list-total-time {
-    color: variables.$dark_text;
-    font-size: 12px;
-    line-height: 14px;
+	color: variables.$dark_text;
+	font-size: 12px;
+	line-height: 14px;
 }
 
 .time-entries-list-total {
-    margin-right: 3px;
-    color: variables.$lighter_text;
-    font-size: 12px;
-    line-height: 14px;
+	margin-right: 3px;
+	color: variables.$lighter_text;
+	font-size: 12px;
+	line-height: 14px;
 }
 
 .loading-entries {
-    text-align: center;
-    font-weight: bold;
-    font-size: 18px;
-    animation: loading 2s linear infinite;
+	text-align: center;
+	font-weight: bold;
+	font-size: 18px;
+	animation: loading 2s linear infinite;
 }
 
 @keyframes loading {
-    0% {
-        opacity: 0;
-    }
-    100% {
-        opacity: 1;
-    }
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
 }
 
 .no-entries-img {
-    width:299px;
-    height: 85px;
-    content: url("../assets/images/clockify_illustration.png");
+	width: 299px;
+	height: 85px;
+	content: url('../assets/images/clockify_illustration.png');
 }
 
 .no-entries {
-    margin-top: 70px;
-    margin-right: auto;
-    margin-left: auto;
-    text-align: center;
-    width: 300px;
+	margin-top: 70px;
+	margin-right: auto;
+	margin-left: auto;
+	text-align: center;
+	width: 300px;
 }
 
 .no-entries span {
-    display: block;
-    margin-top: 20px;
-    margin-bottom: 10px;
-    font-size: 13px;
-    font-weight: bold;
+	display: block;
+	margin-top: 20px;
+	margin-bottom: 10px;
+	font-size: 13px;
+	font-weight: bold;
 }
 
 .no-entries label {
-    color: #999;
+	color: #999;
 }

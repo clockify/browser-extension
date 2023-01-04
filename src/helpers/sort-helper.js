@@ -1,9 +1,13 @@
 export class SortHepler {
+	constructor() {}
 
-    constructor() {}
-
-    sortArrayByStringProperty(array, prop) {
-       return array.sort((a,b) => (a[prop].toLowerCase() > b[prop].toLowerCase()) ?
-                                    1 : ((b[prop].toLowerCase() > a[prop].toLowerCase()) ? -1 : 0));
-    }
+	sortArrayByStringProperty(array, prop) {
+		return array.sort((a, b) =>
+			a[prop].toLowerCase() > b[prop].toLowerCase()
+				? 1
+				: b[prop].toLowerCase() > a[prop].toLowerCase()
+				? -1
+				: 0
+		);
+	}
 }

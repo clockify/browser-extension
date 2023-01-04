@@ -1,51 +1,67 @@
-clockifyButton.render('.item-topbar:not(.clockify)', {observe: true}, (elem) => {
-    var delay = 1000; //1 second
-    setTimeout(function () {
-        var link, wrapper,
-            description = $('.item-title', elem),
-            container = $('.breadcrumb', elem);
+clockifyButton.render(
+	'.item-topbar:not(.clockify)',
+	{ observe: true },
+	(elem) => {
+		let delay = 1000;
+		setTimeout(() => {
+			let link,
+				wrapper,
+				description = $('.item-title', elem),
+				container = $('.breadcrumb', elem);
 
-        if (description === null || container === null) {
-            return;
-        }
-        link = clockifyButton.createButton(description.textContent);
+			if (description === null || container === null) {
+				return;
+			}
+			link = clockifyButton.createButton(description.textContent.trim());
 
-        wrapper = createTag('div', 'item-via');
-        wrapper.appendChild(link);
-        container.parentNode.insertBefore(wrapper, container.nextSibling);
-    }, delay);
-});
+			wrapper = createTag('div', 'item-via');
+			wrapper.appendChild(link);
+			container.parentNode.insertBefore(wrapper, container.nextSibling);
+		}, delay);
+	}
+);
 
+clockifyButton.render(
+	'.task-detail:not(.clockify)',
+	{ observe: true },
+	(elem) => {
+		let link,
+			wrapper,
+			description = $('.task-link', elem.parentNode),
+			container = $('.edit-task-reference-wrapper', elem);
 
-clockifyButton.render('.task-detail:not(.clockify)', {observe: true}, (elem) => {
-    var link, wrapper,
-        description = $('.task-link', elem.parentNode),
-        container = $('.edit-task-reference-wrapper', elem);
+		if (description === null || container === null) {
+			return;
+		}
 
-    if (description === null || container === null) {
-        return;
-    }
+		link = clockifyButton.createButton(description.textContent);
 
-    link = clockifyButton.createButton(description.textContent);
+		wrapper = createTag('div', 'task-via');
+		wrapper.appendChild(link);
+		container.parentNode.insertBefore(wrapper, container.nextSibling);
+	}
+);
 
-    wrapper = createTag('div', 'task-via');
-    wrapper.appendChild(link);
-    container.parentNode.insertBefore(wrapper, container.nextSibling);
-});
+clockifyButton.render(
+	'.task-header:not(.clockify)',
+	{ observe: true },
+	(elem) => {
+		let link,
+			wrapper,
+			container = $('.action-bar ul', elem),
+			description = $('.header-title', elem);
 
+		if (description === null || container === null) {
+			return;
+		}
 
-clockifyButton.render('.task-header:not(.clockify)', {observe: true}, (elem) => {
-    var link, wrapper,
-        container = $('.action-bar ul', elem),
-        description = $('.header-title', elem);
+		link = clockifyButton.createButton(description.textContent.trim());
 
-    if (description === null || container === null) {
-        return;
-    }
+		link.style.marginLeft = '10px';
+		link.style.width = 'max-content';
 
-    link = clockifyButton.createButton(description.textContent);
-
-    wrapper = createTag("li", "float-left");
-    wrapper.appendChild(link);
-    container.appendChild(wrapper);
-});
+		wrapper = createTag('li', 'float-left');
+		wrapper.appendChild(link);
+		container.appendChild(wrapper);
+	}
+);

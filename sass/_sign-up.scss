@@ -1,134 +1,133 @@
-@use "variables";
+@use 'variables';
 
 .signup {
-
-  &__disabled {
-    width: calc(100% - 40px);
-    padding: 15px;
-    margin-top: 20px;
-    box-sizing: border-box;
-    color: #FFFFFF;
-    border-radius: 2px;
-    font-size: 14px;
-    line-height: 16px;
-    position: relative;
-    left: 20px;
-    background-color: variables.$blue;
-  }
-  &-logo {
-    text-align: center;
-  }
-  &-logo-img{
-    content: url("../assets/images/clockify_logo.svg");
-    cursor: pointer;
-  }
-  &-title_and_text {
-    margin: 5px 20px 20px 20px;
-    text-align: center;
-  }
-  &-title {
-    font-size: 18px;
-    line-height: 21px;
-    color: variables.$dark_text;
-  }
-  &-text {
-    font-size: 14px;
-    line-height: 21px;
-    color: variables.$dark_text;
-  }
-  &-form {
-    margin-right: 20px;
-    margin-left: 20px;
-    &--email {
-      margin-bottom: 20px;
-    }
-    &--password {
-      margin-bottom: 20px;
-    }
-  }
-  &-input{
-    width: 100%;
-    height: 2.5rem;
-    border-radius: 5px;
-    border: 1px solid #c6d2d9;
-    padding: 15px;
-  }
-  &-terms {
-    display: flex;
-    align-items: center;
-    &--agree {
-      margin-left: 10px;
-      font-size: 14px;
-      line-height: 16px;
-      color: variables.$dark_text;
-      a {
-        margin-left: 5px;
-        color: #03a9f4;
-        cursor: pointer;
-      }
-    }
-    &_and_alert {
-      margin-top: 20px;
-      margin-bottom: 20px;
-    }
-  }
-  &-button {
-    width: 100%;
-    height: 50px;
-    border-radius: 3px;
-    border: 1px solid #c6d2d9;
-    background: #03a9f4;
-    color: white;
-    cursor: pointer;
-  }
-  &-alert {
-    display: inline-block;
-    margin-top: 5px;
-    font-size: 14px;
-    color: red;
-  }
-  &-checkbox {
-    display: inline-block;
-    width: 16px;
-    height: 16px;
-    top: 13px;
-    background: white;
-    border: 1px solid variables.$border;
-    border-radius: 2px;
-    cursor: pointer;
-    &-img {
-      content: url("../assets/images/checked.png");
-      margin-top: 2px;
-      margin-left: 1px;
-    }
-    &-img-hidden {
-      content: url("../assets/images/checked.png");
-      margin-top: 2px;
-      margin-left: 1px;
-      visibility: hidden;
-    }
-  }
-  &--divider {
-    margin-bottom: 20px;
-    border-bottom: 1px dotted variables.$disabled;
-    height: 1px;
-  }
-  &--login-url {
-    text-align: center;
-    a {
-      margin-left: 5px;
-      color: #03a9f4;
-      font-size: 14px;
-      line-height: 16px;
-      cursor: pointer;
-    }
-    p {
-      font-size: 14px;
-      line-height: 16px;
-      color: variables.$dark_text;
-    }
-  }
+	&__disabled {
+		width: calc(100% - 40px);
+		padding: 15px;
+		margin-top: 20px;
+		box-sizing: border-box;
+		color: #ffffff;
+		border-radius: 2px;
+		font-size: 14px;
+		line-height: 16px;
+		position: relative;
+		left: 20px;
+		background-color: variables.$blue;
+	}
+	&-logo {
+		text-align: center;
+	}
+	&-logo-img {
+		content: url('../assets/images/clockify_logo.svg');
+		cursor: pointer;
+	}
+	&-title_and_text {
+		margin: 5px 20px 20px 20px;
+		text-align: center;
+	}
+	&-title {
+		font-size: 18px;
+		line-height: 21px;
+		color: variables.$dark_text;
+	}
+	&-text {
+		font-size: 14px;
+		line-height: 21px;
+		color: variables.$dark_text;
+	}
+	&-form {
+		margin-right: 20px;
+		margin-left: 20px;
+		&--email {
+			margin-bottom: 20px;
+		}
+		&--password {
+			margin-bottom: 20px;
+		}
+	}
+	&-input {
+		width: 100%;
+		height: 2.5rem;
+		border-radius: 5px;
+		border: 1px solid #c6d2d9;
+		padding: 15px;
+	}
+	&-terms {
+		display: flex;
+		align-items: center;
+		&--agree {
+			margin-left: 10px;
+			font-size: 14px;
+			line-height: 16px;
+			color: variables.$dark_text;
+			a {
+				margin-left: 5px;
+				color: #03a9f4;
+				cursor: pointer;
+			}
+		}
+		&_and_alert {
+			margin-top: 20px;
+			margin-bottom: 20px;
+		}
+	}
+	&-button {
+		width: 100%;
+		height: 50px;
+		border-radius: 3px;
+		border: 1px solid #c6d2d9;
+		background: #03a9f4;
+		color: white;
+		cursor: pointer;
+	}
+	&-alert {
+		display: inline-block;
+		margin-top: 5px;
+		font-size: 14px;
+		color: red;
+	}
+	&-checkbox {
+		display: inline-block;
+		width: 16px;
+		height: 16px;
+		top: 13px;
+		background: white;
+		border: 1px solid variables.$border;
+		border-radius: 2px;
+		cursor: pointer;
+		&-img {
+			content: url('../assets/images/checked.png');
+			margin-top: 2px;
+			margin-left: 1px;
+		}
+		&-img-hidden {
+			content: url('../assets/images/checked.png');
+			margin-top: 2px;
+			margin-left: 1px;
+			visibility: hidden;
+		}
+	}
+	&--divider {
+		margin-bottom: 20px;
+		border-bottom: 1px dotted variables.$disabled;
+		height: 1px;
+	}
+	&--login-url {
+		text-align: center;
+		a {
+			margin-left: 5px;
+			color: #03a9f4;
+			font-size: 14px;
+			line-height: 16px;
+			cursor: pointer;
+		}
+		p {
+			font-size: 14px;
+			line-height: 16px;
+			color: variables.$dark_text;
+		}
+	}
 }
 .disabled {
-  display: none;
+	display: none;
 }

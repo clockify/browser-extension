@@ -1,42 +1,54 @@
-@use "variables";
+@use 'variables';
 
 .toaster__container {
-  position: fixed;
-  width: calc(100% - 30px);
-  left: 15px;
-  bottom: 15px;
-  z-index: 1112;
+	position: fixed;
+	width: calc(100% - 30px);
+	left: 15px;
+	bottom: 15px;
+	z-index: 1112;
 }
 .toaster__message {
-  &--container_success,
-  &--container_info,
-  &--container_error {
-    padding: 15px;
-    margin-top: 5px;
-    box-sizing: border-box;
-    color: variables.$input-background;
-    border-radius: 2px;
-    font-size: 14px;
-    line-height: 16px;
-    position: relative;
-    bottom: 15px;
-    left: 0;
-  }
-  &--container_success {
-    background-color: variables.$green;
-  }
-  &--container_error {
-    background-color: variables.$red;
-  }
-  &--container_info {
-    background-color: variables.$orange;
-  }
+	&--container_success,
+	&--container_info,
+	&--container_error {
+		padding: 15px;
+		margin-top: 5px;
+		box-sizing: border-box;
+		color: variables.$input-background;
+		border-radius: 2px;
+		font-size: 14px;
+		line-height: 16px;
+		position: relative;
+		bottom: 15px;
+		left: 0;
+	}
+	&--container_success {
+		background-color: variables.$green;
+	}
+	&--container_error {
+		background-color: variables.$red;
+	}
+	&--container_info {
+		background-color: variables.$orange;
+	}
 }
 @keyframes toaster-fadein {
-  from {bottom: 0; opacity: 0;}
-  to {bottom: 15px; opacity: 1;}
+	from {
+		bottom: 0;
+		opacity: 0;
+	}
+	to {
+		bottom: 15px;
+		opacity: 1;
+	}
 }
 @keyframes toaster-fadeout {
-  from {left: 0; opacity: 1;}
-  to {left: 100%; opacity: 0;}
+	from {
+		left: 0;
+		opacity: 1;
+	}
+	to {
+		left: 100%;
+		opacity: 0;
+	}
 }

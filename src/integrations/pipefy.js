@@ -1,8 +1,14 @@
-clockifyButton.render('#edit-card-title:not(.clockify)', {observe: true}, (elem) => {
-    let description = $('#edit-card-title');
-    let link = clockifyButton.createButton(description.textContent);
-    link.style.position = "relative";
-    link.style.left = "15px";
-    link.style.fontSize = "16px";
-    elem.parentNode.appendChild(link);
-});
+clockifyButton.render(
+	'[data-testid="open-card-title-wrapper"]:not(.clockify)',
+	{ observe: true },
+	(elem) => {
+		let description = $('button', elem).textContent;
+		let link = clockifyButton.createButton(description);
+
+		link.style.position = 'relative';
+		link.style.fontSize = '16px';
+		link.style.marginTop = '16px';
+
+		elem.append(link);
+	}
+);

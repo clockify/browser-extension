@@ -1,51 +1,51 @@
-@use "variables";
+@use 'variables';
 
 .time-entries-list-not-synced {
-  position: relative;
-  top: 8px; /*-40px;*/
-  margin: 20px;
-  border: 1px solid variables.$border;
+	position: relative;
+	top: 8px; /*-40px;*/
+	margin: 20px;
+	border: 1px solid variables.$border;
 }
 
 .time-entry-not-synced {
-  background: white;
-  padding: 15px;
-  border-bottom: 1px solid variables.$border;
-  cursor: pointer;
+	background: white;
+	padding: 15px;
+	border-bottom: 1px solid variables.$border;
+	cursor: pointer;
 }
 
 .time-entry-not-synced-sync {
-  float: right;
-  width: 20px;
-  height: 20px;
-  background-image: url("../assets/images/edit-unsynced.png");
+	float: right;
+	width: 20px;
+	height: 20px;
+	background-image: url('../assets/images/edit-unsynced.png');
 
-  &:hover {
-    width: 20px;
-    height: 20px;
-    background-image: url("../assets/images/edit-unsynced-hover.png");
-  }
+	&:hover {
+		width: 20px;
+		height: 20px;
+		background-image: url('../assets/images/edit-unsynced-hover.png');
+	}
 }
 
 .time-entry-not-synced {
-  &-description {
-      display: inline-block;
-      width: 170px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-  }
+	&-description {
+		display: inline-block;
+		width: 170px;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
 
-  &-placeholder {
-    display: inline-block;
-    width: 170px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    color: variables.$lighter_text;
-  }
+	&-placeholder {
+		display: inline-block;
+		width: 170px;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		color: variables.$lighter_text;
+	}
 }
 
 .time-entry-not-synced-time {
-  color: variables.$dark_text;
+	color: variables.$dark_text;
 }

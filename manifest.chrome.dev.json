@@ -1,68 +1,70 @@
 {
-  "manifest_version" : 3,
-  "name": "__MSG_appName__",
-  "short_name": "Clockify",
-  "description": "__MSG_appDesc__",
-  "default_locale": "en",
-  "background": {
-    "service_worker": "sw.js"
-  },
-  "version": "2.8.3",
-  "action": {
-    "default_popup": "index.html",
-    "default_title": "Clockify"
-  },
-  "content_scripts": [
-    {
-      "matches": ["https://*/*", "http://*/*"],
-      "js": ["contentScripts/service-localstorage.js", "vendors.bundle.js", "main.bundle.js"]
-    }
-  ],
-  "options_page": "settings.html",
-  "commands": {
-    "quick-start-stop-entry": {
-      "suggested_key": {
-        "default": "Ctrl+Shift+U"
-      },
-      "description": "Quick start/stop current entry"
-    }
-  },
-  "icons": {
-    "16":"assets/images/logo-16.png",
-    "48":"assets/images/logo-48.png",
-    "128":"assets/images/logo-128.png"
-  },
-  "web_accessible_resources" : [{
-    "resources": [
-    "assets/images/*.png",
-    "assets/images/*.svg",
-    "assets/images/ui-icons/*.svg"
-    ],
-    "matches": [ "<all_urls>"]
-  }],
-  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnGPvcU+dm/buLXvICzoohIQrifJQyUq2CggI7hK8rfl/lowHVpMWKGep83DoKtoc9b7ITmuFbdfJAvYzewKoGu2wJWM9rUH1mZaUtcqwOLxRvYQpiJzr+EXzUU3foFaqf//KNjsmWkV8hy0Uw6Hd0fB24kWdnlbIWE13YeCHifgH5gHJbNzBw6SEOWg5EAt986El6+xFhjtL40HdJwZ2gRJvSvM1qSr3HAIQBb5P/fJeOkBYSnt8+XkbvlWgxWANiWmBco+Zj4sUBmuRUOapVhajRaiGXU/fA5jCnE3Q6QJAv2W7piDJIYTWpvpPsTfZxmgc0TBGF7uvpeJsJmqFmQIDAQAB",
-  "permissions": [
-    "background",
-    "contextMenus",
-    "storage",
-    "tabs",
-    "activeTab",
-    "identity",
-    "idle",
-    "notifications",
-    "scripting",
-    "alarms"
-  ],
-  "host_permissions": [
-    "*://*/",
-    "*://*.clockify.me/*"
-  ],
-  "content_security_policy": {
-    "extension_pages": "script-src 'self'; object-src 'self'"
-  },
-  "externally_connectable": {
-    "ids": ["*"],
-    "accepts_tls_channel_id": false
-  }
+	"manifest_version": 3,
+	"name": "__MSG_appName__",
+	"short_name": "Clockify",
+	"description": "__MSG_appDesc__",
+	"default_locale": "en",
+	"background": {
+		"service_worker": "sw.js"
+	},
+	"version": "2.8.10",
+	"action": {
+		"default_popup": "index.html",
+		"default_title": "Clockify"
+	},
+	"content_scripts": [
+		{
+			"matches": ["https://*/*", "http://*/*"],
+			"js": [
+				"contentScripts/service-localstorage.js",
+				"vendors.bundle.js",
+				"main.bundle.js"
+			]
+		}
+	],
+	"options_page": "settings.html",
+	"commands": {
+		"quick-start-stop-entry": {
+			"suggested_key": {
+				"default": "Ctrl+Shift+U"
+			},
+			"description": "Quick start/stop current entry"
+		}
+	},
+	"icons": {
+		"16": "assets/images/logo-16.png",
+		"48": "assets/images/logo-48.png",
+		"128": "assets/images/logo-128.png"
+	},
+	"web_accessible_resources": [
+		{
+			"resources": [
+				"assets/images/*.png",
+				"assets/images/*.svg",
+				"assets/images/ui-icons/*.svg"
+			],
+			"matches": ["<all_urls>"]
+		}
+	],
+	"key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnGPvcU+dm/buLXvICzoohIQrifJQyUq2CggI7hK8rfl/lowHVpMWKGep83DoKtoc9b7ITmuFbdfJAvYzewKoGu2wJWM9rUH1mZaUtcqwOLxRvYQpiJzr+EXzUU3foFaqf//KNjsmWkV8hy0Uw6Hd0fB24kWdnlbIWE13YeCHifgH5gHJbNzBw6SEOWg5EAt986El6+xFhjtL40HdJwZ2gRJvSvM1qSr3HAIQBb5P/fJeOkBYSnt8+XkbvlWgxWANiWmBco+Zj4sUBmuRUOapVhajRaiGXU/fA5jCnE3Q6QJAv2W7piDJIYTWpvpPsTfZxmgc0TBGF7uvpeJsJmqFmQIDAQAB",
+	"permissions": [
+		"background",
+		"contextMenus",
+		"storage",
+		"tabs",
+		"activeTab",
+		"identity",
+		"idle",
+		"notifications",
+		"scripting",
+		"alarms"
+	],
+	"host_permissions": ["*://*/", "*://*.clockify.me/*"],
+	"content_security_policy": {
+		"extension_pages": "script-src 'self'; object-src 'self'"
+	},
+	"externally_connectable": {
+		"ids": ["*"],
+		"accepts_tls_channel_id": false
+	}
 }
-

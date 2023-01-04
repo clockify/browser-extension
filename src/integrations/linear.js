@@ -1,17 +1,36 @@
-clockifyButton.render('[aria-label="Edit issue"]:not(.clockify)', {observe: true}, function (elem) {
-  // We'll extract the data via the path since Linear app uses an excessive minification strategy.
-  const pathArray = window.location.pathname.split('/');
-  issueId = pathArray[3];
-  description = document.title;
-  // Normalize the project id.
-  project = pathArray[1].replace(/-/g, ' ').toLowerCase().replace(/(^|\s)\S/g, L => L.toUpperCase());
+clockifyButton.render(
+	'[aria-label="Set issue status…"]:not(.clockify)',
+	{ observe: true },
+	(elem) => {
+		// We'll extract the data via the path since Linear app uses an excessive minification strategy.
+		const pathArray = window.location.pathname.split('/');
+		// const issueId = pathArray[3];
+		const description = document.title;
+		// Normalize the project id.
+		const project = pathArray[1]
+			.replace(/-/g, ' ')
+			.toLowerCase()
+			.replace(/(^|\s)\S/g, (L) => L.toUpperCase());
 
-  link = clockifyButton.createButton({
-      description: description,
-      projectName: project,
-      taskName: description,
-  });
+		const link = clockifyButton.createButton({
+			description: description,
+			projectName: project,
+			taskName: description,
+		});
 
-  link.style.padding = "0 14px";
-  elem.parentNode.prepend(link);
-});
+		const getThirdParent = (e) => {
+			let parent = e;
+
+			for (let i = 0; i < 3; i++) {
+				parent = parent.parentElement;
+			}
+
+			return parent;
+		};
+
+		const thirdParent = getThirdParent(elem);
+
+		if (getComputedStyle(thirdParent).display !== 'flex')
+			thirdParent.append(link);
+	}
+);

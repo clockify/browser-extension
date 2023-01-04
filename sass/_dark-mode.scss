@@ -1,610 +1,642 @@
-@use "variables";
+@use 'variables';
 
-body.dark, .clockify-dark-mode {
-  background-color: variables.$bg-09;
-  .logo {
-    width: 98px;
-    background-image: url("../assets/images/clockify_logo_dark.svg");
-  }
-  .header_and_timer {
-    background-color: variables.$bg-09;
-  }
-  .settings_page__header {
-    background-color: variables.$bg-09;
-  }
-  .start-timer {
-    background-color: variables.$bg-11;
-    border: 1px solid variables.$bg-12;
-  }
-  .start-timer_description_grey {
-    color: variables.$bg-04;
-  }
-  .start-timer_description {
-    color: variables.$bg-02;
-  }
-  .start-timer_description-input {
-    background-color: variables.$bg-11;
-    color: variables.$bg-02;
-  }
-  .start-timer_description-input::placeholder, .start-timer_placeholder {
-    color: variables.$bg-04;
-  }
+body.clockify-dark-mode,
+.clockify-dark-mode {
+	background-color: variables.$bg-09;
+	.logo {
+		width: 98px;
+	}
+	.home_page,
+	.settings_page {
+		.header .logo {
+			background-image: url('../assets/images/clockify_logo_dark.svg');
+		}
+	}
+	.header_and_timer {
+		background-color: variables.$bg-09;
+	}
+	.settings_page__header {
+		background-color: variables.$bg-09;
+	}
+	.start-timer {
+		background-color: variables.$bg-11;
+		border: 1px solid variables.$bg-12;
+	}
+	.start-timer_description_grey {
+		color: variables.$bg-04;
+	}
+	.start-timer_description {
+		color: variables.$bg-02;
+	}
+	.start-timer_description-input {
+		background-color: variables.$bg-11;
+		color: variables.$bg-02;
+	}
+	.start-timer_description-input::placeholder,
+	.start-timer_placeholder {
+		color: variables.$bg-04;
+	}
 
-  .dropdown-menu {
-    background-color: variables.$bg-12;
-    box-shadow: none;
-  }
-  .dropdown-header, .dropdown-item {
-    color: variables.$bg-04;
-  }
-  .dropdown-divider {
-    border-bottom: 1px dotted variables.$bg-10;
-  }
-  .rectangle {
-    background-color: variables.$bg-12;
-    box-shadow: none;
-  }
-  .time-entries-list {
-    border: 1px solid variables.$bg-12;
-  }
-  .time-entries-list-time {
-    background-color: variables.$bg-12;
-    border-bottom: 1px solid variables.$bg-12;
-  }
-  .time-entries-list-total, .time-entries-list-day {
-    color: variables.$bg-04;
-  }
-  .time-entries-list-total-time {
-    color: variables.$bg-03;
-  }
-  .time-entry, .time-entry-locked {
-    background: variables.$bg-11;
-    border: 1px solid variables.$bg-12;
-  }
-  .time-entry--collapsed {
-    background-color: #36464f;
-  }
-  .time-entry-group-number {
-    background-color: #12191D;
-    color: #90a4ae;
-    &:hover{
-      background-color: #37474F;
-    }
-  }
-  .week-header {
-    color: #C6D2D9;
-    &-total {
-        &-time {
-          color: #C6D2D9;
-        }
-        &-label{
-            color: #90A4AE;
-        }
-    }
-}
-  .description {
-    color: variables.$bg-02;
-  }
-  .time-entry__task-name, .time-entry__client-name, .time-entry__right-side--duration {
-    color: variables.$bg-03;
-  }
-  .no-description {
-    color: variables.$bg-04;
-  }
-  .dropdown-item:hover {
-    background: variables.$bg-10;
-  }
-  .duration, .description-textarea {
-    border: 1px solid variables.$bg-12;
-    background-color: variables.$bg-10;
-  }
-  .ant-time-picker-input {
-    background-color: variables.$bg-10;
-    color: variables.$bg-03;
-  }
-  .duration-duration {
-    background-color: variables.$bg-10;
-    color: variables.$bg-03;
-  }
-  .duration-label {
-    color: variables.$bg-04;
-  }
-  .edit-form-description {
-    background-color: variables.$bg-10;
-    color: variables.$bg-03;
+	.dropdown-menu {
+		background-color: variables.$bg-12;
+		box-shadow: none;
+	}
+	.dropdown-header,
+	.dropdown-item {
+		color: variables.$bg-04;
+	}
+	.dropdown-divider {
+		border-bottom: 1px dotted variables.$bg-10;
+	}
+	.rectangle {
+		background-color: variables.$bg-12;
+		box-shadow: none;
+	}
+	.time-entries-list {
+		border: 1px solid variables.$bg-12;
+	}
+	.time-entries-list-time {
+		background-color: variables.$bg-12;
+		border-bottom: 1px solid variables.$bg-12;
+	}
+	.time-entries-list-total,
+	.time-entries-list-day {
+		color: variables.$bg-04;
+	}
+	.time-entries-list-total-time {
+		color: variables.$bg-03;
+	}
+	.time-entry,
+	.time-entry-locked {
+		background: variables.$bg-11;
+		border: 1px solid variables.$bg-12;
+	}
+	.time-entry--collapsed {
+		background-color: #36464f;
+	}
+	.time-entry-group-number {
+		background-color: #12191d;
+		color: #90a4ae;
+		&:hover {
+			background-color: #37474f;
+		}
+	}
+	.week-header {
+		color: #c6d2d9;
+		&-total {
+			&-time {
+				color: #c6d2d9;
+			}
+			&-label {
+				color: #90a4ae;
+			}
+		}
+	}
+	.description {
+		color: variables.$bg-02;
+	}
+	.time-entry__task-name,
+	.time-entry__client-name,
+	.time-entry__right-side--duration {
+		color: variables.$bg-03;
+	}
+	.no-description {
+		color: variables.$bg-04;
+	}
+	.dropdown-item:hover {
+		background: variables.$bg-10;
+	}
+	.duration,
+	.description-textarea {
+		border: 1px solid variables.$bg-12;
+		background-color: variables.$bg-10;
+	}
+	.ant-time-picker-input {
+		background-color: variables.$bg-10;
+		color: variables.$bg-03;
+	}
+	.duration-duration {
+		background-color: variables.$bg-10;
+		color: variables.$bg-03;
+	}
+	.duration-label {
+		color: variables.$bg-04;
+	}
+	.edit-form-description {
+		background-color: variables.$bg-10;
+		color: variables.$bg-03;
 
-    &::placeholder {
-      color: variables.$bg-04;
-    }
-  }
-  
-  textarea.custom-field-text {
-    color: #C6D2D9;
-    background-color: #263238;
-    border: 1px solid variables.$bg-12;
-  
-    &-disabled {
-      border: 1px solid #12191D !important;
-      background-color: #36464f !important;
-      cursor: not-allowed;
-      color: #90A4AE !important;
-      &::placeholder{
-        color: #90A4AE !important;
-      }
-    }
-    &::placeholder{
-      color: #C6D2D9;
-    }
-  }
+		&::placeholder {
+			color: variables.$bg-04;
+		}
+	}
 
-  .clockify-switch-label{
-    color: #8fa2ad !important;
-  }
+	textarea.custom-field-text {
+		color: #c6d2d9;
+		background-color: #263238;
+		border: 1px solid variables.$bg-12;
 
-  div.custom-field-inner-checkbox{
-    background-color: #36464f !important;
-    &-disabled{
-      border: none !important;
-      background-color: initial !important;
-    }
-  }
+		&-disabled {
+			border: 1px solid #12191d !important;
+			background-color: #36464f !important;
+			cursor: not-allowed;
+			color: #90a4ae !important;
+			&::placeholder {
+				color: #90a4ae !important;
+			}
+		}
+		&::placeholder {
+			color: #c6d2d9;
+		}
+	}
 
-  .clockify-link-input-disabled, .custom-field-number-disabled{
-    border: 1px solid #12191D !important;
-    background-color: #36464f !important;
-    cursor: not-allowed;
-    color: #90A4AE !important;
-    &::placeholder{
-      color: #90A4AE !important;
-    }
-  }
+	.clockify-switch-label {
+		color: #8fa2ad !important;
+	}
 
-  .tag-list-item-row{
-    color: white !important;
-  }
+	div.custom-field-inner-checkbox {
+		background-color: #36464f !important;
+		&-disabled {
+			border: none !important;
+			background-color: initial !important;
+		}
+	}
 
-  .custom-fields{
-    background-color: #36464f !important;
-  }
+	.clockify-link-input-disabled,
+	.custom-field-number-disabled {
+		border: 1px solid #12191d !important;
+		background-color: #36464f !important;
+		cursor: not-allowed;
+		color: #90a4ae !important;
+		&::placeholder {
+			color: #90a4ae !important;
+		}
+	}
 
-  .custom-field{
-    background-color: transparent !important;
-    input{
-      background-color: #263238 !important;
-      color: white !important;
-      border: 0 !important;
-      outline: none !important;
-      &::placeholder{
-        color: #C6D2D9;
-      }
-    }
-    &-disabled{
-      border: none !important;
-      background-color: initial !important;
-    }
-  }
+	.tag-list-item-row {
+		color: white !important;
+	}
 
-  .description-textarea-required,
-  .project-list-button-required,
-  .tag-list-button-required {
-    background-color: variables.$bg-10;
-  }
-  .project-list-button,
-  .tag-list-button,
-  .edit-form-checkbox,
-  .tag-list-checkbox,
-  .default-project-checkbox,
-  .dark-mode__checkbox,
-  .settings__send-errors__checkbox,
-  .settings__auto_start_on_browser_start__checkbox,
-  .settings__auto_stop_on_browser_close__checkbox,
-  .settings__reminder__section__checkbox,
-  .settings__context_menu__section__checkbox,
-  .settings__idle-detection__checkbox,
-  .pomodoro__checkbox,
-  .create-project__checkbox {
-    background-color: variables.$bg-10;
-    border: 1px solid #12191D;
-    &-disabled{
-      background-color: initial !important;
-      border: 1px solid #12191D;
-      .tag-list-selected-item, .tag-list-add{
-        color: #90A4AE;
-      }
-    }
-  }
-  .tag-list-add, .edit-form-billable {
-    color: variables.$bg-04;
-  }
-  .checked {
-    width: 18px;
-    height: 18px;
-    background: variables.$blue;
-    border: none;
-    img {
-      margin-top: 3px;
-      margin-left: 2px;
-    }
-  }
-  .delete-entry-confirmation-dialog {
-    background-color: variables.$bg-10;
-    &-open {
-      background-color: rgba(0, 0, 0, 0.8);
-    }
-    &__question {
-      color: variables.$bg-04;
-    }
-  }
-  .project-list-dropdown, .tag-list-dropdown {
-    background: variables.$bg-12;
-    box-shadow: none;
-  }
-  .project-list-input, .tag-list-input {
-    background: variables.$bg-12;
-    input {
-      background: variables.$bg-10;
-      border: 1px solid variables.$bg-12;
-      color: variables.$bg-04;
+	.custom-fields {
+		background-color: #36464f !important;
+	}
 
-      &::placeholder {
-        color: variables.$bg-04;
-      }
-    }
-  }
-  .project-list-client {
-    color: variables.$bg-04;
-    border-top: 1px dotted variables.$bg-10;
-  }
-  .tag-list-item, .tag-list-load {
-    color: variables.$bg-04;
-  }
-  hr {
-    border-bottom: 1px dotted variables.$bg-12;
-  }
-  .user-settings:last-child {
-    color: variables.$bg-04;
-  }
-  .time-entries-list-not-synced {
-    border: 1px solid variables.$bg-12;
-    border-radius: 2px;
-  }
-  .time-entry-not-synced {
-    background: variables.$bg-10;
-    border-bottom: 1px solid variables.$bg-12;
-    span {
-      color: variables.$bg-04;
-    }
-  }
-  .user-settings {
-    border-top: 1px dotted variables.$bg-12;
-    border-bottom: 1px dotted variables.$bg-12;
-    span {
-      color: variables.$bg-04;
-    }
-  }
-  .workspace-list-title,
-  .default-project-title,
-  .dark-mode__title,
-  .settings__send-errors__title,
-  .settings__send-errors__title--shortcut,
-  .settings__auto_start_on_browser_start__title,
-  .settings__auto_stop_on_browser_close__title,
-  .pomodoro__title {
-    color: variables.$bg-02;
-  }
-  .workspace-list-selection {
-    background: variables.$bg-10;
-    border: 1px solid variables.$bg-12;
-  }
-  .workspace-list-default {
-    color: variables.$bg-04;
-  }
-  .settings__reminder {
-    background: variables.$bg-12;
-  }
-  .settings__reminder__week__day {
-    background: variables.$bg-10;
-    border: 1px solid variables.$bg-10;
-    span {
-      color: variables.$bg-04;
-    }
-  }
-  .day-active {
-    background: variables.$blue;
-    border: 1px solid #03A9F4;
-    span {
-      color: variables.$input-background;
-    }
-  }
-  .settings__reminder__times--from,
-  .settings__reminder__times--to {
-    p {
-      color: variables.$bg-04;
-    }
-  }
-  .settings__reminder__time_picker {
-    .ant-time-picker-input {
-      border: 1px solid variables.$bg-12;
-    }
-  }
-  .settings__reminder__times--minutes_since_last_entry {
-    input {
-      background: variables.$bg-10;
-      border: 1px solid variables.$bg-12;
-      color: variables.$bg-02;
-    }
-    p {
-      color: variables.$bg-04;
-    }
-  }
-  .settings__idle-detection__box {
-    background-color: variables.$bg-12;
-  }
-  .settings__idle-detection__box__content {
-    p {
-      color: variables.$bg-04;
-    }
-    input {
-      background: variables.$bg-10;
-      border: 1px solid variables.$bg-12;
-      color: variables.$bg-02;
-    }
-  }
-  .pomodoro__content {
-    background: variables.$bg-12;
-  }
-  .pomodoro__border {
-    border-bottom: 1px solid variables.$bg-10;
-  }
-  .pomodoro__switch {
-    background-color: variables.$bg-10;
-    border: 1px solid variables.$bg-12;
-    &::after {
-      background-color: variables.$bg-04;
-    }
-  }
-  .ant-switch-checked {
-    background-color: variables.$blue;
+	.custom-field {
+		background-color: transparent !important;
+		input {
+			background-color: #263238 !important;
+			color: white !important;
+			border: 0 !important;
+			outline: none !important;
+			&::placeholder {
+				color: #c6d2d9;
+			}
+		}
+		&-disabled {
+			border: none !important;
+			background-color: initial !important;
+		}
+	}
 
-    &::after {
-      background-color: variables.$input-background;
-    }
-  }
-  .pomodoro__box__content {
-    p {
-      color: variables.$bg-04;
-    }
-    input {
-      background: variables.$bg-10;
-      border: 1px solid variables.$bg-12;
-      color: variables.$bg-02;
-    }
-  }
-  .default-project__project-list {
-    background: variables.$bg-12;
-  }
-  .project-list-arrow,
-  .tag-list-arrow {
-    width: 10px;
-    height: 5px;
-    content: url("../assets/images/arrow-dark-mode.png");
-  }
-  .project-list-arrow-up,
-  .tag-list-arrow-up {
-    width: 10px;
-    height: 5px;
-    content: url("../assets/images/arrow-dark-mode-up.png");
-  }
-  .dropdown-item:hover {
-    background: variables.$bg-10;
-  }
-  .workspace-list-item:hover {
-    background-color: variables.$bg-10;
-  }
-  .workspace-list-dropdown {
-    background: variables.$bg-12;
-    box-shadow: 0 5px 7px #000;
-  }
-  .workspace-list-item--name {
-    color: variables.$bg-04;
-  }
-  .duration-divider {
-    border-left: 1px dotted variables.$bg-12;
-    background-color: variables.$bg-12;
-  }
-  .project-item:hover{
-    background-color: variables.$bg-10;
-  }
-  li.project-item-name {
-    color: white;
-  }
-  .project-list-name {
-    color: variables.$bg-04;
-  }
-  .project-name {
-    color: variables.$bg-04;
-  }
-  .task-item {
-    color: variables.$bg-04;
-    background-color: variables.$bg-10;
-    &:hover {
-      background-color: variables.$bg-09;
-    }
-  }
-  .tag-list-item {
-    color: variables.$bg-04;
-    &-row:hover {
-      background-color: variables.$bg-10;
-    }
-  }
-  .tag-list-selected-item {
-    color: variables.$bg-03;
-  }
+	.description-textarea-required,
+	.project-list-button-required,
+	.tag-list-button-required {
+		background-color: variables.$bg-10;
+	}
+	.project-list-button,
+	.tag-list-button,
+	.edit-form-checkbox,
+	.tag-list-checkbox,
+	.default-project-checkbox,
+	.dark-mode__checkbox,
+	.settings__send-errors__checkbox,
+	.settings__auto_start_on_browser_start__checkbox,
+	.settings__auto_stop_on_browser_close__checkbox,
+	.settings__reminder__section__checkbox,
+	.settings__context_menu__section__checkbox,
+	.settings__idle-detection__checkbox,
+	.pomodoro__checkbox,
+	.create-project__checkbox {
+		background-color: variables.$bg-10;
+		border: 1px solid #12191d;
+		&-disabled {
+			background-color: initial !important;
+			border: 1px solid #12191d;
+			.tag-list-selected-item,
+			.tag-list-add {
+				color: #90a4ae;
+			}
+		}
+	}
+	.tag-list-add,
+	.edit-form-billable {
+		color: variables.$bg-04;
+	}
+	.checked {
+		width: 18px;
+		height: 18px;
+		background: variables.$blue;
+		border: none;
+		img {
+			margin-top: 3px;
+			margin-left: 2px;
+		}
+	}
+	.delete-entry-confirmation-dialog {
+		background-color: variables.$bg-10;
+		&-open {
+			background-color: rgba(0, 0, 0, 0.8);
+		}
+		&__question {
+			color: variables.$bg-04;
+		}
+	}
+	.project-list-dropdown,
+	.tag-list-dropdown {
+		background: variables.$bg-12;
+		box-shadow: none;
+	}
+	.project-list-input,
+	.tag-list-input {
+		background: variables.$bg-12;
+		input {
+			background: variables.$bg-10;
+			border: 1px solid variables.$bg-12;
+			color: variables.$bg-04;
 
-  .projects-list__create-task{
-    background-color: variables.$bg-10;
-  }
-  .projects-list__create-project,
-  .tag-list__create-tag,
-  .client-list__create-client,
-  .client-list-dropdown {
-    background-color: variables.$bg-12;
-    box-shadow: none;
-  }
-  .create-project__project-name, .create-task__task-name {
-    border: 1px solid variables.$bg-12;
-    background-color: variables.$bg-10;
-    color: variables.$bg-03;
-    &::placeholder {
-      color: variables.$bg-04;
-    }
-    &:focus {
-      outline: none;
-      border: 2px solid #0f3beb;
-      border-radius: 5px;
-    }
-  }
-  .color-picker__title,
-  .create-project__billable-title,
-  .create-project__public-title  {
-    color: variables.$bg-04;
-  }
-  .create-project__divider {
-    border-bottom: 1px dotted variables.$bg-12;
-  }
-  .client-list-button {
-    border: 1px solid variables.$bg-12;
-    background-color: variables.$bg-10;
-  }
-  .client-list-name {
-    color: variables.$bg-04;
-  }
-  .client-list-arrow {
-    content: url("/assets/images/arrow-dark-mode.png");
-  }
-  .client-list-input {
-    background: variables.$bg-12;
-  }
-  .client-list-filter {
-    background-color: variables.$bg-10;
-    border: none;
-    &::placeholder {
-      color: variables.$bg-03;
-    }
-  }
-  .client-list-client {
-    color: variables.$bg-04;
-  }
-  .client-list__create-form {
-    background-color: variables.$bg-09;
-    &--open {
-      background-color: rgba(0, 0, 0, 0.5);
-    }
-    &--divider {
-      border-bottom: 1px dotted variables.$bg-12;
-    }
-    &--title {
-      color: variables.$bg-03;
-    }
-    &--client-name {
-      border: 1px solid variables.$bg-12;
-      background-color: variables.$bg-10;
-      color: variables.$bg-03;
-      &::placeholder {
-        color: variables.$bg-04;
-      }
-    }
-  }
-  .tag-list--not_tags {
-    color: #8c9fa9;
-  }
-  .tag-list__create-form, .poppup-modal {
-    background-color: variables.$bg-09;
-    &--open {
-      background-color: rgba(0, 0, 0, 0.5);
-    }
-    &--divider {
-      border-bottom: 1px dotted variables.$bg-12;
-    }
-    &--title, p {
-      color: variables.$bg-03;
-    }
-    &--tag-name {
-      border: 1px solid variables.$bg-12;
-      background-color: variables.$bg-10;
-      color: variables.$bg-03;
-      &::placeholder {
-        color: variables.$bg-04;
-      }
-    }
-  }
+			&::placeholder {
+				color: variables.$bg-04;
+			}
+		}
+	}
+	.project-list-client {
+		color: variables.$bg-04;
+		border-top: 1px dotted variables.$bg-10;
+	}
+	.tag-list-item,
+	.tag-list-load {
+		color: variables.$bg-04;
+	}
+	hr {
+		border-bottom: 1px dotted variables.$bg-12;
+	}
+	.user-settings:last-child {
+		color: variables.$bg-04;
+	}
+	.time-entries-list-not-synced {
+		border: 1px solid variables.$bg-12;
+		border-radius: 2px;
+	}
+	.time-entry-not-synced {
+		background: variables.$bg-10;
+		border-bottom: 1px solid variables.$bg-12;
+		span {
+			color: variables.$bg-04;
+		}
+	}
+	.user-settings {
+		border-top: 1px dotted variables.$bg-12;
+		border-bottom: 1px dotted variables.$bg-12;
+		span {
+			color: variables.$bg-04;
+		}
+	}
+	.workspace-list-title,
+	.default-project-title,
+	.dark-mode__title,
+	.settings__send-errors__title,
+	.settings__send-errors__title--shortcut,
+	.settings__auto_start_on_browser_start__title,
+	.settings__auto_stop_on_browser_close__title,
+	.pomodoro__title {
+		color: variables.$bg-02;
+	}
+	.workspace-list-selection {
+		background: variables.$bg-10;
+		border: 1px solid variables.$bg-12;
+	}
+	.workspace-list-default {
+		color: variables.$bg-04;
+	}
+	.settings__reminder {
+		background: variables.$bg-12;
+	}
+	.settings__reminder__week__day {
+		background: variables.$bg-10;
+		border: 1px solid variables.$bg-10;
+		span {
+			color: variables.$bg-04;
+		}
+	}
+	.day-active {
+		background: variables.$blue;
+		border: 1px solid #03a9f4;
+		span {
+			color: variables.$input-background;
+		}
+	}
+	.settings__reminder__times--from,
+	.settings__reminder__times--to {
+		p {
+			color: variables.$bg-04;
+		}
+	}
+	.settings__reminder__time_picker {
+		.ant-time-picker-input {
+			border: 1px solid variables.$bg-12;
+		}
+	}
+	.settings__reminder__times--minutes_since_last_entry {
+		input {
+			background: variables.$bg-10;
+			border: 1px solid variables.$bg-12;
+			color: variables.$bg-02;
+		}
+		p {
+			color: variables.$bg-04;
+		}
+	}
+	.settings__idle-detection__box {
+		background-color: variables.$bg-12;
+	}
+	.settings__idle-detection__box__content {
+		p {
+			color: variables.$bg-04;
+		}
+		input {
+			background: variables.$bg-10;
+			border: 1px solid variables.$bg-12;
+			color: variables.$bg-02;
+		}
+	}
+	.pomodoro__content {
+		background: variables.$bg-12;
+	}
+	.pomodoro__border {
+		border-bottom: 1px solid variables.$bg-10;
+	}
+	.pomodoro__switch {
+		background-color: variables.$bg-10;
+		border: 1px solid variables.$bg-12;
+		&::after {
+			background-color: variables.$bg-04;
+		}
+	}
+	.ant-switch-checked {
+		background-color: variables.$blue;
 
-  .clockify-modal-content {
-    background-color: #37474F;
-    border: none;
-    box-shadow: 0px 4px 4px rgba(0,0,0,0.25);
-    .cl-modal-title, .custom-field-link-label{
-      color: #C6D2D9;
-    }
-    .custom-field-link{
-      background-color: #263238;
-      color: #C6D2D9;
-    }
-    .cl-close{
-      background: none;
-      .clockify-close{
-        background: none;
-      }
-    }
-    .cl-modal-header{
-      border-bottom: 1px dotted #12191D;
-    }
-    .cl-modal-footer{
-      border-top: 1px dotted #12191D;
-    }
-  }
+		&::after {
+			background-color: variables.$input-background;
+		}
+	}
+	.pomodoro__box__content {
+		p {
+			color: variables.$bg-04;
+		}
+		input {
+			background: variables.$bg-10;
+			border: 1px solid variables.$bg-12;
+			color: variables.$bg-02;
+		}
+	}
+	.default-project__project-list {
+		background: variables.$bg-12;
+	}
+	.project-list-arrow,
+	.tag-list-arrow {
+		width: 10px;
+		height: 5px;
+		content: url('../assets/images/arrow-dark-mode.png');
+	}
+	.project-list-arrow-up,
+	.tag-list-arrow-up {
+		width: 10px;
+		height: 5px;
+		content: url('../assets/images/arrow-dark-mode-up.png');
+	}
+	.dropdown-item:hover {
+		background: variables.$bg-10;
+	}
+	.workspace-list-item:hover {
+		background-color: variables.$bg-10;
+	}
+	.workspace-list-dropdown {
+		background: variables.$bg-12;
+		box-shadow: 0 5px 7px #000;
+	}
+	.workspace-list-item--name {
+		color: variables.$bg-04;
+	}
+	.duration-divider {
+		border-left: 1px dotted variables.$bg-12;
+		background-color: variables.$bg-12;
+	}
+	ul.project-item:hover {
+		background-color: variables.$bg-10;
+	}
+	li.project-item-name {
+		color: white;
+	}
+	.project-list-name {
+		color: variables.$bg-04;
+	}
+	.project-name {
+		color: variables.$bg-04;
+	}
+	.task-item {
+		color: variables.$bg-04;
+		background-color: variables.$bg-10;
+		&:hover {
+			background-color: variables.$bg-09;
+		}
+	}
+	.tag-list-item {
+		color: variables.$bg-04;
+		&-row:hover {
+			background-color: variables.$bg-10;
+		}
+	}
+	.tag-list-selected-item {
+		color: variables.$bg-03;
+	}
 
-  // .tag-list-selected {
-  //   background-color: variables.$bg-12;
-  // }
-  .tag-list-item--comma {
-    color: white;
-  }
-  .app-version {
-    color: variables.$bg-03;
-  }
-  .clockify-error {
-    color: red;
-    font-size: 14px;
-  }
-  .loading-entries {
-    color: #C6D2D9;
-  }
+	.projects-list__create-task {
+		background-color: variables.$bg-10;
+	}
+	.projects-list__create-project,
+	.tag-list__create-tag,
+	.client-list__create-client,
+	.client-list-dropdown {
+		background-color: variables.$bg-12;
+		box-shadow: none;
+	}
 
-  .autocomplete-dropdown-item {
-    color: #90a4ae;
-    background-color: #1d272c;
-    &:hover {
-      background-color: #263238;
-    }
-    &__tag {
-      color: #90a4ae;
-      background: #12191D;
-      &:hover {
-        background: #37474F;
-      }
-    }
-  }
-  .react-autocomplete > div {
-    background: #1d272c !important;
-  }
+	.create-project,
+	.create-task {
+		background-color: variables.$bg-09;
 
-  .edit-form__break-label {
-    background: variables.$bg-10;
-    color: variables.$bg-03;
-  }
-  &.clockify-integration-popup{
-    color: variables.$light_text;
-  }
+		&__title {
+			color: variables.$bg-03;
+		}
+	}
 
+	.create-project__project-name,
+	.create-task__task-name {
+		border: 1px solid variables.$bg-12;
+		background-color: variables.$bg-10;
+		color: variables.$bg-03;
+		&::placeholder {
+			color: variables.$bg-04;
+		}
+		&:focus {
+			outline: none;
+			border: 2px solid #0f3beb;
+			border-radius: 5px;
+		}
+	}
+	.color-picker__title,
+	.create-project__billable-title,
+	.create-project__public-title {
+		color: variables.$bg-04;
+	}
+	.create-project__divider {
+		border-bottom: 1px dotted variables.$bg-12;
+	}
+	.client-list-button {
+		border: 1px solid variables.$bg-12;
+		background-color: variables.$bg-10;
+	}
+	.client-list-name {
+		color: variables.$bg-04;
+	}
+	.client-list-arrow {
+		content: url('/assets/images/arrow-dark-mode.png');
+	}
+	.client-list-input {
+		background: variables.$bg-12;
+	}
+	.client-list-filter {
+		background-color: variables.$bg-10;
+		border: none;
+		&::placeholder {
+			color: variables.$bg-03;
+		}
+	}
+	.client-list-client {
+		color: variables.$bg-04;
+	}
+	.client-list__create-form {
+		background-color: variables.$bg-09;
+		&--open {
+			background-color: rgba(0, 0, 0, 0.5);
+		}
+		&--divider {
+			border-bottom: 1px dotted variables.$bg-12;
+		}
+		&--title {
+			color: variables.$bg-03;
+		}
+		&--client-name {
+			border: 1px solid variables.$bg-12;
+			background-color: variables.$bg-10;
+			color: variables.$bg-03;
+			&::placeholder {
+				color: variables.$bg-04;
+			}
+		}
+	}
+	.tag-list--not_tags {
+		color: #8c9fa9;
+	}
+	.tag-list__create-form,
+	.poppup-modal {
+		background-color: variables.$bg-09;
+		&--open {
+			background-color: rgba(0, 0, 0, 0.5);
+		}
+		&--divider {
+			border-bottom: 1px dotted variables.$bg-12;
+		}
+		&--title,
+		p {
+			color: variables.$bg-03;
+		}
+		&--tag-name {
+			border: 1px solid variables.$bg-12;
+			background-color: variables.$bg-10;
+			color: variables.$bg-03;
+			&::placeholder {
+				color: variables.$bg-04;
+			}
+		}
+	}
+
+	.clockify-modal-content {
+		background-color: #37474f;
+		border: none;
+		box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+		.cl-modal-title,
+		.custom-field-link-label {
+			color: #c6d2d9;
+		}
+		.custom-field-link {
+			background-color: #263238;
+			color: #c6d2d9;
+		}
+		.cl-close {
+			background: none;
+			.clockify-close {
+				background: none;
+			}
+		}
+		.cl-modal-header {
+			border-bottom: 1px dotted #12191d;
+		}
+		.cl-modal-footer {
+			border-top: 1px dotted #12191d;
+		}
+	}
+
+	// .tag-list-selected {
+	//   background-color: variables.$bg-12;
+	// }
+	.tag-list-item--comma {
+		color: white;
+	}
+	.app-version {
+		color: variables.$bg-03;
+	}
+	.clockify-error {
+		color: red;
+		font-size: 14px;
+	}
+	.loading-entries {
+		color: #c6d2d9;
+	}
+
+	.autocomplete-dropdown-item {
+		color: #90a4ae;
+		background-color: #1d272c;
+		&:hover {
+			background-color: #263238;
+		}
+		&__tag {
+			color: #90a4ae;
+			background: #12191d;
+			&:hover {
+				background: #37474f;
+			}
+		}
+	}
+	.react-autocomplete > div {
+		background: #1d272c !important;
+	}
+
+	.edit-form__break-label {
+		background: variables.$bg-10;
+		color: variables.$bg-03;
+	}
+	&.clockify-integration-popup {
+		color: variables.$light_text;
+	}
 }

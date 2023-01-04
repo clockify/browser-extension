@@ -1,436 +1,435 @@
-@use "variables";
+@use 'variables';
 
 .settings_page {
-  padding-top: 60px;
+	padding-top: 60px;
 
-  &__header {
-    position: fixed;
-    width: 100%;
-    z-index: 1113;
-    background: #eff4f7;
-    box-shadow: 0 5px 10px rgba(0,0,0,0.1);
-    top: 0;
-  }
+	&__header {
+		position: fixed;
+		width: 100%;
+		z-index: 1113;
+		background: #eff4f7;
+		box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+		top: 0;
+	}
 }
 
 .settings-buttons {
-  margin: 25px 0px;
-  padding: 25px 0;
+	margin: 25px 0px;
+	padding: 25px 0;
 }
 
 .settings-button-save {
-  width: 110px;
-  height: 40px;
-  margin-left: 20px;
-  border: none;
-  border-radius: 3px;
-  color: white;
-  background: variables.$blue;
-  cursor: pointer;
+	width: 110px;
+	height: 40px;
+	margin-left: 20px;
+	border: none;
+	border-radius: 3px;
+	color: white;
+	background: variables.$blue;
+	cursor: pointer;
 }
 
 .settings-button-cancel {
-  margin-left: 20px;
-  color: variables.$blue;
-  cursor: pointer;
+	margin-left: 20px;
+	color: variables.$blue;
+	cursor: pointer;
 }
 
 .user-settings {
-  display: flex;
-  padding: 20px;
-  border-bottom: 1px dotted variables.$border;
-  align-items: center;
+	display: flex;
+	padding: 20px;
+	border-bottom: 1px dotted variables.$border;
+	align-items: center;
 }
 .user-settings span:first-child {
-  width: 32px;
-  height: 32px;
+	width: 32px;
+	height: 32px;
 }
 
-
 .user-settings span img {
-  display: inline-block;
-  width: 32px;
-  height: 32px;
-  border-radius: 16px;
+	display: inline-block;
+	width: 32px;
+	height: 32px;
+	border-radius: 16px;
 }
 
 .user-settings span:last-child {
-  margin-left: 10px;
-  color: variables.$middle_light_text;
-  font-style: italic;
-  font-size: 15px;
+	margin-left: 10px;
+	color: variables.$middle_light_text;
+	font-style: italic;
+	font-size: 15px;
 }
 
 .app-version {
-  position: absolute;
-  margin: 20px;
-  bottom: 0;
-  right: 0;
-  color: variables.$dark_text;
-  font-size: 12px;
+	position: absolute;
+	margin: 20px;
+	bottom: 0;
+	right: 0;
+	color: variables.$dark_text;
+	font-size: 12px;
 }
 
 .settings {
-  &__send-errors {
-    display: flex;
-    margin: 20px;
-    align-items: center;
+	&__send-errors {
+		display: flex;
+		margin: 20px;
+		align-items: center;
 
-    &__checkbox {
-      display: inline-block;
-      width: 16px;
-      height: 16px;
-      border: 1px solid variables.$border;
-      position: relative;
-      cursor: pointer;
-      background: white;
+		&__checkbox {
+			display: inline-block;
+			width: 16px;
+			height: 16px;
+			border: 1px solid variables.$border;
+			position: relative;
+			cursor: pointer;
+			background: white;
 
-      &--img {
-        content: url("../assets/images/checked.png");
-        margin-top: 3px;
-        margin-bottom: 2px;
-      }
+			&--img {
+				content: url('../assets/images/checked.png');
+				margin-top: 3px;
+				margin-bottom: 2px;
+			}
 
-      &--img_hidden {
-        content: url("../assets/images/checked.png");
-        margin-top: 3px;
-        margin-bottom: 2px;
-        visibility: hidden;
-      }
-    }
+			&--img_hidden {
+				content: url('../assets/images/checked.png');
+				margin-top: 3px;
+				margin-bottom: 2px;
+				visibility: hidden;
+			}
+		}
 
-    &__title {
-      margin-left: 10px;
-      font-size: 13px;
-      font-weight: 400;
-      color: variables.$middle_light_text;
+		&__title {
+			margin-left: 10px;
+			font-size: 13px;
+			font-weight: 400;
+			color: variables.$middle_light_text;
 
-      &--shortcut {
-        margin-left: 3px;
-        font-size: 13px;
-        font-weight: 400;
-        color: variables.$lighter_text;
-      }
-    }
-  }
+			&--shortcut {
+				margin-left: 3px;
+				font-size: 13px;
+				font-weight: 400;
+				color: variables.$lighter_text;
+			}
+		}
+	}
 
-  &__idle-detection {
-    display: flex;
-    margin: 13px 20px 5px 20px;
-    align-items: center;
+	&__idle-detection {
+		display: flex;
+		margin: 13px 20px 5px 20px;
+		align-items: center;
 
-    &__checkbox {
-      display: inline-block;
-      width: 16px;
-      height: 16px;
-      border: 1px solid variables.$border;
-      position: relative;
-      cursor: pointer;
-      background: white;
+		&__checkbox {
+			display: inline-block;
+			width: 16px;
+			height: 16px;
+			border: 1px solid variables.$border;
+			position: relative;
+			cursor: pointer;
+			background: white;
 
-      &--img {
-        content: url("../assets/images/checked.png");
-        margin-top: 3px;
-        margin-bottom: 2px;
-      }
+			&--img {
+				content: url('../assets/images/checked.png');
+				margin-top: 3px;
+				margin-bottom: 2px;
+			}
 
-      &--img_hidden {
-        content: url("../assets/images/checked.png");
-        margin-top: 3px;
-        margin-bottom: 2px;
-        visibility: hidden;
-      }
-    }
+			&--img_hidden {
+				content: url('../assets/images/checked.png');
+				margin-top: 3px;
+				margin-bottom: 2px;
+				visibility: hidden;
+			}
+		}
 
-    &__title {
-      margin-left: 10px;
-      font-size: 13px;
-      font-weight: 400;
-      color: variables.$middle_light_text;
-    }
+		&__title {
+			margin-left: 10px;
+			font-size: 13px;
+			font-weight: 400;
+			color: variables.$middle_light_text;
+		}
 
-    &__box {
-      display: flex;
-      height: 60px;
-      background-color: #E4EAEE;
-      align-items: center;
+		&__box {
+			display: flex;
+			height: 60px;
+			background-color: #e4eaee;
+			align-items: center;
 
-      &__content {
-        display: flex;
-        margin: 20px;
-        align-items: center;
-        justify-content: space-between;
-        width: 85%;
+			&__content {
+				display: flex;
+				margin: 20px;
+				align-items: center;
+				justify-content: space-between;
+				width: 85%;
 
-        input {
-          width: 40px;
-          height: 40px;
-          border: 1px solid #C6D2D9;
-          border-radius: 5px;
-          margin: 0 5px;
-          color: #999999;
-          font-style: normal;
-          font-weight: normal;
-          font-size: 14px;
-          line-height: 16px;
-          text-align: center;
-        }
+				input {
+					width: 40px;
+					height: 40px;
+					border: 1px solid #c6d2d9;
+					border-radius: 5px;
+					margin: 0 5px;
+					color: #999999;
+					font-style: normal;
+					font-weight: normal;
+					font-size: 14px;
+					line-height: 16px;
+					text-align: center;
+				}
 
-        p {
-          font-size: 13px;
-          font-weight: 400;
-          color: #666666;
-        }
-      }
-    }
-  }
+				p {
+					font-size: 13px;
+					font-weight: 400;
+					color: #666666;
+				}
+			}
+		}
+	}
 
-  &__reminder {
-    background-color: variables.$entries_header;
+	&__reminder {
+		background-color: variables.$entries_header;
 
-    &__section {
-      diplay: flex;
-      margin: 20px 20px 5px 20px;
-      align-items: center;
+		&__section {
+			display: flex;
+			margin: 20px 20px 5px 20px;
+			align-items: center;
 
-      &__checkbox {
-        display: inline-block;
-        width: 16px;
-        height: 16px;
-        border: 1px solid variables.$border;
-        position: relative;
-        cursor: pointer;
-        background: white;
+			&__checkbox {
+				display: inline-block;
+				width: 16px;
+				height: 16px;
+				border: 1px solid variables.$border;
+				position: relative;
+				cursor: pointer;
+				background: white;
 
-        &--img {
-          content: url("../assets/images/checked.png");
-          margin-top: 3px;
-          margin-bottom: 2px;
-        }
+				&--img {
+					content: url('../assets/images/checked.png');
+					margin-top: 3px;
+					margin-bottom: 2px;
+				}
 
-        &--img_hidden {
-          content: url("../assets/images/checked.png");
-          margin-top: 3px;
-          margin-bottom: 2px;
-          visibility: hidden;
-        }
-      }
-    }
+				&--img_hidden {
+					content: url('../assets/images/checked.png');
+					margin-top: 3px;
+					margin-bottom: 2px;
+					visibility: hidden;
+				}
+			}
+		}
 
-    &__week {
-      display: flex;
-      padding-top: 20px;
-      margin-right: 20px;
-      margin-bottom: 10px;
-      margin-left: 20px;
-      justify-content: space-between;
+		&__week {
+			display: flex;
+			padding-top: 20px;
+			margin-right: 20px;
+			margin-bottom: 10px;
+			margin-left: 20px;
+			justify-content: space-between;
 
-      &__day {
-        width: 40px;
-        height: 40px;
-        border: 1px solid variables.$border;
-        border-radius: 2px;
-        background-color: variables.$input-background;
-        text-align: center;
+			&__day {
+				width: 40px;
+				height: 40px;
+				border: 1px solid variables.$border;
+				border-radius: 2px;
+				background-color: variables.$input-background;
+				text-align: center;
 
-        &:hover {
-          cursor: pointer;
-        }
+				&:hover {
+					cursor: pointer;
+				}
 
-        &--name {
-          position: relative;
-          top: 30%;
-          font-size: 14px;
-          line-height: 16px;
-          color: variables.$dark_text;
-          transform: translate(0, -50%);
-          text-transform: uppercase;
-        }
-      }
-    }
+				&--name {
+					position: relative;
+					top: 30%;
+					font-size: 14px;
+					line-height: 16px;
+					color: variables.$dark_text;
+					transform: translate(0, -50%);
+					text-transform: uppercase;
+				}
+			}
+		}
 
-    &__times {
-      margin-right: 20px;
-      margin-left: 20px;
+		&__times {
+			margin-right: 20px;
+			margin-left: 20px;
 
-      &--from {
-        display: flex;
-        margin-top: 10px;
-        justify-content: space-between;
+			&--from {
+				display: flex;
+				margin-top: 10px;
+				justify-content: space-between;
 
-        .ant-time-picker {
-          width: 240px;
+				.ant-time-picker {
+					width: 240px;
 
-          &-icon {
-            display: none;
-          }
+					&-icon {
+						display: none;
+					}
 
-          &-clear {
-            display: none;
-          }
-        }
+					&-clear {
+						display: none;
+					}
+				}
 
-        p {
-          font-size: 14px;
-          line-height: 16px;
-          color: variables.$middle_light_text
-        }
-      }
+				p {
+					font-size: 14px;
+					line-height: 16px;
+					color: variables.$middle_light_text;
+				}
+			}
 
-      &--to {
-        display: flex;
-        margin-top: 10px;
-        justify-content: space-between;
+			&--to {
+				display: flex;
+				margin-top: 10px;
+				justify-content: space-between;
 
-        .ant-time-picker {
-          width: 240px;
+				.ant-time-picker {
+					width: 240px;
 
-          &-icon {
-            display: none;
-          }
+					&-icon {
+						display: none;
+					}
 
-          &-clear {
-            display: none;
-          }
-        }
+					&-clear {
+						display: none;
+					}
+				}
 
-        p {
-          font-size: 14px;
-          line-height: 16px;
-          color: variables.$middle_light_text
-        }
-      }
+				p {
+					font-size: 14px;
+					line-height: 16px;
+					color: variables.$middle_light_text;
+				}
+			}
 
-      &--minutes_since_last_entry {
-        display: flex;
-        margin: 10px 20px;
-        padding-bottom: 20px;
+			&--minutes_since_last_entry {
+				display: flex;
+				margin: 10px 20px;
+				padding-bottom: 20px;
 
-        input {
-          width: 40px;
-          height: 40px;
-          border: 1px solid #C6D2D9;
-          border-radius: 2px;
-          color: #999999;
-          font-style: normal;
-          font-weight: normal;
-          font-size: 14px;
-          line-height: 16px;
-          text-align: center;
-        }
+				input {
+					width: 40px;
+					height: 40px;
+					border: 1px solid #c6d2d9;
+					border-radius: 2px;
+					color: #999999;
+					font-style: normal;
+					font-weight: normal;
+					font-size: 14px;
+					line-height: 16px;
+					text-align: center;
+				}
 
-        p {
-          margin-left: 10px;
-          font-size: 13px;
-          font-weight: 400;
-          color: #666666;
-        }
-      }
-    }
-  }
+				p {
+					margin-left: 10px;
+					font-size: 13px;
+					font-weight: 400;
+					color: #666666;
+				}
+			}
+		}
+	}
 
-  &__context_menu {
-    background-color: variables.$entries_header;
+	&__context_menu {
+		background-color: variables.$entries_header;
 
-    &__section {
-      display: flex;
-      margin: 20px 20px 5px 20px;
-      align-items: center;
+		&__section {
+			display: flex;
+			margin: 20px 20px 5px 20px;
+			align-items: center;
 
-      &__checkbox {
-        display: inline-block;
-        width: 16px;
-        height: 16px;
-        border: 1px solid variables.$border;
-        position: relative;
-        cursor: pointer;
-        background: white;
+			&__checkbox {
+				display: inline-block;
+				width: 16px;
+				height: 16px;
+				border: 1px solid variables.$border;
+				position: relative;
+				cursor: pointer;
+				background: white;
 
-        &--img {
-          content: url("../assets/images/checked.png");
-          margin-top: 3px;
-          margin-bottom: 2px;
-        }
+				&--img {
+					content: url('../assets/images/checked.png');
+					margin-top: 3px;
+					margin-bottom: 2px;
+				}
 
-        &--img_hidden {
-          content: url("../assets/images/checked.png");
-          margin-top: 3px;
-          margin-bottom: 2px;
-          visibility: hidden;
-        }
-      }
-    }
-  }  
+				&--img_hidden {
+					content: url('../assets/images/checked.png');
+					margin-top: 3px;
+					margin-bottom: 2px;
+					visibility: hidden;
+				}
+			}
+		}
+	}
 
-  &__auto_start_on_browser_start {
-    diplay: flex;
-    margin: 20px 20px 10px 20px;
-    align-items: center;
+	&__auto_start_on_browser_start {
+		diplay: flex;
+		margin: 20px 20px 10px 20px;
+		align-items: center;
 
-    &__checkbox {
-      display: inline-block;
-      width: 16px;
-      height: 16px;
-      border: 1px solid variables.$border;
-      position: relative;
-      cursor: pointer;
-      background: white;
+		&__checkbox {
+			display: inline-block;
+			width: 16px;
+			height: 16px;
+			border: 1px solid variables.$border;
+			position: relative;
+			cursor: pointer;
+			background: white;
 
-      &--img {
-        content: url("../assets/images/checked.png");
-        margin-top: 3px;
-        margin-bottom: 2px;
-      }
+			&--img {
+				content: url('../assets/images/checked.png');
+				margin-top: 3px;
+				margin-bottom: 2px;
+			}
 
-      &--img_hidden {
-        content: url("../assets/images/checked.png");
-        margin-top: 3px;
-        margin-bottom: 2px;
-        visibility: hidden;
-      }
-    }
+			&--img_hidden {
+				content: url('../assets/images/checked.png');
+				margin-top: 3px;
+				margin-bottom: 2px;
+				visibility: hidden;
+			}
+		}
 
-    &__title {
-      margin-left: 10px;
-      font-size: 13px;
-      font-weight: 400;
-      color: variables.$middle_light_text;
-    }
-  }
+		&__title {
+			margin-left: 10px;
+			font-size: 13px;
+			font-weight: 400;
+			color: variables.$middle_light_text;
+		}
+	}
 
-  &__auto_stop_on_browser_close {
-    diplay: flex;
-    margin: 20px 20px 10px 20px;
-    align-items: center;
+	&__auto_stop_on_browser_close {
+		diplay: flex;
+		margin: 20px 20px 10px 20px;
+		align-items: center;
 
-    &__checkbox {
-      display: inline-block;
-      width: 16px;
-      height: 16px;
-      border: 1px solid variables.$border;
-      position: relative;
-      cursor: pointer;
-      background: white;
+		&__checkbox {
+			display: inline-block;
+			width: 16px;
+			height: 16px;
+			border: 1px solid variables.$border;
+			position: relative;
+			cursor: pointer;
+			background: white;
 
-      &--img {
-        content: url("../assets/images/checked.png");
-        margin-top: 3px;
-        margin-bottom: 2px;
-      }
+			&--img {
+				content: url('../assets/images/checked.png');
+				margin-top: 3px;
+				margin-bottom: 2px;
+			}
 
-      &--img_hidden {
-        content: url("../assets/images/checked.png");
-        margin-top: 3px;
-        margin-bottom: 2px;
-        visibility: hidden;
-      }
-    }
+			&--img_hidden {
+				content: url('../assets/images/checked.png');
+				margin-top: 3px;
+				margin-bottom: 2px;
+				visibility: hidden;
+			}
+		}
 
-    &__title {
-      margin-left: 10px;
-      font-size: 13px;
-      font-weight: 400;
-      color: variables.$middle_light_text;
-    }
-  }
+		&__title {
+			margin-left: 10px;
+			font-size: 13px;
+			font-weight: 400;
+			color: variables.$middle_light_text;
+		}
+	}
 }
