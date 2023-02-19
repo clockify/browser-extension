@@ -458,5 +458,10 @@
 		"name": "JetBrains Space",
 		"link": "*://*.jetbrains.space/*",
 		"script": "jetbrains.js"
+	},
+	"connect.zoho.com": {
+		"name": "Zoho Connect",
+		"link": "*://connect.zoho.com/*",
+		"script": "zohoconnect.js"
 	}
 }
