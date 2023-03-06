@@ -463,5 +463,10 @@
 		"name": "Zoho Connect",
 		"link": "*://connect.zoho.com/*",
 		"script": "zohoconnect.js"
+	},
+	"projects.zoho.com": {
+		"name": "Zoho Projects",
+		"link": "*://projects.zoho.com/*",
+		"script": "zohoprojects.js"
 	}
 }
