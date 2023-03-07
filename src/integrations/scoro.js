@@ -1,27 +1,33 @@
-if ((window.location.href.indexOf("main") !== -1) || (window.location.href.indexOf("tasks") !== -1)) {
-    clockifyButton.render('.Tasktd:not(.clockify)', {observe: true}, (elem) => {
-        var link, titleElem = $('.eventName', elem), title = $('.bold', titleElem);
-        link = clockifyButton.createSmallButton(title.textContent);
-        elem.parentNode.appendChild(link);
+// Task list
+clockifyButton.render('.TaskRow:not(.clockify)', { observe: true }, (elem) => {
+	const title = $('.eventName .bold', elem).textContent;
 
-        link.style.paddingTop = 0;
+	const link = clockifyButton.createButton({
+		description: title,
+		small: true,
+	});
 
-        if (window.location.href.indexOf("tasks") !== -1) {
-            $(".tasksContainer").style.paddingLeft = "8px";
-            link.style.paddingLeft = "10px";
-        }
-    });
-}
+	link.dataset.title = title;
 
-if (window.location.href.indexOf("tasks/view") !== -1) {
-    clockifyButton.render('.buttonbar.compact-button-bar:not(.clockify)', {observe: true}, (elem) => {
-        var link, titleElem = $('.ellip');
+	link.style.marginTop =
+		window.location.href.indexOf('tasks') !== -1 ? '10px' : '11px';
+	link.style.paddingLeft = '8px';
 
-        link = clockifyButton.createButton(titleElem.textContent);
-        link.style.position = "absolute";
-        link.style.top = "-15px";
-        link.style.left = "-35px";
+	elem.appendChild(link);
+});
 
-        $('.buttonbar.compact-button-bar').parentNode.appendChild(link);
-    });
-}
+// Single task
+clockifyButton.render(
+	'.buttonbar.compact-button-bar .d-inline-flex:not(.clockify)',
+	{ observe: true },
+	(elem) => {
+		const title = $('div.main-row-title').textContent.trim();
+
+		const link = clockifyButton.createButton(title);
+
+		link.style.whiteSpace = 'nowrap';
+		link.style.paddingBottom = '3px';
+
+		elem.prepend(link);
+	}
+);

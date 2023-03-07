@@ -1,45 +1,45 @@
-@use "variables";
+@use 'variables';
 
 .default-project {
-  margin: 20px 20px 0px 20px;
+	margin: 20px 20px 0px 20px;
 
-  &-checkbox {
-    display: inline-block;
-    width: 16px;
-    height: 16px;
-    border: 1px solid variables.$border;
-    position: relative;
-    cursor: pointer;
-    background: white;
+	&-checkbox {
+		display: inline-block;
+		width: 16px;
+		height: 16px;
+		border: 1px solid variables.$border;
+		position: relative;
+		cursor: pointer;
+		background: white;
 
-    &--img {
-      content: url("../assets/images/checked.png");
-      margin-top: 3px;
-      margin-bottom: 2px;
-    }
+		&--img {
+			content: url('../assets/images/checked.png');
+			margin-top: 3px;
+			margin-bottom: 2px;
+		}
 
-    &--img_hidden {
-      content: url("../assets/images/checked.png");
-      margin-top: 3px;
-      margin-bottom: 2px;
-      visibility: hidden;
-    }
-  }
+		&--img_hidden {
+			content: url('../assets/images/checked.png');
+			margin-top: 3px;
+			margin-bottom: 2px;
+			visibility: hidden;
+		}
+	}
 
-  &-title {
-    position: relative;
-    //bottom: 1px;
-    margin-left: 10px;
-    font-size: 13px;
-    font-weight: 400;
-    color: variables.$middle_light_text;
-  }
+	&-title {
+		position: relative;
+		//bottom: 1px;
+		margin-left: 10px;
+		font-size: 13px;
+		font-weight: 400;
+		color: variables.$middle_light_text;
+	}
 
-  &__project-list {
-    .project-list-dropdown {
-      position: relative;
-      top: 0;
-      height: 265px;
-    }
-  }
+	&__project-list {
+		.project-list-dropdown {
+			position: relative;
+			top: 0;
+			height: 265px;
+		}
+	}
 }

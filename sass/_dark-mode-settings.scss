@@ -1,37 +1,37 @@
-@use "variables";
+@use 'variables';
 
 .dark-mode {
-  diplay: flex;
-  margin: 10px 20px;
-  align-items: center;
+	diplay: flex;
+	margin: 10px 20px;
+	align-items: center;
 
-  &__checkbox {
-    display: inline-block;
-    width: 16px;
-    height: 16px;
-    border: 1px solid variables.$border;
-    position: relative;
-    cursor: pointer;
-    background: white;
+	&__checkbox {
+		display: inline-block;
+		width: 16px;
+		height: 16px;
+		border: 1px solid variables.$border;
+		position: relative;
+		cursor: pointer;
+		background: white;
 
-    &--img {
-      content: url("../assets/images/checked.png");
-      margin-top: 3px;
-      margin-bottom: 2px;
-    }
+		&--img {
+			content: url('../assets/images/checked.png');
+			margin-top: 3px;
+			margin-bottom: 2px;
+		}
 
-    &--img_hidden {
-      content: url("../assets/images/checked.png");
-      margin-top: 3px;
-      margin-bottom: 2px;
-      visibility: hidden;
-    }
-  }
+		&--img_hidden {
+			content: url('../assets/images/checked.png');
+			margin-top: 3px;
+			margin-bottom: 2px;
+			visibility: hidden;
+		}
+	}
 
-  &__title {
-    margin-left: 10px;
-    font-size: 13px;
-    font-weight: 400;
-    color: variables.$middle_light_text;
-  }
+	&__title {
+		margin-left: 10px;
+		font-size: 13px;
+		font-weight: 400;
+		color: variables.$middle_light_text;
+	}
 }

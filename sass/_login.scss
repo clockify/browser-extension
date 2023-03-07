@@ -1,192 +1,191 @@
-@use "variables";
+@use 'variables';
 
 .login {
-  width: 90%;
-  margin: 5%;
-  &__oauth {
-    &--button {
-      display: flex;
-      margin-bottom: 20px;
-      width: 100%;
-      height: 50px;
-      background: variables.$input-background;
-      border: 1px solid variables.$blue;
-      border-radius: 2px;
-      color: variables.$lighter_text;
-      font-size: 14px;
-      cursor: pointer;
-      justify-content: space-evenly;
-      align-items: center;
-      &__img_and_text {
-        display: flex;
-        align-items: center;
-        p {
-          color: variables.$blue;
-          margin-right: 10px;
-          margin-left: 10px;
-        }
-      }
-    }
-    &--img {
-      position: relative;
-      margin-right: 10px;
-      width: 18px;
-      height: 18px;
-    }
-  }
-  &__saml2 {
-    &--button {
-      display: flex;
-      margin-bottom: 20px;
-      width: 100%;
-      height: 50px;
-      background: white;
-      border: 1px solid variables.$border;
-      border-radius: 2px;
-      color: variables.$lighter_text;
-      font-size: 14px;
-      cursor: pointer;
-      justify-content: space-evenly;
-      align-items: center;
-    }
-  }
+	width: 90%;
+	margin: 5%;
+	&__oauth {
+		&--button {
+			display: flex;
+			margin-bottom: 20px;
+			width: 100%;
+			height: 50px;
+			background: variables.$input-background;
+			border: 1px solid variables.$blue;
+			border-radius: 2px;
+			color: variables.$lighter_text;
+			font-size: 14px;
+			cursor: pointer;
+			justify-content: space-evenly;
+			align-items: center;
+			&__img_and_text {
+				display: flex;
+				align-items: center;
+				p {
+					color: variables.$blue;
+					margin-right: 10px;
+					margin-left: 10px;
+				}
+			}
+		}
+		&--img {
+			position: relative;
+			margin-right: 10px;
+			width: 18px;
+			height: 18px;
+		}
+	}
+	&__saml2 {
+		&--button {
+			display: flex;
+			margin-bottom: 20px;
+			width: 100%;
+			height: 50px;
+			background: white;
+			border: 1px solid variables.$border;
+			border-radius: 2px;
+			color: variables.$lighter_text;
+			font-size: 14px;
+			cursor: pointer;
+			justify-content: space-evenly;
+			align-items: center;
+		}
+	}
 
-  &__forgot-password {
-    display: block;
-    margin-bottom: 20px;
-    font-size: 14px;
-    text-decoration: none;
-    cursor: pointer;
-    color: variables.$blue;
-  }
+	&__forgot-password {
+		display: block;
+		margin-bottom: 20px;
+		font-size: 14px;
+		text-decoration: none;
+		cursor: pointer;
+		color: variables.$blue;
+	}
 }
 .login input {
-  width: 100%;
-  height: 40px;
-  margin-bottom: 10px;
-  padding: 10px;
-  border-radius: 3px;
-  border: 1px solid variables.$border;
+	width: 100%;
+	height: 40px;
+	margin-bottom: 10px;
+	padding: 10px;
+	border-radius: 3px;
+	border: 1px solid variables.$border;
 }
 .login-submit {
-  display: block;
-  padding: 5px 10px;
-  margin: 20px auto;
-  font-size: 14px;
-  width: 100%;
-  height: 50px;
-  border: 1px solid  variables.$blue;
-  border-radius: 2px;
-  background-color: variables.$blue;
-  text-transform: uppercase;
-  color: #ffffff;
+	display: block;
+	padding: 5px 10px;
+	margin: 20px auto;
+	font-size: 14px;
+	width: 100%;
+	height: 50px;
+	border: 1px solid variables.$blue;
+	border-radius: 2px;
+	background-color: variables.$blue;
+	text-transform: uppercase;
+	color: #ffffff;
 }
-.login p#info{
-  font-size: 13px;
-  color: variables.$red;
+.login p#info {
+	font-size: 13px;
+	color: variables.$red;
 }
-.login input[type=submit]:hover {
-  background-color: variables.$blue_hover;
-  border: 1px solid variables.$blue_hover;
+.login input[type='submit']:hover {
+	background-color: variables.$blue_hover;
+	border: 1px solid variables.$blue_hover;
 }
-.login a{
-  display: block;
-  margin-bottom: 20px;
-  font-size: 14px;
-  text-decoration: none;
-  cursor: pointer;
-  color: variables.$blue;
+.login a {
+	display: block;
+	margin-bottom: 20px;
+	font-size: 14px;
+	text-decoration: none;
+	cursor: pointer;
+	color: variables.$blue;
 }
 .login a:hover {
-  color: variables.$blue_hover;
-  text-decoration: underline;
+	color: variables.$blue_hover;
+	text-decoration: underline;
 }
-.new-account{
-  display: flex;
-  flex-wrap: nowrap;
-  margin-right: auto;
-  margin-top: 20px;
-  margin-left: auto;
-  width: 60%;
-  justify-content: space-between;
-  align-items: baseline;
+.new-account {
+	display: flex;
+	flex-wrap: nowrap;
+	margin-right: auto;
+	margin-top: 20px;
+	margin-left: auto;
+	width: 60%;
+	justify-content: space-between;
+	align-items: baseline;
 }
-.new-account p{
-  font-size: 14px;
-  color: variables.$lighter_text;
-  margin: 0;
+.new-account p {
+	font-size: 14px;
+	color: variables.$lighter_text;
+	margin: 0;
 }
-.new-account a{
-  color: variables.$blue;
-  font-size: 14px;
-  text-decoration: none;
-  cursor: pointer;
+.new-account a {
+	color: variables.$blue;
+	font-size: 14px;
+	text-decoration: none;
+	cursor: pointer;
 }
 .new-account a:hover {
-  color: variables.$blue_hover;
-  text-decoration: underline;
+	color: variables.$blue_hover;
+	text-decoration: underline;
 }
 .self-hosting-url {
-  a {
-    margin-top: 20px;
-    color: variables.$blue;
-    font-size: 14px;
-    text-decoration: none;
-    cursor: pointer;
-    text-align: center;
+	a {
+		margin-top: 20px;
+		color: variables.$blue;
+		font-size: 14px;
+		text-decoration: none;
+		cursor: pointer;
+		text-align: center;
 
-    &:hover {
-      color: variables.$blue_hover;
-      text-decoration: underline;
-    }
-  }
+		&:hover {
+			color: variables.$blue_hover;
+			text-decoration: underline;
+		}
+	}
 }
 .cloud-version-url {
-  display: flex;
-  width: 49%;
-  margin-right: auto;
-  margin-top: 20px;
-  margin-left: auto;
-  flex-wrap: nowrap;
-  justify-content: space-between;
-  align-items: baseline;
+	display: flex;
+	width: 49%;
+	margin-right: auto;
+	margin-top: 20px;
+	margin-left: auto;
+	flex-wrap: nowrap;
+	justify-content: space-between;
+	align-items: baseline;
 
-  p {
-    font-size: 14px;
-    color: variables.$lighter_text;
-    margin: 0;
-  }
+	p {
+		font-size: 14px;
+		color: variables.$lighter_text;
+		margin: 0;
+	}
 
-  a {
-    color: variables.$blue;
-    font-size: 14px;
-    text-decoration: none;
-    cursor: pointer;
+	a {
+		color: variables.$blue;
+		font-size: 14px;
+		text-decoration: none;
+		cursor: pointer;
 
-    &:hover {
-      color: variables.$blue_hover;
-      text-decoration: underline;
-    }
-  }
-
+		&:hover {
+			color: variables.$blue_hover;
+			text-decoration: underline;
+		}
+	}
 }
 .google-login {
-  margin-bottom: 20px;
-  width: 100%;
-  height: 50px;
-  background: white;
-  border: 1px solid variables.$border;
-  border-radius: 2px;
-  color: variables.$lighter_text;
-  font-size: 14px;
-  cursor: pointer;
+	margin-bottom: 20px;
+	width: 100%;
+	height: 50px;
+	background: white;
+	border: 1px solid variables.$border;
+	border-radius: 2px;
+	color: variables.$lighter_text;
+	font-size: 14px;
+	cursor: pointer;
 }
 .google-img {
-  position: relative;
-  top: 3px;
-  margin-right: 10px;
-  content: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAARCAYAAADUryzEAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAIPSURBVHgBlVM/aBNhFH/vS5qmiz0XbXToBaQOor2znUQwZBCcUu1YEIugDkqrTiroKYjrqYM4BQfJoJQgimiHHhlEtJET3L1BtFTbntGSo6Tf8921F+9Sr9jfcHy/9733e//uQ+jA54KmZFPpMyDpGACpACJNQD/4/A5J3slZthP1xyiZKwxNsMUgAAUSgIhmU7Zu5i3b9bkIL74VDxqEYG4W7IOIJrtRFEOeDoILQ5eB4EbcE57y50WQBTEvgU5yfhVX8XSuVp9qV9R8Ceqvh/s+rv7MbluPdIDEeM6ataJ6X4t6P0mh77bq1VhL3ms4R43Mg8bjAZBuNyDh/j5r9hP8J3BlGma474JPvPc7nvVenS9FHQ4ZS5rYZC68Itgbkq7h+doGh5Qo8zy0hHhX8Nraq+TDAmwNil+Bh38FNmRCHmp8teifQ76E3iu4hwIuPPf64f7yoOs2Rd4er7pJKY/capT5zzzlnwnJEiRgylw+ALd/D0ODuhTMpsyk4MPG94EwOADRo6B6vTI6g+ubWLPjNFLryoexat3nWnlEEVkx0fPl2mSquScs36ld780HAlplREUQLIJqvH/0uP9FltwV2jKLJcgslNwVKfW3xnanvYEkkU6woNMzd/b4m4tH7bUk8VvUKycusfV8pxARuPwS70qvZUaHjEmZBiujOj+iPiK5E2TKtsee2P/y+wNydMMjOPbkvQAAAABJRU5ErkJggg==");
+	position: relative;
+	top: 3px;
+	margin-right: 10px;
+	content: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAARCAYAAADUryzEAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAIPSURBVHgBlVM/aBNhFH/vS5qmiz0XbXToBaQOor2znUQwZBCcUu1YEIugDkqrTiroKYjrqYM4BQfJoJQgimiHHhlEtJET3L1BtFTbntGSo6Tf8921F+9Sr9jfcHy/9733e//uQ+jA54KmZFPpMyDpGACpACJNQD/4/A5J3slZthP1xyiZKwxNsMUgAAUSgIhmU7Zu5i3b9bkIL74VDxqEYG4W7IOIJrtRFEOeDoILQ5eB4EbcE57y50WQBTEvgU5yfhVX8XSuVp9qV9R8Ceqvh/s+rv7MbluPdIDEeM6ataJ6X4t6P0mh77bq1VhL3ms4R43Mg8bjAZBuNyDh/j5r9hP8J3BlGma474JPvPc7nvVenS9FHQ4ZS5rYZC68Itgbkq7h+doGh5Qo8zy0hHhX8Nraq+TDAmwNil+Bh38FNmRCHmp8teifQ76E3iu4hwIuPPf64f7yoOs2Rd4er7pJKY/capT5zzzlnwnJEiRgylw+ALd/D0ODuhTMpsyk4MPG94EwOADRo6B6vTI6g+ubWLPjNFLryoexat3nWnlEEVkx0fPl2mSquScs36ld780HAlplREUQLIJqvH/0uP9FltwV2jKLJcgslNwVKfW3xnanvYEkkU6woNMzd/b4m4tH7bUk8VvUKycusfV8pxARuPwS70qvZUaHjEmZBiujOj+iPiK5E2TKtsee2P/y+wNydMMjOPbkvQAAAABJRU5ErkJggg==');
 }
 .google-login-disabled {
-  display: none;
+	display: none;
 }

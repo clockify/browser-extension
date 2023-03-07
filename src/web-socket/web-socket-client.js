@@ -1,69 +1,71 @@
-import {getEnv} from "../environment";
-import {getBrowser} from "../helpers/browser-helper";
-import {TokenService} from "../services/token-service";
+import { getEnv } from '../environment';
+import { getBrowser } from '../helpers/browser-helper';
+import { TokenService } from '../services/token-service';
 
 const environment = getEnv();
 const tokenService = new TokenService();
 
 export class WebSocketClient {
-    constructor() {
-        this.connection = "";
-    }
+	constructor() {
+		this.connection = '';
+	}
 
-    async connect() {
-        this.connectionId =
-            `/${environment.webSocket.clientId}/` +
-            `${await localStorage.getItem('userEmail')}/` +
-            `${Math.random().toString(36).substring(2, 10)}/extension`;
-        if (this.connection) {
-            return;
-        }
+	async connect() {
+		this.connectionId =
+			`/${environment.webSocket.clientId}/` +
+			`${await localStorage.getItem('userEmail')}/` +
+			`${Math.random().toString(36).substring(2, 10)}/extension`;
+		if (this.connection) {
+			return;
+		}
 
-        this.connection = new WebSocket(`${environment.webSocket.endpoint}${this.connectionId}`);
+		this.connection = new WebSocket(
+			`${environment.webSocket.endpoint}${this.connectionId}`
+		);
 
-        this.connection.onopen = (event) => {
-            if (event.type === 'open') {
-                tokenService.getToken().then(token => {
-                    if (!!token) {
-                        this.authenticate(token);
-                        localStorage.setItem('wsConnectionId', this.connectionId);
-                    }
-                });
-            }
-        };
+		this.connection.onopen = (event) => {
+			if (event.type === 'open') {
+				tokenService.getToken().then((token) => {
+					if (!!token) {
+						this.authenticate(token);
+						localStorage.setItem('wsConnectionId', this.connectionId);
+					}
+				});
+			}
+		};
 
-        this.connection.onclose = () => {
-            const getReconnectTimeout = () => {
-                const min = 20 * 1000;
-                const max = 150 * 1000;
+		this.connection.onclose = () => {
+			const getReconnectTimeout = () => {
+				const min = 20 * 1000;
+				const max = 150 * 1000;
 
-                return Math.floor(Math.random() * (max - min + 1)) + min;
-            };
+				return Math.floor(Math.random() * (max - min + 1)) + min;
+			};
 
-            setTimeout(() => this.connect(), getReconnectTimeout());
-        };
+			setTimeout(() => this.connect(), getReconnectTimeout());
+		};
 
-        this.connection.onmessage = (message) => {
-            this.messageHandler(message);
-        };
-    }
+		this.connection.onmessage = (message) => {
+			this.messageHandler(message);
+		};
+	}
 
-    disconnect() {
-        if (this.connection) {
-            this.connection.close();
-        }
-    }
+	disconnect() {
+		if (this.connection) {
+			this.connection.close();
+		}
+	}
 
-    messageHandler(event) {
-        getBrowser().runtime.sendMessage({eventName: event.data});
-    };
+	messageHandler(event) {
+		getBrowser().runtime.sendMessage({ eventName: event.data });
+	}
 
-    authenticate(token) {
-        if (!this.connection) return;
-        if (token) {
-            this.connection.send(token);
-        } else {
-            setTimeout(() => this.authenticate(), 10000);
-        }
-    }
+	authenticate(token) {
+		if (!this.connection) return;
+		if (token) {
+			this.connection.send(token);
+		} else {
+			setTimeout(() => this.authenticate(), 10000);
+		}
+	}
 }

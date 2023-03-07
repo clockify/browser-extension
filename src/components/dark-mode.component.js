@@ -1,103 +1,117 @@
-import * as React from "react";
-import {LocalStorageService} from "../services/localStorage-service";
-import {getLocalStorageEnums} from "../enums/local-storage.enum";
-import {HtmlStyleHelper} from "../helpers/html-style-helper";
-import locales from "../helpers/locales";
+import * as React from 'react';
+import { LocalStorageService } from '../services/localStorage-service';
+import { getLocalStorageEnums } from '../enums/local-storage.enum';
+import { HtmlStyleHelper } from '../helpers/html-style-helper';
+import locales from '../helpers/locales';
 
 const localStorageService = new LocalStorageService();
 const htmlStyleHelper = new HtmlStyleHelper();
 
 class DarkModeComponent extends React.Component {
+	constructor(props) {
+		super(props);
 
-    constructor(props) {
-        super(props);
+		this.state = {
+			enabled: false,
+		};
+	}
 
-        this.state = {
-            enabled: false
-        };
-    }
+	componentDidMount() {
+		this.isDarkModeOn();
+	}
 
-    componentDidMount() {
-        this.isDarkModeOn();
-    }
+	async isDarkModeOn() {
+		const userId = await localStorageService.get('userId');
+		const darkMode = await localStorageService.get('darkMode');
+		const darkModeFromStorageForUser =
+			darkMode &&
+			JSON.parse(darkMode).filter((darkMode) => darkMode.userId === userId)
+				.length > 0
+				? JSON.parse(darkMode).filter(
+						(darkMode) => darkMode.userId === userId
+				  )[0]
+				: null;
 
-    async isDarkModeOn() {
-        const userId = await localStorageService.get('userId');
-        const darkMode = await localStorageService.get('darkMode');
-        const darkModeFromStorageForUser = darkMode &&
-        JSON.parse(darkMode)
-            .filter(darkMode => darkMode.userId === userId).length > 0 ?
-            JSON.parse(darkMode)
-                .filter(darkMode => darkMode.userId === userId)[0] : null;
+		if (!darkModeFromStorageForUser) {
+			return;
+		}
 
-        if (!darkModeFromStorageForUser) {
-            return;
-        }
+		this.setState({
+			enabled: darkModeFromStorageForUser.enabled,
+		});
+	}
 
-        this.setState({
-            enabled: darkModeFromStorageForUser.enabled
-        });
-    }
+	async toggleDarkMode() {
+		const userId = await localStorageService.get('userId');
+		const darkMode = await localStorageService.get('darkMode');
+		let darkModeFromStorage = darkMode ? JSON.parse(darkMode) : [];
+		let isEnabled;
+		const darkModeForCurrentUser =
+			darkModeFromStorage.length > 0 &&
+			darkModeFromStorage.filter((darkMode) => darkMode.userId === userId)
+				.length > 0
+				? darkModeFromStorage.filter(
+						(darkMode) => darkMode.userId === userId
+				  )[0]
+				: null;
 
-    async toggleDarkMode() {
-        const userId = await localStorageService.get('userId');
-        const darkMode = await localStorageService.get('darkMode');
-        let darkModeFromStorage = darkMode ?
-            JSON.parse(darkMode) : [];
-        let isEnabled;
-        const darkModeForCurrentUser = darkModeFromStorage.length > 0 &&
-            darkModeFromStorage.filter(darkMode => darkMode.userId === userId).length > 0 ?
-                darkModeFromStorage.filter(darkMode => darkMode.userId === userId)[0] : null;
+		if (!darkModeForCurrentUser) {
+			darkModeFromStorage = [
+				...darkModeFromStorage,
+				{
+					userId: userId,
+					enabled: true,
+				},
+			];
+			isEnabled = true;
+		} else {
+			isEnabled = !this.state.enabled;
+			darkModeFromStorage = darkModeFromStorage.map((darkMode) => {
+				if (darkMode.userId === userId) {
+					darkMode.enabled = isEnabled;
+				}
 
-        if (!darkModeForCurrentUser) {
-            darkModeFromStorage = [
-                ...darkModeFromStorage,
-                {
-                    userId: userId,
-                    enabled: true
-                }
-            ];
-            isEnabled = true;
-        } else {
-            isEnabled = !this.state.enabled;
-            darkModeFromStorage = darkModeFromStorage.map(darkMode => {
-                if (darkMode.userId === userId) {
-                    darkMode.enabled = isEnabled;
-                }
+				return darkMode;
+			});
+		}
 
-                return darkMode;
-            });
-        }
+		localStorageService.set(
+			'darkMode',
+			JSON.stringify(darkModeFromStorage),
+			getLocalStorageEnums().PERMANENT_PREFIX
+		);
 
-        localStorageService.set(
-            'darkMode',
-            JSON.stringify(darkModeFromStorage),
-            getLocalStorageEnums().PERMANENT_PREFIX
-        );
+		htmlStyleHelper.addOrRemoveDarkModeClassOnBodyElement();
+		this.props.changeSaved();
 
-        htmlStyleHelper.addOrRemoveDarkModeClassOnBodyElement();
-        this.props.changeSaved();
+		this.setState({
+			enabled: isEnabled,
+		});
+	}
 
-        this.setState({
-            enabled: isEnabled
-        });
-    }
-
-    render() {
-        return (
-            <div className="dark-mode"
-                 onClick={this.toggleDarkMode.bind(this)}>
-                <div className={this.state.enabled ?
-                    "dark-mode__checkbox checked" : "dark-mode__checkbox"}>
-                    <img src="./assets/images/checked.png"
-                         className={this.state.enabled ?
-                             "dark-mode__checkbox--img" :
-                             "dark-mode__checkbox--img_hidden"}/>
-                </div>
-                <span className="dark-mode__title">{locales.ENABLE_DARK_MODE}</span>
-            </div>
-        )
-    }
+	render() {
+		return (
+			<div className="dark-mode" onClick={this.toggleDarkMode.bind(this)}>
+				<div
+					className={
+						this.state.enabled
+							? 'dark-mode__checkbox checked'
+							: 'dark-mode__checkbox'
+					}
+				>
+					<img
+						src="./assets/images/checked.png"
+						className={
+							this.state.enabled
+								? 'dark-mode__checkbox--img'
+								: 'dark-mode__checkbox--img_hidden'
+						}
+					/>
+				</div>
+				<span className="dark-mode__title">{locales.ENABLE_DARK_MODE}</span>
+			</div>
+		);
+	}
 }
 
 export default DarkModeComponent;

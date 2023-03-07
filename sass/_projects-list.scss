@@ -1,311 +1,313 @@
-@use "variables";
+@use 'variables';
 
 $spacer: 1rem !default;
 
 .project-list-button {
-  padding: 0 6px;
-  // padding-right: 6px;
-  background: white;
-  border: 1px solid variables.$border;
-  border-radius: 2px;
-  cursor: pointer;
-  align-items: center;
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  height: 38px;
-  
-  &-required {
-    //padding: 5px 0;
-    padding: 0px 6px;
-    background: white;
-    border: 1px solid variables.$red;
-    border-radius: 2px;
-    cursor: pointer;
-    box-sizing: border-box;
-    display: flex;
-    align-items: center;
-    height: 38px;
-}
+	padding: 0 6px;
+	// padding-right: 6px;
+	background: white;
+	border: 1px solid variables.$border;
+	border-radius: 2px;
+	cursor: pointer;
+	align-items: center;
+	box-sizing: border-box;
+	display: flex;
+	align-items: center;
+	height: 38px;
+
+	&-required {
+		//padding: 5px 0;
+		padding: 0px 6px;
+		background: white;
+		border: 1px solid variables.$red;
+		border-radius: 2px;
+		cursor: pointer;
+		box-sizing: border-box;
+		display: flex;
+		align-items: center;
+		height: 38px;
+	}
 }
 
 .project-list__spec_filter_no_task_or_project {
-    margin-left: auto;
-    margin-right: auto;
-    width: 80%;
-    text-align: center
+	margin-left: auto;
+	margin-right: auto;
+	width: 80%;
+	text-align: center;
 }
 
 .project-list-button-offline {
-  width: 100%;
-  height: 40px;
-  background: #eff4f7;
-  margin: 10px 0;
-  border: 1px solid variables.$border;
-  border-radius: 2px;
-  cursor: not-allowed;
-  padding: 0px 6px;
-  display: flex;
-  align-items: center;
-  box-sizing: border-box;
+	width: 100%;
+	height: 40px;
+	background: #eff4f7;
+	margin: 10px 0;
+	border: 1px solid variables.$border;
+	border-radius: 2px;
+	cursor: not-allowed;
+	padding: 0px 6px;
+	display: flex;
+	align-items: center;
+	box-sizing: border-box;
 }
 
-
 .project-list-name {
-  display: inline-flex;
-  //padding: 5px 10px;
-  // padding: 0px 7px !important;
-  width: 85%;
-  font-size: 14px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  color: #333; //  variables.$lighter_text;
+	display: inline-flex;
+	//padding: 5px 10px;
+	// padding: 0px 7px !important;
+	width: 85%;
+	font-size: 14px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	color: #333; //  variables.$lighter_text;
+	text-overflow: ellipsis;
+	display: inline-block;
 }
 
 span.project-list-name-client {
-  color: #999;
-  text-overflow: ellipsis;
+	color: #999;
+	text-overflow: ellipsis;
 }
 
-
 .project-list-arrow {
-  //position: relative;
-  width: 10px;
-  height: 5px;
-  //float: right;
-  //padding-right: 15px;
-  //top: 11px;
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  padding: 0px 10px 0px 10px;    
-  content: url("../assets/images/arrow-light-mode.png");
+	//position: relative;
+	width: 10px;
+	height: 5px;
+	//float: right;
+	//padding-right: 15px;
+	//top: 11px;
+	margin-left: auto;
+	display: flex;
+	align-items: center;
+	padding: 0px 10px 0px 10px;
+	content: url('../assets/images/arrow-light-mode.png');
 }
 
 .project-list-arrow-up {
-  //position: relative;
-  width: 10px;
-  height: 5px;
-  //float: right;
-  //padding-right: 15px;
-  //top: 11px;
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  padding: 0px 10px 0px 10px;  
-  content: url("../assets/images/arrow-light-mode-up.png");
+	//position: relative;
+	width: 10px;
+	height: 5px;
+	//float: right;
+	//padding-right: 15px;
+	//top: 11px;
+	margin-left: auto;
+	display: flex;
+	align-items: center;
+	padding: 0px 10px 0px 10px;
+	content: url('../assets/images/arrow-light-mode-up.png');
 }
 
-
 .project-list-dropdown {
-  position: absolute;
-  width: 100%;
-  left: 0;
-  top: 39px;
-  background: white;
-  z-index: 2;
-  box-shadow: 0 5px 7px #ccc;
-  font-size: 14px;
-  border-radius: 2px;
-  &--content {
-    height: 269px;
-    overflow-y: auto;
-  }
+	position: absolute;
+	width: 100%;
+	left: 0;
+	top: 39px;
+	background: white;
+	z-index: 2;
+	box-shadow: 0 5px 7px #ccc;
+	font-size: 14px;
+	border-radius: 2px;
+	&--content {
+		height: 269px;
+		overflow-y: auto;
+	}
 }
 
 .project-list-input {
-  background: white;
-  padding: 10px;
+	background: white;
+	padding: 10px;
 
-  &--border {
-    position: relative;
-  }
+	&--border {
+		position: relative;
+	}
 }
 
 .project-list-filter {
-  width: 100%;
-  height: 40px;
-  padding: 10px;
-  border: 1px solid variables.$border;
-  border-radius: 2px;
+	width: 100%;
+	height: 40px;
+	padding: 10px;
+	border: 1px solid variables.$border;
+	border-radius: 2px;
 
-  &__clear {
-    position: absolute;
-    right: 10px;
-    top: 14px;
-    height: 12px;
-    width: 12px;
-    content: url("../assets/images/x.png");
-    cursor: pointer;
-  }
-  &:focus {
-    outline: none;
-    border: 2px solid #0f3beb;
-    border-radius: 5px;
-  }
+	&__clear {
+		position: absolute;
+		right: 10px;
+		top: 14px;
+		height: 12px;
+		width: 12px;
+		content: url('../assets/images/x.png');
+		cursor: pointer;
+	}
+	&:focus {
+		outline: none;
+		border: 2px solid #0f3beb;
+		border-radius: 5px;
+	}
 }
 
 .tasks-arrow-down {
-  // content: url("../assets/images/filter-arrow-down.png");
-  margin-left: 5px;
+	// content: url("../assets/images/filter-arrow-down.png");
+	margin-left: 5px;
 }
 
 .tasks-arrow-right {
-  // content: url("../assets/images/filter-arrow-right.png");
-  position: relative;
-  top: -1px;
-  margin-left: 5px;
-  vertical-align: middle;
+	// content: url("../assets/images/filter-arrow-right.png");
+	position: relative;
+	top: -1px;
+	margin-left: 5px;
+	vertical-align: middle;
 }
 
 ul.project-item {
-  padding: 7px 5px 8px 10px;
-  cursor: pointer;
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  margin: 0;
+	padding: 7px 5px 8px 10px;
+	cursor: pointer;
+	font-size: 16px;
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	margin: 0;
 
-  list-style-type: none;
-  border-top: 1px dotted variables.$border;
+	list-style-type: none;
+	border-top: 1px dotted variables.$border;
 
-  &:hover {
-    background-color: variables.$entries_header;
-  }
+	&:hover {
+		background-color: variables.$entries_header;
+	}
 }
 
 li.project-item-dot {
-  flex: 0 0 5px;
-  width: 5px;
-  height: 5px;
-  border-radius: 5px;
-  display: inline-block;
-  margin-right: 5px;
+	flex: 0 0 5px;
+	width: 5px;
+	height: 5px;
+	border-radius: 5px;
+	display: inline-block;
+	margin-right: 5px;
 }
 
 li.project-item-name {
-  display: inline-block;
-  flex: 1 1;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  font-size: 14px;
-  // line-height: 16px;
-  white-space: nowrap;
-  color: variables.$dark_text;
+	display: inline-block;
+	flex: 1 1;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	font-size: 14px;
+	// line-height: 16px;
+	white-space: nowrap;
+	color: variables.$dark_text;
 }
 
 li.project-item-tasks {
-  display: flex;
-  color: variables.$lighter_text;
-  font-size: 13px;
-  flex: 0 0 90px;
+	display: flex;
+	color: variables.$lighter_text;
+	font-size: 13px;
+	flex: 0 0 90px;
 }
 
 li.project-item-tasks > span {
-  color: variables.$lighter_text;
+	color: variables.$lighter_text;
+	img {
+		width: auto;
+	}
 }
 
 li.project-item-favorite {
-  flex: 0 0 20px;
+	flex: 0 0 20px;
 }
 
-.project-item-create-task{
-  color: #03a9f4;
-  cursor: pointer;
-  font-size: 14px;
-  margin-right: 10px;
-  &:hover{
-    text-decoration: underline;
-  }
+.project-item-create-task {
+	color: #03a9f4;
+	cursor: pointer;
+	font-size: 14px;
+	margin-right: 10px;
+	&:hover {
+		text-decoration: underline;
+	}
 }
 
 .task-item {
-  padding: 7px 0 7px 25px;
-  background-color: variables.$task-background;
-  color: variables.$dark_text;
-  font-size: 14px;
-  // line-height: 16px;
-  &:hover {
-    background-color: variables.$entries_header;
-    cursor: pointer;
-  }
-  &:first-child {
-    padding-top: 10px;
-  }
-  &:last-child {
-    padding-bottom: 10px;
-  }
+	padding: 7px 0 7px 25px;
+	background-color: variables.$task-background;
+	color: variables.$dark_text;
+	font-size: 14px;
+	// line-height: 16px;
+	&:hover {
+		background-color: variables.$entries_header;
+		cursor: pointer;
+	}
+	&:first-child {
+		padding-top: 10px;
+	}
+	&:last-child {
+		padding-bottom: 10px;
+	}
 }
 .project-list-load {
-  text-align: center;
-  margin-top: 15px;
-  margin-bottom: 35px;
-  color: variables.$middle_light_text;
-  cursor: pointer;
+	text-align: center;
+	margin-top: 15px;
+	margin-bottom: 35px;
+	color: variables.$middle_light_text;
+	cursor: pointer;
 }
 .project-list-client {
-  margin: 10px;
-  padding-top: 5px;
-  //border-top: 1px dotted variables.$border;
-  font-size: 14px;
-  color: variables.$lighter_text;
+	margin: 10px;
+	padding-top: 5px;
+	//border-top: 1px dotted variables.$border;
+	font-size: 14px;
+	color: variables.$lighter_text;
 }
 .projects-list {
-  position: relative;
+	position: relative;
 
-  &__create-project, &__create-task {
-    position: absolute;
-    display: flex;
-    align-items: center;
-    padding-top: 17px;
-    padding-bottom: 17px;
-    bottom: 0px;
-    width: 320px;
-    background: white;
-    box-shadow: 0 -5px 10px rgba(0,0,0,0.1);
-    cursor: pointer;
-    &--icon {
-      width: 19px;
-      height: 19px;
-      margin-right: 7px;
-      margin-left: 10px;
-      // content: url("/assets/images/create.png");
-    }
-    &--text {
-      color: variables.$blue;
-      font-size: 14px;
-      // line-height: 16px;
-    }
-  }
-  &__bottom-padding {
-    padding-bottom: 54px;
-    width: 100%;
-  }
-  &__create-task{
-    box-sizing: border-box;
-    position: relative;
-    padding-left: 10px;
-    width: 100%;
-  }
+	&__create-project,
+	&__create-task {
+		position: absolute;
+		display: flex;
+		align-items: center;
+		padding-top: 17px;
+		padding-bottom: 17px;
+		bottom: 0px;
+		width: 320px;
+		background: white;
+		box-shadow: 0 -5px 10px rgba(0, 0, 0, 0.1);
+		cursor: pointer;
+		&--icon {
+			width: 19px;
+			height: 19px;
+			margin-right: 7px;
+			margin-left: 10px;
+			// content: url("/assets/images/create.png");
+		}
+		&--text {
+			color: variables.$blue;
+			font-size: 14px;
+			// line-height: 16px;
+		}
+	}
+	&__bottom-padding {
+		padding-bottom: 54px;
+		width: 100%;
+	}
+	&__create-task {
+		box-sizing: border-box;
+		position: relative;
+		padding-left: 10px;
+		width: 100%;
+	}
 }
 
 .clockify-error {
-  color: red;
-  font-size: 14px;
+	color: red;
+	font-size: 14px;
 }
 
-
 .cl-dropdown-star {
-  width: 16px;
-  height: 16px;
-  margin: 5px 3px 0px 5px;
-  // background: url(../assets/images/ui-icons/favorites-normal.svg);
-  // &:hover {
-  //   background: url(../assets/images/ui-icons/favorites-hover.svg);
-  // }
-  // &.cl-active {
-  //   background: url(../assets/images/ui-icons/favorites-active.svg);
-  // }
+	width: 16px;
+	height: 16px;
+	margin: 5px 3px 0px 5px;
+	// background: url(../assets/images/ui-icons/favorites-normal.svg);
+	// &:hover {
+	//   background: url(../assets/images/ui-icons/favorites-hover.svg);
+	// }
+	// &.cl-active {
+	//   background: url(../assets/images/ui-icons/favorites-active.svg);
+	// }
 }

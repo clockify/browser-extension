@@ -38,4 +38,3 @@
 // export function isAppTypeDesktop() {
 //     return localStorageService.get('appType') === getAppTypes().DESKTOP;
 // }
-

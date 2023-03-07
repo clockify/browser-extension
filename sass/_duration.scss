@@ -1,94 +1,93 @@
-@use "variables";
+@use 'variables';
 
 .duration {
-  height: 50px;
-  margin: 10px 20px;
-  background: white;
-  border: 1px solid variables.$border;
-  border-radius: 2px;
+	height: 50px;
+	margin: 10px 20px;
+	background: white;
+	border: 1px solid variables.$border;
+	border-radius: 2px;
 
-  &__date-picker {
-    padding: 13px 4px;
-  }
+	&__date-picker {
+		padding: 13px 4px;
+	}
 
-  .ant-time-picker {
-    width: 85px;
+	.ant-time-picker {
+		width: 85px;
 
-    &-input {
-      margin-top: 3px;
-      border: none;
-      text-align: center;
-      width: 100%;
-    }
+		&-input {
+			margin-top: 3px;
+			border: none;
+			text-align: center;
+			width: 100%;
+		}
 
-    &-icon {
-      display: none;
-    }
+		&-icon {
+			display: none;
+		}
 
-    &-clear {
-      display: none;
-    }
+		&-clear {
+			display: none;
+		}
 
-    .ant-time-picker-input::placeholder {
-      font-size: 11px;
-    }
-  }
+		.ant-time-picker-input::placeholder {
+			font-size: 11px;
+		}
+	}
 }
 
 .duration-time {
-  display:flex;
-  margin-left: 5px;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 14px;
-  color: variables.$lighter_text;
+	display: flex;
+	margin-left: 5px;
+	justify-content: space-between;
+	align-items: center;
+	font-size: 14px;
+	color: variables.$lighter_text;
 }
 
 .duration-start {
-  padding-top: 13px;
-  padding-bottom: 13px;
-  position: relative;
-  top: 0px;
-  width: 65px;
-  outline: none;
-  border: none;
-  color: variables.$middle_light_text;
-  font-size: 14px;
-  margin-left: 5px;
-  text-align: center;
+	padding-top: 13px;
+	padding-bottom: 13px;
+	position: relative;
+	top: 0px;
+	width: 65px;
+	outline: none;
+	border: none;
+	color: variables.$middle_light_text;
+	font-size: 14px;
+	margin-left: 5px;
+	text-align: center;
 }
 
 .duration-end {
-  display: block;
+	display: block;
 }
 
 .duration-duration {
-  position: relative;
-  padding: 6px 2px;
-  border: none;
-  width: 85px;
-  font-size: 18px;
-  color: variables.$dark_text;
-  outline: none;
+	position: relative;
+	padding: 6px 2px;
+	border: none;
+	width: 85px;
+	font-size: 18px;
+	color: variables.$dark_text;
+	outline: none;
 }
 
 .duration-dash {
-  position: relative;
-  top: 2px;
+	position: relative;
+	top: 2px;
 }
 
 .duration-label {
-  margin-left: 7px;
-  word-break: keep-all;
-  position: relative;
-  top: 0px;
+	margin-left: 7px;
+	word-break: keep-all;
+	position: relative;
+	top: 0px;
 }
 
-
 .duration-divider {
-  position: relative;
-  top: -2px;
-  height: 50px;
-  border-left: 1px dotted #cacaca;
-  background-color: white;
+	position: relative;
+	top: -2px;
+	height: 50px;
+	border-left: 1px dotted #cacaca;
+	background-color: white;
 }

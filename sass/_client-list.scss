@@ -1,228 +1,228 @@
-@use "variables";
+@use 'variables';
 
-.client-list{
-  position: relative;
-  &-button {
-    display: flex;
-    padding: 6px 0;
-    background: white;
-    border: 1px solid variables.$border;
-    border-radius: 2px;
-    cursor: pointer;
-    align-items: center;
-    box-sizing: border-box;
-    &-required {
-      padding: 5px 0;
-      background: white;
-      border: 1px solid variables.$red;
-      border-radius: 2px;
-      cursor: pointer;
-    }
-    &-offline {
-      width: 100%;
-      height: 40px;
-      background: variables.$disabled;
-      margin: 10px 0;
-      border: 1px solid variables.$border;
-      border-radius: 2px;
-      cursor: not-allowed;
-    }
-  }
-  &-open {
-    .invisible {
-      height: 100vh;
-      width: 100vw;
-      top: -120px;
-      left: -20px;
-    }
-  }
-  &-arrow {
-    width: 10px;
-    height: 5px;
-    content: url("../assets/images/arrow-light-mode.png");
-  }
-  &-name {
-    display: inline-block;
-    padding: 5px 10px;
-    width: 85%;
-    font-size: 14px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    color: variables.$middle_light_text;
-  }
-  &-dropdown {
-    position: absolute;
-    width: 100%;
-    left: 0;
-    top: 39px;
-    background: white;
-    z-index: 2;
-    box-shadow: 0 5px 7px #ccc;
-    font-size: 14px;
-    border-radius: 2px;
+.client-list {
+	position: relative;
+	&-button {
+		display: flex;
+		padding: 6px 0;
+		background: white;
+		border: 1px solid variables.$border;
+		border-radius: 2px;
+		cursor: pointer;
+		align-items: center;
+		box-sizing: border-box;
+		&-required {
+			padding: 5px 0;
+			background: white;
+			border: 1px solid variables.$red;
+			border-radius: 2px;
+			cursor: pointer;
+		}
+		&-offline {
+			width: 100%;
+			height: 40px;
+			background: variables.$disabled;
+			margin: 10px 0;
+			border: 1px solid variables.$border;
+			border-radius: 2px;
+			cursor: not-allowed;
+		}
+	}
+	&-open {
+		.invisible {
+			height: 100vh;
+			width: 100vw;
+			top: -120px;
+			left: -20px;
+		}
+	}
+	&-arrow {
+		width: 10px;
+		height: 5px;
+		content: url('../assets/images/arrow-light-mode.png');
+	}
+	&-name {
+		display: inline-block;
+		padding: 5px 10px;
+		width: 85%;
+		font-size: 14px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		color: variables.$middle_light_text;
+	}
+	&-dropdown {
+		position: absolute;
+		width: 100%;
+		left: 0;
+		top: 39px;
+		background: white;
+		z-index: 2;
+		box-shadow: 0 5px 7px #ccc;
+		font-size: 14px;
+		border-radius: 2px;
 
-    &--content {
-      height: 279px;
-      overflow-y: auto;
-    }
-  }
-  &-input {
-    background: white;
-    padding: 10px;
+		&--content {
+			height: 279px;
+			overflow-y: auto;
+		}
+	}
+	&-input {
+		background: white;
+		padding: 10px;
 
-    &--border {
-      position: relative;
-    }
-  }
-  &-filter {
-    width: 100%;
-    height: 40px;
-    padding: 10px;
-    border: 1px solid variables.$border;
-    border-radius: 2px;
+		&--border {
+			position: relative;
+		}
+	}
+	&-filter {
+		width: 100%;
+		height: 40px;
+		padding: 10px;
+		border: 1px solid variables.$border;
+		border-radius: 2px;
 
-    &__clear {
-      position: absolute;
-      right: 10px;
-      top: 14px;
-      height: 12px;
-      width: 12px;
-      content: url("../assets/images/x.png");
-      cursor: pointer;
-    }
-    &:focus {
-      outline: none;
-      border: 2px solid #0f3beb;
-      border-radius: 5px;
-    }
-  }
-  &-client {
-    margin: 10px;
-    padding-top: 5px;
-    color: variables.$lighter_text;
-    cursor: pointer;
-  }
-  &-load {
-    text-align: center;
-    margin-top: 15px;
-    margin-bottom: 10px;
-    color: variables.$middle_light_text;
-    cursor: pointer;
-  }
-  &__create-client {
-    position: absolute;
-    display: flex;
-    align-items: center;
-    padding-top: 17px;
-    padding-bottom: 17px;
-    bottom: 0;
-    width: 320px;
-    background: white;
-    box-shadow: 0 -5px 10px rgba(0,0,0,0.1);
-    cursor: pointer;
-    &--icon {
-      width: 19px;
-      height: 19px;
-      margin-right: 7px;
-      margin-left: 10px;
-      content: url("/assets/images/create.png");
-    }
-    &--text {
-      color: variables.$blue;
-      font-size: 14px;
-      line-height: 16px;
-    }
-  }
-  &__bottom-padding {
-    padding-bottom: 65px;
-    width: 100%;
-  }
-  &__create-form {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 320px;
-    height: 240px;
-    background: variables.$input-background;
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-    border-radius: 2px;
-    text-align: center;
-    align-items: center;
-    &__title-and-close {
-      display: flex;
-      margin-bottom: 20px;
-      width: 100%;
-    }
-    &__close {
-      position: absolute;
-      right: 20px;
-      top: 25px;
-      height: 12px;
-      width: 12px;
-      content: url("../assets/images/x.png");
-      cursor: pointer;
-    }
-    &--open {
-      background-color: rgba(0, 0, 0, 0.8);
-      position: fixed;
-      width: 100vw;
-      height: 100vh;
-      left: 0;
-      top: 0;
-      z-index: 999;
-    }
-    &--divider {
-      width: 100%;
-      height: 1px;
-      border-bottom: 1px dotted variables.$border;
-      margin-bottom: 20px;
-    }
-    &--title {
-      margin-top: 20px;
-      margin-left: 20px;
-      font-size: 18px;
-      line-height: 21px;
-      color: variables.$middle_light_text;
-    }
-    &--client-name {
-      margin-bottom: 20px;
-      padding-left: 10px;
-      border: 1px solid variables.$border;
-      border-radius: 2px;
-      width: 280px;
-      height: 40px;
-      &::placeholder {
-        color: variables.$lighter_text;
-      }
-      &:focus {
-        outline: none;
-        border: 2px solid #0f3beb;
-        border-radius: 5px;
-      }
-    }
-    &--confirmation_button {
-      margin-bottom: 20px;
-      padding-top: 12px;
-      width: 280px;
-      height: 28px;
-      border-radius: 2px;
-      background: variables.$blue;
-      color: variables.$input-background;
-      font-size: 14px;
-      line-height: 16px;
-      text-transform: uppercase;
-      cursor: pointer;
-    }
+		&__clear {
+			position: absolute;
+			right: 10px;
+			top: 14px;
+			height: 12px;
+			width: 12px;
+			content: url('../assets/images/x.png');
+			cursor: pointer;
+		}
+		&:focus {
+			outline: none;
+			border: 2px solid #0f3beb;
+			border-radius: 5px;
+		}
+	}
+	&-client {
+		margin: 10px;
+		padding-top: 5px;
+		color: variables.$lighter_text;
+		cursor: pointer;
+	}
+	&-load {
+		text-align: center;
+		margin-top: 15px;
+		margin-bottom: 10px;
+		color: variables.$middle_light_text;
+		cursor: pointer;
+	}
+	&__create-client {
+		position: absolute;
+		display: flex;
+		align-items: center;
+		padding-top: 17px;
+		padding-bottom: 17px;
+		bottom: 0;
+		width: 100%;
+		background: white;
+		box-shadow: 0 -5px 10px rgba(0, 0, 0, 0.1);
+		cursor: pointer;
+		&--icon {
+			width: 19px;
+			height: 19px;
+			margin-right: 7px;
+			margin-left: 10px;
+			content: url('/assets/images/create.png');
+		}
+		&--text {
+			color: variables.$blue;
+			font-size: 14px;
+			line-height: 16px;
+		}
+	}
+	&__bottom-padding {
+		padding-bottom: 65px;
+		width: 100%;
+	}
+	&__create-form {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		width: 320px;
+		height: 240px;
+		background: variables.$input-background;
+		box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+		border-radius: 2px;
+		text-align: center;
+		align-items: center;
+		&__title-and-close {
+			display: flex;
+			margin-bottom: 20px;
+			width: 100%;
+		}
+		&__close {
+			position: absolute;
+			right: 20px;
+			top: 25px;
+			height: 12px;
+			width: 12px;
+			content: url('../assets/images/x.png');
+			cursor: pointer;
+		}
+		&--open {
+			background-color: rgba(0, 0, 0, 0.8);
+			position: fixed;
+			width: 100vw;
+			height: 100vh;
+			left: 0;
+			top: 0;
+			z-index: 999;
+		}
+		&--divider {
+			width: 100%;
+			height: 1px;
+			border-bottom: 1px dotted variables.$border;
+			margin-bottom: 20px;
+		}
+		&--title {
+			margin-top: 20px;
+			margin-left: 20px;
+			font-size: 18px;
+			line-height: 21px;
+			color: variables.$middle_light_text;
+		}
+		&--client-name {
+			margin-bottom: 20px;
+			padding-left: 10px;
+			border: 1px solid variables.$border;
+			border-radius: 2px;
+			width: 280px;
+			height: 40px;
+			&::placeholder {
+				color: variables.$lighter_text;
+			}
+			&:focus {
+				outline: none;
+				border: 2px solid #0f3beb;
+				border-radius: 5px;
+			}
+		}
+		&--confirmation_button {
+			margin-bottom: 20px;
+			padding-top: 12px;
+			width: 280px;
+			height: 28px;
+			border-radius: 2px;
+			background: variables.$blue;
+			color: variables.$input-background;
+			font-size: 14px;
+			line-height: 16px;
+			text-transform: uppercase;
+			cursor: pointer;
+		}
 
-    &--cancel {
-      font-size: 14px;
-      line-height: 16px;
-      color: variables.$blue;
-      cursor: pointer;
-    }
-  }
+		&--cancel {
+			font-size: 14px;
+			line-height: 16px;
+			color: variables.$blue;
+			cursor: pointer;
+		}
+	}
 }

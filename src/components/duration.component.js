@@ -1,314 +1,369 @@
 import * as React from 'react';
 import moment, { duration } from 'moment';
 
-import DatePicker from "react-datepicker";
-import MyTimePicker from './my-time-picker.component'
-import MyDurationPicker from './my-duration-picker.component'
-import { HtmlStyleHelper } from "../helpers/html-style-helper";
+import DatePicker from 'react-datepicker';
+import MyTimePicker from './my-time-picker.component';
+import MyDurationPicker from './my-duration-picker.component';
+import { HtmlStyleHelper } from '../helpers/html-style-helper';
 import locales from '../helpers/locales';
-import dateFnsLocale from './date-fns-locale'
+import dateFnsLocale from './date-fns-locale';
 
 const htmlStyleHelpers = new HtmlStyleHelper();
-const daysOfWeek = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
+const daysOfWeek = [
+	'SUNDAY',
+	'MONDAY',
+	'TUESDAY',
+	'WEDNESDAY',
+	'THURSDAY',
+	'FRIDAY',
+	'SATURDAY',
+];
 
 let _currentPeriod;
 let _interval;
 
 class Duration extends React.Component {
+	constructor(props) {
+		super(props);
 
-    constructor(props) {
-        super(props);
+		const { start, end } = this.props.timeEntry.timeInterval;
+		let startTime = moment(start);
+		let endTime = null;
+		if (end) {
+			endTime = moment(end);
+			if (moment(start).date() !== moment(end).date()) {
+				startTime = moment(start).subtract(1, 'day');
+				endTime = moment(end).subtract(1, 'day');
+			}
+		}
+		this.state = {
+			datePickerOpen: false,
+			timeFormat: this.props.timeFormat === 'HOUR12' ? 'h:mm A' : 'HH:mm',
+			start,
+			end,
+			startTime,
+			endTime,
+			dayAfterLockedEntries: 'January 1, 1970, 00:00:00 UTC',
+			manualModeDisabled: null,
+			time: duration(
+				end ? moment(end).diff(start) : moment().diff(moment(start))
+			),
+			lang: 'en',
+		};
 
-        const { start, end } = this.props.timeEntry.timeInterval;
-        let startTime = moment(start);
-        let endTime = null;
-        if(end){
-            endTime = moment(end);
-            if(moment(start).date() !== moment(end).date()){
-                startTime = moment(start).subtract(1, 'day');
-                endTime = moment(end).subtract(1, 'day');
-            }
+		this.selectStartTime = this.selectStartTime.bind(this);
+		this.selectEndTime = this.selectEndTime.bind(this);
+		this.selectDuration = this.selectDuration.bind(this);
+		this.changeDuration = this.changeDuration.bind(this);
+		this.setAsyncStateItems = this.setAsyncStateItems.bind(this);
 
-        }
-        this.state = {
-            datePickerOpen: false,
-            timeFormat: this.props.timeFormat === 'HOUR12' ? 'h:mm A' : 'HH:mm',
-            start,
-            end,
-            startTime,
-            endTime,
-            dayAfterLockedEntries: 'January 1, 1970, 00:00:00 UTC',
-            manualModeDisabled: null,
-            time: duration(end 
-                    ? moment(end).diff(start)
-                    : moment().diff(moment(start))
-                  ),
-            lang: 'en'
-        }
+		dateFnsLocale.regLocale();
+	}
 
-        this.selectStartTime = this.selectStartTime.bind(this);
-        this.selectEndTime = this.selectEndTime.bind(this);
-        this.selectDuration = this.selectDuration.bind(this);
-        this.changeDuration = this.changeDuration.bind(this);
-        this.setAsyncStateItems = this.setAsyncStateItems.bind(this);
+	componentDidMount() {
+		this.setDayAfterLockedEntries();
+		this.setStartDayInDatePicker(this.props.userSettings.weekStart);
+		this.setTime();
+		this.setAsyncStateItems();
+	}
 
-        dateFnsLocale.regLocale();
-    }
+	async setAsyncStateItems() {
+		const manualModeDisabled = await localStorage.getItem('manualModeDisabled');
+		const lang = await localStorage.getItem('lang');
+		this.setState({
+			manualModeDisabled: JSON.parse(manualModeDisabled),
+			lang,
+		});
+	}
 
-    componentDidMount() {
-        this.setDayAfterLockedEntries();
-        this.setStartDayInDatePicker(this.props.userSettings.weekStart);
-        this.setTime();
-        this.setAsyncStateItems();
-    }
+	componentDidUpdate(prevProps, prevState) {
+		const { start, end } = this.props.timeEntry.timeInterval;
+		let startTime = moment(start);
+		let endTime = null;
+		if (end) {
+			endTime = moment(end);
+			if (
+				!this.props.isFormManual &&
+				moment(start).date() !== moment(end).date()
+			) {
+				startTime = moment(start).subtract(1, 'day');
+				endTime = moment(end).subtract(1, 'day');
+			}
+		}
+		if (start !== prevState.start) {
+			if (end !== prevState.end) {
+				this.setState({
+					start,
+					startTime,
+					end,
+					endTime,
+					time: duration(moment(end).diff(start)),
+					datePickerOpen: false,
+				});
+			} else {
+				this.setState({
+					start,
+					startTime,
+					time: duration(
+						end ? moment(end).diff(start) : moment().diff(moment(start))
+					),
+					datePickerOpen: false,
+				});
+			}
+			_currentPeriod = moment().diff(moment(start));
+		} else if (end !== prevState.end) {
+			this.setState({
+				end,
+				endTime,
+				time: duration(moment(end).diff(start)),
+			});
+		}
+	}
 
-    async setAsyncStateItems() {
-        const manualModeDisabled = await localStorage.getItem('manualModeDisabled');
-        const lang = await localStorage.getItem('lang');
-        this.setState({
-            manualModeDisabled: JSON.parse(manualModeDisabled),
-            lang
-        });
-    }
+	componentWillUnmount() {
+		if (_interval) clearInterval(_interval);
+	}
 
+	setStartDayInDatePicker(weekStart) {
+		moment.updateLocale('en', {
+			week: {
+				dow: daysOfWeek.indexOf(weekStart),
+				doy: 7 + daysOfWeek.indexOf(weekStart) - 1,
+			},
+		});
+	}
 
-    componentDidUpdate(prevProps, prevState) {
-        const { start, end } = this.props.timeEntry.timeInterval;
-        let startTime = moment(start);
-        let endTime = null;
-        if(end){
-            endTime = moment(end);
-            if(!this.props.isFormManual && moment(start).date() !== moment(end).date()){
-                startTime = moment(start).subtract(1, 'day');
-                endTime = moment(end).subtract(1, 'day');
-            }
-        }
-        if (start !== prevState.start) {
-            if (end !== prevState.end) {
-                this.setState({
-                    start,
-                    startTime,
-                    end,
-                    endTime,
-                    time: duration(moment(end).diff(start)),
-                    datePickerOpen: false
-                })
-            }
-            else {
-                this.setState({
-                    start,
-                    startTime,
-                    time: duration(end 
-                        ? moment(end).diff(start)
-                        : moment().diff(moment(start))
-                    ),
-                    datePickerOpen: false
-                })
-            }
-            _currentPeriod = moment().diff(moment(start));
-        }
-        else if (end !== prevState.end) {
-            this.setState({
-                end,
-                endTime,
-                time: duration(moment(end).diff(start))
-            })
-        }
-    }
+	setDayAfterLockedEntries() {
+		if (
+			!this.props.isUserOwnerOrAdmin &&
+			!!this.props.workspaceSettings.lockTimeEntries
+		) {
+			this.setState({
+				dayAfterLockedEntries: this.props.workspaceSettings.lockTimeEntries,
+			});
+		}
+	}
 
-    componentWillUnmount() {
-        if (_interval)
-            clearInterval(_interval);
-    }
+	setTime() {
+		const { timeInterval } = this.props.timeEntry;
+		if (!timeInterval.end) {
+			_currentPeriod = moment().diff(moment(timeInterval.start));
+			clearInterval(_interval);
+			_interval = setInterval(() => {
+				_currentPeriod += 1000;
+				this.setState({
+					time: duration(_currentPeriod), //.format('HH:mm:ss', {trim: false})
+				});
+			}, 1000);
+		}
+	}
 
-    setStartDayInDatePicker(weekStart) {
-        moment.updateLocale('en', {
-            week: {
-                dow: daysOfWeek.indexOf(weekStart),
-                doy: 7 + daysOfWeek.indexOf(weekStart) - 1
-            }
-        });
-    }
+	selectStartTime(startTime) {
+		if (startTime && !startTime.isSame(this.state.startTime)) {
+			this.changeStart(startTime);
+		}
+	}
 
-    setDayAfterLockedEntries() {
-        if (!this.props.isUserOwnerOrAdmin && !!this.props.workspaceSettings.lockTimeEntries) {
-            this.setState({
-                dayAfterLockedEntries: this.props.workspaceSettings.lockTimeEntries
-            });
-        }
-    }
+	selectEndTime(endTime) {
+		if (endTime && !endTime.isSame(this.state.endTime)) {
+			this.changeEnd(endTime);
+		}
+	}
 
-    setTime() {
-        const { timeInterval } = this.props.timeEntry;
-        if (!timeInterval.end) {
-            _currentPeriod = moment().diff(moment(timeInterval.start));
-            clearInterval(_interval);
-            _interval = setInterval(() => {
-                _currentPeriod += 1000;
-                this.setState({
-                    time: duration(_currentPeriod) //.format('HH:mm:ss', {trim: false})
-                })
-            }, 1000);
-        }
-    }
+	changeStart(startTime) {
+		const timeInterval = Object.assign(this.props.timeEntry.timeInterval, {});
+		startTime = moment(startTime).set('second', 0);
 
+		const endTime = this.state.endTime || moment();
 
-    selectStartTime(startTime) {
-        if (startTime && !startTime.isSame(this.state.startTime)) {
-            this.changeStart(startTime);
-        }
-    }
+		if (moment(endTime).diff(startTime) < 0) {
+			startTime = moment(startTime).subtract(1, 'day');
+		} else if (
+			moment(endTime).date() !== moment(startTime).date() &&
+			moment(endTime).date(1).diff(moment(startTime).date(1)) > 0
+		) {
+			startTime = moment(startTime).add(1, 'day');
+		}
 
-    selectEndTime(endTime) {
-        if (endTime && !endTime.isSame(this.state.endTime)) {
-            this.changeEnd(endTime)
-        }
-    }
+		timeInterval.start = startTime;
+		timeInterval.end = this.state.endTime;
+		this.props.changeInterval(timeInterval);
+	}
 
-    changeStart(startTime) {
-        const timeInterval = Object.assign(this.props.timeEntry.timeInterval, {});
-        startTime = moment(startTime).set('second', 0);
+	changeEnd(endTime) {
+		const timeInterval = Object.assign(this.props.timeEntry.timeInterval, {});
 
-        const endTime = this.state.endTime || moment();
+		let startTime = this.state.startTime;
+		endTime = moment(endTime).set('second', 0);
 
-        if (moment(endTime).diff(startTime) < 0) {
-            startTime = moment(startTime).subtract(1, 'day');
-        }
-        else if (moment(endTime).date() !== moment(startTime).date() 
-                && moment(endTime).date(1).diff(moment(startTime).date(1)) > 0) {
-            startTime = moment(startTime).add(1, 'day');
-        }
-        
-        timeInterval.start = startTime;
-        timeInterval.end = this.state.endTime;
-        this.props.changeInterval(timeInterval);
-    }
+		if (moment(endTime).diff(startTime) < 0) {
+			startTime = moment(startTime).subtract(1, 'day');
+		} else if (
+			moment(endTime).date() !== moment(startTime).date() &&
+			moment(endTime).date(1).diff(moment(startTime).date(1)) > 0
+		) {
+			startTime = moment(startTime).add(1, 'day');
+		}
 
-    changeEnd(endTime) {
-        const timeInterval = Object.assign(this.props.timeEntry.timeInterval, {});
+		timeInterval.start = startTime;
+		timeInterval.end = endTime;
+		this.props.changeInterval(timeInterval);
+	}
 
-        let startTime = this.state.startTime;
-        endTime = moment(endTime).set('second', 0);
+	selectDuration(time, timeString) {
+		if (!!timeString) {
+			this.changeDuration(timeString);
+		}
+	}
 
-        if (moment(endTime).diff(startTime) < 0) {
-            startTime = moment(startTime).subtract(1, 'day');
-        }
-        else if (moment(endTime).date() !== moment(startTime).date() 
-                && moment(endTime).date(1).diff(moment(startTime).date(1)) > 0) {
-            startTime = moment(startTime).add(1, 'day');
-        }
+	changeDuration(selectedDuration) {
+		this.props.changeDuration(selectedDuration);
+	}
 
-        timeInterval.start = startTime;
-        timeInterval.end = endTime;
-        this.props.changeInterval(timeInterval);
-    }
+	selectDate(date) {
+		this.props.changeDate(date);
+	}
 
-    selectDuration(time, timeString) {
-        if (!!timeString) {
-            this.changeDuration(timeString);
-        }
-    }
+	cancelDate() {
+		this.setState({
+			datePickerOpen: false,
+		});
+	}
 
-    changeDuration(selectedDuration) {
-        this.props.changeDuration(selectedDuration);
-    }
+	openDatePicker() {
+		this.setState({
+			datePickerOpen: true,
+		});
+	}
 
-    selectDate(date) {
-        this.props.changeDate(date);
-    }
+	fadeBackgroundAroundTimePicker(event) {
+		if (event) {
+			htmlStyleHelpers.fadeBackground();
+		} else {
+			setTimeout(() => {
+				htmlStyleHelpers.unfadeBackground();
+			}, 100);
+		}
+	}
 
-    cancelDate() {
-        this.setState({
-            datePickerOpen: false
-        })
-    }
-
-    openDatePicker() {
-        this.setState({
-            datePickerOpen: true
-        })
-    }
-
-    fadeBackgroundAroundTimePicker(event) {
-        if (event) {
-            htmlStyleHelpers.fadeBackground();
-        } else {
-            setTimeout(() => {
-                htmlStyleHelpers.unfadeBackground();
-            }, 100);
-        }
-    }
-
-    render() {
-        return (
-            <div className="duration">
-                <div className="duration-time">
-                    <label className={!this.state.end ? "duration-label" : "disabled"}>{locales.START}:</label>
-                    <span className="ant-time-picker duration-start ant-time-picker-small">
-                        <MyTimePicker
-                            id="startTimePicker"
-                            value={this.state.startTime}
-                            className="ant-time-picker-input"
-                            format={this.state.timeFormat}
-                            size="small"
-                            use12Hours={this.props.timeFormat === 'HOUR12'}
-                            onChange={this.selectStartTime}
-                            editDisabled={this.state.manualModeDisabled}
-                            title={this.state.manualModeDisabled ? locales.DISABLED_MANUAL_MODE : ""}
-                        />
-                    </span>
-                    <label className={this.state.end ? "duration-dash" : "disabled"}>-</label>
-                    <span className="ant-time-picker duration-end ant-time-picker-small">
-                        <MyTimePicker
-                            id="endTimePicker"
-                            value={this.state.endTime}
-                            className={this.state.end ? "ant-time-picker-input" : "disabled"}
-                            isDisabled={!this.state.end}
-                            format={this.state.timeFormat}
-                            size="small"
-                            use12Hours={this.props.timeFormat === 'HOUR12'}
-                            onChange={this.selectEndTime}
-                            editDisabled={this.state.manualModeDisabled}
-                            title={this.state.manualModeDisabled ? locales.DISABLED_MANUAL_MODE : ""}
-                        />
-                    </span>
-                    <span style={{ paddingRight: this.state.end ? '' : '3px', position: 'relative'}}>
-                        {!this.state.end
-                            ? <span style={{position: 'absolute', right: '5px', bottom: '-9px', wordBreak: 'keep-all'}}>{locales.TODAY_LABEL}</span>
-                            : <DatePicker
-                                selected={new Date(this.state.start)} //moment(this.state.start)}
-                                onChange={this.selectDate.bind(this)}
-                                customInput={<img src="./assets/images/calendar.png" />}
-                                withPortal
-                                min={moment(new Date(this.state.dayAfterLockedEntries))}
-                                max={!this.props.end ?
-                                    moment(/*this.props.start*/) : moment().add(10, 'years')}
-                                disabled={this.state.manualModeDisabled}
-                                title={this.state.manualModeDisabled ? locales.DISABLED_MANUAL_MODE : ""}
-                                className={this.state.manualModeDisabled ? "disable-manual" : ""}
-                                locale={this.state.lang}
-                            />
-                        }
-                    </span>
-                    <span className="duration-divider"></span>
-                    <span className="ant-time-picker duration-end ant-time-picker-small">
-                        <MyDurationPicker id="durationTimePicker"
-                            className={"ant-time-picker-input"}
-                            isDisabled={!this.state.end}
-                            defaultOpenValue={this.state.time}
-                            placeholder={this.props.workspaceSettings.trackTimeDownToSecond ?
-                                "Duration (HH:mm:ss)" : "Duration (h:mm)"}
-                            size="small"
-                            format={this.props.workspaceSettings.trackTimeDownToSecond ? "HH:mm:ss" : "H:mm"}
-                            onChange={this.selectDuration}
-                            editDisabled={this.state.manualModeDisabled}
-                            title={this.state.manualModeDisabled ? locales.DISABLED_MANUAL_MODE : ""}
-                        />
-                    </span>
-                </div>
-            </div>
-        )
-    }
+	render() {
+		return (
+			<div className="duration">
+				<div className="duration-time">
+					<label className={!this.state.end ? 'duration-label' : 'disabled'}>
+						{locales.START}:
+					</label>
+					<span className="ant-time-picker duration-start ant-time-picker-small">
+						<MyTimePicker
+							id="startTimePicker"
+							value={this.state.startTime}
+							className="ant-time-picker-input"
+							format={this.state.timeFormat}
+							size="small"
+							use12Hours={this.props.timeFormat === 'HOUR12'}
+							onChange={this.selectStartTime}
+							editDisabled={this.state.manualModeDisabled}
+							title={
+								this.state.manualModeDisabled
+									? locales.DISABLED_MANUAL_MODE
+									: ''
+							}
+						/>
+					</span>
+					<label className={this.state.end ? 'duration-dash' : 'disabled'}>
+						-
+					</label>
+					<span className="ant-time-picker duration-end ant-time-picker-small">
+						<MyTimePicker
+							id="endTimePicker"
+							value={this.state.endTime}
+							className={this.state.end ? 'ant-time-picker-input' : 'disabled'}
+							isDisabled={!this.state.end}
+							format={this.state.timeFormat}
+							size="small"
+							use12Hours={this.props.timeFormat === 'HOUR12'}
+							onChange={this.selectEndTime}
+							editDisabled={this.state.manualModeDisabled}
+							title={
+								this.state.manualModeDisabled
+									? locales.DISABLED_MANUAL_MODE
+									: ''
+							}
+						/>
+					</span>
+					<span
+						style={{
+							paddingRight: this.state.end ? '' : '3px',
+							position: 'relative',
+						}}
+					>
+						{!this.state.end ? (
+							<span
+								style={{
+									position: 'absolute',
+									right: '5px',
+									bottom: '-9px',
+									wordBreak: 'keep-all',
+								}}
+							>
+								{locales.TODAY_LABEL}
+							</span>
+						) : (
+							<DatePicker
+								selected={new Date(this.state.start)} //moment(this.state.start)}
+								onChange={this.selectDate.bind(this)}
+								customInput={<img src="./assets/images/calendar.png" />}
+								withPortal
+								min={moment(new Date(this.state.dayAfterLockedEntries))}
+								max={
+									!this.props.end
+										? moment(/*this.props.start*/)
+										: moment().add(10, 'years')
+								}
+								disabled={this.state.manualModeDisabled}
+								title={
+									this.state.manualModeDisabled
+										? locales.DISABLED_MANUAL_MODE
+										: ''
+								}
+								className={
+									this.state.manualModeDisabled ? 'disable-manual' : ''
+								}
+								locale={this.state.lang}
+							/>
+						)}
+					</span>
+					<span className="duration-divider"></span>
+					<span className="ant-time-picker duration-end ant-time-picker-small">
+						<MyDurationPicker
+							id="durationTimePicker"
+							className={'ant-time-picker-input'}
+							isDisabled={!this.state.end}
+							defaultOpenValue={this.state.time}
+							placeholder={
+								this.props.workspaceSettings.trackTimeDownToSecond
+									? 'Duration (HH:mm:ss)'
+									: 'Duration (h:mm)'
+							}
+							size="small"
+							format={
+								this.props.workspaceSettings.trackTimeDownToSecond
+									? 'HH:mm:ss'
+									: 'H:mm'
+							}
+							onChange={this.selectDuration}
+							editDisabled={this.state.manualModeDisabled}
+							title={
+								this.state.manualModeDisabled
+									? locales.DISABLED_MANUAL_MODE
+									: ''
+							}
+						/>
+					</span>
+				</div>
+			</div>
+		);
+	}
 }
 
 export default Duration;
