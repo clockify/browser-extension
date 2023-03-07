@@ -6,7 +6,7 @@
   },
   "ambra.app": {
     "name": "Ambra",
-    "link": "*://ambra.app/project/*",
+    "link": "*://ambra.app",
     "script": "ambra.js"
   },
   "asana.com": {
@@ -66,7 +66,7 @@
   },  
   "coda.io": {
     "name": "Coda",
-    "link": "*://*.coda.io/*",
+    "link": "*://coda.io/*",
     "script": "coda.js"
   },
   "conectohub.com": {
@@ -181,7 +181,7 @@
   },
   "linear.app": {
     "name": "Linear",
-    "link": "*://*.linear.app/*",
+    "link": "*://linear.app/*",
     "script": "linear.js"
   },
   "liquidplanner.com": {
@@ -281,7 +281,7 @@
   },
   "podio.com": {
     "name": "Podio",
-    "link": "*://*.podio.com/*",
+    "link": "*://podio.com/*",
     "script": "podio.js"
   },
   "pipedrive.com": {
@@ -293,6 +293,11 @@
     "name": "Plaky",
     "link": "*://*.plaky.com/*",
     "script": "plaky.js"
+  },
+  "plutio.com": {
+    "name": "Plutio",
+    "link": "*://*.plutio.com/*",
+    "script": "plutio.js"
   },
   "redbooth.com": {
     "name": "Redbooth",
@@ -457,12 +462,11 @@
   "jetbrains.space": {
     "name": "JetBrains Space",
     "link": "*://*.jetbrains.space/*",
-    "script": "space.js",
-    "clone": false
+    "script": "jetbrains.js"
   },
-  "plutio.com": {
-    "name": "Plutio",
-    "link": "*://*.plutio.com/*",
-    "script": "plutio.js"
+  "nifty.pm": {
+    "name": "Nifty",
+    "link": "*://*.nifty.pm/*",
+    "script": "nifty.js"
   }
 }
