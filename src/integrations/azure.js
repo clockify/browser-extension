@@ -10,12 +10,13 @@ clockifyButton.render(
 			: $('.navigation-container .project-item .text-ellipsis').textContent;
 		tagNames = () =>
 			Array.from(
-				$$('.tags-items-container .tag-item:not(.tags-add-button) .tag-box')
+				$$('.work-item-view .tags-items-container .tag-item:not(.tags-add-button) .tag-box')
 			).map((e) => e.innerText);
 		link = clockifyButton.createButton({
 			description: () => '#' + itemId() + ' ' + description(),
 			projectName: project,
 			taskName: () => description(),
+			tagNames: tagNames()
 		});
 		link.style.display = 'block';
 		link.style.paddingTop = '0';
