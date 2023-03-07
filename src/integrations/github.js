@@ -41,7 +41,7 @@ clockifyButton.render(
 	function (elem) {
 		issueId = $('.gh-header-number').innerText;
 		description = issueId + ' ' + $('.js-issue-title').innerText;
-		project = $("[data-pjax='#repo-content-pjax-container']").innerText;
+		project = $('[data-pjax=\'#repo-content-pjax-container\']').innerText;
 		(tags = () => Array.from($$('.IssueLabel')).map((e) => e.innerText)),
 			(link = clockifyButton.createButton({
 				description: description,

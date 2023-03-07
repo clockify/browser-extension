@@ -1,4 +1,4 @@
-import { enUS, es, fr, pt, ru, de, ko, ja } from 'date-fns/locale';
+import { de, enUS, es, fr, ja, ko, pt, ru } from 'date-fns/locale';
 
 import { registerLocale } from 'react-datepicker';
 

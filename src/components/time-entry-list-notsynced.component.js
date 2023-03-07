@@ -1,5 +1,4 @@
 import React from 'react';
-import * as ReactDOM from 'react-dom';
 import moment, { duration } from 'moment';
 import EditFormManual from './edit-form-manual.component';
 

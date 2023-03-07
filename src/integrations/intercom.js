@@ -1,63 +1,45 @@
+// Inbox
 clockifyButton.render(
-	'.conversation__card__content-expanded__controls .inbox__conversation-controls__pane-selector:not(.clockify)',
+	'.inbox2__composer__container > div:last-child:not(.clockify)',
 	{ observe: true },
-	function (elem) {
-		if (elem.querySelector('.clockify-button')) {
-			return;
-		}
+	(elem) => {
+		const description = $(
+			'.text-lg.u__one-truncated-line > div > span'
+		).textContent;
 
-		const descriptionSelector = () => {
-			const description = $(
-				'.ember-view.attribute__label-wrapper.u__one-truncated-line.t__solo-link.t__h4'
-			);
-			return description
-				? description.textContent.trim().replace(/ +/g, ' ')
-				: '';
-		};
-		const projectSelector = () => {
-			const project = $(
-				'div.layout__box.o__centers-vertically.o__flexes-to-1.inbox__user-profile__user-details-title > div > div.c__deemphasized-text > span > span > a > span'
-			);
-			return project ? project.textContent.trim().replace(/ +/g, ' ') : '';
-		};
-
-		const link = clockifyButton.createButton(
-			descriptionSelector,
-			projectSelector
+		const companyRow = $('.o__inbox2__company')?.closest(
+			'.flex.flex-row.items-center'
 		);
-		link.style.textDecoration = 'none';
-		link.style.position = 'relative';
-		link.style.top = '7px';
-		link.style.right = '10px';
+		const companyName = $(
+			'p > span > a > span',
+			companyRow
+		)?.textContent?.trim();
+		const projectName = companyName ?? '';
 
-		if (elem.querySelector('#clockifyButton')) {
-			elem.removeChild(elem.querySelector('#clockifyButton'));
-		}
+		const link = clockifyButton.createButton({ description, projectName });
 
-		link.addEventListener('mousedown', (e) => {
-			e.preventDefault();
-			e.stopPropagation();
-		});
+		link.style.padding = '8px';
+		link.style.position = 'absolute';
+		link.style.marginLeft = '80px';
 
-		elem.appendChild(link);
+		$('div:first-child', elem).after(link);
 	}
 );
 
+// Articles
 clockifyButton.render(
-	'.articles__editor__header-text:not(.clockify)',
+	'.js__articles__scrollable-content .flex.flex-row.pr-8.pt-6.pb-2:not(.clockify)',
 	{ observe: true },
-	function (elem) {
-		const descriptionSelector = () => {
-			const description = elem.textContent;
-			return description
-				? description.trim().replace(' ' + clockifyLocales.START_TIMER, '')
-				: '';
-		};
+	(elem) => {
+		const description =
+			$('.educate__article__editor__title')?.getAttribute('placeholder') ||
+			$('.educate__article__view__title')?.textContent?.trim() ||
+			'';
 
-		const link = clockifyButton.createButton(descriptionSelector);
-		link.style.margin = '3px 15px';
-		link.style.textDecoration = 'none';
+		const link = clockifyButton.createButton({ description });
 
-		elem.appendChild(link);
+		link.style.marginRight = '20px';
+
+		elem.prepend(link);
 	}
 );

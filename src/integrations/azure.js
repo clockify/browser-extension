@@ -5,8 +5,8 @@ clockifyButton.render(
 		var link, itemId, description, project, tagNames;
 		itemId = () => $('.work-item-form-id > span', elem).textContent;
 		description = () => $('.work-item-form-title input', elem).value;
-		project = $("input[aria-label='Clockify Project']")
-			? $("input[aria-label='Clockify Project']").value
+		project = $('input[aria-label=\'Clockify Project\']')
+			? $('input[aria-label=\'Clockify Project\']').value
 			: $('.navigation-container .project-item .text-ellipsis').textContent;
 		tagNames = () =>
 			Array.from(
@@ -16,7 +16,7 @@ clockifyButton.render(
 			description: () => '#' + itemId() + ' ' + description(),
 			projectName: project,
 			taskName: () => description(),
-			tagNames: tagNames()
+			tagNames: () => tagNames()
 		});
 		link.style.display = 'block';
 		link.style.paddingTop = '0';
@@ -35,8 +35,8 @@ clockifyButton.render(
 		var link, itemId, description, project;
 		itemId = () => $('.work-item-form-header > .body-xl', elem).textContent;
 		description = () => $('.work-item-title-textfield input', elem).value;
-		project = $("input[aria-label='Clockify Project']")
-			? $("input[aria-label='Clockify Project']").value
+		project = $('input[aria-label=\'Clockify Project\']')
+			? $('input[aria-label=\'Clockify Project\']').value
 			: $('.navigation-container .project-item .text-ellipsis').textContent;
 		link = clockifyButton.createButton({
 			description: () => '#' + itemId() + ' ' + description(),

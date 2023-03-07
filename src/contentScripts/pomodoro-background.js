@@ -101,14 +101,14 @@ aBrowser.alarms.onAlarm.addListener(async (alarm) => {
 		lastIntervalId = null;
 	}
 	switch (alarm.name) {
-		case 'breakInterval':
-			breakIntervalAlarm();
-			break;
-		case 'pomodoroInterval':
-			pomodoroIntervalAlarm();
-			break;
-		default:
-			break;
+	case 'breakInterval':
+		breakIntervalAlarm();
+		break;
+	case 'pomodoroInterval':
+		pomodoroIntervalAlarm();
+		break;
+	default:
+		break;
 	}
 });
 
@@ -265,7 +265,7 @@ function removeAllPomodoroTimers() {
 	this.clearBreakOverNotification();
 	this.clearBreakNotification();
 	this.clearLongBreakNotification();
-	if (lastIntervalId) {
+	if (typeof lastIntervalId !== 'undefined' && lastIntervalId) {
 		clearInterval(lastIntervalId);
 	}
 }
@@ -517,7 +517,7 @@ async function startBreak(description, endDate) {
 
 async function startBreakTimer(description, isWebSocketHeader, options) {
 	const isPomodoro = true;
-	const { entry, error } = await TimeEntry.startTimer(
+	const { data: entry, error } = await TimeEntry.startTimer(
 		description,
 		Object.assign({}, options, { isWebSocketHeader }),
 		isPomodoro
@@ -603,7 +603,10 @@ async function startTimerByPomodoro() {
 async function startNewEntryTimer(isWebSocketHeader) {
 	const pomodoroForUser = await getPomodoroForUser();
 	this.setActiveBadge(pomodoroForUser.timerInterval);
-	const { entry, error } = await TimeEntry.startTimer('', isWebSocketHeader);
+	const { data: entry, error } = await TimeEntry.startTimer(
+		'',
+		isWebSocketHeader
+	);
 
 	if (entry && entry.id) {
 		const pomodoroForUser = await getPomodoroForUser();
@@ -655,7 +658,7 @@ async function continueLastEntryByPomodoro(endDate) {
 
 async function continueLastEntryTimer(timeEntry, isWebSocketHeader) {
 	const isPomodoro = true;
-	const { entry, error } = await TimeEntry.startTimer(
+	const { data: entry, error } = await TimeEntry.startTimer(
 		timeEntry.description,
 		{
 			projectId: timeEntry.projectId,

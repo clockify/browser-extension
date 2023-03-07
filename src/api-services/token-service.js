@@ -1,6 +1,4 @@
 class TokenService extends ClockifyService {
-	constructor() {}
-
 	static async urlTokenRefresh() {
 		const apiEndpoint = await this.apiEndpoint;
 		return `${apiEndpoint}/auth/token/refresh`;

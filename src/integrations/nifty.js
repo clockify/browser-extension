@@ -1,29 +1,37 @@
-removeAllButtons();
-
 clockifyButton.render(
-  ".project-main .tasks-view-holder .content-panel-holder .content-panel-head:not(.clockify)",
-  { observe: true },
-  elem => {
-    let link;
+	'.tasks-view-holder .content-panel-holder .content-panel-head:not(.clockify)',
+	{ observe: true },
+	elem => {
 
-    let projectName = document
-      .querySelector(".header-title h1")
-      .innerText.trim();
+		let getTaskName, getProjectName, taskID, tagNames, link;
 
-    let taskName =
-      document
-        .querySelector(".content-panel-title .content-panel-field-input")
-        .innerHTML.trim() || false;
+		getTaskName = () => $('.content-panel-title .content-panel-field-input').innerHTML.trim() || 'Add task name...';
 
-    let taskID =
-      document.querySelector(".content-panel-head .nice-id").innerText || false;
+		getProjectName = () => {
+			let projectName;
+			let rows = Array.from($$('.row-task'));
+			for (const row of rows) {
+				if (row.innerText.includes(`${getTaskName()}`) && row.querySelector('.task-project-name')) {
+					projectName = row.querySelector('.task-project-name').innerText;
+				}
+			}
+			if (!projectName) projectName = $('.header-title h1').textContent;
+			return projectName;
+		};
 
-    if (!taskName || !taskID) {
-      return;
-    }
+		taskID = $('.content-panel-head .nice-id') ? $('.content-panel-head .nice-id').innerText : '';
 
-    link = clockifyButton.createButton(`#${taskID} ${taskName}`, projectName);
+		tagNames = () =>
+			Array.from(
+				$$('.control .labels-list-item')
+			).map((e) => e.innerText);
 
-    elem.appendChild(link);
-  }
+		link = clockifyButton.createButton({
+			description: () => `#${taskID} ${getTaskName()}`,
+			projectName: getProjectName(),
+			tagNames: () => tagNames()
+		});
+
+		elem.appendChild(link);
+	}
 );

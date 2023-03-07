@@ -105,13 +105,17 @@ async function messageHandler(event) {
 				aBrowser.action.setIcon({
 					path: iconPathStarted,
 				});
+
+				aBrowser.runtime.sendMessage({
+					eventName: 'addPomodoroTimer',
+				});
 			}
 
 			this.sendWebSocketEventToExtension(event.data);
 			this.addIdleListenerIfIdleIsEnabled();
 			this.removeReminderTimer();
-			// this.restartPomodoro();
-			// this.addPomodoroTimer();
+			this.restartPomodoro();
+			this.addPomodoroTimer();
 			break;
 		}
 
@@ -128,7 +132,6 @@ async function messageHandler(event) {
 			this.removeIdleListenerIfIdleIsEnabled();
 			this.addReminderTimer();
 			this.restartPomodoro();
-			// this.removeBadge();
 			break;
 
 		case webSocketEventsEnums.TIME_ENTRY_UPDATED: {
@@ -150,7 +153,7 @@ async function messageHandler(event) {
 				});
 				this.removeIdleListenerIfIdleIsEnabled();
 				this.addReminderTimer();
-				// this.restartPomodoro();
+				this.restartPomodoro();
 			} else {
 				setTimeEntryInProgress(entry);
 				aBrowser.action.setIcon({
@@ -176,7 +179,7 @@ async function messageHandler(event) {
 					this.sendWebSocketEventToExtension(event.data);
 				})
 				.catch((err) => console.log(err));
-
+			this.restartPomodoro();	
 			break;
 
 		case webSocketEventsEnums.CHANGED_ADMIN_PERMISSION:

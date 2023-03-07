@@ -6,25 +6,28 @@
 	"default_locale": "en",
 	"background": {
 		"scripts": [
+			"moment.js",
 			"contentScripts/URLPatternHelper.js",
 			"contentScripts/service-localstorage.js",
 			"contentScripts/defaultProject.js",
-			"contentScripts/userWorkspaceStorage.js",
 			"contentScripts/service-background.js",
-			"contentScripts/token-service-background.js",
-			"contentScripts/user-service-background.js",
+			"api-services/workspace-service.js",
+			"api-services/token-service.js",
+			"api-services/user-service.js",
+			"api-services/client-service.js",
+			"api-services/project-task-service.js",
+			"api-services/tag-service.js",
+			"api-services/time-entry-service.js",
+			"api-services/auth-service.js",
 			"contentScripts/integration-background.js",
-			"contentScripts/task-service-background.js",
-			"contentScripts/project-service-background.js",
-			"contentScripts/tag-service-background.js",
 			"contentScripts/custom-field-service-background.js",
-			"contentScripts/timeEntry.js",
 			"contentScripts/clockifyLocales.js",
 			"contentScripts/background.js",
 			"contentScripts/webSocket-background.js",
 			"contentScripts/idle-detection-background.js",
 			"contentScripts/context-menu.background.js",
 			"contentScripts/notification-background.js",
+			"contentScripts/stop-timer-at-background.js",
 			"contentScripts/reminder-background.js",
 			"contentScripts/pomodoro-background.js"
 		]
@@ -35,7 +38,7 @@
 			"strict_min_version": "57.0a1"
 		}
 	},
-	"version": "2.8.10",
+	"version": "2.9.1",
 	"browser_action": {
 		"default_popup": "index.html",
 		"default_title": "Clockify"
@@ -45,9 +48,11 @@
 			"matches": ["https://*/*", "http://*/*"],
 			"js": [
 				"contentScripts/service-localstorage.js",
+				"contentScripts/clockifyLocales.js",
 				"vendors.bundle.js",
 				"main.bundle.js"
-			]
+			],
+			"css": ["styles/main-integration.css"]
 		}
 	],
 	"options_ui": {

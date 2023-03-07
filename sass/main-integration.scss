@@ -1,7 +1,7 @@
 @use 'sass:meta';
 @use 'integration';
 .clockify-integration-popup {
-	@include meta.load-css('~antd/lib/switch/style/index');
+	@include meta.load-css('../node_modules/antd/lib/switch/style/index');
 	// @include meta.load-css("header");
 	@include meta.load-css('start-timer');
 	// @include meta.load-css("menu");

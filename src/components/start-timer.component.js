@@ -8,17 +8,14 @@ import { isOffline } from './check-connection';
 import { getIconStatus } from '../enums/browser-icon-status-enum';
 import { Application } from '../application';
 import { TimeEntryHelper } from '../helpers/timeEntry-helper';
-import { TimeEntryService } from '../services/timeEntry-service';
 import { getKeyCodes } from '../enums/key-codes.enum';
 import { getBrowser } from '../helpers/browser-helper';
-import { LocalStorageService } from '../services/localStorage-service';
+
 import { offlineStorage } from '../helpers/offlineStorage';
 import locales from '../helpers/locales';
 import debounce from 'lodash.debounce';
 
 const timeEntryHelper = new TimeEntryHelper();
-const timeEntryService = new TimeEntryService();
-const localStorageService = new LocalStorageService();
 let interval;
 
 class StartTimer extends Component {
@@ -82,8 +79,10 @@ class StartTimer extends Component {
 	}
 
 	getRecentEntries() {
-		timeEntryService
-			.getRecentTimeEntries()
+		getBrowser()
+			.runtime.sendMessage({
+				eventName: 'getRecentTimeEntries',
+			})
 			.then((res) => {
 				this.setState({
 					autocompleteItemsRecent: res.data.map((entry) => ({
@@ -106,8 +105,13 @@ class StartTimer extends Component {
 
 	handleInputChange(inputValue) {
 		if (!inputValue) return;
-		timeEntryService
-			.searchEntries(inputValue)
+		getBrowser()
+			.runtime.sendMessage({
+				eventName: 'searchEntries',
+				options: {
+					searchValue: inputValue,
+				},
+			})
 			.then((res) => {
 				this.setState({
 					autocompleteItems: res.data.map((entry) => ({
@@ -156,10 +160,12 @@ class StartTimer extends Component {
 				}
 			);
 		} else {
-			timeEntryService
-				.getEntryInProgress()
+			getBrowser()
+				.runtime.sendMessage({
+					eventName: 'getEntryInProgress',
+				})
 				.then((response) => {
-					let timeEntry = response.data[0];
+					let timeEntry = response.data;
 					this.setTimeEntryInProgress(timeEntry);
 				})
 				.catch((error) => {
@@ -198,6 +204,9 @@ class StartTimer extends Component {
 					? getIconStatus().timeEntryStarted
 					: getIconStatus().timeEntryEnded
 			);
+			getBrowser().runtime.sendMessage({
+				eventName: 'addPomodoroTimer',
+			});
 			const { forceProjects, forceTasks } = this.props.workspaceSettings;
 			const taskId = timeEntry.task ? timeEntry.task.id : timeEntry.taskId;
 
@@ -228,6 +237,9 @@ class StartTimer extends Component {
 					? getIconStatus().timeEntryStarted
 					: getIconStatus().timeEntryEnded
 			);
+			getBrowser().runtime.sendMessage({
+						eventName: 'restartPomodoro',
+					});
 		}
 	}
 
@@ -310,7 +322,7 @@ class StartTimer extends Component {
 			this.setState(
 				{
 					timeEntry: {
-						workspaceId: await localStorageService.get('activeWorkspaceId'),
+						workspaceId: await localStorage.getItem('activeWorkspaceId'),
 						id: offlineStorage.timeEntryIdTemp,
 						description: this.state.timeEntry.description,
 						projectId: this.state.timeEntry.projectId,
@@ -357,18 +369,20 @@ class StartTimer extends Component {
 								value: type === 'NUMBER' ? parseFloat(value) : value,
 							}))
 					: [];
-
-			timeEntryService
-				.startNewEntry(
-					projectId,
-					description,
-					null,
-					moment(),
-					null,
-					taskId,
-					tagIds,
-					cfs
-				)
+			getBrowser()
+				.runtime.sendMessage({
+					eventName: 'startWithDescription',
+					options: {
+						projectId,
+						description,
+						billable: null,
+						start: null,
+						end: null,
+						taskId,
+						tagIds,
+						customFields: cfs,
+					},
+				})
 				.then((response) => {
 					let data = response.data;
 					this.setState(
@@ -466,8 +480,10 @@ class StartTimer extends Component {
 			});
 			this.props.setTimeEntryInProgress(null);
 		} else {
-			timeEntryService
-				.stopEntryInProgress(moment())
+			getBrowser()
+				.runtime.sendMessage({
+					eventName: 'endInProgress',
+				})
 				.then(() => {
 					localStorage.setItem('timeEntryInProgress', null);
 					getBrowser().runtime.sendMessage({
@@ -522,9 +538,7 @@ class StartTimer extends Component {
 	}
 
 	async goToEditManual() {
-		const activeWorkspaceId = await localStorageService.get(
-			'activeWorkspaceId'
-		);
+		const activeWorkspaceId = await localStorage.getItem('activeWorkspaceId');
 		if (!this.state.timeEntry.timeInterval) {
 			this.setState(
 				{

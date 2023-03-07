@@ -48,9 +48,10 @@ class ProjectItem extends React.Component {
 	}
 
 	async openTasks(e) {
-		e.preventDefault();
-
+		if(e) e.preventDefault();
+		 
 		if (this.state.tasks.length === 0) {
+			 
 			if (this.state.taskList.length > 0) {
 				this.setState({
 					tasks: [...this.state.taskList],
@@ -69,6 +70,7 @@ class ProjectItem extends React.Component {
 	}
 
 	chooseProject() {
+		 
 		this.props.selectProject(this.props.project);
 	}
 
@@ -87,7 +89,7 @@ class ProjectItem extends React.Component {
 				});
 			});
 		} else {
-			this.props.makeProjectFavorite(project.id).then(() => {
+			this.props.makeProjectFavorite(project.id).then((response) => {
 				this.setState({
 					favorite: true,
 				});

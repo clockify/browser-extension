@@ -60,7 +60,7 @@ class TagService extends ClockifyService {
 			}
 		}
 		if (notifyCanNotreateObjects)
-			message += "\n Integrations can't create tags.";
+			message += '\n Integrations can\'t create tags.';
 		if (forceTags && tags.length !== tagNames.length)
 			message += '\n Tags are required.';
 

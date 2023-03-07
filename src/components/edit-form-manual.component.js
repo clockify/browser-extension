@@ -8,11 +8,7 @@ import ProjectList from './project-list.component';
 import TagsList from './tags-list.component';
 import HomePage from './home-page.component';
 import { isOffline } from './check-connection';
-// import {TimeEntryHelper} from "../helpers/timeEntry-helper";
-import { TimeEntryService } from '../services/timeEntry-service';
-import { ProjectService } from '../services/project-service';
 import DeleteEntryConfirmationComponent from './delete-entry-confirmation.component';
-// import {LocalStorageService} from "../services/localStorage-service";
 import Toaster from './toaster-component';
 import { DefaultProject } from '../helpers/storageUserWorkspace';
 import { CustomFieldsContainer } from './customFields/customFields-Container';
@@ -20,11 +16,6 @@ import { offlineStorage, getWSCustomFields } from '../helpers/offlineStorage';
 import locales from '../helpers/locales';
 import Autocomplete from './autocomplete.component';
 import { getBrowser } from '../helpers/browser-helper';
-
-// const timeEntryHelper = new TimeEntryHelper();
-const timeEntryService = new TimeEntryService();
-const projectService = new ProjectService();
-// const localStorageService = new LocalStorageService();
 
 class EditFormManual extends React.Component {
 	constructor(props) {
@@ -85,9 +76,10 @@ class EditFormManual extends React.Component {
 
 	async componentDidMount() {
 		this.setAsyncStateItems();
-
-		timeEntryService
-			.getRecentTimeEntries()
+		getBrowser()
+			.runtime.sendMessage({
+				eventName: 'getRecentTimeEntries',
+			})
 			.then((res) => {
 				this.setState({
 					autocompleteItemsRecent: res.data.map((entry) => ({
@@ -179,8 +171,13 @@ class EditFormManual extends React.Component {
 
 	handleInputChange(inputValue) {
 		if (!inputValue) return;
-		timeEntryService
-			.searchEntries(inputValue)
+		getBrowser()
+			.runtime.sendMessage({
+				eventName: 'searchEntries',
+				options: {
+					searchValue: inputValue,
+				},
+			})
 			.then((res) => {
 				this.setState({
 					autocompleteItems: res.data.map((entry) => ({
@@ -256,15 +253,29 @@ class EditFormManual extends React.Component {
 				!defaultProject.project.name.includes('task');
 			let lastEntry;
 			try {
-				lastEntry = await projectService.getLastUsedProject(
-					!isLastUsedProjectWithoutTask
-				);
+				const response = await getBrowser().runtime.sendMessage({
+					eventName: 'getLastUsedProjectFromTimeEntries',
+					options: {
+						forceTasks: !isLastUsedProjectWithoutTask,
+					},
+				});
+
+				if(!response.data) throw new Error(response);
 				lastEntry = {
-					project: lastEntry.data.project || lastEntry.data,
-					task: lastEntry.data.task,
+					project: !isLastUsedProjectWithoutTask ? response.data.project : response.data,
+					task: !isLastUsedProjectWithoutTask ? response.data.task : null,
 				};
+				
 			} catch (e) {
-				lastEntry = this.props.timeEntries?.[0];
+				console.error('project not found', e);
+				setTimeout(() => {
+						this.toaster.toast(
+							'info',
+							`${locales.DEFAULT_PROJECT_NOT_AVAILABLE} ${locales.YOU_CAN_SET_A_NEW_ONE_IN_SETTINGS}`,
+							4
+						);
+				}, 1000);
+				return { projectDB: null, taskDB: null };
 			}
 			if (!isLastUsedProject) {
 				const { projectDB, taskDB, msg } =
@@ -552,10 +563,13 @@ class EditFormManual extends React.Component {
 				? JSON.parse(wsSettings).taskBillableEnabled
 				: false;
 			if (tasksBillable) {
-				let projectTask = await projectService.getTaskOfProject(
-					this.state.timeEntry.project.id,
-					this.state.timeEntry.task.name
-				);
+				let projectTask = getBrowser().runtime.sendMessage({
+					eventName: 'getTaskOfProject',
+					options: {
+						projectId: this.state.timeEntry.project.id,
+						taskName: this.state.timeEntry.task.name,
+					},
+				});
 				projectTask.data &&
 					this.setState({
 						timeEntry: {
@@ -631,7 +645,6 @@ class EditFormManual extends React.Component {
 					billable,
 					customFieldValues,
 				} = timeEntry;
-
 				const cfs =
 					customFieldValues && customFieldValues.length > 0
 						? customFieldValues
@@ -651,19 +664,27 @@ class EditFormManual extends React.Component {
 						),
 						end,
 					};
+				} else if (timeInterval.start.toDate) {
+					timeInterval = {
+						start: timeInterval.start.toDate(),
+						end: timeInterval.end.toDate(),
+					};
 				}
-
-				timeEntryService
-					.startNewEntry(
-						projectId,
-						description,
-						billable,
-						timeInterval.start,
-						timeInterval.end,
-						task ? task.id : null,
-						tagIds ? tagIds : [],
-						cfs
-					)
+				getBrowser()
+					.runtime.sendMessage({
+						eventName: 'startWithDescription',
+						options: {
+							projectId,
+							description,
+							billable,
+							start: timeInterval.start,
+							end: timeInterval.end,
+							taskId: task ? task.id : null,
+							tagIds: tagIds ? tagIds : [],
+							customFields: cfs,
+							manualMode: true,
+						},
+					})
 					.then((response) => {
 						let timeEntries = offlineStorage.timeEntriesOffline;
 						if (
@@ -678,6 +699,7 @@ class EditFormManual extends React.Component {
 								1
 							);
 						}
+
 						offlineStorage.timeEntriesOffline = timeEntries;
 						if (this.props.integrationMode) {
 							this.notify('Time submitted!', 'success', 10);
@@ -689,6 +711,7 @@ class EditFormManual extends React.Component {
 						}
 					})
 					.catch((error) => {
+						console.log('ERROR', error);
 						if (error.request.status === 403) {
 							const response = JSON.parse(error.request.response);
 							if (response.code === 4030) {

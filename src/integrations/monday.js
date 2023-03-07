@@ -1,3 +1,43 @@
+// Pulse from "my word" board
+clockifyButton.render(
+	'.pulse-page-header-component:not(.clockify)',
+	{ observe: true },
+	function (elem) {
+		let taskTitleElem = $(
+			'.pulse-page-header-component .pulse-page-name-wrapper:not(.clockify'
+		);
+		const descriptionElem = () => $('.ds-text-component > span', taskTitleElem);
+		const description = () =>
+			descriptionElem() ? descriptionElem().textContent : '';
+		const projectElem = () => {
+			let projectElem = $(
+				'#board-header > div.board-header-content-wrapper > div.board-header-main > div.board-header-top > div.board-header-left'
+			);
+			if (!projectElem) {
+				projectElem = $(
+					'.pulse-page-header-component a.open-pulse-in-board-link'
+				);
+			}
+			return projectElem;
+		};
+		const project = () => {
+			return getProject(projectElem());
+		};
+		const task = () => {
+			return getTask(projectElem());
+		};
+		link = clockifyButton.createButton(description, project, task);
+		link.style.position = 'absolute';
+		link.style.top = '10px';
+		link.style.left = '27px';
+
+		taskTitleElem.style.marginTop = '10px';
+		elem.style.paddingTop = '26px';
+
+		elem.appendChild(link);
+	}
+);
+
 // Pulse from standard and kanban board
 clockifyButton.render(
 	'.flexible-header:not(.clockify)',
@@ -35,39 +75,6 @@ clockifyButton.render(
 	}
 );
 
-// Pulse from "my word" board
-/* clockifyButton.render(
-	'.pulse-page-header-component .pulse-page-name-wrapper:not(.clockify)',
-	{ observe: true },
-	function (elem) {
-		const descriptionElem = () => $('.ds-text-component > span', elem);
-		const description = () =>
-			descriptionElem() ? descriptionElem().textContent : '';
-		const projectElem = () => {
-			let projectElem = $(
-				'#board-header > div.board-header-content-wrapper > div.board-header-main > div.board-header-top > div.board-header-left'
-			);
-			if (!projectElem) {
-				projectElem = $(
-					'.pulse-page-header-component a.open-pulse-in-board-link'
-				);
-			}
-			return projectElem;
-		};
-		const project = () => {
-			return getProject(projectElem());
-		};
-		const task = () => {
-			return getTask(projectElem());
-		};
-		link = clockifyButton.createButton(description, project, task);
-		link.style.position = 'absolute';
-		link.style.top = '5px';
-		link.style.left = '60px';
-		elem.appendChild(link);
-	}
-); */
-
 clockifyButton.render(
 	'#pulse-card-dialog-component:not(.clockify)',
 	{ observe: true },
@@ -104,7 +111,7 @@ clockifyButton.render(
 );
 
 // for this version we used dynamic project, because of modal dlgs (chat/timeline views)
-/* function getProject(projectElem) {
+function getProject(projectElem) {
 	var projName = projectElem ? projectElem.textContent : '';
 	var taskName = '';
 
@@ -125,4 +132,4 @@ function getTask(projectElem) {
 		taskName = pNames[1];
 	}
 	return taskName;
-} */
+}

@@ -1,8 +1,8 @@
 export function parseTimeEntryDuration(input) {
-	if (!!input) {
+	if (input) {
 		input = input.replace(',', '.').replace('.0', 'h');
 
-		const timeDurationData = input.split(/[:\/;\-]/);
+		const timeDurationData = input.split(/[:/;-]/);
 		if (timeDurationData.length === 1) {
 			return calculateHoursOrMinutes(timeDurationData[0]);
 		} else if (timeDurationData.length === 2) {
@@ -92,9 +92,9 @@ function calculateMinutesNumberOnly(timeDuration) {
 					timeDuration.length - 2
 				)}:
           ${timeDuration.substring(
-						timeDuration.length - 2,
-						timeDuration.length
-					)}`;
+		timeDuration.length - 2,
+		timeDuration.length
+	)}`;
 			}
 			return calculateHoursAndMinutes(convertedTimeDuration.split(':'));
 		}

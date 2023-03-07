@@ -1,3 +1,4 @@
+
 clockifyButton.render(
 	[
 		'#xDetDlg > div:not(.clockify)', // Event card.
@@ -40,6 +41,7 @@ clockifyButton.render(
 				$('.clockify-input').style.border = '1px solid #eaecf0';
 				$('.clockify-input').style.backgroundColor = '#eaecf0';
 			}
-		}, 500);
+		}, 1500);
 	}
 );
+

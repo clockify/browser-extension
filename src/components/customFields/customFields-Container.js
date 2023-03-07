@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { offlineStorage } from '../../helpers/offlineStorage';
 
 import CustomField from './customField';
@@ -139,7 +139,6 @@ export function CustomFieldsContainer({
 				allFieldsValid = false;
 			}
 		}
-		console.log('validatedCustomFields', validatedCustomFields);
 		areCustomFieldsValid(allFieldsValid);
 	}, [validatedCustomFields]);
 

@@ -1,15 +1,10 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import Header from './header.component';
 import Toaster from './toaster-component';
 import EditForm from './edit-form.component';
 import EditFormManual from './edit-form-manual.component';
-import { ProjectService } from '../services/project-service';
-import { TimeEntryService } from '../services/timeEntry-service';
 import locales from '../helpers/locales';
-
-const projectService = new ProjectService();
-const timeEntryService = new TimeEntryService();
+import { getBrowser } from '../helpers/browser-helper';
 
 class CreateTask extends React.Component {
 	constructor(props) {
@@ -40,8 +35,15 @@ class CreateTask extends React.Component {
 			projectId: project.id,
 		};
 
-		projectService
-			.createTask(task)
+		console.log(task);
+
+		getBrowser()
+			.runtime.sendMessage({
+				eventName: 'createTask',
+				options: {
+					task,
+				},
+			})
 			.then((response) => {
 				const timeEntry = Object.assign(this.props.timeEntry, {
 					taskId: response.data.id,
@@ -53,6 +55,7 @@ class CreateTask extends React.Component {
 					color: project.color,
 					isPublic: project.isPublic,
 				});
+				this.props.checkRequiredFields();
 				this.goBackToEdit(timeEntry);
 			})
 			.catch((error) => {
@@ -76,11 +79,14 @@ class CreateTask extends React.Component {
 
 	goBackToEdit(timeEntry) {
 		if (timeEntry.projectId && timeEntry.taskId && timeEntry.id) {
-			timeEntryService.updateTask(
-				timeEntry.taskId,
-				timeEntry.projectId,
-				timeEntry.id
-			);
+			getBrowser().runtime.sendMessage({
+				eventName: 'editTask',
+				options: {
+					task: timeEntry.taskId,
+					project: timeEntry.projectId,
+					id: timeEntry.id,
+				},
+			});
 		}
 
 		this.props.closeModal();
@@ -104,9 +110,7 @@ class CreateTask extends React.Component {
 						this.toaster = instance;
 					}}
 				/>
-				<div
-					className='create-task'
-				>
+				<div className="create-task">
 					<div className="create-task__title-and-close">
 						<p className="create-task__title">{locales.CREATE_NEW_TASK}</p>
 						<span

@@ -41,9 +41,13 @@ const commands = {
 Object.freeze(commands);
 
 function setTimeEntryInProgress(entry) {
-	aBrowser.storage.local.set({
-		timeEntryInProgress: entry,
-	});
+	if (entry?.timeInterval && entry.timeInterval.end !== null) {
+		return;
+	} else {
+		aBrowser.storage.local.set({
+			timeEntryInProgress: entry,
+		});
+	}
 }
 
 aBrowser.runtime.onInstalled.addListener(async (details) => {
@@ -60,52 +64,52 @@ aBrowser.runtime.onInstalled.addListener(async (details) => {
 });
 
 _messageExternal_busy = false;
-aBrowser.runtime.onMessageExternal.addListener(
-	async (request, sender, sendResponse) => {
-		if (_messageExternal_busy) {
-			sendResponse({
-				entry: null,
-				message: 'Request denied. Previous is being executed!',
-			});
-			return;
-		}
-		_messageExternal_busy = true;
-		try {
-			switch (request.eventName) {
-				case 'startNewEntry':
-					{
-						TimeEntry.startNewEntryExternal(request.data).then((res) => {
-							sendResponse(res);
-							_messageExternal_busy = false;
-						});
-					}
-					break;
+// aBrowser.runtime.onMessageExternal.addListener(
+// 	async (request, sender, sendResponse) => {
+// 		if (_messageExternal_busy) {
+// 			sendResponse({
+// 				entry: null,
+// 				message: 'Request denied. Previous is being executed!',
+// 			});
+// 			return;
+// 		}
+// 		_messageExternal_busy = true;
+// 		try {
+// 			switch (request.eventName) {
+// 				case 'startNewEntry':
+// 					{
+// 						TimeEntry.startNewEntryExternal(request.data).then((res) => {
+// 							sendResponse(res);
+// 							_messageExternal_busy = false;
+// 						});
+// 					}
+// 					break;
 
-				case 'endInProgress':
-					{
-						TimeEntry.endInProgressExternal().then((res) => {
-							const { entry, error } = res;
-							sendResponse({
-								entry,
-								message: error ? error.message : 'Time entry stopped!',
-							});
-							_messageExternal_busy = false;
-						});
-					}
-					break;
+// 				case 'endInProgress':
+// 					{
+// 						TimeEntry.endInProgressExternal().then((res) => {
+// 							const { entry, error } = res;
+// 							sendResponse({
+// 								entry,
+// 								message: error ? error.message : 'Time entry stopped!',
+// 							});
+// 							_messageExternal_busy = false;
+// 						});
+// 					}
+// 					break;
 
-				default:
-					sendResponse({
-						entry: null,
-						message: 'Unknown: ' + request.eventName,
-					});
-			}
-		} finally {
-			//_messageExternal_busy = false;
-		}
-		return true;
-	}
-);
+// 				default:
+// 					sendResponse({
+// 						entry: null,
+// 						message: 'Unknown: ' + request.eventName,
+// 					});
+// 			}
+// 		} finally {
+// 			//_messageExternal_busy = false;
+// 		}
+// 		return true;
+// 	}
+// );
 
 aBrowser.windows.getAll(
 	{ populate: true, windowTypes: ['normal'] },
@@ -122,6 +126,7 @@ aBrowser.runtime.onStartup.addListener(async () => {
 		const { entry, error } = await TimeEntry.getEntryInProgress();
 		if (entry === null || error) {
 			this.addReminderTimerOnStartingBrowser();
+			aBrowser.runtime.sendMessage({ eventName: 'createStopTimerEvent' });
 			TimeEntry.startTimerOnStartingBrowser();
 			setTimeEntryInProgress(null);
 			aBrowser.action.setIcon({
@@ -175,50 +180,51 @@ aBrowser.windows.onRemoved.addListener((window) => {
 });
 
 function setClockifyOriginsToStorage() {
-	return fetch('integrations/integrations.json')
+	fetch('integrations/integrations.json')
 		.then((response) => response.json())
 		.then(async (clockifyOrigins) => {
 			const userId = await localStorage.getItem('userId');
 			if (userId) {
-				const permissions = await localStorage.getItem('permissions');
-				const permissionsForStorage = permissions || [];
-				let arr = permissionsForStorage.filter(
-					(permission) => permission.userId === userId
-				);
-				let permissionForUser;
-				if (arr.length === 0) {
-					permissionForUser = {
-						userId,
-						permissions: [],
-					};
-					permissionsForStorage.push(permissionForUser);
-					for (let key in clockifyOrigins) {
-						permissionForUser.permissions.push({
-							domain: key,
-							urlPattern: clockifyOrigins[key].link,
-							isEnabled: true,
-							script: clockifyOrigins[key].script,
-							name: clockifyOrigins[key].name,
-							isCustom: false,
-						});
+				aBrowser.storage.local.get('permissions', (result) => {
+					const permissionsForStorage = result.permissions
+						? result.permissions
+						: [];
+					let arr = permissionsForStorage.filter(
+						(permission) => permission.userId === userId
+					);
+					let permissionForUser;
+					if (arr.length === 0) {
+						permissionForUser = {
+							userId,
+							permissions: [],
+						};
+						permissionsForStorage.push(permissionForUser);
+						for (let key in clockifyOrigins) {
+							permissionForUser.permissions.push({
+								domain: key,
+								urlPattern: clockifyOrigins[key].link,
+								isEnabled: true,
+								script: clockifyOrigins[key].script,
+								name: clockifyOrigins[key].name,
+								isCustom: false,
+							});
+						}
+						aBrowser.storage.local.set({ permissions: permissionsForStorage });
 					}
-					await localStorage.setItem('permissions', permissionsForStorage);
-				}
+				});
 			}
 		});
 }
 
 // call it
-// setClockifyOriginsToStorage();
+setClockifyOriginsToStorage();
 
 UserWorkspaceStorage.getSetWorkspaceSettings();
-UserWorkspaceStorage.getWasRegionalEverAllowed().then((response) => {
-	localStorage.setItem('wasRegionalEverAllowed', response);
-});
+UserWorkspaceStorage.getWasRegionalEverAllowed();
 UserWorkspaceStorage.getPermissionsForUser().then((response) => {
-	if (response) {
+	if (response.data) {
 		const isUserOwnerOrAdmin =
-			response.filter(
+			response.data.filter(
 				(permission) =>
 					permission.name === 'WORKSPACE_OWN' ||
 					permission.name === 'WORKSPACE_ADMIN'
@@ -264,9 +270,6 @@ aBrowser.commands.onCommand.addListener(async (command) => {
 	}
 });
 
-const chromeExtensionID = 'pmjeegjhjdlccodhacdgbgfagbpmccpe';
-const firefoxExtensionID = '{1262fc44-5ec9-4088-a7a7-4cd42f3f548d}';
-
 aBrowser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 	const isIdentityRedirectUrl = tab.url.includes(
 		aBrowser.identity.getRedirectURL()
@@ -276,14 +279,13 @@ aBrowser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 	}
 
 	if (changeInfo.status === 'complete') {
-		await setClockifyOriginsToStorage();
 		aBrowser.storage.local.get('permissions', async (result) => {
 			const isLoggedIn = await TokenService.isLoggedIn();
 			if (!tab.url.includes('chrome://') && isLoggedIn) {
 				const userLang = await localStorage.getItem('lang');
-				clockifyLocales.onProfileLangChange(userLang);
+				await clockifyLocales.onProfileLangChange(userLang);
 				let domainInfo = await extractDomainInfo(tab.url, result.permissions);
-				if (!!domainInfo.file) {
+				if (domainInfo.file) {
 					aBrowser.tabs.sendMessage(tabId, {
 						eventName: 'cleanup',
 					});
@@ -291,36 +293,22 @@ aBrowser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 						target: { tabId },
 						files: ['popupDlg/clockifyDebounce.js'],
 					});
-
-					const locMessages =
-						(await localStorage.getItem(`locale_messages`)) || {};
-					if (!this.isChrome()) {
-						aBrowser.tabs.executeScript(tabId, {
-							code: 'self._clockifyMessages = ' + JSON.stringify(locMessages),
-						});
-					} else {
-						aBrowser.scripting.executeScript({
-							target: { tabId },
-							func: (locMessages) => {
-								self._clockifyMessages = locMessages;
-							},
-							args: [locMessages],
-						});
-					}
 					aBrowser.scripting.executeScript({
 						target: { tabId },
 						files: ['contentScripts/clockifyLocales.js'],
+					}, ()=>{
+						aBrowser.scripting.executeScript(
+							{ target: { tabId }, files: ['popupDlg/clockifyButton.js'] },
+							() => {
+								loadScripts(tabId, domainInfo.file);
+								setTimeout(() => {
+									backgroundWebSocketConnect();
+								}, 1000);
+							}
+						);
 					});
 
-					aBrowser.scripting.executeScript(
-						{ target: { tabId }, files: ['popupDlg/clockifyButton.js'] },
-						() => {
-							loadScripts(tabId, domainInfo.file);
-							setTimeout(() => {
-								backgroundWebSocketConnect();
-							}, 1000);
-						}
-					);
+					
 				}
 			} else {
 				if (tab.url.includes(aBrowser.identity.getRedirectURL())) {
@@ -339,7 +327,9 @@ function loadScripts(tabId, file) {
 			target: { tabId },
 			files: ['integrations/' + file],
 		});
-	} catch (e) {}
+	} catch (e) {
+		// console.log(e);
+	}
 }
 
 async function extractDomainInfo(url, permissions) {
@@ -375,7 +365,7 @@ async function extractAndSaveToken(url) {
 			});
 		}
 	});
-	ProjectService.getProjectsWithFilter('', 1, 50).then((projects) => {
+	ProjectTaskService.getProjectsWithFilter('', 1, 50).then((projects) => {
 		if (projects && projects.data) {
 			localStorage.setItem('preProjectList', {
 				projectList: projects.data,
@@ -397,7 +387,7 @@ async function checkState(state) {
 function getParamFromUrl(params, paramName) {
 	let param = '';
 
-	if (!!params) {
+	if (params) {
 		param = params
 			.split('&')
 			.filter((param) => param.includes(paramName))
@@ -420,6 +410,7 @@ async function getOriginFileName(domain, permissionsFromStorage) {
 	if (!permissionsByUser) {
 		return null;
 	}
+
 	const enabledPermissions = permissionsByUser.permissions.filter(
 		(p) => p.isEnabled
 	);
@@ -445,106 +436,103 @@ self.addEventListener('offline', () => {
 aBrowser.runtime.onMessage.addListener((request, sender, sendResponse) => {
 	switch (request.eventName) {
 		case 'takeTimeEntryInProgress':
-			return ClockifyIntegration.takeTimeEntryInProgress(sendResponse);
-
 		case 'endInProgress':
-			return ClockifyIntegration.stopEntryInProgress(sendResponse);
-
-		case 'startWithDescription':
-			return ClockifyIntegration.startWithDescription(request, sendResponse);
-
-		case 'getProjectsByIds':
-			return ClockifyIntegration.getProjectsByIds(request, sendResponse);
-
-		case 'getDefaultProjectTask':
-			return ClockifyIntegration.getDefaultProjectTask(sendResponse);
-
-		case 'getProjects':
-			return ClockifyIntegration.getProjects(request, sendResponse);
-
-		case 'getProjectTasks':
-			return ClockifyIntegration.getProjectTasks(request, sendResponse);
-
-		case 'submitDescription':
-			return ClockifyIntegration.submitDescription(request, sendResponse);
-
-		case 'editProject':
-			return ClockifyIntegration.editProject(request, sendResponse);
-
-		case 'editTask':
-			return ClockifyIntegration.editTask(request, sendResponse);
-
-		case 'getTags':
-			return ClockifyIntegration.getTags(request, sendResponse);
-
-		case 'editTags':
-			return ClockifyIntegration.editTags(request, sendResponse);
-
 		case 'fetchEntryInProgress':
-			return ClockifyIntegration.fetchEntryInProgress(sendResponse);
-
-		case 'removeProjectAsFavorite':
-			return ClockifyIntegration.removeProjectAsFavorite(request, sendResponse);
-
-		case 'makeProjectFavorite':
-			return ClockifyIntegration.makeProjectFavorite(request, sendResponse);
-
-		case 'editBillable':
-			return ClockifyIntegration.editBillable(request, sendResponse);
-
-		case 'submitTime':
-			return ClockifyIntegration.submitTime(request, sendResponse);
-
-		case 'getWSCustomField':
-			return ClockifyIntegration.getWSCustomField(request, sendResponse);
-
+		case 'getDefaultProjectTask':
+		case 'getRecentTimeEntries':
+		case 'getUser':
 		case 'getUserRoles':
-			return ClockifyIntegration.getUserRoles(request, sendResponse);
-
+		case 'getBoot':
+		case 'getPermissionsForUser':
+		case 'getWorkspaceSettings':
+		case 'getWorkspacesOfUser':
+		case 'getWasRegionalEverAllowed':
+			return ClockifyIntegration.callFunction(
+				request.eventName,
+				null,
+				sendResponse
+			);
+		case 'getMemberProfile':	
+		case 'getProjectsByIds':
+		case 'startWithDescription':
+		case 'getTimeEntries':
+		case 'changeStart':
+		case 'editTimeInterval':
+		case 'getEntryInProgress':
+		case 'setDescription':
+		case 'removeProject':
+		case 'getProjects':
+		case 'getLastUsedProjectFromTimeEntries':
+		case 'getProjectTasks':
+		case 'getTaskOfProject':
+		case 'submitDescription':
+		case 'createProject':
+		case 'editProject':
+		case 'createTask':
+		case 'editTask':
+		case 'getTags':
+		case 'createTag':
+		case 'editTags':
+		case 'deleteTimeEntry':
+		case 'searchEntries':
+		case 'duplicateTimeEntry':
+		case 'deleteTimeEntries':
+		case 'removeProjectAsFavorite':
+		case 'makeProjectFavorite':
+		case 'editBillable':
+		case 'submitTime':
+		case 'getWSCustomField':
 		case 'submitCustomField':
-			return ClockifyIntegration.submitCustomField(request, sendResponse);
-
 		case 'generateManualEntryData':
-			return ClockifyIntegration.generateManualEntryData(request, sendResponse);
+		case 'removeTask':
+		case 'setDefaultWorkspace':
+		case 'signup':
+		case 'getClientsWithFilter':
+		case 'createClient':
+			return ClockifyIntegration.callFunction(
+				request.eventName,
+				request,
+				sendResponse
+			);
 		default:
 			return false;
 	}
 });
 
-function startWithDescription(request) {
-	return new Promise(async (resolve) => {
-		const { entry, error } = await TimeEntry.getEntryInProgress();
-		if (error) {
-			resolve({ status: err.status });
-			return;
-		}
+// function startWithDescription(request) {
+// 	return new Promise(async (resolve) => {
+// 		const { entry, error } = await TimeEntry.getEntryInProgress();
+// 		if (error) {
+// 			resolve({ status: err.status });
+// 			return;
+// 		}
 
-		if (entry) {
-			const { error } = await TimeEntry.endInProgress();
-			if (error) {
-				resolve({ status: error.status });
-				return;
-			}
-		}
+// 		if (entry) {
+// 			const { error } = await TimeEntry.endInProgress();
+// 			if (error) {
+// 				resolve({ status: error.status });
+// 				return;
+// 			}
+// 		}
 
-		const { timeEntryOptions } = request;
-		const { entry: ent, error: err } = await TimeEntry.startTimer(
-			timeEntryOptions.description,
-			timeEntryOptions
-		);
-		if (err) {
-			resolve({ status: err.status });
-			return;
-		}
-		if (ent.status === 201) {
-			aBrowser.action.setIcon({
-				path: iconPathStarted,
-			});
-			addPomodoroTimer();
-		}
-		resolve({ status: ent.status, data: ent });
-	});
-}
+// 		const { timeEntryOptions } = request;
+// 		const { data: ent, error: err } = await TimeEntry.startTimer(
+// 			timeEntryOptions.description,
+// 			timeEntryOptions
+// 		);
+// 		if (err) {
+// 			resolve({ status: err.status });
+// 			return;
+// 		}
+// 		if (ent.status === 201) {
+// 			aBrowser.action.setIcon({
+// 				path: iconPathStarted,
+// 			});
+// 			addPomodoroTimer();
+// 		}
+// 		resolve({ status: ent.status, data: ent });
+// 	});
+// }
 
 function afterStartTimer() {
 	addIdleListenerIfIdleIsEnabled();

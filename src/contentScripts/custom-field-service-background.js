@@ -1,6 +1,5 @@
 class CustomFieldService extends ClockifyService {
 	constructor() {}
-
 	static async url(endpoint) {
 		// https://global.api.clockify.me/workspaces/61237bdb9737ba60e3cbdab0/timeEntries/61277fdfb7753e6977f72366/custom-field
 		const workspaceId = await this.workspaceId;

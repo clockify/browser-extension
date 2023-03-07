@@ -1,9 +1,7 @@
 import React from 'react';
 import { getBrowser } from '../helpers/browser-helper';
-import { LocalStorageService } from '../services/localStorage-service';
-import locales from '../helpers/locales';
 
-const localStorageService = new LocalStorageService();
+import locales from '../helpers/locales';
 
 class WsChange2FAPopupComponent extends React.Component {
 	cancel() {
@@ -11,7 +9,7 @@ class WsChange2FAPopupComponent extends React.Component {
 	}
 
 	async openSettings() {
-		const homeUrl = await localStorageService.get('homeUrl');
+		const homeUrl = await localStorage.getItem('homeUrl');
 		getBrowser().tabs.create({
 			url: `${homeUrl}/user/settings`,
 		});

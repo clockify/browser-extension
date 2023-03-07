@@ -1,25 +1,49 @@
-clockifyButton.render(
-	'.page-actions__left:not(.clockify)',
-	{ observe: true },
-	function () {
-		createClockifyElements();
-	}
-);
+const observer = new MutationObserver((mutations) => {
+	mutations.forEach((mutation) => {
+		if (mutation.type === 'characterData') {
+			renderCardButton();
+		}
+	});
+});
 
-function createClockifyElements() {
-	const containerElem = $('.page-actions__left');
-	const clockifyButtonElement = $('#clockifyButton');
-	if (clockifyButtonElement) clockifyButtonElement.remove();
-	const desc = $('.ticket-subject-heading').innerText;
-	const ticket = $('.breadcrumb__item.active').innerText;
-	const link = clockifyButton.createButton('[#' + ticket + '] ' + desc);
-	link.style.marginLeft = '10px';
-	link.style.display = 'inline-flex';
-	link.style.verticalAlign = 'middle';
-	containerElem.append(link);
+setTimeout(() => {
+	let target = $('.ticket-subject-heading');
+	console.log('title', target);
+	const config = { characterData: true, attributes: true, childList: true, subtree: true };
+
+	observer.observe($('.ticket-subject-heading'), config);
+
+	target = $('.breadcrumb__item.active');
+	console.log('number', target);
+	observer.observe($('.breadcrumb__item.active'), config);
+	}, 3000);	
+
+
+function renderCardButton(){
+	removeAllButtons();
+	clockifyButton.render(
+		'.page-actions__left:not(.clockify)',
+		{ observe: true },
+		(elem) => {
+			if ($('#clockifyButton')) return;
+
+			const ticketSubject = () => $('.ticket-subject-heading').innerText;
+			const ticketNumber = () => $('.breadcrumb__item.active').innerText;
+
+			const description = () => `[#${ticketNumber()}] ${ticketSubject()}`;
+
+			const link = clockifyButton.createButton({ description });
+
+			link.style.marginLeft = '10px';
+			link.style.display = 'inline-flex';
+			link.style.verticalAlign = 'middle';
+
+			elem.append(link);
+		}
+	);
 }
 
-//when item is changed on page, then create clockify button with new data
-setTimeout(() => {
-	createClockifyElements();
-}, 600);
+renderCardButton();
+
+
+

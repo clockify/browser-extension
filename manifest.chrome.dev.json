@@ -7,7 +7,7 @@
 	"background": {
 		"service_worker": "sw.js"
 	},
-	"version": "2.8.10",
+	"version": "2.9.1",
 	"action": {
 		"default_popup": "index.html",
 		"default_title": "Clockify"
@@ -17,9 +17,11 @@
 			"matches": ["https://*/*", "http://*/*"],
 			"js": [
 				"contentScripts/service-localstorage.js",
+				"contentScripts/clockifyLocales.js",
 				"vendors.bundle.js",
 				"main.bundle.js"
-			]
+			],
+			"css": ["styles/main-integration.css"]
 		}
 	],
 	"options_page": "settings.html",

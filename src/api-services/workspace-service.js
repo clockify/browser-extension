@@ -1,9 +1,10 @@
-class UserWorkspaceStorage {
+class UserWorkspaceStorage extends ClockifyService {
 	constructor(
 		storageName = DefaultProjectEnums.DEFAULT_PROJECTS,
 		storageItems,
 		isPermanent = true
 	) {
+		super();
 		this.storageName = storageName;
 		this.isPermanent = isPermanent;
 
@@ -65,7 +66,7 @@ class UserWorkspaceStorage {
 	static async getProjectPickerTaskFilter() {
 		const apiEndpoint = await this.apiEndpoint;
 		let endPoint = `${apiEndpoint}/v1/user`;
-		const { data, error, status } = await ClockifyService.apiCall(endPoint);
+		const { data, error, status } = await this.apiCall(endPoint);
 		if (data) {
 			return data.settings.projectPickerTaskFilter;
 		} else return false;
@@ -80,7 +81,7 @@ class UserWorkspaceStorage {
 			(userSettings && userSettings.projectPickerTaskFilter) ||
 			false;
 		let endPoint = `${apiEndpoint}/workspaces/${workspaceId}`;
-		const { data, error, status } = await ClockifyService.apiCall(endPoint);
+		const { data, error, status } = await this.apiCall(endPoint);
 		if (data) {
 			const { workspaceSettings, features, featureSubscriptionType } = data;
 			workspaceSettings.projectPickerSpecialFilter = projectPickerTaskFilter;
@@ -116,6 +117,7 @@ class UserWorkspaceStorage {
 				},
 			});
 		}
+		return { data, error, status };
 	}
 
 	static async getPermissionsForUser() {
@@ -124,9 +126,14 @@ class UserWorkspaceStorage {
 		const baseUrl = await this.apiEndpoint;
 		const workspacePermissionsUrl = `${baseUrl}/workspaces/${activeWorkspaceId}/users/${userId}/permissions`;
 
-		return ClockifyService.apiCall(workspacePermissionsUrl).then(
-			(response) => response.data
-		);
+		return this.apiCall(workspacePermissionsUrl);
+	}
+
+	static async getWorkspacesOfUser() {
+		const baseUrl = await this.apiEndpoint;
+		const workspacesUrl = `${baseUrl}/workspaces/`;
+
+		return this.apiCall(workspacesUrl);
 	}
 
 	get Workspace() {
@@ -203,7 +210,7 @@ class UserWorkspaceStorage {
 	}
 
 	store() {
-		localStorageService.set(
+		localStorage.setItem(
 			this.storageName,
 			JSON.stringify(this.storage),
 			this.isPermanent ? 'permanent_' : null
@@ -214,8 +221,9 @@ class UserWorkspaceStorage {
 		const baseUrl = await this.apiEndpoint;
 		const workspaceId = await this.workspaceId;
 		const workspaceRegionalUrl = `${baseUrl}/workspaces/${workspaceId}/payments/was-regional-ever-allowed`;
-		return await ClockifyService.apiCall(workspaceRegionalUrl).then(
-			(response) => response.data
-		);
+		return await this.apiCall(workspaceRegionalUrl).then((response) => {
+			localStorage.setItem('wasRegionalEverAllowed', response.data);
+			return response.data;
+		});
 	}
 }

@@ -90,8 +90,8 @@ function addGenericIntegrationToList(option, origins) {
 }
 
 function initLoad() {
-	aBrowser.storage.local.get('locale_messages', (result) => {
-		self._clockifyMessages = result.locale_messages || {};
+	aBrowser.storage.local.get(['locale_messages', 'lang'], async (result) => {
+		await clockifyLocales.onProfileLangChange(result.lang);
 		const localesScript = document.createElement('script');
 		localesScript.src = 'contentScripts/clockifyLocales.js';
 		document.body.appendChild(localesScript);

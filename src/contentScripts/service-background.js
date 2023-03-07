@@ -172,7 +172,8 @@ class ClockifyService {
 		endpoint,
 		method = 'GET',
 		body = null,
-		withNoToken = false
+		withNoToken = false,
+		additionalHeaders
 	) {
 		let token;
 		// TREBA LI SVAKI apiCall da ima TOKEN
@@ -187,7 +188,14 @@ class ClockifyService {
 
 		const hdrs = await createHttpHeaders(token);
 
-		const headers = new Headers(hdrs);
+		const headers = new Headers({ ...hdrs, ...additionalHeaders });
+
+		//TODO: this is a temporary fix for the sub-domain-name header
+		const baseUrl = await this.apiEndpoint;
+		const signupUrl = `${baseUrl}/auth/`;
+		if(endpoint === signupUrl) {
+			headers.delete('sub-domain-name');
+		}
 
 		const request = new Request(endpoint, {
 			method,
@@ -246,12 +254,5 @@ class ClockifyService {
 					error
 				); // error.message
 			});
-	}
-
-	static async healthCheck() {
-		const apiEndpoint = await this.apiEndpoint;
-		const endPoint = `${apiEndpoint}/health`;
-		const { error } = await this.apiCall(endPoint);
-		return !error;
 	}
 }

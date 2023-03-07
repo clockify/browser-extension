@@ -4,7 +4,7 @@ import Header from './header.component';
 import SignUp from './sign-up.component';
 import packageJson from '../../package';
 import SelfHostedUrl from './self-hosted-url.component';
-import { LocalStorageService } from '../services/localStorage-service';
+
 import { getLocalStorageEnums } from '../enums/local-storage.enum';
 import { getBrowser, isChrome } from '../helpers/browser-helper';
 import { HtmlStyleHelper } from '../helpers/html-style-helper';
@@ -13,7 +13,6 @@ import locales from '../helpers/locales';
 import { checkConnection } from './check-connection';
 
 const environment = getEnv();
-const localStorageService = new LocalStorageService();
 const htmlStyleHelper = new HtmlStyleHelper();
 const mozzilaRedirectNumb = 4;
 const chromeRedirectNumb = 3;
@@ -53,9 +52,9 @@ class Login extends React.Component {
 
 	async setAsyncStateItems() {
 		const selfHosted = JSON.parse(
-			await localStorageService.get('selfHosted', false)
+			await localStorage.getItem('selfHosted', false)
 		);
-		const isSubDomain = !!(await localStorageService.get('subDomainName'));
+		const isSubDomain = !!(await localStorage.getItem('subDomainName'));
 		this.setState({
 			selfHosted,
 			isSubDomain,
@@ -72,6 +71,9 @@ class Login extends React.Component {
 		getBrowser().runtime.sendMessage({
 			eventName: 'removeReminderTimer',
 		});
+		getBrowser().runtime.sendMessage({
+			eventName: 'removeStopTimerEvent',
+		});
 	}
 
 	removeDarkMode() {
@@ -79,7 +81,7 @@ class Login extends React.Component {
 	}
 
 	setAppVersionToStorage() {
-		localStorageService.set('appVersion', packageJson.version);
+		localStorage.setItem('appVersion', packageJson.version);
 	}
 
 	onChange(e) {
@@ -93,7 +95,7 @@ class Login extends React.Component {
 	}
 
 	async openLoginPage() {
-		const homeUrl = await localStorageService.get('homeUrl');
+		const homeUrl = await localStorage.getItem('homeUrl');
 		let redirectNumb = mozzilaRedirectNumb;
 		if (isChrome()) {
 			redirectNumb = chromeRedirectNumb;
@@ -121,17 +123,17 @@ class Login extends React.Component {
 	}
 
 	backToCloudVersion() {
-		localStorageService.set(
+		localStorage.setItem(
 			'baseUrl',
 			environment.endpoint,
 			getLocalStorageEnums().PERMANENT_PREFIX
 		);
-		localStorageService.set(
+		localStorage.setItem(
 			'homeUrl',
 			environment.home,
 			getLocalStorageEnums().PERMANENT_PREFIX
 		);
-		localStorageService.clearByPrefixes([
+		localStorage.clearByPrefixes([
 			getLocalStorageEnums().SELF_HOSTED_PREFIX,
 			getLocalStorageEnums().SUB_DOMAIN_PREFIX,
 		]);
@@ -144,11 +146,9 @@ class Login extends React.Component {
 	}
 
 	async logout() {
-		const isOffline = await localStorageService.get('offline');
+		const isOffline = await localStorage.getItem('offline');
 		if (isOffline && !JSON.parse(isOffline)) {
-			let timeEntriesOffline = await localStorageService.get(
-				'timeEntriesOffline'
-			);
+			let timeEntriesOffline = await localStorage.getItem('timeEntriesOffline');
 			timeEntriesOffline = timeEntriesOffline
 				? JSON.parse(timeEntriesOffline)
 				: [];
@@ -156,7 +156,7 @@ class Login extends React.Component {
 			this.clearPermissions();
 			getBrowser().runtime.sendMessage('closeOptionsPage');
 
-			await localStorageService.clearByPrefixes(
+			await localStorage.clearByPrefixes(
 				[
 					getLocalStorageEnums().PERMANENT_PREFIX,
 					getLocalStorageEnums().SELF_HOSTED_PREFIX,
@@ -164,7 +164,7 @@ class Login extends React.Component {
 				],
 				true
 			);
-			localStorageService.set(
+			localStorage.setItem(
 				'timeEntriesOffline',
 				JSON.stringify(timeEntriesOffline)
 			);
@@ -195,7 +195,7 @@ class Login extends React.Component {
 					}
 				});
 
-				localStorageService.removeItem('permissions');
+				localStorage.removeItem('permissions');
 				if (newPermissions.length > 0)
 					getBrowser().storage.local.set({ permissions: newPermissions });
 			}

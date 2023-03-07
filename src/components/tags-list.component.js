@@ -1,12 +1,10 @@
 import * as React from 'react';
-import { TagService } from '../services/tag-service';
 import { SortHepler } from '../helpers/sort-helper';
 import { debounce } from 'lodash';
 import locales from '../helpers/locales';
 import onClickOutside from 'react-onclickoutside';
 import { getBrowser } from '../helpers/browser-helper';
 
-const tagService = new TagService();
 const sortHelpers = new SortHepler();
 const pageSize = 50;
 
@@ -81,10 +79,17 @@ class TagsList extends React.Component {
 	async getTags(page, pageSize) {
 		const offline = await localStorage.getItem('offline');
 		if (!JSON.parse(offline)) {
-			tagService
-				.getAllTagsWithFilter(page, pageSize, this.state.filter)
+			getBrowser()
+				.runtime.sendMessage({
+					eventName: 'getTags',
+					options: { page, pageSize, filter: this.state.filter },
+				})
 				.then((response) => {
-					let data = response.data;
+					const { data } = response;
+					if (response && !data) {
+						console.log('getTags error: ', response);
+						return;
+					}
 					const tagsList =
 						this.state.page === 1 ? data : this.state.tagsList.concat(data);
 					this.setState(
@@ -206,8 +211,13 @@ class TagsList extends React.Component {
 		}
 		tag.name = this.state.tagName;
 
-		tagService
-			.createTag(tag)
+		getBrowser()
+			.runtime.sendMessage({
+				eventName: 'createTag',
+				options: {
+					tag,
+				},
+			})
 			.then((response) => {
 				this.props.editTag(response.data, true);
 

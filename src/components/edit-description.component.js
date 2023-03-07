@@ -1,5 +1,4 @@
 import React from 'react';
-import debounce from 'lodash/debounce';
 import locales from '../helpers/locales';
 
 class EditDescription extends React.Component {

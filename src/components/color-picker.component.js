@@ -18,7 +18,7 @@ const colorList = [
 	'#607D8B',
 ];
 
-export class ColorPicker extends React.Component {
+class ColorPicker extends React.Component {
 	constructor(props) {
 		super(props);
 

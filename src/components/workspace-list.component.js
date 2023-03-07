@@ -1,10 +1,8 @@
 import * as React from 'react';
-// import {WorkspaceService} from "../services/workspace-service";
-import { LocalStorageService } from '../services/localStorage-service';
+
 import locales from '../helpers/locales';
 
 // const workspaceService = new WorkspaceService();
-const localStorageService = new LocalStorageService();
 
 class WorkspaceList extends React.Component {
 	constructor(props) {
@@ -26,7 +24,7 @@ class WorkspaceList extends React.Component {
 	}
 
 	async setAsyncStateItems() {
-		const subDomainName = !!(await localStorageService.get('subDomainName'));
+		const subDomainName = !!(await localStorage.getItem('subDomainName'));
 		this.setState({
 			subDomainName,
 		});

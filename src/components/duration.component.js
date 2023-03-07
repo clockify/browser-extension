@@ -211,7 +211,7 @@ class Duration extends React.Component {
 	}
 
 	selectDuration(time, timeString) {
-		if (!!timeString) {
+		if (timeString) {
 			this.changeDuration(timeString);
 		}
 	}

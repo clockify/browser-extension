@@ -123,31 +123,36 @@ clockifyButton.render(
 );
 
 clockifyButton.render(
-	'[data-testid="task-details-sidebar"] > ._5641699f:not(.clockify)',
+	'[data-testid="task-details-sidebar"] > div:not(.clockify)',
 	{ observe: true },
-	function (elem) {
-		description = $(
-			'.task-overview-header > div > div.markdown_content.task_content'
-		).textContent;
-		project = $('button[aria-label="Select a project"] span').textContent;
-		// var tags = () => Array.from($$(".task_list_item__info_tags__label")).map(e => e.innerText);
+	(elem) => {
+		const description = $(
+				'.task-overview-header > div > div.markdown_content.task_content'
+			).textContent,
+			projectName = $('button[aria-label="Select a project"] span').textContent;
 
-		link = clockifyButton.createButton({
-			description: description,
-			projectName: project,
+		const clockifyContainer = createTag('div', 'clockify-widget-container');
+
+		const link = clockifyButton.createButton({
+			description,
+			projectName,
 			small: true,
-			// tagNames: tags
 		});
 
-		const inputForm = clockifyButton.createInput({
-			description: description,
-			// projectName: project,
+		const input = clockifyButton.createInput({
+			description,
+			projectName,
 		});
+
+		clockifyContainer.style = 'display: flex';
+		clockifyContainer.style = 'align-items: center';
 
 		link.style.paddingRight = '10px';
 		link.style.marginRight = '10px';
 		link.style.height = 'fit-content';
-		elem.append(link);
-		elem.append(inputForm);
+
+		clockifyContainer.append(link);
+		clockifyContainer.append(input);
+		elem.append(clockifyContainer);
 	}
 );

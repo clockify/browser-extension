@@ -1,472 +1,472 @@
 {
-  "airtable.com": {
-    "name": "Airtable",
-    "link": "*://airtable.com/*",
-    "script": "airtable.js"
-  },
-  "ambra.app": {
-    "name": "Ambra",
-    "link": "*://ambra.app",
-    "script": "ambra.js"
-  },
-  "asana.com": {
-    "name": "Asana",
-    "link": "*://app.asana.com",
-    "script": "asana.js"
-  },
-  "axosoft.com": {
-    "name": "Axosoft",
-    "link": "*://axosoft.com/",
-    "script": "axosoft.js"
-  },
-  "azure.com": {
-    "name": "Azure",
-    "link": "*://*.azure.*/*",
-    "script": "azure.js"
-  },
-  "basecamp.com": {
-    "name": "Basecamp",
-    "link": "*://*.basecamp.com/*,*://*.basecamphq.com/*",
-    "script": "basecamp.js"
-  },
-  "bitbucket.org": {
-    "name": "Bitbucket",
-    "link": "*://bitbucket.org/*",
-    "script": "bitbucket.js"
-  },
-  "breeze.pm": {
-    "name": "Breeze",
-    "link": "*://app.breeze.pm/*",
-    "script": "breeze.js"
-  },
-  "capsulecrm.com": {
-    "name": "CapsuleCRM",
-    "link": "*://*.capsulecrm.com/*",
-    "script": "capsulecrm.js"
-  },
-  "clickup.com": {
-    "name": "ClickUp",
-    "link": "*://*.clickup.com/*",
-    "script": "clickup.js"
-  },
-  "clubhouse.io": {
-    "name": "Clubhouse",
-    "link": "*://app.clubhouse.io/*",
-    "script": "clubhouse.js"
-  },
-  "crowdin.com": {
-    "name": "Crowdin",
-    "link": "*://*.crowdin.com/*",
-    "script": "crowdin.js"
-  },
-  "shortcut.com": {
-    "name": "Shortcut",
-    "link": "*://app.shortcut.com/*",
-    "script": "clubhouse.js"
-  },  
-  "coda.io": {
-    "name": "Coda",
-    "link": "*://coda.io/*",
-    "script": "coda.js"
-  },
-  "conectohub.com": {
-    "name": "ConectoHub",
-    "link": "*://*.conectohub.com/*",
-    "script": "conectohub.js"
-  },
-  "dixa.com": {
-    "name": "Dixa",
-    "link": "*://*.dixa.com/*",
-    "script": "dixa.js"
-  },
-  "evernote.com": {
-    "name": "Evernote",
-    "link": "*://*.evernote.com/*",
-    "script": "evernote.js"
-  },
-  "freedcamp.com": {
-    "name": "FreedCamp",
-    "link": "*://freedcamp.com/*",
-    "script": "freedcamp.js"
-  },
-  "freshdesk.com": {
-    "name": "Freshdesk",
-    "link": "*://*.freshdesk.com/*",
-    "script": "freshdesk.js"
-  },
-  "freshservice.com": {
-    "name": "Freshservice",
-    "link": "*://*.freshservice.com/*",
-    "script": "freshservice.js"
-  },
-  "frontapp.com": {
-    "name": "Front",
-    "link": "*://*.frontapp.com/*",
-    "script": "front.js"
-  },
-  "getflow.com": {
-    "name": "Getflow",
-    "link": "*://app.getflow.com/*",
-    "script": "flow.js"
-  },
-  "gitea.io": {
-    "name": "Gitea",
-    "link": "*://try.gitea.io/*",
-    "script": "gitea.js"
-  },
-  "groupnwork.com": {
-    "name": "Group&Work",
-    "link": "*://*.groupnwork.com/*",
-    "script": "groupnwork.js"
-  },
-  "github.com": {
-    "name": "Github",
-    "link": "*://github.com/*",
-    "script": "github.js"
-  },
-  "gitlab.com": {
-    "name": "Gitlab",
-    "link": "*://gitlab.com/*",
-    "script": "gitlab.js"
-  },
-  "calendar.google.com": {
-    "name": "Google calendar",
-    "link": "*://calendar.google.com/*",
-    "script": "google-calendar.js"
-  },
-  "docs.google.com": {
-    "name": "Google Docs",
-    "link": "*://docs.google.com/*",
-    "script": "google-docs.js"
-  },
-  "kanbanize.com": {
-    "name": "Kanbanize",
-    "link": "*://*.kanbanize.com/*",
-    "script": "kanbanize.js"
-  },
-  "keep.google.com": {
-    "name": "Google Keep",
-    "link": "*://keep.google.com/*",
-    "script": "google-keep.js"
-  },
-  "mail.google.com": {
-    "name": "Google Mail",
-    "link": "*://mail.google.com/*",
-    "script": "google-mail.js"
-  },
-  "helpscout.net": {
-    "name": "Helpscout",
-    "link": "*://*.helpscout.net/*",
-    "script": "helpscout.js"
-  },
-  "helprace.com": {
-    "name": "Helprace",
-    "link": "*://*.helprace.com/*",
-    "script": "helprace.js"
-  },
-  "hillia.app": {
-    "name": "Hillia",
-    "link": "*://hillia.app/*",
-    "script": "hillia.js"
-  },
-  "hubspot.com": {
-    "name": "Hubspot",
-    "link": "*://*.hubspot.com/*",
-    "script": "hubspot.js"
-  },
-  "huskymarketingplanner.com": {
-    "name": "Husky Marketing Planner",
-    "link": "*://*.huskymarketingplanner.com/*",
-    "script": "husky-marketing-planner.js"
-  },
-  "linear.app": {
-    "name": "Linear",
-    "link": "*://linear.app/*",
-    "script": "linear.js"
-  },
-  "liquidplanner.com": {
-    "name": "Liquidplanner",
-    "link": "*://*.liquidplanner.com/*",
-    "script": "liquidplanner.js"
-  },
-  "manageengine.com": {
-    "name": "ManageEngine",
-    "link": "*://*.manageengine.com/*",
-    "script": "manageengine.js"
-  },
-  "mantishub.io": {
-    "name": "Mantishub",
-    "link": "*://*.mantishub.io/*,*://*.mantishub.com/*",
-    "script": "mantishub.js"
-  },
-  "manuscript.com": {
-    "name": "Manuscript",
-    "link": "*://*.manuscript.com/*",
-    "script": "manuscript.js"
-  },
-  "meistertask.com": {
-    "name": "Meistertask",
-    "link": "*://www.meistertask.com/*",
-    "script": "meistertask.js"
-  },
-  "tasks.office.com": {
-    "name": "Microsoft Planner",
-    "link": "*://tasks.office.com/*",
-    "script": "microsoft-planner.js"
-  },
-  "miro.com": {
-    "name": "Miro (Kanban)",
-    "link": "*://miro.com/*",
-    "script": "miro.js"
-  },
-  "monday.com": {
-    "name": "Monday",
-    "link": "*://*.monday.com/*",
-    "script": "monday.js"
-  },
-  "youtrack.": {
-    "name": "Youtrack",
-    "link": "*://youtrack.*/*,*://*.youtrack.*/*",
-    "script": "youtrack.js"
-  },
-  "myfocusspace.com": {
-    "name": "MyFocusSpace",
-    "link": "*://*.myfocusspace.com/*",
-    "script": "myfocusspace.js"
-  },
-  "notion.so": {
-    "name": "Notion",
-    "link": "*://*.notion.so/*",
-    "script": "notion.js"
-  },
-  "nozbe.com": {
-    "name": "Nozbe",
-    "link": "*://*.nozbe.com/*",
-    "script": "nozbe.js"
-  },
-  "openproject.com": {
-    "name": "Openproject",
-    "link": "*://*.openproject.com/*",
-    "script": "openproject.js"
-  },
-  "osticket.com": {
-    "name": "osTicket",
-    "link": "*://*.supportsystem.com/*",
-    "script": "osticket.js"
-  },
-  "outlook.live.com": {
-    "name": "Outlook",
-    "link": "*://outlook.*/*",
-    "script": "outlook.js"
-  },
-  "phacility.com": {
-    "name": "Phabricator",
-    "link": "*://*.phacility.com/*,*://phabricator.*/*",
-    "script": "phabricator.js"
-  },
-  "pipefy.com": {
-    "name": "Pipefy",
-    "link": "*://app.pipefy.com/*",
-    "script": "pipefy.js"
-  },
-  "produck.io": {
-    "name": "Produck",
-    "link": "*://*.produck.io/*",
-    "script": "produck.js"
-  },
-  "pivotaltracker.com": {
-    "name": "PivotalTracker",
-    "link": "*://*.pivotaltracker.com/*",
-    "script": "pivotaltracker.js"
-  },
-  "podio.com": {
-    "name": "Podio",
-    "link": "*://podio.com/*",
-    "script": "podio.js"
-  },
-  "pipedrive.com": {
-    "name": "Pipedrive",
-    "link": "*://*.pipedrive.com/*",
-    "script": "pipedrive.js"
-  },
-  "plaky.com": {
-    "name": "Plaky",
-    "link": "*://*.plaky.com/*",
-    "script": "plaky.js"
-  },
-  "plutio.com": {
-    "name": "Plutio",
-    "link": "*://*.plutio.com/*",
-    "script": "plutio.js"
-  },
-  "redbooth.com": {
-    "name": "Redbooth",
-    "link": "*://*.redbooth.com/*",
-    "script": "redbooth.js"
-  },
-  "redmine.org": {
-    "name": "Redmine",
-    "link": "*://*.redmine.org/*",
-    "script": "redmine.js"
-  },
-  "lightning.force.com": {
-    "name": "Salesforce Lightning",
-    "link": "*://*.salesforce.com/*,*://*.my.salesforce.com/*,*://*.lightning.force.com/*",
-    "script": "salesforce.js"
-  },
-  "scoro.com": {
-    "name": "Scoro",
-    "link": "*://*.scoro.com/*",
-    "script": "scoro.js"
-  },
-  "sprint.ly": {
-    "name": "Sprint",
-    "link": "*://sprint.ly/*",
-    "script": "sprintly.js"
-  },
-  "app.startinfinity.com": {
-    "name": "Infinity",
-    "link": "*://app.startinfinity.com/*",
-    "script": "infinity.js"
-  },
-  "taiga.io": {
-    "name": "Taiga",
-    "link": "*://*.taiga.io/*",
-    "script": "taiga.js"
-  },
-  "teamwave.com": {
-    "name": "Teamwave",
-    "link": "*://*.teamwave.com/*",
-    "script": "teamwave.js"
-  },
-  "teamwork.com": {
-    "name": "Teamwork",
-    "link": "*://*.teamwork.com/*",
-    "script": "teamwork.js"
-  },
-  "ticktick.com": {
-    "name": "TickTick",
-    "link": "*://ticktick.com/*",
-    "script": "ticktick.js"
-  },
-  "todoist.com": {
-    "name": "Todoist",
-    "link": "*://todoist.com/*",
-    "script": "todoist.js"
-  },
-  "toodledo.com": {
-    "name": "Toodledo",
-    "link": "*://*.toodledo.com/*",
-    "script": "toodledo.js"
-  },
-  "trello.com": {
-    "name": "Trello",
-    "link": "*://trello.com/*",
-    "script": "trello.js"
-  },
-  "unfuddle.com": {
-    "name": "Unfuddle",
-    "link": "*://*.unfuddle.com/*",
-    "script": "unfuddle.js"
-  },
-  "visualstudio.com": {
-    "name": "VisualStudio",
-    "link": "*://*.visualstudio.com/*",
-    "script": "azure.js"
-  },
-  "wekan.github.io": {
-    "name": "Wekan",
-    "link": "*://*.wekan.*/*",
-    "script": "wekan.js"
-  },
-  "wrike.com": {
-    "name": "Wrike",
-    "link": "*://*.wrike.com/*",
-    "script": "wrike.js"
-  },
-  "wunderlist.com": {
-    "name": "Wunderlist",
-    "link": "*://*.wunderlist.com/*",
-    "script": "wunderlist.js"
-  },
-  "zammad.com": {
-    "name": "Zammad",
-    "link": "*://*.zammad.com/*",
-    "script": "zammad.js"
-  },
-  "zendesk.com": {
-    "name": "Zendesk",
-    "link": "*://*.zendesk.com/*",
-    "script": "zendesk.js"
-  },
-  "zenkit.com": {
-    "name": "Zenkit",
-    "link": "*://*.zenkit.com/*",
-    "script": "zenkit.js"
-  },
-  "rallydev.com": {
-    "name": "Rally",
-    "link": "*://*.rallydev.com/*",
-    "script": "rallydev.js"
-  },
-  "ladesk.com": {
-    "name": "LiveAgent",
-    "link": "*://*.ladesk.com/*",
-    "script": "liveagent.js"
-  },
-  "nela.com.br": {
-    "name": "Nela",
-    "link": "*://*.nela.com.br/*",
-    "script": "nela.js"
-  },
-  "intercom.com": {
-    "name": "Rally",
-    "link": "*://*.intercom.com/*",
-    "script": "intercom.js"
-  },
-  "to-do.live.com": {
-    "name": "Microsoft To-Do",
-    "link": "*://to-do.live.com/*",
-    "script": "microsoft-todo.js"
-  },
-  "cerb.ai": {
-    "name": "Cerb",
-    "link": "*://*.cerb.ai/*",
-    "script": "cerb.js"
-  },
-  "usepixie.net": {
-    "name": "Pixie",
-    "link": "*://*.usepixie.net/*,*://pureworkflow.io/*", 
-    "script": "usepixie.js"
-  },
-  "figma.com": {
-    "name": "Figma",
-    "link": "*://*.figma.com/*",
-    "script": "figma.js"
-  },
-  "freshrelease.com": {
-    "name": "Freshrelease",
-    "link": "*://*.freshrelease.com/*",
-    "script": "freshrelease.js"
-  },
-  "desk.zoho.com": {
-    "name": "Zoho Desk",
-    "link": "*://desk.zoho.*/*",
-    "script": "zohodesk.js"
-  },
-  "sentry.io": {
-    "name": "Sentry",
-    "link": "*://sentry.io/*",
-    "script": "sentry.js"
-  },
-  "jetbrains.space": {
-    "name": "JetBrains Space",
-    "link": "*://*.jetbrains.space/*",
-    "script": "jetbrains.js"
-  },
-  "nifty.pm": {
-    "name": "Nifty",
-    "link": "*://*.nifty.pm/*",
-    "script": "nifty.js"
-  }
+	"airtable.com": {
+		"name": "Airtable",
+		"link": "*://airtable.com/*",
+		"script": "airtable.js"
+	},
+	"ambra.app": {
+		"name": "Ambra",
+		"link": "*://ambra.app",
+		"script": "ambra.js"
+	},
+	"asana.com": {
+		"name": "Asana",
+		"link": "*://app.asana.com",
+		"script": "asana.js"
+	},
+	"axosoft.com": {
+		"name": "Axosoft",
+		"link": "*://axosoft.com/",
+		"script": "axosoft.js"
+	},
+	"azure.com": {
+		"name": "Azure",
+		"link": "*://*.azure.*/*",
+		"script": "azure.js"
+	},
+	"basecamp.com": {
+		"name": "Basecamp",
+		"link": "*://*.basecamp.com/*,*://*.basecamphq.com/*",
+		"script": "basecamp.js"
+	},
+	"bitbucket.org": {
+		"name": "Bitbucket",
+		"link": "*://bitbucket.org/*",
+		"script": "bitbucket.js"
+	},
+	"breeze.pm": {
+		"name": "Breeze",
+		"link": "*://app.breeze.pm/*",
+		"script": "breeze.js"
+	},
+	"capsulecrm.com": {
+		"name": "CapsuleCRM",
+		"link": "*://*.capsulecrm.com/*",
+		"script": "capsulecrm.js"
+	},
+	"clickup.com": {
+		"name": "ClickUp",
+		"link": "*://*.clickup.com/*",
+		"script": "clickup.js"
+	},
+	"clubhouse.io": {
+		"name": "Clubhouse",
+		"link": "*://app.clubhouse.io/*",
+		"script": "clubhouse.js"
+	},
+	"crowdin.com": {
+		"name": "Crowdin",
+		"link": "*://crowdin.com/*",
+		"script": "crowdin.js"
+	},
+	"shortcut.com": {
+		"name": "Shortcut",
+		"link": "*://app.shortcut.com/*",
+		"script": "clubhouse.js"
+	},
+	"coda.io": {
+		"name": "Coda",
+		"link": "*://coda.io/*",
+		"script": "coda.js"
+	},
+	"conectohub.com": {
+		"name": "ConectoHub",
+		"link": "*://*.conectohub.com/*",
+		"script": "conectohub.js"
+	},
+	"dixa.com": {
+		"name": "Dixa",
+		"link": "*://*.dixa.com/*",
+		"script": "dixa.js"
+	},
+	"evernote.com": {
+		"name": "Evernote",
+		"link": "*://*.evernote.com/*",
+		"script": "evernote.js"
+	},
+	"freedcamp.com": {
+		"name": "FreedCamp",
+		"link": "*://freedcamp.com/*",
+		"script": "freedcamp.js"
+	},
+	"freshdesk.com": {
+		"name": "Freshdesk",
+		"link": "*://*.freshdesk.com/*",
+		"script": "freshdesk.js"
+	},
+	"freshservice.com": {
+		"name": "Freshservice",
+		"link": "*://*.freshservice.com/*",
+		"script": "freshservice.js"
+	},
+	"frontapp.com": {
+		"name": "Front",
+		"link": "*://*.frontapp.com/*",
+		"script": "front.js"
+	},
+	"getflow.com": {
+		"name": "Getflow",
+		"link": "*://app.getflow.com/*",
+		"script": "flow.js"
+	},
+	"gitea.io": {
+		"name": "Gitea",
+		"link": "*://try.gitea.io/*",
+		"script": "gitea.js"
+	},
+	"groupnwork.com": {
+		"name": "Group&Work",
+		"link": "*://*.groupnwork.com/*",
+		"script": "groupnwork.js"
+	},
+	"github.com": {
+		"name": "Github",
+		"link": "*://github.com/*",
+		"script": "github.js"
+	},
+	"gitlab.com": {
+		"name": "Gitlab",
+		"link": "*://gitlab.com/*",
+		"script": "gitlab.js"
+	},
+	"calendar.google.com": {
+		"name": "Google calendar",
+		"link": "*://calendar.google.com/*",
+		"script": "google-calendar.js"
+	},
+	"docs.google.com": {
+		"name": "Google Docs",
+		"link": "*://docs.google.com/*",
+		"script": "google-docs.js"
+	},
+	"kanbanize.com": {
+		"name": "Kanbanize",
+		"link": "*://*.kanbanize.com/*",
+		"script": "kanbanize.js"
+	},
+	"keep.google.com": {
+		"name": "Google Keep",
+		"link": "*://keep.google.com/*",
+		"script": "google-keep.js"
+	},
+	"mail.google.com": {
+		"name": "Google Mail",
+		"link": "*://mail.google.com/*",
+		"script": "google-mail.js"
+	},
+	"helpscout.net": {
+		"name": "Helpscout",
+		"link": "*://*.helpscout.net/*",
+		"script": "helpscout.js"
+	},
+	"helprace.com": {
+		"name": "Helprace",
+		"link": "*://*.helprace.com/*",
+		"script": "helprace.js"
+	},
+	"hillia.app": {
+		"name": "Hillia",
+		"link": "*://hillia.app/*",
+		"script": "hillia.js"
+	},
+	"hubspot.com": {
+		"name": "Hubspot",
+		"link": "*://*.hubspot.com/*",
+		"script": "hubspot.js"
+	},
+	"huskymarketingplanner.com": {
+		"name": "Husky Marketing Planner",
+		"link": "*://*.huskymarketingplanner.com/*",
+		"script": "husky-marketing-planner.js"
+	},
+	"linear.app": {
+		"name": "Linear",
+		"link": "*://linear.app/*",
+		"script": "linear.js"
+	},
+	"liquidplanner.com": {
+		"name": "Liquidplanner",
+		"link": "*://*.liquidplanner.com/*",
+		"script": "liquidplanner.js"
+	},
+	"manageengine.com": {
+		"name": "ManageEngine",
+		"link": "*://*.manageengine.com/*",
+		"script": "manageengine.js"
+	},
+	"mantishub.io": {
+		"name": "Mantishub",
+		"link": "*://*.mantishub.io/*,*://*.mantishub.com/*",
+		"script": "mantishub.js"
+	},
+	"manuscript.com": {
+		"name": "Manuscript",
+		"link": "*://*.manuscript.com/*",
+		"script": "manuscript.js"
+	},
+	"meistertask.com": {
+		"name": "Meistertask",
+		"link": "*://www.meistertask.com/*",
+		"script": "meistertask.js"
+	},
+	"tasks.office.com": {
+		"name": "Microsoft Planner",
+		"link": "*://tasks.office.com/*",
+		"script": "microsoft-planner.js"
+	},
+	"miro.com": {
+		"name": "Miro",
+		"link": "*://miro.com/*",
+		"script": "miro.js"
+	},
+	"monday.com": {
+		"name": "Monday",
+		"link": "*://*.monday.com/*",
+		"script": "monday.js"
+	},
+	"youtrack.": {
+		"name": "Youtrack",
+		"link": "*://youtrack.*/*,*://*.youtrack.*/*",
+		"script": "youtrack.js"
+	},
+	"myfocusspace.com": {
+		"name": "MyFocusSpace",
+		"link": "*://*.myfocusspace.com/*",
+		"script": "myfocusspace.js"
+	},
+	"notion.so": {
+		"name": "Notion",
+		"link": "*://*.notion.so/*",
+		"script": "notion.js"
+	},
+	"nozbe.com": {
+		"name": "Nozbe",
+		"link": "*://nozbe.app/*",
+		"script": "nozbe.js"
+	},
+	"openproject.com": {
+		"name": "Openproject",
+		"link": "*://*.openproject.com/*",
+		"script": "openproject.js"
+	},
+	"osticket.com": {
+		"name": "osTicket",
+		"link": "*://*.supportsystem.com/*",
+		"script": "osticket.js"
+	},
+	"outlook.live.com": {
+		"name": "Outlook",
+		"link": "*://outlook.*/*",
+		"script": "outlook.js"
+	},
+	"phacility.com": {
+		"name": "Phabricator",
+		"link": "*://*.phacility.com/*,*://phabricator.*/*",
+		"script": "phabricator.js"
+	},
+	"pipefy.com": {
+		"name": "Pipefy",
+		"link": "*://app.pipefy.com/*",
+		"script": "pipefy.js"
+	},
+	"produck.io": {
+		"name": "Produck",
+		"link": "*://*.produck.io/*",
+		"script": "produck.js"
+	},
+	"pivotaltracker.com": {
+		"name": "PivotalTracker",
+		"link": "*://*.pivotaltracker.com/*",
+		"script": "pivotaltracker.js"
+	},
+	"podio.com": {
+		"name": "Podio",
+		"link": "*://podio.com/*",
+		"script": "podio.js"
+	},
+	"pipedrive.com": {
+		"name": "Pipedrive",
+		"link": "*://*.pipedrive.com/*",
+		"script": "pipedrive.js"
+	},
+	"plaky.com": {
+		"name": "Plaky",
+		"link": "*://*.plaky.com/*",
+		"script": "plaky.js"
+	},
+	"plutio.com": {
+		"name": "Plutio",
+		"link": "*://*.plutio.com/*",
+		"script": "plutio.js"
+	},
+	"redbooth.com": {
+		"name": "Redbooth",
+		"link": "*://*.redbooth.com/*",
+		"script": "redbooth.js"
+	},
+	"redmine.org": {
+		"name": "Redmine",
+		"link": "*://*.redmine.org/*",
+		"script": "redmine.js"
+	},
+	"lightning.force.com": {
+		"name": "Salesforce Lightning",
+		"link": "*://*.salesforce.com/*,*://*.my.salesforce.com/*,*://*.lightning.force.com/*",
+		"script": "salesforce.js"
+	},
+	"scoro.com": {
+		"name": "Scoro",
+		"link": "*://*.scoro.com/*",
+		"script": "scoro.js"
+	},
+	"sprint.ly": {
+		"name": "Sprint",
+		"link": "*://sprint.ly/*",
+		"script": "sprintly.js"
+	},
+	"app.startinfinity.com": {
+		"name": "Infinity",
+		"link": "*://app.startinfinity.com/*",
+		"script": "infinity.js"
+	},
+	"taiga.io": {
+		"name": "Taiga",
+		"link": "*://*.taiga.io/*",
+		"script": "taiga.js"
+	},
+	"teamwave.com": {
+		"name": "Teamwave",
+		"link": "*://*.teamwave.com/*",
+		"script": "teamwave.js"
+	},
+	"teamwork.com": {
+		"name": "Teamwork",
+		"link": "*://*.teamwork.com/*",
+		"script": "teamwork.js"
+	},
+	"ticktick.com": {
+		"name": "TickTick",
+		"link": "*://ticktick.com/*",
+		"script": "ticktick.js"
+	},
+	"todoist.com": {
+		"name": "Todoist",
+		"link": "*://todoist.com/*",
+		"script": "todoist.js"
+	},
+	"toodledo.com": {
+		"name": "Toodledo",
+		"link": "*://*.toodledo.com/*",
+		"script": "toodledo.js"
+	},
+	"trello.com": {
+		"name": "Trello",
+		"link": "*://trello.com/*",
+		"script": "trello.js"
+	},
+	"unfuddle.com": {
+		"name": "Unfuddle",
+		"link": "*://*.unfuddle.com/*",
+		"script": "unfuddle.js"
+	},
+	"visualstudio.com": {
+		"name": "VisualStudio",
+		"link": "*://*.visualstudio.com/*",
+		"script": "azure.js"
+	},
+	"wekan.github.io": {
+		"name": "Wekan",
+		"link": "*://*.wekan.*/*",
+		"script": "wekan.js"
+	},
+	"wrike.com": {
+		"name": "Wrike",
+		"link": "*://*.wrike.com/*",
+		"script": "wrike.js"
+	},
+	"wunderlist.com": {
+		"name": "Wunderlist",
+		"link": "*://*.wunderlist.com/*",
+		"script": "wunderlist.js"
+	},
+	"zammad.com": {
+		"name": "Zammad",
+		"link": "*://*.zammad.com/*",
+		"script": "zammad.js"
+	},
+	"zendesk.com": {
+		"name": "Zendesk",
+		"link": "*://*.zendesk.com/*",
+		"script": "zendesk.js"
+	},
+	"zenkit.com": {
+		"name": "Zenkit",
+		"link": "*://*.zenkit.com/*",
+		"script": "zenkit.js"
+	},
+	"rallydev.com": {
+		"name": "Rally",
+		"link": "*://*.rallydev.com/*",
+		"script": "rallydev.js"
+	},
+	"ladesk.com": {
+		"name": "LiveAgent",
+		"link": "*://*.ladesk.com/*",
+		"script": "liveagent.js"
+	},
+	"nela.com.br": {
+		"name": "Nela",
+		"link": "*://*.nela.com.br/*",
+		"script": "nela.js"
+	},
+	"intercom.com": {
+		"name": "Rally",
+		"link": "*://*.intercom.com/*",
+		"script": "intercom.js"
+	},
+	"to-do.live.com": {
+		"name": "Microsoft To-Do",
+		"link": "*://to-do.live.com/*",
+		"script": "microsoft-todo.js"
+	},
+	"cerb.ai": {
+		"name": "Cerb",
+		"link": "*://*.cerb.ai/*",
+		"script": "cerb.js"
+	},
+	"usepixie.net": {
+		"name": "Pixie",
+		"link": "*://*.usepixie.net/*,*://pureworkflow.io/*",
+		"script": "usepixie.js"
+	},
+	"figma.com": {
+		"name": "Figma",
+		"link": "*://*.figma.com/*",
+		"script": "figma.js"
+	},
+	"freshrelease.com": {
+		"name": "Freshrelease",
+		"link": "*://*.freshrelease.com/*",
+		"script": "freshrelease.js"
+	},
+	"desk.zoho.com": {
+		"name": "Zoho Desk",
+		"link": "*://desk.zoho.*/*",
+		"script": "zohodesk.js"
+	},
+	"sentry.io": {
+		"name": "Sentry",
+		"link": "*://sentry.io/*,*://*.sentry.io/*",
+		"script": "sentry.js"
+	},
+	"jetbrains.space": {
+		"name": "JetBrains Space",
+		"link": "*://*.jetbrains.space/*",
+		"script": "jetbrains.js"
+	},
+	"nifty.pm": {
+		"name": "Nifty",
+		"link": "*://*.nifty.pm/*",
+		"script": "nifty.js"
+	}
 }

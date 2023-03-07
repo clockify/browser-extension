@@ -1,18 +1,15 @@
 import * as React from 'react';
 import HomePage from './home-page.component';
 import Header from './header.component';
+import * as ReactDOM from 'react-dom';
 import { getEnv } from '../environment';
 import * as moment from 'moment-timezone';
-import { AuthService } from '../services/auth-service';
-import { UserService } from '../services/user-service';
 import { getBrowser } from '../helpers/browser-helper';
 import Login from './login.component';
 import locales from '../helpers/locales';
 
 const environment = getEnv();
 
-const authService = new AuthService();
-const userService = new UserService();
 let disabledSignup = false;
 
 class SignUp extends React.Component {
@@ -63,12 +60,15 @@ class SignUp extends React.Component {
 							!this.state.passwordAlert
 						) {
 							disabledSignup = true;
-							authService
-								.signup(
-									this.state.email,
-									this.state.password,
-									moment.tz.guess()
-								)
+							getBrowser()
+								.runtime.sendMessage({
+									eventName: 'signup',
+									options: {
+										email: this.state.email,
+										password: this.state.password,
+										timeZone: moment.tz.guess(),
+									},
+								})
 								.then((response) => {
 									let data = response.data;
 									aBrowser.tabs.create({
@@ -113,12 +113,19 @@ class SignUp extends React.Component {
 	}
 
 	fetchUser() {
-		userService
-			.getUser()
+		getBrowser()
+			.runtime.sendMessage({
+				eventName: 'getUser',
+			})
 			.then((response) => {
 				let data = response.data;
 				localStorage.setItem('activeWorkspaceId', data.activeWorkspace);
 				localStorage.setItem('userSettings', JSON.stringify(data.settings));
+
+				getBrowser().storage.local.set({
+					activeWorkspaceId: data.activeWorkspace,
+					userSettings: JSON.stringify(data.settings),
+				});
 				disabledSignup = false;
 				window.reactRoot.render(<HomePage />);
 			})

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import locales from '../helpers/locales';
 
 class WorkspaceChangeConfirmation extends React.Component {
 	constructor(props) {
