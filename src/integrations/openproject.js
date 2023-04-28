@@ -29,31 +29,10 @@ clockifyButton.render('#wrapper:not(.clockify)', { observe: true }, (elem) => {
 	const description = () => `${type()} ${number()}: ${subject()}`;
 	const taskName = () => description();
 	const record = { description, projectName, taskName };
-	console.debug('Clockify Record:', record);
-	//   // header
-	//   const containerHeader = $(".work-packages--subject-type-row", elem);
-	//   const buttonHeader = clockifyButton.createSmallButton(record);
-	//   buttonHeader.style.paddingRight = "5px";
-	//   containerHeader?.insertBefore(buttonHeader, containerHeader.firstChild);
-
-	//   // group
-	//   const containerGroup = $(".attributes-group--header", elem);
-	//   const buttonGroup = clockifyButton.createButton(record);
-	//   buttonGroup.style.paddingRight = "5px";
-	//   buttonGroup.style.paddingBottom = "10px";
-	//   containerGroup?.insertBefore(buttonGroup, containerGroup.firstChild);
 
 	// toolbar
 	const containerToolbar = $('.wp-show--header-container', elem);
 	const buttonToolbar = clockifyButton.createButton(record);
 	buttonToolbar.style.paddingBottom = '10px';
 	containerToolbar?.append(buttonToolbar);
-
-	//   // clock
-	//   const containerClock = $(".time-logging--value", elem);
-	//   const buttonClock = clockifyButton.createSmallButton(record);
-	//   buttonClock.style.position = "relative";
-	//   buttonClock.style.top = "3px";
-	//   buttonClock.style.right = "-6px";
-	//   containerClock?.append(buttonClock);
 });
