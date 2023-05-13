@@ -101,9 +101,9 @@ clockifyButton.render(
 clockifyButton.render(
 	'.filter_view .task_list_item__body:not(.clockify)',
 	{ observe: true },
-	function (elem) {
-		description = $('.markdown_content.task_content', elem).textContent;
-		project = $('.task_list_item__project', elem).textContent;
+    function (elem) {
+        description = $('.task_content', elem).textContent;
+        project = $('.task_list_item__project', elem).textContent.split(' / ')[0];
 		var tags = () =>
 			Array.from($$('.task_list_item__info_tags__label', elem)).map(
 				(e) => e.innerText
