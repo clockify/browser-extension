@@ -127,7 +127,7 @@ clockifyButton.render(
 	{ observe: true },
 	(elem) => {
 		const description = $(
-				'.task-overview-header > div > div.markdown_content.task_content'
+				'.task-overview-header div.task_content'
 			).textContent,
 			projectName = $('button[aria-label="Select a project"] span').textContent;
 
