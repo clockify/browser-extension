@@ -2,8 +2,8 @@
 clockifyButton.render(
 	'.project_editor_instance [data-action-hint="task-root"]:not(.clockify)',
 	{ observe: true },
-	function (elem) {
-		description = $('.markdown_content.task_content', elem).textContent;
+    function (elem) {
+		description = $('.task_content', elem).textContent;
 		project = $('.view_header__content h1').textContent;
 		var tags = () =>
 			Array.from($$('.task_list_item__info_tags__label', elem)).map(
