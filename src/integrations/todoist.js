@@ -130,7 +130,6 @@ clockifyButton.render(
 				'.task-overview-header div.task_content'
         ).textContent,
             projectName = $('button[aria-label="Select a project"] span').textContent.split('/')[0].trim();
-            console.log(projectName);
 
 		const clockifyContainer = createTag('div', 'clockify-widget-container');
 
