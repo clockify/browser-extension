@@ -103,7 +103,7 @@ clockifyButton.render(
 	{ observe: true },
     function (elem) {
         description = $('.task_content', elem).textContent;
-        project = $('.task_list_item__project', elem).textContent.split(' / ')[0];
+        project = $('.task_list_item__project', elem).textContent.split('/')[0].trim();
 		var tags = () =>
 			Array.from($$('.task_list_item__info_tags__label', elem)).map(
 				(e) => e.innerText
@@ -128,8 +128,9 @@ clockifyButton.render(
 	(elem) => {
 		const description = $(
 				'.task-overview-header div.task_content'
-			).textContent,
-			projectName = $('button[aria-label="Select a project"] span').textContent;
+        ).textContent,
+            projectName = $('button[aria-label="Select a project"] span').textContent.split('/')[0].trim();
+            console.log(projectName);
 
 		const clockifyContainer = createTag('div', 'clockify-widget-container');
 
