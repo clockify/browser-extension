@@ -464,9 +464,19 @@
 		"link": "*://*.jetbrains.space/*",
 		"script": "jetbrains.js"
 	},
-	"nifty.pm": {
+	"connect.zoho.com": {
+		"name": "Zoho Connect",
+		"link": "*://connect.zoho.com/*",
+		"script": "zohoconnect.js"
+	},
+	"projects.zoho.com": {
+		"name": "Zoho Projects",
+		"link": "*://projects.zoho.com/*",
+		"script": "zohoprojects.js"
+  }
+  "nifty.pm": {
 		"name": "Nifty",
 		"link": "*://*.nifty.pm/*",
 		"script": "nifty.js"
-	}
+  }
 }
