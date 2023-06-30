@@ -1,15 +1,13 @@
-import * as React from 'react';
+import React from 'react';
 import onClickOutside from 'react-onclickoutside';
 import ProjectItem from './project-item.component';
-import { ProjectService } from '../services/project-service';
-import _, { debounce } from 'lodash';
-import { LocalStorageService } from '../services/localStorage-service';
+import { debounce } from 'lodash';
+
 import { getDefaultProjectEnums } from '../enums/default-project.enum';
 import { DefaultProject } from '../helpers/storageUserWorkspace';
 import locales from '../helpers/locales';
+import { getBrowser } from '../helpers/browser-helper';
 
-const projectService = new ProjectService();
-const localStorageService = new LocalStorageService();
 const pageSize = 50;
 
 const _lastUsedProject = {
@@ -35,8 +33,6 @@ const _lastUsedProjectAndTask = {
 		name: 'ON-TOP',
 	},
 };
-
-const _withoutClient = locales.WITHOUT_CLIENT;
 
 class DefaultProjectList extends React.PureComponent {
 	constructor(props) {
@@ -73,7 +69,7 @@ class DefaultProjectList extends React.PureComponent {
 			projectList: this.initProjectList,
 			page: 1,
 			loadMore: true,
-			clientProjects: { [_withoutClient]: [] },
+			clientProjects: { withoutClient: [] },
 			title: '',
 			filter: '',
 			specFilterNoTasksOrProject: '',
@@ -231,9 +227,18 @@ class DefaultProjectList extends React.PureComponent {
 		if (!JSON.parse(offline)) {
 			const { filter, forceTasks, projectList, isSpecialFilter, page } =
 				this.state;
-			const already = page === 1 ? [] : projectList.map((p) => p.id);
-			projectService
-				.getProjectsWithFilter(filter, page, pageSize, forceTasks, already)
+			const alreadyIds = page === 1 ? [] : projectList.map((p) => p.id);
+			getBrowser()
+				.runtime.sendMessage({
+					eventName: 'getProjects',
+					options: {
+						filter,
+						page,
+						pageSize,
+						forceTasks,
+						alreadyIds,
+					},
+				})
 				.then((response) => {
 					const projects = response.data;
 					this.setState(
@@ -277,21 +282,38 @@ class DefaultProjectList extends React.PureComponent {
 		}
 	}
 
-	getProjectTasks(projectId, filter, page) {
-		return projectService.getProjectTasksWithFilter(projectId, filter, page);
+	async getProjectTasks(projectId, filter, page) {
+		return getBrowser().runtime.sendMessage({
+			eventName: 'getProjectTasks',
+			options: {
+				projectId,
+				filter,
+				page,
+			},
+		});
 	}
 
-	makeProjectFavorite(projectId) {
-		return projectService.makeProjectFavorite(projectId);
+	async makeProjectFavorite(projectId) {
+		return getBrowser().runtime.sendMessage({
+			eventName: 'makeProjectFavorite',
+			options: {
+				projectId,
+			},
+		});
 	}
 
 	removeProjectAsFavorite(projectId) {
-		return projectService.removeProjectAsFavorite(projectId);
+		return getBrowser().runtime.sendMessage({
+			eventName: 'removeProjectAsFavorite',
+			options: {
+				projectId,
+			},
+		});
 	}
 
 	groupByClientName(objectArray) {
 		return objectArray.reduce((acc, p) => {
-			const key = p.client && !!p.client.name ? p.client.name : _withoutClient;
+			const key = p.client && !!p.client.name ? p.client.name : 'withoutClient';
 			if (!acc[key]) {
 				acc[key] = [];
 			}
@@ -415,8 +437,8 @@ class DefaultProjectList extends React.PureComponent {
 	}
 
 	async getDarkMode() {
-		const userId = await localStorageService.get('userId');
-		const str = await localStorageService.get('darkMode');
+		const userId = await localStorage.getItem('userId');
+		const str = await localStorage.getItem('darkMode');
 		const darkModeFromStorage = str ? JSON.parse(str) : [];
 		return darkModeFromStorage.find(
 			(darkMode) => darkMode.userId === userId && darkMode.enabled
@@ -493,16 +515,18 @@ class DefaultProjectList extends React.PureComponent {
 							? (selectedProject.getLocale && selectedProject.getLocale()) ||
 							  selectedProject.name
 							: locales.ADD_PROJECT}
-						<span
-							style={{
-								color: selectedProject ? selectedProject.color : '#999999',
-							}}
-							className={
-								isLastUsed || selectedTaskName === '' ? 'disabled' : ''
-							}
-						>
-							{': ' + selectedTaskName}
-						</span>
+						{selectedTaskName && (
+							<span
+								style={{
+									color: selectedProject ? selectedProject.color : '#999999',
+								}}
+								className={
+									isLastUsed || selectedTaskName === '' ? 'disabled' : ''
+								}
+							>
+								{': ' + selectedTaskName}
+							</span>
+						)}
 						<span className="project-list-name-client">
 							{selectedProject &&
 							selectedProject.client &&
@@ -631,7 +655,7 @@ class DefaultProjectList extends React.PureComponent {
 											<div key={client}>
 												<div className="project-list-client">
 													<i>
-														{client === 'Without client'
+														{client === 'withoutClient'
 															? locales.WITHOUT_CLIENT
 															: client === 'FAVORITES'
 															? locales.FAVORITES

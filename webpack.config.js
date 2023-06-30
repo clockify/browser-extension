@@ -105,6 +105,7 @@ module.exports = {
 				{ from: `./index.html`, to: './' },
 				{ from: `./manifest.${targetForManifest}.json`, to: `./manifest.json` },
 				{ from: './src/contentScripts', to: './contentScripts' },
+				{ from: './src/api-services', to: './api-services' },
 				{ from: './src/integrations', to: './integrations' },
 				{ from: './src/popupDlg', to: './popupDlg' },
 				{ from: './src/settings.html', to: './' },
@@ -116,10 +117,12 @@ module.exports = {
 					transform(content) {
 						return content
 							.toString()
-							.replace('var locales', 'var clockifyLocales')
-							.replace('export default locales;', '');
+							.replace('const locales', 'self.clockifyLocales')
+							.replace('return locales;', '')
+							.replace('export default', '');
 					},
 				},
+				{ from: './node_modules/moment/moment.js', to: './' },
 				{ from: './sw.js', to: './' },
 			],
 		}),

@@ -1,7 +1,4 @@
-import { LocalStorageService } from '../services/localStorage-service';
 import { isChrome } from './browser-helper';
-
-const localStorageService = new LocalStorageService();
 
 export class HttpHeadersHelper {
 	constructor() {}
@@ -16,8 +13,8 @@ export class HttpHeadersHelper {
 			headers['X-Auth-Token'] = token;
 		}
 
-		const wsConnectionId = await localStorageService.get('wsConnectionId');
-		const subDomainName = await localStorageService.get('subDomainName');
+		const wsConnectionId = await localStorage.getItem('wsConnectionId');
+		const subDomainName = await localStorage.getItem('subDomainName');
 
 		if (wsConnectionId) {
 			headers['socket-connection-id'] = wsConnectionId;
@@ -34,7 +31,7 @@ export class HttpHeadersHelper {
 		}
 
 		headers['App-Name'] = appType;
-		const lang = await localStorageService.get('lang');
+		const lang = await localStorage.getItem('lang');
 		if (lang) {
 			headers['accept-language'] = lang;
 		}

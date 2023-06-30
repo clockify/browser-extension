@@ -19,14 +19,15 @@
 	border-image-width: 0 !important;
 	border: 0px solid #c6d2d9 !important;
 	margin: 8px 0px 0px 0px !important;
-	height: 38px !important;
+	height: 40px !important;
+	overflow: visible;
 	&-disabled {
 		box-sizing: border-box;
 		padding: 0px !important;
 		border-image-width: 0 !important;
 		background-color: #eff4f7 !important;
 		margin: 8px 0px 0px 0px !important;
-		height: 38px !important;
+		height: 40px !important;
 		display: flex;
 		align-items: center;
 	}

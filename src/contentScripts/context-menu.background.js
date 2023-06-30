@@ -22,7 +22,7 @@ function toggleBrowserContextMenu(isContextMenuEnabled) {
 	if (isContextMenuEnabled) {
 		aBrowser.contextMenus.create({
 			id: 'startTimerWithDescriptionCM',
-			title: clockifyLocales.START_TIMER_WITH_DESCRIPTION + " '%s'",
+			title: clockifyLocales.START_TIMER_WITH_DESCRIPTION + ' \'%s\'',
 			contexts: ['selection'],
 		});
 		aBrowser.contextMenus.create({

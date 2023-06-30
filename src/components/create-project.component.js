@@ -3,19 +3,11 @@ import Header from './header.component';
 import ClientListComponent from './client-list.component';
 import ColorPicker from './color-picker.component';
 import Toaster from './toaster-component';
-import { ProjectService } from '../services/project-service';
-import * as ReactDOM from 'react-dom';
 import EditForm from './edit-form.component';
 import EditFormManual from './edit-form-manual.component';
-import { TimeEntryService } from '../services/timeEntry-service';
 import locales from '../helpers/locales';
-import { UserService } from '../services/user-service';
-import { LocalStorageService } from '../services/localStorage-service';
+import { getBrowser } from '../helpers/browser-helper';
 
-const projectService = new ProjectService();
-const timeEntryService = new TimeEntryService();
-const userService = new UserService();
-const localStorageService = new LocalStorageService();
 class CreateProjectComponent extends React.Component {
 	constructor(props) {
 		super(props);
@@ -94,8 +86,13 @@ class CreateProjectComponent extends React.Component {
 			isPublic: this.state.public,
 		};
 
-		projectService
-			.createProject(project)
+		getBrowser()
+			.runtime.sendMessage({
+				eventName: 'createProject',
+				options: {
+					project,
+				},
+			})
 			.then(async (response) => {
 				const timeEntry = Object.assign(this.props.timeEntry, {
 					projectId: response.data.id,
@@ -104,18 +101,17 @@ class CreateProjectComponent extends React.Component {
 					taskId: null,
 					task: null,
 				});
-				const userId = await localStorageService.get('userId');
-				const activeWorkspaceId = await localStorageService.get(
-					'activeWorkspaceId'
-				);
-				userService
-					.getUserRoles(activeWorkspaceId, userId)
+				getBrowser()
+					.runtime.sendMessage({
+						eventName: 'getUserRoles',
+					})
 					.then((response) => {
 						if (response && response.data && response.data.userRoles) {
 							const { userRoles } = response.data;
 							localStorage.setItem('userRoles', userRoles);
 						} else {
 						}
+						this.props.checkRequiredFields();
 						this.goBackToEdit(timeEntry);
 					})
 					.catch((error) => {
@@ -144,7 +140,13 @@ class CreateProjectComponent extends React.Component {
 
 	goBackToEdit(timeEntry) {
 		if (timeEntry.projectId) {
-			timeEntryService.updateProject(timeEntry.projectId, timeEntry.id);
+			getBrowser().runtime.sendMessage({
+				eventName: 'editProject',
+				options: {
+					id: timeEntry.id,
+					project: timeEntry.projectId,
+				},
+			});
 		}
 
 		this.props.closeModal();
@@ -172,9 +174,7 @@ class CreateProjectComponent extends React.Component {
 						this.toaster = instance;
 					}}
 				/>
-				<div
-					className="create-project"
-				>
+				<div className="create-project">
 					<div className="create-project__title-and-close">
 						<p className="create-project__title">
 							{locales.CREATE_NEW_PROJECT}

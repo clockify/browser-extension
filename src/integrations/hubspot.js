@@ -34,7 +34,7 @@ clockifyButton.render(
 	(elem) => {
 		setTimeout(function () {
 			let container = elem.parentElement;
-			for (let i = 0; (i = 3); i++) {
+			for (let i = 0; i === 3; i++) {
 				if (container.tagName.match(/H[1-4]/)) {
 					break;
 				}

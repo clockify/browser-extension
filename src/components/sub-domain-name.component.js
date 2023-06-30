@@ -1,13 +1,10 @@
-import React, { Component } from 'react';
+import React from 'react';
 import Header from './header.component';
 import Login from './login.component';
-// import {SettingsService} from "../services/settings-service";
 import locales from '../helpers/locales';
 import SelfHostedBootSettings from './self-hosted-login-settings.component';
 
-// const settingsService = new SettingsService();
-
-class SubDomainName extends Component {
+class SubDomainName extends React.Component {
 	constructor(props) {
 		super(props);
 

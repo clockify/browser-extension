@@ -1,7 +1,3 @@
-import { LocalStorageService } from '../services/localStorage-service';
-
-const localStorageService = new LocalStorageService();
-
 export class HtmlStyleHelper {
 	constructor() {}
 
@@ -26,8 +22,8 @@ export class HtmlStyleHelper {
 	}
 
 	async addOrRemoveDarkModeClassOnBodyElement() {
-		const userId = await localStorageService.get('userId');
-		const darkMode = await localStorageService.get('darkMode');
+		const userId = await localStorage.getItem('userId');
+		const darkMode = await localStorage.getItem('darkMode');
 		const darkModeFromStorageForUser =
 			darkMode &&
 			JSON.parse(darkMode).filter((darkMode) => darkMode.userId === userId)

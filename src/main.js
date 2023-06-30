@@ -1,11 +1,12 @@
+import * as moment from 'moment-timezone';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
+import '../sass/main-integration.scss';
+import locales from './helpers/locales';
 import { Application } from './application';
 import { checkConnection } from './components/check-connection';
-import locales from './helpers/locales';
-import * as moment from 'moment-timezone';
+import ErrorBoundary from './components/error-boundary';
 import ClockifyButton from './components/integrationPopup/ClockifyButton';
-import '../sass/main-integration.scss';
 import { offlineStorage } from './helpers/offlineStorage';
 
 offlineStorage.load();
@@ -142,22 +143,24 @@ if (
 
 				function renderToRoot(args = { forceStartTimer: false }) {
 					integrationRoots[buttonId].render(
-						<ClockifyButton
-							{...currBtnProps}
-							{...(buttonId === 0
-								? props.popupProps
-								: {
-										inProgressDescription:
-											props.popupProps.inProgressDescription,
-								  })}
-							updateButtonProps={(btnProps, popupProps) =>
-								window.updateButtonProperties(
-									btnProps ? { ...btnProps, buttonId: buttonId } : { buttonId },
-									popupProps
-								)
-							}
-							forceStart={args.forceStartTimer}
-						/>
+						<ErrorBoundary fallback={<p>Clockify: reload page</p>}>
+							<ClockifyButton
+								{...currBtnProps}
+								{...(buttonId === 0
+									? props.popupProps
+									: {
+											inProgressDescription:
+												props.popupProps.inProgressDescription,
+									})}
+								updateButtonProps={(btnProps, popupProps) =>
+									window.updateButtonProperties(
+										btnProps ? { ...btnProps, buttonId: buttonId } : { buttonId },
+										popupProps
+									)
+								}
+								forceStart={args.forceStartTimer}
+							/>
+						</ErrorBoundary>
 					);
 				}
 
@@ -237,7 +240,6 @@ if (
 		}
 	) => {
 		return (newBtnProps, newPopupProps) => {
-			console.count('updateButtonProperties');
 			if (newBtnProps) {
 				if (!props.btnProps[newBtnProps.buttonId]) {
 					props.btnProps[newBtnProps.buttonId] = {};
@@ -258,7 +260,11 @@ if (
 					...newBtnProps,
 				};
 			}
+
 			if (newPopupProps) {
+				if (!('manualMode' in newPopupProps)) {
+					newPopupProps.manualMode = false;
+				}
 				props.popupProps = { ...props.popupProps, ...newPopupProps };
 			}
 			renderClockifyButton(props, newBtnProps?.buttonId);

@@ -108,7 +108,6 @@ const CustomFieldDropMultiple = ({ cf, updateValue, setIsValid }) => {
 	return (
 		<>
 			<div
-				key={id}
 				index={index}
 				className={`custom-field${isDisabled ? '-disabled' : ''}`}
 			>
@@ -172,7 +171,7 @@ const CustomFieldDropMultiple = ({ cf, updateValue, setIsValid }) => {
 										return (
 											<div
 												onClick={() => selectTag(tag.id)}
-												key={tag.name}
+												key={tag.id}
 												tabIndex={'0'}
 												onKeyDown={(e) => {
 													if (e.key === 'Enter') selectTag(tag.id);
@@ -215,7 +214,9 @@ const CustomFieldDropMultiple = ({ cf, updateValue, setIsValid }) => {
 			</div>
 
 			{isNotValid && (
-				<p className="field-required-message">*{cf.wsCustomField.name} {locales.FIELD_REQUIRED}</p>
+				<p className="field-required-message">
+					*{cf.wsCustomField.name} {locales.FIELD_REQUIRED}
+				</p>
 			)}
 		</>
 	);

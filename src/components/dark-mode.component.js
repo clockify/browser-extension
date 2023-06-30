@@ -1,10 +1,9 @@
 import * as React from 'react';
-import { LocalStorageService } from '../services/localStorage-service';
+
 import { getLocalStorageEnums } from '../enums/local-storage.enum';
 import { HtmlStyleHelper } from '../helpers/html-style-helper';
 import locales from '../helpers/locales';
 
-const localStorageService = new LocalStorageService();
 const htmlStyleHelper = new HtmlStyleHelper();
 
 class DarkModeComponent extends React.Component {
@@ -21,8 +20,8 @@ class DarkModeComponent extends React.Component {
 	}
 
 	async isDarkModeOn() {
-		const userId = await localStorageService.get('userId');
-		const darkMode = await localStorageService.get('darkMode');
+		const userId = await localStorage.getItem('userId');
+		const darkMode = await localStorage.getItem('darkMode');
 		const darkModeFromStorageForUser =
 			darkMode &&
 			JSON.parse(darkMode).filter((darkMode) => darkMode.userId === userId)
@@ -42,8 +41,8 @@ class DarkModeComponent extends React.Component {
 	}
 
 	async toggleDarkMode() {
-		const userId = await localStorageService.get('userId');
-		const darkMode = await localStorageService.get('darkMode');
+		const userId = await localStorage.getItem('userId');
+		const darkMode = await localStorage.getItem('darkMode');
 		let darkModeFromStorage = darkMode ? JSON.parse(darkMode) : [];
 		let isEnabled;
 		const darkModeForCurrentUser =
@@ -75,7 +74,7 @@ class DarkModeComponent extends React.Component {
 			});
 		}
 
-		localStorageService.set(
+		localStorage.setItem(
 			'darkMode',
 			JSON.stringify(darkModeFromStorage),
 			getLocalStorageEnums().PERMANENT_PREFIX

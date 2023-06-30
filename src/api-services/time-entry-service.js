@@ -1,6 +1,4 @@
 class TimeEntry extends ClockifyService {
-	constructor() {}
-
 	static get doAlert() {
 		return this._doAlert;
 	}
@@ -28,13 +26,7 @@ class TimeEntry extends ClockifyService {
 		);
 	}
 
-	static async healthCheck() {
-		const baseUrl = await localStorageService.get('baseUrl');
-		const entryInProgressUrl = `${baseUrl}/health`;
-		return super.get(entryInProgressUrl, addToken);
-	}
-
-	static async getEntryInProgress(hydrated = false) {
+	static async getEntryInProgress(hydrated = true) {
 		//const endPoint = `${this.urlTimeEntries}/inProgress`;
 		const apiEndpoint = await this.apiEndpoint;
 		const userId = await this.userId;
@@ -45,7 +37,6 @@ class TimeEntry extends ClockifyService {
 		const { data, error, status } = await this.apiCall(endPoint);
 		if (error) {
 			// entry instanceof Error) {
-			 
 		}
 		return { entry: data && data.length > 0 ? data[0] : null, error };
 	}
@@ -92,21 +83,82 @@ class TimeEntry extends ClockifyService {
 		return { entry, error };
 	}
 
-	static async getTimeEntries(page, limit) {
-		const apiEndpoint = await this.apiEndpoint;
-		const workspaceId = await this.workspaceId;
+	static async getTimeEntries(page, limit = 50) {
+		const baseUrl = await this.getUrlTimeEntries();
 		const userId = await this.userId;
 
-		const allTimeEntriesEndpoint = `${apiEndpoint}/workspaces/${workspaceId}/timeEntries/user/${userId}/full?page=${page}&limit=${limit}`;
+		const endPoint = `${baseUrl}/user/${userId}/full?page=${page}&limit=${limit}`;
 
-		const { data, error } = await this.apiCall(allTimeEntriesEndpoint);
+		const { data, error } = await this.apiCall(endPoint);
 		if (error) {
 			console.error('oh no, failed', error);
 		}
 		return { data, error };
 	}
 
-	static async endInProgress(timeEntry = null, end = new Date()) {
+	static async deleteTimeEntry(entryId) {
+		const baseUrl = await this.getUrlTimeEntries();
+
+		const endPoint = `${baseUrl}/${entryId}`;
+
+		const { data, error } = await this.apiCall(endPoint, 'DELETE');
+		if (error) {
+			console.error('oh no, failed', error);
+		}
+		return { data, error };
+	}
+
+	static async deleteTimeEntries(timeEntries) {
+		const apiEndpoint = await this.apiEndpoint;
+		const workspaceId = await this.workspaceId;
+		const userId = await this.userId;
+
+		const endPoint = `${apiEndpoint}/v1/workspaces/${workspaceId}/user/${userId}/time-entries?time-entry-ids=${timeEntries.join(
+			','
+		)}`;
+
+		const { data, error } = await this.apiCall(endPoint, 'DELETE');
+		if (error) {
+			console.error('oh no, failed', error);
+		}
+		return { data, error };
+	}
+
+	static async duplicateTimeEntry(entryId) {
+		const apiEndpoint = await this.apiEndpoint;
+		const workspaceId = await this.workspaceId;
+		const userId = await this.userId;
+
+		const endPoint = `${apiEndpoint}/v1/workspaces/${workspaceId}/user/${userId}/time-entries/${entryId}/duplicate`;
+
+		const { data, error } = await this.apiCall(endPoint, 'POST');
+		if (error) {
+			console.error('oh no, failed', error);
+		}
+		return { data, error };
+	}
+
+	static async searchEntries(searchValue) {
+		const baseUrl = await this.getUrlTimeEntries();
+		const endPoint = `${baseUrl}?searchValue=${searchValue}`;
+		const { data, error } = await this.apiCall(endPoint);
+		if (error) {
+			console.error('oh no, failed', error);
+		}
+		return { data, error };
+	}
+
+	static async getRecentTimeEntries() {
+		const baseUrl = await this.getUrlTimeEntries();
+		const endPoint = `${baseUrl}/recent?limit=8`;
+		const { data, error } = await this.apiCall(endPoint);
+		if (error) {
+			console.error('oh no, failed', error);
+		}
+		return { data, error };
+	}
+
+	static async endInProgress(timeEntry = null, end = moment()) {
 		const inProgress = await this.getEntryInProgress();
 		let timeEntryInProgress = inProgress.entry;
 
@@ -134,19 +186,19 @@ class TimeEntry extends ClockifyService {
 		const {
 			id,
 			projectId,
+			task,
 			billable,
-			taskId,
 			description,
 			timeInterval,
 			customFieldValues,
-			tagIds,
+			tags,
 		} = timeEntryInProgress;
 		const { start } = timeInterval;
 
 		const body = {
 			projectId,
-			taskId,
-			tagIds,
+			taskId: task ? task.id : undefined,
+			tagIds: tags && tags.length ? tags.map(({ id }) => id) : undefined,
 			description,
 			start,
 			end,
@@ -160,7 +212,6 @@ class TimeEntry extends ClockifyService {
 		if (error) {
 			console.error('oh no, failed', error);
 			if (error.status === 400) {
-				 
 			}
 		} else {
 			aBrowser.action.setIcon({ path: iconPathEnded });
@@ -213,7 +264,7 @@ class TimeEntry extends ClockifyService {
 		},
 		isPomodoro = false
 	) {
-		const { forceProjects, forceTasks } = await this.getForces();
+		const { forceTasks } = await this.getForces();
 		let {
 			projectId,
 			task,
@@ -252,26 +303,22 @@ class TimeEntry extends ClockifyService {
 			customFields,
 		};
 		// console.log('StartTimer body', body)
-		const {
-			data: entry,
-			error,
-			status,
-		} = await this.apiCall(endPoint, 'POST', body);
+		const { data, error, status } = await this.apiCall(endPoint, 'POST', body);
 		if (error) {
 			console.error('oh no, failed', error);
-		} else if (entry && !entry.message && !isSubmitTime) {
+		} else if (data && !data.message && !isSubmitTime) {
 			// window.inProgress = true;
 			aBrowser.action.setIcon({
 				path: iconPathStarted,
 			});
-			setTimeEntryInProgress(entry);
+			setTimeEntryInProgress(data);
 
 			aBrowser.runtime.sendMessage({ eventName: 'TIME_ENTRY_STARTED' });
 
 			afterStartTimer(); // idle, pomodoro ...
 		}
 
-		return { entry, error, status };
+		return { data, error, status };
 	}
 
 	static async startTimerOnStartingBrowser() {
@@ -381,13 +428,6 @@ class TimeEntry extends ClockifyService {
 		return { entry, error };
 	}
 
-	static get timeEntryIdTemp() {
-		return (
-			Math.random().toString(36).substring(2, 15) +
-			Math.random().toString(36).substring(2, 15)
-		);
-	}
-
 	static async saveEntryOfflineAndStopItByDeletingIt(
 		entry,
 		end,
@@ -418,7 +458,7 @@ class TimeEntry extends ClockifyService {
 		);
 
 		const { error } = await this.deleteEntry(entry.id, isWebSocketHeader);
-		return { timeEntry, timeEntry };
+		return { timeEntry };
 	}
 
 	static async(request) {
@@ -488,6 +528,7 @@ class TimeEntry extends ClockifyService {
 			taskName,
 			taskId,
 			tagNames,
+			tagIds = null,
 			billable,
 			start = null,
 			end = null,
@@ -501,7 +542,7 @@ class TimeEntry extends ClockifyService {
 		if (!!project.name) {
 			const createObjects = await this.getCreateObjects();
 			let { projectDB, taskDB, message } =
-				await ProjectService.getOrCreateProjectAndTask(project.name, task);
+				await ProjectTaskService.getOrCreateProjectAndTask(project.name, task);
 			if (projectDB) {
 				project = projectDB;
 			} else {
@@ -523,145 +564,49 @@ class TimeEntry extends ClockifyService {
 			if (tagovi) tags = tagovi;
 			if (msg) console.log('TagService', msg);
 		} else if (forceTags) {
-			 
 		}
 
 		return await this.startTimer(description, {
 			projectId: project.id,
 			task,
 			billable,
-			tags,
+			tags: tagIds ? tagIds.map((id) => ({ id })) : tags,
 			start,
 			end,
 			isSubmitTime,
 		});
 	}
 
-	/////////////////////////////////////////////////
-	// for external extensions
+	static async changeStart(start, timeEntryId) {
+		const baseUrl = await this.getUrlTimeEntries();
+		const endPoint = `${baseUrl}/${timeEntryId}/start`;
 
-	static async startNewEntryExternal(request) {
-		let {
-			description = '',
-			project = { id: null, name: null },
-			task = { id: null, name: null },
-			billable,
-			tags: tagNames = [],
-		} = request;
+		const body = {
+			start,
+		};
 
-		const { forceDescription, forceProjects, forceTasks, forceTags } =
-			await this.getForces();
-
-		if (forceDescription && !request.hasOwnProperty('description')) {
-			return Promise.resolve({
-				entry: {},
-				message: `${clockifyLocales.DESCRIPTION_LABEL} ${clockifyLocales.REQUIRED}`,
-			});
-		}
-
-		if (forceProjects) {
-			if (!request.hasOwnProperty('project') || typeof project !== 'object')
-				return Promise.resolve({
-					entry: {},
-					message: "Missing { project: { name: 'MyProject' } }",
-				});
-		}
-
-		if (forceTasks) {
-			if (!request.hasOwnProperty('task') || typeof task !== 'object')
-				return Promise.resolve({
-					entry: {},
-					message: "Missing { task: { name: 'MyTask' } }",
-				});
-		}
-
-		description = description.trim();
-		if (!project.hasOwnProperty('name')) {
-			project.name = '';
-		}
-		if (!task.hasOwnProperty('name')) {
-			task.name = '';
-		}
-		project.name = project.name.trim();
-		task.name = task.name.trim();
-
-		let message = '';
-		this.doAlert = false; // global
-
-		const { entry, error } = await this.getEntryInProgress();
-		if (entry) {
-			const { error } = await this.endInProgress(entry);
-			if (error) {
-				this.doAlert = true;
-				return Promise.resolve({ entry, message: error.message });
-				//if (error.status === 400)
-				//    alert(error.message + 'startTimerWithDescription')
-			}
-		}
-
-		if (!!project.name) {
-			const createObjects = await this.getCreateObjects();
-			const {
-				projectDB,
-				taskDB,
-				message: msg,
-			} = await ProjectService.getOrCreateProjectAndTask(project.name, task);
-			message += msg;
-			if (projectDB) {
-				project = projectDB;
-			} else {
-				if ((forceProjects || (forceTasks && !taskDB)) && !createObjects) {
-					message += "\n Integrations can't create projects/tasks. ";
-				}
-			}
-			task = taskDB;
-
-			if (billable === null) {
-				billable = projectDB ? projectDB.billable : false;
-			}
-		}
-
-		if (forceDescription && description === '') {
-			message += `\n ${clockifyLocales.DESCRIPTION_LABEL} ${clockifyLocales.REQUIRED}`;
-		}
-
-		if (forceProjects && (!project || !project.hasOwnProperty('id'))) {
-			message += '\n Project (required) is not provided. ';
-		}
-		if (forceTasks && (!task || !task.hasOwnProperty('id'))) {
-			message += '\n Task (required) is not provided. ';
-		}
-
-		let tags = null;
-		if (tagNames.length > 0) {
-			const { tagovi, message: msg } = await TagService.getOrCreateTags(
-				tagNames.map((tagName) => tagName.trim())
-			);
-			if (tagovi) tags = tagovi;
-			if (msg) message += msg;
-		} else if (forceTags) {
-			message += 'Tags are required!';
-		}
-
-		const { entry: ent, error: err } = await this.startTimer(description, {
-			projectId: project.id,
-			task,
-			billable,
-			tags,
-		});
-
-		this.doAlert = true; // global
-		return Promise.resolve({
-			entry: ent,
-			message: message + (err ? err.message : ''),
-		});
+		return super.apiCall(endPoint, 'PUT', body);
 	}
 
-	static async endInProgressExternal() {
-		this.doAlert = false; // global
-		const { entry, error } = await this.endInProgress();
-		this.doAlert = true; // global
-		return Promise.resolve({ entry, error });
+	static async editTimeInterval(entryId, timeInterval) {
+		if (!entryId) {
+			return;
+		}
+		const baseUrl = await this.getUrlTimeEntries();
+		const endPoint = `${baseUrl}/${entryId}/timeInterval`;
+
+		let { start, end } = timeInterval;
+		if (moment(start).date() !== moment(end).date()) {
+			start = moment(start).add(1, 'day');
+			end = moment(end).add(1, 'day');
+		}
+
+		const body = {
+			start,
+			end,
+		};
+
+		return super.apiCall(endPoint, 'PUT', body);
 	}
 }
 

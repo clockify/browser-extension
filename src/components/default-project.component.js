@@ -46,7 +46,6 @@ class DefaultProjectComponent extends React.Component {
 		} else {
 			storage.toggleEnabledOfDefaultProject();
 		}
-
 		this.setState(
 			{
 				defaultProjectEnabled: !this.state.defaultProjectEnabled,

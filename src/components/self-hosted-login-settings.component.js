@@ -1,9 +1,9 @@
 import React from 'react';
 import Request from 'react-http-request';
 import Login from './login.component';
-import { SettingsService } from '../services/settings-service';
+import { ExtParameters } from '../wrappers/ext-parameters';
 
-const settingsService = new SettingsService();
+const extParameters = new ExtParameters();
 
 class SelfHostedBootSettings extends React.Component {
 	constructor(props) {
@@ -56,7 +56,7 @@ class SelfHostedBootSettings extends React.Component {
 							try {
 								const data = JSON.parse(result.text);
 								selfHosted = data.selfHosted;
-								settingsService.setSelfHosted(data.selfHosted);
+								extParameters.setSelfHosted(data.selfHosted);
 								if (data.endpoint.startsWith('/')) {
 									baseUrl = `${this.state.homeUrl}${data.endpoint}`;
 								} else {
@@ -78,19 +78,19 @@ class SelfHostedBootSettings extends React.Component {
 											''
 										)}${webSocketEndPoint}`;
 									}
-									settingsService.setWebSocketUrl(webSocketEndPoint);
+									extParameters.setWebSocketUrl(webSocketEndPoint);
 								}
 							} catch (error) {
 								baseUrl = `${this.state.homeUrl}/api`;
 							}
-							settingsService.setBaseUrl(baseUrl);
-							settingsService.setHomeUrl(this.state.homeUrl);
+							extParameters.setBaseUrl(baseUrl);
+							extParameters.setHomeUrl(this.state.homeUrl);
 
 							const subDomain = [
 								...this.state.homeUrl.matchAll(/\/\/(.*)\.clockify\.me/g),
 							][0]?.[1];
 							if (subDomain) {
-								settingsService.setSubDomainName(subDomain);
+								extParameters.setSubDomainName(subDomain);
 							}
 
 							return <Login />;

@@ -212,7 +212,9 @@ const CustomFieldDropSingle = ({ cf, updateValue, setIsValid }) => {
 				</div>
 			</div>
 			{isNotValid && (
-				<p className="field-required-message">*{cf.wsCustomField.name} {locales.FIELD_REQUIRED}</p>
+				<p className="field-required-message">
+					*{cf.wsCustomField.name} {locales.FIELD_REQUIRED}
+				</p>
 			)}
 		</>
 	);

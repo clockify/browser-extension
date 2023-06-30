@@ -1,17 +1,12 @@
 import * as React from 'react';
 import Menu from './menu.component';
 import { getEnv } from '../environment';
-// import {getAppTypes} from "../enums/applications-types.enum";
-import { LocalStorageService } from '../services/localStorage-service';
-import { TokenService } from '../services/token-service';
+
 import { getLocalStorageEnums } from '../enums/local-storage.enum';
-// import {UserService} from "../services/user-service";
 import locales from '../helpers/locales';
+import { isLoggedIn } from '../helpers/utils';
 
 const environment = getEnv();
-const localStorageService = new LocalStorageService();
-const tokenService = new TokenService();
-// const userService = new UserService();
 
 let _interval;
 // const _sreenshotMessage = "Screenshot recording is enabled. This app can't take screenshots.";
@@ -28,6 +23,7 @@ class Header extends React.Component {
 			showScreenshotNotification: false,
 			screenshotMessage: locales.SCREENSHOT_RECORDING,
 			showScreenshotLink: false,
+			isLoggedIn: false,
 			clockifyLink: '',
 		};
 
@@ -41,6 +37,14 @@ class Header extends React.Component {
 	}
 
 	componentDidMount() {
+		// this.checkScreenshotNotifications();
+		isLoggedIn()
+			.then((isLoggedIn) => {
+				this.setState({
+					isLoggedIn,
+				});
+			})
+			.catch(() => {});
 		this.returnClockifyLink().then((link) => {
 			this.setState({
 				clockifyLink: link,
@@ -53,8 +57,8 @@ class Header extends React.Component {
 	}
 
 	// processNotifications() {
-	//     const activeWorkspaceId = await localStorageService.get('activeWorkspaceId', null);
-	//     const userId = await localStorageService.get('userId', null);
+	//     const activeWorkspaceId = await localStorage.getItem('activeWorkspaceId', null);
+	//     const userId = await localStorage.getItem('userId', null);
 	//     if (userId) {
 	//         userService.getNotifications(userId)
 	//             .then(response => {
@@ -106,25 +110,25 @@ class Header extends React.Component {
 	}
 
 	async returnClockifyLink() {
-		const subDomain = await localStorageService.get('subDomainName', null);
+		const subDomain = await localStorage.getItem('subDomainName', null);
 		const homeUrl = subDomain
 			? `https://${subDomain}.${environment.mainDomain}`
 			: environment.home;
-			
+
 		return `${homeUrl}/tracker`;
-	};
+	}
 
 	async getScreenshotNotificationInfo() {
-		const activeWorkspaceId = await localStorageService.get(
+		const activeWorkspaceId = await localStorage.getItem(
 			'activeWorkspaceId',
 			null
 		);
-		const userId = await localStorageService.get('userId', null);
-		let workspaceSettings = await localStorageService.get('workspaceSettings');
+		const userId = await localStorage.getItem('userId', null);
+		let workspaceSettings = await localStorage.getItem('workspaceSettings');
 		workspaceSettings = (await workspaceSettings)
 			? JSON.parse(workspaceSettings)
 			: null;
-		const isScreenshotMessageRed = await localStorageService.get(
+		const isScreenshotMessageRed = await localStorage.getItem(
 			'isScreenshotMessageRed'
 		);
 		let list = (await isScreenshotMessageRed)
@@ -209,7 +213,7 @@ class Header extends React.Component {
 			showScreenshotLink: notification.on,
 		});
 
-		localStorageService.set(
+		localStorage.setItem(
 			'isScreenshotMessageRed',
 			JSON.stringify(list),
 			getLocalStorageEnums().PERMANENT_PREFIX
@@ -245,7 +249,7 @@ class Header extends React.Component {
 			showScreenshotNotification: false,
 		});
 
-		localStorageService.set(
+		localStorage.setItem(
 			'isScreenshotMessageRed',
 			JSON.stringify(list),
 			getLocalStorageEnums().PERMANENT_PREFIX
@@ -320,7 +324,7 @@ class Header extends React.Component {
 				</div>
 				<div className="header">
 					<div className="self-hosted-url__logo">
-						<a target={"_blank"} href={this.state.clockifyLink}>
+						<a target={'_blank'} href={this.state.clockifyLink}>
 							<span className="logo"></span>
 						</a>
 					</div>
@@ -388,9 +392,7 @@ class Header extends React.Component {
 						</div>
 					</div>
 				)}
-				<hr
-					className={!tokenService.isLoggedIn() ? 'header__break' : 'disabled'}
-				/>
+				<hr className={!this.state.isLoggedIn ? 'header__break' : 'disabled'} />
 			</div>
 		);
 	}

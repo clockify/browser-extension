@@ -8,6 +8,9 @@ _clockifyShowPostStartPopup = true;
 aBrowser.storage.local.get(['permanent_showPostStartPopup']).then((res) => {
 	if (res.permanent_showPostStartPopup)
 		_clockifyShowPostStartPopup = JSON.parse(res.permanent_showPostStartPopup);
+	else {
+		aBrowser.storage.local.set({ permanent_showPostStartPopup: "true" });
+	}
 });
 
 var clockifyButton = {
@@ -201,6 +204,7 @@ var clockifyButton = {
 
 		form.onsubmit = async (e) => {
 			e.preventDefault();
+			e.stopPropagation();
 			let workspaceSettings = await localStorage.getItem('workspaceSettings');
 			workspaceSettings = JSON.parse(workspaceSettings);
 			if (
@@ -244,16 +248,15 @@ var clockifyButton = {
 			}
 			try {
 				const time = input.value;
-				input.value = clockifyLocales.SUBMITTING;
 				const m = time.match(/(?=.{2,})^(\d+d)?\s*(\d+h)?\s*(\d+m)?$/);
 				if (m) {
+					input.value = clockifyLocales.SUBMITTING;
 					var totalMins =
 						8 * 60 * parseInt(m[1] || 0, 10) +
 						60 * parseInt(m[2] || 0, 10) +
 						parseInt(m[3] || 0, 10);
 					aBrowser.storage.local.get(['wsSettings'], (result) => {
 						let { wsSettings } = result;
-						// ClockifyPopupDlg.prototype.wsSettings = result.wsSettings;
 						if (
 							(wsSettings.forceDescription &&
 								!timeEntryOptionsInvoked.description) ||
@@ -361,7 +364,7 @@ var clockifyButton = {
 						}
 					});
 				} else {
-					inputMessage(input, 'Format: 1d 2h 30m', 'error');
+					inputMessage(input, 'Format: 1d 2h 30m', 'error', true);
 				}
 			} catch (e) {
 				console.error(e);

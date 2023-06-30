@@ -1,8 +1,5 @@
-import { LocalStorageService } from '../services/localStorage-service';
 import { getBrowser } from '../helpers/browser-helper';
 import locales from '../helpers/locales';
-
-const localStorageService = new LocalStorageService();
 
 const getWSCustomFields = () =>
 	new Promise((resolve) => {
@@ -63,9 +60,7 @@ var offlineStorage = {
 		this._onlyAdminsCanChangeBillableStatus = onlyAdminsCanChangeBillableStatus
 			? JSON.parse(onlyAdminsCanChangeBillableStatus)
 			: false;
-		const workspaceSettings = await localStorageService.get(
-			'workspaceSettings',
-		);
+		const workspaceSettings = await localStorage.getItem('workspaceSettings');
 		this._userHasCustomFieldsFeature = workspaceSettings
 			? JSON.parse(workspaceSettings).features.customFields
 			: false;
@@ -84,7 +79,7 @@ var offlineStorage = {
 	},
 
 	// store() {
-	//     localStorageService.set(
+	//     localStorage.setItem(
 	//         this.storageName,
 	//         JSON.stringify(this.storage),
 	//         this.isPermanent ? 'permanent_' : null

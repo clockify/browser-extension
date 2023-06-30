@@ -1,27 +1,19 @@
 import * as React from 'react';
 import Settings from './settings.component';
-import { TokenService } from '../services/token-service';
 import { getBrowser, isChrome } from '../helpers/browser-helper';
 import { getEnv } from '../environment';
 import { HtmlStyleHelper } from '../helpers/html-style-helper';
 import WorkspaceList from './workspace-list.component';
-import { WorkspaceService } from '../services/workspace-service';
-import { LocalStorageService } from '../services/localStorage-service';
-import { UserService } from '../services/user-service';
 import WorkspaceChangeConfirmation from './workspace-change-confirmation.component';
-import { SettingsService } from '../services/settings-service';
+import { ExtParameters } from '../wrappers/ext-parameters';
 import locales from '../helpers/locales';
 import WsChange2FAPopupComponent from '../components/ws-change-2fa-popup.component';
 import SelfHostedBootSettings from '../components/self-hosted-login-settings.component';
+import { logout } from '../helpers/utils';
 
-const tokenService = new TokenService();
-//const webSocketClient = new WebSocketClient();
 const environment = getEnv();
 const htmlStyleHelper = new HtmlStyleHelper();
-const localStorageService = new LocalStorageService();
-const userService = new UserService();
-const settingsService = new SettingsService();
-const workspaceService = new WorkspaceService();
+const extParameters = new ExtParameters();
 
 class Menu extends React.Component {
 	constructor(props) {
@@ -67,8 +59,10 @@ class Menu extends React.Component {
 	}
 
 	getWorkspaces() {
-		workspaceService
-			.getWorkspacesOfUser()
+		getBrowser()
+			.runtime.sendMessage({
+				eventName: 'getWorkspacesOfUser',
+			})
 			.then(async (response) => {
 				let data = response.data;
 				const activeWorkspaceId = await localStorage.getItem(
@@ -121,18 +115,17 @@ class Menu extends React.Component {
 		getBrowser().runtime.openOptionsPage();
 	}
 
-	logout() {
+	handleLogoutClick() {
 		if (this.state.isOffline) return;
 		this.disconnectWebSocket();
 		htmlStyleHelper.removeDarkModeClassFromBodyElement();
-		tokenService.logout();
-		if (!isChrome()) localStorageService.removeItem('subDomainName');
+		logout();
+		if (!isChrome()) localStorage.removeItem('subDomainName');
 	}
 
 	async openWebDashboard() {
 		if (this.state.isOffline || this.props.isTrackingDisabled) return;
-		const homeUrl =
-			(await localStorageService.get('homeUrl')) || environment.home;
+		const homeUrl = (await localStorage.getItem('homeUrl')) || environment.home;
 		window.open(`${homeUrl}/dashboard`, '_blank');
 		if (!isChrome()) {
 			browser.tabs.create({
@@ -165,11 +158,15 @@ class Menu extends React.Component {
 			previousWorkspace: state.selectedWorkspace,
 			selectedWorkspace: workspace,
 		}));
-
-		userService
-			.setDefaultWorkspace(workspaceId)
+		getBrowser()
+			.runtime.sendMessage({
+				eventName: 'setDefaultWorkspace',
+				options: {
+					workspaceId,
+				},
+			})
 			.then((response) => {
-				const subDomainName = response.headers['sub-domain-name'];
+				const subDomainName = response.headers ? response.headers['sub-domain-name'] : null;
 				if (subDomainName) {
 					this.setState({
 						revert: false,
@@ -178,7 +175,7 @@ class Menu extends React.Component {
 					});
 					return;
 				}
-				localStorageService.set('activeWorkspaceId', workspaceId);
+				localStorage.setItem('activeWorkspaceId', workspaceId);
 				localStorage.removeItem('preProjectList');
 				localStorage.removeItem('preTagsList');
 
@@ -198,7 +195,7 @@ class Menu extends React.Component {
 				this.props.workspaceChanged();
 			})
 			.catch((error) => {
-				if (error.response.data.code === 1013) {
+				if (error.response?.data.code === 1013) {
 					this.setState({
 						show2FAPopup: true,
 					});
@@ -220,8 +217,8 @@ class Menu extends React.Component {
 			workspaceChangeConfirmationIsOpen: false,
 		});
 
-		settingsService.setSubDomainName(this.state.subDomainName);
-		this.logout.bind(this)();
+		extParameters.setSubDomainName(this.state.subDomainName);
+		this.handleLogoutClick.bind(this)();
 		setTimeout(() => {
 			window.reactRoot.render(
 				<SelfHostedBootSettings
@@ -338,7 +335,7 @@ class Menu extends React.Component {
 							<span className="menu-img-right"></span>
 						</a>
 						<a
-							onClick={this.logout.bind(this)}
+							onClick={this.handleLogoutClick.bind(this)}
 							className="dropdown-item"
 							href="#"
 						>

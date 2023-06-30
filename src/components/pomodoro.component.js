@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { LocalStorageService } from '../services/localStorage-service';
+
 import { getLocalStorageEnums } from '../enums/local-storage.enum';
 import { getKeyCodes } from '../enums/key-codes.enum';
 import Switch from 'antd/lib/switch';
@@ -8,7 +8,6 @@ import { HtmlStyleHelper } from '../helpers/html-style-helper';
 import DefaultPomodoroBreakProject from './default-pomodoro-break-project.component';
 import locales from '../helpers/locales';
 
-const localStorageService = new LocalStorageService();
 const htmlStyleHelper = new HtmlStyleHelper();
 
 class Pomodoro extends Component {
@@ -35,8 +34,8 @@ class Pomodoro extends Component {
 	}
 
 	async getPomodoroStorage() {
-		const userId = await localStorageService.get('userId');
-		const strPomodoro = await localStorageService.get('pomodoro');
+		const userId = await localStorage.getItem('userId');
+		const strPomodoro = await localStorage.getItem('pomodoro');
 		const pomodoroStorage = strPomodoro ? JSON.parse(strPomodoro) : [];
 		return {
 			pomodoroForUser: pomodoroStorage.find(
@@ -47,7 +46,7 @@ class Pomodoro extends Component {
 	}
 
 	store(pomodoroStorage) {
-		localStorageService.set(
+		localStorage.setItem(
 			'pomodoro',
 			JSON.stringify(pomodoroStorage),
 			getLocalStorageEnums().PERMANENT_PREFIX
@@ -99,7 +98,7 @@ class Pomodoro extends Component {
 		let isEnabled;
 
 		const elementsIds = ['longBreak', 'breakCounter'];
-		const userId = await localStorageService.get('userId');
+		const userId = await localStorage.getItem('userId');
 
 		if (!pomodoroForUser) {
 			const obj = {

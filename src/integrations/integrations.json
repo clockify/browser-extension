@@ -56,7 +56,7 @@
 	},
 	"crowdin.com": {
 		"name": "Crowdin",
-		"link": "*://*.crowdin.com/*",
+		"link": "*://crowdin.com/*",
 		"script": "crowdin.js"
 	},
 	"shortcut.com": {
@@ -214,6 +214,11 @@
 		"link": "*://tasks.office.com/*",
 		"script": "microsoft-planner.js"
 	},
+	"miro.com": {
+		"name": "Miro",
+		"link": "*://miro.com/*",
+		"script": "miro.js"
+	},
 	"monday.com": {
 		"name": "Monday",
 		"link": "*://*.monday.com/*",
@@ -236,7 +241,7 @@
 	},
 	"nozbe.com": {
 		"name": "Nozbe",
-		"link": "*://*.nozbe.com/*",
+		"link": "*://nozbe.app/*",
 		"script": "nozbe.js"
 	},
 	"openproject.com": {
@@ -451,7 +456,7 @@
 	},
 	"sentry.io": {
 		"name": "Sentry",
-		"link": "*://sentry.io/*",
+		"link": "*://sentry.io/*,*://*.sentry.io/*",
 		"script": "sentry.js"
 	},
 	"jetbrains.space": {
@@ -468,5 +473,10 @@
 		"name": "Zoho Projects",
 		"link": "*://projects.zoho.com/*",
 		"script": "zohoprojects.js"
-	}
+  }
+  "nifty.pm": {
+		"name": "Nifty",
+		"link": "*://*.nifty.pm/*",
+		"script": "nifty.js"
+  }
 }

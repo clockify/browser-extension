@@ -96,6 +96,7 @@ class DefaultProject {
 		// let us try to notify here
 		if (msg && TimeEntry.doAlert) {
 			// alert(msg)
+			 
 			localStorage.setItem('integrationAlert', msg);
 		}
 		return { projectDB, taskDB, msg, msgId };
@@ -111,28 +112,33 @@ class DefaultProject {
 	async _getProjectTask(forceTasks = false) {
 		const { id, selectedTask } = this.project;
 		if (id === DefaultProjectEnums.LAST_USED_PROJECT) {
-			// return ProjectService.getLastUsedProjectFromTimeEntries(forceTasks);
 			const isLastUsedProjectWithTask = this.project.name.includes('task');
-			let lastEntry = await ProjectService.getLastUsedProjectFromTimeEntries(
-				isLastUsedProjectWithTask
-			);
-			lastEntry = lastEntry?.projectDB && {
-				project: lastEntry.projectDB,
-				task: lastEntry.taskDB,
-			};
+			let lastEntry;
 			let projectDB = null;
 			let taskDB = null;
+			
+			const lastEntryRes = await ProjectTaskService.getLastUsedProjectFromTimeEntries(
+				isLastUsedProjectWithTask
+			);
+			 
+			if(lastEntryRes.error) return { projectDB, taskDB };
+			
+			lastEntry = {
+				project: lastEntryRes.data.project ?? lastEntryRes.data,
+				task: lastEntryRes.data.task ?? null,
+			};
+			 	
 			if (lastEntry && lastEntry.project) {
-				({ projectDB, taskDB } = await ProjectService.getProjectsByIds([
+				({ projectDB, taskDB } = await ProjectTaskService.getProjectsByIds([
 					lastEntry.project.id,
 				]));
 				if (projectDB) {
 					if (
 						!projectDB.archived &&
 						isLastUsedProjectWithTask &&
-						lastEntry.task.id
+						lastEntry.task?.id
 					) {
-						taskDB = await TaskService.getTask(lastEntry.task.id);
+						taskDB = await ProjectTaskService.getTask(lastEntry.task.id);
 						if (taskDB) {
 							taskDB.isDone = taskDB.status === 'DONE';
 						}
@@ -143,14 +149,14 @@ class DefaultProject {
 			return { projectDB, taskDB };
 		} else {
 			const taskIds = selectedTask ? [selectedTask.id] : null;
-			const { projectDB } = await ProjectService.getProjectsByIds(
+			const { projectDB } = await ProjectTaskService.getProjectsByIds(
 				[id],
 				taskIds
 			);
 			let taskDB = null;
 			if (projectDB) {
 				if (!projectDB.archived && selectedTask) {
-					taskDB = await TaskService.getTask(selectedTask.id);
+					taskDB = await ProjectTaskService.getTask(selectedTask.id);
 					if (taskDB) {
 						taskDB.isDone = taskDB.status === 'DONE';
 					}
@@ -167,6 +173,7 @@ class DefaultProject {
 		let msgId = null;
 		if (this.enabled) {
 			let { projectDB, taskDB } = await this._getProjectTask(this.forceTasks);
+			 
 			if (projectDB) {
 				if (projectDB.archived) {
 					// storage.removeDefaultProject();
@@ -174,7 +181,11 @@ class DefaultProject {
 					msgId = 'projectArchived';
 					projectDB = null;
 				} else {
-					if (this.forceTasks) {
+					  
+					 const isLastUsedProjectWithTask =
+						this.project.id === 'lastUsedProject' &&
+						this.project.name.includes('task');
+					if (this.forceTasks && isLastUsedProjectWithTask) {
 						if (taskDB) {
 							if (taskDB.isDone) {
 								taskDB = null;
@@ -187,6 +198,7 @@ class DefaultProject {
 						}
 					}
 				}
+				 
 				return { projectDB, taskDB, msg, msgId };
 			} else {
 				// storage.removeDefaultProject();
@@ -194,6 +206,7 @@ class DefaultProject {
 				msgId = 'projectDoesNotExist';
 			}
 		}
+		 
 		return { projectDB: null, taskDB: null, msg, msgId };
 	}
 }

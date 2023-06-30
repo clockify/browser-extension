@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
 const CustomField = ({ obj }) => {
 	const { wsCustomField, timeEntryId, value, index } = obj;

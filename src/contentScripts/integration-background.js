@@ -1,15 +1,4 @@
 class ClockifyIntegrationBase {
-	constructor() {}
-
-	// static async get wsSettings() {
-	//     const wsSettings = await localStorage.getItem("workspaceSettings");
-	//     return wsSettings ? JSON.parse(wsSettings) : null;
-	// }
-
-	// static get isSpecialFilter() {
-	//     return this.wsSettings ? this.wsSettings.projectPickerSpecialFilter : false;
-	// }
-
 	static async takeTimeEntryInProgress(sendResponse) {
 		if (await isNavigatorOffline()) {
 			sendResponse('Connection is offline');
@@ -30,7 +19,7 @@ class ClockifyIntegrationBase {
 		sendResponse({ status: clockifyLocales.OK_BTN });
 	}
 
-	static async stopEntryInProgress(sendResponse) {
+	static async endInProgress(sendResponse) {
 		if (await isNavigatorOffline()) {
 			sendResponse('Connection is offline');
 			return;
@@ -48,18 +37,16 @@ class ClockifyIntegrationBase {
 		}
 	}
 
-	static async startWithDescription({ timeEntryOptions }, sendResponse) {
+	static async startWithDescription(timeEntryOptions, sendResponse) {
 		if (await isNavigatorOffline()) {
 			sendResponse('Connection is offline');
 			return;
 		}
-
 		const { entry, error } = await TimeEntry.getEntryInProgress();
 		if (error) {
 			sendResponse({ status: error.status });
 			return;
 		}
-
 		if (entry) {
 			const { error } = await TimeEntry.endInProgress();
 			if (error) {
@@ -67,9 +54,8 @@ class ClockifyIntegrationBase {
 				return;
 			}
 		}
-
 		const {
-			entry: ent,
+			data: ent,
 			error: err,
 			status,
 		} = await TimeEntry.integrationStartTimerWithDescription(
@@ -84,9 +70,11 @@ class ClockifyIntegrationBase {
 					path: iconPathStarted,
 				});
 				addPomodoroTimer();
-				aBrowser.storage.local.set({ timeEntryInProgress: ent });
+				if (!timeEntryOptions.manualMode) {
+					aBrowser.storage.local.set({ timeEntryInProgress: ent });
+				}
 			}
-			sendResponse({ status: status, data: ent });
+			sendResponse({ status, data: ent });
 		}
 	}
 
@@ -100,11 +88,13 @@ class ClockifyIntegrationBase {
 		}
 		let project, task, tags;
 		if (projectName) {
-			let { projectDB } = await ProjectService.getOrCreateProject(projectName);
+			let { projectDB } = await ProjectTaskService.getOrCreateProject(
+				projectName
+			);
 			project = projectDB;
 
 			if (project && taskName) {
-				let { taskDB } = await ProjectService.getOrCreateProjectAndTask(
+				let { taskDB } = await ProjectTaskService.getOrCreateProjectAndTask(
 					project.name,
 					{ name: taskName }
 				);
@@ -128,20 +118,20 @@ class ClockifyIntegrationBase {
 			return;
 		}
 
-		const { entry, error } = await TimeEntry.getEntryInProgress();
-		if (error) {
-			sendResponse({
-				projectDB: null,
-				taskDB: null,
-				msg: error.message ? error.message : error.status,
-			});
-			return;
-		}
+		// const { entry, error } = await TimeEntry.getEntryInProgress();
+		// if (error) {
+		// 	sendResponse({
+		// 		projectDB: null,
+		// 		taskDB: null,
+		// 		msg: error.message ? error.message : error.status,
+		// 	});
+		// 	return;
+		// }
 		const {
 			projectDB,
 			error: projectError,
 			status,
-		} = await ProjectService.getProjectsByIds(projectIds, taskIds);
+		} = await ProjectTaskService.getProjectsByIds(projectIds, taskIds);
 		if (projectError) {
 			sendResponse(
 				projectError.message ? projectError.message : projectError.status
@@ -167,15 +157,15 @@ class ClockifyIntegrationBase {
 			return;
 		}
 
-		const { entry, error } = await TimeEntry.getEntryInProgress();
-		if (error) {
-			sendResponse({
-				projectDB: null,
-				taskDB: null,
-				msg: error.message ? error.message : error.status,
-			});
-			return;
-		}
+		// const { entry, error } = await TimeEntry.getEntryInProgress();
+		// if (error) {
+		// 	sendResponse({
+		// 		projectDB: null,
+		// 		taskDB: null,
+		// 		msg: error.message ? error.message : error.status,
+		// 	});
+		// 	return;
+		// }
 
 		const { projectDB, taskDB, msg, msgId } =
 			await DefaultProject.getProjectTaskFromDB();
@@ -191,15 +181,14 @@ class ClockifyIntegrationBase {
 			return;
 		}
 
-		const { entry, error } = await TimeEntry.getEntryInProgress();
-		if (error) {
-			sendResponse({ status: err.status });
-			return;
-		}
+		// const { entry, error } = await TimeEntry.getEntryInProgress();
+		// if (error) {
+		// 	sendResponse({ status: err.status });
+		// 	return;
+		// }
 
-		let projectList = [];
-		const { data: projects, error: projectsError } =
-			await ProjectService.getProjectsWithFilter(
+		const { data, error: projectsError } =
+			await ProjectTaskService.getProjectsWithFilter(
 				filter,
 				page,
 				pageSize,
@@ -213,9 +202,45 @@ class ClockifyIntegrationBase {
 		}
 		sendResponse({
 			status: 201,
-			data: {
-				projectList: projectList.concat(projects),
-			},
+			data,
+		});
+	}
+
+	static async getLastUsedProjectFromTimeEntries({ forceTasks }, sendResponse) {
+		if (await isNavigatorOffline()) {
+			sendResponse('Connection is offline');
+			return;
+		}
+
+		const { data, error: projectsError } =
+			await ProjectTaskService.getLastUsedProjectFromTimeEntries(forceTasks);
+		if (projectsError) {
+			sendResponse(
+				projectsError.message ? projectsError.message : projectsError.status
+			);
+		}
+		sendResponse({
+			status: 201,
+			data,
+		});
+	}
+
+	static async getTaskOfProject({ projectId, taskName }, sendResponse) {
+		if (await isNavigatorOffline()) {
+			sendResponse('Connection is offline');
+			return;
+		}
+
+		const { data, error: projectsError } =
+			await ProjectTaskService.getTaskOfProject(projectId, taskName);
+		if (projectsError) {
+			sendResponse(
+				projectsError.message ? projectsError.message : projectsError.status
+			);
+		}
+		sendResponse({
+			status: 201,
+			data,
 		});
 	}
 
@@ -225,26 +250,24 @@ class ClockifyIntegrationBase {
 			return;
 		}
 
-		const { entry, error } = await TimeEntry.getEntryInProgress();
-		if (error) {
-			sendResponse({
-				projectDB: null,
-				taskDB: null,
-				msg: error.message ? error.message : error.status,
-			});
-			return;
-		}
+		// const { entry, error } = await TimeEntry.getEntryInProgress();
+		// if (error) {
+		// 	sendResponse({
+		// 		projectDB: null,
+		// 		taskDB: null,
+		// 		msg: error.message ? error.message : error.status,
+		// 	});
+		// 	return;
+		// }
 
-		const { data, status } = await ProjectService.getProjectTasksWithFilter(
+		const { data, status } = await ProjectTaskService.getProjectTasksWithFilter(
 			projectId,
 			filter,
 			page
 		);
 		sendResponse({
 			status,
-			data: {
-				taskList: data,
-			},
+			data,
 		});
 	}
 
@@ -254,26 +277,42 @@ class ClockifyIntegrationBase {
 			return;
 		}
 
-		const { entry, error } = await TimeEntry.getEntryInProgress();
+		// const { entry, error } = await TimeEntry.getEntryInProgress();
+		// if (error) {
+		// 	sendResponse(error.message ? error.message : error.status);
+		// 	return;
+		// }
+
+		// if (entry) {
+		const {
+			data: timeEntry,
+			error,
+			status,
+		} = await TimeEntry.setDescription(id, description.trim());
 		if (error) {
 			sendResponse(error.message ? error.message : error.status);
 			return;
 		}
+		sendResponse({ data: timeEntry, status });
+		// } else {
+		// 	sendResponse('There is no TimeEntry in progress');
+		// }
+	}
 
-		if (entry) {
-			const {
-				data: timeEntry,
-				error,
-				status,
-			} = await TimeEntry.setDescription(id, description.trim());
-			if (error) {
-				sendResponse(error.message ? error.message : error.status);
-				return;
-			}
-			sendResponse({ data: timeEntry, status });
-		} else {
-			sendResponse('There is no TimeEntry in progress');
+	static async createProject({ project }, sendResponse) {
+		if (await isNavigatorOffline()) {
+			sendResponse('Connection is offline');
+			return;
 		}
+
+		const { data, error, status } = await ProjectTaskService.createProject(
+			project
+		);
+		if (error) {
+			sendResponse(error.message ? error.message : error.status);
+			return;
+		}
+		sendResponse({ status, data });
 	}
 
 	static async editProject({ id, project }, sendResponse) {
@@ -282,31 +321,44 @@ class ClockifyIntegrationBase {
 			return;
 		}
 
-		const { entry, error } = await TimeEntry.getEntryInProgress();
+		// const { entry, error } = await TimeEntry.getEntryInProgress();
+		// if (error) {
+		// 	sendResponse(error.message ? error.message : error.status);
+		// 	return;
+		// }
+
+		if (!project) {
+			const { data, error, status } = await TimeEntry.removeProject(id);
+			if (error) {
+				sendResponse(error.message ? error.message : error.status);
+				return;
+			}
+			sendResponse({ status, data });
+		} else {
+			const { data, error, status } = await TimeEntry.updateProject(
+				id,
+				project
+			);
+			if (error) {
+				sendResponse(error.message ? error.message : error.status);
+				return;
+			}
+			sendResponse({ status, data });
+		}
+	}
+
+	static async createTask({ task }, sendResponse) {
+		if (await isNavigatorOffline()) {
+			sendResponse('Connection is offline');
+			return;
+		}
+
+		const { data, error, status } = await ProjectTaskService.createTask(task);
 		if (error) {
 			sendResponse(error.message ? error.message : error.status);
 			return;
 		}
-
-		if (!project.id) {
-			const { data: entry, error, status } = await TimeEntry.removeProject(id);
-			if (error) {
-				sendResponse(error.message ? error.message : error.status);
-				return;
-			}
-			sendResponse({ status, entry });
-		} else {
-			const {
-				data: entry,
-				error,
-				status,
-			} = await TimeEntry.updateProject(id, project.id);
-			if (error) {
-				sendResponse(error.message ? error.message : error.status);
-				return;
-			}
-			sendResponse({ status, entry });
-		}
+		sendResponse({ status, data });
 	}
 
 	static async editTask({ id, project, task }, sendResponse) {
@@ -315,35 +367,35 @@ class ClockifyIntegrationBase {
 			return;
 		}
 
-		const { entry, error } = await TimeEntry.getEntryInProgress();
-		if (error) {
-			sendResponse(error.message ? error.message : error.status);
-			return;
-		}
+		// const { entry, error } = await TimeEntry.getEntryInProgress();
+		// if (error) {
+		// 	sendResponse(error.message ? error.message : error.status);
+		// 	return;
+		// }
 
-		if (entry) {
-			if (!task) {
-				const { data: entry, error, status } = await TimeEntry.removeTask(id);
-				if (error) {
-					sendResponse(error.message ? error.message : error.status);
-					return;
-				}
-				sendResponse({ status, entry });
-			} else {
-				const {
-					data: entry,
-					error,
-					status,
-				} = await TimeEntry.updateTask(task.id, project.id, id);
-				if (error) {
-					sendResponse(error.message ? error.message : error.status);
-					return;
-				}
-				sendResponse({ status, entry });
+		// if (entry) {
+		if (!task) {
+			const { data, error, status } = await TimeEntry.removeTask(id);
+			if (error) {
+				sendResponse(error.message ? error.message : error.status);
+				return;
 			}
+			sendResponse({ status, data });
 		} else {
-			sendResponse('There is no TimeEntry in progress');
+			const { data, error, status } = await TimeEntry.updateTask(
+				task,
+				project,
+				id
+			);
+			if (error) {
+				sendResponse(error.message ? error.message : error.status);
+				return;
+			}
+			sendResponse({ status, data });
 		}
+		// } else {
+		// 	sendResponse('There is no TimeEntry in progress');
+		// }
 	}
 
 	static async getTags({ filter, page, pageSize }, sendResponse) {
@@ -352,14 +404,14 @@ class ClockifyIntegrationBase {
 			return;
 		}
 
-		const { entry, error } = await TimeEntry.getEntryInProgress();
-		if (error) {
-			sendResponse(error.message ? error.message : error.status);
-			return;
-		}
+		// const { entry, error } = await TimeEntry.getEntryInProgress();
+		// if (error) {
+		// 	sendResponse(error.message ? error.message : error.status);
+		// 	return;
+		// }
 
 		const {
-			data: pageTags,
+			data,
 			error: tagsError,
 			status,
 		} = await TagService.getAllTagsWithFilter(page, pageSize, filter);
@@ -367,7 +419,27 @@ class ClockifyIntegrationBase {
 			sendResponse(tagsError.message ? tagsError.message : tagsError.status);
 			return;
 		}
-		sendResponse({ status, pageTags });
+		sendResponse({ status, data });
+	}
+
+	static async createTag({ tag }, sendResponse) {
+		if (await isNavigatorOffline()) {
+			sendResponse('Connection is offline');
+			return;
+		}
+
+		// const { entry, error } = await TimeEntry.getEntryInProgress();
+		// if (error) {
+		// 	sendResponse(error.message ? error.message : error.status);
+		// 	return;
+		// }
+
+		const { data, error: tagsError, status } = await TagService.createTag(tag);
+		if (tagsError) {
+			sendResponse(tagsError.message ? tagsError.message : tagsError.status);
+			return;
+		}
+		sendResponse({ status, data });
 	}
 
 	static async editTags({ id, tagIds }, sendResponse) {
@@ -376,26 +448,22 @@ class ClockifyIntegrationBase {
 			return;
 		}
 
-		const { entry, error } = await TimeEntry.getEntryInProgress();
+		// const { entry, error } = await TimeEntry.getEntryInProgress();
+		// if (error) {
+		// 	sendResponse(error.message ? error.message : error.status);
+		// 	return;
+		// }
+
+		// if (entry) {
+		const { data, error, status } = await TimeEntry.updateTags(tagIds, id);
 		if (error) {
 			sendResponse(error.message ? error.message : error.status);
 			return;
 		}
-
-		if (entry) {
-			const {
-				data: timeEntry,
-				error,
-				status,
-			} = await TimeEntry.updateTags(tagIds, id);
-			if (error) {
-				sendResponse(error.message ? error.message : error.status);
-				return;
-			}
-			sendResponse({ status, timeEntry });
-		} else {
-			sendResponse('There is no TimeEntry in progress');
-		}
+		sendResponse({ status, data });
+		// } else {
+		// 	sendResponse('There is no TimeEntry in progress');
+		// }
 	}
 
 	static async fetchEntryInProgress(sendResponse) {
@@ -420,24 +488,14 @@ class ClockifyIntegrationBase {
 			return;
 		}
 
-		const { entry, error } = await TimeEntry.getEntryInProgress();
+		const { error, status } = await ProjectTaskService.removeProjectAsFavorite(
+			projectId
+		);
 		if (error) {
 			sendResponse(error.message ? error.message : error.status);
 			return;
 		}
-
-		if (entry) {
-			const { error, status } = await ProjectService.removeProjectAsFavorite(
-				projectId
-			);
-			if (error) {
-				sendResponse(error.message ? error.message : error.status);
-				return;
-			}
-			sendResponse({ status });
-		} else {
-			sendResponse('There is no TimeEntry in progress');
-		}
+		sendResponse({ status });
 	}
 
 	static async makeProjectFavorite({ projectId }, sendResponse) {
@@ -446,24 +504,14 @@ class ClockifyIntegrationBase {
 			return;
 		}
 
-		const { entry, error } = await TimeEntry.getEntryInProgress();
+		const { error, status } = await ProjectTaskService.makeProjectFavorite(
+			projectId
+		);
 		if (error) {
 			sendResponse(error.message ? error.message : error.status);
 			return;
 		}
-
-		if (entry) {
-			const { error, status } = await ProjectService.makeProjectFavorite(
-				projectId
-			);
-			if (error) {
-				sendResponse(error.message ? error.message : error.status);
-				return;
-			}
-			sendResponse({ status });
-		} else {
-			sendResponse('There is no TimeEntry in progress');
-		}
+		sendResponse({ status });
 	}
 
 	static async editBillable({ id, billable }, sendResponse) {
@@ -472,25 +520,25 @@ class ClockifyIntegrationBase {
 			return;
 		}
 
-		const { entry, error } = await TimeEntry.getEntryInProgress();
+		// const { entry, error } = await TimeEntry.getEntryInProgress();
+		// if (error) {
+		// 	sendResponse(error.message ? error.message : error.status);
+		// 	return;
+		// }
+
+		// if (entry) {
+		const { entry, error, status } = await TimeEntry.updateBillable(
+			id,
+			billable
+		);
 		if (error) {
 			sendResponse(error.message ? error.message : error.status);
 			return;
 		}
-
-		if (entry) {
-			const { entry, error, status } = await TimeEntry.updateBillable(
-				id,
-				billable
-			);
-			if (error) {
-				sendResponse(error.message ? error.message : error.status);
-				return;
-			}
-			sendResponse({ entry, status });
-		} else {
-			sendResponse('There is no TimeEntry in progress');
-		}
+		sendResponse({ entry, status });
+		// } else {
+		// 	sendResponse('There is no TimeEntry in progress');
+		// }
 	}
 
 	static async submitTime({ totalMins, timeEntryOptions }, sendResponse) {
@@ -575,7 +623,7 @@ class ClockifyIntegrationBase {
 		//}
 	}
 
-	static async getUserRoles({}, sendResponse) {
+	static async getUserRoles(sendResponse) {
 		if (await isNavigatorOffline()) {
 			sendResponse('Connection is offline', 0);
 			return;
@@ -596,6 +644,183 @@ class ClockifyIntegrationBase {
 		sendResponse({ data, status });
 	}
 
+	static async getUser(sendResponse) {
+		if (await isNavigatorOffline()) {
+			sendResponse('Connection is offline', 0);
+			return;
+		}
+
+		const { data, error, status } = await UserService.getUser();
+
+		if (error) {
+			sendResponse(error.message, error.status);
+			return;
+		}
+		sendResponse({ data, status });
+	}
+
+	static async getMemberProfile({ userId, workspaceId }, sendResponse) {
+		if( await isNavigatorOffline()) {
+			sendResponse('Connection is offline', 0);
+			return;
+		}
+		const { data, error, status } = await UserService.getMemberProfile(workspaceId, userId);
+		if (error) {
+			sendResponse(error.message, error.status);
+			return;
+		}
+		sendResponse({ data, status });
+	}
+
+	static async getBoot(sendResponse) {
+		if (await isNavigatorOffline()) {
+			sendResponse('Connection is offline', 0);
+			return;
+		}
+
+		const { data, error, status } = await UserService.getBoot();
+
+		if (error) {
+			sendResponse(error.message, error.status);
+			return;
+		}
+		sendResponse({ data, status });
+	}
+
+	static async setDefaultWorkspace({ workspaceId }, sendResponse) {
+		if (await isNavigatorOffline()) {
+			sendResponse('Connection is offline', 0);
+			return;
+		}
+
+		const { data, error, status } = await UserService.setDefaultWorkspace(
+			workspaceId
+		);
+		
+		if (error) {
+			sendResponse(error.message, error.status);
+			return;
+		}
+		sendResponse({ data, status });
+	}
+
+	static async getPermissionsForUser(sendResponse) {
+		if (await isNavigatorOffline()) {
+			sendResponse('Connection is offline', 0);
+			return;
+		}
+
+		const { data, error, status } =
+			await UserWorkspaceStorage.getPermissionsForUser();
+
+		if (error) {
+			sendResponse(error.message, error.status);
+			return;
+		}
+		sendResponse({ data, status });
+	}
+
+	static async getWorkspaceSettings(sendResponse) {
+		if (await isNavigatorOffline()) {
+			sendResponse('Connection is offline', 0);
+			return;
+		}
+
+		const { data, error, status } =
+			await UserWorkspaceStorage.getSetWorkspaceSettings();
+
+		if (error) {
+			sendResponse(error.message, error.status);
+			return;
+		}
+		sendResponse({ data, status });
+	}
+
+	static async getWorkspacesOfUser(sendResponse) {
+		if (await isNavigatorOffline()) {
+			sendResponse('Connection is offline', 0);
+			return;
+		}
+
+		const { data, error, status } =
+			await UserWorkspaceStorage.getWorkspacesOfUser();
+
+		if (error) {
+			sendResponse(error.message, error.status);
+			return;
+		}
+		sendResponse({ data, status });
+	}
+
+	static async getWasRegionalEverAllowed(sendResponse) {
+		if (await isNavigatorOffline()) {
+			sendResponse('Connection is offline', 0);
+			return;
+		}
+
+		const { data, error, status } =
+			await UserWorkspaceStorage.getWasRegionalEverAllowed();
+
+		if (error) {
+			sendResponse(error.message, error.status);
+			return;
+		}
+		sendResponse({ data, status });
+	}
+
+	static async signup({ email, password, timeZone }, sendResponse) {
+		if (await isNavigatorOffline()) {
+			sendResponse('Connection is offline', 0);
+			return;
+		}
+
+		const { data, error, status } = await AuthService.signup(
+			email,
+			password,
+			timeZone
+		);
+
+		if (error) {
+			sendResponse(error.message, error.status);
+			return;
+		}
+		sendResponse({ data, status });
+	}
+
+	static async getClientsWithFilter({ page, pageSize, filter }, sendResponse) {
+		if (await isNavigatorOffline()) {
+			sendResponse('Connection is offline', 0);
+			return;
+		}
+
+		const { data, error, status } = await ClientService.getClientsWithFilter(
+			page,
+			pageSize,
+			filter
+		);
+
+		if (error) {
+			sendResponse(error.message, error.status);
+			return;
+		}
+		sendResponse({ data, status });
+	}
+
+	static async createClient({ client }, sendResponse) {
+		if (await isNavigatorOffline()) {
+			sendResponse('Connection is offline', 0);
+			return;
+		}
+
+		const { data, error, status } = await ClientService.createClient(client);
+
+		if (error) {
+			sendResponse(error.message, error.status);
+			return;
+		}
+		sendResponse({ data, status });
+	}
+
 	static async submitCustomField(
 		{ timeEntryId, customFieldId, value },
 		sendResponse
@@ -605,14 +830,6 @@ class ClockifyIntegrationBase {
 			return;
 		}
 
-		// we can edit some TimeEntry in EditForm, without TimeEntry in progress
-		// const { entry, error } = await TimeEntry.getEntryInProgress();
-		// if (error) {
-		//     sendResponse(error.message, error.status);
-		//     return;
-		// }
-
-		//if (entry) {
 		const { data, error, status } = await CustomFieldService.updateCustomField(
 			timeEntryId,
 			customFieldId,
@@ -623,243 +840,197 @@ class ClockifyIntegrationBase {
 			return;
 		}
 		sendResponse({ data, status });
-		//}
-		//else {
-		//    sendResponse('There is no TimeEntry in progress', 0)
-		//}
+	}
+
+	static async getTimeEntries({ page }, sendResponse) {
+		if (await isNavigatorOffline()) {
+			sendResponse('Connection is offline', 0);
+			return;
+		}
+
+		const { data, error, status } = await TimeEntry.getTimeEntries(page);
+		if (error) {
+			sendResponse(error.message, error.status);
+			return;
+		}
+		sendResponse({ data, status });
+	}
+
+	static async changeStart({ start, timeEntryId }, sendResponse) {
+		if (await isNavigatorOffline()) {
+			sendResponse('Connection is offline', 0);
+			return;
+		}
+
+		const { data, error, status } = await TimeEntry.changeStart(
+			start,
+			timeEntryId
+		);
+		if (error) {
+			sendResponse(error.message, error.status);
+			return;
+		}
+		sendResponse({ data, status });
+	}
+
+	static async editTimeInterval({ entryId, timeInterval }, sendResponse) {
+		if (await isNavigatorOffline()) {
+			sendResponse('Connection is offline', 0);
+			return;
+		}
+
+		const { data, error, status } = await TimeEntry.editTimeInterval(
+			entryId,
+			timeInterval
+		);
+		if (error) {
+			sendResponse(error.message, error.status);
+			return;
+		}
+		sendResponse({ data, status });
+	}
+
+	static async getEntryInProgress(sendResponse) {
+		if (await isNavigatorOffline()) {
+			sendResponse('Connection is offline', 0);
+			return;
+		}
+
+		const { entry, error, status } = await TimeEntry.getEntryInProgress();
+		if (error) {
+			sendResponse(error.message, error.status);
+			return;
+		}
+		sendResponse({ data: entry, status });
+	}
+	static async setDescription({ entryId, description }, sendResponse) {
+		if (await isNavigatorOffline()) {
+			sendResponse('Connection is offline', 0);
+			return;
+		}
+
+		const { data, error, status } = await TimeEntry.setDescription(
+			entryId,
+			description
+		);
+		if (error) {
+			sendResponse(error.message, error.status);
+			return;
+		}
+		sendResponse({ data, status });
+	}
+	static async removeProject({ entryId }, sendResponse) {
+		if (await isNavigatorOffline()) {
+			sendResponse('Connection is offline', 0);
+			return;
+		}
+
+		const { data, error, status } = await TimeEntry.removeProject(entryId);
+		if (error) {
+			sendResponse(error.message, error.status);
+			return;
+		}
+		sendResponse({ data, status });
+	}
+	static async removeTask({ entryId }, sendResponse) {
+		if (await isNavigatorOffline()) {
+			sendResponse('Connection is offline', 0);
+			return;
+		}
+
+		const { data, error, status } = await TimeEntry.removeTask(entryId);
+		if (error) {
+			sendResponse(error.message, error.status);
+			return;
+		}
+		sendResponse({ data, status });
+	}
+	static async deleteTimeEntry({ entryId }, sendResponse) {
+		if (await isNavigatorOffline()) {
+			sendResponse('Connection is offline', 0);
+			return;
+		}
+
+		const { data, error, status } = await TimeEntry.deleteTimeEntry(entryId);
+		if (error) {
+			sendResponse(error.message, error.status);
+			return;
+		}
+		sendResponse({ data, status });
+	}
+	static async deleteTimeEntries({ entryIds }, sendResponse) {
+		if (await isNavigatorOffline()) {
+			sendResponse('Connection is offline', 0);
+			return;
+		}
+
+		const { data, error, status } = await TimeEntry.deleteTimeEntries(entryIds);
+		if (error) {
+			sendResponse(error.message, error.status);
+			return;
+		}
+		sendResponse({ data, status });
+	}
+	static async duplicateTimeEntry({ entryId }, sendResponse) {
+		if (await isNavigatorOffline()) {
+			sendResponse('Connection is offline', 0);
+			return;
+		}
+
+		const { data, error, status } = await TimeEntry.duplicateTimeEntry(entryId);
+		if (error) {
+			sendResponse(error.message, error.status);
+			return;
+		}
+		sendResponse({ data, status });
+	}
+
+	static async searchEntries({ searchValue }, sendResponse) {
+		if (await isNavigatorOffline()) {
+			sendResponse('Connection is offline', 0);
+			return;
+		}
+
+		const { data, error, status } = await TimeEntry.searchEntries(searchValue);
+		if (error) {
+			sendResponse(error.message, error.status);
+			return;
+		}
+		sendResponse({ data, status });
+	}
+
+	static async getRecentTimeEntries(sendResponse) {
+		if (await isNavigatorOffline()) {
+			sendResponse('Connection is offline', 0);
+			return;
+		}
+
+		const { data, error, status } = await TimeEntry.getRecentTimeEntries();
+		if (error) {
+			sendResponse(error.message, error.status);
+			return;
+		}
+		sendResponse({ data, status });
 	}
 }
 
 class ClockifyIntegration extends ClockifyIntegrationBase {
-	constructor() {}
-
-	static takeTimeEntryInProgress(sendResponse) {
+	static callFunction(functionName, request, sendResponse) {
 		if (isChrome()) {
-			super.takeTimeEntryInProgress(sendResponse);
+			if (request && request.options) {
+				super[functionName](request.options, sendResponse);
+			} else {
+				super[functionName](sendResponse);
+			}
+
 			return true;
 		} else {
 			return new Promise((resolve) => {
-				super.takeTimeEntryInProgress(resolve);
-			});
-		}
-	}
-
-	static stopEntryInProgress(sendResponse) {
-		if (isChrome()) {
-			super.stopEntryInProgress(sendResponse);
-			return true;
-		} else {
-			return new Promise((resolve) => {
-				super.stopEntryInProgress(resolve);
-			});
-		}
-	}
-
-	static startWithDescription(request, sendResponse) {
-		if (isChrome()) {
-			super.startWithDescription(request, sendResponse);
-			return true;
-		} else {
-			return new Promise((resolve) => {
-				super.startWithDescription(request, resolve);
-			});
-		}
-	}
-
-	static getProjectsByIds(request, sendResponse) {
-		if (isChrome()) {
-			super.getProjectsByIds(request.options, sendResponse);
-			return true;
-		} else {
-			return new Promise((resolve) => {
-				super.getProjectsByIds(request.options, resolve);
-			});
-		}
-	}
-
-	static getDefaultProjectTask(sendResponse) {
-		if (isChrome()) {
-			super.getDefaultProjectTask(sendResponse);
-			return true;
-		} else {
-			return new Promise((resolve) => {
-				super.getDefaultProjectTask(resolve);
-			});
-		}
-	}
-
-	static getProjects(request, sendResponse) {
-		if (isChrome()) {
-			super.getProjects(request.options, sendResponse);
-			return true;
-		} else {
-			return new Promise((resolve) => {
-				super.getProjects(request.options, resolve);
-			});
-		}
-	}
-
-	static generateManualEntryData(request, sendResponse) {
-		if (isChrome()) {
-			super.generateManualEntryData(request.options, sendResponse);
-			return true;
-		} else {
-			return new Promise((resolve) => {
-				super.generateManualEntryData(request.options, resolve);
-			});
-		}
-	}
-
-	static getProjectTasks(request, sendResponse) {
-		if (isChrome()) {
-			super.getProjectTasks(request.options, sendResponse);
-			return true;
-		} else {
-			return new Promise((resolve) => {
-				super.getProjectTasks(request.options, resolve);
-			});
-		}
-	}
-
-	static submitDescription(request, sendResponse) {
-		if (isChrome()) {
-			super.submitDescription(request.timeEntryOptions, sendResponse);
-			return true;
-		} else {
-			return new Promise((resolve) => {
-				super.submitDescription(request.timeEntryOptions, resolve);
-			});
-		}
-	}
-
-	static editProject(request, sendResponse) {
-		if (isChrome()) {
-			super.editProject(request.timeEntryOptions, sendResponse);
-			return true;
-		} else {
-			return new Promise((resolve) => {
-				super.editProject(request.timeEntryOptions, resolve);
-			});
-		}
-	}
-
-	static editTask(request, sendResponse) {
-		if (isChrome()) {
-			super.editTask(request.timeEntryOptions, sendResponse);
-			return true;
-		} else {
-			return new Promise((resolve) => {
-				super.editTask(request.timeEntryOptions, resolve);
-			});
-		}
-	}
-
-	static getTags(request, sendResponse) {
-		if (isChrome()) {
-			super.getTags(request.options, sendResponse);
-			return true;
-		} else {
-			return new Promise((resolve) => {
-				super.getTags(request.options, resolve);
-			});
-		}
-	}
-
-	static editTags(request, sendResponse) {
-		if (isChrome()) {
-			super.editTags(request.options, sendResponse);
-			return true;
-		} else {
-			return new Promise((resolve) => {
-				super.editTags(request.options, resolve);
-			});
-		}
-	}
-
-	static fetchEntryInProgress(sendResponse) {
-		if (isChrome()) {
-			super.fetchEntryInProgress(sendResponse);
-			return true;
-		} else {
-			return new Promise((resolve) => {
-				super.fetchEntryInProgress(resolve);
-			});
-		}
-	}
-
-	static removeProjectAsFavorite(request, sendResponse) {
-		if (isChrome()) {
-			super.removeProjectAsFavorite(request.options, sendResponse);
-			return true;
-		} else {
-			return new Promise((resolve) => {
-				super.removeProjectAsFavorite(request.options, resolve);
-			});
-		}
-	}
-
-	static makeProjectFavorite(request, sendResponse) {
-		if (isChrome()) {
-			super.makeProjectFavorite(request.options, sendResponse);
-			return true;
-		} else {
-			return new Promise((resolve) => {
-				super.makeProjectFavorite(request.options, resolve);
-			});
-		}
-	}
-
-	static editBillable(request, sendResponse) {
-		if (isChrome()) {
-			super.editBillable(request.options, sendResponse);
-			return true;
-		} else {
-			return new Promise((resolve) => {
-				super.editBillable(request.options, resolve);
-			});
-		}
-	}
-
-	static submitTime(request, sendResponse) {
-		if (isChrome()) {
-			super.submitTime(request.options, sendResponse);
-			return true;
-		} else {
-			return new Promise((resolve) => {
-				super.submitTime(request.options, resolve);
-			});
-		}
-	}
-
-	static getWSCustomField(request, sendResponse) {
-		if (isChrome()) {
-			super.getWSCustomField(request.options, sendResponse);
-			return true;
-		} else {
-			return new Promise((resolve) => {
-				super.getWSCustomField(request.options, resolve);
-			});
-		}
-	}
-
-	static getUserRoles(request, sendResponse) {
-		if (isChrome()) {
-			super.getUserRoles(request.options, sendResponse);
-			return true;
-		} else {
-			return new Promise((resolve) => {
-				super.getUserRoles(request.options, resolve);
-			});
-		}
-	}
-
-	static submitCustomField(request, sendResponse) {
-		if (isChrome()) {
-			super.submitCustomField(request.options, sendResponse);
-			return true;
-		} else {
-			return new Promise((resolve) => {
-				super.submitCustomField(request.options, resolve);
+				if (request && request.options) {
+					super[functionName](request.options, resolve);
+				} else {
+					super[functionName](resolve);
+				}
 			});
 		}
 	}

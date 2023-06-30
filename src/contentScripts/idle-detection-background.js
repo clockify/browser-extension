@@ -219,8 +219,8 @@ function createIdleMessage(description, idleDuration) {
 	//     message += clockifyLocales.NO_DESCRIPTION;
 	// }
 
-	if (!!description) {
-		description = "'" + description + "'";
+	if (description) {
+		description = '\'' + description + '\'';
 	} else {
 		description = clockifyLocales.NO_DESCRIPTION;
 	}

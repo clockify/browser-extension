@@ -638,7 +638,7 @@ var ClockifyEditForm = class {
 						aBrowser.runtime.sendMessage(
 							{
 								eventName: 'submitDescription',
-								timeEntryOptions: {
+								options: {
 									id: timeEntry.id,
 									description,
 								},
@@ -698,15 +698,14 @@ var ClockifyEditForm = class {
 
 	async editProject(project) {
 		const { timeEntry } = this.state;
-		const previousProjectId = timeEntry.project.id;
 		return new Promise((resolve) => {
 			try {
 				aBrowser.runtime.sendMessage(
 					{
 						eventName: 'editProject',
-						timeEntryOptions: {
+						options: {
 							id: timeEntry.id,
-							project,
+							project: project.id,
 						},
 					},
 					(response) => {
@@ -790,7 +789,7 @@ var ClockifyEditForm = class {
 				aBrowser.runtime.sendMessage(
 					{
 						eventName: 'editTask',
-						timeEntryOptions: {
+						options: {
 							id: timeEntry.id,
 							project,
 							task,

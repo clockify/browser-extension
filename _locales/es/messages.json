@@ -1,1184 +1,1048 @@
 {
-	"APPROVAL__ENTRY_NO_DESCRIPTION": {
-		"message": "Sin descripción"
-	},
-	"TRACKER__APPROVAL__THIS_WEEK": {
-		"message": "Esta semana"
-	},
-	"TRACKER__APPROVAL__LAST_WEEK": {
-		"message": "La semana pasada"
-	},
-	"TRACKER__TIME_TRACKER__WEEK_TOTAL": {
-		"message": "Total semanal:"
-	},
-	"TRACKER__ENTRY_MESSAGES__LOADING": {
-		"message": "Cargando, espera."
-	},
-	"TRACKER__DEFAULT": {
-		"message": "predeterminado"
-	},
-	"TRACKER__STOP": {
-		"message": "Detener"
-	},
-	"TRACKER__START": {
-		"message": "Iniciar"
-	},
-	"TRACKER__CONFIRM_ACTION": {
-		"message": "¿Estás seguro?"
-	},
-	"TRACKER__TIME_TRACKER__DESCRIPTION_TOOLTIP": {
-		"message": "Escribe en qué estás trabajando"
-	},
-	"TRACKER__TIME_TRACKER__START_TIMER_TOOLTIP": {
-		"message": "Iniciar temporizador"
-	},
-	"TRACKER__TIME_TRACKER__ENTRY__TRACK__MANUAL_M": {
-		"message": "Manual (m)"
-	},
-	"TRACKER__TIME_TRACKER__ENTRY__TRACK__TIMER_N": {
-		"message": "Temporizador (n)"
-	},
-	"TRACKER__TIME_TRACKER__ENTRY__TRACK__TIMER": {
-		"message": "Temporizador"
-	},
-	"TRACKER__TIME_TRACKER__ENTRY__TRACK__PLACEHOLDER__TIMER": {
-		"message": "¿En qué estás trabajando?"
-	},
-	"TRACKER__TIME_TRACKER__ENTRY__DESCRIPTION": {
-		"message": "Añadir descripción"
-	},
-	"TRACKER__TIME_TRACKER__ENTRY__CONTINUE": {
-		"message": "Continuar con el temporizador para esta actividad"
-	},
-	"TRACKER__TIME_TRACKER__ENTRY__DELETE_ENTRIES_MODAL_BODY": {
-		"message": "¿Seguro que quieres eliminar $entries$ entradas?",
-		"placeholders": {
-			"entries": {
-				"content": "$1",
-				"example": "label"
-			}
-		}
-	},
-	"TRACKER__TIME_TRACKER__ENTRY__DELETE__CONFIRM": {
-		"message": "¿Seguro que quieres eliminar $value$ entradas de tiempo?",
-		"placeholders": {
-			"value": {
-				"content": "$1",
-				"example": "label"
-			}
-		}
-	},
-	"REPORTS__DETAILED_REPORT__DELETE_MODAL_BODY": {
-		"message": "¿Seguro que quieres eliminar la entrada?"
-	},
-	"TRACKER__TIME_TRACKER__RECORDER__ADD_TIME_MANUALLY_TOOLTIP": {
-		"message": "Añadir tiempo manualmente aquí"
-	},
-	"GLOBAL__BILLABLE_LABEL": {
-		"message": "Facturable"
-	},
-	"GLOBAL__BILLING_CHANGE_SUCCESS_MESSAGE": {
-		"message": "La información de facturación cambió"
-	},
-	"GLOBAL__CANCEL_BTN": {
-		"message": "Cancelar"
-	},
-	"GLOBAL__CLIENT_LABEL": {
-		"message": "Cliente"
-	},
-	"GLOBAL__DATE_LABEL": {
-		"message": "Fecha"
-	},
-	"GLOBAL__DELETE_BTN": {
-		"message": "Eliminar"
-	},
-	"GLOBAL__DELETE_ERROR_MESSAGE": {
-		"message": "Error al eliminar"
-	},
-	"GLOBAL__DESCRIPTION_LABEL": {
-		"message": "Descripción"
-	},
-	"GLOBAL__EDIT_LABEL": {
-		"message": "Editar"
-	},
-	"GLOBAL__EVERYONE_LABEL": {
-		"message": "Todos"
-	},
-	"GLOBAL__GET_PERMISSIONS_ERROR_MESSAGE": {
-		"message": "Error al obtener permisos"
-	},
-	"GLOBAL__GROUPS_LABEL": {
-		"message": "Grupos"
-	},
-	"GLOBAL__LOADER_WAIT_MOMENT": {
-		"message": "Un momento por favor"
-	},
-	"GLOBAL__LOADER_LOADING": {
-		"message": "Cargando..."
-	},
-	"GLOBAL__NAME_LABEL": {
-		"message": "Nombre"
-	},
-	"GLOBAL__NO_CLIENT_LABEL": {
-		"message": "Sin cliente"
-	},
-	"GLOBAL__NO_PROJECT_LABEL": {
-		"message": "Sin proyecto"
-	},
-	"GLOBAL__NON_BILLABLE_LABEL": {
-		"message": "No facturable"
-	},
-	"GLOBAL__PROJECT_LABEL": {
-		"message": "Proyecto"
-	},
-	"GLOBAL__ROLE_LABEL": {
-		"message": "Rol"
-	},
-	"GLOBAL__SELECT_ALL_LABEL": {
-		"message": "Seleccionar todo"
-	},
-	"GLOBAL__ADD_PROJECT_LABEL": {
-		"message": "Seleccionar proyecto"
-	},
-	"GLOBAL__MINUTES_LABEL": {
-		"message": "Minutos"
-	},
-	"GLOBAL__FAVORITES_LABEL": {
-		"message": "Favoritos"
-	},
-	"GLOBAL__SELECT_LABEL": {
-		"message": "Seleccionar $label$",
-		"placeholders": {
-			"label": {
-				"content": "$1",
-				"example": "label"
-			}
-		}
-	},
-	"GLOBAL__SHOW_ALL_LABEL": {
-		"message": "Mostrar todo"
-	},
-	"GLOBAL__STATUS_LABEL": {
-		"message": "Estado"
-	},
-	"GLOBAL__TAGS_LABEL": {
-		"message": "Etiquetas"
-	},
-	"GLOBAL__TIME_ROUNDING_TITLE": {
-		"message": "Redondeo de tiempo"
-	},
-	"GLOBAL__UPDATE_FAILED_ERROR_MESSAGE": {
-		"message": "Error de actualización"
-	},
-	"GLOBAL__USER_LABEL": {
-		"message": "Usuario"
-	},
-	"GLOBAL__USERS_LABEL": {
-		"message": "Usuarios"
-	},
-	"GLOBAL__DUPLICATE_BTN": {
-		"message": "Duplicar"
-	},
-	"GLOBAL__WITHOUT_PROJECT_LABEL": {
-		"message": "Sin proyecto"
-	},
-	"GLOBAL__CREATE_NEW_PROJECT_TITLE": {
-		"message": "Crear nuevo proyecto"
-	},
-	"SHARED_MODULES__SHARED__CREATE_NEW_TASK_LABEL": {
-		"message": "Crear nueva tarea"
-	},
-	"GLOBAL__WITHOUT_TASK_LABEL": {
-		"message": "Sin tarea"
-	},
-	"GLOBAL__CONFIRM_LABEL": {
-		"message": "Sí"
-	},
-	"GLOBAL__TASK_LABEL": {
-		"message": "Tarea"
-	},
-	"GLOBAL__ACCESS_LABEL": {
-		"message": "Acceso"
-	},
-	"GLOBAL__ADD_LABEL": {
-		"message": "Añadir"
-	},
-	"GLOBAL__ADD_TAGS_LABEL": {
-		"message": "Añadir etiquetas"
-	},
-	"GLOBAL__ADMINS_LABEL": {
-		"message": "Administradores"
-	},
-	"GLOBAL__BILLING_LABEL": {
-		"message": "Facturación"
-	},
-	"GLOBAL__CHANGE_LABEL": {
-		"message": "Cambiar"
-	},
-	"GLOBAL__CHANGE_NAME_LABEL": {
-		"message": "Cambiar nombre"
-	},
-	"GLOBAL__CLOSE_BTN": {
-		"message": "Cerrar"
-	},
-	"GLOBAL__CREATE_LABEL": {
-		"message": "Crear"
-	},
-	"GLOBAL__CREATE_NEW_TITLE": {
-		"message": "Crear nuevo"
-	},
-	"GLOBAL__FAILED_MESSAGE": {
-		"message": "Error"
-	},
-	"GLOBAL__FILTER_LABEL": {
-		"message": "Filtrar"
-	},
-	"GLOBAL__HOURS_LABEL": {
-		"message": "Horas"
-	},
-	"GLOBAL__LOG_IN_LABEL": {
-		"message": "Iniciar sesión"
-	},
-	"GLOBAL__MANAGE_LABEL": {
-		"message": "Gestionar"
-	},
-	"GLOBAL__MANUAL_LABEL": {
-		"message": "Manual"
-	},
-	"GLOBAL__NO_LABEL": {
-		"message": "No"
-	},
-	"GLOBAL__NONE_LABEL": {
-		"message": "Nada"
-	},
-	"GLOBAL__CONFIRM_OK_BTN": {
-		"message": "OK"
-	},
-	"GLOBAL__PRIVATE_LABEL": {
-		"message": "Privado"
-	},
-	"GLOBAL__PROJECTS_LABEL": {
-		"message": "Proyectos"
-	},
-	"GLOBAL__PUBLIC_LABEL": {
-		"message": "Público"
-	},
-	"GLOBAL__REMOVE_LABEL": {
-		"message": "Eliminar"
-	},
-	"GLOBAL__SAVE_LABEL": {
-		"message": "Guardar"
-	},
-	"GLOBAL__SHOW_LABEL": {
-		"message": "Mostrar"
-	},
-	"GLOBAL__FORM_LABEL_START_TIME": {
-		"message": "Hora de inicio"
-	},
-	"GLOBAL__SUCCESS_MSG": {
-		"message": "¡Éxito!"
-	},
-	"GLOBAL__TAG_LABEL": {
-		"message": "Etiqueta"
-	},
-	"GLOBAL__TASKS_LABEL": {
-		"message": "Tareas"
-	},
-	"GLOBAL__TIME_LABEL": {
-		"message": "Tiempo"
-	},
-	"GLOBAL__FORM_LABEL_DESCRIPTION_PLACEHOLDER": {
-		"message": "¿En qué has trabajado?"
-	},
-	"GLOBAL__WORKSPACE_LABEL": {
-		"message": "Espacio de trabajo"
-	},
-	"GLOBAL__WORKSPACES_LABEL": {
-		"message": "Espacios de trabajo"
-	},
-	"GLOBAL__ADMIN_LABEL": {
-		"message": "Administrador"
-	},
-	"GLOBAL__CLEAR_FILTERS_LABEL": {
-		"message": "Borrar filtros"
-	},
-	"GLOBAL__DASHBOARD_LABEL": {
-		"message": "Panel"
-	},
-	"GLOBAL__LABEL_TEXT": {
-		"message": "Etiqueta"
-	},
-	"GLOBAL__APPLY_FILTER_LABEL": {
-		"message": "Aplicar filtro"
-	},
-	"GLOBAL__SUBMIT": {
-		"message": "Enviar"
-	},
-	"GLOBAL__PROJECT_FIND": {
-		"message": "Buscar proyectos..."
-	},
-	"GLOBAL__FIND_TASKS_LABEL": {
-		"message": "Buscar tareas..."
-	},
-	"GLOBAL__FIND_TAGS_LABEL": {
-		"message": "Buscar etiquetas..."
-	},
-	"GLOBAL__ENTER_DESCRIPTION_PLACEHOLDER": {
-		"message": "Introduce descripción..."
-	},
-	"GLOBAL__WITHOUT_DESCRIPTION_LABEL": {
-		"message": "Sin descripción"
-	},
-	"GLOBAL__SEARCH_PLACEHOLDER": {
-		"message": "Buscar..."
-	},
-	"GLOBAL__NOW_LABEL": {
-		"message": "Ahora"
-	},
-	"GLOBAL__IN_PROGRESS_LABEL": {
-		"message": "En curso"
-	},
-	"GLOBAL__SELECT_RANGEE_LABEL": {
-		"message": "Seleccionar intervalo"
-	},
-	"GLOBAL__PLACEHOLDER__ENTER_NAME": {
-		"message": "Introducir nombre"
-	},
-	"GLOBAL__DESCRIPTION_LIMIT_ERROR_MSG": {
-		"message": "Descripción acortada (longitud máxima $limit$ caracteres)",
-		"placeholders": {
-			"limit": {
-				"content": "$1",
-				"example": "3000"
-			}
-		}
-	},
-	"INSTAL_AND_TRACK_ANYWHERE": {
-		"message": "Instala Clockify y rastrea el tiempo en cualquier lugar."
-	},
-	"TEMPLATE_WITH_NAME_EXISTS_PART_TWO": {
-		"message": "ya existe"
-	},
-	"PROJECTS__MESSAGES__PROJECT_NAME_LENGTH_ERROR": {
-		"message": "El nombre del proyecto debe tener entre 2 y 250 caracteres"
-	},
-	"PROJECTS__EDIT_PROJECT_SETTINGS__PROJECT_COLOR_EXPLANATION": {
-		"message": "Usa color para diferenciar visualmente los proyectos."
-	},
-	"PROJECTS__EDIT_PROJECT_SETTINGS__DEFAULT_BILLABLE_STATUS_LABEL": {
-		"message": "Facturable por defecto"
-	},
-	"PROJECTS__EDIT_PROJECT_SETTINGS__TASK_BASED_LABEL": {
-		"message": "Basado en tareas"
-	},
-	"PROJECTS__NEW_PROJECT__CUSTOM_COLOR_LABEL": {
-		"message": "Color personalizado"
-	},
-	"PROJECTS__EDIT_PROJECT_PAGE__PROJECT_SETTINGS": {
-		"message": "Configuración de proyecto"
-	},
-	"PROJECTS__EDIT_PROJECT_PAGE__DELETE_PROJECT_WARNING": {
-		"message": "¿Seguro que quieres eliminar el proyecto $projectName$?",
-		"placeholders": {
-			"projectName": {
-				"content": "$1",
-				"example": "Project1"
-			}
-		}
-	},
-	"PROJECTS__SHARED__COLOR_LABEL": {
-		"message": "Color"
-	},
-	"PROJECTS__SHARED__ENTER_PROJECT_NAME_PLACEHOLDER": {
-		"message": "Introduce el nombre de proyecto"
-	},
-	"PROJECTS__SHARED__WITHOUT_CLIENT_PLACEHOLDER": {
-		"message": "Sin cliente"
-	},
-	"SHARED_MODULES__CUSTOM_FIELD__ENTER_DROPDOWN_VALUES_MSG": {
-		"message": "Por favor, introduce valores para la lista desplegable"
-	},
-	"SHARED_MODULES__CUSTOM_FIELD__EMPTY_NAME_ERROR_MSG": {
-		"message": "Nombre no puede estar vacío."
-	},
-	"SHARED_MODULES__CUSTOM_FIELD__TYPE_TEXT_LABEL": {
-		"message": "Texto"
-	},
-	"SHARED_MODULES__CUSTOM_FIELD__TYPE_NUMBER_LABEL": {
-		"message": "Número"
-	},
-	"SHARED_MODULES__CUSTOM_FIELD__TYPE_LINK_LABEL": {
-		"message": "Enlace"
-	},
-	"SHARED_MODULES__CUSTOM_FIELD__TYPE_SWITCH_LABEL": {
-		"message": "Cambiar"
-	},
-	"SHARED_MODULES__CUSTOM_FIELD__TYPE_SELECT_LABEL": {
-		"message": "Seleccionar"
-	},
-	"SHARED_MODULES__CUSTOM_FIELD__OPTION_PART_LABEL": {
-		"message": "Opción"
-	},
-	"SHARED_MODULES__CUSTOM_FIELD__TYPE_SELECT_MULTIPLE_LABEL": {
-		"message": "Seleccionar varios"
-	},
-	"SHARED_MODULES__CUSTOM_FIELD__DROPDOWN_DEFAULT_VALUE_INFO": {
-		"message": "Estado y valor de opción predeterminados"
-	},
-	"SHARED_MODULES__CUSTOM_FIELD__ON_LABEL": {
-		"message": "ACTIVADO"
-	},
-	"PROJECTS__SHARED__SELECT_CLIENT_PLACEHOLDER": {
-		"message": "Seleccionar cliente"
-	},
-	"SHARED_MODULES__CUSTOM_FIELD__ADD_OPTION_LABEL": {
-		"message": "Añadir opción"
-	},
-	"SHARED_MODULES__CUSTOM_FIELD__PLACEHOLDER_LABEL": {
-		"message": "Marcador de posición"
-	},
-	"SHARED_MODULES__CUSTOM_FIELD__VALUE_LABEL": {
-		"message": "Valor"
-	},
-	"SHARED_MODULES__CUSTOM_FIELD__DEFAULT_LABEL": {
-		"message": "Predeterminado: "
-	},
-	"SHARED_MODULES__CUSTOM_FIELD__AVAILABLE_FIELD_INFO_HEADER": {
-		"message": "Campos disponibles"
-	},
-	"SHARED_MODULES__PROJECT_PICKER__FIND_TASK_LABEL": {
-		"message": "Buscar tarea @proyecto o $projectGroupingLabel$",
-		"placeholders": {
-			"projectGroupingLabel": {
-				"content": "$1",
-				"example": "Client"
-			}
-		}
-	},
-	"SHARED_MODULES__PROJECT_PICKER__FIND_PROJECT_LABEL": {
-		"message": "Buscar proyecto o $projectGroupingLabel$",
-		"placeholders": {
-			"projectGroupingLabel": {
-				"content": "$1",
-				"example": "Client"
-			}
-		}
-	},
-	"SHARED_MODULES__PROJECT_PICKER__CREATE_PROJECT_WITH_PARAM_LABEL": {
-		"message": "crear $project$ proyecto.",
-		"placeholders": {
-			"project": {
-				"content": "$1",
-				"example": "Client"
-			}
-		}
-	},
-	"SHARED_MODULES__PROJECT_PICKER__CREATE_TASK_WITH_PARAM_LABEL": {
-		"message": "crear $task$ tarea en $project$ proyecto.",
-		"placeholders": {
-			"project": {
-				"content": "$1",
-				"example": "Project1"
-			},
-			"task": {
-				"content": "$2",
-				"example": "Task1"
-			}
-		}
-	},
-	"SHARED_MODULES__PROJECT_PICKER__TYPE_TO_CREATE_PROJECT_PLACEHOLDER": {
-		"message": "Escribe tarea@proyecto para crear una."
-	},
-	"SHARED_MODULES__PROJECT_PICKER__FILTER_BY_PROJECT_INFO": {
-		"message": "Para filtrar por proyecto, añade el prefijo @ (p. ej., @miproyecto)"
-	},
-	"SHARED_MODULES__PROJECT_PICKER__COUNT_TASKS_LABEL": {
-		"message": "$count$ Tareas",
-		"placeholders": {
-			"count": {
-				"content": "$1",
-				"example": "3"
-			}
-		}
-	},
-	"SHARED_MODULES__PROJECT_PICKER__CREATE_NEW_PROJ_TASK_LABEL": {
-		"message": "Crear nuevo proyecto y tarea"
-	},
-	"SHARED_MODULES__INPUT_NUMBER__NUMBER_INVALID_ERROR_MSG": {
-		"message": "Introduce un número válido."
-	},
-	"SHARED_MODULES__INPUT_NUMBER__NUMBER_TOO_SMALL_ERROR_MSG": {
-		"message": "Número debe ser mayor que $minNumber$.",
-		"placeholders": {
-			"minNumber": {
-				"content": "$1",
-				"example": "5"
-			}
-		}
-	},
-	"SHARED_MODULES__INPUT_NUMBER__NUMBER_TOO_BIG_ERROR_MSG": {
-		"message": "Número debe ser menor que $maxNumber$.",
-		"placeholders": {
-			"maxNumber": {
-				"content": "$1",
-				"example": "15"
-			}
-		}
-	},
-	"SHARED_MODULES__INPUT_STRING__VALUE_TOO_LONG_ERROR_MSG": {
-		"message": "Valor debe tener menos de $maxLength$ caracteres.",
-		"placeholders": {
-			"maxLength": {
-				"content": "$1",
-				"example": "15"
-			}
-		}
-	},
-	"SHARED_MODULES__INPUT_STRING__VALUE_REQUIRED_ERROR_MESSAGE": {
-		"message": "Se requiere valor."
-	},
-	"PAGES__DASHBOARD__TEAM_ACTIVITIES__ACTIVITY__NO_DESCRIPTION": {
-		"message": "(sin descripción)"
-	},
-	"PAGES__DASHBOARD__TEAM_ACTIVITIES__ACTIVITY__NO_PROJECT": {
-		"message": "(sin proyecto)"
-	},
-	"SHARED_MODULES__STRIPE__REQUIRED": {
-		"message": "requerido"
-	},
-	"SHARED_MODULES__STRIPE__REQUIRED_LABEL": {
-		"message": "(requerido)"
-	},
-	"GLOBAL__TODAY_LABEL": {
-		"message": "Hoy"
-	},
-	"GLOBAL__YESTERDAY_LABEL": {
-		"message": "Ayer"
-	},
-	"GLOBAL__TOTAL_TIME": {
-		"message": "Total:"
-	},
-	"CALENDAR__INTEGRATIONS__DISABLED_MANUAL_MODE_TOOLTIP": {
-		"message": "Modo manual desactivado"
-	},
-	"LAYOUT__SIDEBAR__NAVIGATION__SETTINGS_LABEL": {
-		"message": "Configuración"
-	},
-	"WORKSPACE__SETTINGS__TABS__INTEGRATIONS_TITLE": {
-		"message": "Integraciones"
-	},
-	"LAYOUT__DEFAULT_LAYOUT__LOG_OUT_BTN": {
-		"message": "Cerrar sesión"
-	},
-	"TIMESHEET2__MESSAGES__SAVE_ERROR_MISSING_FIELDS": {
-		"message": "No se puede guardar sin campos requeridos."
-	},
-	"SERVICES__TAG__GET__ERROR_MESSAGE": {
-		"message": "Error al obtener etiquetas"
-	},
-	"GLOBAL__CUSTOM_FIELDS_LABEL": {
-		"message": "Campos personalizados"
-	},
-	"WORKSPACE__GENERAL_SETTINGS__DURATION_FORMAT__TITLE": {
-		"message": "Formato de duración"
-	},
-	"WORKSPACE__SUBDOMAIN__PLACEHOLDER_FOR_NAME": {
-		"message": "Nombre de subdominio"
-	},
-	"TEAMS__REMINDERS__WEEKDAYS__MONDAY": {
-		"message": "Lunes"
-	},
-	"TEAMS__REMINDERS__WEEKDAYS__MODAY_SHORT": {
-		"message": "Lu."
-	},
-	"TEAMS__REMINDERS__WEEKDAYS__TUESDAY": {
-		"message": "Martes"
-	},
-	"TEAMS__REMINDERS__WEEKDAYS__TUESDAY_SHORT": {
-		"message": "Ma."
-	},
-	"TEAMS__REMINDERS__WEEKDAYS__WEDNESDAY": {
-		"message": "Miércoles"
-	},
-	"TEAMS__REMINDERS__WEEKDAYS__WEDNESDAY_SHORT": {
-		"message": "Mi."
-	},
-	"TEAMS__REMINDERS__WEEKDAYS__THURSDAY": {
-		"message": "Jueves"
-	},
-	"TEAMS__REMINDERS__WEEKDAYS__THURSDAY_SHORT": {
-		"message": "Ju."
-	},
-	"TEAMS__REMINDERS__WEEKDAYS__FRIDAY": {
-		"message": "Viernes"
-	},
-	"TEAMS__REMINDERS__WEEKDAYS__FRIDAY_SHORT": {
-		"message": "Vi."
-	},
-	"TEAMS__REMINDERS__WEEKDAYS__SATURDAY": {
-		"message": "Sábado"
-	},
-	"TEAMS__REMINDERS__WEEKDAYS__SATURDAY_SHORT": {
-		"message": "Sá."
-	},
-	"TEAMS__REMINDERS__WEEKDAYS__SUNDAY": {
-		"message": "Domingo"
-	},
-	"TEAMS__REMINDERS__WEEKDAYS__SUNDAY_SHORT": {
-		"message": "Do."
-	},
-	"PROJECTS__FILTER_DROPDOWN__NO_MATCHING_ENTITIES_LABEL": {
-		"message": "Sin $entityInPlural$ coincidentes",
-		"placeholders": {
-			"entityInPlural": {
-				"content": "$1",
-				"example": "No matching tags"
-			}
-		}
-	},
-	"REPORTS__MODELS__CUSTOM_FIELD_FILTER_LABEL": {
-		"message": "Filtro $name$",
-		"placeholders": {
-			"name": {
-				"content": "$1",
-				"example": "Filter tags"
-			}
-		}
-	},
-	"EXTENSION__APPEND_THE_WEBSITE_URL": {
-		"message": "Añadir la URL del sitio web"
-	},
-	"EXTENSION__ADD_PROJECT": {
-		"message": "Añadir proyecto"
-	},
-	"EXTENSION__ADD_TASK": {
-		"message": "Añadir tarea"
-	},
-	"EXTENSION__ADD_TIME_MANUAL": {
-		"message": "Añadir tiempo (p.ej., 15 min)"
-	},
-	"EXTENSION__SHORTCUT": {
-		"message": "Atajo"
-	},
-	"EXTENSION__START_TIMER_WHEN_BROWSER_STARTS": {
-		"message": "Iniciar temporizador cuando se inicie el navegador"
-	},
-	"EXTENSION__STOP_TIMER_WHEN_BROWSER_CLOSES": {
-		"message": "Detener el temporizador cuando se cierre el navegador"
-	},
-	"EXTENSION__STOP_TIMER": {
-		"message": "Detener temporizador"
-	},
-	"EXTENSION__DESCRIPTION_REQUIRED": {
-		"message": "Descripción (requerido)"
-	},
-	"EXTENSION__START_STOP_TIME_SHORTCUT": {
-		"message": "Atajo para Iniciar/Detener el temporizador"
-	},
-	"EXTENSION__DEFAULT_PROJECT_ARCHIVED": {
-		"message": "Tu proyecto predeterminado está archivado."
-	},
-	"EXTENSION__DEFAULT_TASK_DONE": {
-		"message": "Tu tarea predeterminada es Hecha, ya no está disponible."
-	},
-	"EXTENSION__DEFAULT_TASK_DOES_NOT_EXIST": {
-		"message": "La tarea predeterminada no existe."
-	},
-	"EXTENSION__DEFAULT_PROJECT_NOT_AVAILABLE": {
-		"message": "Tu proyecto predeterminado ya no está disponible."
-	},
-	"EXTENSION__YOU_CAN_SET_A_NEW_ONE_IN_SETTINGS": {
-		"message": "Puedes establecer uno nuevo en Configuración."
-	},
-	"EXTENSION__COMPLETE_CURRENT_ENTRY": {
-		"message": "Por favor, ¡primero completa tu Entrada actual!"
-	},
-	"EXTENSION__ENTER_REQUIRED_FIELDS": {
-		"message": "Introduce los campos requeridos o edita la configuración de tu espacio de trabajo."
-	},
-	"EXTENSION__CANNOT_START_ENTRY_WITHOUT_PROJECT": {
-		"message": "No se puede iniciar la entrada sin proyecto, tarea, descripción o etiquetas."
-	},
-	"EXTENSION__EDIT_YOUR_TIME_ENTRY": {
-		"message": "Edita tu entrada de tiempo."
-	},
-	"EXTENSION__CREATE_TIME_ENTRY_USING_DASHBOARD": {
-		"message": "Crea tu entrada de tiempo utilizando el panel o edita la configuración de tu espacio de trabajo."
-	},
-	"EXTENSION__ENABLE_INTEGRATIONS": {
-		"message": "Habilitar integraciones"
-	},
-	"EXTENSION__ENABLE_TOOLS": {
-		"message": "Habilita las herramientas que quieres utilizar con la extensión Clockify."
-	},
-	"EXTENSION__ENABLE_ALL": {
-		"message": "Habilitar todo"
-	},
-	"EXTENSION__DISABLE_ALL": {
-		"message": "Deshabilitar todo"
-	},
-	"EXTENSION__CUSTOM_DOMAINS": {
-		"message": "Dominios personalizados"
-	},
-	"EXTENSION__HOSTED_ON_CUSTOM_DOMAIN": {
-		"message": "Si usas una herramienta alojada en un dominio personalizado, puedes habilitarla aquí"
-	},
-	"EXTENSION__ENTER_DOMAIN_NAME": {
-		"message": "Introduce el nombre de dominio en el formato 'midominio.com' y selecciona la integración del menú desplegable"
-	},
-	"EXTENSION__PORTS_NOT_SUPPORTED": {
-		"message": "Los puertos no son compatibles"
-	},
-	"EXTENSION__NO_RECENT_ENTRIES_TO_SHOW": {
-		"message": "No hay entradas recientes para mostrar"
-	},
-	"EXTENSION__YOU_HAVE_NOT_TRACKED": {
-		"message": "Parece que no has rastreado ningún tiempo últimamente"
-	},
-	"EXTENSION__GET_ONLINE": {
-		"message": "Conéctate para ver tus entradas"
-	},
-	"EXTENSION__YOU_CAN_STILL_TRACK_TIME": {
-		"message": "Mientras tanto, aún puedes seguir el tiempo, incluso si no estás conectado"
-	},
-	"EXTENSION__ENABLE_DARK_MODE": {
-		"message": "Habilitar modo oscuro"
-	},
-	"EXTENSION__DEFAULT_PROJECT": {
-		"message": "Proyecto predeterminado"
-	},
-	"EXTENSION__DEFAULT_PROJECT_AND_TASK": {
-		"message": "Proyecto y tarea predeterminados"
-	},
-	"EXTENSION__LAST_USED_PROJECT": {
-		"message": "Último proyecto utilizado"
-	},
-	"EXTENSION__LAST_USED_PROJECT_AND_TASK": {
-		"message": "Último proyecto y tarea utilizados"
-	},
-	"EXTENSION__INTEGRATIONS_CAN_CREATE_PROJECTS": {
-		"message": "Las integraciones pueden crear proyectos/tareas/etiquetas"
-	},
-	"EXTENSION__SHOW_POST_START_POPUP": {
-		"message": "Mostrar ventana emergente posterior al inicio"
-	},
-	"EXTENSION__REMIND_ME_TO_TRACK_TIME": {
-		"message": "Recuérdame seguir el tiempo"
-	},
-	"EXTENSION__MINUTES_SINCE_LAST_ENTRY": {
-		"message": "minutos desde la última entrada"
-	},
-	"EXTENSION__ENABLE_CONTEXT_MENU": {
-		"message": "Habilitar el menú contextual"
-	},
-	"EXTENSION__IDLE_DETECTION": {
-		"message": "Detección de inactividad"
-	},
-	"EXTENSION__DETECT_IDLE_TIME": {
-		"message": "Detectar el tiempo de inactividad si está inactivo durante"
-	},
-	"EXTENSION__CANT_START_ENTRY_WITHOUT_PROJECT": {
-		"message": "No se puede iniciar la entrada sin proyecto, tarea, descripción o etiquetas"
-	},
-	"EXTENSION__PLEASE_EDIT_YOUR_TIME_ENTRY": {
-		"message": "Edita tu entrada de tiempo"
-	},
-	"EXTENSION__CANNOT_END_ENTRY": {
-		"message": "No se puede finalizar la entrada sin proyecto, tarea, descripción o etiquetas"
-	},
-	"EXTENSION__YOU_MUST_BE_LOGGED_IN_TO_START": {
-		"message": "Debes iniciar sesión para iniciar la entrada de tiempo"
-	},
-	"EXTENSION__YOU_ALREADY_HAVE_ENTRY_WITHOUT": {
-		"message": "Ya tienes una entrada en curso sin proyecto/tarea/descripción o etiquetas"
-	},
-	"EXTENSION__ENTER_REQUIRED_FIELDS_OR_EDIT_WORKSPACE_SETTINGS": {
-		"message": "Introduce los campos requeridos o edita la configuración de tu espacio de trabajo"
-	},
-	"EXTENSION__EXT_RELOADED": {
-		"message": "Se ha vuelto a cargar la extensión"
-	},
-	"EXTENSION__EXT_CONTEXT_INVALIDATED": {
-		"message": "Contexto de extensión invalidado"
-	},
-	"EXTENSION__REFRESH_THE_PAGE": {
-		"message": "¡Actualiza la página!"
-	},
-	"EXTENSION__WORKSPACE_NOT_AUTHORIZED_FOR_CUSTOM_FIELDS": {
-		"message": "Tu espacio de trabajo no está autorizado para campos personalizados"
-	},
-	"EXTENSION__TIME_ADDED": {
-		"message": "¡Tiempo añadido!"
-	},
-	"EXTENSION__CUSTOM_DOMAIN_ENABLE": {
-		"message": "Si usas una herramienta alojada en un dominio personalizado, puedes habilitarla aquí"
-	},
-	"EXTENSION__ENTER_TIME": {
-		"message": "Introduce el tiempo (p.ej., 1,5)"
-	},
-	"EXTENSION__ENTRY_MODE": {
-		"message": "Modo de entrada"
-	},
-	"REFRESH": {
-		"message": "Actualizar"
-	},
-	"EXTENSION__LOGIN_TO_CUSTOM_DOMAIN": {
-		"message": "Inicia sesión en el dominio personalizado"
-	},
-	"EXTENSION__LOGIN_TO_SUB_DOMAIN": {
-		"message": "Inicia sesión en el subdominio"
-	},
-	"EXTENSION__RETURN_TO_CLOCKIFY_CLOUD": {
-		"message": "Volver a la nube de Clockify"
-	},
-	"EXTENSION__CREATE_AN_ACCOUNT": {
-		"message": "Crea una cuenta"
-	},
-	"EXTENSION__NEW_HERE": {
-		"message": "Nuevo aquí"
-	},
-	"EXTENSION__NAME_AND_COLOR_ARE_REQUIRED": {
-		"message": "El nombre y el color son obligatorios"
-	},
-	"EXTENSION__ENABLE_POMODORO_TIMER": {
-		"message": "Habilitar el temporizador Pomodoro"
-	},
-	"EXTENSION__TIMER_INTERVAL": {
-		"message": "Intervalo de temporizador"
-	},
-	"EXTENSION__SHORT_BREAK": {
-		"message": "Descanso breve"
-	},
-	"EXTENSION__LONG_BREAK": {
-		"message": "Descanso largo"
-	},
-	"EXTENSION__LONG_BREAK_STARTS_AFTER": {
-		"message": "Descanso largo comienza después de"
-	},
-	"EXTENSION__BREAKS": {
-		"message": "descansos"
-	},
-	"EXTENSION__SOUND_NOTIFICATION": {
-		"message": "Notificación de sonido"
-	},
-	"EXTENSION__AUTOMATIC_BREAKS": {
-		"message": "Descansos automáticos"
-	},
-	"EXTENSION__DEFAULT_BREAK_PROJECT": {
-		"message": "Proyecto de descanso predeterminado"
-	},
-	"EXTENSION__AND_TASK": {
-		"message": "y tarea"
-	},
-	"EXTENSION__SELECT_COLOR": {
-		"message": "Seleccionar color"
-	},
-	"EXTENSION__ADD_TIME": {
-		"message": "AÑADIR TIEMPO"
-	},
-	"EXTENSION__BACK": {
-		"message": "Atrás"
-	},
-	"EXTENSION__CHANGE_SAVED": {
-		"message": "Cambio guardado"
-	},
-	"EXTENSION__CREATE_NEW_CLIENT": {
-		"message": "Crear nuevo cliente"
-	},
-	"EXTENSION__NAME_IS_REQUIRED": {
-		"message": "Se requiere el nombre"
-	},
-	"EXTENSION__FROM": {
-		"message": "Desde"
-	},
-	"EXTENSION__TO": {
-		"message": "Hasta"
-	},
-	"EXTENSION__CREATE_NEW_TAG": {
-		"message": "Crear nueva etiqueta"
-	},
-	"ENABLE_ALL_INTEGRATIONS": {
-		"message": "Puedes habilitar todo haciendo clic en el botón 'Habilitar todo'."
-	},
-	"AUDIT_LOG__TABLE_COLUMNS__PROJECT__NAME": {
-		"message": "Nombre de proyecto"
-	},
-	"AUDIT_LOG__TABLE_COLUMNS__CLIENT__NAME": {
-		"message": "Nombre de cliente"
-	},
-	"AUDIT_LOG__TABLE_COLUMNS__TAG__NAME": {
-		"message": "Nombre de etiqueta"
-	},
-	"PROJECTS__PROJECTS_TABLE__ADD_TASK_PLACEHOLDER": {
-		"message": "Añadir nueva tarea"
-	},
-	"AUDIT_LOG__TABLE_COLUMNS__TASK__NAME": {
-		"message": "Nombre de tarea"
-	},
-	"SHARED_MODULES__SHARED__CREATE_TASK_LABEL": {
-		"message": "Crear tarea"
-	},
-	"SERVICES__AUTHENTIFICATION__EMAIL__VALIDATION__ERROR_MESSAGE": {
-		"message": "¡Dirección de correo electrónico ya está en uso o no es válida!"
-	},
-	"REGISTER__SIGNUP__AGREE_LABEL": {
-		"message": "Estoy de acuerdo con las"
-	},
-	"GLOBAL__TOS": {
-		"message": "Condiciones de Uso"
-	},
-	"EXTENSION__ALREADY_HAVE_AN_ACCOUNT": {
-		"message": "Ya tienes una cuenta"
-	},
-	"REGISTER__SHARED__TOS_ACCEPT_ERROR": {
-		"message": "Debes aceptar las condiciones de uso"
-	},
-	"REGISTER__SHARED__PASSWORD_MIN_LENGTH_ERROR_MSG": {
-		"message": "La contraseña debe tener al menos $minLength$ caracteres.",
-		"placeholders": {
-			"minLength": {
-				"content": "$1",
-				"example": "6"
-			}
-		}
-	},
-	"GLOBAL__EMAIL_LABEL": {
-		"message": "Correo electrónico"
-	},
-	"GLOBAL__PASSWORD_LABEL": {
-		"message": "Contraseña"
-	},
-	"GLOBAL__DONE_LABEL": {
-		"message": "Hecho"
-	},
-	"REGISTER__SIGNUP__TITLE": {
-		"message": "Empieza a usar Clockify"
-	},
-	"REGISTER__SIGNUP__CREATE_ACCOUNT_EXPLANATION": {
-		"message": "Crea una cuenta gratis para empezar a seguir el tiempo y aumentar tu productividad."
-	},
-	"EXTENSION__CUSTOM_DOMAIN_URL": {
-		"message": "URL de dominio personalizado"
-	},
-	"EXTENSION__CUSTOM_DOMAIN_DESCRIPTION": {
-		"message": "Introduce tu dominio Clockify. Tu dominio es la URL desde la que accedes a Clockify en el navegador"
-	},
-	"GLOBAL__SIGNUP_LABEL": {
-		"message": "Regístrate"
-	},
-	"ACTIVITY_TABS__LOCATIONS__LOAD_MORE_BTN": {
-		"message": "Cargar más"
-	},
-	"EXTENSION__SUBMITTING": {
-		"message": "Enviando…"
-	},
-	"EXTENSION__EXPAND": {
-		"message": "Expandir"
-	},
-	"EXTENSION__FAVORITE": {
-		"message": "Favorito"
-	},
-	"EXTENSION__POMODORO_BREAK_STARTED": {
-		"message": "Tu descanso de $breakMinutes$ minutos ha comenzado.",
-		"placeholders": {
-			"breakMinutes": {
-				"content": "$1",
-				"example": "5"
-			}
-		}
-	},
-	"EXTENSION__POMODORO_BREAK_ENDED": {
-		"message": "Tu descanso ha terminado. Se reanudó el temporizador de trabajo."
-	},
-	"EXTENSION__POMODORO_TAKE_BREAK": {
-		"message": "Has estado trabajando $minLength$ minutos. ¡Hora de tomar un descanso!",
-		"placeholders": {
-			"minLength": {
-				"content": "$1",
-				"example": "30"
-			}
-		}
-	},
-	"EXTENSION__POMODORO_TIME_TO_WORK": {
-		"message": "Ha terminado el descanso. ¡Hora de trabajar!"
-	},
-	"EXTENSION__CLICK_HERE_TO_START_TIMER": {
-		"message": "Haz clic aquí para iniciar el temporizador."
-	},
-	"EXTENSION__CLICK_HERE_TO_START_BREAK": {
-		"message": "Haz clic aquí para iniciar el descanso."
-	},
-	"EXTENSION__POMODORO_SESSION": {
-		"message": "(Sesión $number$).",
-		"placeholders": {
-			"number": {
-				"content": "$1",
-				"example": "1"
-			}
-		}
-	},
-	"EXTENSION__POMODORO_TAKE_LONG_BREAK": {
-		"message": "Has estado trabajando $minLength$ minutos. ¡Hora de tomarse un largo descanso!",
-		"placeholders": {
-			"minLength": {
-				"content": "$1",
-				"example": "30"
-			}
-		}
-	},
-	"EXTENSION__CLICK_HERE_TO_START_LONG_BREAK": {
-		"message": "Haz clic aquí para iniciar el descanso largo."
-	},
-	"EXTENSION__POMODORO_TIMER": {
-		"message": "Temporizador Pomodoro"
-	},
-	"EXTENSION__REMINDER_MESSAGE": {
-		"message": "¡No olvides seguir tu tiempo! ($minutes$min transcurridos desde la última actividad)",
-		"placeholders": {
-			"minutes": {
-				"content": "$1",
-				"example": "15"
-			}
-		}
-	},
-	"EXTENSION__ADD_MISSING_TIME": {
-		"message": "Añadir tiempo que falta"
-	},
-	"EXTENSION__DISCARD_IDLE_TIME": {
-		"message": "Descartar tiempo de inactividad"
-	},
-	"EXTENSION__DISCARD_AND_CONTINUE": {
-		"message": "Descartar y continuar"
-	},
-	"EXTENSION__FOCUS_MODE": {
-		"message": "Modo de enfoque"
-	},
-	"EXTENSION__IDLE_TIME_DETECTED": {
-		"message": "Tiempo de inactividad detectado"
-	},
-	"EXTENSION__CLICK_HERE_TO_DISCARD_IDLE": {
-		"message": "Haz clic aquí para descartar la inactividad y detener la entrada."
-	},
-	"EXTENSION__IDLE_MESSAGE": {
-		"message": "Has estado inactivo durante $hours$h $minutes$min mientras rastreabas $desc$.",
-		"placeholders": {
-			"hours": {
-				"content": "$1",
-				"example": "1"
-			},
-			"minutes": {
-				"content": "$2",
-				"example": "15"
-			},
-			"desc": {
-				"content": "$3",
-				"example": "Project:task"
-			}
-		}
-	},
-	"EXTENSION__IDLE_MESSAGE_MINUTES": {
-		"message": "Has estado inactivo durante $minutes$min mientras rastreabas $desc$.",
-		"placeholders": {
-			"minutes": {
-				"content": "$1",
-				"example": "15"
-			},
-			"desc": {
-				"content": "$2",
-				"example": "Project:task"
-			}
-		}
-	},
-	"GLOBAL__CLIENTS_LABEL": {
-		"message": "Clientes"
-	},
-	"GLOBAL__DEPARTMENT_LABEL": {
-		"message": "Departamento"
-	},
-	"GLOBAL__DEPARTMENTS_LABEL": {
-		"message": "Departamentos"
-	},
-	"GLOBAL__THIS_MONTH_LABEL": {
-		"message": "Este mes"
-	},
-	"GLOBAL__LAST_MONTH_LABEL": {
-		"message": "El mes pasado"
-	},
-	"TRACKER__TIME_TRACKER__MONTHLY_TOTAL": {
-		"message": "Total mensual"
-	},
-	"TRACKER__TIME_TRACKER__SEMI_MONTHLY_TOTAL": {
-		"message": "Total bimensual"
-	},
-	"GLOBAL__CATEGORY_LABEL": {
-		"message": "Categoría"
-	},
-	"GLOBAL__CATEGORIES_LABEL": {
-		"message": "Categorías"
-	},
-	"GLOBAL__LOCATION_LABEL": {
-		"message": "Ubicación"
-	},
-	"GLOBAL__LOCATIONS_LABEL": {
-		"message": "Ubicaciones"
-	},
-	"GLOBAL__JOB_LABEL": {
-		"message": "Trabajo"
-	},
-	"GLOBAL__JOBS_LABEL": {
-		"message": "Trabajos"
-	},
-	"GLOBAL__ACTIVITY_LABEL": {
-		"message": "Actividad"
-	},
-	"GLOBAL__ACTIVITIES_LABEL": {
-		"message": "Actividades"
-	},
-	"GLOBAL__JOB_AREA_LABEL": {
-		"message": "Área de trabajo"
-	},
-	"GLOBAL__JOB_AREAS_LABEL": {
-		"message": "Áreas de trabajo"
-	},
-	"GLOBAL__SUBSCRIPTION_EXPIRED": {
-		"message": "Tu suscripción ha expirado."
-	},
-	"GLOBAL__FEATURE_DISABLED_CONTACT_ADMIN": {
-		"message": "Función deshabilitada. Ponte en contacto con tu administrador para obtener más información."
-	},
-	"EXTENSION__START_TIMER_WITH_DESCRIPTION": {
-		"message": "Iniciar temporizador con descripción"
-	},
-	"WORKSPACE__TWO_FACTOR__MODAL__TITLE": {
-		"message": "Se requiere seguridad mejorada"
-	},
-	"WORKSPACE__TWO_FACTOR__MODAL__INFO_MESSAGE": {
-		"message": "requiere autenticación de dos factores (2FA). Una vez habilitada, deberás comprobar tu correo electrónico al iniciar sesión."
-	},
-	"WORKSPACE__TWO_FACTOR__MODAL__ENABLE": {
-		"message": "Habilitar 2FA"
-	},
-	"EXTENSION__SCREENSHOT_RECORDING": {
-		"message": "Capturas de pantalla están habilitadas. Esta aplicación no puede tomar capturas de pantalla."
-	},
-	"EXTENSION__REMINDER": {
-		"message": "Recordatorio"
-	},
-	"EXTENSION__DOWNLOAD_SREENSHOTS_RECORDING_APP": {
-		"message": "Descargar la aplicación de tomar capturas de pantalla"
-	},
-	"AUDIT_LOG__KIOSK__BREAK_TYPE_LABEL": {
-		"message": "Descanso"
-	},
-	"EXTENSION__UPGRADE_TO_USE_THIS_FEATURE": {
-		"message": "Actualiza para usar esta función"
-	},
-	"appName": {
-		"message": "Clockify Rastreador de tiempo",
-		"description": "El título de la aplicación, que se muestra en la tienda web."
-	},
-	"appDesc": {
-		"message": "Sigue el tiempo desde cualquier lugar de la web y mejora la productividad.",
-		"description": "La descripción de la aplicación, que se muestra en la tienda web."
-	}
+  "APPROVAL__ENTRY_NO_DESCRIPTION": {
+    "message": "Sin descripción"
+  },
+  "THIS_WEEK": {
+    "message": "Esta semana"
+  },
+  "LAST_WEEK": {
+    "message": "La semana pasada"
+  },
+  "WEEK_TOTAL": {
+    "message": "Total semanal:"
+  },
+  "TRACKER__ENTRY_MESSAGES__LOADING": {
+    "message": "Cargando, espera."
+  },
+  "TRACKER__DEFAULT": {
+    "message": "predeterminado"
+  },
+  "STOP": {
+    "message": "Detener"
+  },
+  "START": {
+    "message": "Iniciar"
+  },
+  "TRACKER__CONFIRM_ACTION": {
+    "message": "¿Estás seguro?"
+  },
+  "TRACKER__TIME_TRACKER__DESCRIPTION_TOOLTIP": {
+    "message": "Escribe en qué estás trabajando"
+  },
+  "START_TIMER": {
+    "message": "Iniciar temporizador"
+  },
+  "TRACKER__TIME_TRACKER__ENTRY__TRACK__MANUAL_M": {
+    "message": "Manual (m)"
+  },
+  "TRACKER__TIME_TRACKER__ENTRY__TRACK__TIMER_N": {
+    "message": "Temporizador (n)"
+  },
+  "TIMER": {
+    "message": "Temporizador"
+  },
+  "WHAT_ARE_YOU_WORKING_ON": {
+    "message": "¿En qué estás trabajando?"
+  },
+  "TRACKER__TIME_TRACKER__ENTRY__DESCRIPTION": {
+    "message": "Añadir descripción"
+  },
+  "TRACKER__TIME_TRACKER__ENTRY__CONTINUE": {
+    "message": "Continuar con el temporizador para esta actividad"
+  },
+  "DELETE_MULTIPLE_ENTRIES": {
+    "message": "¿Seguro que quieres eliminar { entries } entradas?"
+  },
+  "TRACKER__TIME_TRACKER__ENTRY__DELETE__CONFIRM": {
+    "message": "¿Seguro que quieres eliminar { value } entradas de tiempo?"
+  },
+  "ARE_YOU_SURE_DELETE": {
+    "message": "¿Seguro que quieres eliminar la entrada?"
+  },
+  "TRACKER__TIME_TRACKER__RECORDER__ADD_TIME_MANUALLY_TOOLTIP": {
+    "message": "Añadir tiempo manualmente aquí"
+  },
+  "BILLABLE_LABEL": {
+    "message": "Facturable"
+  },
+  "GLOBAL__BILLING_CHANGE_SUCCESS_MESSAGE": {
+    "message": "La información de facturación cambió"
+  },
+  "CANCEL": {
+    "message": "Cancelar"
+  },
+  "CLIENT": {
+    "message": "Cliente"
+  },
+  "GLOBAL__DATE_LABEL": {
+    "message": "Fecha"
+  },
+  "DELETE": {
+    "message": "Eliminar"
+  },
+  "GLOBAL__DELETE_ERROR_MESSAGE": {
+    "message": "Error al eliminar"
+  },
+  "DESCRIPTION_LABEL": {
+    "message": "Descripción"
+  },
+  "GLOBAL__EDIT_LABEL": {
+    "message": "Editar"
+  },
+  "GLOBAL__EVERYONE_LABEL": {
+    "message": "Todos"
+  },
+  "GLOBAL__GET_PERMISSIONS_ERROR_MESSAGE": {
+    "message": "Error al obtener permisos"
+  },
+  "GLOBAL__GROUPS_LABEL": {
+    "message": "Grupos"
+  },
+  "GLOBAL__LOADER_WAIT_MOMENT": {
+    "message": "Un momento por favor"
+  },
+  "GLOBAL__LOADER_LOADING": {
+    "message": "Cargando..."
+  },
+  "GLOBAL__NAME_LABEL": {
+    "message": "Nombre"
+  },
+  "GLOBAL__NO_CLIENT_LABEL": {
+    "message": "Sin cliente"
+  },
+  "NO_PROJECT": {
+    "message": "Sin proyecto"
+  },
+  "GLOBAL__NON_BILLABLE_LABEL": {
+    "message": "No facturable"
+  },
+  "PROJECT": {
+    "message": "Proyecto"
+  },
+  "GLOBAL__ROLE_LABEL": {
+    "message": "Rol"
+  },
+  "GLOBAL__SELECT_ALL_LABEL": {
+    "message": "Seleccionar todo"
+  },
+  "GLOBAL__ADD_PROJECT_LABEL": {
+    "message": "Seleccionar proyecto"
+  },
+  "MINUTES": {
+    "message": "Minutos"
+  },
+  "FAVORITES": {
+    "message": "Favoritos"
+  },
+  "GLOBAL__SELECT_LABEL": {
+    "message": "Seleccionar { label }"
+  },
+  "GLOBAL__SHOW_ALL_LABEL": {
+    "message": "Mostrar todo"
+  },
+  "GLOBAL__STATUS_LABEL": {
+    "message": "Estado"
+  },
+  "TAGS": {
+    "message": "Etiquetas"
+  },
+  "GLOBAL__TIME_ROUNDING_TITLE": {
+    "message": "Redondeo de tiempo"
+  },
+  "THIS_MONTH": {
+    "message": "Este mes"
+  },
+  "LAST_MONTH": {
+    "message": "El mes pasado"
+  },
+  "MONTHLY_TOTAL": {
+    "message": "Total mensual"
+  },
+  "SEMI_MONTHLY_TOTAL": {
+    "message": "Total bimensual"
+  },
+  "GLOBAL__UPDATE_FAILED_ERROR_MESSAGE": {
+    "message": "Error de actualización"
+  },
+  "GLOBAL__USER_LABEL": {
+    "message": "Usuario"
+  },
+  "GLOBAL__USERS_LABEL": {
+    "message": "Usuarios"
+  },
+  "DUPLICATE": {
+    "message": "Duplicar"
+  },
+  "GLOBAL__WITHOUT_PROJECT_LABEL": {
+    "message": "Sin proyecto"
+  },
+  "CREATE_NEW_PROJECT": {
+    "message": "Crear nuevo proyecto"
+  },
+  "CREATE_NEW_TASK": {
+    "message": "Crear nueva tarea"
+  },
+  "WITHOUT_TASK": {
+    "message": "Sin tarea"
+  },
+  "GLOBAL__CONFIRM_LABEL": {
+    "message": "Sí"
+  },
+  "TASK": {
+    "message": "Tarea"
+  },
+  "GLOBAL__ACCESS_LABEL": {
+    "message": "Acceso"
+  },
+  "ADD": {
+    "message": "Añadir"
+  },
+  "ADD_TAGS": {
+    "message": "Añadir etiquetas"
+  },
+  "GLOBAL__ADMINS_LABEL": {
+    "message": "Administradores"
+  },
+  "GLOBAL__BILLING_LABEL": {
+    "message": "Facturación"
+  },
+  "GLOBAL__CHANGE_LABEL": {
+    "message": "Cambiar"
+  },
+  "GLOBAL__CHANGE_NAME_LABEL": {
+    "message": "Cambiar nombre"
+  },
+  "GLOBAL__CLOSE_BTN": {
+    "message": "Cerrar"
+  },
+  "GLOBAL__CREATE_LABEL": {
+    "message": "Crear"
+  },
+  "GLOBAL__CREATE_NEW_TITLE": {
+    "message": "Crear nuevo"
+  },
+  "GLOBAL__FAILED_MESSAGE": {
+    "message": "Error"
+  },
+  "GLOBAL__FILTER_LABEL": {
+    "message": "Filtrar"
+  },
+  "HOURS": {
+    "message": "Horas"
+  },
+  "LOG_IN": {
+    "message": "Iniciar sesión"
+  },
+  "GLOBAL__MANAGE_LABEL": {
+    "message": "Gestionar"
+  },
+  "MANUAL": {
+    "message": "Manual"
+  },
+  "GLOBAL__NO_LABEL": {
+    "message": "No"
+  },
+  "NONE": {
+    "message": "Nada"
+  },
+  "OK_BTN": {
+    "message": "OK"
+  },
+  "GLOBAL__PRIVATE_LABEL": {
+    "message": "Privado"
+  },
+  "PROJECTS": {
+    "message": "Proyectos"
+  },
+  "PUBLIC": {
+    "message": "Público"
+  },
+  "GLOBAL__REMOVE_LABEL": {
+    "message": "Eliminar"
+  },
+  "SAVE": {
+    "message": "Guardar"
+  },
+  "GLOBAL__SHOW_LABEL": {
+    "message": "Mostrar"
+  },
+  "GLOBAL__FORM_LABEL_START_TIME": {
+    "message": "Hora de inicio"
+  },
+  "GLOBAL__SUCCESS_MSG": {
+    "message": "¡Éxito!"
+  },
+  "TAG": {
+    "message": "Etiqueta"
+  },
+  "TASKS": {
+    "message": "Tareas"
+  },
+  "GLOBAL__TIME_LABEL": {
+    "message": "Tiempo"
+  },
+  "GLOBAL__FORM_LABEL_DESCRIPTION_PLACEHOLDER": {
+    "message": "¿En qué has trabajado?"
+  },
+  "WORKSPACE": {
+    "message": "Espacio de trabajo"
+  },
+  "GLOBAL__WORKSPACES_LABEL": {
+    "message": "Espacios de trabajo"
+  },
+  "GLOBAL__ADMIN_LABEL": {
+    "message": "Administrador"
+  },
+  "GLOBAL__CLEAR_FILTERS_LABEL": {
+    "message": "Borrar filtros"
+  },
+  "DASHBOARD": {
+    "message": "Panel"
+  },
+  "GLOBAL__LABEL_TEXT": {
+    "message": "Etiqueta"
+  },
+  "GLOBAL__APPLY_FILTER_LABEL": {
+    "message": "Aplicar filtro"
+  },
+  "SUBMIT": {
+    "message": "Enviar"
+  },
+  "FIND_PROJECTS": {
+    "message": "Buscar proyectos..."
+  },
+  "GLOBAL__FIND_TASKS_LABEL": {
+    "message": "Buscar tareas..."
+  },
+  "FIND_TAGS": {
+    "message": "Buscar etiquetas..."
+  },
+  "ENTER_DESCRIPTION": {
+    "message": "Introducir descripción..."
+  },
+  "GLOBAL__WITHOUT_DESCRIPTION_LABEL": {
+    "message": "Sin descripción"
+  },
+  "GLOBAL__SEARCH_PLACEHOLDER": {
+    "message": "Buscar..."
+  },
+  "GLOBAL__NOW_LABEL": {
+    "message": "Ahora"
+  },
+  "GLOBAL__IN_PROGRESS_LABEL": {
+    "message": "En curso"
+  },
+  "GLOBAL__SELECT_RANGEE_LABEL": {
+    "message": "Seleccionar intervalo"
+  },
+  "GLOBAL__PLACEHOLDER__ENTER_NAME": {
+    "message": "Introducir nombre"
+  },
+  "DESCRIPTION_LIMIT_ERROR_MSG": {
+    "message": "Descripción acortada (longitud máxima { limit } caracteres)"
+  },
+  "INSTAL_AND_TRACK_ANYWHERE": {
+    "message": "Instala Clockify y rastrea el tiempo en cualquier lugar."
+  },
+  "TEMPLATE_WITH_NAME_EXISTS_PART_TWO": {
+    "message": "ya existe"
+  },
+  "PROJECT_NAME_LENGTH_ERROR": {
+    "message": "El nombre del proyecto debe tener entre 2 y 250 caracteres"
+  },
+  "PROJECTS__EDIT_PROJECT_SETTINGS__PROJECT_COLOR_EXPLANATION": {
+    "message": "Usa color para diferenciar visualmente los proyectos."
+  },
+  "PROJECTS__EDIT_PROJECT_SETTINGS__DEFAULT_BILLABLE_STATUS_LABEL": {
+    "message": "Facturable por defecto"
+  },
+  "PROJECTS__EDIT_PROJECT_SETTINGS__TASK_BASED_LABEL": {
+    "message": "Basado en tareas"
+  },
+  "PROJECTS__NEW_PROJECT__CUSTOM_COLOR_LABEL": {
+    "message": "Color personalizado"
+  },
+  "PROJECTS__EDIT_PROJECT_PAGE__PROJECT_SETTINGS": {
+    "message": "Configuración del proyecto"
+  },
+  "PROJECTS__EDIT_PROJECT_PAGE__DELETE_PROJECT_WARNING": {
+    "message": "¿Seguro que quieres eliminar el proyecto { projectName }?"
+  },
+  "PROJECTS__SHARED__COLOR_LABEL": {
+    "message": "Color"
+  },
+  "PROJECTS__SHARED__ENTER_PROJECT_NAME_PLACEHOLDER": {
+    "message": "Introduce el nombre de proyecto"
+  },
+  "WITHOUT_CLIENT": {
+    "message": "Sin cliente"
+  },
+  "SHARED_MODULES__CUSTOM_FIELD__ENTER_DROPDOWN_VALUES_MSG": {
+    "message": "Por favor, introduce valores para la lista desplegable"
+  },
+  "SHARED_MODULES__CUSTOM_FIELD__EMPTY_NAME_ERROR_MSG": {
+    "message": "Nombre no puede estar vacío."
+  },
+  "SHARED_MODULES__CUSTOM_FIELD__TYPE_TEXT_LABEL": {
+    "message": "Texto"
+  },
+  "SHARED_MODULES__CUSTOM_FIELD__TYPE_NUMBER_LABEL": {
+    "message": "Número"
+  },
+  "SHARED_MODULES__CUSTOM_FIELD__TYPE_LINK_LABEL": {
+    "message": "Enlace"
+  },
+  "SHARED_MODULES__CUSTOM_FIELD__TYPE_SWITCH_LABEL": {
+    "message": "Conmutador"
+  },
+  "SELECT": {
+    "message": "Seleccionar"
+  },
+  "SHARED_MODULES__CUSTOM_FIELD__OPTION_PART_LABEL": {
+    "message": "Opción"
+  },
+  "SHARED_MODULES__CUSTOM_FIELD__TYPE_SELECT_MULTIPLE_LABEL": {
+    "message": "Seleccionar varios"
+  },
+  "SHARED_MODULES__CUSTOM_FIELD__DROPDOWN_DEFAULT_VALUE_INFO": {
+    "message": "Estado y valor de opción predeterminados"
+  },
+  "SHARED_MODULES__CUSTOM_FIELD__ON_LABEL": {
+    "message": "ACTIVADO"
+  },
+  "SELECT_CLIENT": {
+    "message": "Seleccionar cliente"
+  },
+  "SHARED_MODULES__CUSTOM_FIELD__ADD_OPTION_LABEL": {
+    "message": "Añadir opción"
+  },
+  "SHARED_MODULES__CUSTOM_FIELD__PLACEHOLDER_LABEL": {
+    "message": "Marcador de posición"
+  },
+  "SHARED_MODULES__CUSTOM_FIELD__VALUE_LABEL": {
+    "message": "Valor"
+  },
+  "SHARED_MODULES__CUSTOM_FIELD__DEFAULT_LABEL": {
+    "message": "Predeterminado: "
+  },
+  "SHARED_MODULES__CUSTOM_FIELD__AVAILABLE_FIELD_INFO_HEADER": {
+    "message": "Campos disponibles"
+  },
+  "SHARED_MODULES__PROJECT_PICKER__FIND_TASK_LABEL": {
+    "message": "Buscar tarea @proyecto o { projectGroupingLabel }"
+  },
+  "SHARED_MODULES__PROJECT_PICKER__FIND_PROJECT_LABEL": {
+    "message": "Buscar proyecto o { projectGroupingLabel }"
+  },
+  "SHARED_MODULES__PROJECT_PICKER__CREATE_PROJECT_WITH_PARAM_LABEL": {
+    "message": "crear { project } proyecto."
+  },
+  "SHARED_MODULES__PROJECT_PICKER__CREATE_TASK_WITH_PARAM_LABEL": {
+    "message": "crear { task } tarea en { project } proyecto."
+  },
+  "SHARED_MODULES__PROJECT_PICKER__TYPE_TO_CREATE_PROJECT_PLACEHOLDER": {
+    "message": "Escribe tarea@proyecto para crear una."
+  },
+  "MONKEY_SEARCH": {
+    "message": "Para filtrar por proyecto, añade el prefijo @ (p. ej., @miproyecto)"
+  },
+  "TASKS_NUMBER": {
+    "message": "{ count } Tareas"
+  },
+  "SHARED_MODULES__PROJECT_PICKER__CREATE_NEW_PROJ_TASK_LABEL": {
+    "message": "Crear nuevo proyecto y tarea"
+  },
+  "SHARED_MODULES__INPUT_NUMBER__NUMBER_INVALID_ERROR_MSG": {
+    "message": "Introduce un número válido."
+  },
+  "SHARED_MODULES__INPUT_NUMBER__NUMBER_TOO_SMALL_ERROR_MSG": {
+    "message": "Número debe ser mayor que { minNumber }."
+  },
+  "SHARED_MODULES__INPUT_NUMBER__NUMBER_TOO_BIG_ERROR_MSG": {
+    "message": "Número debe ser menor que { maxNumber }."
+  },
+  "SHARED_MODULES__INPUT_STRING__VALUE_TOO_LONG_ERROR_MSG": {
+    "message": "Valor debe tener menos de { maxLength } caracteres."
+  },
+  "SHARED_MODULES__INPUT_STRING__VALUE_REQUIRED_ERROR_MESSAGE": {
+    "message": "Se requiere valor."
+  },
+  "NO_DESCRIPTION": {
+    "message": "(sin descripción)"
+  },
+  "PAGES__DASHBOARD__TEAM_ACTIVITIES__ACTIVITY__NO_PROJECT": {
+    "message": "(sin proyecto)"
+  },
+  "REQUIRED": {
+    "message": "requerido"
+  },
+  "REQUIRED_LABEL": {
+    "message": "(requerido)"
+  },
+  "TODAY_LABEL": {
+    "message": "Hoy"
+  },
+  "YESTERDAY_LABEL": {
+    "message": "Ayer"
+  },
+  "TOTAL": {
+    "message": "Total:"
+  },
+  "DISABLED_MANUAL_MODE": {
+    "message": "Modo manual desactivado"
+  },
+  "SETTINGS": {
+    "message": "Configuración"
+  },
+  "INTEGRATIONS": {
+    "message": "Integraciones"
+  },
+  "LOG_OUT": {
+    "message": "Cerrar sesión"
+  },
+  "CANT_SAVE_WITHOUT_REQUIRED_FIELDS": {
+    "message": "No se puede guardar sin campos requeridos."
+  },
+  "TAG__GET__ERROR": {
+    "message": "Error al obtener etiquetas"
+  },
+  "CUSTOM_FIELDS": {
+    "message": "Campos personalizados"
+  },
+  "DURATION_FORMAT": {
+    "message": "Formato de duración"
+  },
+  "SUBDOMAIN_NAME": {
+    "message": "Nombre de subdominio"
+  },
+  "MONDAY": {
+    "message": "Lunes"
+  },
+  "MONDAY_SHORT": {
+    "message": "Lu."
+  },
+  "TUESDAY": {
+    "message": "Martes"
+  },
+  "TUESDAY_SHORT": {
+    "message": "Ma."
+  },
+  "WEDNESDAY": {
+    "message": "Miércoles"
+  },
+  "WEDNESDAY_SHORT": {
+    "message": "Mi."
+  },
+  "THURSDAY": {
+    "message": "Jueves"
+  },
+  "THURSDAY_SHORT": {
+    "message": "Ju."
+  },
+  "FRIDAY": {
+    "message": "Viernes"
+  },
+  "FRIDAY_SHORT": {
+    "message": "Vi."
+  },
+  "SATURDAY": {
+    "message": "Sábado"
+  },
+  "SATURDAY_SHORT": {
+    "message": "Sá."
+  },
+  "SUNDAY": {
+    "message": "Domingo"
+  },
+  "SUNDAY_SHORT": {
+    "message": "Do."
+  },
+  "NO_MATCHING": {
+    "message": "Sin { entityInPlural } coincidentes"
+  },
+  "FILTER_NAME": {
+    "message": "Filtro { name }"
+  },
+  "APPEND_THE_WEBSITE_URL": {
+    "message": "Añadir la URL del sitio web"
+  },
+  "ADD_PROJECT": {
+    "message": "Añadir proyecto"
+  },
+  "ADD_TASK": {
+    "message": "Añadir tarea"
+  },
+  "ADD_TIME_MANUAL": {
+    "message": "Añadir tiempo (p.ej., 15 min)"
+  },
+  "SHORTCUT": {
+    "message": "Acceso directo"
+  },
+  "START_TIMER_WHEN_BROWSER_STARTS": {
+    "message": "Iniciar el temporizador cuando se inicie el navegador"
+  },
+  "STOP_TIMER_WHEN_BROWSER_CLOSES": {
+    "message": "Detener el temporizador cuando se cierre el navegador"
+  },
+  "STOP_TIMER": {
+    "message": "Detener temporizador"
+  },
+  "DESCRIPTION_REQUIRED": {
+    "message": "Descripción (requerido)"
+  },
+  "START_STOP_TIME_SHORTCUT": {
+    "message": "Acceso directo para Iniciar/Detener el temporizador"
+  },
+  "DEFAULT_PROJECT_ARCHIVED": {
+    "message": "Tu proyecto predeterminado está archivado."
+  },
+  "DEFAULT_TASK_DONE": {
+    "message": "Tu tarea predeterminada es Hecha, ya no está disponible."
+  },
+  "DEFAULT_TASK_DOES_NOT_EXIST": {
+    "message": "La tarea predeterminada no existe."
+  },
+  "DEFAULT_PROJECT_NOT_AVAILABLE": {
+    "message": "Tu proyecto predeterminado ya no está disponible."
+  },
+  "YOU_CAN_SET_A_NEW_ONE_IN_SETTINGS": {
+    "message": "Puedes establecer uno nuevo en Configuración."
+  },
+  "COMPLETE_CURRENT_ENTRY": {
+    "message": "Por favor, ¡primero completa tu Entrada actual!"
+  },
+  "ENTER_REQUIRED_FIELDS": {
+    "message": "Introduce los campos requeridos o edita la configuración de tu espacio de trabajo."
+  },
+  "CANNOT_START_ENTRY_WITHOUT_PROJECT": {
+    "message": "No se puede iniciar la entrada sin proyecto, tarea, descripción o etiquetas."
+  },
+  "EDIT_YOUR_TIME_ENTRY": {
+    "message": "Edita tu entrada de tiempo."
+  },
+  "CREATE_TIME_ENTRY_USING_DASHBOARD": {
+    "message": "Crea tu entrada de tiempo utilizando el panel o edita la configuración de tu espacio de trabajo."
+  },
+  "ENABLE_INTEGRATIONS": {
+    "message": "Habilitar integraciones"
+  },
+  "ENABLE_TOOLS": {
+    "message": "Habilita las herramientas que quieres utilizar con la extensión Clockify."
+  },
+  "ENABLE_ALL": {
+    "message": "Habilitar todo"
+  },
+  "DISABLE_ALL": {
+    "message": "Deshabilitar todo"
+  },
+  "CUSTOM_DOMAINS": {
+    "message": "Dominios personalizados"
+  },
+  "HOSTED_ON_CUSTOM_DOMAIN": {
+    "message": "Si usas una herramienta alojada en un dominio personalizado, puedes habilitarla aquí"
+  },
+  "ENTER_DOMAIN_NAME": {
+    "message": "Introduce el nombre de dominio en el formato 'midominio.com' y selecciona la integración del menú desplegable"
+  },
+  "PORTS_NOT_SUPPORTED": {
+    "message": "Los puertos no son compatibles"
+  },
+  "NO_RECENT_ENTRIES_TO_SHOW": {
+    "message": "No hay entradas recientes para mostrar"
+  },
+  "YOU_HAVE_NOT_TRACKED": {
+    "message": "Parece que no has rastreado ningún tiempo últimamente"
+  },
+  "GET_ONLINE": {
+    "message": "Conéctate para ver tus entradas"
+  },
+  "YOU_CAN_STILL_TRACK_TIME": {
+    "message": "Mientras tanto, aún puedes seguir el tiempo, incluso si no estás conectado"
+  },
+  "ENABLE_DARK_MODE": {
+    "message": "Habilitar modo oscuro"
+  },
+  "DEFAULT_PROJECT": {
+    "message": "Proyecto predeterminado"
+  },
+  "DEFAULT_PROJECT_AND_TASK": {
+    "message": "Proyecto y tarea predeterminados"
+  },
+  "LAST_USED_PROJECT": {
+    "message": "Último proyecto utilizado"
+  },
+  "LAST_USED_PROJECT_AND_TASK": {
+    "message": "Último proyecto y tarea utilizados"
+  },
+  "INTEGRATIONS_CAN_CREATE_PROJECTS": {
+    "message": "Las integraciones pueden crear proyectos/tareas/etiquetas"
+  },
+  "SHOW_POST_START_POPUP": {
+    "message": "Mostrar ventana emergente posterior al inicio"
+  },
+  "REMIND_ME_TO_TRACK_TIME": {
+    "message": "Recuérdame seguir el tiempo"
+  },
+  "MINUTES_SINCE_LAST_ENTRY": {
+    "message": "minutos desde la última entrada"
+  },
+  "ENABLE_CONTEXT_MENU": {
+    "message": "Habilitar el menú contextual"
+  },
+  "IDLE_DETECTION": {
+    "message": "Detección de inactividad"
+  },
+  "DETECT_IDLE_TIME": {
+    "message": "Detectar el tiempo de inactividad si está inactivo durante"
+  },
+  "CANT_START_ENTRY_WITHOUT_PROJECT": {
+    "message": "No se puede iniciar la entrada sin proyecto, tarea, descripción o etiquetas"
+  },
+  "PLEASE_EDIT_YOUR_TIME_ENTRY": {
+    "message": "Edita tu entrada de tiempo"
+  },
+  "CANNOT_END_ENTRY": {
+    "message": "No se puede finalizar la entrada sin proyecto, tarea, descripción o etiquetas"
+  },
+  "STOP_TIME": {
+    "message": "Detener tiempo"
+  },
+  "STOP_AT_SPECIFIED_TIME": {
+    "message": "Detener el temporizador automáticamente a una hora determinada del día"
+  },
+  "YOU_MUST_BE_LOGGED_IN_TO_START": {
+    "message": "Debes iniciar sesión para iniciar la entrada de tiempo"
+  },
+  "YOU_ALREADY_HAVE_ENTRY_WITHOUT": {
+    "message": "Ya tienes una entrada en curso sin proyecto/tarea/descripción o etiquetas"
+  },
+  "ENTER_REQUIRED_FIELDS_OR_EDIT_WORKSPACE_SETTINGS": {
+    "message": "Introduce los campos requeridos o edita la configuración de tu espacio de trabajo"
+  },
+  "EXT_RELOADED": {
+    "message": "Se ha vuelto a cargar la extensión"
+  },
+  "EXT_CONTEXT_INVALIDATED": {
+    "message": "Contexto de extensión invalidado"
+  },
+  "REFRESH_THE_PAGE": {
+    "message": "¡Actualiza la página!"
+  },
+  "WORKSPACE_NOT_AUTHORIZED_FOR_CUSTOM_FIELDS": {
+    "message": "Tu espacio de trabajo no está autorizado para campos personalizados"
+  },
+  "TIME_ADDED": {
+    "message": "¡Tiempo añadido!"
+  },
+  "CUSTOM_DOMAIN_ENABLE": {
+    "message": "Si usas una herramienta alojada en un dominio personalizado, puedes habilitarla aquí"
+  },
+  "ENTER_TIME": {
+    "message": "Introduce el tiempo (p.ej., 1,5)"
+  },
+  "ENTRY_MODE": {
+    "message": "Modo de entrada"
+  },
+  "REFRESH": {
+    "message": "Actualizar"
+  },
+  "LOGIN_TO_CUSTOM_DOMAIN": {
+    "message": "Inicia sesión en el dominio personalizado"
+  },
+  "LOGIN_TO_SUB_DOMAIN": {
+    "message": "Inicia sesión en el subdominio"
+  },
+  "RETURN_TO_CLOCKIFY_CLOUD": {
+    "message": "Volver a la nube de Clockify"
+  },
+  "CREATE_AN_ACCOUNT": {
+    "message": "Crea una cuenta"
+  },
+  "NEW_HERE": {
+    "message": "¿Eres nuevo aquí"
+  },
+  "NAME_AND_COLOR_ARE_REQUIRED": {
+    "message": "El nombre y el color son obligatorios"
+  },
+  "ENABLE_POMODORO_TIMER": {
+    "message": "Habilitar el temporizador Pomodoro"
+  },
+  "TIMER_INTERVAL": {
+    "message": "Intervalo de temporizador"
+  },
+  "SHORT_BREAK": {
+    "message": "Descanso breve"
+  },
+  "LONG_BREAK": {
+    "message": "Descanso largo"
+  },
+  "LONG_BREAK_STARTS_AFTER": {
+    "message": "Descanso largo comienza después de"
+  },
+  "BREAKS": {
+    "message": "descansos"
+  },
+  "SOUND_NOTIFICATION": {
+    "message": "Notificación de sonido"
+  },
+  "AUTOMATIC_BREAKS": {
+    "message": "Descansos automáticos"
+  },
+  "DEFAULT_BREAK_PROJECT": {
+    "message": "Proyecto de descanso predeterminado"
+  },
+  "AND_TASK": {
+    "message": "y tarea"
+  },
+  "SELECT_COLOR": {
+    "message": "Seleccionar color"
+  },
+  "ADD_TIME": {
+    "message": "AÑADIR TIEMPO"
+  },
+  "BACK": {
+    "message": "Atrás"
+  },
+  "CHANGE_SAVED": {
+    "message": "Cambio guardado"
+  },
+  "CREATE_NEW_CLIENT": {
+    "message": "Crear nuevo cliente"
+  },
+  "NAME_IS_REQUIRED": {
+    "message": "Se requiere el nombre"
+  },
+  "FROM": {
+    "message": "Desde"
+  },
+  "TO": {
+    "message": "Hasta"
+  },
+  "CREATE_NEW_TAG": {
+    "message": "Crear nueva etiqueta"
+  },
+  "FIELD_REQUIRED": {
+    "message": "requerido"
+  },
+  "ENABLE_ALL_INTEGRATIONS": {
+    "message": "Puedes habilitar todo haciendo clic en el botón 'Habilitar todo'."
+  },
+  "PROJECT_NAME": {
+    "message": "Nombre de proyecto"
+  },
+  "CLIENT_NAME": {
+    "message": "Nombre de cliente"
+  },
+  "TAG_NAME": {
+    "message": "Nombre de etiqueta"
+  },
+  "PROJECTS__PROJECTS_TABLE__ADD_TASK_PLACEHOLDER": {
+    "message": "Añadir nueva tarea"
+  },
+  "TASK_NAME": {
+    "message": "Nombre de tarea"
+  },
+  "CREATE_TASK": {
+    "message": "Crear tarea"
+  },
+  "INVALID_EMAIL": {
+    "message": "¡Dirección de correo electrónico ya está en uso o no es válida!"
+  },
+  "AGREE_LABEL": {
+    "message": "Estoy de acuerdo con las"
+  },
+  "TOS": {
+    "message": "Condiciones de Uso"
+  },
+  "ALREADY_HAVE_AN_ACCOUNT": {
+    "message": "Ya tienes una cuenta"
+  },
+  "TOS_ACCEPT_ERROR": {
+    "message": "Debes aceptar las condiciones de uso"
+  },
+  "PASSWORD_MIN_LENGTH_ERROR_MSG": {
+    "message": "La contraseña debe tener al menos { minLength } caracteres."
+  },
+  "EMAIL": {
+    "message": "Correo electrónico"
+  },
+  "PASSWORD": {
+    "message": "Contraseña"
+  },
+  "DONE_LABEL": {
+    "message": "Hecho"
+  },
+  "SIGNUP_TITLE": {
+    "message": "Empieza a usar Clockify"
+  },
+  "CREATE_ACCOUNT_EXPLANATION": {
+    "message": "Crea una cuenta gratis para empezar a seguir el tiempo y aumentar tu productividad."
+  },
+  "CUSTOM_DOMAIN_URL": {
+    "message": "URL de dominio personalizado"
+  },
+  "CUSTOM_DOMAIN_DESCRIPTION": {
+    "message": "Introduce tu dominio Clockify. Tu dominio es la URL desde la que accedes a Clockify en el navegador"
+  },
+  "SIGNUP": {
+    "message": "Regístrate"
+  },
+  "LOAD_MORE": {
+    "message": "Cargar más"
+  },
+  "SUBMITTING": {
+    "message": "Enviando…"
+  },
+  "EXPAND": {
+    "message": "Expandir"
+  },
+  "FAVORITE": {
+    "message": "Favorito"
+  },
+  "POMODORO_BREAK_STARTED": {
+    "message": "Tu descanso de { breakMinutes } minutos ha comenzado."
+  },
+  "POMODORO_BREAK_ENDED": {
+    "message": "Tu descanso ha terminado. Se reanudó el temporizador de trabajo."
+  },
+  "POMODORO_TAKE_BREAK": {
+    "message": "Has estado trabajando { minLength } minutos. ¡Hora de tomar un descanso!"
+  },
+  "POMODORO_TIME_TO_WORK": {
+    "message": "Ha terminado el descanso. ¡Hora de trabajar!"
+  },
+  "CLICK_HERE_TO_START_TIMER": {
+    "message": "Haz clic aquí para iniciar el temporizador."
+  },
+  "CLICK_HERE_TO_START_BREAK": {
+    "message": "Haz clic aquí para iniciar el descanso."
+  },
+  "SESSION": {
+    "message": "(Sesión { number })."
+  },
+  "POMODORO_TAKE_LONG_BREAK": {
+    "message": "Has estado trabajando { minLength } minutos. ¡Hora de tomarse un largo descanso!"
+  },
+  "CLICK_HERE_TO_START_LONG_BREAK": {
+    "message": "Haz clic aquí para iniciar el descanso largo."
+  },
+  "POMODORO_TIMER": {
+    "message": "Temporizador Pomodoro"
+  },
+  "REMINDER_MESSAGE": {
+    "message": "¡No olvides seguir tu tiempo! ({ minutes }min transcurridos desde la última actividad)"
+  },
+  "ADD_MISSING_TIME": {
+    "message": "Añadir tiempo que falta"
+  },
+  "DISCARD_IDLE_TIME": {
+    "message": "Descartar tiempo de inactividad"
+  },
+  "DISCARD_AND_CONTINUE": {
+    "message": "Descartar y continuar"
+  },
+  "FOCUS_MODE": {
+    "message": "Modo de enfoque"
+  },
+  "IDLE_TIME_DETECTED": {
+    "message": "Tiempo de inactividad detectado"
+  },
+  "CLICK_HERE_TO_DISCARD_IDLE": {
+    "message": "Haz clic aquí para descartar la inactividad y detener la entrada."
+  },
+  "IDLE_MESSAGE": {
+    "message": "Has estado inactivo durante { hours }h { minutes }min mientras rastreabas { desc }."
+  },
+  "IDLE_MESSAGE_MINUTES": {
+    "message": "Has estado inactivo durante { minutes }min mientras rastreabas { desc }."
+  },
+  "CLIENTS": {
+    "message": "Clientes"
+  },
+  "DEPARTMENT": {
+    "message": "Departamento"
+  },
+  "DEPARTMENTS": {
+    "message": "Departamentos"
+  },
+  "CATEGORY": {
+    "message": "Categoría"
+  },
+  "CATEGORIES": {
+    "message": "Categorías"
+  },
+  "LOCATION": {
+    "message": "Ubicación"
+  },
+  "LOCATIONS": {
+    "message": "Ubicaciones"
+  },
+  "JOB": {
+    "message": "Trabajo"
+  },
+  "JOBS": {
+    "message": "Trabajos"
+  },
+  "ACTIVITY": {
+    "message": "Actividad"
+  },
+  "ACTIVITIES": {
+    "message": "Actividades"
+  },
+  "JOB_AREA": {
+    "message": "Área de trabajo"
+  },
+  "JOB_AREAS": {
+    "message": "Áreas de trabajo"
+  },
+  "SUBSCRIPTION_EXPIRED": {
+    "message": "Tu suscripción ha expirado."
+  },
+  "FEATURE_DISABLED_CONTACT_ADMIN": {
+    "message": "Función deshabilitada. Ponte en contacto con tu administrador para obtener más información."
+  },
+  "START_TIMER_WITH_DESCRIPTION": {
+    "message": "Iniciar temporizador con descripción"
+  },
+  "WORKSPACE__TWO_FACTOR__MODAL__TITLE": {
+    "message": "Se requiere seguridad mejorada"
+  },
+  "WORKSPACE__TWO_FACTOR__MODAL__INFO_MESSAGE": {
+    "message": "requiere autenticación de dos factores (2FA). Una vez habilitada, deberás comprobar tu correo electrónico al iniciar sesión."
+  },
+  "WORKSPACE__TWO_FACTOR__MODAL__ENABLE": {
+    "message": "Habilitar 2FA"
+  },
+  "SCREENSHOT_RECORDING": {
+    "message": "Capturas de pantalla están habilitadas. Esta aplicación no puede tomar capturas de pantalla."
+  },
+  "REMINDER": {
+    "message": "Recordatorio"
+  },
+  "DOWNLOAD_SREENSHOTS_RECORDING_APP": {
+    "message": "Descargar la aplicación de tomar capturas de pantalla"
+  },
+  "AUDIT_LOG__KIOSK__BREAK_TYPE_LABEL": {
+    "message": "Descanso"
+  },
+  "UPGRADE_TO_USE_THIS_FEATURE": {
+    "message": "Actualiza para usar esta función"
+  },
+  "UPGRADE_REGIONAL": {
+    "message": "Espacio de trabajo bloqueado. Ponte en contacto con tu administrador para obtener más información."
+  },
+  "UPGRADE_REGIONAL_ADMIN": {
+    "message": "Espacio de trabajo bloqueado porque está alojado en un servidor regional. Añade información de pago o cambia de espacio de trabajo."
+  },
+  "ENTER_REQUIRED_FIEEDS_OR_EDIT_WORKSPACE_SETTINGS": {
+    "message": "Introduce los campos requeridos o edita la configuración de tu espacio de trabajo."
+  },
+  "appName": {
+    "message": "Clockify Rastreador de tiempo",
+    "description": "El título de la aplicación, que se muestra en la tienda web."
+  },
+  "appDesc": {
+    "message": "Sigue el tiempo desde cualquier lugar de la web y mejora la productividad.",
+    "description": "La descripción de la aplicación, que se muestra en la tienda web."
+  }
 }

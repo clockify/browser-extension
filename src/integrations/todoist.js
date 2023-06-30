@@ -2,8 +2,8 @@
 clockifyButton.render(
 	'.project_editor_instance [data-action-hint="task-root"]:not(.clockify)',
 	{ observe: true },
-	function (elem) {
-		description = $('.markdown_content.task_content', elem).textContent;
+    function (elem) {
+		description = $('.task_content', elem).textContent;
 		project = $('.view_header__content h1').textContent;
 		var tags = () =>
 			Array.from($$('.task_list_item__info_tags__label', elem)).map(
@@ -101,9 +101,9 @@ clockifyButton.render(
 clockifyButton.render(
 	'.filter_view .task_list_item__body:not(.clockify)',
 	{ observe: true },
-	function (elem) {
-		description = $('.markdown_content.task_content', elem).textContent;
-		project = $('.task_list_item__project', elem).textContent;
+    function (elem) {
+        description = $('.task_content', elem).textContent;
+        project = $('.task_list_item__project', elem).textContent.split('/')[0].trim();
 		var tags = () =>
 			Array.from($$('.task_list_item__info_tags__label', elem)).map(
 				(e) => e.innerText
@@ -123,31 +123,36 @@ clockifyButton.render(
 );
 
 clockifyButton.render(
-	'[data-testid="task-details-sidebar"] > ._5641699f:not(.clockify)',
+	'[data-testid="task-details-sidebar"] > div:not(.clockify)',
 	{ observe: true },
-	function (elem) {
-		description = $(
-			'.task-overview-header > div > div.markdown_content.task_content'
-		).textContent;
-		project = $('button[aria-label="Select a project"] span').textContent;
-		// var tags = () => Array.from($$(".task_list_item__info_tags__label")).map(e => e.innerText);
+	(elem) => {
+		const description = $(
+				'.task-overview-header div.task_content'
+        ).textContent,
+            projectName = $('button[aria-label="Select a project"] span').textContent.split('/')[0].trim();
 
-		link = clockifyButton.createButton({
-			description: description,
-			projectName: project,
+		const clockifyContainer = createTag('div', 'clockify-widget-container');
+
+		const link = clockifyButton.createButton({
+			description,
+			projectName,
 			small: true,
-			// tagNames: tags
 		});
 
-		const inputForm = clockifyButton.createInput({
-			description: description,
-			// projectName: project,
+		const input = clockifyButton.createInput({
+			description,
+			projectName,
 		});
+
+		clockifyContainer.style = 'display: flex';
+		clockifyContainer.style = 'align-items: center';
 
 		link.style.paddingRight = '10px';
 		link.style.marginRight = '10px';
 		link.style.height = 'fit-content';
-		elem.append(link);
-		elem.append(inputForm);
+
+		clockifyContainer.append(link);
+		clockifyContainer.append(input);
+		elem.append(clockifyContainer);
 	}
 );

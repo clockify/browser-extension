@@ -1,10 +1,7 @@
 class UserService extends ClockifyService {
-	constructor() {}
-
 	static async getUser() {
 		const apiEndpoint = await this.apiEndpoint;
 		const endPoint = `${apiEndpoint}/v1/user`;
-		const addToken = true;
 		return await this.apiCall(endPoint);
 	}
 
@@ -37,6 +34,13 @@ class UserService extends ClockifyService {
 		return await this.apiCall(endPoint);
 	}
 
+	static async getMemberProfile(workspaceId, userId) {
+		const apiEndpoint = await this.apiEndpoint;
+		const memberProfileUrl = `${apiEndpoint}/workspaces/${workspaceId}/member-profile/${userId}`;
+
+		return this.apiCall(memberProfileUrl);
+	}
+
 	static async getSetUserRoles() {
 		// aBrowser.storage.local.set({
 		//     userRoles: []
@@ -49,5 +53,18 @@ class UserService extends ClockifyService {
 			});
 		} else {
 		}
+	}
+
+	static async getBoot() {
+		const homeUrl = await localStorage.getItem('permanent_homeUrl');
+		return await this.apiCall(`${homeUrl}/web/boot`);
+	}
+
+	static async setDefaultWorkspace(workspaceId) {
+		const userId = await this.userId;
+		const apiEndpoint = await this.apiEndpoint;
+		const saveWorkspaceUrl = `${apiEndpoint}/users/${userId}/defaultWorkspace/${workspaceId}`;
+
+		return await this.apiCall(saveWorkspaceUrl, 'POST', '');
 	}
 }

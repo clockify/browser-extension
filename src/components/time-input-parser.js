@@ -1,6 +1,5 @@
 import * as moment from 'moment';
 import 'moment-duration-format';
-import { duration } from 'moment';
 
 export function parseTimeEntryDuration(input, format) {
 	if (!format) {
@@ -15,7 +14,7 @@ export function parseTimeEntryDuration(input, format) {
 				input.split('.0')[1].length == 0 ? input.replace('.0', 'h') : input;
 		}
 
-		const timeDurationData = input.split(/[:\/;\-]/);
+		const timeDurationData = input.split(/[:/;-]/);
 		if (timeDurationData.length === 1) {
 			return calculateHoursOrMinutes(timeDurationData[0], format);
 		} else if (timeDurationData.length === 2) {
@@ -229,16 +228,6 @@ function calculateHoursMinutesAndSeconds(timeDurationData, format) {
 	}
 }
 
-export function calculateSecondsFromTimeEntryDuration(timeEntryDuration) {
-	const data = timeEntryDuration.split(':');
-	let seconds = Number(data[0]) * 3600 + Number(data[1]) * 60;
-	if (data[2]) {
-		seconds += Number(data[2]);
-	}
-
-	return seconds;
-}
-
 function setTimeEntryDurationDisplay(hours, minutes, seconds, format) {
 	const timeEntryDuration = moment.duration({
 		hour: hours,
@@ -247,12 +236,4 @@ function setTimeEntryDurationDisplay(hours, minutes, seconds, format) {
 	});
 
 	return timeEntryDuration.format(format, { trim: false });
-}
-
-export function formatedDuration(time, format) {
-	if (time) {
-		return duration(time).format(format, { trim: false });
-	}
-
-	return;
 }

@@ -215,10 +215,12 @@ body.clockify-dark-mode,
 	.settings__reminder__section__checkbox,
 	.settings__context_menu__section__checkbox,
 	.settings__idle-detection__checkbox,
+	.settings__stop_timer__section__checkbox,
 	.pomodoro__checkbox,
 	.create-project__checkbox {
 		background-color: variables.$bg-10;
 		border: 1px solid #12191d;
+		flex-shrink: 0;
 		&-disabled {
 			background-color: initial !important;
 			border: 1px solid #12191d;
@@ -318,9 +320,15 @@ body.clockify-dark-mode,
 	.workspace-list-default {
 		color: variables.$bg-04;
 	}
-	.settings__reminder {
+	.settings__reminder,
+	.settings__stop_timer {
 		background: variables.$bg-12;
 	}
+
+	.settings__stop_timer p {
+		color: variables.$bg-04;
+	}
+
 	.settings__reminder__week__day {
 		background: variables.$bg-10;
 		border: 1px solid variables.$bg-10;
@@ -336,12 +344,14 @@ body.clockify-dark-mode,
 		}
 	}
 	.settings__reminder__times--from,
-	.settings__reminder__times--to {
+	.settings__reminder__times--to,
+	.stop_timer__times--picker {
 		p {
 			color: variables.$bg-04;
 		}
 	}
-	.settings__reminder__time_picker {
+	.settings__reminder__time_picker,
+	.settings__stop_timer__time_picker {
 		.ant-time-picker-input {
 			border: 1px solid variables.$bg-12;
 		}

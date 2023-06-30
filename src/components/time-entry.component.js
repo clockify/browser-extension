@@ -1,6 +1,5 @@
 import * as React from 'react';
 import EditForm from './edit-form.component';
-import * as ReactDOM from 'react-dom';
 import { isOffline } from './check-connection';
 import Login from './login.component';
 import { offlineStorage } from '../helpers/offlineStorage';
@@ -10,11 +9,10 @@ import 'moment-duration-format';
 import { toDecimalFormat } from '../helpers/time.helper';
 import TimeEntryDropdown from './time-entry-dropdown.component';
 import DeleteEntryConfirmationComponent from './delete-entry-confirmation.component';
-import { TimeEntryService } from '../services/timeEntry-service';
 import HomePage from './home-page.component';
 import Toaster from './toaster-component';
+import { getBrowser } from '../helpers/browser-helper';
 
-const timeEntryService = new TimeEntryService();
 class TimeEntry extends React.Component {
 	constructor(props) {
 		super(props);
@@ -165,8 +163,13 @@ class TimeEntry extends React.Component {
 	onClickDuplicateEntry(e) {
 		e.stopPropagation();
 		this.toggleEntryDropdownMenu();
-		timeEntryService
-			.duplicateTimeEntry(this.props.timeEntry.id)
+		getBrowser()
+			.runtime.sendMessage({
+				eventName: 'duplicateTimeEntry',
+				options: {
+					entryId: this.props.timeEntry.id,
+				},
+			})
 			.then(() => {
 				this.props.handleRefresh();
 			})
@@ -194,8 +197,13 @@ class TimeEntry extends React.Component {
 		if (await isOffline()) {
 			this.offlineDeleteEntry(entryId);
 		} else {
-			timeEntryService
-				.deleteTimeEntry(entryId)
+			getBrowser()
+				.runtime.sendMessage({
+					eventName: 'deleteTimeEntry',
+					options: {
+						entryId,
+					},
+				})
 				.then((response) => {
 					this.toggleDeleteConfirmationModal();
 					this.props.handleRefresh();
@@ -208,8 +216,13 @@ class TimeEntry extends React.Component {
 		if (await isOffline()) {
 			entryIds.forEach((entry) => this.offlineDeleteEntry(entry));
 		} else {
-			timeEntryService
-				.deleteMultipleTimeEntries(entryIds)
+			getBrowser()
+				.runtime.sendMessage({
+					eventName: 'deleteTimeEntries',
+					options: {
+						entryIds,
+					},
+				})
 				.then((response) => {
 					this.toggleDeleteConfirmationModal();
 					this.props.handleRefresh();

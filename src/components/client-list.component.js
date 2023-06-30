@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { ClientService } from '../services/client-service';
 import locales from '../helpers/locales';
+import { getBrowser } from '../helpers/browser-helper';
+import { debounce } from 'lodash';
 
 const pageSize = 50;
-const clientService = new ClientService();
 
 class ClientListComponent extends Component {
 	constructor(props) {
@@ -26,6 +26,8 @@ class ClientListComponent extends Component {
 		this.setAsyncStateItems = this.setAsyncStateItems.bind(this);
 		this.clientFilterRef = null;
 		this.clientDropdownRef = null;
+		this.filterClients = this.filterClients.bind(this);
+		this.getClients = debounce(this.getClients, 500);
 	}
 
 	async setAsyncStateItems() {
@@ -89,20 +91,28 @@ class ClientListComponent extends Component {
 				page: 1,
 			},
 			() => {
-				this.getClients(this.state.page);
+				this.getClients(1);
 			}
 		);
 	}
 
 	getClients(page) {
-		clientService
-			.getClientsWithFilter(page, pageSize, this.state.filter)
+		getBrowser()
+			.runtime.sendMessage({
+				eventName: 'getClientsWithFilter',
+				options: {
+					page,
+					pageSize,
+					filter: this.state.filter,
+				},
+			})
 			.then((response) => {
-				this.setState({
-					clientList: this.state.clientList.concat(response.data),
-					loadMore: response.data.length === pageSize,
+				this.setState((state) => ({
+					clientList: state.clientList.concat(response.data),
+					loadMore: response.data.length >= pageSize,
 					ready: true,
-				});
+					page: state.page + 1,
+				}));
 			})
 			.catch();
 	}
@@ -147,8 +157,13 @@ class ClientListComponent extends Component {
 		}
 		client.name = this.state.clientName;
 
-		clientService
-			.createClient(client)
+		getBrowser()
+			.runtime.sendMessage({
+				eventName: 'createClient',
+				options: {
+					client,
+				},
+			})
 			.then((response) => {
 				this.props.selectedClient(response.data);
 
@@ -210,7 +225,7 @@ class ClientListComponent extends Component {
 											locales.CLIENTS.toLowerCase()
 										)}
 										className="client-list-filter"
-										onChange={this.filterClients.bind(this)}
+										onChange={this.filterClients}
 										ref={(e) => (this.clientFilterRef = e)}
 										value={this.state.filter}
 									/>

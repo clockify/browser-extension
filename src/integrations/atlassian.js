@@ -57,12 +57,12 @@ clockifyButton.render(
 			project = '';
 		}
 		(tags = () => Array.from($$('a.iHqNYf')).map((e) => e.innerText)),
-			(link = clockifyButton.createButton({
-				description: '[' + issueNumber + '] ' + desc,
-				projectName: project,
-				taskName: issueNumber,
-				tagNames: tags,
-			}));
+		(link = clockifyButton.createButton({
+			description: '[' + issueNumber + '] ' + desc,
+			projectName: project,
+			taskName: issueNumber,
+			tagNames: tags,
+		}));
 		inputForm = clockifyButton.createInput({
 			description: '[' + issueNumber + '] ' + desc,
 			projectName: project,

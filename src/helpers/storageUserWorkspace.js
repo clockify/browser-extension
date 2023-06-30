@@ -1,11 +1,8 @@
-import { getDefaultProjectEnums } from '../enums/default-project.enum';
-import { LocalStorageService } from '../services/localStorage-service';
-import { ProjectService } from '../services/project-service';
 import { isOffline } from '../components/check-connection';
+import { getDefaultProjectEnums } from '../enums/default-project.enum';
 import locales from '../helpers/locales';
 
-const localStorageService = new LocalStorageService();
-const projectService = new ProjectService();
+import { getBrowser } from './browser-helper';
 
 export class DefaultProject {
 	constructor(defaultProject) {
@@ -22,19 +19,20 @@ export class DefaultProject {
 		const storageName = isPomodoro
 			? getDefaultProjectEnums().POMODORO_BREAK_DEFAULT_PROJECTS
 			: getDefaultProjectEnums().DEFAULT_PROJECTS;
-
 		const isPermanent = true;
-		const workspaceId = await localStorageService.get('activeWorkspaceId');
-		const userId = await localStorageService.get('userId');
-		const str = await localStorageService.get(
+		const workspaceId = await localStorage.getItem('activeWorkspaceId');
+		const userId = await localStorage.getItem('userId');
+		const str = await localStorage.getItem(
 			`${isPermanent ? 'permanent_' : ''}${storageName}`
 		);
+
 
 		const storage = new StorageUserWorkspace(
 			storageName,
 			{ workspaceId, userId, str },
 			isPermanent
 		);
+
 		const defaultProject = storage.defaultProject;
 		return { storage, defaultProject };
 	}
@@ -48,19 +46,22 @@ export class DefaultProject {
 
 	async _getProjectTask(forceTasks = false) {
 		const { id, selectedTask } = this.project;
+		 
 		if (id === getDefaultProjectEnums().LAST_USED_PROJECT) {
-			return await this.getLastUsedProjectFromTimeEntries(forceTasks);
+			const { data, error, status } = await this.getLastUsedProjectFromTimeEntries(forceTasks);
+			 
+			if(error) return { projectDB: null, taskDB: null };
+			return { projectDB : data.project ?? data, taskDB: data.task ?? null };
 		} else {
-			const projectDB = await this.getProjectsByIds([id]);
-			let taskDB = null;
-			if (projectDB) {
-				if (!projectDB.archived && selectedTask) {
-					taskDB = await this.getTask(selectedTask.id);
-					if (taskDB) {
-						taskDB.isDone = taskDB.status === 'DONE';
-					}
-				}
+			const projectDB = await this.getProjectsByIds(
+				[id],
+				selectedTask ? [selectedTask.id] : null
+			);
+			const taskDB = projectDB?.tasks?.[0] ?? null;
+			if (taskDB) {
+				taskDB.isDone = taskDB.status === 'DONE';
 			}
+			 
 			return { projectDB, taskDB };
 		}
 	}
@@ -71,18 +72,23 @@ export class DefaultProject {
 		let msg = null;
 		let msgId = null;
 		if (this.enabled) {
-			let { projectDB, taskDB, notFound } = await this._getProjectTask(
+			let { projectDB, taskDB } = await this._getProjectTask(
 				forceTasks
 			);
-			if (notFound) msgId = 'projectDoesNotExist';
+			 
 			if (projectDB) {
+				 
 				if (projectDB.archived) {
 					// storage.removeDefaultProject();
 					msg = `${locales.DEFAULT_PROJECT_ARCHIVED}. ${locales.YOU_CAN_SET_A_NEW_ONE_IN_SETTINGS}.`;
 					msgId = 'projectArchived';
 					projectDB = null;
 				} else {
-					if (forceTasks) {
+					 
+					const isLastUsedProjectWithTask =
+						this.project.id === 'lastUsedProject' &&
+						this.project.name.includes('task');
+					if (forceTasks && isLastUsedProjectWithTask) {
 						if (taskDB) {
 							if (taskDB.isDone) {
 								taskDB = null;
@@ -97,6 +103,7 @@ export class DefaultProject {
 				}
 				return { projectDB, taskDB, msg, msgId };
 			} else {
+				 
 				// storage.removeDefaultProject();
 				msg = `${locales.DEFAULT_PROJECT_NOT_AVAILABLE} ${locales.YOU_CAN_SET_A_NEW_ONE_IN_SETTINGS}`;
 				msgId = 'projectDoesNotExist';
@@ -106,55 +113,35 @@ export class DefaultProject {
 	}
 
 	async getLastUsedProjectFromTimeEntries(forceTasks) {
-		return projectService
-			.getLastUsedProject(forceTasks)
-			.then((response) => {
-				if (response.data) {
-					const { data } = response;
-					return forceTasks
-						? { projectDB: data.project, taskDB: data.task }
-						: { projectDB: data, taskDB: null };
-				} else {
-					return { projectDB: null, taskDB: null };
-				}
-			})
-			.catch(() => {
-				return { projectDB: null, taskDB: null, notFound: true };
-			});
+		return await getBrowser().runtime.sendMessage({
+			eventName: 'getLastUsedProjectFromTimeEntries',
+			options: {
+				forceTasks,
+			},
+		});
 	}
 
-	async getProjectsByIds(projectIds) {
-		return projectService
-			.getProjectsByIds(projectIds)
+	async getProjectsByIds(projectIds, taskIds) {
+		return await getBrowser()
+			.runtime.sendMessage({
+				eventName: 'getProjectsByIds',
+				options: {
+					projectIds,
+					taskIds,
+				},
+			})
 			.then((response) => {
-				if (response.data.length > 0) {
-					return response.data[0];
+				if (!response.data?.length) {
+					console.log('getProjectsByIds error: ', response.error);
 				} else {
-					return null;
+					return response.data[0];
 				}
 			})
-			.catch(() => {
-				return null;
-			});
-	}
-
-	async getTask(taskId) {
-		return projectService
-			.getAllTasks([taskId])
-			.then((response) => {
-				if (response.data.length > 0) {
-					return response.data[0];
-				} else {
-					return null;
-				}
-			})
-			.catch((error) => {
-				return null;
-			});
+			.catch(() => {});
 	}
 }
 
-export class StorageUserWorkspace {
+class StorageUserWorkspace {
 	constructor(
 		storageName = getDefaultProjectEnums().DEFAULT_PROJECTS,
 		storageItems,
@@ -167,10 +154,10 @@ export class StorageUserWorkspace {
 		this.userId = storageItems.userId;
 		const str = storageItems.str;
 
-		// this.workspaceId = await localStorageService.get('activeWorkspaceId');
-		// this.userId = await localStorageService.get('userId');
+		// this.workspaceId = await localStorage.getItem('activeWorkspaceId');
+		// this.userId = await localStorage.getItem('userId');
 
-		// const str = await localStorageService.get(`${isPermanent ? 'permanent_' : ''}${storageName}`);
+		// const str = await localStorage.getItem(`${isPermanent ? 'permanent_' : ''}${storageName}`);
 		let storage = str ? JSON.parse(str) : {};
 		if (Array.isArray(storage)) {
 			const obj = {};
@@ -275,7 +262,7 @@ export class StorageUserWorkspace {
 	}
 
 	store() {
-		localStorageService.set(
+		localStorage.setItem(
 			this.storageName,
 			JSON.stringify(this.storage),
 			this.isPermanent ? 'permanent_' : null

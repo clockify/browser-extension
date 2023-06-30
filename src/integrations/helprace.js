@@ -1,16 +1,21 @@
 clockifyButton.render(
-	'.b-topic__sidebar_head span.ticket_clock:not(.clockify)',
+	'.components-tickets-view .top-toolbar .b-toolbar:not(.clockify)',
 	{ observe: true },
-	function (elem) {
-		const fn = function () {
-			return $('#extension_data').dataset.description;
-		};
-
-		const link = clockifyButton.createButton(
-			fn,
-			$('#extension_data').dataset.project
+	(elem) => {
+		const description = $('#extension_data').dataset.description;
+		const projectName = $('#extension_data').dataset.project ?? '';
+		const tagNames = Array.from($$('.b-text-field_multiline_tags li span')).map(
+			(tag) => tag.textContent
 		);
 
-		elem.appendChild(link, elem);
+		const link = clockifyButton.createButton({
+			description,
+			projectName,
+			tagNames,
+		});
+
+		link.style.marginTop = '4px';
+
+		elem.append(link);
 	}
 );

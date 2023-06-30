@@ -184,7 +184,8 @@
 		}
 	}
 
-	&__reminder {
+	&__reminder,
+	&__stop_timer {
 		background-color: variables.$entries_header;
 
 		&__section {
@@ -300,6 +301,30 @@
 				}
 			}
 
+			&--picker {
+				display: flex;
+				margin-top: 10px;
+				justify-content: space-between;
+
+				.ant-time-picker {
+					width: 240px;
+
+					&-icon {
+						display: none;
+					}
+
+					&-clear {
+						display: none;
+					}
+				}
+
+				p {
+					font-size: 14px;
+					line-height: 16px;
+					color: variables.$middle_light_text;
+				}
+			}
+
 			&--minutes_since_last_entry {
 				display: flex;
 				margin: 10px 20px;
@@ -362,7 +387,7 @@
 	}
 
 	&__auto_start_on_browser_start {
-		diplay: flex;
+		display: flex;
 		margin: 20px 20px 10px 20px;
 		align-items: center;
 
@@ -398,7 +423,7 @@
 	}
 
 	&__auto_stop_on_browser_close {
-		diplay: flex;
+		display: flex;
 		margin: 20px 20px 10px 20px;
 		align-items: center;
 

@@ -1,16 +1,13 @@
 import React from 'react';
 import ProjectItem from './project-item.component';
-import { ProjectService } from '../services/project-service';
 import { debounce } from 'lodash';
-import { LocalStorageService } from '../services/localStorage-service';
+
 import { getBrowser } from '../helpers/browser-helper';
 import CreateProjectComponent from './create-project.component';
 import CreateTask from './create-task.component';
 import locales from '../helpers/locales';
 import onClickOutside from 'react-onclickoutside';
 
-const projectService = new ProjectService();
-const localStorageService = new LocalStorageService();
 const pageSize = 50;
 
 const _noProjectObj = () => ({
@@ -71,16 +68,14 @@ class ProjectList extends React.Component {
 	}
 
 	async setAsyncStateItems() {
-		let userRoles = (await localStorageService.get('userRoles')) || [];
+		let userRoles = (await localStorage.getItem('userRoles')) || [];
 		let projectManagerFor = userRoles
 			.find(({ role }) => role === 'PROJECT_MANAGER')
 			?.entities.map(({ id }) => id);
 		if (userRoles.length) {
 			userRoles = userRoles.map(({ role }) => role);
 		}
-		const workspaceSettings = await localStorageService.get(
-			'workspaceSettings'
-		);
+		const workspaceSettings = await localStorage.getItem('workspaceSettings');
 		const isSpecialFilter = workspaceSettings
 			? JSON.parse(workspaceSettings).projectPickerSpecialFilter
 			: false;
@@ -167,15 +162,19 @@ class ProjectList extends React.Component {
 
 	async getProjects(page, pageSize) {
 		if (!JSON.parse(await localStorage.getItem('offline'))) {
-			const already = page === 1 ? [] : this.state.projectList.map((p) => p.id);
-			projectService
-				.getProjectsWithFilter(
-					this.state.filter,
-					page,
-					pageSize,
-					false,
-					already
-				)
+			const alreadyIds =
+				page === 1 ? [] : this.state.projectList.map((p) => p.id);
+			getBrowser()
+				.runtime.sendMessage({
+					eventName: 'getProjects',
+					options: {
+						filter: this.state.filter,
+						page,
+						pageSize,
+						forceTasks: false,
+						alreadyIds,
+					},
+				})
 				.then((response) => {
 					const projects = response.data;
 					const projectList =
@@ -235,14 +234,31 @@ class ProjectList extends React.Component {
 	}
 
 	getProjectTasks(projectId, filter, page) {
-		return projectService.getProjectTasksWithFilter(projectId, filter, page);
+		return getBrowser().runtime.sendMessage({
+			eventName: 'getProjectTasks',
+			options: {
+				projectId,
+				filter,
+				page,
+			},
+		});
 	}
 
 	makeProjectFavorite(projectId) {
-		return projectService.makeProjectFavorite(projectId);
+		return getBrowser().runtime.sendMessage({
+			eventName: 'makeProjectFavorite',
+			options: {
+				projectId,
+			},
+		});
 	}
 	removeProjectAsFavorite(projectId) {
-		return projectService.removeProjectAsFavorite(projectId);
+		return getBrowser().runtime.sendMessage({
+			eventName: 'removeProjectAsFavorite',
+			options: {
+				projectId,
+			},
+		});
 	}
 
 	groupByClientName(objectArray) {
@@ -408,8 +424,8 @@ class ProjectList extends React.Component {
 	}
 
 	async getColorForProject() {
-		const userId = await localStorageService.get('userId');
-		const darkMode = await localStorageService.get('darkMode');
+		const userId = await localStorage.getItem('userId');
+		const darkMode = await localStorage.getItem('darkMode');
 		const darkModeFromStorage = darkMode ? JSON.parse(darkMode) : [];
 
 		if (
@@ -481,6 +497,7 @@ class ProjectList extends React.Component {
 				isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}
 				userSettings={this.props.userSettings}
 				projectName={this.state.filter}
+				checkRequiredFields={this.props.checkRequiredFields}
 				closeModal={() =>
 					this.setState({
 						projectsModalOpen: false,
@@ -498,6 +515,7 @@ class ProjectList extends React.Component {
 				isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}
 				userSettings={this.props.userSettings}
 				project={this.state.modalProject}
+				checkRequiredFields={this.props.checkRequiredFields}
 				closeModal={() =>
 					this.setState({ tasksModalOpen: false, isOpen: false })
 				}

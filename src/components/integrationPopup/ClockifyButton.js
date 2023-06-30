@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
-import locales from '../../helpers/locales';
-import { LocalStorageService } from '../../services/localStorage-service';
 import { getBrowser } from '../../helpers/browser-helper';
 import EditForm from '../edit-form.component';
 import EditFormManual from '../edit-form-manual.component';
+import { offlineStorage } from '../../helpers/offlineStorage';
+
 Modal.defaultStyles = {};
 
-const localStorageService = new LocalStorageService();
+offlineStorage.load();
 
 const aBrowser = getBrowser();
 let _waitingForResponse = false;
@@ -69,51 +69,6 @@ function invokeIfFunction(trial) {
 	return trial;
 }
 
-// function OpenPostStartPopupDlg(timeEntry, msg, manualMode = false) {
-//     if (timeEntry) {
-//         if (timeEntry.message)
-//             alert(timeEntry.message)
-
-// _clockifyPopupDlg = new ClockifyPopupDlg();
-// aBrowser.storage.local.get(['userRoles'], (result) => {
-//  _clockifyPopupDlg.userRoles = result.userRoles;
-// })
-
-// _clockifyPopupDlg.wsCustomFields = [];
-// if (ClockifyEditForm.userHasCustomFieldsFeature) {
-//     aBrowser.runtime.sendMessage({
-//         eventName: 'getWSCustomField',
-//         options: {}
-//     }, (response) => {
-//         if (response) {
-//             const { data, status } = response;
-//             if (status !== 200) {
-//                 if (status === 403) {
-//                     alert(locales.WORKSPACE_NOT_AUTHORIZED_FOR_CUSTOM_FIELDS)
-//                 }
-//             }
-//             else {
-// _clockifyPopupDlg.wsCustomFields = data;
-// _clockifyPopupDlg.injectLinkModal();
-// }
-// }
-// document.body.appendChild(_clockifyPopupDlg.create(timeEntry, msg, manualMode));
-// });
-// }
-// else {
-//     document.body.appendChild(_clockifyPopupDlg.create(timeEntry, msg, manualMode));
-// }
-
-// if(window.clockifyListeners){
-//     window.addEventListener('click', window.clockifyListeners.clockifyClicks, true);
-//     window.addEventListener('change', window.clockifyListeners.clockifyChanges, true);
-//     document.addEventListener('click', window.clockifyListeners.clockifyRemovePopupDlg, true);
-//     window.addEventListener('resize', window.clockifyListeners.clockifyTrackResize, true);
-//     window.addEventListener('scroll', window.clockifyListeners.clockifyTrackScroll, true);
-// }
-//     }
-// }
-
 const Button = (props) => {
 	const styles = { marginLeft: '5px', float: 'none', position: 'relative' };
 	if (props.active) {
@@ -142,7 +97,9 @@ const Button = (props) => {
 							: 'clockify-button-inactive clockify-button-inactive-span'
 					}
 				>
-					{!props.active ? locales.START_TIMER : locales.STOP_TIMER}
+					{!props.active
+						? clockifyLocales.START_TIMER
+						: clockifyLocales.STOP_TIMER}
 				</span>
 			)}
 		</div>
@@ -177,8 +134,8 @@ function ClockifyButton(props) {
 	};
 
 	const syncDarkMode = async () => {
-		const userId = await localStorageService.get('userId');
-		const darkMode = await localStorageService.get('darkMode');
+		const userId = await localStorage.getItem('userId');
+		const darkMode = await localStorage.getItem('darkMode');
 		const darkModeFromStorageForUser =
 			darkMode &&
 			JSON.parse(darkMode).filter((darkMode) => darkMode.userId === userId)
@@ -285,11 +242,11 @@ function ClockifyButton(props) {
 			alert(
 				!wasRegionalEverAllowed
 					? isUserOwnerOrAdmin
-						? locales.UPGRADE_REGIONAL_ADMIN
-						: locales.UPGRADE_REGIONAL
+						? clockifyLocales.UPGRADE_REGIONAL_ADMIN
+						: clockifyLocales.UPGRADE_REGIONAL
 					: isUserOwnerOrAdmin
-					? locales.SUBSCRIPTION_EXPIRED
-					: locales.FEATURE_DISABLED_CONTACT_ADMIN
+					? clockifyLocales.SUBSCRIPTION_EXPIRED
+					: clockifyLocales.FEATURE_DISABLED_CONTACT_ADMIN
 			);
 			return;
 		}
@@ -326,7 +283,7 @@ function ClockifyButton(props) {
 					(response) => {
 						if (!response) {
 							_waitingForResponse = false;
-							alert(locales.YOU_MUST_BE_LOGGED_IN_TO_START);
+							alert(clockifyLocales.YOU_MUST_BE_LOGGED_IN_TO_START);
 							// this.hideClockifyButtonLinks();
 							return;
 						} else if (typeof response === 'string') {
@@ -336,7 +293,7 @@ function ClockifyButton(props) {
 							return;
 						}
 						if (response.status === 400) {
-							const msg = locales.CANNOT_END_ENTRY;
+							const msg = clockifyLocales.CANNOT_END_ENTRY;
 							if (_clockifyShowPostStartPopup) {
 								aBrowser.runtime.sendMessage(
 									{
@@ -344,7 +301,7 @@ function ClockifyButton(props) {
 									},
 									(response) => {
 										if (!response) {
-											alert(locales.TAG__GET__ERROR);
+											alert(clockifyLocales.TAG__GET__ERROR);
 											_waitingForResponse = false;
 											return;
 										}
@@ -354,11 +311,11 @@ function ClockifyButton(props) {
 											return;
 										}
 										const { status, entry: hydratedEntry } = response;
-
 										aBrowser.storage.local.set({
 											timeEntryInProgress: hydratedEntry,
 										});
 										if (hydratedEntry) {
+											props.updateButtonProps({ active: true });
 											if (!_clockifyPopupDlg) {
 												// OpenPostStartPopupDlg(hydratedEntry, msg);
 												saveEntryAndOpenPopup(hydratedEntry);
@@ -390,19 +347,19 @@ function ClockifyButton(props) {
 				);
 			} else {
 				if (timeEntryOptionsInvoked.description === '') {
-					alert(locales.ENTER_DESCRIPTION);
+					alert(clockifyLocales.ENTER_DESCRIPTION);
 					_waitingForResponse = false; // ?
 					return;
 				}
 				aBrowser.runtime.sendMessage(
 					{
 						eventName: 'startWithDescription',
-						timeEntryOptions: timeEntryOptionsInvoked,
+						options: timeEntryOptionsInvoked,
 					},
 					(response) => {
 						if (!response) {
 							_waitingForResponse = false;
-							alert(locales.YOU_MUST_BE_LOGGED_IN_TO_START);
+							alert(clockifyLocales.YOU_MUST_BE_LOGGED_IN_TO_START);
 							return;
 						} else if (typeof response === 'string') {
 							_waitingForResponse = false;
@@ -411,7 +368,7 @@ function ClockifyButton(props) {
 						}
 						if (response.status === 400) {
 							if (_clockifyShowPostStartPopup) {
-								const msg = `${locales.COMPLETE_CURRENT_ENTRY}!<br/>${locales.ENTER_REQUIRED_FIEEDS_OR_EDIT_WORKSPACE_SETTINGS}`;
+								const msg = `${clockifyLocales.COMPLETE_CURRENT_ENTRY}!<br/>${clockifyLocales.ENTER_REQUIRED_FIEEDS_OR_EDIT_WORKSPACE_SETTINGS}`;
 								aBrowser.storage.local.get(
 									['timeEntryInProgress'],
 									(result) => {
@@ -428,12 +385,12 @@ function ClockifyButton(props) {
 									}
 								);
 							} else {
-								const msg =
-									locales.CANNOT_START_ENTRY_WITHOUT_PROJECT +
+								msg =
+									clockifyLocales.CANNOT_START_ENTRY_WITHOUT_PROJECT +
 									'. ' +
-									locales.EDIT_YOUR_TIME_ENTRY +
+									clockifyLocales.EDIT_YOUR_TIME_ENTRY +
 									'. ' +
-									locales.CREATE_TIME_ENTRY_USING_DASHBOARD +
+									clockifyLocales.CREATE_TIME_ENTRY_USING_DASHBOARD +
 									'.';
 								alert(msg);
 								_waitingForResponse = false;
@@ -453,7 +410,7 @@ function ClockifyButton(props) {
 									},
 									(response) => {
 										if (!response) {
-											alert(locales.TAG__GET__ERROR);
+											alert(clockifyLocales.TAG__GET__ERROR);
 											_waitingForResponse = false;
 											return;
 										}
@@ -494,42 +451,6 @@ function ClockifyButton(props) {
 			_waitingForResponse = false;
 		}
 	}
-
-	// async function onManualModeSubmit() {
-	//     const {timeEntry} = this.state;
-	//     this.manualEntryHeaderText(clockifyLocales.SUBMITTING);
-	//     return aBrowser.runtime.sendMessage({
-	//         eventName: 'submitTime',
-	//         options: {
-	//             totalMins: timeEntry.totalMins,
-	//             timeEntryOptions: {
-	//                 description: timeEntry.description,
-	//                 projectId: timeEntry.project.id,
-	//                 taskId: timeEntry.task?.id,
-	//                 tagNames: this.state.tags.map(tag => tag.name),
-	//                 billable: timeEntry.billable,
-	//             }
-	//         }
-	//     }).then((response) => {
-	//         if (!response) {
-	//             inputMessage(input, "Error: " + (response??''), "error");
-	//         }
-	//         else if (typeof response === "string") {
-	//             alert(response)
-	//         } else if (response.status !== 201) {
-	//             if (response.status === 400) {
-	//                 // project/task/etc. can be configured to be mandatory; this can result in a code 400 during
-	//                 // time entry creation
-	//                 if (response.endInProgressStatus) {
-	//                     alert(`${clockifyLocales.YOU_ALREADY_HAVE_ENTRY_WITHOUT}.\n${clockifyLocales.PLEASE_EDIT_YOUR_TIME_ENTRY}.`);
-	//                 }
-	//             }
-	//         } else {
-	//             alert("Time submitted!");
-	//             clockifyDestroyPopupDlg();
-	//         }
-	//     })
-	// }
 
 	return (
 		<>
@@ -606,6 +527,9 @@ function ClockifyButton(props) {
 								inProgress={true}
 								closeIntegrationPopup={() => {
 									setIsPopupOpen(false);
+									props.updateButtonProps(null, {
+										manualMode: false,
+									});
 								}}
 							/>
 						)

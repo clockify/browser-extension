@@ -1,5 +1,17 @@
 getProject = () => {
-	let project = $('.TaskPane .TaskProjectToken .TokenizerPillBase-name');
+	const currentlyOpenedSectionTitle = $('[class*="TopbarPageHeader"][class*="Typography--h4"]');
+	const firstProjectInListInOpenTask = $('.TaskPane .TaskProjectToken .TokenizerPillBase-name');
+	const replaceNbspsInString = (str) => {
+		const regex = new RegExp(String.fromCharCode(160), "g");
+		return str.replace(regex, " ");
+	}
+	let project;
+	if (currentlyOpenedSectionTitle) {
+		const currentlyOpenedSectionTitleText = replaceNbspsInString(currentlyOpenedSectionTitle.innerText);
+		const allProjectsListInOpenTask = Array.from($$('.TaskPane .TaskProjectToken .TokenizerPillBase-name'));
+		const allProjectsListInOpenTaskNames = allProjectsListInOpenTask.map(project => project.innerText);
+		project = allProjectsListInOpenTaskNames.includes(currentlyOpenedSectionTitleText) ? currentlyOpenedSectionTitle : firstProjectInListInOpenTask;
+	}
 	if (!project) {
 		project = $(
 			'div.FullWidthPageStructureWithDetailsOverlay-detailsOverlay .TaskProjects .TokenizerPillBase-name'
