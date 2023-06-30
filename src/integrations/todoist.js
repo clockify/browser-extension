@@ -2,8 +2,8 @@
 clockifyButton.render(
 	'.project_editor_instance [data-action-hint="task-root"]:not(.clockify)',
 	{ observe: true },
-	function (elem) {
-		description = $('.markdown_content.task_content', elem).textContent;
+    function (elem) {
+		description = $('.task_content', elem).textContent;
 		project = $('.view_header__content h1').textContent;
 		var tags = () =>
 			Array.from($$('.task_list_item__info_tags__label', elem)).map(
@@ -101,9 +101,9 @@ clockifyButton.render(
 clockifyButton.render(
 	'.filter_view .task_list_item__body:not(.clockify)',
 	{ observe: true },
-	function (elem) {
-		description = $('.markdown_content.task_content', elem).textContent;
-		project = $('.task_list_item__project', elem).textContent;
+    function (elem) {
+        description = $('.task_content', elem).textContent;
+        project = $('.task_list_item__project', elem).textContent.split('/')[0].trim();
 		var tags = () =>
 			Array.from($$('.task_list_item__info_tags__label', elem)).map(
 				(e) => e.innerText
@@ -127,9 +127,9 @@ clockifyButton.render(
 	{ observe: true },
 	(elem) => {
 		const description = $(
-				'.task-overview-header > div > div.markdown_content.task_content'
-			).textContent,
-			projectName = $('button[aria-label="Select a project"] span').textContent;
+				'.task-overview-header div.task_content'
+        ).textContent,
+            projectName = $('button[aria-label="Select a project"] span').textContent.split('/')[0].trim();
 
 		const clockifyContainer = createTag('div', 'clockify-widget-container');
 
