@@ -260,10 +260,6 @@ class Header extends React.Component {
 		this.props.goBackTo();
 	}
 
-	goToDownloadScreenshotsApp() {
-		openExternal('https://app.clockify.me/screenshot-recording-app');
-	}
-
 	goToScreenshotsHelp() {
 		openExternal(`${environment.home}/help/extra-features/screenshots`);
 	}
@@ -332,7 +328,7 @@ class Header extends React.Component {
 						<div
 							onClick={this.handleRefresh}
 							title={locales.REFRESH}
-							className={this.props.showSync ? 'header-sync' : 'disabled'}
+							className={this.props.showSync ? 'refresh-icon' : 'disabled'}
 						></div>
 						{this.props.showActions && (
 							<div
@@ -378,10 +374,11 @@ class Header extends React.Component {
 								{this.state.screenshotMessage}
 								{this.state.showScreenshotLink && (
 									<a
-										onClick={this.goToDownloadScreenshotsApp.bind(this)}
+										href="https://clockify.me/screenshot-recording-app"
+										target={'_blank'}
 										className="screenshot-notification__action_buttons--help"
 									>
-										{locales.DOWNLOAD_SCREENSHOTS_RECORDING_APP}
+										{locales.ACTIVITY_TABS__SCREENSHOTS__NO_SCREENSHOTS_PROMO_BTN}
 									</a>
 								)}
 							</span>

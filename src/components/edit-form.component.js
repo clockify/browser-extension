@@ -36,7 +36,7 @@ class EditForm extends React.Component {
 			askToDeleteEntry: false,
 			isInProgress: this.props.inProgress,
 			tags: this.props.timeEntry.tags ? this.props.timeEntry.tags : [],
-			// redrawCustomFields: 0,
+			redrawCustomFields: 0,
 			workspaceSettings: null,
 		};
 
@@ -47,10 +47,12 @@ class EditForm extends React.Component {
 		this.notifyAboutError = this.notifyAboutError.bind(this);
 		this.editProject = this.editProject.bind(this);
 		this.editTask = this.editTask.bind(this);
-		// this.onChangeProjectRedrawCustomFields = this.onChangeProjectRedrawCustomFields.bind(this);
+		this.onChangeProjectRedrawCustomFields =
+			this.onChangeProjectRedrawCustomFields.bind(this);
 		this.updateCustomFields = this.updateCustomFields.bind(this);
 		this.setAsyncStateItems = this.setAsyncStateItems.bind(this);
 		this.areCustomFieldsValid = this.areCustomFieldsValid.bind(this);
+		this.cfContainsWrongChars = this.cfContainsWrongChars.bind(this);
 	}
 
 	async setAsyncStateItems() {
@@ -76,6 +78,51 @@ class EditForm extends React.Component {
 
 	componentDidUpdate() {
 		this.setAsyncStateItems();
+	}
+
+	async onChangeProjectRedrawCustomFields() {
+		const { redrawCustomFields } = this.state;
+
+		this.setState({
+			redrawCustomFields: redrawCustomFields + 1,
+		});
+	}
+
+	async setUserWorkspaceSettings() {
+		getBrowser()
+			.runtime.sendMessage({
+				eventName: 'getWorkspaceSettings',
+			})
+			.then(async (response) => {
+				if (!response.data) {
+					throw new Error(response);
+				}
+				let { workspaceSettings } = response.data;
+				if (!workspaceSettings.hasOwnProperty('timeTrackingMode')) {
+					workspaceSettings.timeTrackingMode =
+						getManualTrackingModeEnums().DEFAULT;
+				}
+
+				localStorage.setItem('mode', this.state.mode); // for usage in edit-forms
+				localStorage.setItem(
+					'manualModeDisabled',
+					JSON.stringify(this.state.manualModeDisabled)
+				); // for usage in header
+				localStorage.setItem(
+					'workspaceSettings',
+					JSON.stringify(workspaceSettings)
+				);
+				offlineStorage.userHasCustomFieldsFeature =
+					workspaceSettings.features.customFields;
+				offlineStorage.activeBillableHours =
+					workspaceSettings.activeBillableHours;
+				offlineStorage.onlyAdminsCanChangeBillableStatus =
+					workspaceSettings.onlyAdminsCanChangeBillableStatus;
+				return Promise.resolve(true);
+			})
+			.catch((error) => {
+				return Promise.reject(true);
+			});
 	}
 
 	async componentDidMount() {
@@ -124,15 +171,15 @@ class EditForm extends React.Component {
 					},
 				}));
 			}
+			await this.setUserWorkspaceSettings();
 		}
 
 		if (!projectId || (forceTasks && !taskId)) {
 			const { projectDB, taskDB } = await this.checkDefaultProjectTask(
 				forceTasks
 			);
-			 
+
 			if (projectDB) {
-				 
 				const entry = await timeEntryHelper.updateProjectTask(
 					timeEntry,
 					projectDB,
@@ -166,8 +213,7 @@ class EditForm extends React.Component {
 						if (cf) cf.value = value;
 					});
 				} else {
-					// Da li
-					alert('Da li je moguce da timeEntryInOffline nema customFieldValues');
+					// timeEntryInOffline w/o customFieldValues?
 				}
 				offlineStorage.timeEntryInOffline = timeEntry;
 				this.setState(
@@ -187,13 +233,7 @@ class EditForm extends React.Component {
 								);
 								if (cf) cf.value = value;
 							});
-						} else {
-							// Da li
-							alert(
-								'Da li je moguce da timeEntry in timeEntries nema customFieldValues'
-							);
 						}
-
 						this.setState(
 							{
 								timeEntry,
@@ -210,7 +250,7 @@ class EditForm extends React.Component {
 
 	async checkDefaultProjectTask(forceTasks) {
 		const { defaultProject } = await DefaultProject.getStorage();
-		 
+
 		if (defaultProject && defaultProject.enabled) {
 			const isLastUsedProject = defaultProject.project.id === 'lastUsedProject';
 			const isLastUsedProjectWithoutTask =
@@ -218,16 +258,17 @@ class EditForm extends React.Component {
 				!defaultProject.project.name.includes('task');
 			let lastEntry;
 			try {
-				 
 				const response = await getBrowser().runtime.sendMessage({
 					eventName: 'getLastUsedProjectFromTimeEntries',
 					options: {
 						forceTasks: !isLastUsedProjectWithoutTask,
 					},
 				});
-				if(!response.data) throw new Error(response);
+				if (!response.data) throw new Error(response);
 				lastEntry = {
-					project: !isLastUsedProjectWithoutTask ? response.data.project : response.data,
+					project: !isLastUsedProjectWithoutTask
+						? response.data.project
+						: response.data,
 					task: !isLastUsedProjectWithoutTask ? response.data.task : null,
 				};
 			} catch (e) {
@@ -237,11 +278,11 @@ class EditForm extends React.Component {
 						'info',
 						`${locales.DEFAULT_PROJECT_NOT_AVAILABLE} ${locales.YOU_CAN_SET_A_NEW_ONE_IN_SETTINGS}`,
 						4
-					);	
+					);
 				}, 2000);
 				return { projectDB: null, taskDB: null };
 			}
-			 	
+
 			if (!isLastUsedProject) {
 				const { projectDB, taskDB, msg } =
 					await defaultProject.getProjectTaskFromDB(forceTasks);
@@ -252,7 +293,6 @@ class EditForm extends React.Component {
 				}
 				return { projectDB, taskDB };
 			} else {
-				 
 				if (!lastEntry) {
 					setTimeout(() => {
 						this.toaster.toast(
@@ -268,7 +308,7 @@ class EditForm extends React.Component {
 				if (isLastUsedProjectWithoutTask) {
 					task = null;
 				}
-				 
+
 				return { projectDB: project, taskDB: task };
 			}
 		}
@@ -332,7 +372,7 @@ class EditForm extends React.Component {
 					.runtime.sendMessage({
 						eventName: 'changeStart',
 						options: {
-							start: timeInterval.start,
+							start: timeInterval.start.toDate(),
 							timeEntryId: this.props.timeEntry.id,
 						},
 					})
@@ -470,7 +510,6 @@ class EditForm extends React.Component {
 									...state.timeEntry,
 									description: entry.description,
 								},
-								description: entry.description,
 							}),
 							() => this.checkRequiredFields()
 						);
@@ -489,7 +528,8 @@ class EditForm extends React.Component {
 					},
 				})
 				.then((response) => {
-					let data = response.data;
+					const { data } = response;
+					if (!data) return;
 					setTimeout(() => {
 						this.setState(
 							(state) => ({
@@ -864,6 +904,16 @@ class EditForm extends React.Component {
 		this.setState({ cfRequired: !val });
 	}
 
+	cfContainsWrongChars({ id, isCustomFieldContainsWrongChars }) {
+		const { customFieldsContainWrongChars } = this.state;
+		this.setState({
+			customFieldsContainWrongChars: {
+				...customFieldsContainWrongChars,
+				[id]: isCustomFieldContainsWrongChars,
+			},
+		});
+	}
+
 	done() {
 		// if (this.state.projectRequired && !this.state.timeEntry.project) {
 		// 	this.shakeHeader(document.querySelector('.projects-list'));
@@ -871,6 +921,19 @@ class EditForm extends React.Component {
 		// if (this.state.tagsRequired && !this.state.timeEntry.tags) {
 		// 	this.shakeHeader(document.querySelector('.tag-list'));
 		// }
+
+		const description = this.state.description;
+		const pattern = /<[^>]+>/;
+		const descriptionContainsWrongChars = pattern.test(description);
+		const customFieldContainsWrongChars =
+			Object.values(this.state.customFieldsContainWrongChars ?? {}).filter(
+				Boolean
+			).length > 0;
+
+		if (descriptionContainsWrongChars || customFieldContainsWrongChars) {
+			return this.toaster.toast('error', locales.FORBIDDEN_CHARACTERS, 2);
+		}
+
 		if (
 			this.state.descRequired ||
 			this.state.projectRequired ||
@@ -1159,7 +1222,9 @@ class EditForm extends React.Component {
 								timeFormat={this.props.timeFormat}
 								userSettings={this.props.userSettings}
 								checkRequiredFields={this.checkRequiredFields}
-								// onChangeProjectRedrawCustomFields={this.onChangeProjectRedrawCustomFields}
+								onChangeProjectRedrawCustomFields={
+									this.onChangeProjectRedrawCustomFields
+								}
 								integrationMode={this.props.integrationMode}
 							/>
 						</div>
@@ -1214,17 +1279,23 @@ class EditForm extends React.Component {
 									{locales.BILLABLE_LABEL}
 								</label>
 							</div>
-							{offlineStorage.userHasCustomFieldsFeature && (
-								<CustomFieldsContainer
-									key="customFieldsContainer"
-									timeEntry={timeEntry}
-									isUserOwnerOrAdmin={this.state.isUserOwnerOrAdmin}
-									manualMode={false}
-									updateCustomFields={this.updateCustomFields}
-									isInProgress={this.state.isInProgress}
-									areCustomFieldsValid={this.areCustomFieldsValid}
-								/>
-							)}
+							{offlineStorage.userHasCustomFieldsFeature &&
+								!this.state.isOffline && (
+									<CustomFieldsContainer
+										cfContainsWrongChars={this.cfContainsWrongChars}
+										key="customFieldsContainer"
+										timeEntry={timeEntry}
+										isUserOwnerOrAdmin={this.state.isUserOwnerOrAdmin}
+										manualMode={false}
+										updateCustomFields={this.updateCustomFields}
+										isInProgress={this.state.isInProgress}
+										areCustomFieldsValid={this.areCustomFieldsValid}
+										areCustomFieldsCntainWrongChars={
+											this.areCustomFieldsCntainWrongChars
+										}
+										workspaceSettings={this.props.workspaceSettings}
+									/>
+								)}
 							<div id="" className="edit-form-right-buttons">
 								<button
 									onClick={this.done.bind(this)}

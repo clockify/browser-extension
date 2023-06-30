@@ -1,3 +1,5 @@
+import { getBrowser } from '../helpers/browser-helper';
+
 export async function isOffline() {
 	// if (localStorage.getItem('offlineForTest')) {
 	//     return JSON.parse(localStorage.getItem('offlineForTest'))
@@ -9,7 +11,20 @@ export async function isOffline() {
 
 export async function checkConnection() {
 	if (navigator && !navigator.onLine) {
-		localStorage.setItem('offline', 'true');
+		getBrowser().runtime.sendMessage(
+			{
+				eventName: 'checkInternetConnection',
+			},
+			function (response) {
+				let offline = 'true';
+
+				if (response && response.data && response.data.status === 'UP') {
+					offline = 'false';
+				}
+
+				localStorage.setItem('offline', offline);
+			}
+		);
 	} else {
 		localStorage.setItem('offline', 'false');
 	}

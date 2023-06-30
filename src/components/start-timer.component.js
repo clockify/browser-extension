@@ -40,7 +40,7 @@ class StartTimer extends Component {
 		this.showManualInputPlaceholder =
 			this.showManualInputPlaceholder.bind(this);
 		this.showTimerPlaceHolder = this.showTimerPlaceHolder.bind(this);
-        this.goToEdit = this.goToEdit.bind(this);
+		this.goToEdit = this.goToEdit.bind(this);
 	}
 
 	async setAsyncStateItems() {
@@ -85,19 +85,22 @@ class StartTimer extends Component {
 			})
 			.then((res) => {
 				this.setState({
-					autocompleteItemsRecent: res.data.map((entry) => ({
-						project: {
-							clientName: entry.clientName,
-							color: entry.projectColor,
-							name: entry.projectName,
-						},
-						task: {
-							name: entry.taskName,
-							id: entry.taskId,
-						},
-						billable: entry.projectBillable,
-						...entry,
-					})),
+					autocompleteItemsRecent: res.data?.map(
+						(entry) =>
+							({
+								project: {
+									clientName: entry.clientName,
+									color: entry.projectColor,
+									name: entry.projectName,
+								},
+								task: {
+									name: entry.taskName,
+									id: entry.taskId,
+								},
+								billable: entry.projectBillable,
+								...entry,
+							} || [])
+					),
 				});
 			})
 			.catch((err) => console.log(err));
@@ -204,9 +207,6 @@ class StartTimer extends Component {
 					? getIconStatus().timeEntryStarted
 					: getIconStatus().timeEntryEnded
 			);
-			getBrowser().runtime.sendMessage({
-				eventName: 'addPomodoroTimer',
-			});
 			const { forceProjects, forceTasks } = this.props.workspaceSettings;
 			const taskId = timeEntry.task ? timeEntry.task.id : timeEntry.taskId;
 
@@ -238,8 +238,8 @@ class StartTimer extends Component {
 					: getIconStatus().timeEntryEnded
 			);
 			getBrowser().runtime.sendMessage({
-						eventName: 'restartPomodoro',
-					});
+				eventName: 'restartPomodoro',
+			});
 		}
 	}
 
@@ -336,12 +336,20 @@ class StartTimer extends Component {
 					offlineStorage.timeEntryInOffline = this.state.timeEntry;
 					this.props.changeMode('timer');
 					this.props.setTimeEntryInProgress(this.state.timeEntry);
-					this.goToEdit();
+					this.goToEdit({ inProgress: true });
 				}
 			);
 		} else {
 			let { projectId, billable, task, description, customFieldValues, tags } =
 				this.state.timeEntry;
+
+			if (/<[^>]+>/.test(description)) {
+				return this.props.toaster.toast(
+					'error',
+					locales.FORBIDDEN_CHARACTERS,
+					2
+				);
+			}
 			let taskId = task ? task.id : null;
 			const tagIds = tags ? tags.map((tag) => tag.id) : [];
 
@@ -400,14 +408,11 @@ class StartTimer extends Component {
 							getBrowser().runtime.sendMessage({
 								eventName: 'removeReminderTimer',
 							});
-							getBrowser().runtime.sendMessage({
-								eventName: 'addPomodoroTimer',
-							});
 							localStorage.setItem({
 								timeEntryInProgress: data,
 							});
 
-							this.goToEdit({inProgress: true});
+							this.goToEdit({ inProgress: true });
 						}
 					);
 				})
@@ -442,13 +447,13 @@ class StartTimer extends Component {
 		if (isOff) {
 			this.stopEntryInProgress();
 		} else if (forceDescription && (description === '' || !description)) {
-			this.goToEdit({inProgress : true});
+			this.goToEdit({ inProgress: true });
 		} else if (forceProjects && !project) {
-			this.goToEdit({inProgress : true});
+			this.goToEdit({ inProgress: true });
 		} else if (forceTasks && !task) {
-			this.goToEdit({inProgress : true});
+			this.goToEdit({ inProgress: true });
 		} else if (forceTags && (!tags || !tags.length > 0)) {
-			this.goToEdit({inProgress : true});
+			this.goToEdit({ inProgress: true });
 		} else {
 			this.stopEntryInProgress();
 		}
@@ -512,18 +517,21 @@ class StartTimer extends Component {
 				.catch((res) => {
 					this.props.log('timeEntryService.stopEntryInProgress error');
 					// if error message says that some fields are required, open the edit page
-					if(res.response?.data?.message?.includes("required")){
-						this.goToEdit({inProgress : true});
+					if (res.response?.data?.message?.includes('required')) {
+						this.goToEdit({ inProgress: true });
 					}
 				});
 		}
 	}
 
-    changeMode(mode) {
-        this.props.changeMode(mode);
-    }
+	changeMode(mode) {
+		this.props.changeMode(mode);
+	}
 
 	goToEdit(params) {
+		if (!this.state.timeEntry) {
+			return null;
+		}
 		window.reactRoot.render(
 			<EditForm
 				changeMode={this.changeMode.bind(this)}
@@ -532,7 +540,7 @@ class StartTimer extends Component {
 				workspaceSettings={this.props.workspaceSettings}
 				timeFormat={this.props.timeFormat}
 				userSettings={this.props.userSettings}
-                      inProgress={params.inProgress}
+				inProgress={params.inProgress}
 			/>
 		);
 	}
@@ -559,7 +567,7 @@ class StartTimer extends Component {
 							timeEntries={this.props.timeEntries}
 							timeFormat={this.props.timeFormat}
 							userSettings={this.props.userSettings}
-                        	inProgress={true}
+							inProgress={true}
 						/>
 					);
 				}
@@ -576,7 +584,7 @@ class StartTimer extends Component {
 					timeEntries={this.props.timeEntries}
 					timeFormat={this.props.timeFormat}
 					userSettings={this.props.userSettings}
-                    inProgress={true}
+					inProgress={true}
 				/>
 			);
 		}
@@ -610,6 +618,9 @@ class StartTimer extends Component {
 	}
 
 	render() {
+		if (!this.state.timeEntry) {
+			return null;
+		}
 		const { id, description, task, project } = this.state.timeEntry;
 
 		return (
@@ -624,7 +635,7 @@ class StartTimer extends Component {
 						}
 					>
 						<div
-							onClick={() => this.goToEdit({inProgress: true})}
+							onClick={() => this.goToEdit({ inProgress: true })}
 							className={id ? 'start-timer_description' : 'disabled'}
 						>
 							<span>{description || locales.NO_DESCRIPTION}</span>

@@ -60,27 +60,50 @@ class TimeEntry extends ClockifyService {
 	}
 
 	static async getLastPomodoroEntry() {
-		const apiEndpoint = await this.apiEndpoint;
-		const userId = await this.userId;
-		const workspaceId = await this.workspaceId;
-		const endPoint = `${apiEndpoint}/v1/workspaces/${workspaceId}/user/${userId}/time-entries?page-size=10`;
-		const { data: timeEntries, error } = await this.apiCall(endPoint);
-		let entry = timeEntries && timeEntries[0];
-		if (error) {
-			console.error('oh no, failed', error);
-		} else {
-			if (timeEntries && timeEntries.length > 0) {
-				const pomodoroBreakIndex = timeEntries.findIndex(
-					(entry) =>
-						entry.description === 'Pomodoro break' ||
-						entry.description === 'Pomodoro long break'
-				);
-				if (pomodoroBreakIndex > -1) {
-					entry = timeEntries[pomodoroBreakIndex + 1];
-				}
+		try {
+			const [apiEndpoint, userId, workspaceId] = await Promise.all([
+				this.apiEndpoint,
+				this.userId,
+				this.workspaceId,
+			]);
+			const endPoint = `${apiEndpoint}/v1/workspaces/${workspaceId}/user/${userId}/time-entries?page-size=10`;
+			const { data: timeEntries, error } = await this.apiCall(endPoint);
+
+			if (error) {
+				console.error('oh no, failed', error);
+				return { error };
 			}
+
+			const timeEntriesOffline =
+				JSON.parse(await localStorage.getItem('timeEntriesOffline')) || [];
+
+			const findFirstNonBreakEntry = (entries) =>
+				entries.find(
+					(entry) =>
+						entry.description !== 'Pomodoro break' &&
+						entry.description !== 'Pomodoro long break'
+				);
+
+			const onlineEntry = findFirstNonBreakEntry(timeEntries);
+			const offlineEntry = findFirstNonBreakEntry(timeEntriesOffline);
+
+			let latestEntry;
+
+			if (onlineEntry && offlineEntry) {
+				const onlineStartTime = new Date(onlineEntry.timeInterval?.start);
+				const offlineStartTime = new Date(offlineEntry.timeInterval?.start);
+
+				latestEntry =
+					offlineStartTime > onlineStartTime ? offlineEntry : onlineEntry;
+			} else {
+				latestEntry = onlineEntry || offlineEntry;
+			}
+
+			return { entry: latestEntry };
+		} catch (err) {
+			console.error('An error occurred:', err);
+			return { error: err };
 		}
-		return { entry, error };
 	}
 
 	static async getTimeEntries(page, limit = 50) {
@@ -163,7 +186,9 @@ class TimeEntry extends ClockifyService {
 		let timeEntryInProgress = inProgress.entry;
 
 		if (inProgress.error) {
-			return;
+			return {
+				error: { status: 404, message: 'no entry in progress' },
+			};
 		}
 		if (timeEntry) {
 			const { projectId, taskId } = timeEntry;
@@ -181,7 +206,7 @@ class TimeEntry extends ClockifyService {
 			}
 		}
 		if (!timeEntryInProgress) {
-			return;
+			return { error: { status: 404, message: 'no entry in progress' } };
 		}
 		const {
 			id,
@@ -302,7 +327,6 @@ class TimeEntry extends ClockifyService {
 			taskId: task ? task.id : null,
 			customFields,
 		};
-		// console.log('StartTimer body', body)
 		const { data, error, status } = await this.apiCall(endPoint, 'POST', body);
 		if (error) {
 			console.error('oh no, failed', error);
@@ -456,7 +480,9 @@ class TimeEntry extends ClockifyService {
 			'timeEntriesOffline',
 			JSON.stringify(timeEntriesOffline)
 		);
-
+		aBrowser.runtime.sendMessage({
+			eventName: 'offlineEntryAdded',
+		});
 		const { error } = await this.deleteEntry(entry.id, isWebSocketHeader);
 		return { timeEntry };
 	}
@@ -562,7 +588,6 @@ class TimeEntry extends ClockifyService {
 				tagNames.map((tagName) => tagName.trim())
 			);
 			if (tagovi) tags = tagovi;
-			if (msg) console.log('TagService', msg);
 		} else if (forceTags) {
 		}
 

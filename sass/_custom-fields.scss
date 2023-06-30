@@ -33,6 +33,36 @@
 	}
 }
 
+.custom-field-number {
+	position: relative;
+	.input-stepper {
+		position: absolute;
+		top: 10px;
+		right: 10px;
+		width: 13px;
+		height: 14px;
+		.input-stepper-wrapper {
+			display: flex;
+			justify-content: center;
+			background: #f1f1f1;
+			width: 16px;
+			height: 8px;
+			&:hover {
+				background: #c1c1c1;
+			}
+			&:active {
+				background: #a1a1a1;
+			}
+		}
+		.input-stepper-up,
+		.input-stepper-down {
+			position: relative;
+			top: 2px;
+			height: 4px;
+		}
+	}
+}
+
 div.custom-field-ta {
 	box-sizing: border-box;
 	padding: 0px !important;

@@ -22,7 +22,7 @@ export default (function () {
 		const language = self.aBrowser.i18n.getUILanguage();
 
 		let lang = language;
-		if(!lang) lang = 'en';
+		if (!lang) lang = 'en';
 		if (lang.indexOf('-') !== -1) lang = lang.split('-')[0];
 		if (lang.indexOf('_') !== -1) lang = lang.split('_')[0];
 		return _supportedLanguages.includes(lang) ? lang : 'en';
@@ -31,7 +31,7 @@ export default (function () {
 	function debounce(func, delay) {
 		let timer;
 		let executeImmediately = true;
-		return function() {
+		return function () {
 			const context = this;
 			const args = arguments;
 			clearTimeout(timer);
@@ -42,7 +42,7 @@ export default (function () {
 			timer = setTimeout(() => {
 				executeImmediately = true;
 			}, delay);
-		}
+		};
 	}
 
 	const objLocales = {
@@ -50,7 +50,9 @@ export default (function () {
 		lang: 'en',
 		messages: null,
 		async loadLocaleMessagesFromJson(lang = 'en') {
-			const res = await fetch(self.aBrowser.runtime.getURL(`/_locales/${lang}/messages.json`));
+			const res = await fetch(
+				self.aBrowser.runtime.getURL(`/_locales/${lang}/messages.json`)
+			);
 			const messages = await res.json();
 			this.lang = lang;
 			this.messages = messages;
@@ -77,7 +79,6 @@ export default (function () {
 			let messageObject = this.messages[key];
 			return messageObject ? messageObject.message : key;
 		},
-		
 
 		getMessage(id, params) {
 			const getFromMessages = () => {
@@ -96,12 +97,10 @@ export default (function () {
 			};
 
 			if (!this.messages) {
-				this.loadLocaleMessagesFromJson(this.lang).then(
-					() => {
-						return getFromMessages();
-					}
-				);
-			}else{
+				this.loadLocaleMessagesFromJson(this.lang).then(() => {
+					return getFromMessages();
+				});
+			} else {
 				return getFromMessages();
 			}
 		},

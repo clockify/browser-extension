@@ -135,27 +135,31 @@ clockifyButton.render(
 
 // Teamwork (July 2020)
 clockifyButton.render(
-	'.task-groupHold-wrapper .task-row .row-content-holder:not(.clockify), .s-project-task__tasklist .row-content-holder:not(.clockify)',
+	'[data-identifier="task-list-task-name"]:not(.clockify)',
 	{ observe: true },
-	function (root) {
-		const getNameHolder = () => root.querySelector('.w-task-row__name > a');
+	(elem) => {
+		const description = () =>
+			$('.w-task-row__name > a', elem).textContent.trim();
+		const projectName = () =>
+			$('.tw-toolbar-title > span')?.textContent?.trim() || '';
+		const tagNames = () => [
+			...new Set(
+				Array.from($$('.w-tags__tag-name', elem)).map((tag) =>
+					tag.textContent.trim()
+				)
+			),
+		];
 
-		if (!getNameHolder()) {
-			return;
-		}
+		if (!description()) return;
 
 		const link = clockifyButton.createButton({
+			description,
+			projectName,
+			tagNames,
 			small: true,
-			description: () => getNameHolder().textContent.trim(),
-			projectName: () => {
-				const nameElement = $('.w-header-titles__project-name a');
-				return nameElement ? nameElement.textContent.trim() : '';
-			},
 		});
 
-		Object.assign(link.style, {
-			backgroundSize: '16px',
-		});
+		link.style.backgroundSize = '16px';
 
 		link.setAttribute('data-content', 'Clockify Timer');
 
@@ -166,6 +170,6 @@ clockifyButton.render(
 			'show-on-mouseenter'
 		);
 
-		root.appendChild(link);
+		elem.appendChild(link);
 	}
 );

@@ -19,3 +19,7 @@
 	@include meta.load-css('global');
 }
 @include meta.load-css('dark-mode');
+
+style {
+	display: none;
+}

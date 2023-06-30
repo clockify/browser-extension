@@ -51,13 +51,13 @@
     "message": "Continuar con el temporizador para esta actividad"
   },
   "DELETE_MULTIPLE_ENTRIES": {
-    "message": "¿Seguro que quieres eliminar { entries } entradas?"
+    "message": "¿Estás seguro de que quieres eliminar { entries } entradas?"
   },
   "TRACKER__TIME_TRACKER__ENTRY__DELETE__CONFIRM": {
-    "message": "¿Seguro que quieres eliminar { value } entradas de tiempo?"
+    "message": "¿Estás seguro de que quieres eliminar { value } entradas de tiempo?"
   },
   "ARE_YOU_SURE_DELETE": {
-    "message": "¿Seguro que quieres eliminar la entrada?"
+    "message": "¿Estás seguro de que quieres eliminar la entrada?"
   },
   "TRACKER__TIME_TRACKER__RECORDER__ADD_TIME_MANUALLY_TOOLTIP": {
     "message": "Añadir tiempo manualmente aquí"
@@ -366,7 +366,7 @@
     "message": "Configuración del proyecto"
   },
   "PROJECTS__EDIT_PROJECT_PAGE__DELETE_PROJECT_WARNING": {
-    "message": "¿Seguro que quieres eliminar el proyecto { projectName }?"
+    "message": "¿Estás seguro de que quieres eliminar el proyecto { projectName }?"
   },
   "PROJECTS__SHARED__COLOR_LABEL": {
     "message": "Color"
@@ -705,10 +705,10 @@
     "message": "No se puede finalizar la entrada sin proyecto, tarea, descripción o etiquetas"
   },
   "STOP_TIME": {
-    "message": "Detener tiempo"
+    "message": "Para el tiempo"
   },
   "STOP_AT_SPECIFIED_TIME": {
-    "message": "Detener el temporizador automáticamente a una hora determinada del día"
+    "message": "Detener el temporizador automáticamente a una hora específica del día"
   },
   "YOU_MUST_BE_LOGGED_IN_TO_START": {
     "message": "Debes iniciar sesión para iniciar la entrada de tiempo"
@@ -750,7 +750,7 @@
     "message": "Inicia sesión en el dominio personalizado"
   },
   "LOGIN_TO_SUB_DOMAIN": {
-    "message": "Inicia sesión en el subdominio"
+    "message": "Inicie sesión en el subdominio"
   },
   "RETURN_TO_CLOCKIFY_CLOUD": {
     "message": "Volver a la nube de Clockify"
@@ -1013,6 +1013,27 @@
   "WORKSPACE__TWO_FACTOR__MODAL__ENABLE": {
     "message": "Habilitar 2FA"
   },
+  "WORKSPACE__DISABLED_TOOLTIP": {
+    "message": "Este espacio de trabajo está deshabilitado."
+  },
+  "BANNED__INFO_MODAL__TITLE": {
+    "message": "Has estado desconectado"
+  },
+  "BANNED__INFO_MODAL__MESSAGE_PART_ONE": {
+    "message": "Se ha cerrado la sesión desde que se inhabilitó tu cuenta."
+  },
+  "BANNED__INFO_MODAL__MESSAGE_PART_TWO": {
+    "message": "Por favor contactar"
+  },
+  "BANNED__INFO_MODAL__MESSAGE_PART_THREE": {
+    "message": "para más información."
+  },
+  "BANNED__INFO_MODAL__WORKSPACE_MESSAGE_PART_ONE": {
+    "message": "Has sido desconectado porque se suspendió { workspaceName }."
+  },
+  "BANNED__ACCOUNT_SUSPENDED": {
+    "message": "Esta cuenta ha sido suspendida"
+  },
   "SCREENSHOT_RECORDING": {
     "message": "Capturas de pantalla están habilitadas. Esta aplicación no puede tomar capturas de pantalla."
   },
@@ -1034,8 +1055,14 @@
   "UPGRADE_REGIONAL_ADMIN": {
     "message": "Espacio de trabajo bloqueado porque está alojado en un servidor regional. Añade información de pago o cambia de espacio de trabajo."
   },
+  "ACTIVITY_TABS__SCREENSHOTS__NO_SCREENSHOTS_PROMO_BTN": {
+    "message": "Obtener la app de capturas de pantalla"
+  },
   "ENTER_REQUIRED_FIEEDS_OR_EDIT_WORKSPACE_SETTINGS": {
     "message": "Introduce los campos requeridos o edita la configuración de tu espacio de trabajo."
+  },
+  "FORBIDDEN_CHARACTERS": {
+    "message": "Has introducido un valor incorrecto. No uses los caracteres \" < \" y \" > \""
   },
   "appName": {
     "message": "Clockify Rastreador de tiempo",

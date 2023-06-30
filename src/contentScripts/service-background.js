@@ -29,7 +29,8 @@ async function createHttpHeaders(token) {
 		headers['socket-connection-id'] = wsConnectionId;
 	}
 
-	headers['App-Name'] = 'extension-' + isChrome() ? 'chrome' : 'firefox';
+	headers['App-Name'] = 'extension-' + (isChrome() ? 'chrome' : 'firefox');
+	headers['App-Version'] = aBrowser.runtime.getManifest().version;
 
 	const subDomainName = await localStorage.getItem('sub-domain_subDomainName');
 	if (subDomainName) {
@@ -44,12 +45,13 @@ async function createHttpHeaders(token) {
 	return headers;
 }
 
-function errorObj(status, message) {
+function errorObj(status, message, errorData) {
 	return {
 		data: null,
 		error: {
 			status,
 			message,
+			errorData,
 		},
 	};
 }
@@ -67,6 +69,39 @@ class ClockifyService {
 
 	static get apiEndpoint() {
 		return localStorage.getItem('permanent_baseUrl');
+	}
+
+	// Here we have a list of endpoints that we want to cache
+	// and the time they should be cached for
+	static routesToCache = [
+		{ path: '/auth/token/refresh', expiresInMilliseconds: 3 * 1000 },
+		{
+			path: '/timeEntries/recent?limit=',
+			expiresInMilliseconds: 1 * 1000,
+		},
+	];
+	// Here we store the cached data
+	static cache = {};
+
+	static addToCache(endpoint, data) {
+		this.cache[endpoint] = {
+			...data,
+			timestamp: new Date().getTime(),
+		};
+	}
+
+	static removeFromCache(endpoint) {
+		delete this.cache[endpoint];
+	}
+
+	// Here we store the requests that are currently being made
+	// so that we don't make the same request twice
+	// Only one request will be made and the other requests will wait for the first one to finish
+	static requestQueue = {};
+
+	// This function will check if the endpoint is in the list of endpoints to cache
+	static isEndpointInRoutesToCache(endpoint) {
+		return this.routesToCache.find((route) => endpoint.includes(route.path));
 	}
 
 	static async getForces() {
@@ -168,6 +203,33 @@ class ClockifyService {
 		}
 	}
 
+	static async handleBannedResponse(errorData) {
+		const aBrowser = isChrome() ? chrome : browser;
+		// error returned on banned workspace will be
+		// 'You’ve been logged out since your 63b7f35f0cf4083520b4cfb7 workspace has been suspended. Contact support@clockify.me for more information';
+		// so if the error is of this format we know it's a workspace ban
+		// otherwise it's probably a user ban
+		const bannedWorkspaceRegex =
+			/You’ve been logged out since your ([a-f\d]{24}) workspace has been suspended\. Contact support@clockify\.me for more information/;
+		const regexMatch = errorData.message?.match(bannedWorkspaceRegex);
+
+		if (regexMatch) {
+			const workspaceId = regexMatch[1]; // Extract the workspace ID from the first capture group
+			aBrowser.runtime.sendMessage({
+				eventName: 'WORKSPACE_BANNED',
+				options: { ...errorData, workspaceId },
+			});
+		} else if (
+			errorData.message?.includes('Access to workspace is denied') ||
+			errorData.message?.includes('account has been disabled')
+		) {
+			aBrowser.runtime.sendMessage({
+				eventName: 'USER_BANNED',
+				options: errorData,
+			});
+		}
+	}
+
 	static async apiCall(
 		endpoint,
 		method = 'GET',
@@ -176,7 +238,6 @@ class ClockifyService {
 		additionalHeaders
 	) {
 		let token;
-		// TREBA LI SVAKI apiCall da ima TOKEN
 		if (withNoToken) {
 			token = null;
 		} else {
@@ -187,14 +248,38 @@ class ClockifyService {
 		}
 
 		const hdrs = await createHttpHeaders(token);
-
-		const headers = new Headers({ ...hdrs, ...additionalHeaders });
+		const mergedHeaders = additionalHeaders
+			? { ...hdrs, ...additionalHeaders }
+			: hdrs;
+		const headers = new Headers(mergedHeaders);
 
 		//TODO: this is a temporary fix for the sub-domain-name header
 		const baseUrl = await this.apiEndpoint;
 		const signupUrl = `${baseUrl}/auth/`;
-		if(endpoint === signupUrl) {
+		if (endpoint === signupUrl) {
 			headers.delete('sub-domain-name');
+		}
+
+		const routeToCache = this.isEndpointInRoutesToCache(endpoint);
+		// Check if the data is in the cache and not expired
+		// if it is, return it and don't make the request
+		if (routeToCache) {
+			const cachedData = this.cache[routeToCache.path];
+			// Check if the data is in the cache and not expired
+			if (
+				cachedData &&
+				cachedData.timestamp + routeToCache.expiresInMilliseconds > Date.now()
+			) {
+				return Promise.resolve(cachedData);
+			}
+
+			// Check if the request was already fired but did not yet get saved to the cache
+			if (this.requestQueue[routeToCache.path]) {
+				const requestData = await this.requestQueue[routeToCache.path];
+				// once the request is done, delete it from the queue
+				delete this.requestQueue[routeToCache.path];
+				return Promise.resolve(requestData);
+			}
 		}
 
 		const request = new Request(endpoint, {
@@ -203,8 +288,7 @@ class ClockifyService {
 			body: body ? JSON.stringify(body) : null,
 		});
 
-		// TODO Take care request failed, probably because of wrong permissions
-		return await fetch(request)
+		const fetchRequest = fetch(request)
 			.then(async (response) => {
 				if (response.type === 'error') {
 					this.setOffline();
@@ -212,33 +296,76 @@ class ClockifyService {
 				} else {
 					this.setOnline();
 				}
-
+				let errorData;
+				const errorMessagesThatShouldBeReturnedToComponent = [
+					/Client with name '.*' already exists/,
+					/.* project for client  already exists./,
+					/Task name has to be between 1 and 1000 characters long/,
+					/.* project for client .* already exists./,
+				];
 				switch (response.status) {
 					case 400:
 					case 501:
+						const { message } = await response.json();
+
+						const returnMessageToComponent =
+							errorMessagesThatShouldBeReturnedToComponent.find((pattern) =>
+								pattern.test(message)
+							);
+
+						if (returnMessageToComponent) return errorObj(400, message);
+
 						return errorObj(
 							400,
 							`${clockifyLocales.YOU_ALREADY_HAVE_ENTRY_WITHOUT}. ${clockifyLocales.PLEASE_EDIT_YOUR_TIME_ENTRY}.`
 						);
 					case 403:
-						// logout()
-						// window.location.assign(window.location)
 						return errorObj(response.status, 'Unauthenticated');
 					case 404:
 						return errorObj(response.status, 'Not found');
 					case 405:
 						return errorObj(response.status, 'Method not allowed');
+					case 406:
+						errorData = await response.json();
+						this.handleBannedResponse(errorData);
+						return errorObj(response.status, 'Banned', errorData);
 					case 401:
+						errorData = await response.json();
+						if (errorData) {
+							if (errorData.code === 406) {
+								this.handleBannedResponse(errorData);
+								return errorObj(response.status, errorData?.message, errorData);
+							} else if (errorData.code === 4017) {
+								aBrowser.runtime.sendMessage({
+									eventName: 'TOKEN_INVALID',
+									options: errorData,
+								});
+								return errorObj(response.status, 'Token invalid', errorData);
+							}
+						}
 						return errorObj(response.status, 'Forbidden');
 					default:
 					// fall through
 				}
+				let data;
 				if (response.ok) {
-					let data;
 					try {
 						data = await response.json();
 					} catch {
 						data = null;
+					}
+					// If the endpoint is in the routesToCache, cache the result
+					if (routeToCache) {
+						this.addToCache(routeToCache.path, {
+							data,
+							error: null,
+							status: response.status,
+						});
+
+						// Schedule cache busting after the expiresInMilliseconds duration
+						setTimeout(() => {
+							this.removeFromCache(routeToCache.path);
+						}, routeToCache.expiresInMilliseconds);
 					}
 					return { data, error: null, status: response.status };
 				} else {
@@ -253,6 +380,17 @@ class ClockifyService {
 					'There has been a problem with your fetch operation: ',
 					error
 				); // error.message
+
+				return errorObj(0, error);
 			});
+
+		// If the endpoint is in the routesToCache, add the request	to the requestQueue
+		// so that if the same request is made again, we can return the same promise
+		if (routeToCache) {
+			this.requestQueue[routeToCache.path] = fetchRequest;
+		}
+
+		// TODO Take care request failed, probably because of wrong permissions
+		return await fetchRequest;
 	}
 }

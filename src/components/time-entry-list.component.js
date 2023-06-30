@@ -100,7 +100,7 @@ class TimeEntryList extends React.Component {
 					{this.props.groups.map((group, index) => {
 						return (
 							<React.Fragment key={group.title}>
-								<div className="week-header">
+								<div className="week-header" data-pw={`week-${index}`}>
 									<span className="week-header-dates">{group.title}</span>
 									<span className="week-header-total">
 										<span className="week-header-total-label">
@@ -113,13 +113,13 @@ class TimeEntryList extends React.Component {
 								</div>
 								{this.props.dates
 									.filter((date) => group.dates.some((d) => date.includes(d)))
-									.map((day) => {
+									.map((day, index) => {
 										const groupedIndexes = [];
 										const parts = day.split('-');
 										const lastPart = parts.pop();
 										const firstPart = parts.join('-');
 										return (
-											<div className="time-entries-list" key={day}>
+											<div className="time-entries-list" key={day} data-pw={`time-entries-list-${index}`}>
 												<div className="time-entries-list-time">
 													<span className="time-entries-list-day">
 														{firstPart}
@@ -175,6 +175,7 @@ class TimeEntryList extends React.Component {
 														}
 														return (
 															<TimeEntry
+																timeEntryIndex={index}
 																key={timeEntry.id}
 																timeEntry={timeEntry}
 																project={

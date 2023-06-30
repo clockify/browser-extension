@@ -26,7 +26,7 @@
 	},
 	"basecamp.com": {
 		"name": "Basecamp",
-		"link": "*://*.basecamp.com/*,*://*.basecamphq.com/*",
+		"link": "*://*.basecamp.com/*,*://*.basecamphq.com/*,*://basecamp.com/*",
 		"script": "basecamp.js"
 	},
 	"bitbucket.org": {
@@ -49,11 +49,6 @@
 		"link": "*://*.clickup.com/*",
 		"script": "clickup.js"
 	},
-	"clubhouse.io": {
-		"name": "Clubhouse",
-		"link": "*://app.clubhouse.io/*",
-		"script": "clubhouse.js"
-	},
 	"crowdin.com": {
 		"name": "Crowdin",
 		"link": "*://crowdin.com/*",
@@ -62,7 +57,7 @@
 	"shortcut.com": {
 		"name": "Shortcut",
 		"link": "*://app.shortcut.com/*",
-		"script": "clubhouse.js"
+		"script": "shortcut.js"
 	},
 	"coda.io": {
 		"name": "Coda",
@@ -126,7 +121,7 @@
 	},
 	"gitlab.com": {
 		"name": "Gitlab",
-		"link": "*://gitlab.com/*",
+		"link": "*://gitlab.com/*,*://*.coingdevelopment.com/*",
 		"script": "gitlab.js"
 	},
 	"calendar.google.com": {
@@ -135,7 +130,7 @@
 		"script": "google-calendar.js"
 	},
 	"docs.google.com": {
-		"name": "Google Docs",
+		"name": "Google Docs / Sheets",
 		"link": "*://docs.google.com/*",
 		"script": "google-docs.js"
 	},
@@ -236,7 +231,7 @@
 	},
 	"notion.so": {
 		"name": "Notion",
-		"link": "*://*.notion.so/*",
+		"link": "*://*.notion.so/*,*://notion.so/*",
 		"script": "notion.js"
 	},
 	"nozbe.com": {
@@ -269,11 +264,6 @@
 		"link": "*://app.pipefy.com/*",
 		"script": "pipefy.js"
 	},
-	"produck.io": {
-		"name": "Produck",
-		"link": "*://*.produck.io/*",
-		"script": "produck.js"
-	},
 	"pivotaltracker.com": {
 		"name": "PivotalTracker",
 		"link": "*://*.pivotaltracker.com/*",
@@ -301,7 +291,7 @@
 	},
 	"redbooth.com": {
 		"name": "Redbooth",
-		"link": "*://*.redbooth.com/*",
+		"link": "*://redbooth.com/*",
 		"script": "redbooth.js"
 	},
 	"redmine.org": {
@@ -384,11 +374,6 @@
 		"link": "*://*.wrike.com/*",
 		"script": "wrike.js"
 	},
-	"wunderlist.com": {
-		"name": "Wunderlist",
-		"link": "*://*.wunderlist.com/*",
-		"script": "wunderlist.js"
-	},
 	"zammad.com": {
 		"name": "Zammad",
 		"link": "*://*.zammad.com/*",
@@ -464,19 +449,14 @@
 		"link": "*://*.jetbrains.space/*",
 		"script": "jetbrains.js"
 	},
-	"connect.zoho.com": {
-		"name": "Zoho Connect",
-		"link": "*://connect.zoho.com/*",
-		"script": "zohoconnect.js"
-	},
-	"projects.zoho.com": {
-		"name": "Zoho Projects",
-		"link": "*://projects.zoho.com/*",
-		"script": "zohoprojects.js"
-  }
-  "nifty.pm": {
+	"nifty.pm": {
 		"name": "Nifty",
 		"link": "*://*.nifty.pm/*",
 		"script": "nifty.js"
-  }
+	},
+	"connect.zoho.com": {
+		"name": "Zoho Connect",
+		"link": "*://connect.zoho.*/*",
+		"script": "zohoconnect.js"
+	}
 }

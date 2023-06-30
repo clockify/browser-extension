@@ -1,135 +1,56 @@
-// Pulse from "my word" board
-clockifyButton.render(
-	'.pulse-page-header-component:not(.clockify)',
-	{ observe: true },
-	function (elem) {
-		let taskTitleElem = $(
-			'.pulse-page-header-component .pulse-page-name-wrapper:not(.clockify'
-		);
-		const descriptionElem = () => $('.ds-text-component > span', taskTitleElem);
+(async () => {
+	const selectors = await getSelectors('monday', 'allViews');
+
+	// "Main table", "Kanban", "My work", "Cards" and "Modal" view
+	clockifyButton.render(selectors.hanger, { observe: true }, (elem) => {
+		const boardName =
+			text(selectors.boardName) || text(selectors.boardNameFromMainTable);
+		const hasBoardNameColon = boardName.includes(':');
+		const beforeColon = boardName.split(':')[0].trim();
+		const afterColon = boardName.split(':').slice(1).join('').trim();
+
 		const description = () =>
-			descriptionElem() ? descriptionElem().textContent : '';
-		const projectElem = () => {
-			let projectElem = $(
-				'#board-header > div.board-header-content-wrapper > div.board-header-main > div.board-header-top > div.board-header-left'
-			);
-			if (!projectElem) {
-				projectElem = $(
-					'.pulse-page-header-component a.open-pulse-in-board-link'
-				);
-			}
-			return projectElem;
-		};
-		const project = () => {
-			return getProject(projectElem());
-		};
-		const task = () => {
-			return getTask(projectElem());
-		};
-		link = clockifyButton.createButton(description, project, task);
-		link.style.position = 'absolute';
-		link.style.top = '10px';
-		link.style.left = '27px';
+			text(selectors.descriptionFromKanbanAndMyWork) ||
+			text(selectors.descriptionFromMainTable) ||
+			text(selectors.descriptionFromCard, elem) ||
+			text(selectors.descriptionFromModal);
+		const projectName = hasBoardNameColon ? beforeColon : boardName;
+		const taskName = hasBoardNameColon ? afterColon : '';
 
-		taskTitleElem.style.marginTop = '10px';
-		elem.style.paddingTop = '26px';
+		const properties = { description, projectName, taskName };
 
-		elem.appendChild(link);
-	}
-);
+		const link = clockifyButton.createButton(properties);
+		const input = clockifyButton.createInput(properties);
 
-// Pulse from standard and kanban board
-clockifyButton.render(
-	'.flexible-header:not(.clockify)',
-	{ observe: true },
-	(elem) => {
-		const kanban = !window.location.href.includes('pulses') ? true : false,
-			boardName = $('.board-name h1').textContent,
-			description = kanban
-				? $('.pulse-page-name-wrapper div span').textContent
-				: $('.title-editable').textContent,
-			projectName = boardName.includes(':')
-				? boardName.split(':')[0]
-				: boardName,
-			taskName = boardName.includes(':') ? boardName.split(':')[1] : '',
-			clockifyContainer = createTag('div', 'clockify-widget-container');
+		const container = createTag('div', 'clockify-widget-container');
 
-		const data = { description, projectName, taskName };
-
-		const link = clockifyButton.createButton(data);
-		const input = clockifyButton.createInput(data);
-
-		clockifyContainer.style.position = 'absolute';
-		clockifyContainer.style.top = '14px';
-		clockifyContainer.style.right = kanban ? '50px' : '5px';
-		clockifyContainer.style.display = 'flex';
-		clockifyContainer.style.alignItems = 'center';
+		container.style.position = 'absolute';
+		container.style.top = getContainerPosition('top');
+		container.style.right = getContainerPosition('right');
+		container.style.display = 'flex';
+		container.style.alignItems = 'center';
 		link.style.marginRight = '10px';
 
-		clockifyContainer.appendChild(link);
-		clockifyContainer.appendChild(input);
+		container.append(link);
+		container.append(input);
 
-		elem.prepend(clockifyContainer);
+		elem.prepend(container);
+	});
 
-		$('.clockify-input', elem).style.paddingLeft = '3px';
+	function getContainerPosition(edge) {
+		const { kanban, card, modal, myWork, mainTable } =
+			selectors.selectorsForViewSpecificElements;
+
+		const views = [
+			{ isCurrentView: $(kanban), top: '14px', right: '50px' },
+			{ isCurrentView: $(card), top: '10px', right: '90px' },
+			{ isCurrentView: $(modal), top: '23px', right: '50px' },
+			{ isCurrentView: $(myWork), top: '10px', right: '50px' },
+			{ isCurrentView: $(mainTable), top: '10px', right: '5px' },
+		];
+
+		const currentView = views.find(({ isCurrentView }) => isCurrentView);
+
+		return currentView[edge];
 	}
-);
-
-clockifyButton.render(
-	'#pulse-card-dialog-component:not(.clockify)',
-	{ observe: true },
-	(elem) => {
-		const boardName = $('.board-name h1').textContent,
-			description = $(
-				'#pulse-card-dialog-component .ds-editable-component > .ds-text-component > span'
-			).textContent,
-			projectName = boardName.includes(':')
-				? boardName.split(':')[0]
-				: boardName,
-			taskName = boardName.includes(':') ? boardName.split(':')[1] : '',
-			clockifyContainer = createTag('div', 'clockify-widget-container');
-
-		const data = { description, projectName, taskName };
-
-		const link = clockifyButton.createButton(data);
-		const input = clockifyButton.createInput(data);
-
-		clockifyContainer.style.position = 'absolute';
-		clockifyContainer.style.top = '15px';
-		clockifyContainer.style.left = '60px';
-		clockifyContainer.style.display = 'flex';
-		clockifyContainer.style.alignItems = 'center';
-		link.style.marginRight = '10px';
-
-		clockifyContainer.appendChild(link);
-		clockifyContainer.appendChild(input);
-
-		elem.prepend(clockifyContainer);
-
-		$('.clockify-input', elem).style.paddingLeft = '3px';
-	}
-);
-
-// for this version we used dynamic project, because of modal dlgs (chat/timeline views)
-function getProject(projectElem) {
-	var projName = projectElem ? projectElem.textContent : '';
-	var taskName = '';
-
-	if (typeof projName == 'string' && projName.indexOf(':') > -1) {
-		var pNames = projName.split(':');
-		projName = pNames[0];
-		taskName = pNames[1];
-	}
-	return projName;
-}
-
-function getTask(projectElem) {
-	var projName = projectElem ? projectElem.textContent : '';
-	var taskName = '';
-	if (typeof projName == 'string' && projName.indexOf(':') > -1) {
-		var pNames = projName.split(':');
-		projName = pNames[0];
-		taskName = pNames[1];
-	}
-	return taskName;
-}
+})();

@@ -7,7 +7,7 @@
 	position: fixed;
 	top: 3vh;
 	right: 3vw;
-	z-index: 9999999999;
+	z-index: 2147483647 !important;
 	color: variables.$dark_text;
 	font-size: 14px;
 

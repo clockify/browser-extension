@@ -17,6 +17,49 @@ const htmlStyleHelper = new HtmlStyleHelper();
 const mozzilaRedirectNumb = 4;
 const chromeRedirectNumb = 3;
 
+const ErrorMessageComponent = (props) => {
+	const { type, data } = props;
+
+	switch (type) {
+		case 'USER_BANNED':
+			return (
+				<div>
+					<p className="login-error-message">
+						{locales.BANNED__ACCOUNT_SUSPENDED}
+						{'. '}
+						{locales.BANNED__INFO_MODAL__MESSAGE_PART_TWO}{' '}
+						<a href="mailto:support@clockify.me">support@clockify.me</a>{' '}
+						{locales.BANNED__INFO_MODAL__MESSAGE_PART_THREE}
+					</p>
+				</div>
+			);
+		case 'WORKSPACE_BANNED':
+			return (
+				<div>
+					<p className="login-error-message">
+						{locales.BANNED__INFO_MODAL__WORKSPACE_MESSAGE_PART_ONE(
+							`${locales.WORKSPACE} ${data?.name}`
+						)}{' '}
+						<br />
+						{locales.BANNED__INFO_MODAL__MESSAGE_PART_TWO}{' '}
+						<a href="mailto:support@clockify.me">support@clockify.me</a>{' '}
+						{locales.BANNED__INFO_MODAL__MESSAGE_PART_THREE}
+					</p>
+				</div>
+			);
+		case 'TOKEN_INVALID':
+			return (
+				<div>
+					<p className="login-error-message">
+						Your session has expired. Please try to log in again. For other
+						issues, please contact{' '}
+						<a href="mailto:support@clockify.me">support@clockify.me</a>
+					</p>
+				</div>
+			);
+	}
+};
+
 class Login extends React.Component {
 	constructor(props) {
 		super(props);
@@ -45,7 +88,7 @@ class Login extends React.Component {
 		// this.setAppType();
 		this.setAsyncStateItems();
 
-		if (this.props.logout) {
+		if (this.props.logout?.isTrue) {
 			this.logout();
 		}
 	}
@@ -147,12 +190,18 @@ class Login extends React.Component {
 
 	async logout() {
 		const isOffline = await localStorage.getItem('offline');
+		getBrowser()
+			.runtime.sendMessage({
+				eventName: 'invalidateToken',
+			})
+			.finally(() => {
+				localStorage.removeItem('token');
+			});
 		if (isOffline && !JSON.parse(isOffline)) {
 			let timeEntriesOffline = await localStorage.getItem('timeEntriesOffline');
 			timeEntriesOffline = timeEntriesOffline
 				? JSON.parse(timeEntriesOffline)
 				: [];
-
 			this.clearPermissions();
 			getBrowser().runtime.sendMessage('closeOptionsPage');
 
@@ -172,6 +221,7 @@ class Login extends React.Component {
 		getBrowser().runtime.sendMessage({
 			eventName: 'removeBadge',
 		});
+
 		checkConnection();
 	}
 
@@ -239,6 +289,12 @@ class Login extends React.Component {
 							{locales.RETURN_TO_CLOCKIFY_CLOUD}
 						</a>
 					</div>
+					{this.props.logout?.isTrue && (
+						<ErrorMessageComponent
+							type={this.props.logout?.reason}
+							data={this.props.logout?.data}
+						/>
+					)}
 				</div>
 			</div>
 		);

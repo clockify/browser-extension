@@ -1,47 +1,51 @@
-
 clockifyButton.render(
-	[
-		'#xDetDlg > div:not(.clockify)', // Event card.
-		'div[jsname=ssXDle] div[data-taskid]:not(.clockify)', // Task card.
-	].join(','),
+	'span[jsslot].JtukPc', // both event card & task card
 	{ observe: true },
-	function (elem) {
-		setTimeout(() => {
-			let link, description, headerElem, inputForm;
-			headerElem = $('[role="heading"]', elem);
-			if (
-				!headerElem ||
-				!headerElem.textContent ||
-				$('.clockify-widget-container')
-			)
-				return;
-			let cardHeader = document.querySelector('.wv9rPe');
-			if(cardHeader) {
-			const clockifyContainer = createTag('div', 'clockify-widget-container');
-			description = headerElem.textContent;
+	function(elem) {
+		function createClockifyElements() {
+			const getDescription = () => {
+				const descriptionSelector = $('[role="heading"]', elem);
+				if (descriptionSelector) return descriptionSelector.textContent;
+				else return '';
+			};
+			let cardHeader = $('.wv9rPe');
+			if (cardHeader) {
+				const link = clockifyButton.createButton({
+					description: () => getDescription()
+				});
+				const clockifyInput = clockifyButton.createInput({
+					description: () => getDescription()
+				});
+				const clockifyContainer = createTag('div', 'clockify-widget-container');
 
-			link = clockifyButton.createButton(description);
-			link.style.display = 'inline-flex';
-			link.style.cursor = 'pointer';
-
-			inputForm = clockifyButton.createInput({
-				description: description,
-			});
-			clockifyContainer.appendChild(link);
-			clockifyContainer.appendChild(inputForm);
+				clockifyContainer.appendChild(link);
+				clockifyContainer.appendChild(clockifyInput);
 				cardHeader.appendChild(clockifyContainer);
-				$('.clockify-widget-container').style.display = 'flex';
-				$('.clockify-widget-container').style.margin = '7px auto';
-				$('.clockify-widget-container').style.height = '34px';
 
-				$('.clockify-input').style.display = 'inline-block';
-				$('.clockify-input').style.width = '118px';
-				$('.clockify-input').style.marginLeft = '7px';
-				$('.clockify-input').style.boxShadow = 'none';
-				$('.clockify-input').style.border = '1px solid #eaecf0';
-				$('.clockify-input').style.backgroundColor = '#eaecf0';
+				link.style.display = 'inline-flex';
+				link.style.cursor = 'pointer';
+
+				clockifyContainer.style.display = 'flex';
+				clockifyContainer.style.margin = '7px auto';
+				clockifyContainer.style.height = '34px';
+
+				const clockifyInputField = $('.clockify-input');
+				clockifyInputField.style.display = 'inline-block';
+				clockifyInputField.style.width = '120px';
+				clockifyInputField.style.marginLeft = '7px';
+				clockifyInputField.style.boxShadow = 'none';
+				clockifyInputField.style.border = '1px solid #eaecf0';
+				clockifyInputField.style.backgroundColor = '#eaecf0';
 			}
-		}, 1500);
+		}
+		if (!$('.clockify-widget-container')) {
+			createClockifyElements()
+		}
+		$$('[role="button"][data-opens-details="true"]').forEach(item => {
+			item.addEventListener('click', event => {
+				createClockifyElements();
+			})
+		})
 	}
 );
 

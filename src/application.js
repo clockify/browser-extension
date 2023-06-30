@@ -15,6 +15,29 @@ export class Application {
 		this.setBaseUrl();
 		this.setHomeUrl();
 		extension.afterLoad();
+
+		aBrowser.runtime.onMessage.addListener(this.backgroundMessageListener);
+	}
+
+	// Since background/sw is split into multiple files, we need to
+	// listen for messages sent from one file and forward them to the other
+	// background files.
+	backgroundMessageListener(request, sender, sendResponse) {
+		switch (request.eventName) {
+			case 'entryStarted':
+				aBrowser.runtime.sendMessage({
+					eventName: 'entryStarted',
+					options: request.options,
+				});
+				break;
+			case 'entryEnded':
+				aBrowser.runtime.sendMessage({
+					eventName: 'entryEnded',
+					options: request.options,
+				});
+			default:
+				break;
+		}
 	}
 
 	setIcon(iconStatus) {

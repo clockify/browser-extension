@@ -25,6 +25,13 @@ class CreateTask extends React.Component {
 		const { taskName } = this.state;
 		const { project } = this.props;
 
+		const pattern = /<[^>]+>/;
+		const taskContainsWrongChars = pattern.test(taskName);
+
+		if (taskContainsWrongChars) {
+			return this.toaster.toast('error', locales.FORBIDDEN_CHARACTERS, 2);
+		}
+
 		if (!taskName) {
 			this.toaster.toast('error', locales.NAME_IS_REQUIRED, 2);
 			return;
@@ -35,7 +42,6 @@ class CreateTask extends React.Component {
 			projectId: project.id,
 		};
 
-		console.log(task);
 
 		getBrowser()
 			.runtime.sendMessage({
@@ -45,6 +51,8 @@ class CreateTask extends React.Component {
 				},
 			})
 			.then((response) => {
+				if (response.error)
+					return this.toaster.toast('error', response.error.message, 2);
 				const timeEntry = Object.assign(this.props.timeEntry, {
 					taskId: response.data.id,
 					projectId: response.data.projectId,

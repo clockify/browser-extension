@@ -1,33 +1,43 @@
-// Task list
-clockifyButton.render('.TaskRow:not(.clockify)', { observe: true }, (elem) => {
-	const title = $('.eventName .bold', elem).textContent;
+(async () => {
+	const selectors = await getSelectors('scoro');
 
-	const link = clockifyButton.createButton({
-		description: title,
-		small: true,
-	});
+	// Task list
+	clockifyButton.render(
+		selectors.taskListView.hanger,
+		{ observe: true },
+		async (elem) => {
+			const description = $(selectors.taskListView.taskName, elem).textContent;
 
-	link.dataset.title = title;
+			const link = clockifyButton.createButton({
+				description,
+				small: true,
+			});
 
-	link.style.marginTop =
-		window.location.href.indexOf('tasks') !== -1 ? '10px' : '11px';
-	link.style.paddingLeft = '8px';
+			link.dataset.title = description;
 
-	elem.appendChild(link);
-});
+			link.style.marginTop =
+				window.location.href.indexOf('tasks') !== -1 ? '10px' : '11px';
+			link.style.paddingLeft = '8px';
 
-// Single task
-clockifyButton.render(
-	'.buttonbar.compact-button-bar .d-inline-flex:not(.clockify)',
-	{ observe: true },
-	(elem) => {
-		const title = $('div.main-row-title').textContent.trim();
+			elem.appendChild(link);
+		}
+	);
 
-		const link = clockifyButton.createButton(title);
+	// Single task
+	clockifyButton.render(
+		selectors.singleTaskView.hanger,
+		{ observe: true },
+		async (elem) => {
+			const description = $(
+				selectors.singleTaskView.taskTitle
+			).textContent.trim();
 
-		link.style.whiteSpace = 'nowrap';
-		link.style.paddingBottom = '3px';
+			const link = clockifyButton.createButton({ description });
 
-		elem.prepend(link);
-	}
-);
+			link.style.whiteSpace = 'nowrap';
+			link.style.paddingBottom = '3px';
+
+			elem.prepend(link);
+		}
+	);
+})();

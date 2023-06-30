@@ -1013,6 +1013,27 @@
   "WORKSPACE__TWO_FACTOR__MODAL__ENABLE": {
     "message": "Включить двухфакторную аутентификацию"
   },
+  "WORKSPACE__DISABLED_TOOLTIP": {
+    "message": "Это рабочее пространство отключено."
+  },
+  "BANNED__INFO_MODAL__TITLE": {
+    "message": "Вы вышли из системы"
+  },
+  "BANNED__INFO_MODAL__MESSAGE_PART_ONE": {
+    "message": "Вы вышли из системы, так как ваша учетная запись была отключена."
+  },
+  "BANNED__INFO_MODAL__MESSAGE_PART_TWO": {
+    "message": "Пожалуйста свяжитесь"
+  },
+  "BANNED__INFO_MODAL__MESSAGE_PART_THREE": {
+    "message": "для дополнительной информации."
+  },
+  "BANNED__INFO_MODAL__WORKSPACE_MESSAGE_PART_ONE": {
+    "message": "Вы вышли из системы, так как ваш { workspaceName } был заблокирован."
+  },
+  "BANNED__ACCOUNT_SUSPENDED": {
+    "message": "Действие этого аккаунта приостановлено"
+  },
   "SCREENSHOT_RECORDING": {
     "message": "Запись скриншотов включена. Это приложение не может делать скриншоты."
   },
@@ -1034,8 +1055,14 @@
   "UPGRADE_REGIONAL_ADMIN": {
     "message": "Рабочая область заблокирована из-за размещения на региональном сервере. Пожалуйста, добавьте платежную информацию или переключитесь на другую рабочую область."
   },
+  "ACTIVITY_TABS__SCREENSHOTS__NO_SCREENSHOTS_PROMO_BTN": {
+    "message": "Скачать приложение для записи скриншотов"
+  },
   "ENTER_REQUIRED_FIEEDS_OR_EDIT_WORKSPACE_SETTINGS": {
     "message": "Заполните обязательные поля или, при желании, отредактируйте настройки рабочей области."
+  },
+  "FORBIDDEN_CHARACTERS": {
+    "message": "Вы ввели неправильное значение. Не используйте символы \"<\" и \">\""
   },
   "appName": {
     "message": "Clockify Отслеживание времени",

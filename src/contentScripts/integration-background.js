@@ -29,7 +29,7 @@ class ClockifyIntegrationBase {
 			sendResponse({ status: error.status });
 		} else {
 			aBrowser.notifications.clear('idleDetection');
-			restartPomodoro();
+			aBrowser.runtime.sendMessage({ eventName: 'entryEnded' });
 			aBrowser.action.setIcon({
 				path: iconPathEnded,
 			});
@@ -69,7 +69,10 @@ class ClockifyIntegrationBase {
 				aBrowser.action.setIcon({
 					path: iconPathStarted,
 				});
-				addPomodoroTimer();
+				aBrowser.runtime.sendMessage({
+					eventName: 'entryStarted',
+					options: { entry: ent },
+				});
 				if (!timeEntryOptions.manualMode) {
 					aBrowser.storage.local.set({ timeEntryInProgress: ent });
 				}
@@ -309,7 +312,7 @@ class ClockifyIntegrationBase {
 			project
 		);
 		if (error) {
-			sendResponse(error.message ? error.message : error.status);
+			sendResponse({ error });
 			return;
 		}
 		sendResponse({ status, data });
@@ -355,7 +358,7 @@ class ClockifyIntegrationBase {
 
 		const { data, error, status } = await ProjectTaskService.createTask(task);
 		if (error) {
-			sendResponse(error.message ? error.message : error.status);
+			sendResponse({ error });
 			return;
 		}
 		sendResponse({ status, data });
@@ -660,11 +663,14 @@ class ClockifyIntegrationBase {
 	}
 
 	static async getMemberProfile({ userId, workspaceId }, sendResponse) {
-		if( await isNavigatorOffline()) {
+		if (await isNavigatorOffline()) {
 			sendResponse('Connection is offline', 0);
 			return;
 		}
-		const { data, error, status } = await UserService.getMemberProfile(workspaceId, userId);
+		const { data, error, status } = await UserService.getMemberProfile(
+			workspaceId,
+			userId
+		);
 		if (error) {
 			sendResponse(error.message, error.status);
 			return;
@@ -696,7 +702,7 @@ class ClockifyIntegrationBase {
 		const { data, error, status } = await UserService.setDefaultWorkspace(
 			workspaceId
 		);
-		
+
 		if (error) {
 			sendResponse(error.message, error.status);
 			return;
@@ -749,6 +755,8 @@ class ClockifyIntegrationBase {
 			sendResponse(error.message, error.status);
 			return;
 		}
+
+		data && aBrowser.storage.local.set({ userWorkspaces: data });
 		sendResponse({ data, status });
 	}
 
@@ -815,7 +823,7 @@ class ClockifyIntegrationBase {
 		const { data, error, status } = await ClientService.createClient(client);
 
 		if (error) {
-			sendResponse(error.message, error.status);
+			sendResponse({ error });
 			return;
 		}
 		sendResponse({ data, status });
@@ -1011,6 +1019,24 @@ class ClockifyIntegrationBase {
 			return;
 		}
 		sendResponse({ data, status });
+	}
+
+	static async invalidateToken(sendResponse) {
+		if (await isNavigatorOffline()) {
+			sendResponse('Connection is offline', 0);
+			return;
+		}
+		const { data, error, status } = await AuthService.invalidateToken();
+		if (error) {
+			sendResponse(error.message, error.status);
+			return;
+		}
+		sendResponse({ data, status });
+	}
+
+	static async checkInternetConnection(sendResponse) {
+		const isOnline = await UserService.checkInternetConnection();
+		sendResponse(isOnline);
 	}
 }
 

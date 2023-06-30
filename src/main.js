@@ -97,6 +97,39 @@ function Mac() {
 	}
 }
 
+window.getAllDocuments = () => {
+	const iframes = Array.from(document.querySelectorAll('iframe'));
+	const iframeDocuments = iframes
+		.map(({ contentDocument }) => contentDocument)
+		.filter(Boolean);
+	const documents = [...iframeDocuments, document];
+
+	return documents;
+};
+
+const LoadingElement = () => {
+	return <div className="clockify-splash-screen"></div>;
+};
+
+function getSiblingButtonId(element) {
+	const previousSibling = element.parentElement.previousElementSibling;
+	const nextSibling = element.parentElement.nextElementSibling;
+
+	if (previousSibling && previousSibling.classList.contains('clockifyButton')) {
+		// Extract the ID from the class name
+		const id = previousSibling.className.match(/clockifyButtonId(\d+)/)[1];
+		return id;
+	}
+
+	if (nextSibling && nextSibling.classList.contains('clockifyButton')) {
+		// Extract the ID from the class name
+		const id = nextSibling.className.match(/clockifyButtonId(\d+)/)[1];
+		return id;
+	}
+
+	return null;
+}
+
 if (
 	window.location.href.includes('chrome-extension://') ||
 	window.location.href.includes('moz-extension://')
@@ -104,27 +137,40 @@ if (
 	import('antd/lib/date-picker/style/css');
 	import('antd/lib/switch/style/css');
 	import('../sass/main.scss');
-
+	checkConnection();
 	window.mountHtmlElement = document.getElementById('mount');
 	window.reactRoot = createRoot(window.mountHtmlElement);
-
+	!navigator.onLine && window.reactRoot.render(<LoadingElement />);
 	document.addEventListener('DOMContentLoaded', async () => {
-		await checkConnection();
+		// since the navigator.onLine may be unreliable
+		// once it says we are offline we need to give extension
+		// some time to actually check if it's online or not by firing off a health check
+		// api request
+		const offlineDelay = navigator.onLine ? 0 : 500;
+		setTimeout(() => {
+			Mac();
+			const application = new Application();
 
-		Mac();
-		const application = new Application();
+			localStorage.setItem('timeZone', moment.tz.guess());
 
-		localStorage.setItem('timeZone', moment.tz.guess());
-
-		application.afterLoad();
+			application.afterLoad();
+		}, offlineDelay);
 	});
 } else {
 	let integrationRoots = [];
 
-	const renderClockifyButton = (props, buttonId = 0) => {
+	const renderClockifyButton = (props, buttonId) => {
 		let counter = 0;
+		if (buttonId === undefined || buttonId === null) {
+			buttonId = getSiblingButtonId(props.popupProps?.inputElement) || 0;
+		}
 		const intervalId = setTimeout(() => {
-			const entryPoint = document.querySelector(`.clockifyButtonId${buttonId}`);
+			const documents = getAllDocuments();
+			const [entryPoint] = documents
+				.map((document) =>
+					document.querySelector(`.clockifyButtonId${buttonId}`)
+				)
+				.filter(Boolean);
 			if (entryPoint) {
 				const currBtnProps = props?.btnProps[buttonId];
 				if (!currBtnProps) return;
@@ -134,27 +180,27 @@ if (
 				} else {
 					entryPoint.classList.toggle('active', false);
 				}
-
 				function createHTMLButton() {
 					currBtnProps.newRoot = false;
 					entryPoint.innerHTML = '';
 					entryPoint.appendChild(getClockifyButtonHTML(currBtnProps));
 				}
-
 				function renderToRoot(args = { forceStartTimer: false }) {
 					integrationRoots[buttonId].render(
 						<ErrorBoundary fallback={<p>Clockify: reload page</p>}>
 							<ClockifyButton
 								{...currBtnProps}
-								{...(buttonId === 0
+								{...(props.popupProps?.manualMode
 									? props.popupProps
 									: {
 											inProgressDescription:
 												props.popupProps.inProgressDescription,
-									})}
+									  })}
 								updateButtonProps={(btnProps, popupProps) =>
 									window.updateButtonProperties(
-										btnProps ? { ...btnProps, buttonId: buttonId } : { buttonId },
+										btnProps
+											? { ...btnProps, buttonId: buttonId }
+											: { buttonId },
 										popupProps
 									)
 								}
@@ -165,10 +211,7 @@ if (
 				}
 
 				function createReactRoot() {
-					if (integrationRoots[buttonId]) {
-						integrationRoots[buttonId].unmount();
-						delete integrationRoots[buttonId];
-					}
+					removeReactRoot();
 					integrationRoots[buttonId] = createRoot(entryPoint, {
 						identifierPrefix: buttonId,
 					});
@@ -200,11 +243,21 @@ if (
 						!props.popupProps?.manualMode
 					);
 				}
+
+				function removeReactRoot() {
+					if (integrationRoots[buttonId]) {
+						integrationRoots[buttonId].unmount();
+						delete integrationRoots[buttonId];
+					}
+				}
 				//if react mount point exists, render to it
 				if (integrationRoots[buttonId]) {
 					// if entry point is empty, it means that button was removed from DOM,
 					// so we render HTML button again
 					if (!entryPoint.firstChild) {
+						// in some cases, when clockify button is in a modal, it doesn't get removed from DOM
+						// when modal is closed, so we need to remove it manually
+						removeReactRoot();
 						createHTMLButton();
 						addClickHandlerToHTMLButton();
 					} else {

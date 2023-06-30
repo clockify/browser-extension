@@ -41,7 +41,8 @@ class EditFormManual extends React.Component {
 		this.notify = this.notify.bind(this);
 		this.editProject = this.editProject.bind(this);
 		this.editTask = this.editTask.bind(this);
-		// this.onChangeProjectRedrawCustomFields = this.onChangeProjectRedrawCustomFields.bind(this);
+		this.onChangeProjectRedrawCustomFields =
+			this.onChangeProjectRedrawCustomFields.bind(this);
 		this.updateCustomFields = this.updateCustomFields.bind(this);
 		this.setAsyncStateItems = this.setAsyncStateItems.bind(this);
 		this.handleInputChange = debounce(this.handleInputChange.bind(this), 200);
@@ -82,7 +83,7 @@ class EditFormManual extends React.Component {
 			})
 			.then((res) => {
 				this.setState({
-					autocompleteItemsRecent: res.data.map((entry) => ({
+					autocompleteItemsRecent: res.data?.map((entry) => ({
 						project: {
 							clientName: entry.clientName,
 							color: entry.projectColor,
@@ -95,7 +96,7 @@ class EditFormManual extends React.Component {
 						},
 						billable: entry.projectBillable,
 						...entry,
-					})),
+					}) || [] ),
 				});
 			})
 			.catch((err) => console.log(err));
@@ -206,10 +207,7 @@ class EditFormManual extends React.Component {
 			if (timeEntry.customFieldValues) {
 				offlineStorage.updateCustomFieldValues(timeEntry, customFields);
 			} else {
-				console.log(
-					'Da li je moguce da timeEntryInOffline nema customFieldValues',
-					timeEntry
-				);
+				// timeEntryInOffline w/o customFieldValues?
 			}
 			this.setState(
 				{
@@ -231,17 +229,13 @@ class EditFormManual extends React.Component {
 		}
 	}
 
-	// async onChangeProjectRedrawCustomFields() {
-	// const { redrawCustomFields } = this.state;
-	//const { customFieldValues } = timeEntry;
-	//     if (await isOffline()) {
-	//     }
-	//     else {
-	//         this.setState({
-	//             redrawCustomFields: redrawCustomFields + 1
-	//         });
-	//     }
-	// }
+	async onChangeProjectRedrawCustomFields() {
+		const { redrawCustomFields } = this.state;
+
+		this.setState({
+			redrawCustomFields: redrawCustomFields + 1,
+		});
+	}
 
 	async checkDefaultProjectTask(forceTasks) {
 		const { defaultProject } = await DefaultProject.getStorage();
@@ -260,20 +254,27 @@ class EditFormManual extends React.Component {
 					},
 				});
 
-				if(!response.data) throw new Error(response);
+				if (!response.data) throw new Error(response);
+				if (!response.data) throw new Error(response);
 				lastEntry = {
-					project: !isLastUsedProjectWithoutTask ? response.data.project : response.data,
+					project: !isLastUsedProjectWithoutTask
+						? response.data.project
+						: response.data,
 					task: !isLastUsedProjectWithoutTask ? response.data.task : null,
 				};
-				
 			} catch (e) {
 				console.error('project not found', e);
 				setTimeout(() => {
-						this.toaster.toast(
-							'info',
-							`${locales.DEFAULT_PROJECT_NOT_AVAILABLE} ${locales.YOU_CAN_SET_A_NEW_ONE_IN_SETTINGS}`,
-							4
-						);
+					this.toaster.toast(
+						'info',
+						`${locales.DEFAULT_PROJECT_NOT_AVAILABLE} ${locales.YOU_CAN_SET_A_NEW_ONE_IN_SETTINGS}`,
+						4
+					);
+					this.toaster.toast(
+						'info',
+						`${locales.DEFAULT_PROJECT_NOT_AVAILABLE} ${locales.YOU_CAN_SET_A_NEW_ONE_IN_SETTINGS}`,
+						4
+					);
 				}, 1000);
 				return { projectDB: null, taskDB: null };
 			}
@@ -586,6 +587,14 @@ class EditFormManual extends React.Component {
 	}
 
 	async done() {
+		const { description } = this.state.timeEntry;
+		const pattern = /<[^>]+>/;
+		const descriptionContainsWrongChars = pattern.test(description);
+
+		if (descriptionContainsWrongChars) {
+			return this.toaster.toast('error', locales.FORBIDDEN_CHARACTERS, 2);
+		}
+
 		if (
 			this.state.descRequired ||
 			this.state.projectRequired ||
@@ -711,7 +720,6 @@ class EditFormManual extends React.Component {
 						}
 					})
 					.catch((error) => {
-						console.log('ERROR', error);
 						if (error.request.status === 403) {
 							const response = JSON.parse(error.request.response);
 							if (response.code === 4030) {
@@ -882,6 +890,20 @@ class EditFormManual extends React.Component {
 										className={'edit-form-description'}
 										type="text"
 										{...props}
+										onBlur={(event) => {
+											const description = event.target.value;
+											const pattern = /<[^>]+>/;
+											const descriptionContainsWrongChars =
+												pattern.test(description);
+
+											if (descriptionContainsWrongChars) {
+												return this.toaster.toast(
+													'error',
+													locales.FORBIDDEN_CHARACTERS,
+													2
+												);
+											}
+										}}
 									/>
 								)}
 							/>
@@ -905,7 +927,9 @@ class EditFormManual extends React.Component {
 								editForm={false}
 								userSettings={this.props.userSettings}
 								integrationMode={this.props.integrationMode}
-								// onChangeProjectRedrawCustomFields={this.onChangeProjectRedrawCustomFields}
+								onChangeProjectRedrawCustomFields={
+									this.onChangeProjectRedrawCustomFields
+								}
 							/>
 						</div>
 						<TagsList
@@ -970,6 +994,7 @@ class EditFormManual extends React.Component {
 									updateCustomFields={this.updateCustomFields}
 									areCustomFieldsValid={this.areCustomFieldsValid}
 									isInProgress={this.props.inProgress}
+									workspaceSettings={this.props.workspaceSettings}
 								/>
 							)}
 							<div className="edit-form-right-buttons">

@@ -169,6 +169,16 @@
 		}
 	}
 }
+
+.login-error-message {
+	text-align: center;
+	color: #f44336;
+	a {
+		display: inline;
+		margin-bottom: 0px;
+	}
+}
+
 .google-login {
 	margin-bottom: 20px;
 	width: 100%;

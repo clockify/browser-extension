@@ -43,31 +43,35 @@ const useCustomField = (cf, updateValue) => {
 	//     setVal(val)
 	// };
 
-	const storeValue = useCallback(() => {
-		getBrowser().runtime.sendMessage(
-			{
-				eventName: 'submitCustomField',
-				options: {
-					timeEntryId: timeEntryId,
-					customFieldId: id,
-					value,
+	const storeValue = useCallback(
+		(formatter) => {
+			getBrowser().runtime.sendMessage(
+				{
+					eventName: 'submitCustomField',
+					options: {
+						timeEntryId: timeEntryId,
+						customFieldId: id,
+						value: formatter ? formatter(value) : value,
+					},
 				},
-			},
-			(response) => {
-				if (!response) {
-					return response;
-				}
-				const { data, status } = response;
-				if (status !== 201) {
-					if (status === 400) {
+				(response) => {
+					if (!response) {
+						return response;
 					}
-				} else {
-					updateValue(id, value);
-					// setValue(data);
+					const { data, status } = response;
+					if (status !== 201) {
+						if (status === 400) {
+							console.log('Problem with Custom Field Value.');
+						}
+					} else {
+						updateValue(id, value);
+						// setValue(data);
+					}
 				}
-			}
-		);
-	}, [value]);
+			);
+		},
+		[value]
+	);
 
 	useEffect(() => {
 		if (

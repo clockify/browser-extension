@@ -3,7 +3,6 @@
 .DS_Store
 Dockerfile
 /local.properties
-/.vscode
 /.idea/caches
 /.idea/libraries
 /.idea/modules.xml

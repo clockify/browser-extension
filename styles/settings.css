@@ -1,3 +1,8 @@
+body {
+	font-family: system-ui, sans-serif;
+	font-size: 100%;
+}
+
 .settings__header {
 	width: 100%;
 	margin: 20px 20px;
@@ -31,6 +36,10 @@
 
 .settings__permissions-toolbar {
 	margin-top: 20px;
+}
+
+#settings__permissions-container label {
+	margin: 3px 0;
 }
 
 .settings__permissions__button-container {

@@ -1,123 +1,84 @@
-clockifyButton.render(
-	'.issue-details .detail-page-description:not(.clockify)',
-	{ observe: true },
-	(elem) => {
-		const projectLinkElem = $('.breadcrumbs-links li:nth-last-child(3) a'),
-			numElem = $('.identifier') || $('.breadcrumbs-links li:last-child a'),
-			titleElem = $('.title', elem),
-			projectElem =
-				$('.title .project-item-select-holder') ||
-				$('.breadcrumbs-list li:nth-last-child(3) .breadcrumb-item-text'),
-			actionsElem = $('.detail-page-header-actions');
+(async () => {
+	addCustomCSS();
 
-		const title = titleElem.textContent.trim();
-		const projectRef = projectLinkElem
-			? projectLinkElem.href.trim().replace(location.origin + '/', '')
-			: '';
-		const projectNum = numElem
-			? numElem.textContent.split(' ').pop().trim()
-			: '';
+	const selectors = await getSelectors('gitlab', 'MergeRequestAndIssueView');
 
-		const description = (projectRef + projectNum + ' ' + title).trim();
-		const projectName = projectElem.textContent.trim();
-		const taskName = `${numElem?.textContent?.split(' ')?.pop()} 
-		${titleElem.textContent}`.trim();
-		const tagNames = () => [
-			...new Set(
-				Array.from($$('div.labels .gl-label-link')).map((e) => {
-					const label = $('.gl-label-text', e).innerText.trim();
-					const scopedLabel = $('.gl-label-text-scoped', e)?.innerText?.trim();
+	// Issue view & Merge Request view
+	clockifyButton.render(selectors.hanger, { observe: true }, () => {
+		const breadcrumbs = $(selectors.breadcrumbs);
+		const breadcrumbsList = Array.from($$(selectors.breadcrumbsList));
 
-					return scopedLabel ? `${label}:${scopedLabel}` : label;
-				})
-			),
-		];
+		const lastBreadcrumbItemIndex = breadcrumbsList.length - 1;
+		const thirdToLastBreadcrumbItemIndex = breadcrumbsList.length - 3;
 
-		const buttonProperties = { description, projectName, taskName, tagNames };
+		const groupBreadcrumb = breadcrumbsList[0];
+		const projectBreadcrumb = breadcrumbsList[thirdToLastBreadcrumbItemIndex];
+		const idBreadcrumb = breadcrumbsList[lastBreadcrumbItemIndex];
 
-		const link = clockifyButton.createButton(buttonProperties);
-		const input = clockifyButton.createInput(buttonProperties);
+		const groupName =
+			$(selectors.groupName, groupBreadcrumb)?.textContent?.trim() ||
+			$(selectors.anchor, groupBreadcrumb)?.textContent?.trim();
+		const id = $(selectors.id, idBreadcrumb).textContent.trim();
+		const title = () => $(selectors.issueTitle).textContent.trim();
+		const labels = () => Array.from($$(selectors.label));
+		const labelsFormated = () =>
+			labels().map((label) => {
+				const firstSpan = $(selectors.firstSpan, label)?.textContent?.trim();
+				const secondSpan = $(selectors.secondSpan, label)?.textContent?.trim();
 
-		addCustomCSS();
+				const isLabelScoped = !!secondSpan;
 
-		actionsElem.parentElement.insertBefore(link, actionsElem);
-		actionsElem.parentElement.insertBefore(input, actionsElem);
+				return isLabelScoped ? `${firstSpan}:${secondSpan}` : firstSpan;
+			});
+
+		const projectName = $(
+			selectors.projectName,
+			projectBreadcrumb
+		)?.textContent?.trim();
+		const description = () => `${groupName}/${projectName}${id} ${title()}`;
+		const taskName = () => `${id} ${title()}`;
+		const tagNames = () => [...new Set(labelsFormated())];
+
+		const clockifyContainer = createTag('div', 'clockify-widget-container');
+
+		const entryOptions = { description, projectName, taskName, tagNames };
+
+		const link = clockifyButton.createButton(entryOptions);
+		const input = clockifyButton.createInput(entryOptions);
+
+		clockifyContainer.append(link);
+		clockifyContainer.append(input);
+
+		breadcrumbs.append(clockifyContainer);
+
+		console.log(projectName);
+	});
+
+	function addCustomCSS() {
+		const isCustomStyleAdded = $('.clockify-custom-css');
+
+		if (isCustomStyleAdded) return;
+
+		const customCSS = `
+			#clockifyButton {
+				display: flex;
+				align-items: flex-start !important;
+				margin: 0 7px;
+			}
+
+			#clockify-manual-input-form {
+				margin-right: 7px;
+			}
+
+			.breadcrumbs, .clockify-widget-container {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+			}
+		`;
+
+		const style = createTag('style', 'clockify-custom-css', customCSS);
+
+		document.head.append(style);
 	}
-);
-
-clockifyButton.render(
-	'.merge-request-details.issuable-details > .detail-page-description:not(.clockify)',
-	{ observe: true },
-	(elem) => {
-		var link,
-			description,
-			projectLinkElem = $('.breadcrumbs-links li:nth-last-child(3) a'),
-			numElem = $('.identifier') || $('.breadcrumbs-links li:last-child a'),
-			titleElem = $('h1.title'),
-			projectElem =
-				$('.title .project-item-select-holder') ||
-				$('.breadcrumbs-list li:nth-last-child(3) .breadcrumb-item-text'),
-			actionsElem = $('.detail-page-header-actions');
-
-		var task = titleElem.textContent.trim();
-
-		if (numElem !== null) {
-			task =
-				'MR' +
-				numElem.textContent.split(' ').pop().trim().replace('!', '') +
-				'::' +
-				task;
-		}
-
-		var tags = Array.from($$('div.labels .gl-label-text')).map(
-			(e) => e.innerText
-		);
-
-		var title = titleElem.textContent.trim();
-		var projectRef = projectLinkElem
-			? projectLinkElem.href.trim().replace(location.origin + '/', '')
-			: '';
-		var projectNum = numElem ? numElem.textContent.split(' ').pop().trim() : '';
-
-		description = (projectRef + projectNum + ' ' + title).trim();
-
-		link = clockifyButton.createButton({
-			description: description,
-			projectName: projectElem.textContent.trim(),
-			taskName: task,
-			tagNames: tags,
-		});
-		link.style.marginRight = '15px';
-		link.style.padding = '0px';
-		link.style.paddingLeft = '20px';
-		actionsElem.parentElement.insertBefore(link, actionsElem);
-
-		var inputForm = clockifyButton.createInput({
-			description: description,
-			projectName: projectElem.textContent.trim(),
-			taskName: task,
-			tagNames: tags,
-		});
-		actionsElem.parentElement.insertBefore(inputForm, actionsElem);
-	}
-);
-
-function addCustomCSS() {
-	if ($('.clockify-custom-css')) return;
-
-	const customCSS = `
-		#clockifyButton {
-			display: flex;
-			align-items: flex-start !important;
-			margin: 0 7px;
-		}
-
-		#clockify-manual-input-form {
-			margin-right: 7px;
-		}
-	`;
-
-	const style = createTag('style', 'clockify-custom-css', customCSS);
-
-	document.head.append(style);
-}
+})();

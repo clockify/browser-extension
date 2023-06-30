@@ -1,0 +1,120 @@
+{
+	"ambra": {
+		"listAndKanbanView": {
+			"hanger": ".task-container:not(.clockify)",
+			"taskCode": ".task-code",
+			"taskDescription": ".task-description",
+			"projectName": ".project-name",
+			"ambraClockifyButton": "button.clockify-container"
+		},
+		"modalView": {
+			"hanger": ".task-modal:not(.clockify)",
+			"taskOptions": ".task-options",
+			"taskCode": ".task-code",
+			"taskDescription": ".task-description",
+			"projectName": ".project-name"
+		}
+	},
+	"shortcut": {
+		"storyModal": {
+			"hanger": ".story-details:not(.clockify)",
+			"description": "h2.story-name",
+			"stateAttribute": ".story-attributes div:nth-child(6)"
+		}
+	},
+	"nozbe": {
+		"sideTaskView": {
+			"hanger": ".gy6Kr:not(.clockify)",
+			"description": ".cZ3TU",
+			"leftColumn": "._5zFL5",
+			"rightColumn": ".Eh9Kd",
+			"containerClassList": "clockify-widget-container sIw2A xAPTA"
+		}
+	},
+	"wrike": {
+		"taskView": {
+			"hanger": "action-panel.header__action-panel:not(.clockify), .task-view-header__actions.action-bar:not(.clockify), .wrike-panel-header-toolbar:not(.clockify)",
+			"description": ".title__ghost",
+			"projectFromTaskTag": ".folder-tag-label__item--name",
+			"projectFromPageHeader": "header .flex-text-input__ghost",
+			"projectFrom": "header .flex-text-input__ghost"
+		}
+	},
+	"coda": {
+		"documentView": {
+			"hanger": "header > div:first-child:not(.clockify)"
+		}
+	},
+	"gitlab": {
+		"MergeRequestAndIssueView": {
+			"hanger": ".issue-details .detail-page-description:not(.clockify), .merge-request-details.issuable-details > .detail-page-description:not(.clockify)",
+			"breadcrumbs": ".breadcrumbs",
+			"breadcrumbsList": ".breadcrumbs-list li",
+			"anchor": "a",
+			"groupName": ".group-path",
+			"id": "[data-testid=\"breadcrumb-current-link\"] a",
+			"issueTitle": "h1.title",
+			"projectName": ".breadcrumb-item-text",
+			"label": "div.labels .gl-label-link",
+			"firstSpan": "span:nth-child(1)",
+			"secondSpan": "span:nth-child(2)"
+		}
+	},
+	"pipedrive": {
+		"leadView": {
+			"hanger": "[data-testid=\"SidebarLeadTitle\"]:not(.clockify)",
+			"leadName": ".EditFieldstyles__ComponentReadWrapper-sc-lwe1gw-0"
+		},
+		"dealView": {
+			"hanger": "[data-testid=\"header-title\"]:not(.clockify)",
+			"dealName": ".cui5-editable-text__input"
+		},
+		"activityView": {
+			"hanger": ".activity-form__Container-sc-jw07kj-0 .cui5-compound-modal__footer:not(.clockify)",
+			"cardTitle": "[data-test=\"contextual-view\"] .cui5-tabs__tab span span"
+		},
+		"contactView": {
+			"hanger": ".detailView .content .spacer:not(.clockify)"
+		}
+	},
+	"scoro": {
+		"taskListView": {
+			"hanger": ".TaskRow:not(.clockify)",
+			"taskName": ".eventName .bold"
+		},
+		"singleTaskView": {
+			"hanger": ".buttonbar.compact-button-bar .d-inline-flex:not(.clockify)",
+			"taskTitle": "div.main-row-title"
+		}
+	},
+	"redbooth": {
+		"ModalWindowAndRightSidePanel": {
+			"hanger": ".tb-element-big .tb-element-title:not(.clockify)",
+			"description": ".js-element-title-inner a"
+		}
+	},
+	"pipefy": {
+		"cardModalView": {
+			"hanger": "[data-testid=\"open-card-title-wrapper\"]:not(.clockify)",
+			"description": "button"
+		}
+	},
+	"monday": {
+		"allViews": {
+			"hanger": ".flexible-header:not(.clockify), .pulse-card-dialog-component:not(.clockify), .modal-component-content .item-page-header-component__actions-bar:not(.clockify)",
+			"boardNameFromMainTable": ".board-name h1",
+			"boardName": ".open-pulse-in-board-link",
+			"descriptionFromKanbanAndMyWork": ".pulse-page-name-wrapper div span",
+			"descriptionFromMainTable": ".pulse_title [data-testid=\"editable-heading\"]",
+			"descriptionFromCard": ".ds-editable-component span",
+			"descriptionFromModal": "[data-testid=\"editable-heading\"] h2",
+			"selectorsForViewSpecificElements": {
+				"kanban": ".kanban-list-wrapper",
+				"card": ".pulse-card-dialog-component",
+				"modal": ".modal-component-content",
+				"myWork": ".overview-section-content-container",
+				"mainTable": ".slide-panel.open:not(.popup)"
+			}
+		}
+	}
+}

@@ -244,7 +244,7 @@ var offlineStorage = {
 					timeEntry.customFieldValues[cfIndex].value = value;
 			});
 		} else {
-			alert('it should have customFieldValues');
+			//customFieldValues
 		}
 	},
 };

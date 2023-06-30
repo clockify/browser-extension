@@ -555,7 +555,7 @@
     "message": "Dimanche"
   },
   "SUNDAY_SHORT": {
-    "message": "soleil"
+    "message": "Dim"
   },
   "NO_MATCHING": {
     "message": "Aucun { entityInPlural } correspondant"
@@ -1013,6 +1013,27 @@
   "WORKSPACE__TWO_FACTOR__MODAL__ENABLE": {
     "message": "Activer 2FA"
   },
+  "WORKSPACE__DISABLED_TOOLTIP": {
+    "message": "Cet espace de travail est désactivé."
+  },
+  "BANNED__INFO_MODAL__TITLE": {
+    "message": "Vous avez été déconnecté"
+  },
+  "BANNED__INFO_MODAL__MESSAGE_PART_ONE": {
+    "message": "Vous avez été déconnecté depuis que votre compte a été désactivé."
+  },
+  "BANNED__INFO_MODAL__MESSAGE_PART_TWO": {
+    "message": "S'il vous plaît contactez"
+  },
+  "BANNED__INFO_MODAL__MESSAGE_PART_THREE": {
+    "message": "pour plus d'informations."
+  },
+  "BANNED__INFO_MODAL__WORKSPACE_MESSAGE_PART_ONE": {
+    "message": "Vous avez été déconnecté depuis que votre { workspaceName } a été suspendu."
+  },
+  "BANNED__ACCOUNT_SUSPENDED": {
+    "message": "Ce compte a été suspendu"
+  },
   "SCREENSHOT_RECORDING": {
     "message": "L'enregistrement de capture d'écran est activé. Cette application ne peut pas prendre de captures d'écran."
   },
@@ -1034,8 +1055,14 @@
   "UPGRADE_REGIONAL_ADMIN": {
     "message": "Espace de travail verrouillé car hébergé sur un serveur régional. Veuillez ajouter les informations de paiement ou changer d'espace de travail."
   },
+  "ACTIVITY_TABS__SCREENSHOTS__NO_SCREENSHOTS_PROMO_BTN": {
+    "message": "Obtenir l’application pour enregistrer les captures d’écran"
+  },
   "ENTER_REQUIRED_FIEEDS_OR_EDIT_WORKSPACE_SETTINGS": {
     "message": "Saisissez les champs obligatoires ou modifiez éventuellement les paramètres de votre espace de travail."
+  },
+  "FORBIDDEN_CHARACTERS": {
+    "message": "Vous avez saisi une mauvaise valeur. N'utilisez pas les caractères \"<\" et \">\""
   },
   "appName": {
     "message": "Clockify Suivi du temps",

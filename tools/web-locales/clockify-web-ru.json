@@ -63,13 +63,15 @@
             "REMIND_ALL_TITLE": "Напомнить об утверждении времени",
             "REMIND_ALL_BODY": "Готовы отправлять напоминания по электронной почте руководителям групп, которые еще не утвердили расписания своей команды?",
             "REMIND_SELECTED_BODY": "Clockify отправит электронное письмо с напоминанием на { users }, чтобы отправить свое расписание.",
-            "SUBMIT_FOR_APPROVAL": "Готовы представить { startDate } - { endDate } на утверждение, для { userName }?"
+            "SUBMIT_FOR_APPROVAL": "Готовы представить { startDate } - { endDate } на утверждение, для { userName }?",
+            "REMIND_SUBMIT_LOG_SELECTED_BODY": "Clockify отправит напоминание по электронной почте { users }, чтобы зарегистрировать свое время и отправить свое расписание."
         },
         "SHARED": {
             "APPROVE_ALL": "Одобрить все",
             "WITHDRAW": "Снято",
             "REMIND_SUBMIT_BUTTON": "Напомнить отправить",
-            "REMIND_SUBMIT_ALL_BUTTON": "Напомнить утвердить"
+            "REMIND_SUBMIT_ALL_BUTTON": "Напомнить утвердить",
+            "REMIND_TO_LOG_AND_SUBMIT_BUTTON": "Напомнить войти и отправить"
         },
         "MESSAGES": {
             "SUBMIT_SUCCESS": "Успешно отправлено",
@@ -366,7 +368,8 @@
         "REQUIRES_AUTOMATICALLY_ACCRUES_CHECKBOX": "Начисляется автоматически",
         "EMPTY_COMPONENT": {
             "NO_POLICIES": "Правил отпусков пока нет",
-            "INFO": "Создайте свою первую политику и назначьте ее людям, чтобы они могли запросить отгул."
+            "INFO": "Создайте свою первую политику и назначьте ее людям, чтобы они могли запросить отгул.",
+            "EMPTY_POLICIES": "Политики отгулов пока нет."
         },
         "CREATE_POLICY_BUTTON": "Создать политику",
         "CREATE_HOLIDAY": {
@@ -475,7 +478,27 @@
             "REQUEST_ALL_TIME": "Clockify_Time_Off_Requests_All_Time"
         },
         "HALF_DAY_PERIOD_DASH": "полдня",
-        "HALF_DAY_PERIOD_LOWERCASE": "полдня"
+        "HALF_DAY_PERIOD_LOWERCASE": "полдня",
+        "TIME_ENTRIES": {
+            "CREATE": {
+                "AUTO_CREATE_LABEL": "Автоматически создавать записи времени",
+                "ALLOCATE_ENTRIES_LABEL": "Распределить время входа в"
+            },
+            "ARCHIVE_MODAL": {
+                "ARCHIVE_PROJECT_LABEL": "Архив проекта",
+                "ARCHIVE_TASK_LABEL": "Архивировать задачу",
+                "ARCHIVE_PROJECT_AND_TASK_LABEL": "Архивировать проекты и задачи",
+                "REMOVE_FROM_POLICIES_AND_HOLIDAYS_LABEL": "При архивировании этого { entity } он будет удален из политики выходных: { policies } и праздников: { holidays }.",
+                "REMOVE_FROM_POLICIES_LABEL": "Архивация этого { entity } удалит его из правил нерабочего времени:",
+                "REMOVE_FROM_HOLIDAYS_LABEL": "Архивация этого { entity } удалит его из политики праздников:"
+            },
+            "CHANGE_ENTRY_TYPE": {
+                "MARK_AS_REGULAR_LABEL": "Отметить как запись основного времени",
+                "MARK_AS_BREAK_LABEL": "Отметить как запись перерыва",
+                "MARK_AS_TIME_OFF_LABEL": "Отметить как выходной",
+                "MARK_AS_HOLIDAY_LABEL": "Отметить как праздничную запись"
+            }
+        }
     },
     "INVOICES": {
         "SHOW_COLUMNS_IN_PDF": "Показать столбцы в pdf",
@@ -607,7 +630,13 @@
             "EMAIL_FAILED": "Не удалось отправить письмо",
             "EMAIL_SENT": "Письмо было успешно отправлено",
             "EMAIL_INVOICE_SENT": "{ invoiceNumber } отправлено",
-            "EMAIL_REMINDER_SENT": "Напоминание отправлено"
+            "EMAIL_REMINDER_SENT": "Напоминание отправлено",
+            "RECORD_PAYMENT_FAIL": "Не удалось записать платеж",
+            "CONFIRM_PAYMENT_DELETE": "Это приведет к удалению платежной записи на { date } для { amount }.",
+            "PAYMENT_DELETED": "Платеж удален",
+            "RECORD_PAYMENT_SUCCESS": "Платеж зарегистрирован",
+            "PAYMENT_DELETE_FAILED": "Не удалось удалить платеж",
+            "PAYMENT_VALIDATION": "Платеж должен быть больше 0"
         },
         "SHARED": {
             "CREATE_INVOICE": "Создать счет",
@@ -637,7 +666,14 @@
             "IMPORT_TIME_AND_EXPENSES": "Время и расходы на импорт",
             "DRAFT_LABEL": "Черновик",
             "OVERDUE_LABEL": "Просрочено",
-            "INVOICE_ID_LENGTH": "Идентификатор счета должен содержать от 1 до 3000 символов."
+            "INVOICE_ID_LENGTH": "Идентификатор счета должен содержать от 1 до 3000 символов.",
+            "TAX1": "Налог 1",
+            "RECORD_PAYMENT_LABEL": "Записать платеж",
+            "PAYMENTS_LABEL": "Платежи",
+            "REMOVE_PAYMENT_LABEL": "Удалить платеж",
+            "TOTAL_LABEL": "Всего",
+            "PARTIALLY_PAID_LABEL": "Частично оплачено",
+            "REMOVE_PAYMENTS_NOTE": "Все платежи будут удалены."
         },
         "ITEM_TYPE": {
             "CREATE": {
@@ -883,7 +919,8 @@
             },
             "CURRENCY": {
                 "INFO_MESSAGE": "Валюта, в которой суммы к оплате и стоимости будут отображаться в отчетах.",
-                "CHANGED_SUCCESSFULY": "Валюта обновлена."
+                "CHANGED_SUCCESSFULY": "Валюта обновлена.",
+                "INFO_MESSAGE_DEFAULT": "Добавьте дополнительные валюты для почасовых ставок и расходов, а затем назначьте их клиентам."
             },
             "SAVING_TIME": {
                 "TITLE": "Не позволяйте экономить время без",
@@ -986,7 +1023,10 @@
                 "REQUESTS_COUNT": "в настоящее время есть",
                 "REQUESTS_COUNT_FIRST_PART": "Чтобы изменить период утверждения, сначала необходимо отменить все ожидающие запросы.",
                 "MONTHLY": "Ежемесячно"
-            }
+            },
+            "BREAKS_TITLE": "Перерывы",
+            "BREAKS_INFO_MESSAGE": "Отслеживайте и управляйте перерывами вашей команды.",
+            "DEFAULT_BREAKS_PROJECT_LABEL": "Проект перерыва по умолчанию"
         },
         "SHARED": {
             "AUTH_LABEL": "Аутентификация"
@@ -1170,11 +1210,15 @@
                 "LABEL": "Активировать оплачиваемые часы"
             },
             "BILLABLE_RATES": {
-                "INFO": "Кто может видеть почасовые ставки и суммы"
+                "INFO": "Кто может видеть почасовые ставки и суммы",
+                "TITLE": "Кто может видеть оплачиваемые тарифы",
+                "EXPLANATION": "Разрешить пользователям видеть оплачиваемые тарифы"
             },
             "BILLABLE_STATUS": {
                 "INFO": "Кто может видеть и изменять оплачиваемый статус записей времени",
-                "INFO_WHEN_EXPENSES_ENABLED": "Кто может видеть и изменять оплачиваемый статус записей времени"
+                "INFO_WHEN_EXPENSES_ENABLED": "Кто может видеть и изменять оплачиваемый статус записей времени",
+                "TITLE_WITH_EXPENSES_ENABLED": "Кто может просматривать и изменять оплачиваемый статус записей времени и расходов",
+                "TITLE": "Кто может просматривать и изменять оплачиваемый статус записей времени"
             },
             "UPGRADE_BTN_PART_2": "изменить разрешение",
             "CAN_SEE_PROJECT_STATUS_CUSTOM_LABEL": {
@@ -1185,6 +1229,30 @@
                 "TITLE": "Кто может создавать задания",
                 "DESCRIPTION": "Разрешить руководителям проектов создавать задания для своих проектов.",
                 "INFO_MESSAGE": "Разрешить руководителям проектов создавать задания и вехи для своих проектов."
+            },
+            "COST_RATES": {
+                "VIEW": {
+                    "TITLE": "Кто может видеть расценки",
+                    "INFO": "Разрешить людям видеть ставки затрат"
+                },
+                "EDIT": {
+                    "TITLE": "Кто может изменять ставки затрат",
+                    "INFO": "Разрешить пользователям изменять ставки затрат"
+                }
+            },
+            "KIOSK_LAUNCH_SETTINGS": {
+                "TITLE": "Настройки запуска киоска",
+                "INFO": "Когда вы открываете ссылку киоска, выберите, кому сначала нужно войти в систему: администратору или менеджеру (до того, как сотрудники смогут начать работу)."
+            },
+            "KIOSK_LOGIN_REQUIRED": {
+                "LABEL": "Требуется вход в киоск"
+            },
+            "KIOSK_LAUNCH_PERMISSION": {
+                "INFO": "Кто может войти и запустить киоск"
+            },
+            "BILLABLE_RATES_EDIT": {
+                "TITLE": "Кто может изменять оплачиваемые тарифы",
+                "INFO": "Разрешить пользователям изменять оплачиваемые тарифы"
             }
         },
         "TIME_ROUNDING_MODAL": {
@@ -1628,7 +1696,8 @@
                 "TITLE": "Требуется повышенная безопасность",
                 "SWITCH_WORKSPACE": "Переключить рабочее пространство",
                 "ENABLE": "Включить двухфакторную аутентификацию",
-                "INFO_MESSAGE": "требуется двухфакторная аутентификация (2FA). После включения вам нужно будет проверять свою электронную почту при входе в систему."
+                "INFO_MESSAGE": "требуется двухфакторная аутентификация (2FA). После включения вам нужно будет проверять свою электронную почту при входе в систему.",
+                "TITLE_LOGGED_OUT": "Вы вышли из системы"
             }
         },
         "AUTH": {
@@ -1638,13 +1707,16 @@
                 "REQUIRE_ACCESS": "Требовать 2FA для доступа к рабочей области",
                 "WARINING_MESSAGE": "Сначала вам нужно включить 2FA в",
                 "PROFILE_SETTINGS": "настройки вашего профиля",
-                "ERROR_MESSAGE": "Требуется 2FA. Пожалуйста, войдите снова"
+                "ERROR_MESSAGE": "Требуется 2FA. Пожалуйста, войдите снова",
+                "ERROR_MESSAGE_MULTI_WORKSPACES": "Вы деактивированы в рабочей области { workspace }. Войдите в систему еще раз, чтобы получить доступ к другому рабочему пространству.",
+                "ERROR_MESSAGE_ONE_WORKSPACE": "Вы деактивированы в рабочей области { workspace }. Пожалуйста, войдите в систему еще раз, чтобы создать новое рабочее пространство."
             }
         },
         "GENERAL_SETTINGS_DATA_FORMAT_INFO_MESSAGE": "Выберите предпочтительный формат числа и валюты для всего рабочего пространства.",
         "GENERAL_SETTINGS_DATA_FORMAT_TYPE_NUMBER": "Формат номера",
         "GENERAL_SETTINGS_DATA_FORMAT_TYPE_CURRENCY": "Формат валюты",
-        "DISABLED_TOOLTIP": "Это рабочее пространство отключено."
+        "DISABLED_TOOLTIP": "Это рабочее пространство отключено.",
+        "ADD_MEMBER_LABEL": "Добавить участников"
     },
     "CALENDAR": {
         "SHARED": {
@@ -2802,7 +2874,7 @@
         "FULL_USER_SEATS_TITLE": "Полные места",
         "PER_FULL_SEAT": "за полное место",
         "TOS_PART1": "Я прочитал и согласен с",
-        "NO_SEATS_LEFT": "Мест не осталось.",
+        "NO_SEATS_LEFT": "Мест не осталось",
         "REGULAR_LABEL": "Обычный",
         "FULL_MEMBER_LABEL": "Полноправный член",
         "PUBLISHED_LABEL": "Опубликовано",
@@ -2880,7 +2952,21 @@
         "START_LABEL": "Начало",
         "ANNUALLY_LABEL": "Ежегодно",
         "SETTINGS": "Настройки",
-        "SKIP": "Пропускать"
+        "SKIP": "Пропускать",
+        "BANNED": "запрещен",
+        "FORECAST_TITLE": "Прогнозирование",
+        "PROJECT_AND_TEAM_MANAGERS": "Менеджеры проектов и команд",
+        "DATE_OF_CREATION_LABEL": "Дата создания",
+        "DATE_OF_APPROVAL_LABEL": "Дата утверждения",
+        "ALLOWED_USERS": "Разрешенные пользователи на рабочую область: { usersCount }",
+        "HIDE_LABEL": "Скрыть",
+        "SPLIT_AT_LABEL": "Разделить на",
+        "CANNOT_SPLIT_MESSAGE": "Запись времени короче 2 минут не может быть разделена",
+        "TO_SPLIT_TIME": "разделить время",
+        "HOLIDAY_LABEL": "Праздничный день",
+        "MANUAL_MODE_LABEL": "Ручной режим",
+        "CURRENCIES_TITLE": "Валюты",
+        "CURRENCY_LABEL": "Валюта"
     },
     "SHARED_FOLDER": {
         "CURRENT_LEGACY_PLAN_INFO": "В настоящее время вы используете старый тарифный план. После отмены подписки вернуться к старому тарифному плану будет невозможно.",
@@ -3020,7 +3106,8 @@
             "BILLABLE_TOTAL_LABEL": "Итого к оплате",
             "RECEIPTS_LABEL": "Квитанции",
             "EXPENSE_TOTAL_LABEL": "Всего расходов"
-        }
+        },
+        "NOTE_PLACEHOLDER": "Добавить заметку"
     },
     "IN_PROGRESS": "Выполняется импорт. Как только это будет сделано, вы получите уведомление.",
     "LETS_START_TRACKING": "Приступим к отслеживанию!",
@@ -3065,7 +3152,7 @@
         "REMINDERS": {
             "TITLE": "Напоминания",
             "DESCRIPTION": "Получите электронное письмо, когда вы или ваши товарищи по команде пропустите или со временем отслеживаете цели.",
-            "MARKETPLACE_IFNO": "Напоминания отправляются на электронную почту аккаунта, они не доходят до вашего почтового ящика."
+            "MARKETPLACE_IFNO": "Напоминания отправляются на электронные письма пользователей, они не доходят до вашего почтового ящика."
         },
         "INFO_VERIFY": {
             "PART_1": "Проверьте свой адрес электронной почты",
@@ -3208,7 +3295,10 @@
             "ADD_MEMBER_TO_TASK": "Добавить участника в задачу",
             "ADD_MEMBER_TO_PROJECT_AND_TASK_TITLE": "Добавить участника в проект и задачу",
             "ADD_MEMBER_TO_PROJECT_AND_TASK_MESSAGE": "{ userName } не имеет доступа к { projectName }: { taskName } - { clientName }. Хотите добавить их в проект и задачу?",
-            "ADD_MEMBERS_TO_TASK_TITLE": "Добавить участников в проект"
+            "ADD_MEMBERS_TO_TASK_TITLE": "Добавить участников в проект",
+            "ADD_MEMBER_TO_PROJECT_AND_TASK_NO_CLIENT": "{ userName } не имеет доступа к { projectName }: { taskName }. Хотите добавить их в проект и задачу?",
+            "ADD_MEMBER_TO_PROJECT_NO_CLIENT": "{ userName } не имеет доступа к { projectName }. Хотите добавить их в проект?",
+            "ADD_MEMBERS_TO_TASK_NO_CLIENT": "Есть пользователи { numberOfUsers }, у которых нет доступа к { projectName }. Хотите добавить их в проект?"
         },
         "MILESTONE": {
             "DELETE": {
@@ -3282,6 +3372,12 @@
                 "TITLE": "Еженедельно",
                 "DESCRIPTION": "Посмотрите, сколько человек забронировано в неделю."
             }
+        },
+        "HIDE_MEMBER": {
+            "TITLE": "Скрыть участника"
+        },
+        "HIDE_PROJECT": {
+            "TITLE": "Скрыть проект"
         }
     },
     "FAILED_TO_COPY_TIME": "Некоторые записи не могут быть скопированы",
@@ -3578,7 +3674,8 @@
             "ARCHIVE_CLIENT_PROJECTS_TOOLTIP": "Не могу заархивировать { projectLabel } (некоторые киоски используют их)",
             "SEARCH_LABEL": "Найти по имени",
             "PER_YEAR_LABEL": " в год",
-            "PER_WEEK_LABEL": " в неделю"
+            "PER_WEEK_LABEL": " в неделю",
+            "EXPORT_SETTINGS_TITLE": "{ projectLabel } настройки экспорта"
         },
         "EDIT_SECTION": {
             "PROJECT_NAME_ACCESS": "{ name } - Доступ",
@@ -3595,7 +3692,15 @@
             "RESTORE_PROJECT_WARNING": " будут доступны при отслеживании времени.",
             "ARCHIVE_PROJECT_WARNING": " не будут доступны при отслеживании времени.",
             "ARCHIVE_PROJECT_CHECKBOX_LABEL": "Также отметьте все { tasks } как выполненные.",
-            "ARCHIVE_RESTORE_CHECKBOX_LABEL": "Также отметьте все { tasks } как активные"
+            "ARCHIVE_RESTORE_CHECKBOX_LABEL": "Также отметьте все { tasks } как активные",
+            "RESTORE_MULTIPLE_PROJECTS_WARNING_MODAL": "Выбранные проекты станут доступны при отслеживании времени.",
+            "RESTORE_MULTIPLE_PROJECTS_TITLE": "Восстановить проекты { projectsCount }",
+            "ARCHIVE_MULTIPLE_PROJECTS_TITLE": "Архив проектов { projectsCount }",
+            "ARCHIVE_MULTIPLE_PROJECTS_WARNING_MODAL": "Выбранные проекты будут недоступны при отслеживании времени.",
+            "RESTORE_MULTIPLE_PROJECT_TITLE": "Восстановить проект { projectsCount }",
+            "ARCHIVE_MULTIPLE_PROJECT_TITLE": "Архив проекта { projectsCount }",
+            "RESTORE_MULTIPLE_PROJECT_WARNING_MODAL": "Выбранный проект станет доступен при отслеживании времени.",
+            "ARCHIVE_MULTIPLE_PROJECT_WARNING_MODAL": "Выбранный проект будет недоступен при отслеживании времени."
         },
         "EDIT_PROJECT_ACCESS_CUSTOM": {
             "PUBLIC_PROJECT_INFO": "Каждый может отслеживать время в паблике { projectLabel }.",
@@ -3623,7 +3728,33 @@
             "SUCCESSFULLY_UPDATED": "Успешно обновлено { length } { label }.",
             "NOT_COMPLETELY_UPDATED": "Некоторые задачи не удалось удалить, так как они являются задачами по умолчанию в киоске."
         },
-        "SINGLE_PROJECT_UPDATED": "проект"
+        "SINGLE_PROJECT_UPDATED": "проект",
+        "EXPORT_OPTIONS": {
+            "PROGRESS": "Прогресс (%)",
+            "RECURRING_ESTIMATE": "Повторяющаяся оценка",
+            "BILLABLE_H": "Оплачивается (ч)",
+            "VISIBILITY": "Видимость",
+            "NON_BILLABLE_H": "Неоплачиваемый (ч)",
+            "BILLABLE_RATE": "Оплачиваемая ставка ({ currency })",
+            "TRACKED_H": "Гусеничный (ч)",
+            "COST_RATE": "Ставка стоимости ({ currency })",
+            "ESTIMATED_H": "Расчетное (ч)",
+            "EXPENSES": "Расходы ({ currency })",
+            "REMAINING_H": "Осталось (ч)",
+            "BILLABLE_EXPENSES": "Оплачиваемые расходы ({ currency })",
+            "OVERAGE_H'": "Избыток (ч)",
+            "ESTIMATED_BUDGET": "Расчетное ({валюта})",
+            "REMAINING_BUDGET": "Осталось ({валюта})",
+            "PROJECT_MANAGER": "{ projectLabel } менеджер",
+            "OVERAGE_BUDGET": "Превышение ({валюта})",
+            "BILLABILITY": "Платежеспособность",
+            "AMOUNT": "Сумма ({ currency })",
+            "NON_BILLABLE_EXPENSES": "Неоплачиваемые расходы ({ currency })",
+            "TRACKED_BUDGET": "Отслеживается ({валюта})",
+            "ADDITIONAL_FIELDS": "Дополнительные поля",
+            "PROJECT_MEMBERS": "{ projectLabel } участники",
+            "OVERAGE_H": "Избыток (ч)"
+        }
     },
     "REGISTER": {
         "LOGIN_COMMERCIAL": {
@@ -3710,7 +3841,9 @@
             "COUNTINUE_WITH_OAUTH2_LABEL": "Продолжить с OAuth2",
             "ENTER_PASSWORD_PLACEHOLDER": "Введите пароль",
             "ENTER_USERNAME_PLACEHOLDER": "Введите имя пользователя",
-            "ENTER_EMAIL_USERNAME_PLACEHOLDER": "Введите адрес электронной почты/имя пользователя"
+            "ENTER_EMAIL_USERNAME_PLACEHOLDER": "Введите адрес электронной почты/имя пользователя",
+            "COUNTINUE_WITH_SAML2_LABEL": "Продолжить с SAML2",
+            "CONTINUE_WITH_SAML2_LABEL": "Продолжить с SAML2"
         }
     },
     "REPORTS": {
@@ -3795,7 +3928,9 @@
             "BILLABLE_AMOUNT_LABEL": "Сумма к оплате",
             "DECIMAL_DURATION_LABEL": "Десятичная продолжительность",
             "NEW_INVOICE_MODAL_INFO_EXPENSES_1": "Новые счета-фактуры не импортируют расходы, включенные в счет-фактуру.",
-            "NEW_INVOICE_MODAL_INFO_EXPENSES_2": "В новые счета-фактуры можно импортировать неучтенные расходы."
+            "NEW_INVOICE_MODAL_INFO_EXPENSES_2": "В новые счета-фактуры можно импортировать неучтенные расходы.",
+            "MARK_AS_BREAK": "Отметить как перерыв",
+            "MARK_AS_NON_BREAK": "Отметить как непрерывный"
         },
         "QUICK_BOOKS": {
             "NOT_SENT_ENTRIES_WARNING": "Работы продолжительностью более 23 часов 55 минут не будут отправлены в QuickBooks.",
@@ -3952,7 +4087,9 @@
             "CONTAINS_VALUE": "Содержит",
             "NOT_COINTAIN_VALUE": "Не содержит",
             "CONTAINS_ONLY_VALUE": "Содержит только",
-            "APPROVED_BY_LABEL": "Утверждено"
+            "APPROVED_BY_LABEL": "Утверждено",
+            "DATE_OF_APPROVAL_LABEL": "Дата утверждения",
+            "DATE_OF_CREATION_LABEL": "Дата создания"
         },
         "CUSTOMIZE": {
             "DISPLAY_CASE_1": "Видно в PDF, CSV и Excel",
@@ -4020,12 +4157,13 @@
             "DETAILED": "Clockify_Отчет_О_Времени_Подробно",
             "WEEKLY": "Clockify_Отчет_О_Времени_Еженедельно",
             "SCHEDULED_VS_TRACKED": "Clockify_Запланированный_vs_Отслеживаемый",
-            "ASSIGNMENTS": "Clockify_Задания"
+            "ASSIGNMENTS": "Clockify_Задания",
+            "ATTENDANCE": "Clockify_Team_Report_Attendance"
         },
         "NO_ARCHIVED_CLIENTS": "Нет в архиве { clientsLabel }",
         "NO_INACTIVE_USERS": "Нет неактивных пользователей",
-        "NO_ARCHIVED_PROJECTS": "Нет архивных проектов",
-        "NO_COMPLETED_TASKS": "Нет выполненных задач",
+        "NO_ARCHIVED_PROJECTS": "Нет в архиве { projectsLabel }",
+        "NO_COMPLETED_TASKS": "Не выполнено { tasksLabel }",
         "NO_ARCHIVED_CATEGORIES": "Нет заархивированных категорий",
         "NO_ARCHIVED_TAGS": "Нет архивных тегов",
         "SCHEDULED_VS_TRACKED": {
@@ -4051,7 +4189,8 @@
             "CHOOSE_FILE_TEXT": "Выберите файл",
             "SUPPORTED_FORMATS": "Поддерживаемые форматы: png, jpg, gif.",
             "UPLOAD_CSV_FILE_TYPE_ERROR_MSG": "Загрузите файл CSV вместо { type }.",
-            "FILE_SIZE_ERROR_MSG": "Максимальный размер файла - { size } MB."
+            "FILE_SIZE_ERROR_MSG": "Максимальный размер файла - { size } MB.",
+            "FILE_TYPE_ERROR_MSG": "Поддерживаемые форматы: { type }."
         },
         "CANCEL_SUBSCRIPTION": {
             "REASONS": {
@@ -4263,7 +4402,8 @@
             },
             "QUICKBOOKS_INTEGRATIONS": {
                 "TITLE": "Интеграция QuickBooks",
-                "DESCRIPTION": "Подключите Clockify к своей учетной записи QuickBooks. После подключения вы можете синхронизировать пользователей и клиентов между ними и отправлять записи времени из Clockify в QuickBooks."
+                "DESCRIPTION": "Подключите Clockify к своей учетной записи QuickBooks. После подключения вы можете синхронизировать пользователей и клиентов между ними и отправлять записи времени из Clockify в QuickBooks.",
+                "INFO": "Примечание. Несовместимо с платежной ведомостью QuickBooks."
             },
             "USER_FIELDS": {
                 "DESCRIPTION": "Пользовательские поля позволяют добавлять дополнительную информацию к членам команды (например, должность, должность, телефон, отдел, идентификатор пользователя), а затем экспортировать ее вместе со временем."
@@ -4309,6 +4449,14 @@
             "ATTENDANCE_REPORT": {
                 "DESCRIPTION": "Отслеживайте ежедневную посещаемость вашей команды и смотрите, когда они начали и закончили работу, сколько времени они потратили на работу и перерыв, и кто работал сверхурочно. Отфильтруйте отчет по параметру и экспортируйте данные.",
                 "TITLE": "Отчет о посещаемости"
+            },
+            "BREAK_ENTRY": {
+                "TITLE": "Перерыв",
+                "DESCRIPTION": "Разрешить сотрудникам указывать, когда у них перерыв.\n\nСотрудники могут начать перерыв в киоске, пока у них есть часы, или они могут начать его из одного из приложений (веб-сайта и мобильного).\n\nПозже админы и менеджеры смогут увидеть, когда у каждого сотрудника был перерыв и сколько в отчетах."
+            },
+            "MULTIPLE_CURRENCIES": {
+                "TITLE": "Несколько валют",
+                "DESCRIPTION": "Определите более одной валюты и назначьте каждому клиенту свою собственную. Позже просмотрите суммы и затраты в отчетах с разбивкой по валютам."
             }
         },
         "PROJECT_PICKER": {
@@ -4325,8 +4473,8 @@
             "CREATE_CUSTOM_TASK_WITH_PARAM_LABEL": "создайте { task } { taskLabel } на { project } { projectLabel }.",
             "FILTER_BY_CUSTOM_INFO": "Для фильтрации по { label } добавьте префикс @ (например, @myproject)",
             "TYPE_TO_CREATE_CUSTOM_PLACEHOLDER": "Введите { taskLabel }@{ projectLabel }, чтобы создать его.",
-            "FIND_PROJECT_CUSTOM_LABEL": "Найдите { projectLabel } или { projectGroupingLabel }",
-            "FIND_TASK_CUSTOM_LABEL": "Найдите { taskLabel } @{ projectLabel } или { projectGroupingLabel }",
+            "FIND_PROJECT_CUSTOM_LABEL": "Найдите { projectLabel } или { projectGroupingLabel }…",
+            "FIND_TASK_CUSTOM_LABEL": "Найдите { taskLabel } @{ projectLabel } или { projectGroupingLabel }…",
             "FIND_PROJECT_CUSTOM_LABEL_ELLIPSES": "Найдите { projectLabel } или { projectGroupingLabel }…",
             "CAN_NOT_SELECT_PROJECT": "Невозможно выбрать проект, пока в нем не будет хотя бы одной задачи."
         },
@@ -4772,7 +4920,7 @@
             "BULK_EDIT": {
                 "SUCCESS_MESSAGE": "Успешно обновлены пользователи { numberOfBulkEditUsers }",
                 "TITLE": "Массовое редактирование { numberOfMembers } пользователей",
-                "ALL_SELECTED_INFO_WITH_COUNT": "Выбрать всех пользователей { numberOfUsers }",
+                "ALL_SELECTED_INFO_WITH_COUNT": "Выбрать всех пользователей {numberOfUsers}",
                 "ENTER_HOURS": "Введите часы",
                 "SUCCESS_SINGLE": "Успешно обновлен 1 пользователь",
                 "TITLE_SINGLE": "Массовое изменение 1 пользователя",
@@ -4892,7 +5040,8 @@
             "DELETE": {
                 "CONFIRM": "Вы уверены, что хотите удалить эту строку?",
                 "INFO_MESSAGE": "Если вы удалите, он также удалит все записи времени с этим проектом / задачей на этой неделе.",
-                "INFO_MESSAGE_PERIOD": "Если вы удалите, он также удалит все временные записи с этим проектом/задачей для этого { period }."
+                "INFO_MESSAGE_PERIOD": "Если вы удалите, будут также удалены все временные записи с этим проектом/задачей для этого { period }.",
+                "DELETE_MESSAGE_PERIOD": "Если вы удалите, он также удалит все временные записи с этим проектом/задачей для этого { period }."
             },
             "ALERT": {
                 "WARNING_MESSAGE": "без обязательных полей."
@@ -4957,6 +5106,11 @@
         },
         "ADD": {
             "TITLE": "Добавить время"
+        },
+        "DELETE": {
+            "TIME_ENTRY": "Вы уверены, что хотите удалить запись?",
+            "TIME_ENTRIES": "Вы уверены, что хотите удалить записи времени { numberOfEntries }?",
+            "SUCCESS_MESSAGE": "Успешно удалено"
         }
     },
     "TRACKER": {
@@ -4985,7 +5139,11 @@
                     "TIMER": "Таймер",
                     "PLACEHOLDER": {
                         "TIMER": "Над чем ты работаешь?"
-                    }
+                    },
+                    "BREAK": "Перерыв",
+                    "BREAK_B": "Перерыв (б)",
+                    "TIMER_MODE": "Режим таймера",
+                    "BREAK_MODE": "Режим перерыва"
                 },
                 "DESCRIPTION": "Добавить описание",
                 "CONTINUE": "Продолжить таймер для этого занятия",
@@ -4993,7 +5151,8 @@
                 "DELETE": {
                     "CONFIRM": "Вы уверены, что хотите удалить { value } записей времени?"
                 },
-                "GROUPS_TOOLTIP": "{ count } { count, plural, =0{} one{} other{ записей времени}} (щелкните для переключения)"
+                "GROUPS_TOOLTIP": "{ count } { count, plural, =0{} one{} other{ записей времени}} (щелкните для переключения)",
+                "MAX_HOURS_ENTERED": "Невозможно сохранить более 999 часов."
             },
             "WEEK_TOTAL": "Всего за неделю:",
             "BULK": {
@@ -5012,7 +5171,8 @@
             "MONTHLY_TOTAL": "Всего за месяц",
             "SEMI_MONTHLY_TOTAL": "Итого за полмесяца",
             "MONTH_TOTAL": "Итого за месяц:",
-            "SEMI_TOTAL": "Итого за полмесяца:"
+            "SEMI_TOTAL": "Итого за полмесяца:",
+            "START_BREAK_TIMER_TOOLTIP": "Запустить таймер перерыва"
         },
         "CURSOR": {
             "POINTER": "указатель"
@@ -5075,8 +5235,14 @@
             "DATE_LOCKED": "Эта дата заблокирована.",
             "ERROR_MISSING_FIELDS_CANT_SAVE": "Невозможно сохранить, отсутствуют поля: { fields }",
             "ERROR_MISSING_FIELD_CANT_SAVE": "Невозможно сохранить, отсутствует поле: { fields }",
-            "ERROR_MISSING_FIELDS_IS_REQUIRED": "{ fields } требуется."
-        }
+            "ERROR_MISSING_FIELDS_IS_REQUIRED": "{ fields } требуется.",
+            "BREAK_CREATE_SUCCESS": "Запись о перерыве создана",
+            "CREATE_SUCCESS_SPLITTING": "Ввод времени был успешно разделен",
+            "ERROR_MISSING_FIELDS_CANT_SPLIT": "Запись времени не может быть разделена. Отсутствуют обязательные поля: { fields }",
+            "ERROR_MISSING_FIELD_CANT_SPLIT": "Запись времени не может быть разделена. Отсутствует обязательное поле: { fields }"
+        },
+        "STOP_BREAK": "Стоп перерыв",
+        "START_BREAK": "Начать перерыв"
     },
     "USER_PROFILE": {
         "UNSUBMIT": "Отменить",
@@ -5511,7 +5677,8 @@
         "UPGRADE_REGIONAL_ADMIN": "Рабочая область заблокирована из-за размещения на региональном сервере. Пожалуйста, добавьте платежную информацию или переключитесь на другую рабочую область.",
         "FIELD_REQUIRED": "требуется",
         "STOP_AT_SPECIFIED_TIME": "Автоматически останавливать таймер в указанное время суток",
-        "STOP_TIME": "Остановить время"
+        "STOP_TIME": "Остановить время",
+        "FORBIDDEN_CHARACTERS": "Вы ввели неправильное значение. Не используйте символы \"<\" и \">\""
     },
     "ENABLE_ALL_INTEGRATIONS": "Вы можете включить все, нажав кнопку «Включить все».",
     "REFRESH": "Обновить",
@@ -5641,7 +5808,9 @@
         "SELECT_BREAK_PROJECT_LABEL": "Выберите перерыв {projectLabel}",
         "SELECT_BREAK_TASK_LABEL": "Выберите перерыв {taskLabel}",
         "DEFAULT_BREAK_ENTITY": "Разрыв по умолчанию { label }",
-        "DEFAULT_ENTITY": "По умолчанию { label }"
+        "DEFAULT_ENTITY": "По умолчанию { label }",
+        "NAME_CONTAINS_SPECIAL_CHAR": "Имя не может содержать символ { symbols }.",
+        "NAME_CONTAINS_SPECIAL_CHARS": "Имя не может содержать символов { symbols }."
     },
     "KIOSK_MEMBER_PIN_NOT_UNIQUE_1": "PIN-код участника не уникален.",
     "KIOSK_MEMBER_PIN_NOT_UNIQUE_2": "Делать",
@@ -5662,8 +5831,8 @@
     "GLOBALSTART": "Начало",
     "GLOBAL_LIMITED_SEAT_LEFT": "осталось ограниченное количество мест.",
     "GLOBAL_LIMITED_SEATS_LEFT": "осталось ограниченное количество мест.",
-    "GLOBAL_REGULAR_SEAT_LEFT": "сиденье осталось.",
-    "GLOBAL_REGULAR_SEATS_LEFT": "мест осталось.",
+    "GLOBAL_REGULAR_SEAT_LEFT": "место слева",
+    "GLOBAL_REGULAR_SEATS_LEFT": "мест осталось",
     "GLOBAL_FULL_SEAT_LEFT": "осталось полное место.",
     "GLOBAL_FULL_SEATS_LEFT": "осталось полное место.",
     "I have read and agree to the": "GLOBAL.TOS_PART1",
@@ -5832,7 +6001,9 @@
         }
     },
     "APPROVALS": {
-        "ARCHIVE_LABEL": "Архив"
+        "ARCHIVE_LABEL": "Архив",
+        "LOCKED_TIME_ENTRY": "Не могу редактировать заблокированные записи.",
+        "LOCKED_EXPENSES": "Невозможно изменить заблокированные расходы. Свяжитесь с вашим администратором для получения дополнительной информации"
     },
     "AUDITLOG": {
         "AUTHORS": "Авторы",
@@ -5894,10 +6065,10 @@
         }
     },
     "ADDON": {
-        "UNINSTALL_LABEL": "Удалить дополнение",
+        "UNINSTALL_LABEL": "Удаление надстройки",
         "INSTALL_LABEL": "Установить дополнение",
         "MANIFEST_URL_LABEL": "URL-адрес манифеста",
-        "UNINSTALL_CONFIRM_MSG": "Вы уверены, что хотите удалить { addonKey }? В зависимости от Срока использования дополнения вы можете потерять данные от него.",
+        "UNINSTALL_CONFIRM_MSG": "Вы уверены, что хотите удалить { addonKey }? Он будет удален из вашего рабочего пространства. В зависимости от условий использования надстройки вы можете потерять данные из нее.",
         "FILTERS": {
             "SHOW_DISABLED_LABEL": "Показать отключено",
             "SHOW_ENABLED_LABEL": "Показать включено"
@@ -5905,7 +6076,8 @@
         "DISABLED_LABEL": "Неполноценный",
         "INSERT_LINK_LABEL": "Вставить ссылку",
         "INSTALL_LOADING_MESSAGE": "Установка дополнения…",
-        "ADDON_SETTINGS_LABEL": "Дополнительные настройки"
+        "ADDON_SETTINGS_LABEL": "Дополнительные настройки",
+        "LOADING_LABEL": "Загрузка аддона"
     },
     "MESSAGES": {
         "ERROR_MISSING_FIELDS_IS_REQUIRED": "{ fields } требуется."
@@ -5922,8 +6094,12 @@
             "TOOLTIP_MSG": "Ваш аккаунт был заблокирован.",
             "MESSAGE_PART_TWO": "Пожалуйста свяжитесь",
             "MESSAGE_PART_THREE": "для дополнительной информации.",
-            "TITLE": "Вы вышли из системы"
-        }
+            "TITLE": "Вы вышли из системы",
+            "SUSPENDED_ACC_MESSAGE_PART_ONE": "Заблокированная учетная запись не может быть активирована.",
+            "SUSPENDED_ACC_TITLE": "Этот аккаунт был заблокирован",
+            "WORKSPACE_MESSAGE_PART_ONE": "Вы вышли из системы, так как ваш { workspaceName } был заблокирован."
+        },
+        "ACCOUNT_SUSPENDED": "Действие этого аккаунта приостановлено"
     },
     "exception": {
         "user": {
@@ -5935,5 +6111,44 @@
             "MESSAGE_PART_ONE": "Заблокированная учетная запись не может быть активирована.",
             "TITLE": "Этот аккаунт был заблокирован"
         }
-    }
+    },
+    "MARKETPLACE": {
+        "ADDONS_LABEL": "Дополнения",
+        "ADDON_SETTINGS_LABEL": "Дополнительные настройки",
+        "INSTALL_ADDON": {
+            "URL_INVALID_MESSAGE": "Укажите действительный URL.",
+            "URL_REQUIRED_MESSAGE": "Пожалуйста, укажите URL"
+        },
+        "ADDON_MESSAGES": {
+            "ADDON_ACTIVATED_LABEL": "Аддон активирован",
+            "ADDON_DEACTIVATED_LABEL": "Аддон деактивирован",
+            "ADDON_STATUS_TOGGLE_FAILED_LABEL": "Не удалось обновить статус",
+            "ADDON_INSTALLED_SUCCESS_LABEL": "Аддон успешно установлен",
+            "ADDON_UNINSTALLED_SUCCESS_LABEL": "Аддон успешно удален",
+            "ADDON_INSTALLED_FAIL_LABEL": "Не удалось установить дополнение"
+        }
+    },
+    "SHARED": {
+        "CURRENCIES": {
+            "EDIT_CURRENCIES": "Изменить валюты",
+            "ENTER_CURRENCY": "Введите валюту",
+            "CANNOT_REMOVE_CURRENCY": "Не могу удалить валюту по умолчанию",
+            "ADD_NEW": "Добавить валюту",
+            "CANNOT_ADD_CURRENCY": "Не может иметь более 10 валют",
+            "ERROR": {
+                "CURRENCY_EXISTS_ERROR_MESSAGE": "Валюта { currency } уже существует",
+                "CURRENCY_TITLE_MAX_LENGTH": "Валюта должна содержать от 1 до 100 символов."
+            },
+            "SUCCESS": {
+                "CURRENCY_SAVED": "Валюта успешно добавлена",
+                "CURRENCY_DELETED": "Валюта успешно удалена",
+                "CURRENCY_UPDATED": "Валюта успешно обновлена"
+            },
+            "DELETE_CURRENCY": "Если вы удалите, все суммы в валюте { currencyName } будут заменены валютой по умолчанию."
+        },
+        "DROPDOWN": {
+            "UPGRADE_TEXT": "на PRO, чтобы изменить валюту"
+        }
+    },
+    "EXTENSION_FORBIDDEN_CHARACTERS": "Вы ввели неправильное значение. Не используйте символы \"<\" и \">\""
 }

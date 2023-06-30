@@ -591,13 +591,13 @@
     "message": "Descrição (obrigatório)"
   },
   "START_STOP_TIME_SHORTCUT": {
-    "message": "Atalho para iniciar / parar o cronômetro"
+    "message": "Atalho para iniciar/parar o cronômetro"
   },
   "DEFAULT_PROJECT_ARCHIVED": {
     "message": "Seu projeto padrão está arquivado."
   },
   "DEFAULT_TASK_DONE": {
-    "message": "Sua tarefa padrão é Concluída, não está mais disponível."
+    "message": "Sua tarefa padrão está Concluída e não está mais disponível."
   },
   "DEFAULT_TASK_DOES_NOT_EXIST": {
     "message": "A tarefa padrão não existe."
@@ -618,7 +618,7 @@
     "message": "Não é possível iniciar a entrada sem projeto, tarefa, descrição ou etiquetas."
   },
   "EDIT_YOUR_TIME_ENTRY": {
-    "message": "Edite sua entrada de tempo."
+    "message": "Por favor, edite sua entrada de tempo."
   },
   "CREATE_TIME_ENTRY_USING_DASHBOARD": {
     "message": "Crie sua entrada de tempo usando o painel ou edite as configurações do seu espaço de trabalho."
@@ -642,16 +642,16 @@
     "message": "Se você usa uma ferramenta hospedada em um domínio personalizado, pode habilitá-la aqui"
   },
   "ENTER_DOMAIN_NAME": {
-    "message": "Insira o nome de domínio no formato 'mydomain.com' e selecione a integração no menu suspenso"
+    "message": "Insira o nome do domínio no formato 'mydomain.com' e selecione a integração no menu suspenso"
   },
   "PORTS_NOT_SUPPORTED": {
-    "message": "Portas não são suportadas"
+    "message": "Portes não são suportados"
   },
   "NO_RECENT_ENTRIES_TO_SHOW": {
     "message": "Nenhuma entrada recente para mostrar"
   },
   "YOU_HAVE_NOT_TRACKED": {
-    "message": "Parece que você não rastreou nenhum momento recentemente"
+    "message": "Parece que você não rastreou nenhum tempo recentemente"
   },
   "GET_ONLINE": {
     "message": "Fique online para ver suas entradas"
@@ -690,7 +690,7 @@
     "message": "Habilitar menu de contexto"
   },
   "IDLE_DETECTION": {
-    "message": "Detecção ociosa"
+    "message": "Detecção de inatividade"
   },
   "DETECT_IDLE_TIME": {
     "message": "Detecta o tempo ocioso se inativo por"
@@ -714,7 +714,7 @@
     "message": "Você deve estar logado para iniciar a entrada da hora"
   },
   "YOU_ALREADY_HAVE_ENTRY_WITHOUT": {
-    "message": "Você já tem uma entrada em andamento sem projeto / tarefa / descrição ou etiquetas"
+    "message": "Você já tem uma entrada em andamento sem projeto/tarefa/descrição ou etiquetas"
   },
   "ENTER_REQUIRED_FIELDS_OR_EDIT_WORKSPACE_SETTINGS": {
     "message": "Insira os campos obrigatórios ou, opcionalmente, edite as configurações do seu espaço de trabalho"
@@ -753,10 +753,10 @@
     "message": "Faça login no subdomínio"
   },
   "RETURN_TO_CLOCKIFY_CLOUD": {
-    "message": "Voltar para Clockify Nuvem"
+    "message": "Voltar para a Nuvem Clockify"
   },
   "CREATE_AN_ACCOUNT": {
-    "message": "Crie a sua conta aqui"
+    "message": "Criar uma conta"
   },
   "NEW_HERE": {
     "message": "Novo aqui"
@@ -1013,6 +1013,27 @@
   "WORKSPACE__TWO_FACTOR__MODAL__ENABLE": {
     "message": "Ativar 2FA"
   },
+  "WORKSPACE__DISABLED_TOOLTIP": {
+    "message": "Este espaço de trabalho está desativado."
+  },
+  "BANNED__INFO_MODAL__TITLE": {
+    "message": "Você foi desconectado"
+  },
+  "BANNED__INFO_MODAL__MESSAGE_PART_ONE": {
+    "message": "Você foi desconectado desde que sua conta foi desativada."
+  },
+  "BANNED__INFO_MODAL__MESSAGE_PART_TWO": {
+    "message": "Por favor entre em contato"
+  },
+  "BANNED__INFO_MODAL__MESSAGE_PART_THREE": {
+    "message": "Para maiores informações."
+  },
+  "BANNED__INFO_MODAL__WORKSPACE_MESSAGE_PART_ONE": {
+    "message": "Você foi desconectado desde que seu { workspaceName } foi suspenso."
+  },
+  "BANNED__ACCOUNT_SUSPENDED": {
+    "message": "Esta conta foi suspensa"
+  },
   "SCREENSHOT_RECORDING": {
     "message": "A gravação de captura de tela está ativada. Este aplicativo não pode fazer capturas de tela."
   },
@@ -1023,7 +1044,7 @@
     "message": "Baixe o aplicativo de gravação de screenshots"
   },
   "AUDIT_LOG__KIOSK__BREAK_TYPE_LABEL": {
-    "message": "Pausa"
+    "message": "Intervalo"
   },
   "UPGRADE_TO_USE_THIS_FEATURE": {
     "message": "Atualize para usar este recurso"
@@ -1034,12 +1055,18 @@
   "UPGRADE_REGIONAL_ADMIN": {
     "message": "Espaço de trabalho bloqueado por estar hospedado no servidor regional. Por favor, adicione informações de pagamento ou troque o workspace."
   },
+  "ACTIVITY_TABS__SCREENSHOTS__NO_SCREENSHOTS_PROMO_BTN": {
+    "message": "Baixe o aplicativo de gravação de tela"
+  },
   "ENTER_REQUIRED_FIEEDS_OR_EDIT_WORKSPACE_SETTINGS": {
     "message": "Insira os campos obrigatórios ou, opcionalmente, edite as configurações do seu espaço de trabalho."
   },
+  "FORBIDDEN_CHARACTERS": {
+    "message": "Você digitou o valor errado. Não use os caracteres \"<\" e \">\""
+  },
   "appName": {
-    "message": "Clockify Rastreador de Tempo",
-    "description": "O título do aplicativo, exibido na loja da web."
+    "message": "Rastreador de Tempo Clockify",
+    "description": "O nome do aplicativo, exibido na loja da web."
   },
   "appDesc": {
     "message": "Monitore o tempo de qualquer lugar na web e melhore a produtividade.",

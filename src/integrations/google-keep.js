@@ -6,7 +6,6 @@ clockifyButton.render(
         var link,
             toolbar = $('.IZ65Hb-INgbqf', elem),
             checkbox = $('.Q0hgme-MPu53c.IZ65Hb-MPu53c.VIpgJd-MPu53c', elem);
-            //description hvata title, a ako nema title onda description
             descSmallBtn = () => {
                 let description = $('.notranslate.IZ65Hb-YPqjbf.fmcmS-x3Eknd.r4nke-YPqjbf:not(.LwH6nd)', elem).textContent;
                 if(description.length == 0){

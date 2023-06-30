@@ -1,89 +1,94 @@
 var aBrowser = chrome || browser;
 var _clockifyPopupDlg;
 var _waitingForResponse = false;
+var _selectors = null;
+var _clockifyShowPostStartPopup = true;
+var documents = window.getAllDocuments();
 
 removeAllButtons();
-
-_clockifyShowPostStartPopup = true;
-aBrowser.storage.local.get(['permanent_showPostStartPopup']).then((res) => {
-	if (res.permanent_showPostStartPopup)
-		_clockifyShowPostStartPopup = JSON.parse(res.permanent_showPostStartPopup);
-	else {
-		aBrowser.storage.local.set({ permanent_showPostStartPopup: "true" });
-	}
-});
+setPostStartPopup();
 
 var clockifyButton = {
-	links: [],
-	observer: null,
-	titleObserver: null,
 	inProgressDescription: '',
 	nextIndex: 0,
-	render: (selector, opts, renderer, mutationSelector) => {
-		if (opts.observe) {
-			if (!clockifyButton.observer) {
-				if (opts.noDebounce) {
-					clockifyButton.observer = new MutationObserver(
-						clockifyButton.callback
+	mutationObserver: {
+		observer: null,
+		allSelectors: [],
+		callback: (mutations) => {
+			for (const item of clockifyButton.mutationObserver.allSelectors) {
+				const { selector, renderer, mutationSelector } = item;
+				if (mutationSelector) {
+					const matches = mutations.filter((mutation) =>
+						mutation.target.matches(mutationSelector)
 					);
-				} else {
-					clockifyButton.observer = new MutationObserver(
-						clockifyDebounce(clockifyButton.callback, 1000)
-					);
+					if (!matches.length) {
+						continue;
+					}
 				}
-				clockifyButton.observer.observe(document, {
-					childList: true,
-					subtree: true,
+				clockifyButton.renderTo(selector, renderer);
+			}
+		},
+
+		start: (selector, opts, renderer, mutationSelector) => {
+			const { mutationObserver } = clockifyButton;
+			if (opts.observe) {
+				if (!mutationObserver.observer) {
+					if (opts.noDebounce) {
+						mutationObserver.observer = new MutationObserver(
+							mutationObserver.callback
+						);
+					} else {
+						mutationObserver.observer = new MutationObserver(
+							clockifyDebounce(mutationObserver.callback, 1000)
+						);
+					}
+
+					documents.forEach((document) => {
+						mutationObserver.observer.observe(document, {
+							childList: true,
+							subtree: true,
+						});
+					});
+				}
+				mutationObserver.allSelectors.push({
+					selector,
+					renderer,
+					mutationSelector,
 				});
 			}
-			clockifyButton.allSelectors.push({
-				selector,
-				renderer,
-				mutationSelector,
-			});
-		}
+		},
+	},
+	observeDescription: (selector) => {
+		if (!selector) return;
+		setInterval(() => {
+			const descriptionToObserve = document.querySelector(selector);
+			const startTimerButton = closestClockifyButton(descriptionToObserve);
+
+			if (!descriptionToObserve || !startTimerButton) return;
+
+			startTimerButton.setAttribute('title', descriptionToObserve.textContent);
+		}, 500);
+	},
+	render: (selector, opts, renderer, mutationSelector, descriptionSelector) => {
+		clockifyButton.mutationObserver.start(
+			selector,
+			opts,
+			renderer,
+			mutationSelector
+		);
+		clockifyButton.observeDescription(descriptionSelector);
 		clockifyButton.renderTo(selector, renderer);
 	},
 	renderTo: (selector, renderer) => {
-		const elements = document.querySelectorAll(selector);
-		if (elements && elements.length > 0) {
-			for (let i = 0; i < elements.length; i++) {
-				elements[i].classList.add('clockify');
-				elements[i].classList.add('clockifyId' + i);
-				renderer(elements[i]);
-			}
-		}
-	},
+		const elements = $$$(selector);
 
-	allSelectors: [],
-	callback: (mutations) => {
-		for (const item of clockifyButton.allSelectors) {
-			const { selector, renderer, mutationSelector } = item;
-			if (mutationSelector) {
-				const matches = mutations.filter(function (mutation) {
-					return mutation.target.matches(mutationSelector);
-				});
-				if (!matches.length) {
-					continue;
-				}
-			}
-			clockifyButton.renderTo(selector, renderer);
-		}
-	},
-
-	disconnectObserver: () => {
-		clockifyButton.observer?.disconnect();
-		clockifyButton.titleObserver?.disconnect();
+		elements.forEach((element, index) => {
+			element.classList.add('clockify', 'clockify' + index);
+			renderer(element, element.ownerDocument);
+		});
 	},
 
 	createButton: (description, project, task) => {
-		// const allContainers = document.querySelectorAll('.clockifyButton');
-		// if (allContainers.length < clockifyButton.nextIndex) {
-		//     clockifyButton.nextIndex = allContainers.length;
-		// } else {
-		//     clockifyButton.nextIndex = 0;
-		// }
-
 		const currIndex = clockifyButton.nextIndex++;
 
 		window.updateButtonProperties(
@@ -103,10 +108,14 @@ var clockifyButton = {
 		aBrowser.storage.local.get(
 			['timeEntryInProgress', 'permanent_appendWebsiteURL'],
 			(result) => {
+				let pipeSeparator = ' | ';
 				if (result.permanent_appendWebsiteURL) {
-					const sufix = `${document.title} | ${window.location.href}`;
+					if (title.includes(' | ')) {
+						pipeSeparator = ' || ';
+					}
+					const sufix = `${document.title} - ${window.location.href}`;
 					if (!title.includes(sufix)) {
-						title += ` | ${sufix}`;
+						title += `${pipeSeparator}${sufix}`;
 					}
 				}
 				const entry = result.timeEntryInProgress;
@@ -119,10 +128,13 @@ var clockifyButton = {
 				} else {
 					clockifyButton.inProgressDescription = null;
 				}
-
-				let active =
+				const active =
 					title &&
-					title === clockifyButton.inProgressDescription?.split(' | ')[0];
+					removeAppendedURL(title, pipeSeparator) ===
+						removeAppendedURL(
+							clockifyButton.inProgressDescription,
+							pipeSeparator
+						);
 				setButtonProperties(button, title, active, currIndex);
 
 				this.setClockifyButtonLinks(button);
@@ -141,11 +153,6 @@ var clockifyButton = {
 			}
 		);
 
-		// button.addEventListener('click', (e) => {
-		//     e.stopPropagation();
-		//     this.buttonClicked(button, options)
-		// });
-
 		return button;
 	},
 
@@ -158,11 +165,10 @@ var clockifyButton = {
 
 	createInput: (options) => {
 		const form = document.createElement('form');
-		form.setAttribute('id', 'clockify-manual-input-form');
 		const input = document.createElement('input');
+		form.setAttribute('id', 'clockify-manual-input-form');
 		form.appendChild(input);
-		input.classList.add('clockify-input');
-		input.classList.add('clockify-input-default');
+		input.classList.add('clockify-input', 'clockify-input-default');
 		input.setAttribute('placeholder', clockifyLocales.ADD_TIME_MANUAL);
 		let cfFieldsRequired = false;
 
@@ -173,6 +179,7 @@ var clockifyButton = {
 					timeEntry: { originalInput: input.value },
 					isPopupOpen: false,
 					manualMode: true,
+					inputElement: input,
 				});
 			},
 			{ once: true }
@@ -240,9 +247,10 @@ var clockifyButton = {
 			);
 			let title = timeEntryOptionsInvoked.description;
 			if (appendWebsiteURL) {
-				const sufix = `${document.title} | ${window.location.href}`;
+				const pipeSeparator = title.includes(' | ') ? ' || ' : ' | ';
+				const sufix = `${document.title} - ${window.location.href}`;
 				if (!title.includes(sufix)) {
-					title += ` | ${sufix}`;
+					title += `${pipeSeparator}${sufix}`;
 				}
 				timeEntryOptionsInvoked.description = title;
 			}
@@ -251,12 +259,12 @@ var clockifyButton = {
 				const m = time.match(/(?=.{2,})^(\d+d)?\s*(\d+h)?\s*(\d+m)?$/);
 				if (m) {
 					input.value = clockifyLocales.SUBMITTING;
-					var totalMins =
+					const totalMins =
 						8 * 60 * parseInt(m[1] || 0, 10) +
 						60 * parseInt(m[2] || 0, 10) +
 						parseInt(m[3] || 0, 10);
-					aBrowser.storage.local.get(['wsSettings'], (result) => {
-						let { wsSettings } = result;
+					aBrowser.storage.local.get(['wsSettings'], async (result) => {
+						const { wsSettings } = result;
 						if (
 							(wsSettings.forceDescription &&
 								!timeEntryOptionsInvoked.description) ||
@@ -266,59 +274,54 @@ var clockifyButton = {
 							cfFieldsRequired
 						) {
 							if (timeEntryOptionsInvoked.projectName) {
-								aBrowser.runtime
-									.sendMessage({
-										eventName: 'generateManualEntryData',
-										options: timeEntryOptionsInvoked,
-									})
-									.then((response) => {
-										let timeEntry = {
-											...timeEntryOptionsInvoked,
-											totalMins,
-											originalInput: time,
-											projectId:
-												!response.task?.id && wsSettings.forceTasks
-													? null
-													: response.project?.id,
-											taskId: response.task?.id,
-											billable: response.project?.billable,
-											tags: response.tags,
-											tagIds: response.tags?.map((tag) => tag.id) ?? [],
-											project: response.project,
-											task: response.task,
-										};
-										// OpenPostStartPopupDlg(timeEntry, "", true);
-										window.updateButtonProperties(null, {
-											timeEntry,
-											manualMode: true,
-											isPopupOpen: true,
-										});
-										input.value = '';
-									});
+								const response = await aBrowser.runtime.sendMessage({
+									eventName: 'generateManualEntryData',
+									options: timeEntryOptionsInvoked,
+								});
+
+								const timeEntry = {
+									...timeEntryOptionsInvoked,
+									totalMins,
+									originalInput: time,
+									projectId:
+										!response.task?.id && wsSettings.forceTasks
+											? null
+											: response.project?.id,
+									taskId: response.task?.id,
+									billable: response.project?.billable,
+									tags: response.tags,
+									tagIds: response.tags?.map((tag) => tag.id) ?? [],
+									project: response.project,
+									task: response.task,
+								};
+								window.updateButtonProperties(null, {
+									timeEntry,
+									manualMode: true,
+									isPopupOpen: true,
+									inputElement: input,
+								});
+								input.value = '';
 							} else {
-								aBrowser.runtime
-									.sendMessage({
-										eventName: 'getDefaultProjectTask',
-									})
-									.then((response) => {
-										let timeEntry = {
-											...timeEntryOptionsInvoked,
-											totalMins,
-											originalInput: time,
-											projectId: response.projectDB?.id,
-											taskId: response.taskDB?.id,
-											billable: response.projectDB?.billable,
-											project: response.projectDB,
-											task: response.taskDB,
-										};
-										// OpenPostStartPopupDlg(timeEntry, "", true);
-										window.updateButtonProperties(null, {
-											timeEntry,
-											manualMode: true,
-											isPopupOpen: true,
-										});
-										input.value = '';
-									});
+								const response = await aBrowser.runtime.sendMessage({
+									eventName: 'getDefaultProjectTask',
+								});
+								const timeEntry = {
+									...timeEntryOptionsInvoked,
+									totalMins,
+									originalInput: time,
+									projectId: response.projectDB?.id,
+									taskId: response.taskDB?.id,
+									billable: response.projectDB?.billable,
+									project: response.projectDB,
+									task: response.taskDB,
+								};
+								window.updateButtonProperties(null, {
+									timeEntry,
+									manualMode: true,
+									isPopupOpen: true,
+									inputElement: input,
+								});
+								input.value = '';
 							}
 						} else {
 							inputMessage(input, clockifyLocales.SUBMITTING);
@@ -336,7 +339,6 @@ var clockifyButton = {
 										inputMessage(input, 'Error: ' + (response ?? ''), 'error');
 									} else if (typeof response === 'string') {
 										alert(response);
-										//inputMessage(input, "Error: " + (response??''), "error");
 									} else if (response.status !== 201) {
 										if (response.status === 400) {
 											// project/task/etc. can be configured to be mandatory; this can result in a code 400 during
@@ -377,36 +379,61 @@ var clockifyButton = {
 	},
 };
 
-function objectFromParams(description, project, task) {
-	if (typeof description === 'object') {
-		// mode: only one parameter that contains the options
-		return description;
-	} else {
-		// legacy mode: multiple parameters
-		return {
-			description: description || '',
-			projectName: project || null,
-			taskName: task || null,
-			billable: null,
-		};
+function objectFromParams(first, second, third) {
+	const isFirstArgumentObject = typeof first === 'object';
+	const buttonOptions = {
+		description: first || '',
+		projectName: second || null,
+		taskName: third || null,
+		billable: null,
+	};
+
+	return isFirstArgumentObject ? first : buttonOptions;
+}
+
+function $(selector, context = document) {
+	return context.querySelector(selector);
+}
+
+function $$(selector, context = document) {
+	return context.querySelectorAll(selector);
+}
+
+function $$$(selector, contexts = documents) {
+	return contexts
+		.map((context) => context.querySelectorAll(selector))
+		.map((nodeList) => Array.from(nodeList))
+		.flat();
+}
+
+function text(selector, context) {
+	return $(selector, context)?.textContent?.trim();
+}
+
+function timeout({ milliseconds }) {
+	return new Promise((resolve) => setTimeout(resolve, milliseconds));
+}
+
+async function getSelectors(integrationName, viewName, selectorsName) {
+	if (!_selectors) {
+		const response = await aBrowser.storage.local.get(['integrationSelectors']);
+
+		const { integrationSelectors } = response;
+
+		_selectors = integrationSelectors;
 	}
-}
 
-function $(s, elem) {
-	elem = elem || document;
-	return elem.querySelector(s);
-}
-
-function $$(s, elem) {
-	elem = elem || document;
-	return elem.querySelectorAll(s);
+	return selectorsName
+		? _selectors[integrationName][viewName][selectorsName]
+		: viewName
+		? _selectors[integrationName][viewName]
+		: integrationName
+		? _selectors[integrationName]
+		: _selectors;
 }
 
 function invokeIfFunction(trial) {
-	if (trial instanceof Function) {
-		return trial();
-	}
-	return trial;
+	return trial instanceof Function ? trial() : trial;
 }
 
 function objInvokeIfFunction(obj) {
@@ -417,68 +444,67 @@ function objInvokeIfFunction(obj) {
 	return result;
 }
 
-function createTag(name, className, textContent) {
+function createTag(name, className = '', textContent = '') {
 	const tag = document.createElement(name);
-	tag.className = className;
 
-	if (textContent) {
-		tag.textContent = textContent;
-	}
+	tag.className = className;
+	tag.textContent = textContent;
 
 	return tag;
+}
+
+function removeAppendedURL(text, separator) {
+	return text?.split(separator)[0];
+}
+
+function closestClockifyButton(
+	rootElement,
+	clockifyButtonSelector = '.clockifyButton'
+) {
+	let element = rootElement;
+	while (element) {
+		const clockifyButton = element.querySelector(clockifyButtonSelector);
+		if (clockifyButton) {
+			return clockifyButton;
+		}
+
+		element = element.parentElement;
+	}
+	return null;
 }
 
 function inputMessage(input, msg, type, clearInput = false) {
 	input.readOnly = true;
 	const oldValue = input.value;
-	input.classList.remove('clockify-input-default');
-	input.classList.remove('clockify-input-error');
-	input.classList.remove('clockify-input-success');
+	const inputClasses = [
+		'clockify-input-default',
+		'clockify-input-error',
+		'clockify-input-success',
+	];
+	input.classList.remove(...inputClasses);
 	input.classList.add('clockify-input-' + type);
 	input.value = msg;
 
 	setTimeout(() => {
 		input.value = clearInput ? '' : oldValue;
-		input.classList.remove('clockify-input-default');
-		input.classList.remove('clockify-input-error');
-		input.classList.remove('clockify-input-success');
+		input.classList.remove(...inputClasses);
 		input.classList.add('clockify-input-default');
 		input.readOnly = false;
 	}, 1500);
 }
 
 function setButtonProperties(button, title, active, buttonId = 0) {
-	// while(button.firstChild) {
-	//     button.removeChild(button.firstChild)
-	// }
-
-	// const span = document.createElement('span');
 	button.title = title;
-	button.classList.add('clockifyButton');
-	button.classList.add('clockifyButtonId' + buttonId);
+	button.classList.add('clockifyButton', 'clockifyButtonId' + buttonId);
 
 	if (active) {
-		// button.classList.remove('clockify-button-inactive');
-		// button.classList.add('clockify-button-active');
-		// button.innerHTML = getActiveIcon();
 		if (!button.classList.contains('small')) {
-			// span.innerHTML = clockifyLocales.STOP_TIMER;
-			// span.classList.remove('clockify-button-inactive-span');
-			// span.classList.add('clockify-button-active-span');
-			// button.appendChild(span);
 			button.setAttribute('id', 'clockifyButton');
 		} else {
 			button.setAttribute('id', 'clockifySmallButton');
 		}
 	} else {
-		// button.classList.remove('clockify-button-active');
-		// button.classList.add('clockify-button-inactive');
-		// button.innerHTML = getInactiveIcon();
 		if (!button.classList.contains('small')) {
-			// span.innerHTML = clockifyLocales.START_TIMER;
-			// span.classList.remove('clockify-button-active-span');
-			// span.classList.add('clockify-button-inactive-span');
-			// button.appendChild(span);
 			button.setAttribute('id', 'clockifyButton');
 		} else {
 			button.setAttribute('id', 'clockifySmallButton');
@@ -502,26 +528,36 @@ function updateButtonOnProgressChanged(timeEntry) {
 	const { newValue: timeEntryInProgress, oldValue: oldTimeEntryValue } =
 		timeEntry;
 
-	let button;
 	clockifyButton.inProgressDescription =
 		timeEntryInProgress && timeEntryInProgress.id
 			? timeEntryInProgress.description
 			: '';
 
-	const allButtons = document.querySelectorAll('.clockifyButton');
-	for (let i = 0; i < allButtons.length; i++) {
-		button = allButtons[i];
+	const allButtons = $$$('.clockifyButton');
+
+	allButtons.forEach((button) => {
 		const buttonId = button.className.match(/clockifyButtonId(\d+)/)[1];
-		let title = button.title || button.dataset.title; // fix for Zoho Desk bug with disappearing title atributte
+		const title = button.title || button.dataset.title; // fix for Zoho Desk bug with disappearing title atributte
+		let pipeSeparator = ' | ';
+		if (title?.includes(' | ')) pipeSeparator = ' || ';
+		const titleWoURL = removeAppendedURL(title, pipeSeparator);
+		const currentEntryDescriptionWoURL = removeAppendedURL(
+			timeEntryInProgress?.description,
+			pipeSeparator
+		);
+		const previousEntryDescriptionWoURL = removeAppendedURL(
+			oldTimeEntryValue?.description,
+			pipeSeparator
+		);
+
 		const active =
-			timeEntryInProgress &&
-			title?.split(' | ')[0] ===
-				timeEntryInProgress.description.split(' | ')[0];
-		if (
-			title?.split(' | ')[0] ===
-				timeEntryInProgress?.description.split(' | ')[0] ||
-			title?.split(' | ')[0] === oldTimeEntryValue?.description.split(' | ')[0]
-		) {
+			timeEntryInProgress && titleWoURL === currentEntryDescriptionWoURL;
+
+		const titleMatchesCurrentOrPreviousEntryDescription =
+			titleWoURL === currentEntryDescriptionWoURL ||
+			titleWoURL === previousEntryDescriptionWoURL;
+
+		if (titleMatchesCurrentOrPreviousEntryDescription) {
 			console.count('updateButtonState');
 			this.setButtonProperties(
 				button,
@@ -532,21 +568,23 @@ function updateButtonOnProgressChanged(timeEntry) {
 		}
 
 		if (button.onEntryChanged) button.onEntryChanged(timeEntryInProgress);
-	}
+	});
 }
 
 async function hideClockifyButtonLinks() {
-	const styles =
-		'#clockifyButton,#clockify-manual-input-form{ display: none !important; }';
-	const styleSheet = document.createElement('style');
-	styleSheet.innerText = styles;
-	document.head.appendChild(styleSheet);
+	const css = `
+			#clockifyButton, #clockify-manual-input-form { 
+				display: none !important; 
+			}
+		`;
+	const style = document.createElement('style');
+
+	style.innerText = css;
+	document.head.appendChild(style);
 }
 
 function setClockifyButtonLinks(button) {
-	document.clockifyButtonLinks = document.clockifyButtonLinks
-		? document.clockifyButtonLinks
-		: [];
+	document.clockifyButtonLinks = document.clockifyButtonLinks || [];
 	document.clockifyButtonLinks.push(button);
 }
 
@@ -597,12 +635,10 @@ if (!window.clockifyListeners) {
 				}
 			}
 		},
-		clockifyChanges: function (e) {
+		clockifyChanges: (e) => {
 			const divPopupDlg = document.getElementById('divClockifyPopupDlg');
 			if (e.target && e.target.id === 'txtCustomFieldLinkModal') {
-				document
-					.querySelector('.clockify-save')
-					.classList.remove('clockify-save--disabled');
+				$('.clockify-save').classList.remove('clockify-save--disabled');
 				e.stopPropagation();
 				e.preventDefault();
 			} else if (divPopupDlg && divPopupDlg.contains(e.target)) {
@@ -611,7 +647,7 @@ if (!window.clockifyListeners) {
 				e.preventDefault();
 			}
 		},
-		clockifyRemovePopupDlg: function (e) {
+		clockifyRemovePopupDlg: (e) => {
 			const divPopupDlg = document.getElementById('divClockifyPopupDlg');
 			if (divPopupDlg && !divPopupDlg.contains(e.target)) {
 				const divProjectDropDownPopup = document.getElementById(
@@ -629,27 +665,32 @@ if (!window.clockifyListeners) {
 				clockifyDestroyPopupDlg();
 			}
 		},
-		clockifyTrackResize: function () {
+		clockifyTrackResize: () => {
 			if (_clockifyPopupDlg) clockifyRepositionDropDown();
 		},
-		clockifyTrackScroll: function () {
+		clockifyTrackScroll: () => {
 			if (_clockifyPopupDlg) clockifyRepositionDropDown();
 		},
 	};
 }
 
 function removeAllButtons(wrapperClass) {
-	document
-		.querySelectorAll(
-			wrapperClass || '.clockifyButton, #clockify-manual-input-form'
-		)
-		.forEach((el) => {
-			el.parentNode.removeChild(el);
-		});
+	const buttons = $$$(
+		wrapperClass || '.clockifyButton, #clockify-manual-input-form'
+	);
+	const divs = $$$('.clockify');
 
-	document.querySelectorAll('.clockify').forEach((el) => {
-		el.classList.remove('clockify');
-	});
+	buttons.forEach((button) => button.parentNode.removeChild(button));
+	divs.forEach((div) => div.classList.remove('clockify'));
+}
+
+async function setPostStartPopup() {
+	const { permanent_showPostStartPopup: showPostStartPopup } =
+		await aBrowser.storage.local.get(['permanent_showPostStartPopup']);
+
+	if (showPostStartPopup)
+		_clockifyShowPostStartPopup = JSON.parse(showPostStartPopup);
+	else aBrowser.storage.local.set({ permanent_showPostStartPopup: 'true' });
 }
 
 function clockifyDestroyPopupDlg() {
@@ -699,8 +740,7 @@ function clockifyRepositionDropDown() {
 			_clockifyTagList.repositionDropDown();
 		} else {
 			// custom fields popups
-			if (_clockifyPopupDlg.repositionDropDownCF()) {
-			}
+			_clockifyPopupDlg.repositionDropDownCF();
 		}
 	}
 }
@@ -719,13 +759,12 @@ function onChangedListener(changes) {
 		aBrowser.storage.local.get(['token'], (result) => {
 			if (!result.token) {
 				this.hideClockifyButtonLinks();
-			} else {
 			}
 		});
 	}
 
 	if (changedItems.find((item) => item === 'permanent_showPostStartPopup')) {
-		aBrowser.storage.local.get(['[permanent_showPostStartPopup'], (result) => {
+		aBrowser.storage.local.get(['permanent_showPostStartPopup'], (result) => {
 			_clockifyShowPostStartPopup =
 				result.permanent_showPostStartPopup === 'true' ? true : false;
 		});

@@ -77,7 +77,10 @@
 .no-entries-img {
 	width: 299px;
 	height: 85px;
-	content: url('../assets/images/clockify_illustration.png');
+	background-image: url('../assets/images/clockify_illustration.png');
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center;
 }
 
 .no-entries {

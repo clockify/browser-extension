@@ -1,80 +1,84 @@
-// LEADS
-clockifyButton.render(
-	'[data-testid="SidebarLeadTitle"]:not(.clockify)',
-	{ observe: true },
-	function (elem) {
-		var link, description;
-		description = $(
-			'.EditFieldstyles__ComponentReadWrapper-sc-lwe1gw-0',
-			elem
-		).textContent;
-		link = clockifyButton.createButton(description);
-		link.style.display = 'block';
-		link.style.paddingTop = '0';
-		link.style.paddingBottom = '0';
-		link.style.marginBottom = '10px';
-		link.style.marginTop = '10px';
-		link.style.cursor = 'pointer';
-		elem.appendChild(link);
-	}
-);
+(async () => {
+	const selectors = await getSelectors('pipedrive');
 
-// DEALS
-clockifyButton.render(
-	'.actionsContent:not(.clockify)',
-	{ observe: true },
-	function (elem) {
-		var link, description;
-		description = $('.descriptionHead h1 a', elem).textContent;
-		link = clockifyButton.createButton(description);
-		link.style.display = 'block';
-		link.style.paddingTop = '0';
-		link.style.paddingBottom = '0';
-		link.style.marginBottom = '10px';
-		link.style.marginTop = '10px';
-		link.style.cursor = 'pointer';
-		link.style.maxWidth = 'fit-content';
-		elem.appendChild(link);
-	}
-);
+	// Lead View
+	clockifyButton.render(
+		selectors.leadView.hanger,
+		{ observe: true },
+		async (elem) => {
+			const description = () =>
+				$(selectors.leadView.leadName, elem).textContent;
 
-// ACTIVITIES
-clockifyButton.render(
-	'.cui4-modal__wrap .cui4-modal__header:not(.clockify)',
-	{ observe: true },
-	function (elem) {
-		setTimeout(function () {
-			var link, description;
-			description = $('.cui4-input__box [data-test="activity-subject"]').value;
-			link = clockifyButton.createButton(description);
-			link.style.position = 'absolute';
-			link.style.paddingTop = '0';
-			link.style.paddingBottom = '0';
-			link.style.marginBottom = '10px';
+			const link = clockifyButton.createButton({ description });
+
 			link.style.marginTop = '10px';
-			link.style.cursor = 'pointer';
-			link.style.right = '40px';
-			link.style.top = '2px';
-			elem.appendChild(link);
-		}, 500);
-	}
-);
 
-// CONTACTS
-clockifyButton.render(
-	'.detailView .content .spacer:not(.clockify)',
-	{ observe: true },
-	function (elem) {
-		var link, description;
-		description = document.title.replace('- contact details', '');
-		link = clockifyButton.createButton(description);
-		link.style.display = 'block';
-		link.style.paddingTop = '0';
-		link.style.paddingBottom = '0';
-		link.style.marginBottom = '10px';
-		link.style.marginTop = '10px';
-		link.style.cursor = 'pointer';
-		link.style.maxWidth = 'fit-content';
-		elem.appendChild(link);
-	}
-);
+			elem.append(link);
+		}
+	);
+
+	// Deal View
+	clockifyButton.render(
+		selectors.dealView.hanger,
+		{ observe: true },
+		async (elem) => {
+			const description = () =>
+				$(selectors.dealView.dealName, elem).textContent;
+
+			const link = clockifyButton.createButton({ description });
+
+			elem.style.display = 'flex';
+			elem.style.alignItems = 'center';
+			elem.style.justifyContent = 'space-between';
+
+			link.style.marginLeft = '10px';
+
+			elem.append(link);
+		}
+	);
+
+	// Activity View
+	clockifyButton.render(
+		selectors.activityView.hanger,
+		{ observe: true },
+		async (elem) => {
+			const description = () => $(selectors.activityView.cardTitle).textContent;
+
+			const link = clockifyButton.createButton({ description });
+
+			link.style.position = 'absolute';
+			link.style.left = '60px';
+
+			$('div:first-child', elem).after(link);
+
+			const pipedriveSaveButton = $('[data-test="save-activity-button"]');
+
+			pipedriveSaveButton.addEventListener('click', () =>
+				setTimeout(() => {
+					const clockifyButton = $('#clockifyButton');
+					const newDescription = $(
+						selectors.activityView.cardTitle
+					).textContent;
+
+					clockifyButton.setAttribute('title', newDescription);
+				}, 500)
+			);
+		}
+	);
+
+	// Contact View
+	clockifyButton.render(
+		selectors.contactView.hanger,
+		{ observe: true },
+		async (elem) => {
+			const description = () =>
+				document.title.replace(' - contact details', '');
+
+			const link = clockifyButton.createButton({ description });
+
+			link.style.margin = '10px';
+
+			elem.append(link);
+		}
+	);
+})();

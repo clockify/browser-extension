@@ -1,92 +1,187 @@
-// Basecamp Next
-clockifyButton.render(
-	'section.todos li.todo:not(.clockify)',
-	{ observe: true },
-	(elem) => {
-		var link,
-			behavior = 'hover_content',
-			container = $('.wrapper', elem),
-			spanTag,
-			projectFunc;
-		if (container === null) {
-			return;
-		}
+// Name 			| Sign up URL 										| URL pattern
+// Basecamp Classic | https://signup.37signals.com/basecamp/free/ 		| *://*.basecamphq.com/*
+// Basecamp 2 		| https://billing.37signals.com/bcx/trial/signup/ 	| *://basecamp.com/*
+// Basecamp 4 		| https://basecamp.com/pricing 						| *://*.basecamp.com/*
 
-		projectFunc = function () {
-			var p = $('.project > title') || $('.project > header > h1 > a');
-			return p ? p.textContent : 'aaaaaaa';
-		};
-		link = clockifyButton.createSmallButton(
-			$('.content_for_perma', elem).textContent,
-			projectFunc
-		);
+(() => {
+	const currentUrl = location.hostname;
+	const currentUrlParts = currentUrl.split('.').length;
+	const basecampVersion = currentUrl.includes('basecamphq')
+		? 'CLASSIC'
+		: currentUrlParts === 2
+		? '2'
+		: '4';
 
-		spanTag = document.createElement('span');
-		container.appendChild(spanTag.appendChild(link));
-	}
-);
+	if (basecampVersion === 'CLASSIC') {
+		addCustomCss();
 
-// Basecamp Classic
-clockifyButton.render(
-	'.items_wrapper .item > .content:not(.clockify)',
-	{ observe: true },
-	(elem) => {
-		var link,
-			behavior = 'selectable_target',
-			spanTag;
+		clockifyButton.render(
+			'.item .menu_container:not(.clockify)',
+			{ observe: true },
+			(elem) => {
+				const description = () => $('span.content', elem).textContent.trim();
+				const projectName = () =>
+					$('#Header h1').innerHTML.split('<')[0].trim();
 
-		link = clockifyButton.createButton(
-			elem.querySelector('span.content > span').textContent.trim(),
-			$('.project')
-				? ($('.project > title') || $('.project > header > h1 > a')).textContent
-				: ''
-		);
-		link.style.marginLeft = '150px';
+				const link = clockifyButton.createButton({
+					description,
+					projectName,
+					small: true,
+				});
 
-		link.setAttribute('data-behavior', '');
-		link.addEventListener('click', function (e) {
-			if (link.getAttribute('data-behavior') === '') {
-				link.setAttribute('data-behavior', behavior);
-			} else {
-				link.setAttribute('data-behavior', '');
+				elem.style.display = 'flex';
+				elem.style.alignItems = 'center';
+
+				link.style.marginLeft = '15px';
+
+				elem.append(link);
 			}
-		});
-
-		spanTag = document.createElement('span');
-		$('.content', elem).appendChild(spanTag.appendChild(link));
+		);
 	}
-);
 
-// Basecamp 3
-clockifyButton.render(
-	'.todos li.todo:not(.clockify):not(.completed)',
-	{ observe: true },
-	(elem) => {
-		let link,
-			project,
-			nav,
-			description,
-			header,
-			article,
-			parent = $('.checkbox__content', elem),
-			root = $('main[id="main-content"]');
-		description = parent.childNodes[1].textContent.trim();
-		nav = $('nav > h1 > div', root);
-		header = $('header > div > h1', root);
-		article = $('article', root).childNodes[5];
+	if (basecampVersion === '2') {
+		clockifyButton.render(
+			'.todolists .todo span.wrapper:not(.clockify)',
+			{ observe: true },
+			(elem) => {
+				const todo = $('span.content', elem);
 
-		if (nav) {
-			project = $('a', nav.childNodes[3]).textContent;
-		} else if (header) {
-			project = header.textContent;
-		} else if (article) {
-			project = $('div > span > a', article).textContent;
-		} else {
-			project = '';
-		}
+				const description = () => $('span', todo).textContent.trim();
+				const projectName = () =>
+					$('h1.field')?.textContent?.trim() ||
+					$('header h1 a')?.textContent?.trim();
 
-		link = clockifyButton.createSmallButton(description, project.trim());
-		link.style.marginLeft = '150px';
-		parent.appendChild(link);
+				const link = clockifyButton.createButton({
+					description,
+					projectName,
+					small: true,
+				});
+
+				elem.style.display = 'flex';
+				elem.style.alignItems = 'center';
+
+				link.style.margin = '0 15px';
+
+				todo.after(link);
+			}
+		);
 	}
-);
+
+	if (basecampVersion === '4') {
+		// Task in list
+		clockifyButton.render(
+			'.todolist .todo:not(.clockify):not(.completed)',
+			{ observe: true },
+			(elem) => {
+				const todo = $('.checkbox .checkbox__content', elem);
+
+				const description = () => $('a', todo).textContent.trim();
+				const projectName = () =>
+					$('[data-breadcrumbs-target="link"]')?.textContent?.trim() ||
+					$('.latest-activity__project')?.textContent?.trim();
+
+				const link = clockifyButton.createButton({
+					description,
+					projectName,
+					small: true,
+				});
+
+				const todoRow = $('.todo__header') ? todo : elem;
+
+				todoRow.style.display = 'flex';
+				todoRow.style.alignItems = 'center';
+
+				link.style.margin = '0 15px';
+
+				$('*:first-child', todo).after(link);
+			}
+		);
+
+		// Card in list
+		clockifyButton.render(
+			'.kabanlist .kanban-card:not(.clockify)',
+			{ observe: true },
+			(elem) => {
+				const description = () =>
+					$('.checkbox__content a', elem).textContent.trim();
+
+				const link = clockifyButton.createButton({
+					description,
+					small: true,
+				});
+
+				link.style.margin = '0 15px';
+
+				$('.checkbox__content', elem).append(link);
+			}
+		);
+
+		// Card Table
+		clockifyButton.render(
+			'#kanban_cards .kanban-card__wrap:not(.clockify)',
+			{ observe: true },
+			(card) => {
+				card.classList.add('clockify-trello-card');
+				card.addEventListener('mouseover', () => {
+					const description = () =>
+						$('.kanban-card__title', card).textContent.trim();
+					const projectName = () => $('strong a')?.textContent?.trim();
+
+					const link = clockifyButton.createButton({
+						description,
+						projectName,
+						small: true,
+					});
+
+					link.style.position = 'absolute';
+					link.style.right = '10px';
+					link.style.bottom = '10px';
+					link.style.zIndex = '9999';
+
+					card.append(link);
+				});
+
+				card.style.minHeight = '70px';
+			}
+		);
+
+		// Single Card
+		clockifyButton.render(
+			'#card-details .checkbox:not(.clockify)',
+			{ observe: true },
+			(cardHeader) => {
+				const description = () =>
+					$('.todo__title', cardHeader).textContent.trim();
+				const projectName = () =>
+					$('.playground-project-breadcrumb a')?.textContent?.trim() ||
+					$('.recording-breadcrumb strong a')?.textContent?.trim();
+
+				const link = clockifyButton.createButton({
+					description,
+					projectName,
+					small: true,
+				});
+
+				link.style.position = 'absolute';
+				link.style.left = '100px';
+				link.style.top = '31px';
+
+				cardHeader.prepend(link);
+			}
+		);
+	}
+})();
+
+function addCustomCss() {
+	if ($('.clockify-custom-style')) return;
+
+	const css = `
+			.clockify-integration-popup {
+				text-align: initial !important;
+			}
+		`;
+
+	const style = createTag('style', 'clockify-custom-style', css);
+
+	document.head.append(style);
+}

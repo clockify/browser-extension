@@ -1,8 +1,27 @@
 class UserService extends ClockifyService {
 	static async getUser() {
 		const apiEndpoint = await this.apiEndpoint;
-		const endPoint = `${apiEndpoint}/v1/user`;
+		const jwt = await localStorage.getItem('token');
+		const userId = this.extractUserFromToken(jwt);
+		const endPoint = `${apiEndpoint}/users/${userId}`;
 		return await this.apiCall(endPoint);
+	}
+
+	static extractUserFromToken(token) {
+		const base64Url = token.split('.')[1]; // Split the token into an array and get the second element
+		const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/'); // Replace URL-safe base64 with regular base64
+		const jsonPayload = decodeURIComponent(
+			atob(base64)
+				.split('')
+				.map(function (c) {
+					return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+				})
+				.join('')
+		);
+
+		const payload = JSON.parse(jsonPayload);
+		const sub = payload.sub; // This is the 'sub' property
+		return sub;
 	}
 
 	static async getAndStoreUser() {
@@ -66,5 +85,15 @@ class UserService extends ClockifyService {
 		const saveWorkspaceUrl = `${apiEndpoint}/users/${userId}/defaultWorkspace/${workspaceId}`;
 
 		return await this.apiCall(saveWorkspaceUrl, 'POST', '');
+	}
+
+
+	// we only use this because navigator.onLine is not reliable
+	// and if it says we are offline, we are not sure if we are really offline
+	// so we use this to check if we are really offline
+	static async checkInternetConnection() {
+		const apiEndpoint = await this.apiEndpoint;
+		const endPoint = `${apiEndpoint}/health`;
+		return await this.apiCall(endPoint);
 	}
 }

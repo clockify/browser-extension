@@ -111,21 +111,6 @@
 	}
 }
 
-.header-sync {
-	display: inline-block;
-	width: 20px;
-	height: 18px;
-	margin-right: 15px;
-	cursor: pointer;
-	background-image: url('../assets/images/sync.png');
-
-	&:hover {
-		width: 20px;
-		height: 18px;
-		background-image: url('../assets/images/sync-hover.png');
-	}
-}
-
 .debug-info-online {
 	background: green;
 }

@@ -96,16 +96,12 @@ aBrowser.notifications.onButtonClicked.addListener(buttonClickedListener);
 aBrowser.notifications.onClicked.addListener(notificationClickedListener);
 aBrowser.notifications.onClosed.addListener(notificationClosedListener);
 
-function createNotification(notificationId, notificationOptions, isAudioOn) {
+function createNotification(notificationId, notificationOptions) {
 	aBrowser.notifications.create(
 		notificationId,
 		notificationOptions,
 		(callback) => {}
 	);
-
-	if (isAudioOn) {
-		this.audioNotification();
-	}
 }
 
 function audioNotification() {

@@ -124,7 +124,7 @@ class ProjectItem extends React.Component {
 
 		return (
 			<div>
-				<ul className="project-item" title={title}>
+				<ul className="project-item" title={title} data-pw={`project-item-${this.props.projectItemIndex}`}>
 					<li
 						className="project-item-dot"
 						style={{ background: project.color }}

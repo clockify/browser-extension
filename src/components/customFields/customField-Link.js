@@ -4,7 +4,12 @@ import { useOnClickOutside } from './useOnClickOutside';
 import { getBrowser } from '../../helpers/browser-helper';
 import locales from '../../helpers/locales';
 
-const CustomFieldLink = ({ cf, updateValue, setIsValid }) => {
+const CustomFieldLink = ({
+	cf,
+	updateValue,
+	setIsValid,
+	cfContainsWrongChars,
+}) => {
 	const [
 		{
 			id,
@@ -32,9 +37,13 @@ const CustomFieldLink = ({ cf, updateValue, setIsValid }) => {
 		const val = e.target.value;
 		setIsValid({ id: id, isValid: !(required && !val) });
 		setValueStay(val);
+		const pattern = /<[^>]+>/;
+		const isCustomFieldContainsWrongChars = pattern.test(val);
+		cfContainsWrongChars({ id, isCustomFieldContainsWrongChars });
 	};
 
-	const storeStay = () => {
+	const storeStay = (e) => {
+		e.stopPropagation();
 		setValue(valueStay);
 		manualMode && updateValue(id, valueStay);
 		// handleChangeDelayed.current(valueStay);
@@ -62,6 +71,10 @@ const CustomFieldLink = ({ cf, updateValue, setIsValid }) => {
 		setValue(valueTemp);
 		setValueStay(valueTemp);
 		setModalOpen(false);
+
+		const pattern = /<[^>]+>/;
+		const isCustomFieldContainsWrongChars = pattern.test(valueTemp);
+		cfContainsWrongChars({ id, isCustomFieldContainsWrongChars });
 	};
 
 	const isNotValid = required && !value;
@@ -170,7 +183,9 @@ const CustomFieldLink = ({ cf, updateValue, setIsValid }) => {
 				)}
 			</div>
 			{isNotValid && (
-				<p className="field-required-message">*{cf.wsCustomField.name} {locales.FIELD_REQUIRED}</p>
+				<p className="field-required-message">
+					*{cf.wsCustomField.name} {locales.FIELD_REQUIRED}
+				</p>
 			)}
 		</>
 	);

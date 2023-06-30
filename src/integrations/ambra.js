@@ -1,26 +1,53 @@
-// List view, kanban view, task modal
-clockifyButton.render(
-	'.task-modal:not(.clockify), .task-container:not(.clockify)',
-	{ observe: true },
-	(elem) => {
-		const ambraClockifyButton = $('button.clockify-container', elem),
-			taskCode = $('.task-code', elem).textContent,
-			taskDescription = $('.task-description', elem).textContent,
-			description = `${taskCode} ${taskDescription}`,
-			projectName = $('.project-name').textContent,
-			taskOptions = $('.task-options', elem);
+(async () => {
+	// List view and kanban view
+	clockifyButton.render(
+		await getSelectors('ambra', 'listAndKanbanView', 'hanger'),
+		{ observe: true },
+		async (elem) => {
+			const selectors = await getSelectors('ambra', 'listAndKanbanView');
 
-		const link = clockifyButton.createButton({
-			description,
-			projectName,
-			small: true,
-		});
+			const ambraClockifyButton = $(selectors.ambraClockifyButton, elem);
+			const taskCode = $(selectors.taskCode, elem).textContent;
+			const taskDescription = $(selectors.taskDescription, elem).textContent;
 
-		link.style.margin = '0 8px';
+			const description = `${taskCode} ${taskDescription}`;
+			const projectName = $(selectors.projectName).textContent;
 
-		// List & kanban view
-		if (ambraClockifyButton) ambraClockifyButton.replaceWith(link);
-		// Task modal
-		else taskOptions.prepend(link);
-	}
-);
+			const link = clockifyButton.createButton({
+				description,
+				projectName,
+				small: true,
+			});
+
+			link.style.margin = '0 8px';
+
+			ambraClockifyButton.replaceWith(link);
+		}
+	);
+
+	// Task modal
+	clockifyButton.render(
+		await getSelectors('ambra', 'modalView', 'hanger'),
+		{ observe: true },
+		async (elem) => {
+			const selectors = await getSelectors('ambra', 'modalView');
+
+			const taskCode = $(selectors.taskCode, elem).textContent;
+			const taskDescription = $(selectors.taskDescription, elem).textContent;
+			const taskOptions = $(selectors.taskOptions, elem);
+
+			const description = `${taskCode} ${taskDescription}`;
+			const projectName = $(selectors.projectName).textContent;
+
+			const link = clockifyButton.createButton({
+				description,
+				projectName,
+				small: true,
+			});
+
+			link.style.margin = '0 8px';
+
+			taskOptions.prepend(link);
+		}
+	);
+})();

@@ -35,7 +35,7 @@ class SelfHostedBootSettings extends React.Component {
 				>
 					{({ error, result, loading }) => {
 						if (error) {
-							return <Login logout={true} />;
+							return <Login logout={{isTrue: true}} />;
 						}
 						if (loading) {
 							return (

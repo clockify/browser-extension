@@ -294,6 +294,7 @@ class TimeEntry extends React.Component {
 						/>
 						<div>
 							<div
+								data-pw={`time-entry-${this.props.timeEntryIndex}`}
 								className={entryClassNames.join(' ')}
 								title={this.state.title}
 								key={timeEntry.id}
@@ -307,7 +308,7 @@ class TimeEntry extends React.Component {
 										{groupedEntries.length}
 									</div>
 								)}
-								<div className="time-entry-description">
+								<div className="time-entry-description" data-pw={`time-entry-description-${this.props.timeEntryIndex}`}>
 									<div
 										className={
 											timeEntry.description ? 'description' : 'no-description'
@@ -422,8 +423,9 @@ class TimeEntry extends React.Component {
 								</div>
 							</div>
 							{this.state.showGroup &&
-								groupedEntries?.map((entry) => (
+								groupedEntries?.map((entry, index) => (
 									<TimeEntry
+										timeEntryIndex = {index}
 										key={entry.id}
 										timeEntry={entry}
 										project={entry.project ? entry.project : null}

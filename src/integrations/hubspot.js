@@ -1,67 +1,75 @@
-// Inbox
+// Inbox view
 clockifyButton.render(
-	'[class*=InboxThreadOverview] [class*=DetailHeaderWrapper] [class*="UIBox"]:last-child:not(.clockify)',
+	'[class*=InboxThreadOverview] [class*=DetailHeaderWrapper] [class*="UIBox"]:not([class*="ContactAvatar"]):last-child:not(.clockify)',
 	{ observe: true },
-	(elem) => {
-		console.log(elem);
-		setTimeout(function () {
-			const subjectEl = document.querySelector(
-				'[data-test-id="thread-list-member-row"][data-selected="true"]'
+	async (elem) => {
+		await timeout({ milliseconds: 500 });
+
+		const ticketId = extractIdFromUrl();
+		const ticketSubject = text('[data-test-id="ticket-header-name-link"] span');
+		const contact = text(
+			'[data-test-id="thread-list-member-row"][data-selected="true"] .private-truncated-string__inner'
+		);
+
+		const description = `[#${ticketId}] ${ticketSubject} (${contact})`;
+		const projectName = text(
+			'[data-selenium-test="company-chicklet-title-link"]'
+		);
+
+		const link = clockifyButton.createButton({ description, projectName });
+
+		link.style.position = 'relative';
+		link.style.order = '-1';
+		link.style.marginRight = '11px';
+
+		elem.append(link);
+	}
+);
+
+// Contact, Ticket, Deal and Company view
+clockifyButton.render(
+	`
+	[data-selenium-test="contact-highlight-details"]:not(.clockify),
+	[data-selenium-test="ticket-highlight-details"]:not(.clockify),
+	[data-selenium-test="deal-highlight-details"]:not(.clockify),
+	[data-selenium-test="company-highlight-details"]:not(.clockify)
+	`,
+	{ observe: true },
+	async () => {
+		await timeout({ milliseconds: 500 });
+
+		const tabs = $('.private-tabs__list__wrapper [role="navigation"]');
+
+		const id = extractIdFromUrl();
+		const name = text('[data-selenium-test="highlightTitle"]');
+		const contact = text('[data-selenium-test="contact-chicklet-title-link"]');
+		const wrappedContact = contact ? `(${contact})` : '';
+
+		const description = `[#${id}] ${name} ${wrappedContact}`;
+		const projectName =
+			text('[data-selenium-test="company-chicklet-title-link"]') ||
+			text(
+				'[data-selenium-test="company-highlight-details"] [data-selenium-test="highlightTitle"] span'
 			);
-			const subject =
-				subjectEl &&
-				subjectEl.getAttribute('aria-label') &&
-				subjectEl.getAttribute('aria-label').split('with subject ')[1];
-			const contact = document.querySelector(
-				'[data-test-id="thread-list-member-row"][data-selected="true"] .private-truncated-string__inner'
-			).textContent;
-			const ticketId = window.location.href.match(/inbox\/(.*)#email/)[1];
-			const description =
-				'[#' + ticketId + '] ' + subject + ' [' + contact + ']';
-			const link = clockifyButton.createButton(description);
-			link.style.position = 'relative';
-			link.style.order = '-1';
-			link.style.marginRight = '11px';
-			elem.appendChild(link);
-		}, 500);
+
+		const link = clockifyButton.createButton({ description, projectName });
+
+		link.style.fontSize = '16px';
+		link.style.display = 'block';
+		link.style.position = 'absolute';
+		link.style.right = '15px';
+		link.style.top = '5px';
+
+		tabs.append(link);
 	}
 );
 
-// Tickets
-clockifyButton.render(
-	'[data-selenium-test="highlightTitle"]:not(.clockify)',
-	{ observe: true },
-	(elem) => {
-		setTimeout(function () {
-			let container = elem.parentElement;
-			for (let i = 0; i === 3; i++) {
-				if (container.tagName.match(/H[1-4]/)) {
-					break;
-				}
-				container = container.parentElement;
-			}
-			const ticketId = window.location.href.split('/')[6].replace('/', '');
+function extractIdFromUrl() {
+	const url = window.location.href;
 
-			if (
-				document.querySelector(
-					'.width-100 a.private-link.uiLinkWithoutUnderline.uiLinkDark'
-				)
-			) {
-				contact = document.querySelector(
-					'.width-100 a.private-link.uiLinkWithoutUnderline.uiLinkDark'
-				).textContent;
-				link = clockifyButton.createButton(
-					'[#' + ticketId + '] ' + elem.textContent + ' (' + contact + ')'
-				);
-			} else {
-				link = clockifyButton.createButton(
-					'[#' + ticketId + '] ' + elem.textContent
-				);
-			}
-			link.style.fontSize = '16px';
-			link.style.display = 'block';
+	const inboxId = url.match(/inbox\/(.*)#/)?.[1];
+	const contactId = url.match(/contact\/([^/]+)/)?.[1];
+	const recordId = url.match(/record\/[^/]+\/([^/]+)/)?.[1];
 
-			container.appendChild(link);
-		}, 500);
-	}
-);
+	return inboxId || contactId || recordId;
+}

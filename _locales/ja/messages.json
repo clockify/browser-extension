@@ -1013,6 +1013,27 @@
   "WORKSPACE__TWO_FACTOR__MODAL__ENABLE": {
     "message": "2FAを有効にする"
   },
+  "WORKSPACE__DISABLED_TOOLTIP": {
+    "message": "このワークスペースは無効になっています。"
+  },
+  "BANNED__INFO_MODAL__TITLE": {
+    "message": "ログアウトしました"
+  },
+  "BANNED__INFO_MODAL__MESSAGE_PART_ONE": {
+    "message": "アカウントが無効になったため、ログアウトしました。"
+  },
+  "BANNED__INFO_MODAL__MESSAGE_PART_TWO": {
+    "message": "お問い合わせください"
+  },
+  "BANNED__INFO_MODAL__MESSAGE_PART_THREE": {
+    "message": "詳細については。"
+  },
+  "BANNED__INFO_MODAL__WORKSPACE_MESSAGE_PART_ONE": {
+    "message": "{ workspaceName } が停止されたため、ログアウトされました。"
+  },
+  "BANNED__ACCOUNT_SUSPENDED": {
+    "message": "このアカウントは停止されました"
+  },
   "SCREENSHOT_RECORDING": {
     "message": "スクリーンショットの記録が有効になっています。このアプリはスクリーンショットを撮ることができません。"
   },
@@ -1034,8 +1055,14 @@
   "UPGRADE_REGIONAL_ADMIN": {
     "message": "地域サーバーでホストされているため、ワークスペースがロックされています。 支払い情報を追加 またはワークスペースを切り替えてください。"
   },
+  "ACTIVITY_TABS__SCREENSHOTS__NO_SCREENSHOTS_PROMO_BTN": {
+    "message": "スクリーンショット録画アプリを入手"
+  },
   "ENTER_REQUIRED_FIEEDS_OR_EDIT_WORKSPACE_SETTINGS": {
     "message": "必須フィールドを入力するか、オプションでワークスペース設定を編集します。"
+  },
+  "FORBIDDEN_CHARACTERS": {
+    "message": "間違った値を入力しました。 \"<\" および \">\" 文字は使用しないでください"
   },
   "appName": {
     "message": "Clockifyタイムトラッカー",

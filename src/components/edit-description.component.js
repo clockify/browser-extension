@@ -36,8 +36,16 @@ class EditDescription extends React.Component {
 		this.setState({ description: val });
 	}
 
-	handleOnBlur() {
+	handleOnBlur(event) {
 		if (this.prevDescription !== this.state.description) {
+			const description = event.target.value;
+			const pattern = /<[^>]+>/;
+			const descriptionContainsWrongChars = pattern.test(description);
+
+			if (descriptionContainsWrongChars) {
+				this.props.toaster.toast('error', locales.FORBIDDEN_CHARACTERS, 2);
+			}
+
 			this.props.onSetDescription(this.state.description);
 		}
 	}

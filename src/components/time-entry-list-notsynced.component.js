@@ -1,5 +1,6 @@
 import React from 'react';
 import moment, { duration } from 'moment';
+import locales from '../helpers/locales';
 import EditFormManual from './edit-form-manual.component';
 
 class TimeEntryListNotsyncedComponent extends React.Component {
@@ -27,7 +28,6 @@ class TimeEntryListNotsyncedComponent extends React.Component {
 
 	syncEntry(event) {
 		let timeEntry = JSON.parse(event.target.getAttribute('value'));
-
 		window.reactRoot.render(
 			<EditFormManual
 				timeEntry={timeEntry}
@@ -78,10 +78,17 @@ class TimeEntryListNotsyncedComponent extends React.Component {
 			<div className="time-entries-list-not-synced">
 				<div className="time-entries-list-time">
 					<span className="time-entries-list-day">
-						Not synced - missing info
+						Entries not synced - missing info
 					</span>
+					<div
+						onClick={this.props.triggerOfflineEntrySync}
+						title={'Sync entries'}
+						className={'header-sync'}
+						style={{ position: 'absolute', right: '0px', top: '10px' }}
+					></div>
 				</div>
 				{this.state.timeEntries &&
+					!this.props.inProgress &&
 					this.state.timeEntries.map((entry) => {
 						return (
 							<div
@@ -99,7 +106,7 @@ class TimeEntryListNotsyncedComponent extends React.Component {
 											: 'time-entry-not-synced-placeholder'
 									}
 								>
-									{!!entry.description ? entry.description : "What's up"}
+									{!!entry.description ? entry.description : 'No description'}
 								</span>
 								<span
 									value={JSON.stringify(entry)}

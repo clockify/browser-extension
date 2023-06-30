@@ -41,6 +41,17 @@ class TagsList extends React.Component {
 		if (userRoles.length) {
 			userRoles = userRoles.map(({ role }) => role);
 		}
+		let tagsListExistingInLocalStorage = await localStorage.getItem(
+			'preTagsList'
+		);
+		let currentWorkspaceId = await localStorage.getItem('activeWorkspaceId');
+		if (
+			tagsListExistingInLocalStorage &&
+			tagsListExistingInLocalStorage[0]?.workspaceId !== currentWorkspaceId
+		) {
+			await localStorage.removeItem('preTagsList');
+			await this.getTags(this.state.page, pageSize);
+		}
 		let tagsList = (await localStorage.getItem('preTagsList')) || [];
 		if (tagsList?.length) {
 			tagsList = sortHelpers.sortArrayByStringProperty(tagsList, 'name');
@@ -209,6 +220,14 @@ class TagsList extends React.Component {
 			this.props.errorMessage(locales.NAME_IS_REQUIRED);
 			return;
 		}
+
+		const pattern = /<[^>]+>/;
+		const hasWrongChars = (tagName) => (pattern.test(tagName) ? true : false);
+
+		if (hasWrongChars(this.state.tagName)) {
+			return this.props.errorMessage(locales.FORBIDDEN_CHARACTERS);
+		}
+
 		tag.name = this.state.tagName;
 
 		getBrowser()
@@ -335,9 +354,10 @@ class TagsList extends React.Component {
 						</div>
 						<div className="tag-list-items">
 							{this.state.tagsList.length > 0 ? (
-								this.state.tagsList.map((tag) => {
+								this.state.tagsList.map((tag, index) => {
 									return (
 										<div
+											data-pw={`tag-list-item-${index}`}
 											onClick={this.selectTag}
 											key={tag.id}
 											tabIndex={'0'}

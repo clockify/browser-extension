@@ -1013,6 +1013,27 @@
   "WORKSPACE__TWO_FACTOR__MODAL__ENABLE": {
     "message": "Enable 2FA"
   },
+  "WORKSPACE__DISABLED_TOOLTIP": {
+    "message": "This workspace is disabled."
+  },
+  "BANNED__INFO_MODAL__TITLE": {
+    "message": "You’ve been logged out"
+  },
+  "BANNED__INFO_MODAL__MESSAGE_PART_ONE": {
+    "message": "You’ve been logged out since your account has been disabled."
+  },
+  "BANNED__INFO_MODAL__MESSAGE_PART_TWO": {
+    "message": "Please contact"
+  },
+  "BANNED__INFO_MODAL__MESSAGE_PART_THREE": {
+    "message": "for more information."
+  },
+  "BANNED__INFO_MODAL__WORKSPACE_MESSAGE_PART_ONE": {
+    "message": "You’ve been logged out since your { workspaceName } has been suspended."
+  },
+  "BANNED__ACCOUNT_SUSPENDED": {
+    "message": "This account has been suspended"
+  },
   "SCREENSHOT_RECORDING": {
     "message": "Screenshot recording is enabled. This app can't take screenshots."
   },
@@ -1034,8 +1055,14 @@
   "UPGRADE_REGIONAL_ADMIN": {
     "message": "Workspace locked due to being hosted on regional server. Please add payment information or switch workspace."
   },
+  "ACTIVITY_TABS__SCREENSHOTS__NO_SCREENSHOTS_PROMO_BTN": {
+    "message": "Get screenshot recording app"
+  },
   "ENTER_REQUIRED_FIEEDS_OR_EDIT_WORKSPACE_SETTINGS": {
     "message": "Enter required fields or optionally edit your workspace settings."
+  },
+  "FORBIDDEN_CHARACTERS": {
+    "message": "You entered wrong value. Don't use \"<\" and \">\" characters"
   },
   "appName": {
     "message": "Clockify Time Tracker",

@@ -1,16 +1,30 @@
 getProject = () => {
-	const currentlyOpenedSectionTitle = $('[class*="TopbarPageHeader"][class*="Typography--h4"]');
-	const firstProjectInListInOpenTask = $('.TaskPane .TaskProjectToken .TokenizerPillBase-name');
+	const currentlyOpenedSectionTitle = $(
+		'[class*="TopbarPageHeader"][class*="Typography--h4"]'
+	);
+	const firstProjectInListInOpenTask = $(
+		'.TaskPane .TaskProjectToken .TokenizerPillBase-name'
+	);
 	const replaceNbspsInString = (str) => {
-		const regex = new RegExp(String.fromCharCode(160), "g");
-		return str.replace(regex, " ");
-	}
+		const regex = new RegExp(String.fromCharCode(160), 'g');
+		return str.replace(regex, ' ');
+	};
 	let project;
 	if (currentlyOpenedSectionTitle) {
-		const currentlyOpenedSectionTitleText = replaceNbspsInString(currentlyOpenedSectionTitle.innerText);
-		const allProjectsListInOpenTask = Array.from($$('.TaskPane .TaskProjectToken .TokenizerPillBase-name'));
-		const allProjectsListInOpenTaskNames = allProjectsListInOpenTask.map(project => project.innerText);
-		project = allProjectsListInOpenTaskNames.includes(currentlyOpenedSectionTitleText) ? currentlyOpenedSectionTitle : firstProjectInListInOpenTask;
+		const currentlyOpenedSectionTitleText = replaceNbspsInString(
+			currentlyOpenedSectionTitle.innerText
+		);
+		const allProjectsListInOpenTask = Array.from(
+			$$('.TaskPane .TaskProjectToken .TokenizerPillBase-name')
+		);
+		const allProjectsListInOpenTaskNames = allProjectsListInOpenTask.map(
+			(project) => project.innerText
+		);
+		project = allProjectsListInOpenTaskNames.includes(
+			currentlyOpenedSectionTitleText
+		)
+			? currentlyOpenedSectionTitle
+			: firstProjectInListInOpenTask;
 	}
 	if (!project) {
 		project = $(
@@ -27,14 +41,16 @@ getProject = () => {
 			project = $(
 				'div.Pane.Inbox-pane.Inbox-detailsPane .TaskProjects-projectList .TokenizerPillBase-name'
 			);
+		if (!project) project = firstProjectInListInOpenTask;
 	}
-	return project;
+	return project?.textContent;
 };
 
 getTask = () => {
 	const containerElem = $('.TaskPane');
 	//if the user can only see the task name and not edit it (permissions) then the textarea will not be there
-	const taskSelector = $('.TaskPane-titleRow textarea') ?? $('.TaskPane-titleRow')?.firstChild;
+	const taskSelector =
+		$('.TaskPane-titleRow textarea') ?? $('.TaskPane-titleRow')?.firstChild;
 	const subTask = $(
 		'.TaskAncestry-ancestorLink.SecondaryNavigationLink',
 		containerElem
@@ -44,7 +60,6 @@ getTask = () => {
 		const subTaskName = subTask ? subTask.textContent : null;
 		return subTaskName ?? mainTask;
 	};
-	console.log({ description: mainTask ?? '', taskName: taskName() });
 	return { description: mainTask ?? '', taskName: taskName() };
 };
 
@@ -61,12 +76,11 @@ function createClockifyElements() {
 		].map((e) => e.innerText);
 
 	const clockifyContainer = createTag('div', 'clockify-widget-container');
-	project = getProject();
 	link = clockifyButton.createButton({
 		description: () => {
 			return getTask().description;
 		},
-		projectName: project ? project.textContent : null,
+		projectName: () => getProject(),
 		taskName: () => {
 			return getTask().taskName;
 		},
@@ -79,7 +93,7 @@ function createClockifyElements() {
 		description: () => {
 			return getTask().description;
 		},
-		projectName: project ? project.textContent : null,
+		projectName: () => getProject(),
 		taskName: () => {
 			return getTask().taskName;
 		},
@@ -133,12 +147,12 @@ setTimeout(() => {
 			let appendElementsTo = $('.ItemRowTwoColumnStructure-left', elem);
 			const containerElem = $('.TaskPane');
 			//if the user can only see the task name and not edit it (permissions) then the textarea will not be there
-			const taskSelector = $('.TaskPane-titleRow textarea') ?? $('.TaskPane-titleRow')?.firstChild;
+			const taskSelector =
+				$('.TaskPane-titleRow textarea') ?? $('.TaskPane-titleRow')?.firstChild;
 			const mainTask = taskSelector ? taskSelector.textContent : null;
 			const subTask = () => $('textarea', appendElementsTo).textContent;
 			const clockifyElements = createTag('div', 'clockify-elements-container');
 			description = () => subTask() ?? '';
-			project = getProject();
 			taskName = () => subTask() ?? mainTask;
 			const tags = () =>
 				[
@@ -149,7 +163,7 @@ setTimeout(() => {
 				].map((e) => e.innerText);
 			const link = clockifyButton.createButton({
 				description,
-				projectName: project ? project.textContent : null,
+				projectName: () => getProject(),
 				taskName,
 				tagNames: tags,
 			});
@@ -172,15 +186,20 @@ setTimeout(() => {
 		'.CommentOnlySubtaskTaskRow:not(.clockify)',
 		{ observe: true },
 		(elem) => {
-			let appendElementsTo = $('.CommentOnlySubtaskTaskRow-detailsButton', elem);
+			let appendElementsTo = $(
+				'.CommentOnlySubtaskTaskRow-detailsButton',
+				elem
+			);
 			const containerElem = $('.TaskPane');
 			//if the user can only see the task name and not edit it (permissions) then the textarea will not be there
-			const taskSelector = $('.TaskPane-titleRow textarea', containerElem) ?? $('.TaskPane-titleRow', containerElem)?.firstChild;
+			const taskSelector =
+				$('.TaskPane-titleRow textarea', containerElem) ??
+				$('.TaskPane-titleRow', containerElem)?.firstChild;
 			const mainTask = taskSelector ? taskSelector.textContent : null;
-			const subTask = () => $('.CommentOnlySubtaskTaskRow-name', elem).textContent;
+			const subTask = () =>
+				$('.CommentOnlySubtaskTaskRow-name', elem).textContent;
 			const clockifyElements = createTag('div', 'clockify-elements-container');
 			description = () => subTask() ?? '';
-			project = getProject();
 			taskName = () => subTask() ?? mainTask;
 			const tags = () =>
 				[
@@ -191,7 +210,7 @@ setTimeout(() => {
 				].map((e) => e.innerText);
 			const link = clockifyButton.createButton({
 				description,
-				projectName: project ? project.textContent : null,
+				projectName: () => getProject(),
 				taskName,
 				tagNames: tags,
 			});

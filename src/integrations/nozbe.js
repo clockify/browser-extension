@@ -1,36 +1,37 @@
-clockifyButton.render('.V9yOa:not(.clockify)', { observe: true }, (elem) => {
-	var div,
-		link,
-		container = $('._36nYd._1fgLh', elem);
-	container.style.height = '190px';
-	description = $('.jVE-0', elem).textContent;
+(async () => {
+	clockifyButton.render(
+		await getSelectors('nozbe', 'sideTaskView', 'hanger'),
+		{ observe: true },
+		async (elem) => {
+			removeContainers();
 
-	link = clockifyButton.createButton(description);
-	link.style.height = '36px';
-	link.style.marginBottom = '8px';
-	link.style.border = '1px solid #e6ecf0';
-	link.style.borderRadius = '10px';
-	link.style.width = '50%';
-	link.style.marginRight = '4px';
-	link.style.marginLeft = '2px';
+			const selectors = await getSelectors('nozbe', 'sideTaskView');
 
-	input = clockifyButton.createInput({ description: description });
-	input.style.marginRight = '12px';
-	input.style.height = '36px';
-	input.style.marginBottom = '8px';
-	input.style.border = '1px solid #e6ecf0';
-	input.style.borderRadius = '10px';
-	input.style.width = '50%';
-	input.style.textAlign = 'center';
-	input.style.paddingTop = '2px';
-	input.style.marginRight = '2px';
-	input.style.marginLeft = '4px';
+			const leftColumn = $(selectors.leftColumn);
+			const rightColumn = $(selectors.rightColumn);
 
-	div = document.createElement('div');
-	div.style.display = 'flex';
-	div.style.justifyContent = 'space-between';
+			const linkContainer = createTag('div', selectors.containerClassList);
+			const inputContainer = createTag('div', selectors.containerClassList);
 
-	div.appendChild(link);
-	div.appendChild(input);
-	container.appendChild(div);
-});
+			const description = () => $(selectors.description).textContent;
+
+			const link = clockifyButton.createButton({ description });
+			const input = clockifyButton.createInput({ description });
+
+			elem.style.height = 'fit-content';
+			inputContainer.style.cursor = 'default';
+			input.style.cursor = 'text';
+
+			linkContainer.append(link);
+			inputContainer.append(input);
+
+			leftColumn.append(linkContainer);
+			rightColumn.append(inputContainer);
+		}
+	);
+
+	function removeContainers() {
+		const containers = Array.from($$('.clockify-widget-container'));
+		containers.forEach((container) => container.remove());
+	}
+})();

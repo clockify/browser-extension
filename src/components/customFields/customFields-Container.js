@@ -16,6 +16,8 @@ export function CustomFieldsContainer({
 	updateCustomFields,
 	isInProgress,
 	areCustomFieldsValid,
+	workspaceSettings,
+	cfContainsWrongChars,
 }) {
 	const [customFields, setCustomFields] = useState([]);
 	const [projectId, setProjectId] = useState(timeEntry.projectId);
@@ -168,10 +170,6 @@ export function CustomFieldsContainer({
 				if (manualMode) {
 				}
 				wsCustomField = getWSCustomField(item.customFieldId);
-				console.log(
-					'NOT FOUND customFieldDto, took from  getWSCustomField(item.customFieldId)',
-					item
-				);
 			}
 			if (manualMode) {
 				value = wsCustomField.workspaceDefaultValue;
@@ -214,7 +212,7 @@ export function CustomFieldsContainer({
 			}
 		});
 		if (manualMode) {
-			// mozda i ovo  =>   || isOffline()
+			// maybe also  =>   || isOffline()
 			const cfs =
 				arr && arr.length > 0
 					? arr.map(({ type, customFieldId, value }) => ({
@@ -244,6 +242,7 @@ export function CustomFieldsContainer({
 									updateValue={updateValue}
 									isValid={validatedCustomFields[id]}
 									setIsValid={validateCustomFields}
+									cfContainsWrongChars={cfContainsWrongChars}
 								/>
 							);
 						case 'NUMBER':
@@ -252,6 +251,7 @@ export function CustomFieldsContainer({
 									key={id}
 									cf={cf}
 									updateValue={updateValue}
+									numberFormat={workspaceSettings.numberFormat}
 									isValid={validatedCustomFields[id]}
 									setIsValid={validateCustomFields}
 								/>
@@ -264,6 +264,7 @@ export function CustomFieldsContainer({
 									updateValue={updateValue}
 									isValid={validatedCustomFields[id]}
 									setIsValid={validateCustomFields}
+									cfContainsWrongChars={cfContainsWrongChars}
 								/>
 							);
 						case 'CHECKBOX':

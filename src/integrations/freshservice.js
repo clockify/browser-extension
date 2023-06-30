@@ -1,3 +1,22 @@
+// Ticket detail - New UI (March 2023.)
+clockifyButton.render(
+	'.ticket-tabs .multitab-navlist:not(.clockify)',
+	{ observe: true },
+	(elem) => {
+		const ticketId = () =>
+			$('[data-test-id="ticket-human-display-id"]').textContent;
+		const ticketSubject = () => $('[data-test-id="subject-text"]').textContent;
+
+		const description = () => `[ ${ticketId()} ] ${ticketSubject()}`;
+
+		const link = clockifyButton.createButton({ description });
+
+		link.style.marginLeft = '16px';
+
+		elem.append(link);
+	}
+);
+
 // Ticket detail - https://*.freshservice.com/helpdesk/tickets/{ID}
 clockifyButton.render(
 	'#sticky_header.tkt-details-sticky .sticky_right:not(.clockify)',

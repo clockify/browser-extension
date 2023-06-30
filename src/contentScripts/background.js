@@ -61,6 +61,9 @@ aBrowser.runtime.onInstalled.addListener(async (details) => {
 	if (!localMessages || Object.keys(localMessages).length) {
 		clockifyLocales.onProfileLangChange(null);
 	}
+	IntegrationSelectors.fetchAndStore({
+		onlyIfPassedFollowingMinutesSinceLastFetch: 1,
+	});
 });
 
 _messageExternal_busy = false;
@@ -121,6 +124,9 @@ aBrowser.windows.getAll(
 );
 
 aBrowser.runtime.onStartup.addListener(async () => {
+	IntegrationSelectors.fetchAndStore({
+		onlyIfPassedFollowingMinutesSinceLastFetch: 1,
+	});
 	const isLoggedIn = await TokenService.isLoggedIn();
 	if (isLoggedIn) {
 		const { entry, error } = await TimeEntry.getEntryInProgress();
@@ -270,6 +276,10 @@ aBrowser.commands.onCommand.addListener(async (command) => {
 	}
 });
 
+function pause(ms) {
+	return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 aBrowser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 	const isIdentityRedirectUrl = tab.url.includes(
 		aBrowser.identity.getRedirectURL()
@@ -285,6 +295,11 @@ aBrowser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 				const userLang = await localStorage.getItem('lang');
 				await clockifyLocales.onProfileLangChange(userLang);
 				let domainInfo = await extractDomainInfo(tab.url, result.permissions);
+				//TODO: find better solution when working with integrattion iframes
+				// since asana breaks on firefox when iframes are not loaded
+				if (domainInfo.file === 'asana.js' && !this.isChrome()) {
+					await pause(1000);
+				}
 				if (domainInfo.file) {
 					aBrowser.tabs.sendMessage(tabId, {
 						eventName: 'cleanup',
@@ -293,22 +308,26 @@ aBrowser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 						target: { tabId },
 						files: ['popupDlg/clockifyDebounce.js'],
 					});
-					aBrowser.scripting.executeScript({
-						target: { tabId },
-						files: ['contentScripts/clockifyLocales.js'],
-					}, ()=>{
-						aBrowser.scripting.executeScript(
-							{ target: { tabId }, files: ['popupDlg/clockifyButton.js'] },
-							() => {
-								loadScripts(tabId, domainInfo.file);
-								setTimeout(() => {
-									backgroundWebSocketConnect();
-								}, 1000);
-							}
-						);
-					});
-
-					
+					aBrowser.scripting.executeScript(
+						{
+							target: { tabId },
+							files: ['contentScripts/clockifyLocales.js'],
+						},
+						() => {
+							aBrowser.scripting.executeScript(
+								{ target: { tabId }, files: ['popupDlg/clockifyButton.js'] },
+								() => {
+									IntegrationSelectors.fetchAndStore({
+										onlyIfPassedFollowingMinutesSinceLastFetch: 60 * 12,
+									});
+									loadScripts(tabId, domainInfo.file);
+									setTimeout(() => {
+										backgroundWebSocketConnect();
+									}, 1000);
+								}
+							);
+						}
+					);
 				}
 			} else {
 				if (tab.url.includes(aBrowser.identity.getRedirectURL())) {
@@ -421,12 +440,24 @@ async function getOriginFileName(domain, permissionsFromStorage) {
 }
 
 self.addEventListener('online', () => {
+	localStorage.setItem('offline', 'false');
 	aBrowser.runtime.sendMessage({ eventName: 'STATUS_CHANGED_ONLINE' });
 });
 
 self.addEventListener('offline', () => {
+	localStorage.setItem('offline', 'true');
 	aBrowser.runtime.sendMessage({ eventName: 'STATUS_CHANGED_OFFLINE' });
 });
+
+self.ononline = (event) => {
+	localStorage.setItem('offline', 'false');
+	aBrowser.runtime.sendMessage({ eventName: 'STATUS_CHANGED_ONLINE' });
+};
+
+self.onoffline = (event) => {
+	localStorage.setItem('offline', 'true');
+	aBrowser.runtime.sendMessage({ eventName: 'STATUS_CHANGED_OFFLINE' });
+};
 
 /*
     TODO List
@@ -435,6 +466,10 @@ self.addEventListener('offline', () => {
 
 aBrowser.runtime.onMessage.addListener((request, sender, sendResponse) => {
 	switch (request.eventName) {
+		case 'refreshIntegrationsClicked':
+			return IntegrationSelectors.fetchAndStore({
+				onlyIfPassedFollowingMinutesSinceLastFetch: 1,
+			});
 		case 'takeTimeEntryInProgress':
 		case 'endInProgress':
 		case 'fetchEntryInProgress':
@@ -447,12 +482,14 @@ aBrowser.runtime.onMessage.addListener((request, sender, sendResponse) => {
 		case 'getWorkspaceSettings':
 		case 'getWorkspacesOfUser':
 		case 'getWasRegionalEverAllowed':
+		case 'invalidateToken':
+		case 'checkInternetConnection':
 			return ClockifyIntegration.callFunction(
 				request.eventName,
 				null,
 				sendResponse
 			);
-		case 'getMemberProfile':	
+		case 'getMemberProfile':
 		case 'getProjectsByIds':
 		case 'startWithDescription':
 		case 'getTimeEntries':
@@ -498,41 +535,6 @@ aBrowser.runtime.onMessage.addListener((request, sender, sendResponse) => {
 			return false;
 	}
 });
-
-// function startWithDescription(request) {
-// 	return new Promise(async (resolve) => {
-// 		const { entry, error } = await TimeEntry.getEntryInProgress();
-// 		if (error) {
-// 			resolve({ status: err.status });
-// 			return;
-// 		}
-
-// 		if (entry) {
-// 			const { error } = await TimeEntry.endInProgress();
-// 			if (error) {
-// 				resolve({ status: error.status });
-// 				return;
-// 			}
-// 		}
-
-// 		const { timeEntryOptions } = request;
-// 		const { data: ent, error: err } = await TimeEntry.startTimer(
-// 			timeEntryOptions.description,
-// 			timeEntryOptions
-// 		);
-// 		if (err) {
-// 			resolve({ status: err.status });
-// 			return;
-// 		}
-// 		if (ent.status === 201) {
-// 			aBrowser.action.setIcon({
-// 				path: iconPathStarted,
-// 			});
-// 			addPomodoroTimer();
-// 		}
-// 		resolve({ status: ent.status, data: ent });
-// 	});
-// }
 
 function afterStartTimer() {
 	addIdleListenerIfIdleIsEnabled();

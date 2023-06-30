@@ -56,7 +56,6 @@ clockifyButton.render(
 		};
 
 		const desc = () => {
-			// console.log('id', summary(), issueId())
 			return issueId() + ' ' + summary().textContent.trim();
 		};
 		const link = clockifyButton.createButton(desc, issueId().split('-')[0]);

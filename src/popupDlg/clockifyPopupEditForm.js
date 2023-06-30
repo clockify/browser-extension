@@ -156,7 +156,6 @@ var ClockifyEditForm = class {
 				customFieldValues.forEach((customField) => {
 					// hopefully we have no INACTIVE here
 					const wsCustomField = _clockifyPopupDlg.getWSCustomField(customField); // here we can't use customField.customFieldDto
-					// console.log(customField.name.toUpperCase(), {customField, wsCustomField})
 					let status = wsCustomField.status;
 					const { projectDefaultValues } = wsCustomField;
 					if (projectDefaultValues && projectDefaultValues.length > 0) {
@@ -248,7 +247,6 @@ var ClockifyEditForm = class {
 		customFieldValues.forEach((customField) => {
 			// hopefully we have no INACTIVE here
 			const wsCustomField = customField.customFieldDto;
-			//console.log(customField.name.toUpperCase(), {customField, wsCustomField})
 			let status = wsCustomField.status;
 			const { projectDefaultValues } = wsCustomField;
 			if (projectDefaultValues && projectDefaultValues.length > 0) {
@@ -603,7 +601,6 @@ var ClockifyEditForm = class {
 		}
 		const { timeEntry } = this.state;
 
-		//console.log(el)
 		if (el.id) {
 			if (
 				el.id.startsWith('switchboxCustomField') ||
@@ -749,9 +746,7 @@ var ClockifyEditForm = class {
 							}),
 						});
 
-						/* mislim da ovo ne treba
-                    this.setState({ timeEntry });
-                    */
+						// this.setState({ timeEntry }); necessary?
 						this.checkRequiredFields();
 
 						if (_clockifyProjectList.projectFromList)
@@ -814,8 +809,7 @@ var ClockifyEditForm = class {
 
 						timeEntry.task = task;
 						timeEntry.taskId = task ? task.id : null;
-						// mislim da ovo ne treba
-						//this.setState({timeEntry})
+						//this.setState({timeEntry}) neccessary?
 						this.checkRequiredFields();
 						//_clockifyProjectList.mapSelectedProject();
 
@@ -897,7 +891,6 @@ var ClockifyEditForm = class {
 						const { status, timeEntry: entry } = response;
 
 						if (status !== 200) {
-							alert('Tags response ' + status);
 							return;
 						}
 
@@ -942,9 +935,7 @@ var ClockifyEditForm = class {
 						if (response && status !== 200) {
 							return;
 						}
-
-						// treba li nam ovo, jer ko zna kakav timeEntry vraca,
-						// pa izgubimo entry.project, ili entry.task
+						// necessary?
 						// this.setState({
 						//     timeEntry
 						// });

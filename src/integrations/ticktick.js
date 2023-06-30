@@ -1,18 +1,19 @@
 clockifyButton.render(
 	'#td-caption:not(.clockify)',
 	{ observe: true },
-	function (elem) {
-		var link, description;
-		description = () => $('span[role="presentation"]', elem).textContent;
-		if (elem.querySelector('#clockifyButton')) {
-			elem.removeChild(elem.querySelector('#clockifyButton'));
-		}
-		link = clockifyButton.createButton(description);
-		link.style.paddingTop = '0';
-		link.style.paddingBottom = '0';
-		link.style.marginBottom = '10px';
-		link.style.marginTop = '10px';
-		link.style.cursor = 'pointer';
-		elem.appendChild(link);
-	}
+	(elem) => {
+		elem.querySelector('#clockifyButton')?.remove();
+
+		const description = () => $('span[role="presentation"]', elem).textContent;
+		const tagNames = () =>
+			Array.from($$('.content-editor .tag-name')).map((tag) => tag.textContent);
+
+		const link = clockifyButton.createButton({ description, tagNames });
+
+		link.style.margin = '10px 0';
+
+		elem.append(link);
+	},
+	null,
+	'#td-caption span[role="presentation"]'
 );

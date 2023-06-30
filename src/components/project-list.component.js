@@ -44,6 +44,7 @@ class ProjectList extends React.Component {
 			projectFilterValue: '',
 			projectsModalOpen: false,
 			tasksModalOpen: false,
+			isOffline: false,
 		};
 		this.projectListDropdownRef = React.createRef();
 		this.projectFilterRef = React.createRef();
@@ -68,6 +69,7 @@ class ProjectList extends React.Component {
 	}
 
 	async setAsyncStateItems() {
+		const isOffline = await localStorage.getItem('offline');
 		let userRoles = (await localStorage.getItem('userRoles')) || [];
 		let projectManagerFor = userRoles
 			.find(({ role }) => role === 'PROJECT_MANAGER')
@@ -87,6 +89,7 @@ class ProjectList extends React.Component {
 			clientProjects = this.getClients(projectList);
 		}
 		this.setState((state) => ({
+			isOffline: JSON.parse(isOffline),
 			isSpecialFilter,
 			selectedProject: {
 				name: state.selectedProject.name,
@@ -314,6 +317,8 @@ class ProjectList extends React.Component {
 			isOpen: false,
 			projectList: projectList,
 		});
+
+		this.props.onChangeProjectRedrawCustomFields();
 	}
 
 	selectTask(task, project) {
@@ -324,6 +329,8 @@ class ProjectList extends React.Component {
 			// selectedTaskName: task.name,
 			isOpen: false,
 		});
+
+		this.props.onChangeProjectRedrawCustomFields();
 	}
 
 	async openProjectDropdown(e) {
@@ -364,6 +371,7 @@ class ProjectList extends React.Component {
 			},
 			() => {
 				this.getProjects(this.state.page, pageSize);
+				this.props.onChangeProjectRedrawCustomFields();
 			}
 		);
 	}
@@ -654,9 +662,10 @@ class ProjectList extends React.Component {
 											<div className="project-list-client">
 												<i>{locales.FAVORITES.toUpperCase()}</i>
 											</div>
-											{clientProjects['FAVORITES'].map((project) => (
+											{clientProjects['FAVORITES'].map((project, index) => (
 												<div key={project.id}>
 													<ProjectItem
+														projectItemIndex={index}
 														key={project.id}
 														project={project}
 														noTasks={this.props.noTasks}
@@ -692,35 +701,38 @@ class ProjectList extends React.Component {
 											<div className="project-list-client">
 												<i>{locales.WITHOUT_CLIENT}</i>
 											</div>
-											{clientProjects['WITHOUT-CLIENT'].map((project) => (
-												<div key={project.id}>
-													<ProjectItem
-														key={project.id}
-														project={project}
-														noTasks={this.props.noTasks}
-														selectProject={this.selectProject.bind(this)}
-														selectTask={this.selectTask.bind(this)}
-														workspaceSettings={this.props.workspaceSettings}
-														isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}
-														getProjectTasks={this.getProjectTasks}
-														makeProjectFavorite={this.makeProjectFavorite}
-														removeProjectAsFavorite={
-															this.removeProjectAsFavorite
-														}
-														projectFavorites={
-															this.props.workspaceSettings.projectFavorites
-														}
-														openCreateTaskModal={this.openCreateTaskModal}
-														disableCreateTask={
-															!(
-																isEnabledCreateTask ||
-																(isEnabledCreateTaskForPM &&
-																	projectManagerFor.includes(project.id))
-															)
-														}
-													/>
-												</div>
-											))}
+											{clientProjects['WITHOUT-CLIENT'].map(
+												(project, index) => (
+													<div key={project.id}>
+														<ProjectItem
+															projectItemIndex={index}
+															key={project.id}
+															project={project}
+															noTasks={this.props.noTasks}
+															selectProject={this.selectProject.bind(this)}
+															selectTask={this.selectTask.bind(this)}
+															workspaceSettings={this.props.workspaceSettings}
+															isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}
+															getProjectTasks={this.getProjectTasks}
+															makeProjectFavorite={this.makeProjectFavorite}
+															removeProjectAsFavorite={
+																this.removeProjectAsFavorite
+															}
+															projectFavorites={
+																this.props.workspaceSettings.projectFavorites
+															}
+															openCreateTaskModal={this.openCreateTaskModal}
+															disableCreateTask={
+																!(
+																	isEnabledCreateTask ||
+																	(isEnabledCreateTaskForPM &&
+																		projectManagerFor.includes(project.id))
+																)
+															}
+														/>
+													</div>
+												)
+											)}
 										</div>
 									)}
 								<div>

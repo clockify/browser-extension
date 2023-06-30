@@ -68,6 +68,13 @@ class CreateProjectComponent extends React.Component {
 	addProject() {
 		const { projectName, client, selectedColor, billable } = this.state;
 
+		const pattern = /<[^>]+>/;
+		const projectContainsWrongChars = pattern.test(projectName);
+
+		if (projectContainsWrongChars) {
+			return this.toaster.toast('error', locales.FORBIDDEN_CHARACTERS, 2);
+		}
+
 		if (!projectName || !selectedColor) {
 			this.toaster.toast('error', locales.NAME_AND_COLOR_ARE_REQUIRED, 2);
 			return;
@@ -94,6 +101,9 @@ class CreateProjectComponent extends React.Component {
 				},
 			})
 			.then(async (response) => {
+				if (response.error)
+					return this.toaster.toast('error', response.error?.message, 2);
+
 				const timeEntry = Object.assign(this.props.timeEntry, {
 					projectId: response.data.id,
 					billable,
@@ -115,7 +125,6 @@ class CreateProjectComponent extends React.Component {
 						this.goBackToEdit(timeEntry);
 					})
 					.catch((error) => {
-						console.log('getUserRoles() failure');
 						this.goBackToEdit(timeEntry);
 					});
 			})

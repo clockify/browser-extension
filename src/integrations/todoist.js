@@ -1,158 +1,186 @@
-// projects
+observeBodyChanges();
+
+// Task List view
 clockifyButton.render(
-	'.project_editor_instance [data-action-hint="task-root"]:not(.clockify)',
+	'[data-action-hint="task-root"]:not(.clockify)',
 	{ observe: true },
-    function (elem) {
-		description = $('.task_content', elem).textContent;
-		project = $('.view_header__content h1').textContent;
-		var tags = () =>
-			Array.from($$('.task_list_item__info_tags__label', elem)).map(
-				(e) => e.innerText
-			);
+	(todoistTaskContainer) => {
+		const todoistTaskName = $(
+			'.task_content',
+			todoistTaskContainer
+		)?.textContent;
+		const todoistTaskDescription = $(
+			'.task_description',
+			todoistTaskContainer
+		)?.textContent;
+		const todoistProjectWithSectionName =
+			$('.task_list_item__project', todoistTaskContainer)?.textContent ||
+			$('header h1')?.textContent;
+		const tags = $$('.task_list_item__info_tags__label', todoistTaskContainer);
 
-		link = clockifyButton.createButton({
-			description: description,
-			projectName: project,
-			small: true,
-			tagNames: tags,
-		});
-		link.style.paddingRight = '10px';
-		link.style.marginTop = '12px';
-		link.style.height = 'fit-content';
-		elem.prepend(link);
-	}
-);
-
-//
-
-// // task modal
-clockifyButton.render(
-	'.detail_modal:not(.clockify)',
-	{ observe: true },
-	function (elem) {
-		description = () => $('.item_detail .task_content').innerText;
-		project = () => $('.item_detail_parent_name').innerText;
-		var tags = () =>
-			Array.from($$('.item_overview_sub > a', elem)).map((e) => e.innerText);
-
-		link = clockifyButton.createButton({
-			description,
-			projectName: project,
-			tagNames: tags,
-		});
-		link.style.padding = '20px 25px 0px';
-		elem.insertBefore(link, elem.firstChild);
-	}
-);
-
-// // filters
-clockifyButton.render(
-	'#agenda_view [data-action-hint="task-root"]:not(.clockify)',
-	{ observe: true },
-
-	function (elem) {
-		description = $('.markdown_content.task_content', elem).textContent;
-		project = $('.task_list_item__project', elem).textContent;
-
-		var tags = () =>
-			Array.from($$('.task_list_item__info_tags__label', elem)).map(
-				(e) => e.innerText
-			);
-
-		link = clockifyButton.createButton({
-			description: description,
-			projectName: project,
-			small: true,
-			tagNames: tags,
-		});
-		link.style.paddingRight = '10px';
-		link.style.marginTop = '12px';
-		link.style.height = 'fit-content';
-		elem.prepend(link);
-	}
-);
-
-// // calendar
-clockifyButton.render(
-	'.upcoming_view__list [data-action-hint="task-root"]:not(.clockify)',
-	{ observe: true },
-	function (elem) {
-		description = $('.markdown_content.task_content', elem).textContent;
-		project = $('.task_list_item__project', elem).textContent;
-		var tags = () =>
-			Array.from($$('.task_list_item__info_tags__label', elem)).map(
-				(e) => e.innerText
-			);
-
-		link = clockifyButton.createButton({
-			description: description,
-			projectName: project,
-			small: true,
-			tagNames: tags,
-		});
-		link.style.paddingRight = '10px';
-		link.style.marginTop = '12px';
-		link.style.height = 'fit-content';
-		elem.prepend(link);
-	}
-);
-
-// filters
-clockifyButton.render(
-	'.filter_view .task_list_item__body:not(.clockify)',
-	{ observe: true },
-    function (elem) {
-        description = $('.task_content', elem).textContent;
-        project = $('.task_list_item__project', elem).textContent.split('/')[0].trim();
-		var tags = () =>
-			Array.from($$('.task_list_item__info_tags__label', elem)).map(
-				(e) => e.innerText
-			);
-
-		link = clockifyButton.createButton({
-			description: description,
-			projectName: project,
-			small: true,
-			tagNames: tags,
-		});
-		link.style.paddingRight = '10px';
-		link.style.marginTop = '12px';
-		link.style.height = 'fit-content';
-		elem.prepend(link);
-	}
-);
-
-clockifyButton.render(
-	'[data-testid="task-details-sidebar"] > div:not(.clockify)',
-	{ observe: true },
-	(elem) => {
-		const description = $(
-				'.task-overview-header div.task_content'
-        ).textContent,
-            projectName = $('button[aria-label="Select a project"] span').textContent.split('/')[0].trim();
-
-		const clockifyContainer = createTag('div', 'clockify-widget-container');
+		const description = todoistTaskDescription ?? todoistTaskName;
+		const projectName = projectWithoutSection(todoistProjectWithSectionName);
+		const taskName = todoistTaskDescription ? todoistTaskName : '';
+		const tagNames = () => Array.from(tags).map((tag) => tag.innerText);
 
 		const link = clockifyButton.createButton({
 			description,
 			projectName,
+			taskName,
+			tagNames,
 			small: true,
 		});
 
+		link.style.paddingRight = '10px';
+		link.style.marginTop = '12px';
+		link.style.height = 'fit-content';
+
+		todoistTaskContainer.prepend(link);
+	}
+);
+
+// Task board view
+clockifyButton.render(
+	'[data-testid="task-card"]:not(.clockify)',
+	{ observe: true },
+	(todoistTaskCard) => {
+		const todoistTaskName = $('.task_content', todoistTaskCard)?.textContent;
+		const todoistTaskDescription = $(
+			'.task_description',
+			todoistTaskCard
+		)?.textContent;
+		const todoistProjectWithSectionName =
+			$('.task_list_item__project', todoistTaskCard)?.textContent ||
+			$('header h1')?.textContent;
+
+		const description = todoistTaskDescription ?? todoistTaskName;
+		const projectName = projectWithoutSection(todoistProjectWithSectionName);
+		const taskName = todoistTaskDescription ? todoistTaskName : '';
+
+		const link = clockifyButton.createButton({
+			description,
+			projectName,
+			taskName,
+			small: true,
+		});
+
+		todoistTaskCard.style.minHeight = '70px';
+
+		link.style.position = 'absolute';
+		link.style.top = '40px';
+		link.style.left = '13px';
+
+		todoistTaskCard.append(link);
+	}
+);
+
+// Task modal view (sidebar part)
+clockifyButton.render(
+	'[data-testid="modal-overlay"] [role="dialog"]:not(.clockify)',
+	{ observe: true },
+	(todoistTaskModal) => {
+		const todoistTaskModalSidebar = $(
+			'[data-testid="task-details-sidebar"]',
+			todoistTaskModal
+		);
+
+		const todoistTaskName = () =>
+			$('.task-overview-content .task_content', todoistTaskModal)?.textContent;
+		const todoistTaskDescription = () =>
+			$('.task-overview-description .task_content', todoistTaskModal)
+				?.textContent;
+		const todoistProjectWithSectionName = () =>
+			$('button[aria-label="Select a project"] span', todoistTaskModal)
+				?.textContent;
+		const tags = $$('[data-item-label-name]', todoistTaskModal);
+
+		const description = () => todoistTaskDescription() ?? todoistTaskName();
+		const projectName = () =>
+			projectWithoutSection(todoistProjectWithSectionName());
+		const taskName = () => (todoistTaskDescription() ? todoistTaskName() : '');
+		const tagNames = () => Array.from(tags).map((tag) => tag.innerText);
+
+		const container = createTag('div', 'clockify-widget-container');
+
+		const link = clockifyButton.createButton({
+			description,
+			projectName,
+			taskName,
+			tagNames,
+			small: true,
+		});
 		const input = clockifyButton.createInput({
 			description,
 			projectName,
+			taskName,
+			tagNames,
 		});
 
-		clockifyContainer.style = 'display: flex';
-		clockifyContainer.style = 'align-items: center';
+		container.style.padding = '8px';
+		container.style.display = 'flex';
+		container.style.alignItems = 'center';
 
-		link.style.paddingRight = '10px';
-		link.style.marginRight = '10px';
-		link.style.height = 'fit-content';
+		link.style.marginRight = '20px';
 
-		clockifyContainer.append(link);
-		clockifyContainer.append(input);
-		elem.append(clockifyContainer);
+		container.append(link);
+		container.append(input);
+
+		todoistTaskModalSidebar.append(container);
 	}
 );
+
+function projectWithoutSection(projectName) {
+	const hasProjectNameValue = !!projectName;
+	const hasProjectNameSlash = projectName?.includes('/');
+
+	if (!hasProjectNameValue) return '';
+
+	return !hasProjectNameSlash ? projectName : projectName.split('/')[0];
+}
+
+function observeBodyChanges() {
+	const bodyObserver = new MutationObserver(bodyChanges);
+
+	bodyObserver.observe(document.body, {
+		childList: true,
+		subtree: true,
+		characterData: true,
+	});
+}
+
+function bodyChanges() {
+	setTimeout(() => {
+		const todoistModal = $('[data-testid="modal-overlay"]');
+		const clockifyPopup = $('.clockify-integration-popup');
+
+		const todoistModalAndClockifyPopupAreShown = todoistModal && clockifyPopup;
+
+		if (!todoistModalAndClockifyPopupAreShown) return;
+
+		const editableElements = ['textarea', 'input'];
+
+		const taskContent = $('.task-overview-content', todoistModal);
+		const manualInput = $('.clockify-input', todoistModal);
+		const editablePopupFields = editableElements
+			.map((editableElement) => $$(editableElement, clockifyPopup))
+			.map((nodeList) => Array.from(nodeList))
+			.flat();
+
+		blockPropagation({
+			elements: [taskContent, manualInput],
+			eventName: 'focusout',
+		});
+		blockPropagation({
+			elements: editablePopupFields,
+			eventName: 'focusin',
+		});
+	}, 500);
+}
+
+function blockPropagation({ elements = [], eventName }) {
+	elements.forEach((element) => {
+		if (!element) return;
+
+		element.addEventListener(eventName, (event) => event.stopPropagation());
+	});
+}

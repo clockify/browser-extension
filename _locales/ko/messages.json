@@ -1013,6 +1013,27 @@
   "WORKSPACE__TWO_FACTOR__MODAL__ENABLE": {
     "message": "2FA 활성화"
   },
+  "WORKSPACE__DISABLED_TOOLTIP": {
+    "message": "이 작업공간은 비활성화되었습니다."
+  },
+  "BANNED__INFO_MODAL__TITLE": {
+    "message": "로그아웃되었습니다"
+  },
+  "BANNED__INFO_MODAL__MESSAGE_PART_ONE": {
+    "message": "계정이 비활성화되어 로그아웃되었습니다."
+  },
+  "BANNED__INFO_MODAL__MESSAGE_PART_TWO": {
+    "message": "연락주세요"
+  },
+  "BANNED__INFO_MODAL__MESSAGE_PART_THREE": {
+    "message": "자세한 내용은."
+  },
+  "BANNED__INFO_MODAL__WORKSPACE_MESSAGE_PART_ONE": {
+    "message": "{ workspaceName }가 일시 중지된 이후로 로그아웃되었습니다."
+  },
+  "BANNED__ACCOUNT_SUSPENDED": {
+    "message": "이 계정은 정지되었습니다"
+  },
   "SCREENSHOT_RECORDING": {
     "message": "스크린샷 녹화가 활성화되었습니다. 이 앱은 스크린샷을 찍을 수 없습니다."
   },
@@ -1034,8 +1055,14 @@
   "UPGRADE_REGIONAL_ADMIN": {
     "message": "지역 서버에서 호스팅되기 때문에 작업 공간이 잠겼습니다. 결제 정보 추가 또는 작업 공간을 전환하세요."
   },
+  "ACTIVITY_TABS__SCREENSHOTS__NO_SCREENSHOTS_PROMO_BTN": {
+    "message": "스크린샷 녹화 앱 받기"
+  },
   "ENTER_REQUIRED_FIEEDS_OR_EDIT_WORKSPACE_SETTINGS": {
     "message": "필수 필드를 입력하거나 선택적으로 작업 공간 설정을 편집하십시오."
+  },
+  "FORBIDDEN_CHARACTERS": {
+    "message": "잘못된 값을 입력했습니다. \"<\" 및 \">\" 문자를 사용하지 마십시오."
   },
   "appName": {
     "message": "Clockify 시간 추적기",

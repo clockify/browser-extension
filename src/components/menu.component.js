@@ -40,6 +40,7 @@ class Menu extends React.Component {
 			this.cancelSubdomainWorkspaceChange.bind(this);
 		this.changeModeToManual = this.changeModeToManual.bind(this);
 		this.getWorkspaces = this.getWorkspaces.bind(this);
+		this.handleIntegrationsRefresh = this.handleIntegrationsRefresh.bind(this);
 	}
 
 	componentDidMount() {
@@ -166,7 +167,9 @@ class Menu extends React.Component {
 				},
 			})
 			.then((response) => {
-				const subDomainName = response.headers ? response.headers['sub-domain-name'] : null;
+				const subDomainName = response.headers
+					? response.headers['sub-domain-name']
+					: null;
 				if (subDomainName) {
 					this.setState({
 						revert: false,
@@ -226,6 +229,12 @@ class Menu extends React.Component {
 				/>
 			);
 		}, 200);
+	}
+
+	handleIntegrationsRefresh() {
+		getBrowser().runtime.sendMessage({
+			eventName: 'refreshIntegrationsClicked',
+		});
 	}
 
 	render() {
@@ -303,21 +312,32 @@ class Menu extends React.Component {
 								{locales.SETTINGS}
 							</span>
 						</a>
-						<a
-							onClick={this.openUrlPermissions.bind(this)}
-							className="dropdown-item"
-							href="#"
-						>
-							<span
-								className={
-									this.state.isOffline || this.props.isTrackingDisabled
-										? 'disable-manual'
-										: ''
-								}
+						<span className="dropdown-item subitem-container" href="#">
+							<a
+								className="dropdown-subitem"
+								href="#"
+								onClick={this.openUrlPermissions.bind(this)}
+								style={{ width: '100%' }}
 							>
-								{locales.INTEGRATIONS}
-							</span>
-						</a>
+								<span
+									className={
+										this.state.isOffline || this.props.isTrackingDisabled
+											? 'disable-manual'
+											: ''
+									}
+								>
+									{locales.INTEGRATIONS}
+								</span>
+							</a>
+							<a
+								className="dropdown-subitem"
+								href="#"
+								onClick={this.handleIntegrationsRefresh}
+								title={locales.REFRESH}
+							>
+								<span className="refresh-icon" style={{ margin: '0' }}></span>
+							</a>
+						</span>
 						<a
 							onClick={this.openWebDashboard.bind(this)}
 							className="dropdown-item"

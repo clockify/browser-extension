@@ -55,12 +55,17 @@
 			background: variables.$entries_header;
 		}
 
-		&--name {
+		&__name {
 			width: 150px;
 			overflow: hidden;
 			text-overflow: ellipsis;
 			cursor: pointer;
 			white-space: nowrap;
+		}
+
+		&--disabled &__name {
+			color: variables.$disabled;
+			cursor: not-allowed;
 		}
 	}
 	&-active {

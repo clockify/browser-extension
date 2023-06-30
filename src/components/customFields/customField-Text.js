@@ -2,7 +2,12 @@ import React, { useEffect, useState } from 'react';
 import useCustomField from './useCustomField';
 import locales from '../../helpers/locales';
 
-const CustomFieldText = ({ cf, updateValue, setIsValid }) => {
+const CustomFieldText = ({
+	cf,
+	updateValue,
+	setIsValid,
+	cfContainsWrongChars,
+}) => {
 	const [
 		{ id, index, value, isDisabled, placeHolder, title, manualMode, required },
 		setValue,
@@ -13,10 +18,15 @@ const CustomFieldText = ({ cf, updateValue, setIsValid }) => {
 		const val = e.target.value;
 		setIsValid({ id: id, isValid: !(required && !val) });
 		setValue(val);
+
+		const pattern = /<[^>]+>/;
+		const isCustomFieldContainsWrongChars = pattern.test(val);
+		cfContainsWrongChars({ id, isCustomFieldContainsWrongChars });
 	};
 
 	const handleBlur = (e) => {
 		e.preventDefault();
+		e.stopPropagation();
 		storeValue();
 		manualMode && updateValue(id, e.target.value, isValid);
 	};

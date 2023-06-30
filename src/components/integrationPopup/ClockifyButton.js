@@ -5,7 +5,9 @@ import EditForm from '../edit-form.component';
 import EditFormManual from '../edit-form-manual.component';
 import { offlineStorage } from '../../helpers/offlineStorage';
 
-Modal.defaultStyles = {};
+Modal.defaultStyles = {
+	zIndex: 2147483647,
+};
 
 offlineStorage.load();
 
@@ -261,11 +263,12 @@ function ClockifyButton(props) {
 		const appendWebsiteURL = await localStorage.getItem(
 			'permanent_appendWebsiteURL'
 		);
-
+		let pipeSeparator = ' | ';
 		if (appendWebsiteURL) {
-			const sufix = `${document.title} | ${window.location.href}`;
+			if (title.includes(' | ')) pipeSeparator = ' || ';
+			const sufix = `${document.title} - ${window.location.href}`;
 			if (!title.includes(sufix)) {
-				title += ` | ${sufix}`;
+				title += `${pipeSeparator}${sufix}`;
 			}
 			timeEntryOptionsInvoked.description = title;
 		}
@@ -274,7 +277,8 @@ function ClockifyButton(props) {
 		try {
 			if (
 				title &&
-				title?.split(' | ')[0] === inProgressDescription?.split(' | ')[0]
+				title?.split(pipeSeparator)[0] ===
+					inProgressDescription?.split(pipeSeparator)[0]
 			) {
 				aBrowser.runtime.sendMessage(
 					{
@@ -464,9 +468,12 @@ function ClockifyButton(props) {
 				style={{
 					overlay: {
 						position: 'fixed',
-						zIndex: '999999',
+						zIndex: '2147483647',
 						top: '3vh',
 						right: '3vw',
+					},
+					content: {
+						zIndex: '2147483646',
 					},
 				}}
 				isOpen={state.isPopupOpen}

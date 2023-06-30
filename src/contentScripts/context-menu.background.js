@@ -18,16 +18,23 @@ function listener(info, tab) {
 }
 
 function toggleBrowserContextMenu(isContextMenuEnabled) {
+	const startTimerTranslation = clockifyLocales.START_TIMER
+		? clockifyLocales.START_TIMER
+		: 'Start timer';
+	const startTimerWithDescriptionTranslation =
+		clockifyLocales.START_TIMER_WITH_DESCRIPTION
+			? clockifyLocales.START_TIMER_WITH_DESCRIPTION + " '%s'"
+			: 'Start timer with description';
 	aBrowser.contextMenus.removeAll();
 	if (isContextMenuEnabled) {
 		aBrowser.contextMenus.create({
 			id: 'startTimerWithDescriptionCM',
-			title: clockifyLocales.START_TIMER_WITH_DESCRIPTION + ' \'%s\'',
+			title: startTimerWithDescriptionTranslation,
 			contexts: ['selection'],
 		});
 		aBrowser.contextMenus.create({
 			id: 'startTimerCM',
-			title: clockifyLocales.START_TIMER,
+			title: startTimerTranslation,
 			contexts: ['page'],
 		});
 		aBrowser.contextMenus.onClicked.removeListener(listener);

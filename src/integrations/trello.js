@@ -7,20 +7,24 @@ setTimeout(() => {
 			const container = elem.lastChild.childNodes[1];
 			const htmlTag = createTag('div', 'button-link');
 			const htmlTagInput = createTag('div', 'button-link input-button-link');
-			const projectElem = $('.board-header-btn-text', root).textContent.trim();
-			const desc = $('div[class="window-title"] > h2', root).textContent.trim();
-			htmlTagInput.style.padding = '0px';
 
-			const inputForm = clockifyButton.createInput({
-				description: desc,
-				projectName: projectElem,
-			});
-			htmlTagInput.appendChild(inputForm);
+			const description = $(
+				'div[class="window-title"] > h2',
+				root
+			).textContent.trim();
+			const projectName = $('.board-header h1', root)?.textContent?.trim();
+
+			const link = clockifyButton.createButton({ description, projectName });
+			const input = clockifyButton.createInput({ description, projectName });
+
+			htmlTagInput.append(input);
 			container.prepend(htmlTagInput);
 
-			const link = clockifyButton.createButton(desc, projectElem);
 			htmlTag.appendChild(link);
 			container.prepend(htmlTag);
+
+			htmlTagInput.style.padding = '0px';
+
 			$('.clockify-input').style.width = '100%';
 			$('.clockify-input').style.boxShadow = 'none';
 			$('.clockify-input').style.border = '1px solid #eaecf0';
@@ -36,7 +40,7 @@ setTimeout(() => {
 			elem.style.minHeight = '60px';
 			elem.style.paddingRight = '15px';
 			elem.classList.add('clockify-trello-card');
-			const root = $('div[id="trello-root"]');
+
 			// const editIcon = $(
 			// 	'.icon-sm.icon-edit.list-card-operation.js-open-quick-card-editor.js-card-menu'
 			// );
@@ -44,19 +48,19 @@ setTimeout(() => {
 
 			elem.addEventListener('mouseover', () => {
 				const isButtonAlreadyAdded = $('.clockifyButton', elem);
-				if (isButtonAlreadyAdded) {
-					return;
-				}
+				if (isButtonAlreadyAdded) return;
 
-				const projectElem = $(
-					'.board-header-btn-text',
-					root
-				).textContent.trim();
+				const root = $('div[id="trello-root"]');
+
+				const description = () => $('.list-card-title', elem).innerText.trim();
+				const projectName = $('.board-header h1', root)?.textContent?.trim();
+
 				const link = clockifyButton.createButton({
-					description: () => $('.list-card-title', elem).innerText.trim(),
-					projectName: projectElem,
+					description,
+					projectName,
 					small: true,
 				});
+
 				link.style.position = 'absolute';
 				link.style.right = '2px';
 				link.style.bottom = '8px';
@@ -74,20 +78,21 @@ setTimeout(() => {
 		(elem) => {
 			const root = $('div[id="trello-root"]');
 			//const project= $('.board-header-btn > span').textContent.trim();
-			const projectElem = $('.board-header-btn-text', root); //.textContent.trim();
 
 			const desc = $('div[class="window-title"] > h2', root).textContent;
 			const task = $('.checklist-item-details-text', elem).textContent;
 
+			const description = task + ' - ' + desc;
+			const projectName = $('.board-header h1', root)?.textContent?.trim();
+
 			const link = clockifyButton.createButton({
-				description: task + ' - ' + desc,
-				projectName: projectElem ? projectElem.textContent.trim() : null,
+				description,
+				projectName,
 				small: true,
 			});
+
 			link.classList.add('checklist-item-button');
 			$('.checklist-item-controls', elem).prepend(link);
 		}
 	);
 }, 1000);
-
-console.log('Trello integration loaded');

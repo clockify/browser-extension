@@ -1,8 +1,6 @@
-const breakButtons = [clockifyLocales.STOP_TIMER, 'Start break'];
-const longBreakButtons = [clockifyLocales.STOP_TIMER, 'Start long break'];
-const breakOverButtons = [clockifyLocales.START_TIMER, 'Continue last'];
 const minutesSymbol = 'm';
 let lastIntervalId = null;
+let breakButtons, long, breakOverButtons;
 
 async function breakIntervalAlarm() {
 	const { start, pomodoroBreakLength, pomodoroForUser, description } =
@@ -33,29 +31,6 @@ async function breakIntervalAlarm() {
 	}, 1000);
 	lastIntervalId = breakInterval;
 }
-
-// aBrowser.storage.onChanged.addListener((changes) => {
-//     if ('inProgress' in changes) {
-//         if(!changes.inProgress?.newValue) {
-//             // this.restartPomodoro();
-//             this.removeBadge();
-//         }
-//     }
-
-//     if('timeEntryInProgress' in changes){
-//         if(!changes.timeEntryInProgress?.newValue) {
-//             // this.restartPomodoro();
-//             this.removeBadge();
-//         }
-//     }
-
-//     if ('token' in changes) {
-//         if (!changes.token.newValue) {
-//             this.restartPomodoro();
-//             this.removeBadge();
-//         };
-//     }
-// });
 
 async function pomodoroIntervalAlarm() {
 	const { start, pomodoroForUser } = await localStorage.getItem(
@@ -101,28 +76,43 @@ aBrowser.alarms.onAlarm.addListener(async (alarm) => {
 		lastIntervalId = null;
 	}
 	switch (alarm.name) {
-	case 'breakInterval':
-		breakIntervalAlarm();
-		break;
-	case 'pomodoroInterval':
-		pomodoroIntervalAlarm();
-		break;
-	default:
-		break;
+		case 'breakInterval':
+			breakIntervalAlarm();
+			break;
+		case 'pomodoroInterval':
+			pomodoroIntervalAlarm();
+			break;
+		default:
+			break;
 	}
 });
 
 aBrowser.runtime.onMessage.addListener((request, sender, sendResponse) => {
-	if (request.eventName === 'addPomodoroTimer') {
-		this.addPomodoroTimer();
-	} else if (request.eventName === 'restartPomodoro') {
-		this.restartPomodoro();
-	} else if (request.eventName === 'removeBadge') {
-		this.removeBadge();
+	switch (request.eventName) {
+		case 'addPomodoroTimer':
+			this.addPomodoroTimer();
+			break;
+		case 'restartPomodoro':
+			this.restartPomodoro();
+			break;
+		case 'removeBadge':
+			this.removeBadge();
+			break;
+		case 'entryEnded':
+			this.restartPomodoro();
+			break;
+		case 'entryStarted':
+			const breakRegex = /Pomodoro (?:long )?break/;
+			//if it's a break entry, don't start the timer
+			if (breakRegex.test(request.options.entry.description)) return;
+			this.addPomodoroTimer();
+			break;
+		// case 'resetBadge':
+		//     this.resetBadge();
+		//     break;
+		default:
+			break;
 	}
-	// else if (request.eventName === 'resetBadge') {
-	//     this.resetBadge();
-	// }
 });
 
 async function getPomodoroForUser() {
@@ -138,33 +128,39 @@ function setBreakBadge(pomodoroForUser, description) {
 	const minutes = isShortBreak
 		? pomodoroForUser.shortBreak
 		: pomodoroForUser.longBreak;
-	aBrowser.action.setBadgeText({
-		text: `${minutes}${minutesSymbol}`,
-	});
-	if (!this.isChrome()) {
-		aBrowser.action.setBadgeTextColor({
-			color: '#FFFFFF',
-		});
-	}
-	aBrowser.action.setBadgeBackgroundColor({
-		color: '#FFC107',
-	});
-}
 
-function setActiveBadge(minutes) {
-	if (minutes) {
+	setTimeout(() => {
 		aBrowser.action.setBadgeText({
 			text: `${minutes}${minutesSymbol}`,
 		});
-	}
-	if (!this.isChrome()) {
-		aBrowser.action.setBadgeTextColor({
-			color: '#FFFFFF',
+		console.log('setBreakBadge', minutes);
+		if (!this.isChrome()) {
+			aBrowser.action.setBadgeTextColor({
+				color: '#FFFFFF',
+			});
+		}
+		aBrowser.action.setBadgeBackgroundColor({
+			color: '#FFC107',
 		});
-	}
-	aBrowser.action.setBadgeBackgroundColor({
-		color: '#0288D1',
-	});
+	}, 2000);
+}
+
+function setActiveBadge(minutes) {
+	setTimeout(() => {
+		if (minutes) {
+			aBrowser.action.setBadgeText({
+				text: `${minutes}${minutesSymbol}`,
+			});
+		}
+		if (!this.isChrome()) {
+			aBrowser.action.setBadgeTextColor({
+				color: '#FFFFFF',
+			});
+		}
+		aBrowser.action.setBadgeBackgroundColor({
+			color: '#0288D1',
+		});
+	}, 2000);
 }
 
 function updateBadgeTime(diff, currentInterval) {
@@ -197,50 +193,55 @@ function removeBadge() {
 // }
 
 async function addPomodoroTimer() {
-	const userId = await localStorage.getItem('userId');
-	const str = await localStorage.getItem('permanent_pomodoro');
-	const pomodoroForUser = str
-		? JSON.parse(str).find((pomodoro) => pomodoro.userId === userId)
-		: false;
-
-	if (pomodoroForUser && pomodoroForUser.enabled) {
-		let { entry, error } = await TimeEntry.getEntryInProgress();
-		if (error) entry = null;
-
-		aBrowser.storage.local.set({
-			timeEntryInProgress: entry,
-		});
-
-		if (!entry) return;
-
-		// if (entry.description === 'Pomodoro break' || entry.description === 'Pomodoro long break') {
-		//     this.removeBreakInterval();
-		//     const pomodoroBreakLength = entry.description === 'Pomodoro break' ?
-		//         pomodoroForUser.shortBreak * 60 * 1000 : pomodoroForUser.longBreak * 60 * 1000;
-
-		//     localStorage.setItem('breakIntervalProps', {start: entry.timeInterval.start, pomodoroBreakLength, pomodoroForUser, description: entry.description});
-
-		//     aBrowser.alarms.create('breakInterval', {
-		//         periodInMinutes: 1,
-		//         when: Date.now()
-		//     });
-		// } else {
-		this.setActiveBadge(pomodoroForUser.timerInterval);
-		// this.restartPomodoro();
-		// this.removePomodoroInterval();
-
-		localStorage.setItem('pomodoroIntervalProps', {
-			start: entry.timeInterval.start,
-			pomodoroForUser,
-		});
-
-		aBrowser.alarms.create('pomodoroInterval', {
-			periodInMinutes: 1,
-			when: Date.now() + 30000,
-		});
-		// }
+	let pomodoroAlreadyExists = await aBrowser.alarms.get('pomodoroInterval');
+	if (pomodoroAlreadyExists) {
+		return;
 	} else {
-		this.removeBadge();
+		const userId = await localStorage.getItem('userId');
+		const str = await localStorage.getItem('permanent_pomodoro');
+		const pomodoroForUser = str
+			? JSON.parse(str).find((pomodoro) => pomodoro.userId === userId)
+			: false;
+
+		if (pomodoroForUser && pomodoroForUser.enabled) {
+			let { entry, error } = await TimeEntry.getEntryInProgress();
+			if (error) entry = null;
+
+			aBrowser.storage.local.set({
+				timeEntryInProgress: entry,
+			});
+
+			if (!entry) return;
+
+			// if (entry.description === 'Pomodoro break' || entry.description === 'Pomodoro long break') {
+			//     this.removeBreakInterval();
+			//     const pomodoroBreakLength = entry.description === 'Pomodoro break' ?
+			//         pomodoroForUser.shortBreak * 60 * 1000 : pomodoroForUser.longBreak * 60 * 1000;
+
+			//     localStorage.setItem('breakIntervalProps', {start: entry.timeInterval.start, pomodoroBreakLength, pomodoroForUser, description: entry.description});
+
+			//     aBrowser.alarms.create('breakInterval', {
+			//         periodInMinutes: 1,
+			//         when: Date.now()
+			//     });
+			// } else {
+			this.setActiveBadge(pomodoroForUser.timerInterval);
+			// this.restartPomodoro();
+			// this.removePomodoroInterval();
+
+			localStorage.setItem('pomodoroIntervalProps', {
+				start: entry.timeInterval.start,
+				pomodoroForUser,
+			});
+
+			aBrowser.alarms.create('pomodoroInterval', {
+				periodInMinutes: 1,
+				when: Date.now() + 30000,
+			});
+			// }
+		} else {
+			this.removeBadge();
+		}
 	}
 }
 
@@ -309,11 +310,7 @@ function notifyAboutStartingBrake(description, pomodoroForUser) {
 		message: clockifyLocales.POMODORO_BREAK_STARTED(breakMinutes),
 	};
 
-	this.createNotification(
-		'pomodoroBreakNotify',
-		notificationOptions,
-		pomodoroForUser.isSoundNotification
-	);
+	this.createNotification('pomodoroBreakNotify', notificationOptions);
 	this.clearTimeoutForRemovingNotification('pomodoroBreakNotify', 10);
 }
 
@@ -326,15 +323,12 @@ function notifyThatBreakIsOver(pomodoroForUser) {
 		message: clockifyLocales.POMODORO_BREAK_ENDED,
 	};
 
-	this.createNotification(
-		'pomodoroBreakOverNotify',
-		notificationOptions,
-		pomodoroForUser.isSoundNotification
-	);
+	this.createNotification('pomodoroBreakOverNotify', notificationOptions);
 	this.clearTimeoutForRemovingNotification('pomodoroBreakOverNotify', 10);
 }
 
 async function createBreakNotification(pomodoroForUser) {
+	breakButtons = [clockifyLocales.STOP_TIMER, 'Start break'];
 	const breakCounter = await localStorage.getItem('breakCounter');
 	this.removePomodoroInterval();
 
@@ -368,14 +362,11 @@ async function createBreakNotification(pomodoroForUser) {
 			clockifyLocales.SESSION(breakCounter + 1);
 	}
 
-	this.createNotification(
-		'pomodoroBreak',
-		notificationOptions,
-		pomodoroForUser.isSoundNotification
-	);
+	this.createNotification('pomodoroBreak', notificationOptions);
 }
 
 function createBreakOverNotification(pomodoroForUser) {
+	breakOverButtons = [clockifyLocales.START_TIMER, 'Continue last'];
 	this.removeBreakInterval();
 
 	const buttonsForMessage = [
@@ -401,14 +392,11 @@ function createBreakOverNotification(pomodoroForUser) {
 			clockifyLocales.CLICK_HERE_TO_START_TIMER;
 	}
 
-	this.createNotification(
-		'breakOver',
-		notificationOptions,
-		pomodoroForUser.isSoundNotification
-	);
+	this.createNotification('breakOver', notificationOptions);
 }
 
 function createLongBreakNotification(pomodoroForUser) {
+	longBreakButtons = [clockifyLocales.STOP_TIMER, 'Start long break'];
 	this.removePomodoroInterval();
 
 	const buttonsForMessage = [
@@ -436,11 +424,7 @@ function createLongBreakNotification(pomodoroForUser) {
 			clockifyLocales.CLICK_HERE_TO_START_LONG_BREAK;
 	}
 
-	this.createNotification(
-		'pomodoroLongBreak',
-		notificationOptions,
-		pomodoroForUser.isSoundNotification
-	);
+	this.createNotification('pomodoroLongBreak', notificationOptions);
 }
 
 async function startBreak(description, endDate) {
@@ -497,14 +481,14 @@ async function startBreak(description, endDate) {
 						isWebSocketHeader
 					);
 				//if (!err)
-				startBreakTimer(description, isWebSocketHeader, {
+				this.startBreakTimer(description, isWebSocketHeader, {
 					projectId,
 					task,
 					billable,
 					tags,
 				});
 			} else {
-				startBreakTimer(description, isWebSocketHeader, {
+				this.startBreakTimer(description, isWebSocketHeader, {
 					projectId,
 					task,
 					billable,

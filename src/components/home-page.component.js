@@ -115,6 +115,8 @@ class HomePage extends Component {
 		this.setAsyncStateItems = this.setAsyncStateItems.bind(this);
 		this.onStorageChange = this.onStorageChange.bind(this);
 		this.clearEntries = this.clearEntries.bind(this);
+		this.triggerOfflineEntrySync = this.triggerOfflineEntrySync.bind(this);
+		this.backgroundMessageListener = this.backgroundMessageListener.bind(this);
 
 		offlineStorage.load();
 	}
@@ -198,6 +200,13 @@ class HomePage extends Component {
 		}
 	}
 
+	backgroundMessageListener(request, sender, sendResponse) {
+		if (request.eventName === 'offlineEntryAdded') {
+			offlineStorage.load();
+			this.forceUpdate();
+		}
+	}
+
 	async componentDidMount() {
 		const workspaceSettings = await localStorage.getItem('workspaceSettings');
 		if (!workspaceSettings) {
@@ -205,7 +214,15 @@ class HomePage extends Component {
 			this.getWorkspaceSettings();
 			return;
 		}
+		getBrowser().runtime.onMessage.addListener(this.backgroundMessageListener);
 
+		window.ononline = (event) => {
+			this.connectionHandler({ type: 'online' });
+		};
+
+		window.onoffline = (event) => {
+			this.connectionHandler({ type: 'offline' });
+		};
 		this.setAsyncStateItems();
 	}
 
@@ -312,6 +329,10 @@ class HomePage extends Component {
 		getBrowser().runtime.onMessage.removeListener(websocketHandlerListener);
 		websocketHandlerListener = null;
 
+		getBrowser().runtime.onMessage.removeListener(
+			this.backgroundMessageListener
+		);
+
 		document.removeEventListener('scroll', this.handleScroll, false);
 
 		this.log('componentWillUnmount done');
@@ -355,9 +376,11 @@ class HomePage extends Component {
 		if (event.type === 'online') {
 			localStorage.setItem('offline', 'false');
 			isOff = false;
+			this.setState({ isOffline: false });
 		} else {
 			localStorage.setItem('offline', 'true');
 			isOff = true;
+			this.setState({ isOffline: true });
 		}
 
 		if (isOff) this.reloadOffline();
@@ -550,20 +573,28 @@ class HomePage extends Component {
 						},
 					})
 					.then((response) => {
-						let timeEntries = offlineStorage.timeEntriesOffline;
-						if (
-							timeEntries.findIndex(
-								(entryOffline) => entryOffline.id === entry.id
-							) > -1
-						) {
-							timeEntries.splice(
+						if (response && response.data) {
+							let timeEntries = offlineStorage.timeEntriesOffline;
+							if (
 								timeEntries.findIndex(
 									(entryOffline) => entryOffline.id === entry.id
-								),
-								1
+								) > -1
+							) {
+								timeEntries.splice(
+									timeEntries.findIndex(
+										(entryOffline) => entryOffline.id === entry.id
+									),
+									1
+								);
+							}
+							offlineStorage.timeEntriesOffline = timeEntries;
+						} else {
+							this.toaster.toast(
+								'error',
+								`Missing fields in entry: ${entry.description}`,
+								4
 							);
 						}
-						offlineStorage.timeEntriesOffline = timeEntries;
 					})
 					.catch((error) => {
 						if (error.request.status === 403) {
@@ -587,7 +618,6 @@ class HomePage extends Component {
 				.then((response) => {
 					if (response && response.data && response.data.userRoles) {
 						const { userRoles } = response.data;
-						// console.log('getUserRoles', userRoles)
 						getBrowser().storage.local.set({
 							userRoles,
 						});
@@ -595,7 +625,7 @@ class HomePage extends Component {
 					}
 				})
 				.catch((error) => {
-					console.log('getUserRoles() failure');
+					console.log(error);
 				});
 		}
 
@@ -604,6 +634,9 @@ class HomePage extends Component {
 				eventName: 'getWorkspaceSettings',
 			})
 			.then(async (response) => {
+				if (!response.data) {
+					throw new Error(response);
+				}
 				let { workspaceSettings, features, featureSubscriptionType } =
 					response.data;
 				workspaceSettings.projectPickerSpecialFilter =
@@ -1285,10 +1318,6 @@ class HomePage extends Component {
 						});
 						localStorage.setItem('timeEntryInProgress', data);
 						this.application.setIcon(getIconStatus().timeEntryStarted);
-
-						getBrowser().runtime.sendMessage({
-							eventName: 'addPomodoroTimer',
-						});
 					})
 					.catch(() => {});
 			}
@@ -1302,20 +1331,33 @@ class HomePage extends Component {
 					eventName: 'getEntryInProgress',
 				})
 				.then((response) => {
-					this.saveAllOfflineEntries();
-					this.reloadData();
+					// if there is no time entry in progress, then we can safely sync offline entries
+					!response.data && this.triggerOfflineEntrySync();
 				})
-				.catch((error) => {
+				.finally(() => {
 					this.reloadData();
 				});
 		} else {
-			if (!(await isOffline())) {
-				this.saveAllOfflineEntries();
+			this.reloadData();
+		}
+	}
 
-				this.reloadData();
-			} else {
-				this.reloadData();
-			}
+	async triggerOfflineEntrySync() {
+		if (!(await isOffline())) {
+			getBrowser()
+				.runtime.sendMessage({
+					eventName: 'getEntryInProgress',
+				})
+				.then((response) => {
+					// if there is no time entry in progress, then we can safely sync offline entries
+					if (!response.data) this.saveAllOfflineEntries();
+					else
+						this.toaster.toast(
+							'error',
+							"Can't sync while entry in progress",
+							2
+						);
+				});
 		}
 	}
 
@@ -1531,20 +1573,21 @@ class HomePage extends Component {
 							: 'disabled'
 					}
 				>
-					{!isOffline &&
-						!(pomodoroEnabled && isFocusModeEnabled && inProgress) && (
-							<TimeEntryListNotSynced
-								timeEntries={timeEntriesOffline}
-								pullToRefresh={pullToRefresh}
-								handleRefresh={this.handleRefresh}
-								workspaceSettings={workspaceSettings}
-								features={features}
-								timeFormat={userSettings.timeFormat}
-								userSettings={userSettings}
-								isUserOwnerOrAdmin={isUserOwnerOrAdmin}
-								manualModeDisabled={this.state.manualModeDisabled}
-							/>
-						)}
+					{!isOffline && timeEntriesOffline.length > 0 && (
+						<TimeEntryListNotSynced
+							inProgress={inProgress}
+							timeEntries={timeEntriesOffline}
+							pullToRefresh={pullToRefresh}
+							handleRefresh={this.handleRefresh}
+							triggerOfflineEntrySync={this.triggerOfflineEntrySync}
+							workspaceSettings={workspaceSettings}
+							features={features}
+							timeFormat={userSettings.timeFormat}
+							userSettings={userSettings}
+							isUserOwnerOrAdmin={isUserOwnerOrAdmin}
+							manualModeDisabled={this.state.manualModeDisabled}
+						/>
+					)}
 				</div>
 				{pomodoroEnabled && isFocusModeEnabled && inProgress ? (
 					<div>

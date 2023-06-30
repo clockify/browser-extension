@@ -155,6 +155,14 @@ class ClientListComponent extends Component {
 			this.props.errorMessage(locales.NAME_IS_REQUIRED);
 			return;
 		}
+
+		const pattern = /<[^>]+>/;
+		const clientNameContainsWrongChars = pattern.test(this.state.clientName);
+
+		if (clientNameContainsWrongChars) {
+			return this.props.errorMessage(locales.FORBIDDEN_CHARACTERS);
+		}
+
 		client.name = this.state.clientName;
 
 		getBrowser()
@@ -165,6 +173,10 @@ class ClientListComponent extends Component {
 				},
 			})
 			.then((response) => {
+				console.log('response', response);
+				if (response.error)
+					return this.props.errorMessage(response.error?.message);
+
 				this.props.selectedClient(response.data);
 
 				this.setState(

@@ -34,10 +34,31 @@ If you need the fix quicker, feel free to update the integration yourself and se
 
 ### Firefox extension
 
+#### BUILDING THE PRODUCTION VERSION
+
 1. Make sure you have Node and NPM installed on your system (see setup instructions below)
 2. Clone the repository
-3. Run `npm install`
-4. Build Firefox add-on by running:<br>
+3. In project root run `npm install --legacy-peer-deps`
+4. Build Firefox add-on by running:
+   `npm run compile.prod.firefox`<br>
+5. Zip the contents of the `/firefox` folder
+6. Navigate to `about:debugging#/runtime/this-firefox`
+7. Click `"Load Temporary Add-on"`
+8. Select the zipped file
+   > The extension is now built and loaded into firefox successfully
+
+---
+
+if you wish to play around with functionality:  
+9. Proceed to login/signup
+10.You are either redirected to the clockify web to login or if you're already logged in to the web version, then extension will instantly log you in once you've pressed the login button. Open some website (eg. some random Gitlab issue https://gitlab.com/gitlab-org/gitlab/-/issues/220296) 12. "Start timer" will appear, which you can click and the add-on will pick up the issue name and start the timer 13. Stop timer to save the time entry
+
+#### BUILDING THE DEVELOPMENT VERSION
+
+1. Make sure you have Node and NPM installed on your system (see setup instructions below)
+2. Clone the repository
+3. Run `npm install --legacy-peer-deps`
+4. Build Firefox add-on by running:
    `npm run compile.dev.firefox`<br>
 
 5. Navigate to `about:debugging`

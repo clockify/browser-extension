@@ -176,22 +176,32 @@ class Pomodoro extends Component {
 
 	async changePomodoroProperty(event) {
 		let value = parseInt(event.target.value);
-		if (value === 0) {
-			value = 1;
-		}
 		const { id } = event.target;
+		if (id !== 'breakCounter') {
+			if (!value || value < 2) {
+				this.props.errorMessage('Length must be at least 2 minutes');
+				value = '';
+			}
+		} else {
+			if (!value || value < 1) {
+				this.props.errorMessage('Must be at least 1');
+				value = '';
+			}
+		}
 
 		const { pomodoroForUser, pomodoroStorage } =
 			await this.getPomodoroStorage();
+		let hasValueChanged;
 		if (pomodoroForUser) {
+			hasValueChanged = pomodoroForUser[id] !== value;
 			pomodoroForUser[id] = value ? value : pomodoroForUser[id];
 			const obj = {
 				[id]: pomodoroForUser[id],
 			};
 			this.setState(obj);
 		}
-		this.store(pomodoroStorage);
-		this.props.changeSaved();
+		value !== '' && this.store(pomodoroStorage);
+		hasValueChanged && value !== '' && this.props.changeSaved();
 	}
 
 	changePomodoroPropertyOnEnter(event) {
@@ -205,9 +215,10 @@ class Pomodoro extends Component {
 	}
 
 	changePomodoroPropertyState(event) {
-		const { id, value } = event.target;
+		let { id, value } = event.target;
+		value = parseInt(value);
 		this.setState({
-			[id]: value,
+			[id]: value || '',
 		});
 	}
 

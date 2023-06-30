@@ -32,6 +32,20 @@ const CustomFieldDropMultiple = ({ cf, updateValue, setIsValid }) => {
 			isChecked: val.includes(name),
 		}));
 
+	(async function () {
+		let tagsListExistingInLocalStorage = await localStorage.getItem(
+			'preTagsList'
+		);
+		let currentWorkspaceId = await localStorage.getItem('activeWorkspaceId');
+		if (
+			tagsListExistingInLocalStorage &&
+			tagsListExistingInLocalStorage[0]?.workspaceId !== currentWorkspaceId
+		) {
+			await localStorage.removeItem('preTagsList');
+			await this.getTags(this.state.page, pageSize);
+		}
+	})();
+
 	const [isOpen, setOpen] = useState(false);
 
 	const [tagList, setTagList] = useState(allowedValues ? newList(value) : []);

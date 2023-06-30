@@ -16,6 +16,7 @@ class WorkspaceList extends React.Component {
 			isSubDomain: null,
 		};
 		this.setAsyncStateItems = this.setAsyncStateItems.bind(this);
+		this.selectWorkspace = this.selectWorkspace.bind(this);
 	}
 
 	componentDidMount() {
@@ -76,8 +77,8 @@ class WorkspaceList extends React.Component {
 		});
 	}
 
-	selectWorkspace(event) {
-		let workspace = JSON.parse(event.target.getAttribute('value'));
+	selectWorkspace(workspace) {
+		workspace = JSON.parse(workspace);
 		this.setState(
 			{
 				isOpen: false,
@@ -127,14 +128,28 @@ class WorkspaceList extends React.Component {
 								(ws) =>
 									!this.props.selectedWorkspace.onSubdomain || ws.onSubdomain
 							)
-							.map((workspace) => {
+							.map((workspace, index) => {
 								return (
-									<div key={workspace.id} className="workspace-list-item">
+									<div
+										key={workspace.id}
+										className={`workspace-list-item${
+											!workspace.accessEnabled
+												? ' workspace-list-item--disabled'
+												: ''
+										}`}
+										title={
+											workspace.accessEnabled
+												? workspace.name
+												: locales.WORKSPACE__DISABLED_TOOLTIP
+										}
+										data-pw={`workspace-list-item-${index}`}
+									>
 										<span
-											className="workspace-list-item--name"
-											value={JSON.stringify(workspace)}
-											title={workspace.name}
-											onClick={this.selectWorkspace.bind(this)}
+											className="workspace-list-item__name"
+											onClick={() =>
+												workspace.accessEnabled &&
+												this.selectWorkspace(JSON.stringify(workspace))
+											}
 										>
 											{workspace.name}
 										</span>

@@ -107,7 +107,8 @@ async function messageHandler(event) {
 				});
 
 				aBrowser.runtime.sendMessage({
-					eventName: 'addPomodoroTimer',
+					eventName: 'entryStarted',
+					options: { entry },
 				});
 			}
 
@@ -132,6 +133,9 @@ async function messageHandler(event) {
 			this.removeIdleListenerIfIdleIsEnabled();
 			this.addReminderTimer();
 			this.restartPomodoro();
+			aBrowser.runtime.sendMessage({
+				eventName: 'entryEnded',
+			});
 			break;
 
 		case webSocketEventsEnums.TIME_ENTRY_UPDATED: {
@@ -179,7 +183,7 @@ async function messageHandler(event) {
 					this.sendWebSocketEventToExtension(event.data);
 				})
 				.catch((err) => console.log(err));
-			this.restartPomodoro();	
+			this.restartPomodoro();
 			break;
 
 		case webSocketEventsEnums.CHANGED_ADMIN_PERMISSION:

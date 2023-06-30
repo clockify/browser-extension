@@ -1,14 +1,24 @@
-clockifyButton.render(
-	'[data-testid="open-card-title-wrapper"]:not(.clockify)',
-	{ observe: true },
-	(elem) => {
-		let description = $('button', elem).textContent;
-		let link = clockifyButton.createButton(description);
+(async () => {
+	const selectors = await getSelectors('pipefy', 'cardModalView');
 
-		link.style.position = 'relative';
-		link.style.fontSize = '16px';
-		link.style.marginTop = '16px';
+	clockifyButton.render(
+		selectors.hanger,
+		{ observe: true },
+		async (modalTitleWrapper) => {
+			const selectors = await getSelectors('pipefy', 'cardModalView');
 
-		elem.append(link);
-	}
-);
+			const description = $(
+				selectors.description,
+				modalTitleWrapper
+			).textContent;
+
+			const link = clockifyButton.createButton({ description });
+
+			link.style.position = 'relative';
+			link.style.fontSize = '16px';
+			link.style.marginTop = '16px';
+
+			modalTitleWrapper.append(link);
+		}
+	);
+})();

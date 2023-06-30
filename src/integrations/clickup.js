@@ -1,3 +1,45 @@
+// Card - New UI (March 2023.)
+clockifyButton.render(
+	'.cu-task-view__container [data-test="task-view-header__breadcrumbs"]:not(.clockify)',
+	{ observe: true },
+	(elem) => {
+		setTimeout(() => {
+			$('#clockifyButton', elem)?.remove();
+
+			const headerElements = $$('.cu-task-view-breadcrumbs__text');
+			const headerChildren = headerElements.length;
+			const hasThreeChildren = headerChildren === 3;
+			const folderName = hasThreeChildren
+				? headerElements[1].textContent
+				: null;
+			const listName = hasThreeChildren
+				? headerElements[2].textContent
+				: headerElements[1].textContent;
+
+			const description = () => $('.cu-task-title__overlay').textContent;
+			const projectName = () => folderName ?? listName;
+			const taskName = () => (folderName ? listName : '');
+			const tagNames = () =>
+				Array.from($$('.cu-tags-badge__inner span')).map(
+					(tag) => tag.textContent
+				);
+
+			const clockifyProps = { description, projectName, taskName, tagNames };
+
+			const link = clockifyButton.createButton(clockifyProps);
+			const input = clockifyButton.createInput(clockifyProps);
+
+			link.style.display = 'inline-flex';
+			link.style.paddingLeft = '10px';
+			link.style.marginRight = '15px';
+			link.style.cursor = 'pointer';
+
+			elem.appendChild(link);
+			elem.appendChild(input);
+		}, 2000);
+	}
+);
+
 // Card
 clockifyButton.render(
 	'.task-container__header:not(.clockify)',

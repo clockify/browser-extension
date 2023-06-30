@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { getBrowser, isChrome } from '../helpers/browser-helper';
 import Header from './header.component';
-
+import { debounce } from '../helpers/utils';
 import { getLocalStorageEnums } from '../enums/local-storage.enum';
 import { TimePicker } from 'antd';
 import moment from 'moment';
@@ -16,7 +16,6 @@ import HomePage from './home-page.component';
 import locales from '../helpers/locales';
 
 import dateFnsLocale from './date-fns-locale';
-import { debug } from 'console';
 
 const htmlStyleHelpers = new HtmlStyleHelper();
 
@@ -193,27 +192,28 @@ class Settings extends Component {
 	}
 
 	async getMemberProfile() {
-		const activeWorkspaceId = await localStorage.getItem(
-			'activeWorkspaceId'
-		);
-		 getBrowser().runtime.sendMessage({eventName:'getMemberProfile', options: {userId: this.state.userId, workspaceId: activeWorkspaceId}})
-		 .then((response) => {
-			console.log('member profile', response);
-			this.setState(
-			{
-				memberProfile: response.data,
-			},
-			() => {
-				this.isStopTimerOnSelectedTimeOn();
-			}
-		);
-		});		
+		const activeWorkspaceId = await localStorage.getItem('activeWorkspaceId');
+		getBrowser()
+			.runtime.sendMessage({
+				eventName: 'getMemberProfile',
+				options: { userId: this.state.userId, workspaceId: activeWorkspaceId },
+			})
+			.then((response) => {
+				console.log('member profile', response);
+				this.setState(
+					{
+						memberProfile: response.data,
+					},
+					() => {
+						this.isStopTimerOnSelectedTimeOn();
+					}
+				);
+			});
 	}
 
 	getDefaultStopTime(startTime) {
 		let formattedTime = '17:00';
 		// if (this.state.reminderSettings) {
-		// 	console.log('remindersForUser', remindersForUser);
 		if (this.state.memberProfile && this.state.memberProfile.workCapacity) {
 			let [hours, minutes] = startTime.split(':');
 
@@ -316,7 +316,7 @@ class Settings extends Component {
 				]),
 				getLocalStorageEnums().PERMANENT_PREFIX
 			);
-				this.setState({
+			this.setState({
 				timeToStopTimer: defaultStopTime,
 			});
 			return;
@@ -384,32 +384,33 @@ class Settings extends Component {
 		getBrowser()
 			.runtime.sendMessage({
 				eventName: 'getUser',
-			}).then((response) => {
-			let data = response.data;
-			console.log('userData', data);
-			this.setState(
-				{
-					user: data,
-					userId: data.id,
-					userEmail: data.email,
-					userPicture: data.profilePicture,
-					userTimeFormat: data.settings.timeFormat,
-					userStartOfDay: data.settings.myStartOfDay,
-				},
-				() => {
-					localStorage.setItem('userEmail', this.state.userEmail);
-					localStorage.setItem('profilePicture', this.state.userPicture);
-					this.getMemberProfile();
-					this.isIdleDetectionOn();
-					this.isReminderOn();
-					this.isAutoStartStopOn();
-					this.isTimerShortcutOn();
-					this.isContextMenuOn();
-					this.isShowPostStartPopup();
-					this.isAppendWebsiteURLOn();
-				}
-			);
-		});
+			})
+			.then((response) => {
+				let data = response.data;
+				console.log('userData', data);
+				this.setState(
+					{
+						user: data,
+						userId: data.id,
+						userEmail: data.email,
+						userPicture: data.profilePicture,
+						userTimeFormat: data.settings.timeFormat,
+						userStartOfDay: data.settings.myStartOfDay,
+					},
+					() => {
+						localStorage.setItem('userEmail', this.state.userEmail);
+						localStorage.setItem('profilePicture', this.state.userPicture);
+						this.getMemberProfile();
+						this.isIdleDetectionOn();
+						this.isReminderOn();
+						this.isAutoStartStopOn();
+						this.isTimerShortcutOn();
+						this.isContextMenuOn();
+						this.isShowPostStartPopup();
+						this.isAppendWebsiteURLOn();
+					}
+				);
+			});
 	}
 
 	toggleShowPostStartPopup() {
@@ -1222,6 +1223,16 @@ class Settings extends Component {
 		this.toaster.toast('success', `${locales.CHANGE_SAVED}.`, 2);
 	}
 
+	showErrorMessage(message) {
+		this.toaster.toast('error', message, 2);
+	}
+
+	showErrorMessage = debounce({
+		func: this.showErrorMessage,
+		delay: 2000,
+		isImmediate: true,
+	});
+
 	async goBackToHomePage() {
 		window.reactRoot.render(<HomePage />);
 	}
@@ -1614,6 +1625,7 @@ class Settings extends Component {
 				<Pomodoro
 					workspaceSettings={this.props.workspaceSettings}
 					changeSaved={this.showSuccessMessage.bind(this)}
+					errorMessage={this.showErrorMessage.bind(this)}
 					scrollIntoView={this.scrollIntoView}
 				/>
 				<div ref={this.pomodoroEnd} />
