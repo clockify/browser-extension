@@ -59,5 +59,40 @@ clockifyButton.render(
 		link.style.padding = '3px 14px';
 		elem.prepend(link);
 		elem.prepend(inputForm);
-	}
-);
+});
+
+// Sidepanel issue details
+setTimeout(() => {
+	clockifyButton.render('div[data-testid="side-panel-title"]:not(.clockify)', { observe: true }, (elem) => {
+		if (elem != null) {
+			const description = $('bdi', elem).innerText;
+			const issueNum = $('span', elem).innerText;
+			const taskName = `${issueNum} ${description}`;
+
+			// Container for clockify elements
+			const clockifyContainer = createTag('div', 'clockify-widget-container');
+			clockifyContainer.style.display = 'flex';
+			clockifyContainer.style.margin = '6px 0px 6px 0px';
+			clockifyContainer.style.gap = '8px';
+
+			// Button
+			const link = clockifyButton.createButton({
+				description: taskName,
+				taskName: taskName,
+			});
+			clockifyContainer.append(link);
+
+			// Input
+			const htmlTagInput = createTag('div', 'clockify-input-container');
+			const inputForm = clockifyButton.createInput({
+				description: taskName,
+				taskName: taskName,
+			});
+			htmlTagInput.append(inputForm);
+			clockifyContainer.appendChild(htmlTagInput);
+
+			// Add clockify elements to header
+			elem.append(clockifyContainer);
+		}
+	});
+}, 500);
