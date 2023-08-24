@@ -32,16 +32,23 @@ clockifyButton.render(
 	'.work-item-form-header:not(.clockify,.flex-row)',
 	{ observe: true },
 	function (elem) {
-		var link, itemId, description, project;
+		var link, itemId, description, project, tagNames;
 		itemId = () => $('.work-item-form-header > .body-xl', elem).textContent;
 		description = () => $('.work-item-title-textfield input', elem).value;
 		project = $('input[aria-label=\'Clockify Project\']')
 			? $('input[aria-label=\'Clockify Project\']').value
 			: $('.navigation-container .project-item .text-ellipsis').textContent;
+		tagNames = () =>
+			{
+				return Array.from(
+					$$(".work-item-tag-picker .bolt-pill-content",elem)
+				).map((e) => e.innerText);
+			}
 		link = clockifyButton.createButton({
 			description: () => '#' + itemId() + ' ' + description(),
 			projectName: project,
 			taskName: () => description(),
+			tagNames: () => tagNames()
 		});
 		link.style.display = 'block';
 		link.style.paddingTop = '0';
