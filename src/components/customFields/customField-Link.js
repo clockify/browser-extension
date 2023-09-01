@@ -10,21 +10,22 @@ const CustomFieldLink = ({
 	setIsValid,
 	cfContainsWrongChars,
 }) => {
+	const [value, setValue] = useState(cf.value);
+
 	const [
 		{
 			id,
 			index,
-			value,
 			isDisabled,
 			placeHolder,
 			placeHolderOrName,
 			title,
 			manualMode,
 			required,
+			description,
 		},
-		setValue,
 		storeValue,
-	] = useCustomField(cf, updateValue);
+	] = useCustomField(cf, updateValue, value);
 
 	const [valueTemp, setValueTemp] = useState(null);
 	const handleChangeTemp = (e) => {
@@ -40,6 +41,7 @@ const CustomFieldLink = ({
 		const pattern = /<[^>]+>/;
 		const isCustomFieldContainsWrongChars = pattern.test(val);
 		cfContainsWrongChars({ id, isCustomFieldContainsWrongChars });
+		storeValue(val);
 	};
 
 	const storeStay = (e) => {
@@ -70,6 +72,8 @@ const CustomFieldLink = ({
 		}
 		setValue(valueTemp);
 		setValueStay(valueTemp);
+		updateValue(id, valueTemp);
+		storeValue(valueTemp);
 		setModalOpen(false);
 
 		const pattern = /<[^>]+>/;
@@ -80,8 +84,12 @@ const CustomFieldLink = ({
 	const isNotValid = required && !value;
 
 	useEffect(() => {
-		setIsValid({ id: id, isValid: !(required && !cf.value) });
-	}, []);
+		setValue(cf.value);
+	}, [cf.value]);
+
+	useEffect(() => {
+		setIsValid({ id: id, isValid: !(required && !value) });
+	}, [value]);
 	return (
 		<>
 			<div>
@@ -98,14 +106,14 @@ const CustomFieldLink = ({
 								href={value}
 								style={{ color: '#03a9f4', fontSize: '14px' }}
 								target="_blank"
-								title={title}
+								title={description}
 							>
 								{placeHolderOrName}
 							</a>
 							{!isDisabled && (
 								<img
 									index={index}
-									title={title}
+									title={description}
 									src={getBrowser().runtime.getURL(
 										'assets/images/edit-unsynced.png'
 									)}
@@ -128,7 +136,7 @@ const CustomFieldLink = ({
 							className={`custom-field-link clockify-link-input${
 								isDisabled ? '-disabled' : ''
 							} ${isNotValid ? 'custom-field-required' : ''}`}
-							title={title}
+							title={description}
 							placeholder={placeHolderOrName}
 							onChange={handleChangeStay}
 							onBlur={storeStay}

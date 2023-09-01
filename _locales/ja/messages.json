@@ -851,7 +851,16 @@
   "AGREE_LABEL": {
     "message": "私は同意します"
   },
+  "CLOCKIFY_TERMS_OF_USE": {
+    "message": "Clockify に同意します"
+  },
+  "CAKE_TERMS_OF_USE": {
+    "message": "CAKE.com に同意します"
+  },
   "TOS": {
+    "message": "利用規約"
+  },
+  "TERMS_OF_USE": {
     "message": "利用規約"
   },
   "ALREADY_HAVE_AN_ACCOUNT": {

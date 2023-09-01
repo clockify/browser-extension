@@ -261,7 +261,7 @@ class Login extends React.Component {
 						{locales.LOG_IN}
 					</button>
 					<hr className="login__divider" />
-					<div className="new-account">
+					<div className={this.state.isSubDomain || this.state.selfHosted? 'disabled' : 'new-account'}>
 						<p>{locales.NEW_HERE}?</p>
 						<a onClick={this.signup}>{locales.CREATE_AN_ACCOUNT}</a>
 					</div>

@@ -173,3 +173,35 @@ clockifyButton.render(
 		elem.appendChild(link);
 	}
 );
+
+clockifyButton.render(
+	'[data-task-detail-panel-id]:not(.clockify)',
+	{ observe: true },
+	(elem) => {
+		const description = () =>
+			$('.taskLinkName', elem)?.textContent.trim();
+		const projectName = () =>
+			$('.tw-toolbar-title > span')?.textContent?.trim() || '';
+		const tagNames = () => [
+			...new Set(
+				Array.from($$('.v-chip__content span', elem)).map((tag) =>
+					tag.textContent.trim()
+				)
+			),
+		];
+
+		const link = clockifyButton.createButton({
+			description,
+			projectName,
+			tagNames,
+			small: true,
+		});
+
+		elem.style.marginLeft = '28px';
+		link.style.position = 'absolute';
+		link.style.top = '16px';
+		link.style.left = '-24px';
+		link.style.marginLeft = '2px';
+		elem.prepend(link);
+	}
+);

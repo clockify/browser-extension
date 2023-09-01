@@ -1,98 +1,61 @@
-// For the projects detail page
-clockifyButton.render(
-	'div[data-test-id="side-panel"] aside ul:not(.clockify)',
-	{ observe: true, noDebounce: true },
-	(elem) => {
-		const observer = new MutationObserver((mutations) => {
-			mutations.forEach((mutation) => {
-				if (
-					mutation.target.attributes['data-test-id']?.value ===
-					'side-panel-title'
-				) {
-					const description =
-						mutation.target.querySelector('h2 span').innerText;
-					const issueNum = mutation.target.querySelector('a').innerText;
-
-					const link = clockifyButton.createButton(
-						`${issueNum} ${description}`
-					);
-					const li = document.createElement('li');
-					li.style.marginLeft = '8px';
-					li.style.padding = '6px 8px';
-					li.style.listStyle = 'none';
-					li.appendChild(link);
-					elem.append(li);
-				}
-			});
-		});
-
-		observer.observe(document.querySelector('#__primerPortalRoot__ header'), {
-			childList: true,
-			subtree: true,
-		});
-	},
-	'div[data-test-id="side-panel"]'
-);
-
-// For the issues page
+// Issue view, PR view
 clockifyButton.render(
 	'.gh-header-actions:not(.clockify)',
 	{ observe: true },
-	function (elem) {
-		issueId = $('.gh-header-number').innerText;
-		description = issueId + ' ' + $('.js-issue-title').innerText;
-		project = $('[data-pjax=\'#repo-content-pjax-container\']').innerText;
-		(tags = () => Array.from($$('.IssueLabel')).map((e) => e.innerText)),
-			(link = clockifyButton.createButton({
-				description: description,
-				projectName: project,
-				taskName: description,
-				tagNames: tags,
-			}));
-		inputForm = clockifyButton.createInput({
-			description: description,
-			projectName: project,
-			taskName: description,
-			tagNames: tags,
-		});
+	(actions) => {
+		const id = text('.gh-header-number');
+		const title = text('.js-issue-title');
+
+		const description = () => `${id} ${title}`;
+		const projectName = () =>
+			text('[aria-label="Page context"] ul li:nth-child(2) span') ||
+			text('[itemprop="name"] a');
+		const taskName = () => `${id} ${title}`;
+		const tagNames = () => textList('.IssueLabel');
+
+		const entry = { description, projectName, taskName, tagNames };
+
+		const link = clockifyButton.createButton(entry);
+		const input = clockifyButton.createInput(entry);
 
 		link.style.padding = '3px 14px';
-		elem.prepend(link);
-		elem.prepend(inputForm);
-});
 
-// Sidepanel issue details
-setTimeout(() => {
-	clockifyButton.render('div[data-testid="side-panel-title"]:not(.clockify)', { observe: true }, (elem) => {
-		if (elem != null) {
-			const description = $('bdi', elem).innerText;
-			const issueNum = $('span', elem).innerText;
-			const taskName = `${issueNum} ${description}`;
+		actions.prepend(link);
+		actions.prepend(input);
+	}
+);
 
-			// Container for clockify elements
-			const clockifyContainer = createTag('div', 'clockify-widget-container');
-			clockifyContainer.style.display = 'flex';
-			clockifyContainer.style.margin = '6px 0px 6px 0px';
-			clockifyContainer.style.gap = '8px';
+// Sidepanel issue view (project details)
+clockifyButton.render(
+	'div[data-testid="side-panel-title"]:not(.clockify)',
+	{ observe: true },
+	async (sidepanelHeader) => {
+		await timeout({ milliseconds: 1200 });
 
-			// Button
-			const link = clockifyButton.createButton({
-				description: taskName,
-				taskName: taskName,
-			});
-			clockifyContainer.append(link);
+		const issueId = text('span', sidepanelHeader);
+		const issueTitle = text('bdi', sidepanelHeader);
+		const openedIssue = $('[data-test-cell-is-focused="true"] a');
+		const repositoryName = openedIssue.href.split('/')[4];
 
-			// Input
-			const htmlTagInput = createTag('div', 'clockify-input-container');
-			const inputForm = clockifyButton.createInput({
-				description: taskName,
-				taskName: taskName,
-			});
-			htmlTagInput.append(inputForm);
-			clockifyContainer.appendChild(htmlTagInput);
+		const description = `${issueId} ${issueTitle}`;
+		const projectName = repositoryName;
+		const taskName = `${issueId} ${issueTitle}`;
+		const tagNames = textList('[data-testid="sidebar-field-Labels"] li');
 
-			// Add clockify elements to header
-			elem.append(clockifyContainer);
-		}
-	});
-}, 500);
+		const container = createTag('div', 'clockify-widget-container');
+
+		container.style.margin = '6px 0px';
+		container.style.display = 'flex';
+		container.style.gap = '8px';
+
+		const entry = { description, projectName, taskName, tagNames };
+
+		const link = clockifyButton.createButton(entry);
+		const input = clockifyButton.createInput(entry);
+
+		container.append(link);
+		container.append(input);
+
+		sidepanelHeader.append(container);
+	}
+);

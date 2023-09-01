@@ -75,10 +75,7 @@ export class Extension {
 											endPoint = websockets.endpoint;
 										}
 										if (endPoint.startsWith('/')) {
-											endPoint = `${data.frontendUrl.replace(
-												/\/$/,
-												''
-											)}${endPoint}`;
+											endPoint = `wss://${data.frontendUrl}${websockets.apps.extension.endpoint}`;
 										}
 										localStorage.setItem(
 											'webSocketEndpoint',

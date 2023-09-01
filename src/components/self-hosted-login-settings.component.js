@@ -56,7 +56,7 @@ class SelfHostedBootSettings extends React.Component {
 							try {
 								const data = JSON.parse(result.text);
 								selfHosted = data.selfHosted;
-								extParameters.setSelfHosted(data.selfHosted);
+								extParameters.setSelfHosted(true);
 								if (data.endpoint.startsWith('/')) {
 									baseUrl = `${this.state.homeUrl}${data.endpoint}`;
 								} else {
@@ -72,11 +72,7 @@ class SelfHostedBootSettings extends React.Component {
 										webSocketEndPoint = websockets.endpoint;
 									}
 									if (webSocketEndPoint.startsWith('/')) {
-										//webSocketEndPoint = `${this.state.homeUrl}${webSocketEndPoint}`;
-										webSocketEndPoint = `${data.frontendUrl.replace(
-											/\/$/,
-											''
-										)}${webSocketEndPoint}`;
+										webSocketEndPoint = `wss://${data.frontendUrl}${websockets.apps.extension.endpoint}`;
 									}
 									extParameters.setWebSocketUrl(webSocketEndPoint);
 								}

@@ -609,7 +609,7 @@
     "message": "Você pode definir um novo em Configurações."
   },
   "COMPLETE_CURRENT_ENTRY": {
-    "message": "Por favor, primeiro complete sua Inscrição atual!"
+    "message": "Por favor, primeiro complete sua Entrada atual!"
   },
   "ENTER_REQUIRED_FIELDS": {
     "message": "Insira os campos obrigatórios ou, opcionalmente, edite as configurações do seu espaço de trabalho."
@@ -705,10 +705,10 @@
     "message": "Não é possível encerrar a entrada sem projeto, tarefa, descrição ou etiquetas"
   },
   "STOP_TIME": {
-    "message": "Pare o tempo"
+    "message": "Parar o tempo"
   },
   "STOP_AT_SPECIFIED_TIME": {
-    "message": "Pare o cronômetro automaticamente em uma hora especificada do dia"
+    "message": "Pare o cronômetro automaticamente em uma hora especifica do dia"
   },
   "YOU_MUST_BE_LOGGED_IN_TO_START": {
     "message": "Você deve estar logado para iniciar a entrada da hora"
@@ -744,7 +744,7 @@
     "message": "Modo de entrada"
   },
   "REFRESH": {
-    "message": "Atualizar"
+    "message": "Refrescar"
   },
   "LOGIN_TO_CUSTOM_DOMAIN": {
     "message": "Faça login no domínio personalizado"
@@ -765,7 +765,7 @@
     "message": "Nome e cor são obrigatórios"
   },
   "ENABLE_POMODORO_TIMER": {
-    "message": "Ativar temporizador pomodoro"
+    "message": "Ativar o cronômetro pomodoro"
   },
   "TIMER_INTERVAL": {
     "message": "Intervalo do cronômetro"
@@ -780,7 +780,7 @@
     "message": "Longa pausa começa depois"
   },
   "BREAKS": {
-    "message": "rompe"
+    "message": "intervalos"
   },
   "SOUND_NOTIFICATION": {
     "message": "Notificação de som"
@@ -789,7 +789,7 @@
     "message": "Pausas automáticas"
   },
   "DEFAULT_BREAK_PROJECT": {
-    "message": "Projeto de pausa padrão"
+    "message": "Padrão de projeto de pausa"
   },
   "AND_TASK": {
     "message": "e tarefa"
@@ -798,10 +798,10 @@
     "message": "Selecione a cor"
   },
   "ADD_TIME": {
-    "message": "TEMPO EXTRA"
+    "message": "ADICIONAR TEMPO"
   },
   "BACK": {
-    "message": "Costas"
+    "message": "Voltar"
   },
   "CHANGE_SAVED": {
     "message": "Alteração salva"
@@ -851,7 +851,16 @@
   "AGREE_LABEL": {
     "message": "Estou de acordo com"
   },
+  "CLOCKIFY_TERMS_OF_USE": {
+    "message": "Eu concordo com Clockify"
+  },
+  "CAKE_TERMS_OF_USE": {
+    "message": "Eu concordo com CAKE.com"
+  },
   "TOS": {
+    "message": "Termos de uso"
+  },
+  "TERMS_OF_USE": {
     "message": "Termos de uso"
   },
   "ALREADY_HAVE_AN_ACCOUNT": {
@@ -903,13 +912,13 @@
     "message": "Seu intervalo de { breakMinutes } minutos começou."
   },
   "POMODORO_BREAK_ENDED": {
-    "message": "Sua pausa terminou. O temporizador de trabalho foi retomado."
+    "message": "Sua pausa terminou. O cronômetro de trabalho foi retomado."
   },
   "POMODORO_TAKE_BREAK": {
     "message": "Você está trabalhando { minLength } minutos. Hora de fazer uma pausa!"
   },
   "POMODORO_TIME_TO_WORK": {
-    "message": "Rompa. Hora de trabalhar!"
+    "message": "Fim da pausa. Hora de trabalhar!"
   },
   "CLICK_HERE_TO_START_TIMER": {
     "message": "Clique aqui para iniciar o cronômetro."
@@ -927,10 +936,10 @@
     "message": "Clique aqui para iniciar a longa pausa."
   },
   "POMODORO_TIMER": {
-    "message": "Temporizador Pomodoro"
+    "message": "Cronômetro Pomodoro"
   },
   "REMINDER_MESSAGE": {
-    "message": "Não se esqueça de controlar o seu tempo! ({ minutes }m passados desde a última atividade)"
+    "message": "Não se esqueça de rastrear o seu tempo! ({ minutes }min passaram desde a última atividade)"
   },
   "ADD_MISSING_TIME": {
     "message": "Adicionar tempo ausente"
@@ -942,13 +951,13 @@
     "message": "Descartar e continuar"
   },
   "FOCUS_MODE": {
-    "message": "Modo de fóco"
+    "message": "Modo de foco"
   },
   "IDLE_TIME_DETECTED": {
-    "message": "Tempo ocioso detectado"
+    "message": "Tempo de inatividade detectado"
   },
   "CLICK_HERE_TO_DISCARD_IDLE": {
-    "message": "Clique aqui para descartar ociosidade e parar a entrada."
+    "message": "Clique aqui para descartar o tempo de inatividade e parar a entrada."
   },
   "IDLE_MESSAGE": {
     "message": "Você ficou inativo por { hours }h { minutes }m durante o rastreamento { desc }."
@@ -1002,7 +1011,7 @@
     "message": "Recurso desativado. Entre em contato com o administrador para obter mais informações."
   },
   "START_TIMER_WITH_DESCRIPTION": {
-    "message": "Iniciar temporizador com descrição"
+    "message": "Iniciar cronômetro com descrição"
   },
   "WORKSPACE__TWO_FACTOR__MODAL__TITLE": {
     "message": "Segurança aprimorada necessária"
@@ -1041,19 +1050,19 @@
     "message": "Lembrete"
   },
   "DOWNLOAD_SREENSHOTS_RECORDING_APP": {
-    "message": "Baixe o aplicativo de gravação de screenshots"
+    "message": "Baixar o aplicativo de gravação de capturas de tela"
   },
   "AUDIT_LOG__KIOSK__BREAK_TYPE_LABEL": {
     "message": "Intervalo"
   },
   "UPGRADE_TO_USE_THIS_FEATURE": {
-    "message": "Atualize para usar este recurso"
+    "message": "Atualizar para usar esta ferramenta"
   },
   "UPGRADE_REGIONAL": {
     "message": "Área de trabalho bloqueada. Entre em contato com seu administrador para obter mais informações."
   },
   "UPGRADE_REGIONAL_ADMIN": {
-    "message": "Espaço de trabalho bloqueado por estar hospedado no servidor regional. Por favor, adicione informações de pagamento ou troque o workspace."
+    "message": "Espaço de trabalho bloqueado por estar hospedado no servidor regional. Por favor, adicione informações de pagamento ou troque o espaço de trabalho."
   },
   "ACTIVITY_TABS__SCREENSHOTS__NO_SCREENSHOTS_PROMO_BTN": {
     "message": "Baixe o aplicativo de gravação de tela"

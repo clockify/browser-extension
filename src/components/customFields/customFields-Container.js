@@ -145,8 +145,12 @@ export function CustomFieldsContainer({
 	}, [validatedCustomFields]);
 
 	const onChangeProjectRedrawCustomFields = () => {
-		const { customFieldValues, projectId } = timeEntry;
+		const { projectId } = timeEntry;
+		const { customFieldValues } = offlineStorage;
 		if (!customFieldValues || customFieldValues.length === 0) return;
+
+		// removes validated CFs when selected project is changed
+		setValidatedCustomFields({});
 
 		// na nivou projekta moze redefinisati vise od 5 VISIBLE polja,
 		// dok na nivou WS ne vise od 5.

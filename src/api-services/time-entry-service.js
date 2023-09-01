@@ -330,16 +330,18 @@ class TimeEntry extends ClockifyService {
 		const { data, error, status } = await this.apiCall(endPoint, 'POST', body);
 		if (error) {
 			console.error('oh no, failed', error);
-		} else if (data && !data.message && !isSubmitTime) {
+		} else if (data && !data.message && !end) {
 			// window.inProgress = true;
-			aBrowser.action.setIcon({
-				path: iconPathStarted,
-			});
-			setTimeEntryInProgress(data);
+			if (!end) {
+				aBrowser.action.setIcon({
+					path: iconPathStarted,
+				});
+				setTimeEntryInProgress(data);
 
-			aBrowser.runtime.sendMessage({ eventName: 'TIME_ENTRY_STARTED' });
+				aBrowser.runtime.sendMessage({ eventName: 'TIME_ENTRY_STARTED' });
 
-			afterStartTimer(); // idle, pomodoro ...
+				afterStartTimer(); // idle, pomodoro ...
+			}
 		}
 
 		return { data, error, status };
@@ -559,6 +561,7 @@ class TimeEntry extends ClockifyService {
 			start = null,
 			end = null,
 			isSubmitTime = false,
+			customFields = [],
 		} = timeEntryOptions;
 		let project = { id: projectId, name: projectName };
 		let task = { id: taskId ?? null, name: taskName ?? null };
@@ -590,7 +593,6 @@ class TimeEntry extends ClockifyService {
 			if (tagovi) tags = tagovi;
 		} else if (forceTags) {
 		}
-
 		return await this.startTimer(description, {
 			projectId: project.id,
 			task,
@@ -599,6 +601,7 @@ class TimeEntry extends ClockifyService {
 			start,
 			end,
 			isSubmitTime,
+			customFields,
 		});
 	}
 

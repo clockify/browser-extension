@@ -37,8 +37,8 @@
 	position: relative;
 	.input-stepper {
 		position: absolute;
-		top: 10px;
-		right: 10px;
+		top: 11px;
+		right: 16px;
 		width: 13px;
 		height: 14px;
 		.input-stepper-wrapper {
@@ -70,7 +70,7 @@ div.custom-field-ta {
 	border-image-width: 0 !important;
 	background-color: white !important;
 	margin: 8px 0px 0px 0px !important;
-	height: 45px !important;
+	height: 40px !important;
 
 	&-disabled {
 		box-sizing: border-box;
@@ -129,18 +129,20 @@ div.custom-field-inner-checkbox {
 textarea.custom-field-text {
 	box-sizing: border-box;
 	width: 100% !important;
-	height: 45px !important;
-	min-height: 45px !important;
+	height: 100% !important;
+	min-height: 40px !important;
 	border: 1px solid #c6d2d9;
 	margin: 0 !important;
+	line-height: 27px !important;
 	resize: none !important;
 	font-size: 14px !important;
 	outline: none !important;
 	color: #333333;
-	padding: 5px 10px !important;
+	padding: 5px 8px !important;
 	word-wrap: break-word !important;
 	background-color: white;
 	border-image-width: 0 !important;
+	text-overflow: ellipsis !important;
 
 	&-disabled {
 		box-sizing: border-box;
@@ -383,7 +385,7 @@ input.clockify-link-input {
 	background-color: #fff !important;
 	background-clip: padding-box !important;
 	border: 1px solid #c6d2d9 !important;
-	border-radius: 1px !important;
+	border-radius: 0px !important;
 	transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out !important;
 	box-shadow: none !important;
 	&-disabled {
@@ -398,7 +400,7 @@ input.clockify-link-input {
 		line-height: 21px !important;
 		color: #333 !important;
 		background-clip: padding-box !important;
-		border-radius: 1px !important;
+		border-radius: 0px !important;
 		transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out !important;
 		box-shadow: none !important;
 		border: 1px solid #c6d2d9 !important;

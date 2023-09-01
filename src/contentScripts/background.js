@@ -294,13 +294,16 @@ aBrowser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 			if (!tab.url.includes('chrome://') && isLoggedIn) {
 				const userLang = await localStorage.getItem('lang');
 				await clockifyLocales.onProfileLangChange(userLang);
-				let domainInfo = await extractDomainInfo(tab.url, result.permissions);
+				let integrationInfo = await extractDomainInfo(
+					tab.url,
+					result.permissions
+				);
 				//TODO: find better solution when working with integrattion iframes
 				// since asana breaks on firefox when iframes are not loaded
-				if (domainInfo.file === 'asana.js' && !this.isChrome()) {
+				if (integrationInfo.file === 'asana.js' && !this.isChrome()) {
 					await pause(1000);
 				}
-				if (domainInfo.file) {
+				if (integrationInfo.file) {
 					aBrowser.tabs.sendMessage(tabId, {
 						eventName: 'cleanup',
 					});
@@ -320,7 +323,7 @@ aBrowser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 									IntegrationSelectors.fetchAndStore({
 										onlyIfPassedFollowingMinutesSinceLastFetch: 60 * 12,
 									});
-									loadScripts(tabId, domainInfo.file);
+									loadScripts(tabId, integrationInfo);
 									setTimeout(() => {
 										backgroundWebSocketConnect();
 									}, 1000);
@@ -340,12 +343,19 @@ aBrowser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 	}
 });
 
-function loadScripts(tabId, file) {
+function loadScripts(tabId, integrationInfo) {
 	try {
-		aBrowser.scripting.executeScript({
-			target: { tabId },
-			files: ['integrations/' + file],
-		});
+		aBrowser.scripting
+			.executeScript({
+				target: { tabId },
+				files: ['integrations/' + integrationInfo.file],
+			})
+			.then(() => {
+				aBrowser.tabs.sendMessage(tabId, {
+					eventName: 'passArgumentsToClockifyButton',
+					options: { activeIntegration: integrationInfo.hostname },
+				});
+			});
 	} catch (e) {
 		// console.log(e);
 	}
@@ -357,6 +367,7 @@ async function extractDomainInfo(url, permissions) {
 
 	return {
 		domain: url,
+		hostname,
 		file: file,
 		origins: ['*://' + hostname + '/*'],
 	};
@@ -526,6 +537,7 @@ aBrowser.runtime.onMessage.addListener((request, sender, sendResponse) => {
 		case 'signup':
 		case 'getClientsWithFilter':
 		case 'createClient':
+		case 'sendAnalyticsEvent':
 			return ClockifyIntegration.callFunction(
 				request.eventName,
 				request,

@@ -66,14 +66,14 @@ class ClockifyIntegrationBase {
 			sendResponse({ status: err.status });
 		} else {
 			if (status === 201) {
-				aBrowser.action.setIcon({
-					path: iconPathStarted,
-				});
-				aBrowser.runtime.sendMessage({
-					eventName: 'entryStarted',
-					options: { entry: ent },
-				});
 				if (!timeEntryOptions.manualMode) {
+					aBrowser.action.setIcon({
+						path: iconPathStarted,
+					});
+					aBrowser.runtime.sendMessage({
+						eventName: 'entryStarted',
+						options: { entry: ent },
+					});
 					aBrowser.storage.local.set({ timeEntryInProgress: ent });
 				}
 			}
@@ -564,9 +564,9 @@ class ClockifyIntegrationBase {
 			}
 		}
 
-		const end = new Date();
-		timeEntryOptions.start = new Date(end.getTime() - totalMins * 60000);
-		timeEntryOptions.end = end;
+		const start = new Date();
+		timeEntryOptions.start = start;
+		timeEntryOptions.end = new Date(start.getTime() + totalMins * 60000);
 		timeEntryOptions.isSubmitTime = true;
 
 		const {
@@ -1037,6 +1037,17 @@ class ClockifyIntegrationBase {
 	static async checkInternetConnection(sendResponse) {
 		const isOnline = await UserService.checkInternetConnection();
 		sendResponse(isOnline);
+	}
+
+	static async sendAnalyticsEvent(eventOptions, sendResponse) {
+		if (await isNavigatorOffline()) {
+			return;
+		}
+		try {
+			await AnalyticsService.sendAnalyticsEvent(eventOptions);
+		} catch (e) {
+			console.error('API call failed:', e);
+		}
 	}
 }
 

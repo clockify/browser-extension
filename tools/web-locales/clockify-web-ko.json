@@ -186,7 +186,8 @@
             "PAYMENTS_LABEL": "결제",
             "REMOVE_PAYMENT_LABEL": "결제 제거",
             "TOTAL_LABEL": "총",
-            "REMOVE_PAYMENTS_NOTE": "모든 지불이 제거됩니다."
+            "REMOVE_PAYMENTS_NOTE": "모든 지불이 제거됩니다.",
+            "PAYMENT_NOTE_ERROR": "메모 길이는 { length }자를 초과할 수 없습니다."
         },
         "ITEM_TYPE": {
             "TITLE": "항목 형식",
@@ -216,6 +217,11 @@
                     "NAME": {
                         "FAILED_MESSAGE": "최소 2자 이상이어야 합니다."
                     }
+                }
+            },
+            "NAME": {
+                "LENGTH": {
+                    "MIN": "항목 유형 이름은 { min }자 미만을 포함할 수 없습니다."
                 }
             }
         },
@@ -822,7 +828,13 @@
             },
             "BREAKS_TITLE": "휴식",
             "BREAKS_INFO_MESSAGE": "팀의 휴식 시간을 추적하고 관리하세요.",
-            "DEFAULT_BREAKS_PROJECT_LABEL": "기본 휴식 프로젝트"
+            "DEFAULT_BREAKS_PROJECT_LABEL": "기본 휴식 프로젝트",
+            "ENABLE_PROJECT_SWITCH": "키오스크 내에서 프로젝트와 작업 간 전환 허용",
+            "FAVORITE_TIME_ENTRIES": {
+                "TITLE": "즐겨찾는 항목",
+                "EANBLE_FAVORITE_ENTRIES_LABEL": "즐겨찾는 항목 활성화",
+                "INFO_MESSAGE": "시간 항목을 즐겨찾기로 표시하고 미리 채워진 항목을 사용하여 시간을 추적합니다."
+            }
         },
         "PTO": {
             "UPGRADE_MESSAGE": {
@@ -832,7 +844,8 @@
             "TITLE": "휴가",
             "EXPLANATION": "휴가 정책 및 휴일을 정의하고, 휴가를 요청하고, 사람들이 언제 부재 중인지 확인하고, 적치휴가 및 잔액을 추적합니다.",
             "REGULAR_USER_FLAG": "일반 사용자는 다른 사람의 휴가를 볼 수 있습니다.",
-            "ACTIVATE_LABEL": " 휴가 활성화"
+            "ACTIVATE_LABEL": " 휴가 활성화",
+            "REGULAR_USER_INFO": "일반 사용자는 팀 외부에서 휴가를 볼 수 있습니다."
         },
         "TWO_FACTOR": {
             "MODAL": {
@@ -1026,6 +1039,9 @@
             },
             "KIOSK_LAUNCH_PERMISSION": {
                 "INFO": "키오스크에 로그인하고 시작할 수 있는 사람"
+            },
+            "KIOSK_LOGIN_REQUIRED_DISABLED": {
+                "LABEL": "키오스크 링크가 있는 사람은 누구나 키오스크 사용자 목록에 액세스할 수 있습니다."
             }
         },
         "ALERT": {
@@ -1367,6 +1383,16 @@
                 "BREAKS_INFO": "휴식을 활성화하려면 각 키오스크에 대해 기본 휴식 { projectLabel }을 선택하세요.",
                 "TASK_INFO": "키오스크를 활성화하려면 각 키오스크에 대해 기본값 { taskLabel }를 선택하십시오.",
                 "TASK_BREAK_INFO": "휴식을 활성화하려면 각 키오스크에 대해 기본 휴식 { taskLabel }을 선택하세요."
+            },
+            "KIOSKS_WITHOUT_DEFAULTS_AND_BREAK_DEFAULTS": {
+                "INFO": "키오스크를 활성화하려면 각 키오스크에 대해 기본 { projectLabel } 및 기본 브레이크 { projectLabel }를 선택하십시오.",
+                "TASK_INFO": "키오스크를 활성화하려면 각 키오스크에 대해 기본 { taskLabel } 및 기본 나누기 { taskLabel }를 선택하십시오."
+            },
+            "KIOSK_SWITCH": {
+                "KIOSKS_BREAKS_WITHOUT_PROJECT": "이 스위치를 끄려면 모든 키오스크에 기본 프로젝트 및 기본 중단 프로젝트가 있어야 합니다.",
+                "KIOSKS_WITHOUT_TASK": "이 스위치를 끄려면 모든 키오스크에 기본 작업이 있어야 합니다.",
+                "KIOSKS_WITHOUT_PROJECT": "이 스위치를 끄려면 모든 키오스크에 기본 프로젝트가 있어야 합니다.",
+                "KIOSKS_BREAKS_WITHOUT_TASK": "이 스위치를 끄려면 모든 키오스크에 기본 작업 및 기본 중단 작업이 있어야 합니다."
             }
         },
         "GENERAL_SETTINGS_CUSTOM_SETTINGS": {
@@ -1427,7 +1453,8 @@
                 },
                 "TAXES": {
                     "A": "아니요, 저희가 모든 세금을 처리합니다. 표시되는 가격은 청구 금액입니다. 귀하는 세금 ID를 입력할 수 있으나 인보이스에 대한 추가 정보로만 사용됩니다.",
-                    "Q": "추가 세금이 있습니까?"
+                    "Q": "추가 세금이 있습니까?",
+                    "A_V2": "모든 가격은 세금 없이 표시되며 법적으로 귀하의 국가에서 VAT를 징수해야 하는 경우 해당 세금은 결제하기 전에 체크아웃에 표시되는 최종 가격에 추가됩니다."
                 },
                 "SWITCH": {
                     "A": "네. 상위 요금제로 전환하는 경우 즉시 새 기능을 사용할 수 있으며 해당 월에 대해 비례 배분된 요금이 청구됩니다. 하위 요금제로 전환하는 경우, 현재(상위) 요금제가 종료되는 대로 선택된 하위 요금제로 전환됩니다.",
@@ -2552,7 +2579,27 @@
         "HOLIDAY_LABEL": "휴일",
         "MANUAL_MODE_LABEL": "수동 모드",
         "CURRENCIES_TITLE": "통화",
-        "CURRENCY_LABEL": "통화"
+        "CURRENCY_LABEL": "통화",
+        "TERMS_OF_USE": "이용약관",
+        "UNDO_LABEL": "실행 취소",
+        "NO_TASK": "작업 없음",
+        "VIEW_ON_MARKETPLACE": "마켓플레이스에서 보기",
+        "BROWSE_MARKETPLACE": "마켓플레이스 찾아보기",
+        "SEE_ALL": "모두 보기",
+        "DETAILS": "세부",
+        "FIND_TASK_LABEL": "작업 찾기...",
+        "FIND_CURRENCY_LABEL": "통화 찾기...",
+        "WEBSITE_FORMAT_ERROR": "웹사이트 형식이 유효하지 않습니다.",
+        "TEAM_MEMBERS_LABEL": "팀 멤버",
+        "PIN_LABEL": "핀",
+        "CUSTOMER_EXPLANATION": "고객 정보",
+        "SEE_MORE": "더보기",
+        "INVOICE_EXPLANATION_SHORT": "인보이스 정보",
+        "CUSTOMER_EXPLANATION_SHORT": "고객 정보",
+        "PAYMENT_INFORMATION_TITLE_SHORT": "결제 정보",
+        "STEP_3_TITLE": "3단계",
+        "TAX_DISPLAY_NAME_LABEL": "{ displayName }아이디",
+        "KEYBOARD_SHORTCUT_LABEL": "키보드 단축키"
     },
     "PTO": {
         "REQUESTS_TAB": {
@@ -2703,11 +2750,14 @@
                 "REMOVE_FROM_POLICIES_LABEL": "이 { entity }를 보관하면 휴가 정책에서 제거됩니다.",
                 "REMOVE_FROM_HOLIDAYS_LABEL": "이 { entity }를 보관하면 휴일 정책에서 제거됩니다.",
                 "ARCHIVE_PROJECT_LABEL": "아카이브 프로젝트",
-                "REMOVE_FROM_POLICIES_AND_HOLIDAYS_LABEL": "이 { entity }를 보관하면 휴가 정책: { policies } 및 공휴일: { holidays }에서 제거됩니다."
+                "REMOVE_FROM_POLICIES_AND_HOLIDAYS_LABEL": "이 { entity }를 보관하면 휴가 정책: { policies } 및 공휴일: { holidays }에서 제거됩니다.",
+                "ARCHIVE_SINGLE_MESSAGE": "이 { entity }를 보관하면 다음에서 제거됩니다.",
+                "ARCHIVE_PLURAL_MESSAGE": "이 { entities }를 보관하면 다음에서 제거됩니다."
             },
             "CREATE": {
                 "AUTO_CREATE_LABEL": "자동으로 시간 항목 생성",
-                "ALLOCATE_ENTRIES_LABEL": "에 시간 입력 할당"
+                "ALLOCATE_ENTRIES_LABEL": "에 시간 입력 할당",
+                "HOLIDAY_DAY_TOOLTIP_LABEL": "휴일 항목은 휴일의 첫날에 생성됩니다."
             },
             "CHANGE_ENTRY_TYPE": {
                 "MARK_AS_REGULAR_LABEL": "정규 시간 항목으로 표시",
@@ -2715,7 +2765,8 @@
                 "MARK_AS_BREAK_LABEL": "중단 항목으로 표시",
                 "MARK_AS_HOLIDAY_LABEL": "휴일 항목으로 표시"
             }
-        }
+        },
+        "TIME_OFF_POLICIES_LABEL": "휴가 정책"
     },
     "PUMBLE_COUPON": {
         "EXCLUSIVE_OFFER": "독점적인 제공",
@@ -3036,7 +3087,8 @@
                 "SYNC_ERROR_BANNER": "QB 오류: { notSentCount }({ ofCount } 중) 시간 항목을 QuickBooks로 보낼 수 없습니다.",
                 "SYNC_ERROR_BANNER_SINGULAR": "QB 오류: { notSentCount }({ ofCount } 외) 시간 항목을 QuickBooks로 보낼 수 없습니다.",
                 "SYNC_ERROR_INFO_5": "QuickBooks에는 존재하지 않는 Clockify에는 { count } { subject }가 있습니다.",
-                "SYNC_ERROR_INFO_5_PLURAL": "QuickBooks에 존재하지 않는 Clockify의 { count } { subject }가 있습니다."
+                "SYNC_ERROR_INFO_5_PLURAL": "QuickBooks에 존재하지 않는 Clockify의 { count } { subject }가 있습니다.",
+                "SYNC_INACTIVE_ERROR": "활성 사용자만 동기화할 수 있습니다. Clockify를 QuickBooks와 동기화하고 다시 시도하십시오."
             },
             "DELETE_MODAL_BODY_INFO": "내 모든 시간 항목을 삭제하시겠습니까?",
             "SETTINGS_TOOLTIP": "자세한 내보내기 설정",
@@ -3069,7 +3121,8 @@
             "DELETE_MODAL_BODY_INFO_WITH_PARAM": "{ count } 시간 항목을 삭제하시겠습니까?",
             "DEFAULT_LOADER_INFO": "보내기...",
             "MARK_AS_BREAK": "휴식으로 표시",
-            "MARK_AS_NON_BREAK": "중단하지 않음으로 표시"
+            "MARK_AS_NON_BREAK": "중단하지 않음으로 표시",
+            "TIME_ENTRY_UPDATE_SUCCESS": "시간 항목이 성공적으로 업데이트되었습니다."
         },
         "REPORTS_FILTER": {
             "UNAPPROVED_LABEL": "승인되지 않음",
@@ -3245,7 +3298,12 @@
             "SEARCH_LABEL": "이름으로 찾기",
             "PER_YEAR_LABEL": " 연간",
             "PER_WEEK_LABEL": " 한 주에",
-            "EXPORT_SETTINGS_TITLE": "{ projectLabel } 내보내기 설정"
+            "EXPORT_SETTINGS_TITLE": "{ projectLabel } 내보내기 설정",
+            "RESET_ESTIMATE": {
+                "WEEKLY": "{ time }({ timeZone })에서 { dayOfWeek }의 모든 { week }.",
+                "MONTHLY": "{ time }({ timeZone })에서 { dayOfMonth }의 모든 { month }.",
+                "YEARLY": "{ time }({ timeZone })에서 { month }의 { dayOfMonth }에 있는 모든 { year }."
+            }
         },
         "LABELS": {
             "BUDGET": "예산({ currency })",
@@ -3373,7 +3431,8 @@
                 "DELETE_INFO": "덮어쓰기는 프로젝트의 모든 활성 및 완료된 작업이 삭제됨을 의미합니다.",
                 "TYPE_DELETE": "DELETE를 입력하여 확인"
             },
-            "SINGLE_TITLE": "대량 편집 { numberOfProjects } 프로젝트"
+            "SINGLE_TITLE": "대량 편집 { numberOfProjects } 프로젝트",
+            "HEADER_TITLE": "대량 편집 { numberOfProjects } { projectLabel }"
         },
         "EDIT_PROJECT_PAGE": {
             "PROJECT_SETTINGS": "프로젝트 설정",
@@ -3403,7 +3462,11 @@
             "RESTORE_MULTIPLE_PROJECT_TITLE": "{ projectsCount } 프로젝트 복원",
             "ARCHIVE_MULTIPLE_PROJECT_TITLE": "아카이브 { projectsCount } 프로젝트",
             "RESTORE_MULTIPLE_PROJECT_WARNING_MODAL": "선택한 프로젝트는 시간을 추적할 때 사용할 수 있게 됩니다.",
-            "ARCHIVE_MULTIPLE_PROJECT_WARNING_MODAL": "선택한 프로젝트는 시간을 추적할 때 사용할 수 없습니다."
+            "ARCHIVE_MULTIPLE_PROJECT_WARNING_MODAL": "선택한 프로젝트는 시간을 추적할 때 사용할 수 없습니다.",
+            "RESTORE_PROJECT_TITLE": "복원 { projectsCount } { projectLabel }",
+            "ARCHIVE_PROJECT_TITLE": "아카이브 { projectsCount } { projectLabel }",
+            "ARCHIVE_MULTIPLE_PROJECT_MODAL_BODY": "선택한 { projectLabel }는 시간을 추적할 때 사용할 수 없습니다.",
+            "RESTORE_MULTIPLE_PROJECT_MODAL_BODY": "선택한 { projectLabel }는 시간을 추적할 때 사용할 수 있게 됩니다."
         },
         "EDIT_PROJECT_ACCESS_CUSTOM": {
             "PUBLIC_PROJECT_INFO": "누구나 공개 시간을 추적할 수 있습니다{ projectLabel }.",
@@ -3525,7 +3588,8 @@
             "VALID_EMAIL_WARNING_PLACEHOLDER": "유효한 이메일을 입력하지 않으면 귀하의 이메일이 사용됩니다.",
             "CREATE_TOKEN": {
                 "ERROR_MSG": "모든 필드는 필수 입력 사항입니다."
-            }
+            },
+            "VALID_EMAIL_WARNING_PLACEHOLDER_V2": "이메일을 입력하지 않으면 귀하의 이메일을 사용합니다"
         },
         "CUSTOM_FIELD": {
             "TYPE_ENTER_LABEL": "입력하다",
@@ -3570,7 +3634,8 @@
             "TYPE_LINK_LABEL": "링크",
             "TYPE_NUMBER_LABEL": "숫자",
             "TYPE_SWITCH_LABEL": "스위치",
-            "FIND_OPTION_LABEL": "찾기 옵션"
+            "FIND_OPTION_LABEL": "찾기 옵션",
+            "REQUIRED_FIELD_ERROR": "필수 입력란을 숨길 수 없습니다."
         },
         "SHARED": {
             "CREATE_TASK_LABEL": "작업 만들기",
@@ -3962,7 +4027,17 @@
             "APPLY_TO_TASK": "일부 회원이 이 { projectLabel }에 대해 더 구체적인 요율을 지정하지 않는 한 이 요율을 이 { taskLabel }의 모든 항목에 적용합니다.",
             "APPLY_TO_PROJECT": "일부 회원이 이 { projectLabel }에 대해 더 구체적인 비율을 지정하지 않는 한 이 { projectLabel }의 모든 항목에 이 비율을 적용합니다.",
             "APPLY_TO_WORKSPACE_MEMBER": "자체 비율이 있는 { projectLabel }를 제외하고 { userName }가 작성한 모든 항목에 이 비율을 적용합니다.",
-            "APPLY_RATE_TO_WORKSPACE": "{ projectLabel } 또는 팀 비율이 없는 모든 항목에 이 비율을 적용합니다."
+            "APPLY_RATE_TO_WORKSPACE": "{ projectLabel } 또는 팀 비율이 없는 모든 항목에 이 비율을 적용합니다.",
+            "APPLY_TO_WORKSPACE_MEMBER_APPROVAL_OFF": "{ projectLabel }에 자체 요율이 없는 경우 이 요율은 { userName }가 작성한 모든 항목에 적용됩니다.",
+            "APPLY_TO_PROJECT_APPROVAL_OFF": "회원이 이 { projectLabel }에 대해 더 구체적인 요율을 지정하지 않는 한 이 요율은 이 { projectLabel }의 모든 항목에 적용됩니다.",
+            "APPLY_TO_TASK_APPROVAL_OFF": "회원이 이 { projectLabel }에 대해 더 구체적인 요율을 지정하지 않는 한 이 요율은 이 { taskLabel }의 모든 항목에 적용됩니다.",
+            "APPLY_TO_ALL_CREATED_BY_APPROVAL_OFF": "이 요율은 이 { projectLabel }에서 { userName }가 작성한 모든 항목에 적용됩니다.",
+            "APPLY_RATE_TO_WORKSPACE_APPROVAL_OFF": "이 비율은 { projectLabel } 또는 팀 비율이 없는 모든 항목에 적용됩니다.",
+            "APPLY_RATE_TO_WORKSPACE_APPROVAL_ON": "이 비율은 { projectLabel } 또는 팀 비율이 없는 한 승인된 항목을 제외한 모든 항목에 적용됩니다.",
+            "APPLY_TO_WORKSPACE_MEMBER_APPROVAL_ON": "이 요율은 { projectLabel }에 자체 요율이 없는 한 승인된 출품작 외에 { userName }가 만든 모든 출품작에 적용됩니다.",
+            "APPLY_TO_PROJECT_APPROVAL_ON": "일부 구성원이 이 { projectLabel }에 대해 더 구체적인 요율을 지정하지 않는 한 이 요율은 승인된 항목 외에 이 { projectLabel }의 모든 항목에 적용됩니다.",
+            "APPLY_TO_TASK_APPROVAL_ON": "이 요율은 회원이 이 { projectLabel }에 대해 더 구체적인 요율을 지정하지 않는 한 승인된 응모작 외에 이 { taskLabel }의 모든 응모작에 적용됩니다.",
+            "APPLY_TO_ALL_CREATED_BY_APPROVAL_ON": "이 요율은 승인된 출품작 외에 { projectLabel }에서 { userName }가 작성한 모든 출품작에 적용됩니다."
         },
         "CHART": {
             "LOAD_MORE_WITH_COUNT_LABEL": "더 로드({ count } 남음)"
@@ -4121,7 +4196,9 @@
                 "CLEAR_SELECTION": "명확한 선택",
                 "ALL_SELECTED": "모든 { numberOfUsers } 사용자가 선택되었습니다.",
                 "SELECT_DAY": "요일 선택"
-            }
+            },
+            "SETTINGS_TOOLTIP_NOT_FULL": "회원 내보내기 설정",
+            "SETTINGS_TOOLTIP": "전체 내보내기 설정"
         },
         "REMINDERS": {
             "CREATE": {
@@ -4182,7 +4259,8 @@
         },
         "LIMITED_MEMBERS": {
             "EMPTY_STATE": "제한된 회원은 키오스크를 통해서만 출입할 수 있습니다.",
-            "EMPTY_STATE_LINK": "전체 및 제한된 사용자에 대해 자세히 알아보기"
+            "EMPTY_STATE_LINK": "전체 및 제한된 사용자에 대해 자세히 알아보기",
+            "SETTINGS_TOOLTIP": "제한된 내보내기 설정"
         },
         "LIMITED_SEATS": {
             "UPGRADE_INFO_MESSAGE": "제한된 추가 사용자를 활성화하려면 구독을 업데이트하고 더 많은 사용자 시트를 구입해야 합니다."
@@ -4196,7 +4274,13 @@
             "SELECT": "사용자 선택",
             "FIND": "사용자 찾기..."
         },
-        "FIND_MEMBERS": "회원 찾기…"
+        "FIND_MEMBERS": "회원 찾기…",
+        "FILE": {
+            "FULL_MEMBERS": "Clockify_Full_Members",
+            "MEMBERS": "Clockify_멤버",
+            "LIMITED_MEMBERS": "Clockify_Limited_Members",
+            "TEAM_GROUPS": "Clockify_팀_그룹"
+        }
     },
     "TIMESHEET2": {
         "WITHDRAW": "취소",
@@ -4304,7 +4388,8 @@
                 "TRACK": {
                     "TIMER": "시간제 노동자",
                     "PLACEHOLDER": {
-                        "TIMER": "무슨 일을하고 있니?"
+                        "TIMER": "무슨 일을하고 있니?",
+                        "BREAK": "뭐 했어?"
                     },
                     "MANUAL_M": "수동(m)",
                     "TIMER_N": "타이머(n)",
@@ -4320,7 +4405,8 @@
                     "CONFIRM": "{ value } 시간 항목을 삭제하시겠습니까?"
                 },
                 "GROUPS_TOOLTIP": "{ count } { count, plural, =0{} =1{} other{시간 항목} } (전환하려면 클릭)",
-                "MAX_HOURS_ENTERED": "999시간 이상 저장할 수 없습니다."
+                "MAX_HOURS_ENTERED": "999시간 이상 저장할 수 없습니다.",
+                "ADD_TO_FAVORITES_LABEL": "즐겨찾기로 추가"
             },
             "WEEK_TOTAL": "주 총계:",
             "TIMESHEET": {
@@ -4396,7 +4482,13 @@
             "BREAK_CREATE_SUCCESS": "나누기 항목이 생성되었습니다.",
             "ERROR_MISSING_FIELD_CANT_SPLIT": "시간 항목을 분할할 수 없습니다. 필수 필드 누락: { fields }",
             "ERROR_MISSING_FIELDS_CANT_SPLIT": "시간 항목을 분할할 수 없습니다. 누락된 필수 필드: { fields }",
-            "CREATE_SUCCESS_SPLITTING": "시간 항목이 성공적으로 분할되었습니다."
+            "CREATE_SUCCESS_SPLITTING": "시간 항목이 성공적으로 분할되었습니다.",
+            "ENTRY_DELETED_SUCCESS": "항목이 삭제되었습니다.",
+            "ENTRIES_DELETED_SUCCESS": "삭제된 항목",
+            "ENTRY_RESTORED_SUCCESS": "항목 복원됨",
+            "RESTORE_ENTRY_FAIL": "진행 중인 기존 시간 항목이 있는 동안에는 삭제된 항목을 취소할 수 없습니다.",
+            "ENTRIES_RESTORED_SUCCESS": "복원된 항목",
+            "BREAK_DUPLICATE_SUCCESS": "브레이크 항목이 중복되었습니다"
         },
         "APPROVALS": {
             "ZONE": {
@@ -4566,7 +4658,8 @@
                 "TITLE": "이메일을 확인"
             },
             "CHANGE": {
-                "MARKETPLACE_FORBIDDEN": "테스트 환경에서는 이메일을 변경할 수 없습니다."
+                "MARKETPLACE_FORBIDDEN": "테스트 환경에서는 이메일을 변경할 수 없습니다.",
+                "PASSWORD_FORBIDDEN": "비밀번호를 설정하기 전에는 이메일을 변경할 수 없습니다."
             }
         },
         "UNSUBMIT": "제출 취소",
@@ -4712,7 +4805,9 @@
             "TITLE_REGIONAL": "유료 계정 만들기",
             "CREATE_ACCOUNT_EXPLANATION_REGIONAL": "시간 추적을 시작하려면 등록하고 업그레이드하세요.",
             "CREDIT_CARD_REQUIREMENT_REGIONAL": "{ location }에서 호스팅되는 데이터",
-            "CREDIT_CARD_REQUIREMENT_REGIONAL_PART_2": "신용카드 필요"
+            "CREDIT_CARD_REQUIREMENT_REGIONAL_PART_2": "신용카드 필요",
+            "CLOCKIFY_TERMS_OF_USE": "Clockify에 동의합니다.",
+            "CAKE_TERMS_OF_USE": "CAKE.com에 동의합니다."
         },
         "SHARED": {
             "PASSWORD_INPUT_PLACEHOLDER": "암호를 선택",
@@ -4887,7 +4982,9 @@
             "MODAL": {
                 "FAILED_MESSAGE": "비용 삭제에 실패했습니다.",
                 "SUCCESS_MESSAGE": "비용이 성공적으로 삭제되었습니다."
-            }
+            },
+            "EXPENSE_DELETED_SUCCESS": "비용 삭제",
+            "EXPENSES_DELETED_SUCCESS": "비용 삭제"
         },
         "CREATE_MODAL": {
             "AMOUNT": {
@@ -4911,7 +5008,11 @@
             "BILLABLE_TOTAL_LABEL": "청구 가능한 총액",
             "RECEIPTS_LABEL": "영수증"
         },
-        "NOTE_PLACEHOLDER": "메모를 추가"
+        "NOTE_PLACEHOLDER": "메모를 추가",
+        "UNDO_DELETE": {
+            "EXPENSES_RESTORED_SUCCESS": "비용 복구",
+            "EXPENSE_RESTORED_SUCCESS": "비용 복구"
+        }
     },
     "SUBSCRIPTION_TABS": {
         "SUBSCRIPTION_PAYMENT": {
@@ -5092,6 +5193,10 @@
                 "DELETE": {
                     "PERSONAL": "삭제된 시간(개인)",
                     "FOR_OTHER": "삭제 시간(기타)"
+                },
+                "RESTORE": {
+                    "PERSONAL": "복원된 시간(개인)",
+                    "FOR_OTHER": "복원 시간(기타용)"
                 }
             },
             "PROJECT": {
@@ -5184,6 +5289,10 @@
                 "DELETED": {
                     "PERSONAL": "삭제된 비용(개인)",
                     "OTHER": "삭제된 비용(기타)"
+                },
+                "RESTORED": {
+                    "PERSONAL": "복구 비용(개인)",
+                    "FOR_OTHER": "복구 비용(기타)"
                 }
             }
         },
@@ -5596,7 +5705,8 @@
             "YOUR": "당신의 webhooks",
             "INFO_MESSAGE": "7일이 지난 로그는 삭제됩니다.",
             "HEADER": {
-                "DATE": "시도 날짜"
+                "DATE": "시도 날짜",
+                "TITLE": "웹훅 시도"
             },
             "REQUEST": {
                 "TITLE": "엔드포인트에 요청"
@@ -5647,11 +5757,19 @@
             "ASSIGNMENT_CREATED_LABEL": "과제 생성됨",
             "ASSIGNMENT_UPDATED_LABEL": "과제 업데이트됨",
             "ASSIGNMENT_DELETED_LABEL": "과제 삭제됨",
-            "ASSIGNMENT_PUBLISHED_LABEL": "과제가 게시됨"
+            "ASSIGNMENT_PUBLISHED_LABEL": "과제가 게시됨",
+            "ENTRY_RESTORED": "시간 항목 복원됨"
         },
         "WEBHOOK_CREATED": "Webhook 이 생성되었습니다.",
         "OUT_OF": "밖으로",
-        "ONLY_ADMINS_HAVE_ACCESS": "관리자만 여기에 액세스할 수 있습니다."
+        "ONLY_ADMINS_HAVE_ACCESS": "관리자만 여기에 액세스할 수 있습니다.",
+        "ADDONS": {
+            "LOG": {
+                "HEADER": {
+                    "TITLE": "애드온 웹훅 시도"
+                }
+            }
+        }
     },
     "IN_PROGRESS": "가져오기가 진행 중입니다. 완료되면 알림을 받게 됩니다.",
     "LETS_START_TRACKING": "추적을 시작합시다!",
@@ -5761,7 +5879,11 @@
                 "ASSIGNMENT_MULTIPLE_DELETE_WARRNING": "이렇게 하면 지난 { weekCount }주의 할당이 삭제됩니다.",
                 "ASSIGNMENT_CREATE_WARRNING": "그러면 앞으로 새 할당이 생성됩니다.",
                 "EXPLANATION_PART_2_MODIFIED": "{ count, plural, =0{} =1{주} other{주} } ~"
-            }
+            },
+            "NO_DRAFT_ASSIGNMENTS_LABEL": "초안 할당 없음",
+            "REMIND_TO_PUBLISH_SUCCESS_MESSAGE": "알림이 전송됨",
+            "REMIND_TO_PUBLISH": "게시 알림",
+            "REMIND_TO_PUBLISH_BODY_MESSAGE": "{ from } - { to }에 대한 초안 과제를 게시하도록 관리자에게 이메일 알림을 보낼 준비가 되셨습니까?"
         },
         "ADD_MEMBERS_TO_PROJECT": {
             "TITLE": "프로젝트에 구성원 추가",
@@ -5867,6 +5989,10 @@
         },
         "HIDE_MEMBER": {
             "TITLE": "회원 숨기기"
+        },
+        "FILTER": {
+            "SHOW_PUBLISHED": "게시된 쇼",
+            "SHOW_UNPUBLISHED": "게시되지 않은 항목 표시"
         }
     },
     "FAILED_TO_COPY_TIME": "일부 항목을 복사할 수 없습니다.",
@@ -6010,6 +6136,13 @@
             "KIOSK_ENABLED": "필수 { cfname }를 활성화하려면 키오스크를 꺼야 합니다.",
             "ONLY_ADMIN_ALLOWED_AND_NO_DEFAULT_VALUE_SAVE_BTN": "이 필드는 필수입니다. 기본값을 설정하거나 모든 사용자가 편집할 수 있도록 설정하십시오.",
             "EMAIL_CANNOT_BE_CHANGED_TOOLTIP": "비밀번호를 설정하기 전에는 이메일을 변경할 수 없습니다."
+        },
+        "CURRENCY": {
+            "DELETE": {
+                "MODAL": {
+                    "TITLE": "통화 삭제"
+                }
+            }
         }
     },
     "SUBSCRIPTION": {
@@ -6069,7 +6202,29 @@
         "DISABLED_LABEL": "장애가 있는",
         "INSTALL_LOADING_MESSAGE": "애드온 설치 중…",
         "ADDON_SETTINGS_LABEL": "애드온 설정",
-        "LOADING_LABEL": "애드온 로딩"
+        "LOADING_LABEL": "애드온 로딩",
+        "LOADING_TITLE": "추가 기능 시작",
+        "CONTACT_SUPPORT": "애드온 지원",
+        "LOADING_ERROR": {
+            "TITLE": "추가 기능을 사용할 수 없음",
+            "DESCRIPTION": "나중에 다시 시도하거나"
+        },
+        "SUBSCRIPTION_PLAN_ERROR": {
+            "TITLE": "부가 기능이 데이터를 표시할 수 없음",
+            "DESCRIPTION_FIRST_PART": "귀하의 Clockify 계획이 추가 기능의 최소 계획과 일치하지 않을 수 있습니다.",
+            "DESCRIPTION_SECOND_PART": "계획을 세우거나"
+        },
+        "UNINSTALL_INFO_PART_ONE": "추가 기능이 작업 공간에서 제거됩니다.",
+        "DROPDOWN": {
+            "REGULAR_USER_INFO": "관리자만 추가 기능을 보고 설치할 수 있습니다. 여전히 Marketplace를 탐색하고 관리자에게 추가 기능을 제안할 수 있습니다.",
+            "ADMIN_USER_INFO": "첫 번째 애드온을 설치할 준비가 되셨습니까? 필요에 따라 Clockify를 개선하고 적용하십시오.",
+            "ADMIN_USER_INFO_PT_TWO": "필요에 따라 Clockify를 개선하고 조정하십시오."
+        },
+        "DISABLE_INFO": "이 추가 기능을 비활성화하면 UI 위치가 제거되고 추가 기능이 작업 공간에 대한 액세스 권한을 잃게 됩니다. 나중에 활성화할 수 있습니다.",
+        "UNINSTALL_INFO_PART_TWO": "추가 기능에 따라",
+        "UNINSTALL_INFO_PART_THREE": "추가 기능에 의해 저장된 데이터가 손실될 수 있습니다.",
+        "MY_ADDONS_LABEL": "내 애드온",
+        "FAILED_FETCH_WEBHOOKS": "애드온 웹후크를 가져오지 못했습니다."
     },
     "MESSAGES": {
         "ERROR_MISSING_FIELDS_IS_REQUIRED": "{ fields }가 필요합니다."
@@ -6136,11 +6291,53 @@
             },
             "DELETE_CURRENCY": "삭제하면 { currencyName } 통화의 모든 금액이 기본 통화로 대체됩니다.",
             "CANNOT_REMOVE_CURRENCY": "기본 통화를 삭제할 수 없습니다.",
-            "CANNOT_ADD_CURRENCY": "10개 이상의 통화를 가질 수 없습니다."
+            "CANNOT_ADD_CURRENCY": "10개 이상의 통화를 가질 수 없습니다.",
+            "DELETE": {
+                "MODAL": {
+                    "TITLE": "통화 삭제"
+                }
+            }
         },
         "DROPDOWN": {
             "UPGRADE_TEXT": "통화를 변경하려면 PRO로"
+        },
+        "EMAIL_VERIFICATION_INVALID_TOKEN": "인증 토큰이 유효하지 않습니다.",
+        "EMAIL_VERIFICATION_EXPIRED": "확인 링크가 만료되었습니다."
+    },
+    "EXTENSION_FORBIDDEN_CHARACTERS": "잘못된 값을 입력했습니다. \"<\" 및 \">\" 문자를 사용하지 마십시오.",
+    "GOBAL": {
+        "TERMS_OF_USE": "이용약관"
+    },
+    "ADDONS": {
+        "FAILED_FETCH": "애드온을 가져오지 못했습니다."
+    },
+    "TASK_PICKER": {
+        "CREATE_TASK_LABEL": "{ search } 작업을 생성합니다.",
+        "NO_TASKS_FOUND": "활성 작업 없음"
+    },
+    "FAVORITE_TIME_ENTRIES": {
+        "EDIT": {
+            "SUCCESS": "{ name } 변경 사항 저장됨"
+        },
+        "DELETE": {
+            "SUCCESS": "{ name } 즐겨찾기에서 제거됨"
+        },
+        "CREATE": {
+            "SUCCESS": "{ name } 성공적으로 생성됨"
         }
     },
-    "EXTENSION_FORBIDDEN_CHARACTERS": "잘못된 값을 입력했습니다. \"<\" 및 \">\" 문자를 사용하지 마십시오."
+    "PAYMENT": {
+        "CUSTOMER_TYPE_LABEL": "고객 유형",
+        "COUNTRY_LABEL": "국가",
+        "COUNTRY_PLACEHOLDER": "국가 선택",
+        "CUSTOMER_TYPE_PLACEHOLDER": "고객 유형 선택",
+        "CUSTOMER_TYPE": {
+            "COMPANY": "회사/조직",
+            "INDIVIDUAL": "개인"
+        },
+        "COUNTRY_SEARCH_LABEL": "국가 찾기",
+        "STATE_LABEL": "시/도",
+        "STATE_PLACEHOLDER": "시/도 선택",
+        "STATE_SEARCH_LABEL": "시/도 찾기"
+    }
 }

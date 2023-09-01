@@ -66,7 +66,9 @@
                 "FAILED_MESSAGE": "経費の削除に失敗しました。",
                 "SUCCESS_MESSAGE": "経費は正常に削除されました"
             },
-            "MODAL_MESSAGE": "経費を削除してもよろしいですか？"
+            "MODAL_MESSAGE": "経費を削除してもよろしいですか？",
+            "EXPENSE_DELETED_SUCCESS": "経費が削除されました",
+            "EXPENSES_DELETED_SUCCESS": "経費が削除されました"
         },
         "CREATE_MODAL": {
             "AMOUNT": {
@@ -124,7 +126,11 @@
             "BILLABLE_TOTAL_LABEL": "請求可能な合計",
             "RECEIPTS_LABEL": "領収書"
         },
-        "NOTE_PLACEHOLDER": "メモを追加"
+        "NOTE_PLACEHOLDER": "メモを追加",
+        "UNDO_DELETE": {
+            "EXPENSE_RESTORED_SUCCESS": "経費が回復しました",
+            "EXPENSES_RESTORED_SUCCESS": "経費が回復しました"
+        }
     },
     "WORKSPACE": {
         "PTO": {
@@ -135,7 +141,8 @@
             "TITLE": "休暇",
             "EXPLANATION": "休暇のポリシーと休日を定義し、休暇を要求し、人々がいつ不在であるかを確認し、見越額と残りの残高を追跡します。",
             "REGULAR_USER_FLAG": "通常のユーザーは他の人の休暇を見ることができます",
-            "ACTIVATE_LABEL": " 休暇を有効にする"
+            "ACTIVATE_LABEL": " 休暇を有効にする",
+            "REGULAR_USER_INFO": "一般ユーザーはチーム外の休暇を確認できる"
         },
         "ADD_NEW_LABEL": "新しい{ label }を追加",
         "ADD_NEW_CATEGORY": "新しいカテゴリを追加",
@@ -417,6 +424,9 @@
             "BILLABLE_RATES_EDIT": {
                 "TITLE": "請求可能な料金を編集できるユーザー",
                 "INFO": "ユーザーが請求可能な料金を編集できるようにする"
+            },
+            "KIOSK_LOGIN_REQUIRED_DISABLED": {
+                "LABEL": "キオスク リンクを知っている人は誰でも、キオスク ユーザー リストにアクセスできます。"
             }
         },
         "TIME_ROUNDING_MODAL": {
@@ -957,7 +967,13 @@
             },
             "BREAKS_TITLE": "休憩",
             "BREAKS_INFO_MESSAGE": "チームの休憩時間を追跡および管理します。",
-            "DEFAULT_BREAKS_PROJECT_LABEL": "デフォルトの中断プロジェクト"
+            "DEFAULT_BREAKS_PROJECT_LABEL": "デフォルトの中断プロジェクト",
+            "ENABLE_PROJECT_SWITCH": "キオスク内のプロジェクトとタスク間の切り替えを許可する",
+            "FAVORITE_TIME_ENTRIES": {
+                "INFO_MESSAGE": "時間エントリをお気に入りとしてマークし、事前設定されたエントリを使用して時間を追跡します。",
+                "EANBLE_FAVORITE_ENTRIES_LABEL": "お気に入りのエントリを有効にする",
+                "TITLE": "お気に入りのエントリ"
+            }
         },
         "SHARED": {
             "AUTH_LABEL": "認証"
@@ -1008,6 +1024,16 @@
             },
             "TIMESHEET": {
                 "KIOSKS_WITHOUT_DEFAULTS_TOOLTIP": "タイムシートを使用するには、すべてのキオスクにデフォルトが必要です{ projectLabel }"
+            },
+            "KIOSKS_WITHOUT_DEFAULTS_AND_BREAK_DEFAULTS": {
+                "TASK_INFO": "キオスクを有効にするには、キオスクごとにデフォルト { taskLabel } とデフォルト ブレーク { taskLabel } を選択します。",
+                "INFO": "キオスクを有効にするには、キオスクごとにデフォルト { projectLabel } とデフォルト ブレーク { projectLabel } を選択します。"
+            },
+            "KIOSK_SWITCH": {
+                "KIOSKS_BREAKS_WITHOUT_TASK": "このスイッチをオフにするには、すべてのキオスクにデフォルト タスクとデフォルト ブレーク タスクが必要です",
+                "KIOSKS_WITHOUT_TASK": "このスイッチをオフにするには、すべてのキオスクにデフォルトのタスクが必要です",
+                "KIOSKS_BREAKS_WITHOUT_PROJECT": "このスイッチをオフにするには、すべてのキオスクにデフォルト プロジェクトとデフォルト ブレーク プロジェクトが必要です。",
+                "KIOSKS_WITHOUT_PROJECT": "このスイッチをオフにするには、すべてのキオスクにデフォルトのプロジェクトが必要です"
             }
         },
         "GENERAL_SETTINGS_CUSTOM_SETTINGS": {
@@ -1167,7 +1193,8 @@
                 },
                 "TAXES": {
                     "Q": "追加の税金はありますか？",
-                    "A": "いいえ、すべての税金は私たちが負担します。あなたが見る価格はあなたが請求されるものです。納税者番号を入力できますが、これは請求書の追加情報としてのみ使用されます。"
+                    "A": "いいえ、すべての税金は私たちが負担します。あなたが見る価格はあなたが請求されるものです。納税者番号を入力できますが、これは請求書の追加情報としてのみ使用されます。",
+                    "A_V2": "すべての価格は税抜きで表示されており、お客様の国から VAT を徴収することが法的に義務付けられている場合は、お支払い前に、チェックアウト時に表示される最終価格にその税が加算されます。"
                 },
                 "UPGRADE_PER_WORKSPACE": {
                     "Q": "アップグレードはワークスペースごとですか、それともアカウントごとですか?",
@@ -1278,7 +1305,11 @@
                 "ASSIGNMENT_MULTIPLE_DELETE_WARRNING": "これにより、過去{ weekCount }週間の割り当てが削除されます。",
                 "ASSIGNMENT_CREATE_WARRNING": "これにより、将来的に新しい割り当てが作成されます。",
                 "EXPLANATION_PART_2_MODIFIED": "{ count, plural, =0{} =1{週}other{週}}から"
-            }
+            },
+            "REMIND_TO_PUBLISH": "公開をリマインドする",
+            "REMIND_TO_PUBLISH_BODY_MESSAGE": "{ from } ～ { to } のドラフト課題を公開するための電子メール リマインダーをマネージャーに送信する準備はできていますか?",
+            "NO_DRAFT_ASSIGNMENTS_LABEL": "ドラフトの割り当てはありません",
+            "REMIND_TO_PUBLISH_SUCCESS_MESSAGE": "リマインダーを送信しました"
         },
         "ADD_MEMBERS_TO_PROJECT": {
             "TITLE": "プロジェクトにメンバーを追加する",
@@ -1384,6 +1415,10 @@
         },
         "HIDE_MEMBER": {
             "TITLE": "メンバーを非表示"
+        },
+        "FILTER": {
+            "SHOW_UNPUBLISHED": "未公開を表示",
+            "SHOW_PUBLISHED": "公開されたショー"
         }
     },
     "SERVICES": {
@@ -2421,7 +2456,27 @@
         "HOLIDAY_LABEL": "ホリデー",
         "MANUAL_MODE_LABEL": "手動モード",
         "CURRENCIES_TITLE": "通貨",
-        "CURRENCY_LABEL": "通貨"
+        "CURRENCY_LABEL": "通貨",
+        "TERMS_OF_USE": "利用規約",
+        "NO_TASK": "タスク無し",
+        "UNDO_LABEL": "元に戻す",
+        "VIEW_ON_MARKETPLACE": "マーケットプレイスで見る",
+        "BROWSE_MARKETPLACE": "マーケットプレイスを閲覧する",
+        "SEE_ALL": "すべてを見る",
+        "FIND_TASK_LABEL": "タスクの検索...",
+        "DETAILS": "詳細",
+        "PIN_LABEL": "ピン",
+        "FIND_CURRENCY_LABEL": "通貨の検索...",
+        "TEAM_MEMBERS_LABEL": "チームメンバー",
+        "WEBSITE_FORMAT_ERROR": "Web サイトの形式が無効です",
+        "CUSTOMER_EXPLANATION": "顧客情報",
+        "SEE_MORE": "続きを見る",
+        "STEP_3_TITLE": "ステップ3",
+        "INVOICE_EXPLANATION_SHORT": "請求書情報",
+        "CUSTOMER_EXPLANATION_SHORT": "顧客情報",
+        "PAYMENT_INFORMATION_TITLE_SHORT": "支払い情報",
+        "TAX_DISPLAY_NAME_LABEL": "{ displayName } ID",
+        "KEYBOARD_SHORTCUT_LABEL": "キーボードショートカット"
     },
     "AUDIT_LOG": {
         "FILTERS": {
@@ -2440,6 +2495,10 @@
                     "IMPORT": "作成時間（インポート）",
                     "FOR_OTHER": "作成された時間（その他の場合）",
                     "KIOSK": "作成時間（kiosk）"
+                },
+                "RESTORE": {
+                    "PERSONAL": "復元時間（個人）",
+                    "FOR_OTHER": "復旧時間（その他）"
                 }
             },
             "PROJECT": {
@@ -2532,6 +2591,10 @@
                 "DELETED": {
                     "OTHER": "削除費用（その他）",
                     "PERSONAL": "削除された費用（個人）"
+                },
+                "RESTORED": {
+                    "PERSONAL": "復旧費用（個人）",
+                    "FOR_OTHER": "復旧費用（その他）"
                 }
             }
         },
@@ -2847,7 +2910,8 @@
         "TIME_ENTRIES": {
             "CREATE": {
                 "AUTO_CREATE_LABEL": "時間エントリを自動的に作成する",
-                "ALLOCATE_ENTRIES_LABEL": "に時間エントリを割り当てます"
+                "ALLOCATE_ENTRIES_LABEL": "に時間エントリを割り当てます",
+                "HOLIDAY_DAY_TOOLTIP_LABEL": "休日エントリは休日の初日に作成されます"
             },
             "ARCHIVE_MODAL": {
                 "ARCHIVE_PROJECT_LABEL": "プロジェクトのアーカイブ",
@@ -2855,7 +2919,9 @@
                 "ARCHIVE_PROJECT_AND_TASK_LABEL": "プロジェクトとタスクをアーカイブする",
                 "REMOVE_FROM_POLICIES_LABEL": "この { entity } をアーカイブすると、休暇ポリシーから削除されます。",
                 "REMOVE_FROM_HOLIDAYS_LABEL": "この { entity } をアーカイブすると、休日のポリシーから削除されます:",
-                "REMOVE_FROM_POLICIES_AND_HOLIDAYS_LABEL": "この { entity } をアーカイブすると、休暇ポリシー: { policies } および休日: { holidays } から削除されます。"
+                "REMOVE_FROM_POLICIES_AND_HOLIDAYS_LABEL": "この { entity } をアーカイブすると、休暇ポリシー: { policies } および休日: { holidays } から削除されます。",
+                "ARCHIVE_SINGLE_MESSAGE": "この { entity } をアーカイブすると、次の場所から削除されます。",
+                "ARCHIVE_PLURAL_MESSAGE": "これらの { entities } をアーカイブすると、次の場所から削除されます。"
             },
             "CHANGE_ENTRY_TYPE": {
                 "MARK_AS_REGULAR_LABEL": "通常の時間エントリとしてマーク",
@@ -2863,7 +2929,8 @@
                 "MARK_AS_TIME_OFF_LABEL": "休暇エントリとしてマーク",
                 "MARK_AS_HOLIDAY_LABEL": "休日エントリとしてマーク"
             }
-        }
+        },
+        "TIME_OFF_POLICIES_LABEL": "休暇ポリシー"
     },
     "APPROVAL": {
         "MODALS": {
@@ -3187,7 +3254,8 @@
             "TOTAL_LABEL": "合計",
             "PARTIALLY_PAID_LABEL": "一部有償",
             "REMOVE_PAYMENT_LABEL": "支払いを削除",
-            "REMOVE_PAYMENTS_NOTE": "すべての支払いが削除されます。"
+            "REMOVE_PAYMENTS_NOTE": "すべての支払いが削除されます。",
+            "PAYMENT_NOTE_ERROR": "メモの長さは { length } 文字を超えてはなりません"
         },
         "ITEM_TYPE": {
             "CREATE": {
@@ -3217,6 +3285,11 @@
                     "FAILED_MESSAGE": "アイテムタイプの更新に失敗しました。",
                     "DELETE_TOOLTIP": "デフォルトのアイテムタイプは削除できません。",
                     "MAX_TOOLTIP": "50種類を超えることはできません"
+                }
+            },
+            "NAME": {
+                "LENGTH": {
+                    "MIN": "項目タイプ名には { min } 文字未満を含めることはできません。"
                 }
             }
         },
@@ -3589,7 +3662,8 @@
                 "DELETE_INFO": "上書きとは、プロジェクトのすべてのアクティブなタスクと完了したタスクが削除されることを意味します",
                 "TYPE_DELETE": "DELETE と入力して確認します"
             },
-            "SINGLE_TITLE": "{ numberOfProjects } プロジェクトの一括編集"
+            "SINGLE_TITLE": "{ numberOfProjects } プロジェクトの一括編集",
+            "HEADER_TITLE": "一括編集 { numberOfProjects } { projectLabel }"
         },
         "PROJECTS_TABLE": {
             "UPGRADE_LABEL_PART_2_BULK_EDIT": " 一括編集を使用します。",
@@ -3651,7 +3725,12 @@
             "SEARCH_LABEL": "名前で検索",
             "PER_WEEK_LABEL": " 週ごと",
             "PER_YEAR_LABEL": " 1年当たり",
-            "EXPORT_SETTINGS_TITLE": "{ projectLabel } エクスポート設定"
+            "EXPORT_SETTINGS_TITLE": "{ projectLabel } エクスポート設定",
+            "RESET_ESTIMATE": {
+                "WEEKLY": "{ week }、{ dayOfWeek }、{ time } ({ timeZone }) ごとに。",
+                "MONTHLY": "{ dayOfMonth }の{ month }ごとに{ time }({ timeZone })。",
+                "YEARLY": "{ timeZone }の{ dayOfMonth }の{ month }のすべての{ time }({ timeZone })。"
+            }
         },
         "PROJECTS_CUSTOM_PAGE": {
             "DELETE_MULTIPLE_PROJECTS_WARNING": "{ listLength } { projectLabel }を削除してもよろしいですか？",
@@ -3669,7 +3748,11 @@
             "RESTORE_MULTIPLE_PROJECT_TITLE": "{ projectsCount } プロジェクトの復元",
             "ARCHIVE_MULTIPLE_PROJECT_TITLE": "アーカイブ { projectsCount } プロジェクト",
             "RESTORE_MULTIPLE_PROJECT_WARNING_MODAL": "時間を追跡すると、選択したプロジェクトが利用可能になります。",
-            "ARCHIVE_MULTIPLE_PROJECT_WARNING_MODAL": "選択したプロジェクトは、時間を追跡するときに利用できません。"
+            "ARCHIVE_MULTIPLE_PROJECT_WARNING_MODAL": "選択したプロジェクトは、時間を追跡するときに利用できません。",
+            "RESTORE_PROJECT_TITLE": "復元 { projectsCount } { projectLabel }",
+            "ARCHIVE_PROJECT_TITLE": "アーカイブ { projectsCount } { projectLabel }",
+            "ARCHIVE_MULTIPLE_PROJECT_MODAL_BODY": "選択した { projectLabel } は、時間を追跡する場合には使用できません。",
+            "RESTORE_MULTIPLE_PROJECT_MODAL_BODY": "選択した{ projectLabel }は、時間を追跡するときに使用できるようになります。"
         },
         "EDIT_PROJECT_ACCESS_CUSTOM": {
             "PUBLIC_PROJECT_INFO": "誰もが公共の場で時間を追跡することができます{ projectLabel }。",
@@ -3792,7 +3875,9 @@
             "TITLE_REGIONAL": "有料アカウントを作成する",
             "CREATE_ACCOUNT_EXPLANATION_REGIONAL": "サインアップしてアップグレードし、時間の追跡を開始してください。",
             "CREDIT_CARD_REQUIREMENT_REGIONAL_PART_2": "クレジットカードが必要です",
-            "CREDIT_CARD_REQUIREMENT_REGIONAL": "{ location } でホストされるデータ"
+            "CREDIT_CARD_REQUIREMENT_REGIONAL": "{ location } でホストされるデータ",
+            "CLOCKIFY_TERMS_OF_USE": "Clockify に同意します",
+            "CAKE_TERMS_OF_USE": "CAKE.com に同意します"
         },
         "VERIFY_EMAIL": {
             "TITLE": "Eメール確認"
@@ -3866,7 +3951,8 @@
                 "SYNC_ERROR_BANNER_SINGULAR": "QB エラー: { notSentCount } ({ ofCount } のうち) 時間エントリを QuickBooks に送信できませんでした。",
                 "SYNC_ERROR_BANNER": "QB エラー: { notSentCount } ({ ofCount } のうち) 時間エントリを QuickBooks に送信できませんでした。",
                 "SYNC_ERROR_INFO_5": "QuickBooksにはない{ count }{ subject }がClockifyにあります。",
-                "SYNC_ERROR_INFO_5_PLURAL": "QuickBooksにはない{ count }{ subject }がClockifyにあります。"
+                "SYNC_ERROR_INFO_5_PLURAL": "QuickBooksにはない{ count }{ subject }がClockifyにあります。",
+                "SYNC_INACTIVE_ERROR": "アクティブなユーザーのみを同期できます。 Clockify を QuickBooks と同期して、もう一度お試しください。"
             },
             "DELETE_MODAL_BODY_INFO_WITH_PARAM": "{ count }時間エントリを削除してもよろしいですか？",
             "DELETE_MODAL_BODY_INFO": "私の時間エントリをすべて削除してもよろしいですか？",
@@ -3899,7 +3985,8 @@
             "NEW_INVOICE_MODAL_INFO_EXPENSES_1": "新しい請求書は、請求された経費をインポートしません。",
             "NEW_INVOICE_MODAL_INFO_EXPENSES_2": "新しい請求書は、請求されていない経費をインポートできます。",
             "MARK_AS_BREAK": "ブレークとしてマーク",
-            "MARK_AS_NON_BREAK": "非ブレークとしてマーク"
+            "MARK_AS_NON_BREAK": "非ブレークとしてマーク",
+            "TIME_ENTRY_UPDATE_SUCCESS": "時間エントリが正常に更新されました"
         },
         "QUICK_BOOKS": {
             "NOT_SENT_ENTRIES_WARNING": "23時間55分を超えるエントリはQuickBooksに送信されません。",
@@ -4223,7 +4310,8 @@
             "CREATE_CUSTOM_FIELD_TITLE_USER": "ユーザーカスタムフィールドの作成",
             "CREATE_CUSTOM_FIELD_TITLE_TIME_ENTRY": "時間入力カスタムフィールドを作成する",
             "DEFAULT_VALUE_LABEL": "デフォルト値",
-            "FIND_OPTION_LABEL": "オプションを探す"
+            "FIND_OPTION_LABEL": "オプションを探す",
+            "REQUIRED_FIELD_ERROR": "必須フィールドを非表示にできません"
         },
         "DROPDOWN_CHECKBOX_LITE": {
             "FILTER_LIMIT": "最大{ filterLimit }アクティブフィルター"
@@ -4471,7 +4559,7 @@
             "MONTHLY_BILLING_EXPLANATION": "現在の年間サブスクリプションが終了すると、毎月の請求サイクルに切り替わります。",
             "BILLING_PRICE": "推定比例配分価格$ { price }が請求されます",
             "BILLING_SAVINGS": "（{ savings }を保存）。",
-            "UPGRADE_EXPLANATION": "推定比例配分価格$ { price }が請求され、すぐに{ feature }機能にアクセスできるようになります",
+            "UPGRADE_EXPLANATION": "推定比例配分価格$ { price }が請求され、すぐに{ feature }機能にアクセスできるようになります.",
             "DOWNGRADE_EXPLANATION": "現在のサブスクリプションが終了すると、新しいプランにダウングレードされます",
             "DOWNGRADE_BONUS": "（2ヶ月無料）。",
             "REACTIVATE_SUBSCRIPTION": "現在のサブスクリプションを再度アクティブにします。"
@@ -4621,7 +4709,8 @@
                 "INCOMPLETE_NUMBER": "カード番号が間違っています。",
                 "INCOMPLETE_EXPIRY": "有効期限が無効です。",
                 "INCOMPLETE_CVC": "CVC番号が正しくありません。"
-            }
+            },
+            "VALID_EMAIL_WARNING_PLACEHOLDER_V2": "メールアドレスを入力しない場合はあなたのメールアドレスを使用します"
         },
         "STRIPE_INVOICE": {
             "MISSING_TAX_ID_ERROR_MESSAGE": "納税者番号情報がありません",
@@ -4647,7 +4736,17 @@
             "APPLY_TO_TASK": "一部のメンバーがこの{ projectLabel }に対してより具体的なレートを持っていない限り、このレートをこの{ taskLabel }のすべてのエントリに適用します。",
             "APPLY_TO_PROJECT": "一部のメンバーがこの{ projectLabel }に対してより具体的なレートを持っていない限り、このレートをこの{ projectLabel }のすべてのエントリに適用します。",
             "APPLY_TO_WORKSPACE_MEMBER": "このレートは、独自のレートを持つ{ projectLabel }を除き、{ userName }によって作成されたすべてのエントリに適用されます。",
-            "APPLY_RATE_TO_WORKSPACE": "このレートは、{ projectLabel }またはチームレートがないすべてのエントリに適用されます。"
+            "APPLY_RATE_TO_WORKSPACE": "このレートは、{ projectLabel }またはチームレートがないすべてのエントリに適用されます。",
+            "APPLY_RATE_TO_WORKSPACE_APPROVAL_OFF": "このレートは、{ projectLabel } またはチーム レートを持たないすべてのエントリーに適用されます。",
+            "APPLY_RATE_TO_WORKSPACE_APPROVAL_ON": "このレートは、{ projectLabel } またはチーム レートがない限り、承認されたエントリー以外のすべてのエントリーに適用されます。",
+            "APPLY_TO_WORKSPACE_MEMBER_APPROVAL_OFF": "{ projectLabel } が独自のレートを持っていない限り、このレートは { userName } によって作成されたすべてのエントリに適用されます。",
+            "APPLY_TO_PROJECT_APPROVAL_ON": "このレートは、一部のメンバーがこの { projectLabel } に対してより具体的なレートを設定していない限り、承認されたエントリーに加えて、この { projectLabel } のすべてのエントリーに適用されます。",
+            "APPLY_TO_TASK_APPROVAL_OFF": "メンバーがこの { projectLabel } に対してより具体的なレートを設定していない限り、このレートはこの { taskLabel } のすべてのエントリに適用されます。",
+            "APPLY_TO_TASK_APPROVAL_ON": "このレートは、メンバーがこの { projectLabel } に対してより具体的なレートを設定していない限り、承認されたエントリーに加えて、この { taskLabel } のすべてのエントリーに適用されます。",
+            "APPLY_TO_WORKSPACE_MEMBER_APPROVAL_ON": "このレートは、{ projectLabel } が独自のレートを持っていない限り、承認されたエントリ以外に { userName } によって作成されたすべてのエントリに適用されます。",
+            "APPLY_TO_PROJECT_APPROVAL_OFF": "メンバーがこの { projectLabel } に対してより具体的なレートを設定していない限り、このレートはこの { projectLabel } のすべてのエントリに適用されます。",
+            "APPLY_TO_ALL_CREATED_BY_APPROVAL_OFF": "このレートは、{ userName } がこの { projectLabel } で行ったすべてのエントリーに適用されます。",
+            "APPLY_TO_ALL_CREATED_BY_APPROVAL_ON": "このレートは、承認されたエントリーに加え、{ userName } がこの { projectLabel } 上で作成したすべてのエントリーに適用されます。"
         },
         "DROPDOWN_CHECKBOX": {
             "NO_GROUPS_LABEL": "グループはまだありません",
@@ -4896,7 +4995,9 @@
                 "CLEAR_SELECTION": "明確な選択",
                 "ALL_SELECTED": "すべての { numberOfUsers } ユーザーが選択されています",
                 "SELECT_DAY": "曜日を選択"
-            }
+            },
+            "SETTINGS_TOOLTIP": "完全なエクスポート設定",
+            "SETTINGS_TOOLTIP_NOT_FULL": "メンバーのエクスポート設定"
         },
         "REMINDERS": {
             "DATE_RANGE": {
@@ -4978,13 +5079,20 @@
         },
         "LIMITED_MEMBERS": {
             "EMPTY_STATE": "限られたメンバーは、キオスクを介してのみ出入りできます。",
-            "EMPTY_STATE_LINK": "フルユーザーとリミテッドユーザーの詳細"
+            "EMPTY_STATE_LINK": "フルユーザーとリミテッドユーザーの詳細",
+            "SETTINGS_TOOLTIP": "制限されたエクスポート設定"
         },
         "LIMITED_SEATS": {
             "UPGRADE_INFO_MESSAGE": "追加の制限付きユーザーをアクティブ化するには、サブスクリプションを更新し、ユーザーシートを追加購入する必要があります。"
         },
         "NO_FULL_SEATS": "フルシートが残っていません。",
-        "FIND_MEMBERS": "メンバーを探す…"
+        "FIND_MEMBERS": "メンバーを探す…",
+        "FILE": {
+            "FULL_MEMBERS": "Clockify_Full_Members",
+            "MEMBERS": "Clockify_メンバー",
+            "TEAM_GROUPS": "Clockify_チーム_グループ",
+            "LIMITED_MEMBERS": "Clockify_Limited_メンバー"
+        }
     },
     "TIMESHEET2": {
         "FIX": "修理",
@@ -5107,7 +5215,8 @@
                     "TIMER_N": "タイマー（n）",
                     "TIMER": "タイマー",
                     "PLACEHOLDER": {
-                        "TIMER": "何に取り組んでいますか？"
+                        "TIMER": "何に取り組んでいますか？",
+                        "BREAK": "あなたは何をした？"
                     },
                     "BREAK": "壊す",
                     "BREAK_B": "休憩 (b)",
@@ -5121,7 +5230,8 @@
                     "CONFIRM": "{ value }時間エントリを削除してもよろしいですか？"
                 },
                 "GROUPS_TOOLTIP": "{ count } { count, plural, =0{} =1{} other{時間エントリ}}（クリックして切り替え）",
-                "MAX_HOURS_ENTERED": "999 時間以上節約できません。"
+                "MAX_HOURS_ENTERED": "999 時間以上節約できません。",
+                "ADD_TO_FAVORITES_LABEL": "お気に入りとして追加"
             },
             "WEEK_TOTAL": "週の合計：",
             "BULK": {
@@ -5205,7 +5315,13 @@
             "BREAK_CREATE_SUCCESS": "休憩エントリが作成されました",
             "CREATE_SUCCESS_SPLITTING": "時間エントリが正常に分割されました",
             "ERROR_MISSING_FIELD_CANT_SPLIT": "時間エントリを分割できませんでした。必須フィールドがありません: { fields }",
-            "ERROR_MISSING_FIELDS_CANT_SPLIT": "時間エントリを分割できませんでした。必須フィールドがありません: { fields }"
+            "ERROR_MISSING_FIELDS_CANT_SPLIT": "時間エントリを分割できませんでした。必須フィールドがありません: { fields }",
+            "ENTRY_DELETED_SUCCESS": "エントリが削除されました",
+            "ENTRIES_DELETED_SUCCESS": "削除されたエントリ",
+            "ENTRY_RESTORED_SUCCESS": "エントリが復元されました",
+            "ENTRIES_RESTORED_SUCCESS": "エントリが復元されました",
+            "RESTORE_ENTRY_FAIL": "進行中の既存の時間エントリがある間は、削除したエントリを元に戻すことはできません",
+            "BREAK_DUPLICATE_SUCCESS": "ブレークエントリが重複しています"
         },
         "CURSOR": {
             "POINTER": "ポインタ"
@@ -5367,7 +5483,8 @@
                 "TITLE": "あなたのメールをチェック"
             },
             "CHANGE": {
-                "MARKETPLACE_FORBIDDEN": "テスト環境ではメールを変更できません。"
+                "MARKETPLACE_FORBIDDEN": "テスト環境ではメールを変更できません。",
+                "PASSWORD_FORBIDDEN": "パスワードを設定するまでメールアドレスは変更できません"
             }
         },
         "2FA": {
@@ -5440,7 +5557,8 @@
             "YOUR": "あなたのwebhook",
             "INFO_MESSAGE": "7日以上経過したログは削除されます",
             "HEADER": {
-                "DATE": "試行日"
+                "DATE": "試行日",
+                "TITLE": "Webhook の試行"
             },
             "REQUEST": {
                 "TITLE": "エンドポイントへのリクエスト"
@@ -5491,11 +5609,19 @@
             "ASSIGNMENT_CREATED_LABEL": "割り当てが作成されました",
             "ASSIGNMENT_UPDATED_LABEL": "課題が更新されました",
             "ASSIGNMENT_DELETED_LABEL": "課題を削除しました",
-            "ASSIGNMENT_PUBLISHED_LABEL": "課題を公開しました"
+            "ASSIGNMENT_PUBLISHED_LABEL": "課題を公開しました",
+            "ENTRY_RESTORED": "時刻入力が復元されました"
         },
         "WEBHOOK_CREATED": "Webhookが作成されました。",
         "OUT_OF": "から",
-        "ONLY_ADMINS_HAVE_ACCESS": "これにアクセスできるのは管理者だけです。"
+        "ONLY_ADMINS_HAVE_ACCESS": "これにアクセスできるのは管理者だけです。",
+        "ADDONS": {
+            "LOG": {
+                "HEADER": {
+                    "TITLE": "アドオン Webhook の試行"
+                }
+            }
+        }
     },
     "validation": {
         "page": {
@@ -6014,6 +6140,13 @@
             "KIOSK_ENABLED": "必要な { cfname } を有効にするには、キオスクをオフにする必要があります",
             "ONLY_ADMIN_ALLOWED_AND_NO_DEFAULT_VALUE_SAVE_BTN": "この項目は必須です。デフォルト値を設定するか、誰でも編集できるようにします。",
             "EMAIL_CANNOT_BE_CHANGED_TOOLTIP": "パスワードを設定するまでメールアドレスを変更できません"
+        },
+        "CURRENCY": {
+            "DELETE": {
+                "MODAL": {
+                    "TITLE": "通貨の削除"
+                }
+            }
         }
     },
     "SUBSCRIPTION": {
@@ -6073,7 +6206,29 @@
         "DISABLED_LABEL": "無効",
         "INSTALL_LOADING_MESSAGE": "アドオンをインストールしています…",
         "ADDON_SETTINGS_LABEL": "アドオン設定",
-        "LOADING_LABEL": "アドオンの読み込み"
+        "LOADING_LABEL": "アドオンの読み込み",
+        "LOADING_TITLE": "アドオンの起動",
+        "SUBSCRIPTION_PLAN_ERROR": {
+            "TITLE": "アドオンはデータを表示できません",
+            "DESCRIPTION_SECOND_PART": "ご希望のプランを選択するか、",
+            "DESCRIPTION_FIRST_PART": "Clockify プランは、アドオンの最小プランと一致しない可能性があります。"
+        },
+        "CONTACT_SUPPORT": "アドオンのサポート",
+        "LOADING_ERROR": {
+            "TITLE": "アドオンは利用できません",
+            "DESCRIPTION": "後でもう一度お試しいただくか、"
+        },
+        "DISABLE_INFO": "このアドオンを無効にすると、その UI の場所が削除され、アドオンはワークスペースにアクセスできなくなります。後で有効にすることもできます。",
+        "UNINSTALL_INFO_PART_ONE": "アドオンはワークスペースから削除されます。",
+        "UNINSTALL_INFO_PART_THREE": "アドオンによって保存されたデータが失われる可能性があります。",
+        "MY_ADDONS_LABEL": "私のアドオン",
+        "DROPDOWN": {
+            "REGULAR_USER_INFO": "管理者のみがアドオンを表示およびインストールできます。マーケットプレイスを参照して、管理者にアドオンを提案することもできます。",
+            "ADMIN_USER_INFO": "最初のアドオンをインストールする準備はできましたか? Clockify をニーズに合わせて強化し、適応させます。",
+            "ADMIN_USER_INFO_PT_TWO": "Clockify をニーズに合わせて強化し、適応させます。"
+        },
+        "UNINSTALL_INFO_PART_TWO": "アドオンによっては",
+        "FAILED_FETCH_WEBHOOKS": "アドオン Webhook の取得に失敗しました"
     },
     "MESSAGES": {
         "ERROR_MISSING_FIELDS_IS_REQUIRED": "{ fields }が必要です。"
@@ -6140,11 +6295,53 @@
                 "CURRENCY_DELETED": "通貨が正常に削除されました",
                 "CURRENCY_UPDATED": "通貨が正常に更新されました"
             },
-            "DELETE_CURRENCY": "削除すると、{ currencyName } 通貨のすべての金額がデフォルトの通貨に置き換えられます"
+            "DELETE_CURRENCY": "削除すると、{ currencyName } 通貨のすべての金額がデフォルトの通貨に置き換えられます",
+            "DELETE": {
+                "MODAL": {
+                    "TITLE": "通貨の削除"
+                }
+            }
         },
         "DROPDOWN": {
             "UPGRADE_TEXT": "通貨を変更するにはPROに"
+        },
+        "EMAIL_VERIFICATION_EXPIRED": "確認リンクの有効期限が切れています。",
+        "EMAIL_VERIFICATION_INVALID_TOKEN": "検証トークンが無効です。"
+    },
+    "EXTENSION_FORBIDDEN_CHARACTERS": "間違った値を入力しました。 「<」および「>」文字を使用しないでください",
+    "GOBAL": {
+        "TERMS_OF_USE": "利用規約"
+    },
+    "ADDONS": {
+        "FAILED_FETCH": "アドオンの取得に失敗しました"
+    },
+    "TASK_PICKER": {
+        "CREATE_TASK_LABEL": "{ search }タスクを作成します。",
+        "NO_TASKS_FOUND": "アクティブなタスクはありません"
+    },
+    "FAVORITE_TIME_ENTRIES": {
+        "CREATE": {
+            "SUCCESS": "{ name } が正常に作成されました"
+        },
+        "EDIT": {
+            "SUCCESS": "{ name } の変更が保存されました"
+        },
+        "DELETE": {
+            "SUCCESS": "{ name } がお気に入りから削除されました"
         }
     },
-    "EXTENSION_FORBIDDEN_CHARACTERS": "間違った値を入力しました。 「<」および「>」文字を使用しないでください"
+    "PAYMENT": {
+        "CUSTOMER_TYPE_LABEL": "顧客タイプ",
+        "COUNTRY_LABEL": "国",
+        "COUNTRY_PLACEHOLDER": "国を選択",
+        "CUSTOMER_TYPE_PLACEHOLDER": "顧客タイプを選択してください",
+        "CUSTOMER_TYPE": {
+            "INDIVIDUAL": "個人",
+            "COMPANY": "会社・団体"
+        },
+        "COUNTRY_SEARCH_LABEL": "国を探す",
+        "STATE_LABEL": "州/県",
+        "STATE_PLACEHOLDER": "州/県を選択してください",
+        "STATE_SEARCH_LABEL": "州/県を探す"
+    }
 }

@@ -248,6 +248,13 @@ class TimeEntry extends React.Component {
 		window.reactRoot.render(<HomePage />);
 	}
 
+	byTimeDate(firstEntry, secondEntry) {
+		return (
+			new Date(secondEntry.timeInterval.start) -
+			new Date(firstEntry.timeInterval.start)
+		);
+	}
+
 	render() {
 		const { timeEntry, project, groupedEntries } = this.props;
 		if (project !== undefined && this.props.task !== undefined) {
@@ -308,7 +315,10 @@ class TimeEntry extends React.Component {
 										{groupedEntries.length}
 									</div>
 								)}
-								<div className="time-entry-description" data-pw={`time-entry-description-${this.props.timeEntryIndex}`}>
+								<div
+									className="time-entry-description"
+									data-pw={`time-entry-description-${this.props.timeEntryIndex}`}
+								>
 									<div
 										className={
 											timeEntry.description ? 'description' : 'no-description'
@@ -423,25 +433,27 @@ class TimeEntry extends React.Component {
 								</div>
 							</div>
 							{this.state.showGroup &&
-								groupedEntries?.map((entry, index) => (
-									<TimeEntry
-										timeEntryIndex = {index}
-										key={entry.id}
-										timeEntry={entry}
-										project={entry.project ? entry.project : null}
-										task={entry.task ? entry.task : null}
-										playTimeEntry={this.props.playTimeEntry}
-										changeMode={this.props.changeMode}
-										timeFormat={this.props.timeFormat}
-										workspaceSettings={this.props.workspaceSettings}
-										features={this.props.features}
-										isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}
-										userSettings={this.props.userSettings}
-										collapsedEntry={true}
-										handleRefresh={this.props.handleRefresh}
-										manualModeDisabled={this.props.manualModeDisabled}
-									/>
-								))}
+								groupedEntries
+									?.sort(this.byTimeDate)
+									?.map((entry, index) => (
+										<TimeEntry
+											timeEntryIndex={index}
+											key={entry.id}
+											timeEntry={entry}
+											project={entry.project ? entry.project : null}
+											task={entry.task ? entry.task : null}
+											playTimeEntry={this.props.playTimeEntry}
+											changeMode={this.props.changeMode}
+											timeFormat={this.props.timeFormat}
+											workspaceSettings={this.props.workspaceSettings}
+											features={this.props.features}
+											isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}
+											userSettings={this.props.userSettings}
+											collapsedEntry={true}
+											handleRefresh={this.props.handleRefresh}
+											manualModeDisabled={this.props.manualModeDisabled}
+										/>
+									))}
 						</div>
 						<DeleteEntryConfirmationComponent
 							askToDeleteEntry={this.state.askToDeleteEntry}

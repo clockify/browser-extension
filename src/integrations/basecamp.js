@@ -169,6 +169,24 @@
 				cardHeader.prepend(link);
 			}
 		);
+		// To do
+		clockifyButton.render(
+			'.todos .todo:not(.clockify)',
+			{ observe: true },
+			(elem) => {
+				const description = () =>
+					$('.checkbox__content a', elem).textContent.trim();
+
+				const link = clockifyButton.createButton({
+					description,
+					small: true,
+				});
+
+				link.style.margin = '0 15px';
+
+				$('.todo__title', elem).append(link);
+			}
+		);
 	}
 })();
 

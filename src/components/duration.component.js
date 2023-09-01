@@ -1,5 +1,6 @@
 import * as React from 'react';
 import moment, { duration } from 'moment';
+import * as momentTimezone from 'moment-timezone';
 
 import DatePicker from 'react-datepicker';
 import MyTimePicker from './my-time-picker.component';
@@ -43,6 +44,7 @@ class Duration extends React.Component {
 			end,
 			startTime,
 			endTime,
+			timeZone: '',
 			dayAfterLockedEntries: 'January 1, 1970, 00:00:00 UTC',
 			manualModeDisabled: null,
 			time: duration(
@@ -70,9 +72,12 @@ class Duration extends React.Component {
 	async setAsyncStateItems() {
 		const manualModeDisabled = await localStorage.getItem('manualModeDisabled');
 		const lang = await localStorage.getItem('lang');
+		const { timeZone } =
+			JSON.parse(await localStorage.getItem('userSettings'));
 		this.setState({
 			manualModeDisabled: JSON.parse(manualModeDisabled),
 			lang,
+			timeZone: timeZone
 		});
 	}
 
@@ -254,9 +259,9 @@ class Duration extends React.Component {
 						{locales.START}:
 					</label>
 					<span className="ant-time-picker duration-start ant-time-picker-small">
-						<MyTimePicker
+						{this.state.timeZone && <MyTimePicker
 							id="startTimePicker"
-							value={this.state.startTime}
+							value={momentTimezone(this.state.startTime).tz(this.state.timeZone)}
 							className="ant-time-picker-input"
 							format={this.state.timeFormat}
 							size="small"
@@ -268,15 +273,15 @@ class Duration extends React.Component {
 									? locales.DISABLED_MANUAL_MODE
 									: ''
 							}
-						/>
+						/>}
 					</span>
 					<label className={this.state.end ? 'duration-dash' : 'disabled'}>
 						-
 					</label>
 					<span className="ant-time-picker duration-end ant-time-picker-small">
-						<MyTimePicker
+						{this.state.timeZone && <MyTimePicker
 							id="endTimePicker"
-							value={this.state.endTime}
+							value={momentTimezone(this.state.endTime).tz(this.state.timeZone)}
 							className={this.state.end ? 'ant-time-picker-input' : 'disabled'}
 							isDisabled={!this.state.end}
 							format={this.state.timeFormat}
@@ -290,6 +295,7 @@ class Duration extends React.Component {
 									: ''
 							}
 						/>
+						}
 					</span>
 					<span
 						style={{

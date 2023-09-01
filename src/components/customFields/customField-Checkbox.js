@@ -1,32 +1,41 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import useCustomField from './useCustomField';
 import Switch from 'antd/lib/switch';
 import locales from '../../helpers/locales';
 
 const CustomFieldCheckbox = ({ cf, updateValue, setIsValid }) => {
+	const [value, setValue] = useState(cf.value);
+
 	const [
 		{
 			id,
 			index,
-			value,
 			isDisabled,
 			placeHolder,
 			placeHolderOrName,
 			title,
 			manualMode,
+			name,
+			description,
 		},
-		setValue,
 		storeValue,
-	] = useCustomField(cf, updateValue);
+	] = useCustomField(cf, updateValue, value);
 
-	const handleChange = (e) => {
-		setValue(e);
-		manualMode && updateValue(id, e);
+	const handleChange = () => {
+		const updatedValue = !value;
+
+		setValue(updatedValue);
+		storeValue(updatedValue);
+		manualMode && updateValue(id, updatedValue);
 	};
 
 	useEffect(() => {
+		setValue(cf.value);
+	}, [cf.value]);
+
+	useEffect(() => {
 		setIsValid({ id: id, isValid: true });
-	}, []);
+	}, [value]);
 
 	return (
 		<div
@@ -51,9 +60,9 @@ const CustomFieldCheckbox = ({ cf, updateValue, setIsValid }) => {
 				<span
 					className="clockify-switch-label"
 					htmlFor={`switchboxCustomField${index}`}
-					title={title}
+					title={description}
 				>
-					{placeHolder ? placeHolder : name}
+					{placeHolder ?? name}
 				</span>
 				{/* </div> */}
 			</div>

@@ -851,7 +851,16 @@
   "AGREE_LABEL": {
     "message": "я согласен с"
   },
+  "CLOCKIFY_TERMS_OF_USE": {
+    "message": "Я согласен с Clockify"
+  },
+  "CAKE_TERMS_OF_USE": {
+    "message": "Я согласен с CAKE.com"
+  },
   "TOS": {
+    "message": "Условия эксплуатации"
+  },
+  "TERMS_OF_USE": {
     "message": "Условия эксплуатации"
   },
   "ALREADY_HAVE_AN_ACCOUNT": {

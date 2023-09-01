@@ -104,6 +104,7 @@ class ClientListComponent extends Component {
 					page,
 					pageSize,
 					filter: this.state.filter,
+					archived: false
 				},
 			})
 			.then((response) => {

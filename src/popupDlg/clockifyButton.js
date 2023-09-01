@@ -8,6 +8,15 @@ var documents = window.getAllDocuments();
 removeAllButtons();
 setPostStartPopup();
 
+_clockifyShowPostStartPopup = true;
+aBrowser.storage.local.get(['permanent_showPostStartPopup']).then((res) => {
+	if (res.permanent_showPostStartPopup)
+		_clockifyShowPostStartPopup = JSON.parse(res.permanent_showPostStartPopup);
+	else {
+		aBrowser.storage.local.set({ permanent_showPostStartPopup: 'true' });
+	}
+});
+
 var clockifyButton = {
 	inProgressDescription: '',
 	nextIndex: 0,
@@ -106,7 +115,7 @@ var clockifyButton = {
 		let title = invokeIfFunction(options.description);
 
 		aBrowser.storage.local.get(
-			['timeEntryInProgress', 'permanent_appendWebsiteURL'],
+			['timeEntryInProgress', 'permanent_appendWebsiteURL', 'userId'],
 			(result) => {
 				let pipeSeparator = ' | ';
 				if (result.permanent_appendWebsiteURL) {
@@ -117,6 +126,10 @@ var clockifyButton = {
 					if (!title.includes(sufix)) {
 						title += `${pipeSeparator}${sufix}`;
 					}
+				}
+
+				if (result.userId) {
+					clockifyButton.userId = result.userId;
 				}
 				const entry = result.timeEntryInProgress;
 				if (entry && entry.id) {
@@ -153,6 +166,30 @@ var clockifyButton = {
 			}
 		);
 
+		button.addEventListener('click', (e) => {
+			function clickHandler() {
+				aBrowser.runtime.sendMessage({
+					eventName: 'sendAnalyticsEvent',
+					options: {
+						name: 'integration_click',
+						activeIntegration:
+							clockifyButton.injectedArguments?.activeIntegration,
+						userId: clockifyButton.userId,
+					},
+				});
+			}
+
+			if (clockifyButton.userId) {
+				clickHandler();
+			} else {
+				aBrowser.storage.local.get(['userId'], (result) => {
+					if (result.userId) {
+						clockifyButton.userId = result.userId;
+						clickHandler();
+					}
+				});
+			}
+		});
 		return button;
 	},
 
@@ -271,7 +308,8 @@ var clockifyButton = {
 							wsSettings.forceProjects ||
 							wsSettings.forceTasks ||
 							wsSettings.forceTags ||
-							cfFieldsRequired
+							cfFieldsRequired ||
+							_clockifyShowPostStartPopup
 						) {
 							if (timeEntryOptionsInvoked.projectName) {
 								const response = await aBrowser.runtime.sendMessage({
@@ -408,6 +446,17 @@ function $$$(selector, contexts = documents) {
 
 function text(selector, context) {
 	return $(selector, context)?.textContent?.trim();
+}
+
+function textList(selector, context = document, withoutDuplicates = true) {
+	const elements = Array.from($$(selector, context) || []);
+
+	const texts = elements
+		.map((element) => element.textContent)
+		.filter((value) => Boolean(value))
+		.map((text) => text.trim());
+
+	return withoutDuplicates ? [...new Set(texts)] : texts;
 }
 
 function timeout({ milliseconds }) {
@@ -773,7 +822,7 @@ function onChangedListener(changes) {
 	if (changedItems.find((item) => item === 'wsSettings')) {
 		if (_clockifyShowPostStartPopup) {
 			aBrowser.storage.local.get(['wsSettings'], (result) => {
-				ClockifyEditForm.prototype.wsSettings = result.wsSettings;
+				// ClockifyEditForm.prototype.wsSettings = result.wsSettings;
 			});
 		}
 	}
@@ -819,6 +868,12 @@ function cleanup() {
 function onMessageListener(request) {
 	if (request.eventName === 'cleanup') {
 		cleanup();
+	}
+
+	if (request.eventName === 'passArgumentsToClockifyButton') {
+		console.log('PASS options', request.options);
+		clockifyButton = { ...clockifyButton, injectedArguments: request.options };
+		console.log('PASS ARGS', clockifyButton);
 	}
 }
 

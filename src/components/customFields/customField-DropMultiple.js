@@ -5,8 +5,12 @@ import locales from '../../helpers/locales';
 import { useOnClickOutside } from './useOnClickOutside';
 import { getBrowser } from '../../helpers/browser-helper';
 
+const hasValue = (array) => Array.isArray(array) && array.length;
+
 const CustomFieldDropMultiple = ({ cf, updateValue, setIsValid }) => {
 	if (!cf.value) cf.value = [];
+
+	const [value, setValue] = useState(cf.value);
 
 	const menuRef = useRef(null);
 	const isMounted = useRef(false);
@@ -14,44 +18,35 @@ const CustomFieldDropMultiple = ({ cf, updateValue, setIsValid }) => {
 		{
 			id,
 			index,
-			value,
 			isDisabled,
 			placeHolder,
 			allowedValues,
 			manualMode,
 			required,
+			name,
+			description,
 		},
-		setValue,
 		storeValue,
-	] = useCustomField(cf, updateValue);
+	] = useCustomField(cf, updateValue, value);
 
-	const newList = (val) =>
+	const newList = (val = '') =>
 		allowedValues.map((name, id) => ({
 			id,
 			name,
 			isChecked: val.includes(name),
 		}));
 
-	(async function () {
-		let tagsListExistingInLocalStorage = await localStorage.getItem(
-			'preTagsList'
-		);
-		let currentWorkspaceId = await localStorage.getItem('activeWorkspaceId');
-		if (
-			tagsListExistingInLocalStorage &&
-			tagsListExistingInLocalStorage[0]?.workspaceId !== currentWorkspaceId
-		) {
-			await localStorage.removeItem('preTagsList');
-			await this.getTags(this.state.page, pageSize);
-		}
-	})();
-
 	const [isOpen, setOpen] = useState(false);
 
 	const [tagList, setTagList] = useState(allowedValues ? newList(value) : []);
 
 	useEffect(() => {
+		setValue(cf.value);
+	}, [cf.value]);
+
+	useEffect(() => {
 		setTagList(newList(value));
+		setIsValid({ id: id, isValid: !(required && !hasValue(value)) });
 	}, [value]);
 
 	useOnClickOutside(menuRef, () => setOpen(false));
@@ -81,7 +76,6 @@ const CustomFieldDropMultiple = ({ cf, updateValue, setIsValid }) => {
 			? value.filter((name) => name !== tag.name)
 			: [...value, tag.name];
 		setValue(val);
-		setIsValid({ id: id, isValid: !(required && val.length === 0) });
 		manualMode && updateValue(id, val);
 		// handleChangeDelayed.current(val);
 	};
@@ -107,17 +101,8 @@ const CustomFieldDropMultiple = ({ cf, updateValue, setIsValid }) => {
 		return arr.join('');
 	};
 
-	let title = '';
-	if (value && value.length > 0) {
-		title =
-			(value.length > 1 ? `${locales.TAGS}:\n` : `${locales.TAG}: `) +
-			value.join('\n');
-	}
 	const noMatcingItems = locales.NO_MATCHING('items');
-	const isNotValid = required && value.length === 0;
-	useEffect(() => {
-		setIsValid({ id: id, isValid: !(required && cf.value?.length === 0) });
-	}, []);
+	const isNotValid = required && !hasValue(value);
 
 	return (
 		<>
@@ -127,7 +112,7 @@ const CustomFieldDropMultiple = ({ cf, updateValue, setIsValid }) => {
 			>
 				<div
 					className={`tag-list ${isNotValid ? 'custom-field-required' : ''}`}
-					title={title}
+					title={description}
 					ref={menuRef}
 				>
 					<div
@@ -146,7 +131,7 @@ const CustomFieldDropMultiple = ({ cf, updateValue, setIsValid }) => {
 						}}
 					>
 						<span className="tag-list-name">
-							{value.length > 0 ? (
+							{value?.length > 0 ? (
 								<span className={'tag-list-selected'}>
 									{tagList
 										.filter((tag) => tag.isChecked)

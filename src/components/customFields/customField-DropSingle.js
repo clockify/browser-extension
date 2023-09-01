@@ -5,21 +5,23 @@ import { getBrowser } from '../../helpers/browser-helper';
 import { useOnClickOutside } from './useOnClickOutside';
 
 const CustomFieldDropSingle = ({ cf, updateValue, setIsValid }) => {
+	const [value, setValue] = useState(cf.value);
 	const menuRef = useRef(null);
 
 	const [
 		{
 			id,
 			index,
-			value,
 			isDisabled,
 			placeHolder,
 			allowedValues,
 			manualMode,
 			required,
+			name,
+			description,
 		},
-		setValue,
-	] = useCustomField(cf, updateValue);
+		storeValue,
+	] = useCustomField(cf, updateValue, value);
 
 	const newList = (val) => {
 		const items = allowedValues.map((name, id) => ({
@@ -30,20 +32,6 @@ const CustomFieldDropSingle = ({ cf, updateValue, setIsValid }) => {
 		items.unshift({ id: -1, name: locales.NONE, isChecked: val === null });
 		return items;
 	};
-
-	(async function () {
-		let tagsListExistingInLocalStorage = await localStorage.getItem(
-			'preTagsList'
-		);
-		let currentWorkspaceId = await localStorage.getItem('activeWorkspaceId');
-		if (
-			tagsListExistingInLocalStorage &&
-			tagsListExistingInLocalStorage[0]?.workspaceId !== currentWorkspaceId
-		) {
-			await localStorage.removeItem('preTagsList');
-			await this.getTags(this.state.page, pageSize);
-		}
-	})();
 
 	const [isOpen, setOpen] = useState(false);
 
@@ -85,8 +73,8 @@ const CustomFieldDropSingle = ({ cf, updateValue, setIsValid }) => {
 	const selectTag = (tagId) => {
 		const tag = tagList.find((t) => t.id === tagId);
 		const val = tagId === -1 ? null : tag.name;
-		setIsValid({ id: id, isValid: !(required && !val) });
 		setValue(val);
+		storeValue(val);
 		manualMode && updateValue(id, val);
 		// handleChangeDelayed.current(val);
 		setOpen(false);
@@ -115,12 +103,15 @@ const CustomFieldDropSingle = ({ cf, updateValue, setIsValid }) => {
 
 	const noMatcingItems = locales.NO_MATCHING('items');
 
-	let naslov = name + ':' + (value === null ? '' : value);
 	const isNotValid = required && !value;
 
 	useEffect(() => {
-		setIsValid({ id: id, isValid: !(required && !cf.value) });
-	}, []);
+		setValue(cf.value);
+	}, [cf.value]);
+
+	useEffect(() => {
+		setIsValid({ id: id, isValid: !(required && !value) });
+	}, [value]);
 
 	return (
 		<>
@@ -131,7 +122,7 @@ const CustomFieldDropSingle = ({ cf, updateValue, setIsValid }) => {
 			>
 				<div
 					className={`tag-list ${isNotValid ? 'custom-field-required' : ''}`}
-					title={naslov}
+					title={description}
 					ref={menuRef}
 				>
 					<div

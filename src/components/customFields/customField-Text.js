@@ -8,34 +8,46 @@ const CustomFieldText = ({
 	setIsValid,
 	cfContainsWrongChars,
 }) => {
+	const [value, setValue] = useState(cf.value);
+
 	const [
-		{ id, index, value, isDisabled, placeHolder, title, manualMode, required },
-		setValue,
+		{
+			id,
+			index,
+			isDisabled,
+			placeHolder,
+			title,
+			manualMode,
+			required,
+			description,
+		},
 		storeValue,
-	] = useCustomField(cf, updateValue);
+	] = useCustomField(cf, updateValue, value);
 
-	const handleChange = (e) => {
-		const val = e.target.value;
-		setIsValid({ id: id, isValid: !(required && !val) });
-		setValue(val);
-
+	const handleChange = (event) => {
 		const pattern = /<[^>]+>/;
-		const isCustomFieldContainsWrongChars = pattern.test(val);
+		const isCustomFieldContainsWrongChars = pattern.test(event.target.value);
 		cfContainsWrongChars({ id, isCustomFieldContainsWrongChars });
+		setValue(event.target.value);
 	};
 
-	const handleBlur = (e) => {
-		e.preventDefault();
-		e.stopPropagation();
+	const handleBlur = (event) => {
+		const enteredValue = event.target.value;
+		event.preventDefault();
+		event.stopPropagation();
 		storeValue();
-		manualMode && updateValue(id, e.target.value, isValid);
+		manualMode && updateValue(id, enteredValue);
 	};
 
 	const isNotValid = required && !value;
 
 	useEffect(() => {
-		setIsValid({ id: id, isValid: !(required && !cf.value) });
-	}, []);
+		setValue(cf.value);
+	}, [cf.value]);
+
+	useEffect(() => {
+		setIsValid({ id: id, isValid: !(required && !value) });
+	}, [value]);
 
 	return (
 		<>
@@ -50,10 +62,10 @@ const CustomFieldText = ({
 					className={`custom-field-text${isDisabled ? '-disabled' : ''} ${
 						isNotValid ? 'custom-field-required' : ''
 					}`}
-					title={title}
+					title={description}
 					placeholder={placeHolder}
 					disabled={isDisabled}
-					value={!!value ? value : ''}
+					value={value ?? ''}
 					onChange={handleChange}
 					onBlur={handleBlur}
 				/>

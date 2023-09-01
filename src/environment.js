@@ -6,7 +6,8 @@ const environmentDev = {
 	resetPassword: 'https://app.clockify.me/reset-password',
 	startButton: 'START',
 	stopButton: 'STOP',
-	terms: 'https://app.clockify.me/terms',
+	clockifyTerms: 'https://clockify.me/terms',
+	cakeTerms: 'https://cake.com/terms',
 	webSocket: {
 		endpoint: 'wss://stomp.clockify.me',
 		clientId: 'clockify',

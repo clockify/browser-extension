@@ -134,7 +134,6 @@ class EditForm extends React.Component {
 		if (!(await isOffline()) && offlineStorage.userHasCustomFieldsFeature) {
 			const { data, msg } = await getWSCustomFields();
 			if (data) offlineStorage.wsCustomFields = data;
-			else alert(msg);
 		}
 
 		if (this.props.afterCreateProject) {

@@ -48,6 +48,7 @@ class EditFormManual extends React.Component {
 		this.handleInputChange = debounce(this.handleInputChange.bind(this), 200);
 		this.checkIfTaskBillable = this.checkIfTaskBillable.bind(this);
 		this.areCustomFieldsValid = this.areCustomFieldsValid.bind(this);
+		this.cfContainsWrongChars = this.cfContainsWrongChars.bind(this);
 	}
 
 	async setAsyncStateItems() {
@@ -83,20 +84,23 @@ class EditFormManual extends React.Component {
 			})
 			.then((res) => {
 				this.setState({
-					autocompleteItemsRecent: res.data?.map((entry) => ({
-						project: {
-							clientName: entry.clientName,
-							color: entry.projectColor,
-							name: entry.projectName,
-							id: entry.projectId,
-						},
-						task: {
-							name: entry.taskName,
-							id: entry.taskId,
-						},
-						billable: entry.projectBillable,
-						...entry,
-					}) || [] ),
+					autocompleteItemsRecent: res.data?.map(
+						(entry) =>
+							({
+								project: {
+									clientName: entry.clientName,
+									color: entry.projectColor,
+									name: entry.projectName,
+									id: entry.projectId,
+								},
+								task: {
+									name: entry.taskName,
+									id: entry.taskId,
+								},
+								billable: entry.projectBillable,
+								...entry,
+							} || [])
+					),
 				});
 			})
 			.catch((err) => console.log(err));
@@ -109,12 +113,10 @@ class EditFormManual extends React.Component {
 				)
 			);
 		}
-
-		if (offlineStorage.userHasCustomFieldsFeature) {
+		if (this.props.workspaceSettings.features?.customFields) {
 			if (!(await isOffline())) {
 				const { data, msg } = await getWSCustomFields();
 				if (data) offlineStorage.wsCustomFields = data;
-				else alert(msg);
 			}
 
 			if (!timeEntry.customFieldValues || this.props.afterCreateProject)
@@ -586,6 +588,16 @@ class EditFormManual extends React.Component {
 		this.setState({ cfRequired: !val });
 	}
 
+	cfContainsWrongChars({ id, isCustomFieldContainsWrongChars }) {
+		const { customFieldsContainWrongChars } = this.state;
+		this.setState({
+			customFieldsContainWrongChars: {
+				...customFieldsContainWrongChars,
+				[id]: isCustomFieldContainsWrongChars,
+			},
+		});
+	}
+
 	async done() {
 		const { description } = this.state.timeEntry;
 		const pattern = /<[^>]+>/;
@@ -657,7 +669,7 @@ class EditFormManual extends React.Component {
 				const cfs =
 					customFieldValues && customFieldValues.length > 0
 						? customFieldValues
-								.filter((cf) => cf.customFieldDto.status === 'VISIBLE')
+								//.filter((cf) => cf.customFieldDto.status === 'VISIBLE')
 								.map(({ type, customFieldId, value }) => ({
 									customFieldId,
 									sourceType: 'TIMEENTRY',
@@ -666,12 +678,12 @@ class EditFormManual extends React.Component {
 						: [];
 
 				if (this.props.integrationMode) {
-					const end = new Date();
+					const start = new Date();
 					timeInterval = {
-						start: new Date(
-							end.getTime() - this.props.timeEntry.totalMins * 60000
+						start,
+						end:  new Date(
+							start.getTime() + this.props.timeEntry.totalMins * 60000
 						),
-						end,
 					};
 				} else if (timeInterval.start.toDate) {
 					timeInterval = {
@@ -984,8 +996,9 @@ class EditFormManual extends React.Component {
 									{locales.BILLABLE_LABEL}
 								</label>
 							</div>
-							{offlineStorage.userHasCustomFieldsFeature && (
+							{this.props.workspaceSettings.features.customFields && (
 								<CustomFieldsContainer
+									cfContainsWrongChars={this.cfContainsWrongChars}
 									key="customFieldsContainer"
 									timeEntry={timeEntry}
 									isUserOwnerOrAdmin={this.state.isUserOwnerOrAdmin}

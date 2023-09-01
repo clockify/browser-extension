@@ -20,8 +20,10 @@ class SignUp extends React.Component {
 			email: props.email ? props.email : '',
 			password: '',
 			passwordAlert: false,
-			termsOfUse: true,
-			termsAlert: false,
+			clockifyTermsOfUse: false,
+			cakeTermsOfUse: false,
+			clockifyTermsAlert: false,
+			cakeTermsAlert: false,
 			emailAlert: false,
 			emailExists: false,
 			signupDisabledMessage: null,
@@ -41,7 +43,8 @@ class SignUp extends React.Component {
 		this.setState(
 			{
 				emailAlert: false,
-				termsAlert: false,
+				clockifyTermsAlert: false,
+				cakeTermsAlert: false,
 				passwordAlert: false,
 				emailExists: false,
 			},
@@ -50,13 +53,15 @@ class SignUp extends React.Component {
 					{
 						emailAlert:
 							!this.state.email.includes('@') || this.state.email.length < 3,
-						termsAlert: !this.state.termsOfUse,
+						clockifyTermsAlert: !this.state.clockifyTermsOfUse,
+						cakeTermsAlert: !this.state.cakeTermsOfUse,
 						passwordAlert: this.state.password.length < 6,
 					},
 					() => {
 						if (
 							!this.state.emailAlert &&
-							!this.state.termsAlert &&
+							!this.state.clockifyTermsAlert &&
+							!this.state.cakeTermsAlert &&
 							!this.state.passwordAlert
 						) {
 							disabledSignup = true;
@@ -138,14 +143,26 @@ class SignUp extends React.Component {
 		});
 	}
 
-	toggleTermsOfUse() {
+	toggleClockifyTermsOfUse() {
 		this.setState({
-			termsOfUse: !this.state.termsOfUse,
+			clockifyTermsOfUse: !this.state.clockifyTermsOfUse,
+			clockifyTermsAlert: this.state.clockifyTermsOfUse,
 		});
 	}
 
-	termsOfUse() {
-		window.open(`${environment.terms}`, '_blank');
+	toggleCakeTermsOfUse() {
+		this.setState({
+			cakeTermsOfUse: !this.state.cakeTermsOfUse,
+			cakeTermsAlert: this.state.cakeTermsOfUse,
+		});
+	}
+
+	clockifyTermsOfUse() {
+		window.open(`${environment.clockifyTerms}`, '_blank');
+	}
+
+	cakeTermsOfUse() {
+		window.open(`${environment.cakeTerms}`, '_blank');
 	}
 
 	backToLogin() {
@@ -216,28 +233,64 @@ class SignUp extends React.Component {
 						<div className="signup-terms">
 							<span
 								className={
-									this.state.termsOfUse
+									this.state.cakeTermsOfUse
 										? 'signup-checkbox checked'
 										: 'signup-checkbox'
 								}
-								onClick={this.toggleTermsOfUse.bind(this)}
+								onClick={this.toggleCakeTermsOfUse.bind(this)}
 							>
 								<img
 									src="./assets/images/checked.png"
 									className={
-										this.state.termsOfUse
+										this.state.cakeTermsOfUse
 											? 'signup-checked-img'
 											: 'signup-checked-img-hidden'
 									}
 								/>
 							</span>
 							<span className="signup-terms--agree">
-								{locales.AGREE_LABEL}
-								<a onClick={this.termsOfUse.bind(this)}>{locales.TOS}</a>
+								{locales.CAKE_TERMS_OF_USE}
+								<a onClick={this.cakeTermsOfUse.bind(this)}>{locales.TOS}</a>
 							</span>
 						</div>
 						<label
-							className={this.state.termsAlert ? 'signup-alert' : 'disabled'}
+							className={
+								this.state.cakeTermsAlert ? 'signup-alert' : 'disabled'
+							}
+						>
+							{locales.TOS_ACCEPT_ERROR}
+						</label>
+					</div>
+					<div className="signup-terms_and_alert">
+						<div className="signup-terms">
+							<span
+								className={
+									this.state.clockifyTermsOfUse
+										? 'signup-checkbox checked'
+										: 'signup-checkbox'
+								}
+								onClick={this.toggleClockifyTermsOfUse.bind(this)}
+							>
+								<img
+									src="./assets/images/checked.png"
+									className={
+										this.state.clockifyTermsOfUse
+											? 'signup-checked-img'
+											: 'signup-checked-img-hidden'
+									}
+								/>
+							</span>
+							<span className="signup-terms--agree">
+								{locales.CLOCKIFY_TERMS_OF_USE}
+								<a onClick={this.clockifyTermsOfUse.bind(this)}>
+									{locales.TOS}
+								</a>
+							</span>
+						</div>
+						<label
+							className={
+								this.state.clockifyTermsAlert ? 'signup-alert' : 'disabled'
+							}
 						>
 							{locales.TOS_ACCEPT_ERROR}
 						</label>

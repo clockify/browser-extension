@@ -1,8 +1,8 @@
 clockifyButton.render(
-	'div.nH.V8djrc.byY > div.nH > div.ha:not(.clockify)',
+	'div.nH div.ha:not(.clockify)',
 	{ observe: true },
 	function (elem) {
-		var link,
+		let link,
 			description = $('h2', elem);
 		if (!description) {
 			return;

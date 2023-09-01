@@ -159,6 +159,12 @@ function ClockifyButton(props) {
 		if (changedItems.includes('permanent_darkMode')) {
 			syncDarkMode();
 		}
+		if (changedItems.includes('workspaceSettings')) {
+			setState((state) => ({
+				...state,
+				workspaceSettings: JSON.parse(changes.workspaceSettings.newValue),
+			}));
+		}
 	};
 
 	useEffect(() => {

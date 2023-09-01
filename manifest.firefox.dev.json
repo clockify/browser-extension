@@ -19,6 +19,7 @@
 			"api-services/tag-service.js",
 			"api-services/time-entry-service.js",
 			"api-services/auth-service.js",
+			"api-services/analytics-service.js",
 			"api-services/selectors-service.js",
 			"contentScripts/integration-background.js",
 			"contentScripts/custom-field-service-background.js",
@@ -39,7 +40,7 @@
 			"strict_min_version": "57.0a1"
 		}
 	},
-	"version": "2.9.13",
+	"version": "2.10.1",
 	"browser_action": {
 		"default_popup": "index.html",
 		"default_title": "Clockify"

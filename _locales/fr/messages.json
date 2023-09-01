@@ -851,8 +851,17 @@
   "AGREE_LABEL": {
     "message": "J’accepte les"
   },
+  "CLOCKIFY_TERMS_OF_USE": {
+    "message": "J'accepte Clockify"
+  },
+  "CAKE_TERMS_OF_USE": {
+    "message": "J'accepte CAKE.com"
+  },
   "TOS": {
     "message": "Conditions d’utilisation"
+  },
+  "TERMS_OF_USE": {
+    "message": "Conditions d'utilisation"
   },
   "ALREADY_HAVE_AN_ACCOUNT": {
     "message": "Vous avez déjà un compte"
