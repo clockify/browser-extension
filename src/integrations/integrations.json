@@ -176,7 +176,7 @@
 	},
 	"linear.app": {
 		"name": "Linear",
-		"link": "*://linear.app/*/issue/*",
+		"link": "*://linear.app/*",
 		"script": "linear.js"
 	},
 	"liquidplanner.com": {

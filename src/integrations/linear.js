@@ -42,8 +42,6 @@ function renderIssueButton(elem) {
 
 	const description = document.title;
 
-	// Linear doesn't require issues to have projects. So we use the project name from the sidebar if it exists, otherwise we use the team name from the header.
-
 	const sideBarLabels = container.querySelectorAll('& > div > div > span');
 	let linearProject = '';
 
@@ -58,12 +56,7 @@ function renderIssueButton(elem) {
 		}
 	});
 
-	const header = elem.querySelector('header');
-
-	// Depending on how you navigation to an issue, the project might be the first link. But if there is a project we'll get it from the sidebar and use it anyway.
-	const linearTeam = header.querySelector('a span').textContent || '';
-
-	const project = linearProject || linearTeam;
+	const project = linearProject;
 
 	const link = clockifyButton.createButton(description, project);
 	htmlTag.appendChild(link);
