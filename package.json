@@ -34,7 +34,7 @@
 	"license": "ISC",
 	"dependencies": {
 		"@fontsource/roboto": "^4.5.8",
-		"@popperjs/core": "^2.11.0",
+		"@popperjs/core": "^2.11.8",
 		"antd": "^4.21.7",
 		"axios": "^0.27.2",
 		"child_process": "^1.0.2",
