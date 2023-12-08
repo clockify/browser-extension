@@ -9,6 +9,11 @@
 		"link": "*://ambra.app",
 		"script": "ambra.js"
 	},
+	"attlasian.net": {
+		"name": "Atlassian",
+		"link": "*://*.atlassian.net/*",
+		"script": "atlassian.js"
+	},
 	"asana.com": {
 		"name": "Asana",
 		"link": "*://app.asana.com",
