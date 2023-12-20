@@ -5,7 +5,7 @@
 
 	// Issue view & Merge Request view
 	clockifyButton.render(selectors.hanger, { observe: true }, () => {
-		const breadcrumbs = $(selectors.breadcrumbs);
+		const header = $('.detail-page-header');
 		const breadcrumbsList = Array.from($$(selectors.breadcrumbsList));
 
 		const lastBreadcrumbItemIndex = breadcrumbsList.length - 1;
@@ -49,7 +49,7 @@
 		clockifyContainer.append(link);
 		clockifyContainer.append(input);
 
-		breadcrumbs.append(clockifyContainer);
+		header.append(clockifyContainer);
 
 		console.log(projectName);
 	});
