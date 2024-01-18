@@ -167,9 +167,10 @@ export function CustomFieldsContainer({
 			}
 		});
 
+		const timeEntryId = timeEntry.id;
 		customFieldValues.forEach((item) => {
 			// hopefully we have no INACTIVE here
-			let { customFieldDto: wsCustomField, value, timeEntryId, name } = item;
+			let { customFieldDto: wsCustomField, value, name } = item;
 			if (!wsCustomField) {
 				if (manualMode) {
 				}
@@ -188,6 +189,9 @@ export function CustomFieldsContainer({
 					status = projectEntry.status;
 					value = projectEntry.value;
 				}
+			}
+			if (!value?.length && wsCustomField.workspaceDefaultValue) {
+				value = wsCustomField.workspaceDefaultValue
 			}
 			const cf = arr.find((it) => it.wsCustomField.id === wsCustomField.id);
 			if (status === 'VISIBLE') {

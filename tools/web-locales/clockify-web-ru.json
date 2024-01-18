@@ -38,7 +38,8 @@
     "APPROVAL": {
         "LOADER": "Подтверждение расписаний...",
         "GROUPS": {
-            "TOTAL_TIME": "Всего"
+            "TOTAL_TIME": "Всего",
+            "TOTAL_TIME_WITH_INTERPOLATION": "Общий"
         },
         "DETAILS": {
             "TIMEZONE": "Часовой пояс",
@@ -46,7 +47,8 @@
             "APPROVE": "Утвердить",
             "SUBMITTED_BY": "Представленно",
             "REJECT": "Отклонить",
-            "WITHDRAWN_BY": "Снято"
+            "WITHDRAWN_BY": "Снято",
+            "SUBMITTED_BY_WITH_INTERPOLATION": "Представлено: {значение}"
         },
         "NO_TIMESHEETS_ON_LABEL": "Нет { value } расписаний",
         "TABLE": {
@@ -64,7 +66,9 @@
             "REMIND_ALL_BODY": "Готовы отправлять напоминания по электронной почте руководителям групп, которые еще не утвердили расписания своей команды?",
             "REMIND_SELECTED_BODY": "Clockify отправит электронное письмо с напоминанием на { users }, чтобы отправить свое расписание.",
             "SUBMIT_FOR_APPROVAL": "Готовы представить { startDate } - { endDate } на утверждение, для { userName }?",
-            "REMIND_SUBMIT_LOG_SELECTED_BODY": "Clockify отправит напоминание по электронной почте { users }, чтобы зарегистрировать свое время и отправить свое расписание."
+            "REMIND_SUBMIT_LOG_SELECTED_BODY": "Clockify отправит напоминание по электронной почте { users }, чтобы зарегистрировать свое время и отправить свое расписание.",
+            "APPROVE_ALL_BODY_WITH_INTERPOLATION": "Как только все будет одобрено, время будет заблокировано, и никто больше не сможет его редактировать.",
+            "REMIND_ALL_BODY_PM": "Готовы отправлять напоминания по электронной почте менеджерам проектов, которые еще не утвердили ожидающие расписания своих участников проекта?"
         },
         "SHARED": {
             "APPROVE_ALL": "Одобрить все",
@@ -107,11 +111,16 @@
         "SHOW_WITHDRAWN_LABEL": "Показать снято",
         "REMINDER": {
             "ASSIGN_TEAM_MANAGER_TOOLTIP": "Назначьте руководителей групп, чтобы они отправляли им напоминания.",
-            "SELECT_TO_REMIND_TOOLTIP": "Выберите всех пользователей, которым вы хотите напомнить."
+            "SELECT_TO_REMIND_TOOLTIP": "Выберите всех пользователей, которым вы хотите напомнить.",
+            "DISABLED": "Напоминание отключено, поскольку оно не относится к текущему активному периоду утверждения. Чтобы включить его, измените период одобрения в настройках WS."
         },
         "NO_TIMESHEETS_MESSAGE": "Нет { value } расписаний",
         "NO_TIMESHEETS_AND_EXPENSES_ON_UNSUBMITTED_LABEL": "Нет { value } табелей учета рабочего времени и расходов на { label }",
-        "NO_TIMESHEETS_AND_EXPENSES_ON_LABEL": "Нет { value } табелей учета рабочего времени и расходов"
+        "NO_TIMESHEETS_AND_EXPENSES_ON_LABEL": "Нет { value } табелей учета рабочего времени и расходов",
+        "REMINDERS_TAB": {
+            "THIRD_PART": "месяца",
+            "SECOND_PART": "у вас есть неотправленные табели учета рабочего времени и расходы, отправляйте им напоминание каждый раз."
+        }
     },
     "AUDIT_LOG": {
         "FILTERS": {
@@ -282,7 +291,8 @@
                 "INVOICED": "Выставлен счет",
                 "CUSTOMFIELDS": "Настраиваемые поля",
                 "KIOSK_NAME": "Название киоска",
-                "KIOSK_ENTRY_TYPE": "Тип"
+                "KIOSK_ENTRY_TYPE": "Тип",
+                "SYSTEM": "Система"
             },
             "PROJECT": {
                 "NAME": "Название проекта",
@@ -343,7 +353,8 @@
         "KIOSK": {
             "BREAK_TYPE_LABEL": "Перерыв",
             "NON_BREAK_TYPE_LABEL": "Без перерыва"
-        }
+        },
+        "ENABLED_ON_LABEL_WITH_INTERPOLATION": "Включено:"
     },
     "PTO": {
         "TIMELINE": {
@@ -501,13 +512,20 @@
                 "REMOVE_FROM_POLICIES_LABEL": "Архивация этого { entity } удалит его из правил нерабочего времени:",
                 "REMOVE_FROM_HOLIDAYS_LABEL": "Архивация этого { entity } удалит его из политики праздников:",
                 "ARCHIVE_SINGLE_MESSAGE": "При архивировании этого { entity } он будет удален из:",
-                "ARCHIVE_PLURAL_MESSAGE": "При архивировании этих { entities } они будут удалены из:"
+                "ARCHIVE_PLURAL_MESSAGE": "При архивировании этих { entities } они будут удалены из:",
+                "REMOVE_FROM_POLICIES_PLURAL_LABEL": "Архивирование этих { entity } удалит их из политики выходных:",
+                "REMOVE_FROM_HOLIDAYS_PLURAL_LABEL": "Архивирование этих { entity } удалит их из отпуска:"
             },
             "CHANGE_ENTRY_TYPE": {
                 "MARK_AS_REGULAR_LABEL": "Отметить как запись основного времени",
                 "MARK_AS_BREAK_LABEL": "Отметить как запись перерыва",
                 "MARK_AS_TIME_OFF_LABEL": "Отметить как выходной",
                 "MARK_AS_HOLIDAY_LABEL": "Отметить как праздничную запись"
+            },
+            "TYPES": {
+                "REGULAR_ENTRY_LABEL": "Обычный вход",
+                "TIME_OFF_ENTRY": "Отгул",
+                "HOLIDAY_ENTRY_LABEL": "Праздничный день"
             }
         },
         "TIME_OFF_POLICIES_LABEL": "Политика нерабочего времени"
@@ -573,7 +591,9 @@
             },
             "ISSUE": "Дата выпуска",
             "DAYS_AGO": "{ value } дней назад",
-            "DAY_AGO": "{ value } день назад"
+            "DAY_AGO": "{ value } день назад",
+            "DELETE_MODAL_TEXT_WITH_INTERPOLATION": "Все записи в этом счете-фактуре станут несчетными.",
+            "CONFIRM_QUESTION_WITH_INTERPOLATION": "Вы уверены?"
         },
         "SETTINGS": {
             "HEADER": "Настройки счета",
@@ -686,7 +706,8 @@
             "TOTAL_LABEL": "Всего",
             "PARTIALLY_PAID_LABEL": "Частично оплачено",
             "REMOVE_PAYMENTS_NOTE": "Все платежи будут удалены.",
-            "PAYMENT_NOTE_ERROR": "Длина заметки не должна превышать { length } символов."
+            "PAYMENT_NOTE_ERROR": "Длина заметки не должна превышать { length } символов.",
+            "ISSUE_DATE_WITH_INTERPOLATION": "Дата выпуска: "
         },
         "ITEM_TYPE": {
             "CREATE": {
@@ -818,6 +839,23 @@
         "TOOLTIP": {
             "NO_CLIENT": "{ clientLabel } отсутствует. Добавьте их, чтобы отправить этот счет.",
             "NO_COMPANY": "Компания отсутствует. Добавьте его, чтобы отправить этот счет."
+        },
+        "EXPENSES_REPORT": {
+            "WELCOME_MESSAGE": "Привет!",
+            "DESCRIPTION": "Чтобы скачать отчет о расходах, введите код из письма. Срок действия ссылки для скачивания истекает { date }.",
+            "DOWNLOAD_LABEL": "Скачать отчет о расходах",
+            "EXPIRED_CODE_ERROR": "Время действия кода истекло.",
+            "RESET_CODE": "Сброс кода",
+            "TIMER_ERROR": "Вы ввели неправильный код 3 раза. Попробуйте еще раз в { timer }",
+            "INCORRECT_CODE_ERROR": "Вы ввели неправильный код",
+            "CONTACT_OWNER": "Свяжитесь с владельцем счета, чтобы создать новую ссылку.",
+            "DOWNLOAD_COMPLETED": "Загрузка завершена!",
+            "CODE_SENT": "Код отправлен",
+            "DOWNLOAD_SUCCESS": "Вы успешно загрузили отчет о расходах.",
+            "LINK_EXPIRED": "Срок действия вашей ссылки истек."
+        },
+        "EXPORT_SETTINGS": {
+            "TITLE": "Настройки экспорта счетов"
         }
     },
     "WORKSPACE": {
@@ -1143,7 +1181,8 @@
             "UPGRADE_PART2": "импортировать записи времени",
             "START_BTN": "Начать импорт",
             "IN_PROGRESS": "Выполняется импорт. Как только это будет сделано, вы получите уведомление.",
-            "INSTRUCTION_MSG_PART1_CUSTOM_LABELS": "Импорт нескольких { projectsLabel }, { clientsLabel }, { tasksLabel }, тегов и записей времени из файла. Пожалуйста, подготовьте файлы CSV в"
+            "INSTRUCTION_MSG_PART1_CUSTOM_LABELS": "Импорт нескольких { projectsLabel }, { clientsLabel }, { tasksLabel }, тегов и записей времени из файла. Пожалуйста, подготовьте файлы CSV в",
+            "UPGRADE_PART2_WITH_INTERPOLATION": "для импорта записей времени."
         },
         "LOCK_DATE_FOR_TIME_ENTRIES": {
             "UPDATE": {
@@ -1179,7 +1218,8 @@
                 "TASKS_TITLE": "Кто может создать { taskLabel }",
                 "TASKS_INFO": "Разрешить пользователям создавать новые { taskLabel } на своих { projectLabel }",
                 "TAGS_TITLE": "Кто может создавать теги",
-                "TAGS_INFO": "Разрешить пользователям создавать новые теги"
+                "TAGS_INFO": "Разрешить пользователям создавать новые теги",
+                "TAGS_INFO_WITH_INTERPOLATION": "Разрешить пользователям создавать новые теги."
             },
             "CAN_SEE": {
                 "RULE_TITLE": "Обычные пользователи могут видеть",
@@ -1243,7 +1283,9 @@
                 "INFO": "Кто может видеть и изменять оплачиваемый статус записей времени",
                 "INFO_WHEN_EXPENSES_ENABLED": "Кто может видеть и изменять оплачиваемый статус записей времени",
                 "TITLE_WITH_EXPENSES_ENABLED": "Кто может просматривать и изменять оплачиваемый статус записей времени и расходов",
-                "TITLE": "Кто может просматривать и изменять оплачиваемый статус записей времени"
+                "TITLE": "Кто может просматривать и изменять оплачиваемый статус записей времени",
+                "INFO_MESSAGE": "Разрешить людям видеть и изменять статус оплаты записей времени.",
+                "INFO_MESSAGE_WITH_EXPENSES_ENABLED": "Разрешите людям видеть и изменять статус оплаты записей времени и расходов."
             },
             "UPGRADE_BTN_PART_2": "изменить разрешение",
             "CAN_SEE_PROJECT_STATUS_CUSTOM_LABEL": {
@@ -1253,7 +1295,8 @@
             "WHO_CAN_CREATE_ASSIGNMENTS": {
                 "TITLE": "Кто может создавать задания",
                 "DESCRIPTION": "Разрешить руководителям проектов создавать задания для своих проектов.",
-                "INFO_MESSAGE": "Разрешить руководителям проектов создавать задания и вехи для своих проектов."
+                "INFO_MESSAGE": "Разрешить руководителям проектов создавать задания и вехи для своих проектов.",
+                "INFO_DESCRIPTION": "Разрешить людям создавать и редактировать назначения для своих { projectLabelPlural }."
             },
             "COST_RATES": {
                 "VIEW": {
@@ -1281,6 +1324,12 @@
             },
             "KIOSK_LOGIN_REQUIRED_DISABLED": {
                 "LABEL": "Любой, у кого есть ссылка на киоск, сможет получить доступ к списку пользователей киоска."
+            },
+            "APPROVE_SUBMITTED_TIMESHEETS": {
+                "EXPENSES_SECTION": "и расходы",
+                "TITLE": "Кто может утверждать представленные табели учета рабочего времени",
+                "DESCRIPTION_1": "Разрешить руководителям утверждать табели учета рабочего времени",
+                "DESCRIPTION_2": "представленные их командой или участниками проекта."
             }
         },
         "TIME_ROUNDING_MODAL": {
@@ -1347,7 +1396,8 @@
                     "SUPPORTED_SSO": "Поддерживаемые системы единого входа: LDAP, OAuth и SAML2 (охвачены все поставщики удостоверений: Google, Okta, OneLogin, Azure, Active Directory и т. Д.).",
                     "CONFIGURE": "Настроить единый вход",
                     "ADD": "Добавить конфигурацию единого входа",
-                    "TITLE_SSO": "Конфигурация единого входа"
+                    "TITLE_SSO": "Конфигурация единого входа",
+                    "SUPPORTED_SSO_V2": "Поддерживаемые системы единого входа: OAuth и SAML2 (поддерживаются все поставщики удостоверений: Google, Okta, OneLogin, Azure и&nbsp;т.&nbsp;д.)"
                 },
                 "LDAP_FORM": {
                     "PROVIDER_URI": {
@@ -1500,7 +1550,8 @@
             "IDP_TEMPLATES": "Шаблоны поставщика идентификационной информации",
             "SELECT_IDP_TEMPLATE": "Выберите шаблон поставщика идентификационной информации",
             "CUSTOM_SAML2_PROVIDER": "Пользовательский поставщик SAML2",
-            "CUSTOM_OAUTH2_PROVIDER": "Пользовательский поставщик OAuth2"
+            "CUSTOM_OAUTH2_PROVIDER": "Пользовательский поставщик OAuth2",
+            "TEST": "Тестовая конфигурация"
         },
         "SUBDOMAIN": {
             "YOUR": "Ваш поддомен",
@@ -1538,7 +1589,11 @@
                         "EMAIL_AND_PASSWORD": "Авторизуйтесь с адресом электронной почты и паролем",
                         "LDAP": "Войти через LDAP",
                         "OAUTH": "Войти через OAuth",
-                        "SAML2": "Войти с помощью SAML2"
+                        "SAML2": "Войти с помощью SAML2",
+                        "EMAIL": "Войти с помощью электронной почты",
+                        "INFO_MESSAGES": {
+                            "EMAIL_LOGIN_MESSAGE": "Войдите с помощью кода, отправленного по электронной почте, или с помощью электронной почты и пароля"
+                        }
                     }
                 }
             },
@@ -1546,7 +1601,29 @@
                 "INFO_MESSAGE": "Появляется на кнопке «Войти через SSO». Форматы: png, jpg, gif. Максимальный размер: 1 MB.",
                 "TITLE": "Логотип"
             },
-            "TITLE": "Поддомен"
+            "TITLE": "Поддомен",
+            "DATA_REGION": {
+                "CURRENT_REGION": "Область данных ({ region })",
+                "REGION": "Регион данных",
+                "INFO_MESSAGE": "Выберите, в какой стране вы хотите хранить свои данные.",
+                "CHANGE_REGION": {
+                    "CHANGE_WARNING_MESSAGE_1": "На региональных серверах нет бесплатных, базовых или стандартных планов. Если срок действия вашей подписки истечет, все функции будут заблокированы.",
+                    "CHANGE_WARNING_MESSAGE_2": "Мы не предлагаем передачу данных с региональных на глобальные серверы."
+                },
+                "DATA_TRANSFER": {
+                    "CONDITIONS_NOT_MET": "Условия не выполнены",
+                    "CANNOT_TRANSFER_REGION": "Мы не можем перенести ваши данные в {регион}. У некоторых пользователей в вашей рабочей области уже есть учетная запись в этом регионе.",
+                    "DATA_TRANSFER_TITLE": "Обмен данными",
+                    "DATA_TRANSFER_LOGOUT_INFO": "После ввода пароля начнется передача данных, и вы выйдете из системы.",
+                    "FURTHER_INFO": "для дальнейшей помощи.",
+                    "CONTACT_SUPPORT": "Пожалуйста, { contactUs } для получения дополнительной помощи.",
+                    "CONTACT_SUPPORT_LINK": "Пожалуйста, { contactUs } для получения дополнительной помощи.",
+                    "DATA_TRANSFER_INFO": "Вы и пользователи в этой рабочей области выйдут из системы и не смогут отслеживать время в течение 12 часов после начала передачи данных."
+                },
+                "CANNOT_CHANGE_REGION": "Мы не предлагаем передачу данных с регионального на глобальный сервер.",
+                "CHANGE_REGION_TITLE": "Изменить регион"
+            },
+            "DATA_REGION_LOADING_MESSAGE": "Проверяем условия…"
         },
         "NEW": {
             "MODAL_TITLE": "Создать новое рабочее пространство"
@@ -1555,7 +1632,8 @@
             "CONFIRM": "Вы уверены, что хотите удалить",
             "INFO_MESSAGE": " Все отслеживаемые время и проекты в { value } будут удалены навсегда. Это не может быть отменено.",
             "SUBSCRIPTION": "Ваша платная подписка будет автоматически отменена.",
-            "TO_CONFIRM": "подтвердить"
+            "TO_CONFIRM": "подтвердить",
+            "CONFIRM_WITH_INTERPOLATION": "Вы уверены, что хотите удалить {value}?"
         },
         "LEAVE": {
             "INFO_MESSAGE": "Если вы уйдете, вы не сможете вернуться, если вас снова не пригласят. Вы уверены, что хотите покинуть?"
@@ -1589,7 +1667,8 @@
             "LABEL_NAME_EXISTS_ERROR_MSG": "{ labelName } с именем { newLabelName } уже существует.",
             "DELETE_TAG_MSG": "Тег { tagName } также будет удален из всех записей времени, которым он назначен. Это действие нельзя отменить.",
             "DELETE_CLIENT_MSG": "{ clientName } { clientLabel } также будет удален из проектов, которым он назначен. Это действие нельзя отменить.",
-            "DELETE_CLIENT_MSG_CUSTOM": "{ clientName } { clientLabel } также будут удалены из { projectLabel }, которому они назначены. Это действие нельзя отменить."
+            "DELETE_CLIENT_MSG_CUSTOM": "{ clientName } { clientLabel } также будут удалены из { projectLabel }, которому они назначены. Это действие нельзя отменить.",
+            "UPGRADE_TO_USE_BULK_EDIT_PART_2": " использовать массовое редактирование"
         },
         "IMPORT_CSV": {
             "VALIDATING_DATA_LOADER_MSG": "Проверка данных ...",
@@ -1748,7 +1827,9 @@
                 "ERROR_MESSAGE": "Требуется 2FA. Пожалуйста, войдите снова",
                 "ERROR_MESSAGE_MULTI_WORKSPACES": "Вы деактивированы в рабочей области { workspace }. Войдите в систему еще раз, чтобы получить доступ к другому рабочему пространству.",
                 "ERROR_MESSAGE_ONE_WORKSPACE": "Вы деактивированы в рабочей области { workspace }. Пожалуйста, войдите в систему еще раз, чтобы создать новое рабочее пространство."
-            }
+            },
+            "REGION_LOCKED": "Регион заблокирован",
+            "WORKSPACE_LOCKED": "Рабочая область заблокирована"
         },
         "GENERAL_SETTINGS_DATA_FORMAT_INFO_MESSAGE": "Выберите предпочтительный формат числа и валюты для всего рабочего пространства.",
         "GENERAL_SETTINGS_DATA_FORMAT_TYPE_NUMBER": "Формат номера",
@@ -1840,9 +1921,15 @@
         },
         "FORM": {
             "DELETE_REASON_LABEL": "Я удаляю свою учетную запись, потому что",
-            "DELETE_REASON_BTN": "Выберите причину"
+            "DELETE_REASON_BTN": "Выберите причину",
+            "DELETE_REASON_LABEL_WITH_INTERPOLATION": "Я удаляю свой аккаунт, потому что:"
         },
-        "PLEASE_ENTER_EXACT_TEXT": "Пожалуйста, введите текст в точности так, как показано"
+        "PLEASE_ENTER_EXACT_TEXT": "Пожалуйста, введите текст в точности так, как показано",
+        "WORKSPACE_NOT_EMPTY_WARNING_WITH_INTERPOLATION": "Есть люди, которые полагаются на ваши рабочие места:",
+        "DELETE_FROM_ALL_INFO_WITH_INTERPOLATION": "Ваша учетная запись будет удалена из всех этих рабочих областей:",
+        "WORKSPACE_NOT_EMPTY_STEP_INFO_WITH_INTERPOLATION": "Прежде чем вы сможете удалить свою учетную запись, вы должны:",
+        "WORKSPACE_NOT_EMPTY_STEP_FINAL_WITH_INTERPOLATION": "Как только вы закончите, вы можете безопасно удалить свою учетную запись.",
+        "DELETE_ADDONS_INFO": "Удалив учетную запись Clockify, вы также можете потерять учетную запись Marketplace."
     },
     "PAGES": {
         "PAYMENT": {
@@ -1851,7 +1938,8 @@
                 "PER": "за место / в месяц",
                 "SEATS": {
                     "MIN_MESSAGE": "Вы не можете купить меньше мест, чем есть активные пользователи."
-                }
+                },
+                "VAT_LABEL": "НДС"
             }
         },
         "FEATURES": {
@@ -2013,7 +2101,8 @@
                     "SUCCESS_MESSAGE": {
                         "TITLE": "Электронная почта изменена",
                         "MESSAGE": "Пожалуйста, проверьте свою электронную почту для дальнейших действий",
-                        "SUBTITLE": "Пользователь должен подтвердить измененный адрес электронной почты."
+                        "SUBTITLE": "Пользователь должен подтвердить измененный адрес электронной почты.",
+                        "FULL_MESSAGE": "Электронная почта изменена. Проверьте свой почтовый ящик на предмет дальнейших действий"
                     }
                 }
             },
@@ -2081,6 +2170,9 @@
                 "GET": {
                     "ERROR_MESSAGE": "Не удалось получить конфигурацию"
                 }
+            },
+            "TEST": {
+                "SUCCESS_MESSAGE": "Тест конфигурации { type } прошел успешно."
             }
         },
         "EDIT": {
@@ -2103,7 +2195,8 @@
             },
             "DELETE": {
                 "SUCCESS_MESSAGE": "{ projectGroupingLabel } с именем { client } был удален",
-                "ERROR_MESSAGE": "{ projectGroupingLabel } не удалено"
+                "ERROR_MESSAGE": "{ projectGroupingLabel } не удалено",
+                "SUCCESS": "{ clientLabel } успешно удален"
             },
             "GET": {
                 "ERROR_MESSAGE": "Получить клиента не удалось"
@@ -2111,7 +2204,25 @@
             "GET_ID": {
                 "ERROR_MESSAGE": "Не удалось получить идентификаторы клиентов"
             },
-            "NAME_EXISTS_ERROR_MESSAGE": "{ projectGroupingLabel } с именем { projectName } уже существует."
+            "NAME_EXISTS_ERROR_MESSAGE": "{ projectGroupingLabel } с именем { projectName } уже существует.",
+            "UPDATE_MULTIPLE": {
+                "SUCCESS_MESSAGE": "{ clientLabelPlural } были обновлены"
+            },
+            "DELETE_MULTIPLE": {
+                "SUCCESS_MESSAGE": "{ clientLabel } успешно удален"
+            },
+            "ARCHIVE_MULTIPLE": {
+                "SUCCESS_MESSAGE": "{ clientLabelPlural } отправлены в архив"
+            },
+            "RESTORE": {
+                "SUCCESS_MESSAGE": "{ projectGroupingLabel } восстановлен."
+            },
+            "ARCHIVE": {
+                "SUCCESS_MESSAGE": "{ projectGroupingLabel } заархивировано."
+            },
+            "RESTORE_MULTIPLE": {
+                "SUCCESS_MESSAGE": "{ clientLabelPlural } были восстановлены"
+            }
         },
         "CUSTOM_FIELD": {
             "CREATE": {
@@ -2186,6 +2297,9 @@
             "UPDATE_FULL_QUANTITY_SEATS": {
                 "ADD": "Добавлены новые полные места",
                 "REMOVE": "Полные сиденья удалены"
+            },
+            "GET_SCHEDULED_INVOICE_INFO": {
+                "ERROR_MESSAGE": "Не удалось получить запланированную информацию о счете"
             }
         },
         "PROJECT": {
@@ -2271,7 +2385,8 @@
                 "ERROR_MESSAGE": "Напоминание не создано",
                 "NO_DAYS_ERROR_MESSAGE": "Невозможно создать напоминание без добавления дней.",
                 "NO_HOURS_ERROR_MESSAGE": "Невозможно создать напоминание без добавленных часов.",
-                "NO_TEAM_MEMBERS_ERROR_MESSAGE": "Невозможно создать напоминание без добавленных участников команды."
+                "NO_TEAM_MEMBERS_ERROR_MESSAGE": "Невозможно создать напоминание без добавленных участников команды.",
+                "NO_USER_NO_USERGROUPS": "Невозможно создать напоминание, не выбрав участников команды."
             },
             "UPDATE": {
                 "SUCCESS_MESSAGE": "Напоминание успешно обновлено",
@@ -2286,7 +2401,8 @@
             },
             "GET": {
                 "ERROR_MESSAGE": "Не удалось получить напоминания"
-            }
+            },
+            "ALREADY_EXISTS": "Напоминание уже существует"
         },
         "SCREENSHOT": {
             "GET": {
@@ -2318,9 +2434,28 @@
             },
             "DELETE": {
                 "SUCCESS_MESSAGE": "Тег { tagName } удален",
-                "ERROR_MESSAGE": "Не удалось удалить тег"
+                "ERROR_MESSAGE": "Не удалось удалить тег",
+                "SUCCESS": "Тег успешно удален"
             },
-            "NAME_EXISTS_ERROR_MESSAGE": "Тег с именем { tagName } уже существует."
+            "NAME_EXISTS_ERROR_MESSAGE": "Тег с именем { tagName } уже существует.",
+            "UPDATE_MULTIPLE": {
+                "SUCCESS_MESSAGE": "Теги обновлены"
+            },
+            "DELETE_MULTIPLE": {
+                "SUCCESS_MESSAGE": "Теги успешно удалены"
+            },
+            "ARCHIVE_MULTIPLE": {
+                "SUCCESS_MESSAGE": "Теги заархивированы"
+            },
+            "ARCHIVE": {
+                "SUCCESS_MESSAGE": "Тег { tagName } заархивирован"
+            },
+            "RESTORE_MULTIPLE": {
+                "SUCCESS_MESSAGE": "Теги восстановлены."
+            },
+            "RESTORE": {
+                "SUCCESS_MESSAGE": "Тег { tagName } восстановлен."
+            }
         },
         "TIMER": {
             "START": {
@@ -2830,7 +2965,8 @@
                 "QUESTION5": "Что вы искали в Clockify?",
                 "ANOTHER_TOOL_MSG1": "Вы переходите на другой инструмент учета рабочего времени?"
             },
-            "UNPAID_INVOICE_WARNING": "У вас есть неоплаченный счет. Пожалуйста, свяжитесь с нами по телефону { email }, чтобы решить проблему."
+            "UNPAID_INVOICE_WARNING": "У вас есть неоплаченный счет. Пожалуйста, свяжитесь с нами по телефону { email }, чтобы решить проблему.",
+            "UNPAID_INVOICE_WARNING_V2": "У вас есть неоплаченный счет. Оплатите счет или свяжитесь с нами по телефону { email }, чтобы решить проблему."
         },
         "CONTACT_SUPPORT_LABEL": "Контактная поддержка",
         "AUTOMATIC_LABEL": "Автоматическая",
@@ -3025,7 +3161,47 @@
         "PAYMENT_INFORMATION_TITLE_SHORT": "Платежная информация",
         "CUSTOMER_EXPLANATION_SHORT": "Информация о клиенте",
         "KEYBOARD_SHORTCUT_LABEL": "Сочетание клавиш",
-        "TAX_DISPLAY_NAME_LABEL": "{ displayName } ID"
+        "TAX_DISPLAY_NAME_LABEL": "{ displayName } ID",
+        "PREVIOUS_STEP_BTN": "Предыдущий шаг",
+        "APPLIED_LABEL": "Применяемый",
+        "APPLYING_LABEL": "Применение",
+        "NEED_HELP_WITH_INTERPOLATION": "Нужна помощь?",
+        "DATE_LABEL_WITH_INTERPOLATION": "Дата:",
+        "AUTHOR_LABEL_WITH_INTERPOLATION": "Автор:",
+        "BALANCE_LABEL_WITH_INTERPOLATION": "Баланс:",
+        "ACTION_LABEL_WITH_INTERPOLATION": "Действие:",
+        "ADD_TIME_OTHERS_TEXT_PART_WITH_INTERPOLATION": "чтобы добавить время для других.",
+        "TRACKED_LABEL_WITH_INTERPOLATION": "Отслеживаются:",
+        "TIME_LABEL_WITH_INTERPOLATION": "Время:",
+        "CONTINUE_WITH_EMAIL": "Продолжить с электронной почтой",
+        "GPS_TITLE_WITH_INTERPOLATION": "GPS-слежение.",
+        "SCREENSHOT_TITLE_WITH_INTERPOLATION": "Скриншоты.",
+        "COST_LABEL_WITH_INTERPOLATION": "Расходы:",
+        "AMOUNT_LABEL_WITH_INTERPOLATION": "Количество:",
+        "EVERYONE_LABEL_WITH_INTERPOLATION": "Каждый:",
+        "PROFIT_LABEL_WITH_INTERPOLATION": "Выгода:",
+        "BILLING_CHANGE_SUCCESS_BODY_V2": "Эта новая информация будет применяться ко всем вашим будущим счетам.",
+        "EDIT_CUSTOMER_INFORMATION_TITLE": "Изменить информацию о клиенте",
+        "EDIT_INVOICE_INFORMATION_TITLE": "Изменить информацию о счете",
+        "EDIT_PAYMENT_INFORMATION_TITLE": "Изменить платежную информацию",
+        "INVOICE_INFO_UPDATED_V2": "Информация изменена",
+        "TAX_TYPE_LABEL": "Тип налога",
+        "CONTACT_US": "свяжитесь с нами",
+        "ADD_PAYMENT_METHOD": "добавить способ оплаты",
+        "SUBMIT_FOR_APPROVAL": "Отправить на утверждение",
+        "WITHDRAW": "Снять со счета",
+        "ALL_TIME_FILE_LABEL": "Все время",
+        "PROJECT_MANAGER": "Руководитель проекта",
+        "RESEND_BTN": "Отправить",
+        "PLEASE_LABEL": "Пожалуйста",
+        "YOUR_CLOCKIFY_PASSWORD": "Ваш пароль Clockify:",
+        "ADD": "Добавить",
+        "CONTACT_SUPPORT": "Контактная поддержка",
+        "START_DATA_TRANSFER": "Начать передачу данных",
+        "DATA_TRANSFER_STARTED": "Передача данных началась",
+        "SEARCH_USERS_OR_GROUPS": "Поиск пользователей или групп",
+        "REPLACE": "Заменять",
+        "SELECT_DATES": "Выберите даты"
     },
     "SHARED_FOLDER": {
         "CURRENT_LEGACY_PLAN_INFO": "В настоящее время вы используете старый тарифный план. После отмены подписки вернуться к старому тарифному плану будет невозможно.",
@@ -3039,7 +3215,8 @@
         "NO_REFUNDS": "Возврата нет.",
         "SAVE_PERCENT": "(экономия 20%).",
         "KEEP_SUBSCRIPTION": "Сохранить подписку",
-        "SUBSCRIPTION_END_CANT_TRACK_TIME_WARNING": "После окончания подписки вы не сможете отслеживать время."
+        "SUBSCRIPTION_END_CANT_TRACK_TIME_WARNING": "После окончания подписки вы не сможете отслеживать время.",
+        "CANCEL_REASON_LABEL_WITH_INTERPOLATION": "Я отменяю, потому что:"
     },
     "EXPENSES": {
         "TITLE": "Затраты",
@@ -3172,7 +3349,8 @@
         "UNDO_DELETE": {
             "EXPENSE_RESTORED_SUCCESS": "Расход восстановлен",
             "EXPENSES_RESTORED_SUCCESS": "Расходы восстановлены"
-        }
+        },
+        "TITLE_WITH_INTERPOLATION": "Затраты:"
     },
     "IN_PROGRESS": "Выполняется импорт. Как только это будет сделано, вы получите уведомление.",
     "LETS_START_TRACKING": "Приступим к отслеживанию!",
@@ -3231,6 +3409,13 @@
         "ONBOARDING": {
             "TITLE": "Онбординг",
             "DESCRIPTION": "Получите серию электронных писем об основных функциях и действиях после присоединения Clockify."
+        },
+        "INTRO": {
+            "DESCRIPTION": "Вы больше не будете получать электронные письма { emailPrefType } от Clockify."
+        },
+        "MESSAGE": {
+            "UPDATE_SUCCESS": "Ваши настройки электронной почты обновлены",
+            "SESSION_NOT_FOUND": "Сессия не найдена"
         }
     },
     "validation": {
@@ -3254,7 +3439,9 @@
                 "REPEAT_PART_1": "Повторяйте еженедельно для",
                 "LONG_ASSIGNMENT": "Задания должны быть короче одной недели, чтобы повторяться еженедельно",
                 "SUCCESS_MESSAGE_PLURAL": "Задания успешно созданы",
-                "FAILED_MESSAGE_PLURAL": "Не удалось сохранить задания"
+                "FAILED_MESSAGE_PLURAL": "Не удалось сохранить задания",
+                "TOTAL_HOURS_WITH_INTERPOLATION": "Все часы:",
+                "WORKING_DAYS_WITH_INTERPOLATION": "Рабочие дни:"
             },
             "EDIT_MODAL": {
                 "TITLE": "Изменить назначение",
@@ -3367,7 +3554,11 @@
             "ADD_MEMBERS_TO_TASK_TITLE": "Добавить участников в проект",
             "ADD_MEMBER_TO_PROJECT_AND_TASK_NO_CLIENT": "{ userName } не имеет доступа к { projectName }: { taskName }. Хотите добавить их в проект и задачу?",
             "ADD_MEMBER_TO_PROJECT_NO_CLIENT": "{ userName } не имеет доступа к { projectName }. Хотите добавить их в проект?",
-            "ADD_MEMBERS_TO_TASK_NO_CLIENT": "Есть пользователи { numberOfUsers }, у которых нет доступа к { projectName }. Хотите добавить их в проект?"
+            "ADD_MEMBERS_TO_TASK_NO_CLIENT": "Есть пользователи { numberOfUsers }, у которых нет доступа к { projectName }. Хотите добавить их в проект?",
+            "ADD_MEMBER_TO_PROJECT_AND_TASK_BULK_MESSAGE": "Есть пользователи { numberOfUsers }, у которых нет доступа к { projectName }: { taskName } - {clientName}. Хотите добавить их в проект и задачу?",
+            "ADD_MEMBER_TO_PROJECT_AND_TASK_BULK_MESSAGE_NO_CLIENT": "Есть пользователи { numberOfUsers }, у которых нет доступа к { projectName }: { taskName }. Хотите добавить их в проект и задачу?",
+            "ADD_MEMBER_TO_PROJECT_AND_TASK_BULK_TITLE": "Добавить участников в проект и задачу",
+            "ADD_MEMBER_TO_TASK_MESSAGE_NO_CLIENT": "{ userName } не имеет доступа к { projectName }: { taskName }. Хотите добавить их в задачу?"
         },
         "MILESTONE": {
             "DELETE": {
@@ -3420,7 +3611,9 @@
             "FROM": "от",
             "TO": "к",
             "TOTAL_SHIFT": "за общую смену",
-            "CONFIRM_SHIFT": "Подтвердить смену"
+            "CONFIRM_SHIFT": "Подтвердить смену",
+            "FROM_WITH_INTERPOLATION": "от:",
+            "TO_WITH_INTERPOLATION": "к:"
         },
         "SHIFT_TIMELINE": {
             "TEXT": "{ projectName } задерживается? Сдвиньте все будущие задания для проекта вперед (или назад) на временной шкале.",
@@ -3451,6 +3644,15 @@
         "FILTER": {
             "SHOW_PUBLISHED": "Показать опубликовано",
             "SHOW_UNPUBLISHED": "Показать неопубликованные"
+        },
+        "ADD_MEMBER_TO_PROJECTS": {
+            "TITLE": "Добавить участника в проекты",
+            "DESCRIPTION": "Есть проекты { numberOfProjects }, к которым у { userName } нет доступа. Хотите добавить их в проекты?"
+        },
+        "ADD_MEMBER_TO_PROJECTS_AND_TASKS": {
+            "TITLE": "Добавление участника в проекты и задачи",
+            "DESCRIPTION": "Существует {numberOfProjectsAndTasks} проектов и задач, к которым у { userName } нет доступа. Хотите добавить их в проекты и задачи?",
+            "DESCRIPTION_BOTH": "Существуют проекты { numberOfProjects } и задачи { numberOfTasks }, к которым у { userName } нет доступа. Хотите добавить их в проекты и задачи?"
         }
     },
     "FAILED_TO_COPY_TIME": "Некоторые записи не могут быть скопированы",
@@ -3483,9 +3685,11 @@
                 "NOTIFICATION": {
                     "PART_1": "Разные часовые пояса в ",
                     "PART_2": "твой профиль",
-                    "PART_3": "и браузер может приводить к неверным отчетам."
+                    "PART_3": "и браузер может приводить к неверным отчетам.",
+                    "ENABLE_LOCATION_ACCESS": "Включить доступ к местоположению"
                 },
-                "CHANGE_TIMEZONE_NOTIFICATION": "Изменить на { suggestedTimeZone }"
+                "CHANGE_TIMEZONE_NOTIFICATION": "Изменить на { suggestedTimeZone }",
+                "BODY_TEXT": "Если { profileLink } и часовые пояса браузера не совпадают, это может привести к неправильным отчетам, а некоторые функции могут работать не так, как ожидалось."
             },
             "ACCEPT_LABEL": "Принимать",
             "DECLINE_LABEL": "Отклонить",
@@ -3539,6 +3743,17 @@
         "CONTACT": "Контакт",
         "SHARED": {
             "WAIT_TEXT": "Подождите пожалуйста"
+        },
+        "VERIFY_EMAIL_BANNER": {
+            "VERIFY_EMAIL_MESSAGE": "Подтвердите свой адрес электронной почты: { userEmail }",
+            "SEND_VERIFICATION_EMAIL_BTN": "Отправить письмо с подтверждением",
+            "EMAIL_SENT_SUCCESS_MESSAGE": "Письмо отправлено"
+        },
+        "ENFORCE_EMAIL_VERIFICATION": {
+            "VERIFY_EMAIL_TITLE": "Подтвердите Ваш электронный адрес!",
+            "VERIFY_EMAIL_MESSAGE": "{ userName }, чтобы продолжить использовать свою учетную запись clockify, вы должны подтвердить свой адрес электронной почты: { userEmail }",
+            "SEND_VERIFICATION_EMAIL_BTN": "Отправить письмо с подтверждением",
+            "CHANGE_EMAIL_FOOTER": "Возникли проблемы с доступом к электронной почте?"
         }
     },
     "PROJECTS": {
@@ -3631,7 +3846,9 @@
             },
             "WEEK_LABEL": "неделя",
             "MONTH_LABEL": "месяц",
-            "YEAR_LABEL": "год"
+            "YEAR_LABEL": "год",
+            "UPGRADE_LABEL_2_WITH_INTERPOLATION": "в PRO, чтобы использовать повторяющиеся оценки.",
+            "UPGRADE_LABEL_EXCLUDE_WITH_INTERPOLATION": "в PRO, чтобы исключить неоплачиваемое время."
         },
         "EDIT_PROJECT_STATUS": {
             "OVERAGE_LABEL": "Избыток",
@@ -3647,7 +3864,9 @@
             "MARK_AS_DONE_LABEL": "отметить как выполненное",
             "SET_LABEL": "Установленный",
             "MARK_AS_DONE_LIST_KIOSKS": "Чтобы заархивировать { taskName }, сначала удалите его из каждого киоска.",
-            "MARK_AS_DONE_WARNING": "Невозможно заархивировать это { taskLabel }, так как оно используется по умолчанию { taskLabel } в киоске."
+            "MARK_AS_DONE_WARNING": "Невозможно заархивировать это { taskLabel }, так как оно используется по умолчанию { taskLabel } в киоске.",
+            "TASK_ACCESS_UPDATED": "Доступ к задаче обновлен.",
+            "PROJECT_TASK_ACCESS_UPDATED": "Обновлен доступ к проектам и задачам."
         },
         "FILTER_DROPDOWN": {
             "NO_ENTITY_LABEL": "Нет { entity }",
@@ -3754,14 +3973,16 @@
                 "MONTHLY": "каждый { month } на { dayOfMonth } в { time } ({ timeZone }).",
                 "WEEKLY": "каждые { week } на { dayOfWeek } на { time } ({ timeZone }).",
                 "YEARLY": "каждый { year } на { dayOfMonth } из { month } на { time } ({ timeZone })."
-            }
+            },
+            "SEARCH_BY_NAME_LABEL": "Поиск по имени"
         },
         "EDIT_SECTION": {
             "PROJECT_NAME_ACCESS": "{ name } - Доступ",
             "PROJECT_NAME_STATUS": "{ name } - Статус",
             "PROJECT_NAME_TASKS": "{ name } - Задачи",
             "PROJECT_NAME_SETTINGS": "{ name } - Настройки",
-            "PROJECT_NAME_TASKS_CUSTOM": "{ name } - { taskLabel }"
+            "PROJECT_NAME_TASKS_CUSTOM": "{ name } - { taskLabel }",
+            "PROJECT_NAME_FORECAST": "{ name } - Прогноз"
         },
         "PROJECTS_CUSTOM_PAGE": {
             "DELETE_MULTIPLE_PROJECTS_WARNING": "Вы уверены, что хотите удалить { listLength } { projectLabel }?",
@@ -3836,7 +4057,8 @@
             "TRACKED_BUDGET": "Отслеживается ({валюта})",
             "ADDITIONAL_FIELDS": "Дополнительные поля",
             "PROJECT_MEMBERS": "{ projectLabel } участники",
-            "OVERAGE_H": "Избыток (ч)"
+            "OVERAGE_H": "Избыток (ч)",
+            "TASKS": "Задания"
         }
     },
     "REGISTER": {
@@ -3856,7 +4078,9 @@
             "SAML2_LABEL": "Войти с помощью SAML2",
             "META_TITLE_LABEL": "Войти - Clockify",
             "META_DESCRIPTION_LABEL": "Войдите в свою учетную запись Clockify",
-            "SIGN_UP": "Зарегистрироваться - Clockify"
+            "SIGN_UP": "Зарегистрироваться - Clockify",
+            "LOGIN_MANUALLY_LABEL": "Войти вручную",
+            "LOGIN_WITH_EMAIL_LABEL": "Войти с помощью электронной почты"
         },
         "NEW_PASSWORD": {
             "NEW_PASSWORD_PLACEHOLDER": "Введите новый пароль",
@@ -3889,7 +4113,10 @@
             "ACCEPT_TOS_PART1": "я согласен с",
             "ACCEPT_TOS_PART2": "Условия эксплуатации",
             "INVITATION_TITLE_NOT_ACTIVE": "Ссылка-приглашение больше не активна. Если вам нужен новый, обратитесь к своему администратору.\nЕсли у вас уже есть учетная запись Clockify, перейдите на",
-            "INVITATION_TITLE_NOT_ACTIVE_PART_TWO": "и авторизуйтесь."
+            "INVITATION_TITLE_NOT_ACTIVE_PART_TWO": "и авторизуйтесь.",
+            "NAME_INPUT_LENGTH_ERROR_LABEL": "Имя должно содержать не менее 2&nbsp;символов.",
+            "INVITATION_LINK_EXPIRED_TITLE_NEW_LABEL": "Срок действия этого приглашения истек.",
+            "CONTACT_ADMIN_OR_LOG_IN_MESSAGE": "Пожалуйста, свяжитесь с вашим администратором или "
         },
         "SIGNUP": {
             "TITLE": "Начните с Clockify",
@@ -3908,7 +4135,16 @@
             "CREDIT_CARD_REQUIREMENT_REGIONAL": "Данные размещены в { location }",
             "CREDIT_CARD_REQUIREMENT_REGIONAL_PART_2": "Требуется кредитная карта",
             "CAKE_TERMS_OF_USE": "Я согласен с CAKE.com",
-            "CLOCKIFY_TERMS_OF_USE": "Я согласен с Clockify"
+            "CLOCKIFY_TERMS_OF_USE": "Я согласен с Clockify",
+            "PRIVACY_POLICY": "Политика конфиденциальности",
+            "AGREE_TO": "я согласен с",
+            "CLOCKIFY_TOF": "Clockify Условия использования",
+            "CAKE_TOF": "Условия использования CAKE.com",
+            "EMAIL_FORMAT_INVALID": "Недопустимый формат электронной почты",
+            "NEW_SIGNUP_TOF": "Я согласен с { cakeComTermsOfService }, { clockifyTermsOfService } и { privacyPolicy }",
+            "PASSWORD_FORMAT_INVALID": "Пароль недействителен",
+            "ACCOUNT_TEMPORARILY_LOCKED_MSG": "Ваш аккаунт временно заблокирован. Проверьте свою электронную почту, чтобы продолжить.",
+            "SIGNUP_DISABLED_MESSAGE": "Регистрация отключена. Свяжитесь с владельцем рабочей области, если вам нужно отслеживать время на этом поддомене."
         },
         "VERIFY_EMAIL": {
             "TITLE": "Подтвердите электронный адрес"
@@ -3928,7 +4164,19 @@
             "ENTER_USERNAME_PLACEHOLDER": "Введите имя пользователя",
             "ENTER_EMAIL_USERNAME_PLACEHOLDER": "Введите адрес электронной почты/имя пользователя",
             "COUNTINUE_WITH_SAML2_LABEL": "Продолжить с SAML2",
-            "CONTINUE_WITH_SAML2_LABEL": "Продолжить с SAML2"
+            "CONTINUE_WITH_SAML2_LABEL": "Продолжить с SAML2",
+            "PASSWORD_REQUIRED_ERROR_LABEL": "Необходим пароль",
+            "EMAIL_REQUIRED_ERROR_LABEL": "Требуется электронная почта",
+            "NO_ACCOUNT_SIGNUP_INSTEAD_LABEL": "Похоже, у вас нет учетной записи,\nзарегистрируйтесь вместо этого."
+        },
+        "ENTER_VERIFICATION_CODE": {
+            "ENTER_CODE_MSG": "Введите код подтверждения, отправленный на { email }",
+            "RESEND_EMAIL_FOOTER": "Не можете найти нашу электронную почту? Проверьте свой спам или ",
+            "RESEND_EMAIL_LINK": "повторно отправить электронное письмо",
+            "ATTEMPTS_MAXED_OUT_MSG": "Вы исчерпали свои попытки. Проверьте свою электронную почту, чтобы продолжить.",
+            "CODE_NOT_VALID_MSG": "Этот код недействителен. Пожалуйста, попробуйте еще раз.",
+            "CHECK_EMAIL_TITLE": "Проверьте свою электронную почту на наличие кода",
+            "CODE_EXPIRED_MSG": "Срок действия этого кода истек."
         }
     },
     "REPORTS": {
@@ -3946,7 +4194,8 @@
             "SHOW_ENTRIES_LABEL_1": "Отображение записей:",
             "SHOW_ENTRIES_LABEL_2": "Показаны записи за все время.",
             "UPGRADE_TO_USE_AUDIT_PART_2": "использовать аудит",
-            "UPGRADE_TO_USE_AUDIT_COMPLETE": "Обновите, чтобы использовать аудит"
+            "UPGRADE_TO_USE_AUDIT_COMPLETE": "Обновите, чтобы использовать аудит",
+            "UPGRADE_TO_USE_AUDIT_PART_2_WITH_INTERPOLATION": "использовать аудит."
         },
         "DETAILED_REPORT": {
             "BILLABLE_RATE_TOOLTIP": "Оплачиваемая ставка: { amount }",
@@ -4097,7 +4346,9 @@
                 "MY_REPORTS": "Мои отчеты",
                 "SHARED_WITH_ME": "Поделился со мной"
             },
-            "ASSIGNMENT_LABEL": "Задания"
+            "ASSIGNMENT_LABEL": "Задания",
+            "UPGRADE_TO_SCEDULE_REPORT_PART_2_WITH_INTERPOLATION": "для планирования отчетов.",
+            "SCHEDULED_LABEL_WITH_INTERPOLATION": "Запланированное:"
         },
         "SUMMARY": {
             "SORT_BY_TITLE_ASC_LABEL": "Название (вверх)",
@@ -4245,7 +4496,8 @@
             "WEEKLY": "Clockify_Отчет_О_Времени_Еженедельно",
             "SCHEDULED_VS_TRACKED": "Clockify_Запланированный_vs_Отслеживаемый",
             "ASSIGNMENTS": "Clockify_Задания",
-            "ATTENDANCE": "Clockify_Team_Report_Attendance"
+            "ATTENDANCE": "Clockify_Team_Report_Attendance",
+            "INVOICE": "Clockify_Счета-фактуры"
         },
         "NO_ARCHIVED_CLIENTS": "Нет в архиве { clientsLabel }",
         "NO_INACTIVE_USERS": "Нет неактивных пользователей",
@@ -4342,7 +4594,8 @@
             "CREATE_CUSTOM_FIELD_TITLE_TIME_ENTRY": "Создать настраиваемое поле ввода времени",
             "DEFAULT_VALUE_LABEL": "Значение по умолчанию",
             "FIND_OPTION_LABEL": "Найти вариант",
-            "REQUIRED_FIELD_ERROR": "Не могу скрыть обязательное поле"
+            "REQUIRED_FIELD_ERROR": "Не могу скрыть обязательное поле",
+            "SEARCH_OPTION_LABEL": "Параметры поиска"
         },
         "DROPDOWN_CHECKBOX_LITE": {
             "FILTER_LIMIT": "Макс. { filterLimit } активных фильтра"
@@ -4352,7 +4605,8 @@
         },
         "FEATURES_INFO_TYPES": {
             "USER_SEATS": {
-                "DESCRIPTION": "Каждый активный пользователь в вашей рабочей области занимает одно рабочее место.<br><br>Деактивированные пользователи не занимают рабочее место, то есть вы можете деактивировать кого-то и вместо этого занять его место кем-то другим.<br><br>Вы можете покупать или удалять места в любое время на странице подписки."
+                "DESCRIPTION": "Каждый активный пользователь в вашей рабочей области занимает одно рабочее место.<br><br>Деактивированные пользователи не занимают рабочее место, то есть вы можете деактивировать кого-то и вместо этого занять его место кем-то другим.<br><br>Вы можете покупать или удалять места в любое время на странице подписки.",
+                "TAGS_PARAMETERS_DESCRIPTION": "Каждый активный пользователь в вашем рабочем пространстве занимает одно пользовательское место. { doubleBreak } Деактивированные пользователи не занимают места, то есть вы можете деактивировать кого-то и вместо этого занять его место кем-то другим. { doubleBreak } Вы можете купить или удалить места в любое время на странице подписки."
             },
             "ADD_TIME_FOR_OTHERS": {
                 "DESCRIPTION": "Просматривайте расписания участников вашей команды и добавляйте / редактируйте время для них. Или вручную добавьте записи времени для других прямо из отчета. Больше не нужно гнаться за своей командой и ждать, пока они добавят недостающее время."
@@ -4402,7 +4656,9 @@
             },
             "MANAGER_ROLE": {
                 "TITLE": "Роль менеджера",
-                "DESCRIPTION": "Вместо того, чтобы назначать кого-то администратором, сделайте кого-нибудь <b> менеджером группы </b>, чтобы он мог видеть все время и расходы, которые отслеживают их участники команды, и утверждать свои расписания. <br> <br> Или дайте кому-то роль <b> менеджера проекта </b> в нескольких проектах, чтобы он мог видеть все отслеживаемое время и расходы по проектам, которыми они управляют, и редактировать указанные проекты (например, создавать задачи, добавлять участников в проект, устанавливать сметы и т. д.)."
+                "DESCRIPTION": "Вместо того, чтобы назначать кого-то администратором, сделайте кого-нибудь <b> менеджером группы </b>, чтобы он мог видеть все время и расходы, которые отслеживают их участники команды, и утверждать свои расписания. <br> <br> Или дайте кому-то роль <b> менеджера проекта </b> в нескольких проектах, чтобы он мог видеть все отслеживаемое время и расходы по проектам, которыми они управляют, и редактировать указанные проекты (например, создавать задачи, добавлять участников в проект, устанавливать сметы и т. д.).",
+                "DESCRIPTION_WITH_APPROVE": "Вместо того, чтобы назначать кого-то администратором, назначьте кого-то <b>руководителем группы</b>, чтобы он мог видеть все время и расходы, отслеженные членами его команды, и утверждать свои расписания. <br><br> Или назначьте кому-нибудь роль <b>менеджера проекта</b> в нескольких проектах, чтобы он мог видеть и утверждать все отслеживаемые данные о времени и расходах по проектам, которыми он управляет, и редактировать указанные проекты (например, создавать задачи, добавлять участников в проект, устанавливать оценки и т.&nbsp;д.).",
+                "DESCRIPTION_PARAMETERS_DESCRIPTION": "Вместо того, чтобы назначать кого-то администратором, назначьте кого-нибудь { openingBoldTag }менеджером команды{ closingBoldTag }, чтобы он мог видеть все время и расходы, которые отслеживают члены его команды, и утверждать их расписания. { doubleBreaks } Или дайте кому-нибудь роль { openingBoldTag }менеджера проекта{ closingBoldTag } в нескольких проектах, чтобы он мог видеть все отслеживаемое время и расходы на проекты, которыми он управляет, и редактировать указанные проекты (например, создавать задачи, добавлять участников в проект). , устанавливать оценки и т. д.)."
             },
             "TIMESHEET_REMINDERS": {
                 "TITLE": "Цели & напоминания",
@@ -4410,7 +4666,8 @@
             },
             "IMPORT_TIMESHEETS": {
                 "TITLE": "Импортировать табели учета рабочего времени",
-                "DESCRIPTION": "Если у вас есть исторические данные расписания в Excel, вы можете импортировать все в Clockify, чтобы ваши отчеты могли включать все ваши прошлые и будущие данные. <br> Импорт создаст все необходимые проекты, задачи, клиентов, пользователей и записи времени. Все, что вам нужно сделать, это предоставить файл."
+                "DESCRIPTION": "Если у вас есть исторические данные расписания в Excel, вы можете импортировать все в Clockify, чтобы ваши отчеты могли включать все ваши прошлые и будущие данные. <br> Импорт создаст все необходимые проекты, задачи, клиентов, пользователей и записи времени. Все, что вам нужно сделать, это предоставить файл.",
+                "TAG_PARAMETERS_DESCRIPTION": "Если у вас есть исторические данные табелей учета рабочего времени в Excel, вы можете импортировать все в Clockify, чтобы ваши отчеты могли включать все ваши прошлые и будущие данные. { break } При импорте будут созданы все необходимые проекты, задачи, клиенты, пользователи и записи времени. Все, что вам нужно сделать, это предоставить файл."
             },
             "TIME_ROUNDING": {
                 "DESCRIPTION": "Включите и отключите округление, чтобы цифры продолжительности в отчетах выглядели более четкими. Вы можете округлить вверх, вниз или до ближайшей минуты."
@@ -4427,11 +4684,14 @@
                 "TITLE": "Бюджет & оценка",
                 "DESCRIPTION": "Установите смету в денежном выражении для проектов с фиксированной ставкой вознаграждения. Затем вы можете отслеживать прогресс на основе того, сколько денег было потрачено, и получать уведомления, когда бюджет достигает определенного процента выполнения. <br> Вы также можете установить периодические оценки, чтобы время и ход бюджета сбрасывались каждый месяц, а также просматривать оценки непосредственно в отчетах и экспортируйте их вместе с отслеживаемым временем.",
                 "DESCRIPTION_NEW": "Отслеживайте прогресс проекта в зависимости от того, сколько времени или денег было потрачено, и получайте оповещения, когда вы превышаете бюджет или оценку. <br> Вы также можете установить автоматические сбросы каждый месяц, исключить неоплачиваемое время из оценок и просматривать оценки и бюджеты прямо в отчетах (плюс делитесь ими и экспортируйте их).",
-                "DESCRIPTION_V2": "Установите денежную оценку для проектов и задач, и Clockify будет отслеживать прогресс на основе отслеживаемой суммы к оплате и отправлять предупреждения, когда вы собираетесь выйти за рамки бюджета. Вы также можете исключить неоплачиваемое время из оценок времени, настроить автоматический сброс и сравнить фактические значения с оценками в отчетах."
+                "DESCRIPTION_V2": "Установите денежную оценку для проектов и задач, и Clockify будет отслеживать прогресс на основе отслеживаемой суммы к оплате и отправлять предупреждения, когда вы собираетесь выйти за рамки бюджета. Вы также можете исключить неоплачиваемое время из оценок времени, настроить автоматический сброс и сравнить фактические значения с оценками в отчетах.",
+                "TAG_PARAMETERS_DESCRIPTION": "et оценки в денежном выражении для проектов с фиксированной оплатой. Затем вы можете отслеживать прогресс на основе того, сколько денег было потрачено, и получать оповещения, когда бюджет достигает определенного процента выполнения. { break } Вы также можете установить повторяющиеся оценки, чтобы время и прогресс бюджета обнулялись каждый месяц, а также просматривать оценки непосредственно в отчетах и экспортировать их вместе с отслеживаемым временем.",
+                "NEW_TAG_PARAMETERS_DESCRIPTION": "Отслеживайте ход проекта на основе того, сколько времени или денег было потрачено, и получайте оповещения, когда вы превысите бюджет или оценку. { break } Вы также можете установить автоматический сброс каждый месяц, исключить неоплачиваемое время из оценок и просматривать оценки и бюджеты непосредственно в отчетах (а также делиться ими и экспортировать их)."
             },
             "ALERTS": {
                 "DESCRIPTION": "Получайте уведомление по электронной почте, когда проект достигает определенного процента расчетного времени.",
-                "MARKETPLACE_DESCRIPTION": "Оповещения отправляются на электронные письма пользователей, они не доходят до вашего почтового ящика"
+                "MARKETPLACE_DESCRIPTION": "Оповещения отправляются на электронные письма пользователей, они не доходят до вашего почтового ящика",
+                "MARKETPLACE_DESCRIPTION_WITH_INTERPOLATION": "Оповещения отправляются пользователям по электронной почте, они не доходят до вашего почтового ящика."
             },
             "FORCE_TIMER": {
                 "DESCRIPTION": "Отключите ручной режим, чтобы пользователи не могли добавлять время вручную. Вместо этого они смогут создавать записи времени только с помощью таймера. <br> <br> Это также не позволит обычным пользователям редактировать время начала и окончания в своих существующих записях времени."
@@ -4501,7 +4761,8 @@
             },
             "APPROVAL": {
                 "DESCRIPTION": "Ваша команда может отправлять свои еженедельные табели учета рабочего времени и расходов на рассмотрение, которые вы можете одобрить или отклонить. После утверждения время и расходы больше не могут быть изменены без постоянного письменного следа.",
-                "DESCRIPTION_2": "Ваша команда может отправить свои расписания и расходы на проверку, которую вы можете утвердить или отклонить. После утверждения время и расходы больше не могут быть изменены без постоянного письменного следа."
+                "DESCRIPTION_2": "Ваша команда может отправить свои расписания и расходы на проверку, которую вы можете утвердить или отклонить. После утверждения время и расходы больше не могут быть изменены без постоянного письменного следа.",
+                "DESCRIPTION_3": "Члены вашей команды или проекта могут отправлять свои расписания и расходы на проверку, которую вы можете одобрить или отклонить. После утверждения время и расходы больше не могут быть изменены без постоянного письменного следа."
             },
             "BREAKS": {
                 "TITLE": "Перерыв (киоск)",
@@ -4540,11 +4801,16 @@
             },
             "BREAK_ENTRY": {
                 "TITLE": "Перерыв",
-                "DESCRIPTION": "Разрешить сотрудникам указывать, когда у них перерыв.\n\nСотрудники могут начать перерыв в киоске, пока у них есть часы, или они могут начать его из одного из приложений (веб-сайта и мобильного).\n\nПозже админы и менеджеры смогут увидеть, когда у каждого сотрудника был перерыв и сколько в отчетах."
+                "DESCRIPTION": "Разрешить сотрудникам указывать, когда у них перерыв.<br><br> Сотрудники могут начать перерыв в киоске, когда у них есть часы, или они могут начать его из одного из приложений (веб-сайта или мобильного приложения).&lt; br&gt;<br> Позже админы и менеджеры смогут увидеть, когда у каждого сотрудника был перерыв и сколько в отчетах.",
+                "PARAMETERS_DESCRIPTION": "Разрешите сотрудникам указывать, когда у них перерыв. { doubleBreak } Сотрудники могут начать перерыв из киоска, пока они на работе, или из одного из приложений (веб- и мобильных). { doubleBreak } Позже администраторы и менеджеры смогут увидеть, когда и сколько у каждого сотрудника был перерыв, в отчетах."
             },
             "MULTIPLE_CURRENCIES": {
                 "TITLE": "Несколько валют",
                 "DESCRIPTION": "Определите более одной валюты и назначьте каждому клиенту свою собственную. Позже просмотрите суммы и затраты в отчетах с разбивкой по валютам."
+            },
+            "DATA_REGIONS": {
+                "TITLE": "Регионы данных",
+                "DESCRIPTION": "Разместите свои данные в ЕС (Германии), Великобритании, США или Австралии, чтобы обеспечить соблюдение законодательства."
             }
         },
         "PROJECT_PICKER": {
@@ -4564,7 +4830,9 @@
             "FIND_PROJECT_CUSTOM_LABEL": "Найдите { projectLabel } или { projectGroupingLabel }…",
             "FIND_TASK_CUSTOM_LABEL": "Найдите { taskLabel } @{ projectLabel } или { projectGroupingLabel }…",
             "FIND_PROJECT_CUSTOM_LABEL_ELLIPSES": "Найдите { projectLabel } или { projectGroupingLabel }…",
-            "CAN_NOT_SELECT_PROJECT": "Невозможно выбрать проект, пока в нем не будет хотя бы одной задачи."
+            "CAN_NOT_SELECT_PROJECT": "Невозможно выбрать проект, пока в нем не будет хотя бы одной задачи.",
+            "SEARCH_TASK_CUSTOM_LABEL": "Найдите { taskLabel } @{ projectLabel } или { projectGroupingLabel }…",
+            "SEARCH_PROJECT_CUSTOM_LABEL": "Найдите { projectLabel } или { projectGroupingLabel }…"
         },
         "SINGLE_DATE_PICKER": {
             "DATE_RANGE_ERROR_MSG": "Невозможно добавить время к заблокированному периоду",
@@ -4577,7 +4845,8 @@
                 "ENTRY_LOCKED_ADD_TIME_FAIL": "Невозможно добавить время к заблокированному периоду.",
                 "SET_TIME_AFTER_PARAM_FAIL": "Не могу установить время после { timeLimit }."
             },
-            "MAX_PTO_DATE_RANGE_INFO": "Максимальный диапазон дат – 1 год."
+            "MAX_PTO_DATE_RANGE_INFO": "Максимальный диапазон дат – 1 год.",
+            "UPGRADE_TO_ENTERPRISE_PART_2_WITH_INTERPOLATION": "для выбора диапазона более одного года."
         },
         "SUBSCRIPTION_INCOMPLETE_MODAL": {
             "MODAL_TITLE": "Ошибка обновления",
@@ -4593,7 +4862,11 @@
             "UPGRADE_EXPLANATION": "С вас будет списана ориентировочная пропорциональная цена в размере { price } долларов США, и вы сразу же получите доступ к { feature } функциям.",
             "DOWNGRADE_EXPLANATION": "Как только текущая подписка закончится, вы перейдете на новый тарифный план",
             "DOWNGRADE_BONUS": "(2 месяца бесплатно).",
-            "REACTIVATE_SUBSCRIPTION": "Повторно активируйте свою текущую подписку."
+            "REACTIVATE_SUBSCRIPTION": "Повторно активируйте свою текущую подписку.",
+            "UPGRADE_EXPLANATION_CH": "С вас будет немедленно списана пропорциональная цена с НДС за обновление плана до конца платежного цикла. Когда наступит новый расчетный цикл, он будет списан в соответствии с его полной стоимостью.",
+            "UPGRADE_EXPLANATION_V2": "С вас будет немедленно списана пропорциональная цена за обновление плана до конца платежного цикла. Когда наступит новый расчетный цикл, он будет списан в соответствии с его полной стоимостью.",
+            "ESTIMATED_PRICE": "Ориентировочная пропорциональная цена, которая будет применяться: { price }",
+            "BILLING_PRICE_V2": "С вас будет списана ориентировочная пропорциональная цена в размере { price }."
         },
         "TIME_ENTRY_BULK_EDIT": {
             "TITLE_PARAMS": "Массовое редактирование { count } { count, plural, =0{} one{ записей} other{ записей}}",
@@ -4680,7 +4953,8 @@
             "NO_TAGS_LABEL": "Теги: пока нет",
             "NO_MATCHING_TAGS_INFO": "Нет подходящего тега",
             "CREATE_TAG": "создать тег { search }.",
-            "PLACEHOLDER_LABEL": "Добавить/найти теги…"
+            "PLACEHOLDER_LABEL": "Добавить/найти теги…",
+            "SEARCH_PLACEHOLDER_LABEL": "Добавить/поиск тегов"
         },
         "STRIPE": {
             "LABEL_CARD_NUMBER": "Номер карты",
@@ -4741,7 +5015,13 @@
                 "INCOMPLETE_EXPIRY": "Срок годности недействителен.",
                 "INCOMPLETE_CVC": "Номер CVC неверен."
             },
-            "VALID_EMAIL_WARNING_PLACEHOLDER_V2": "Введите адрес электронной почты или мы используем ваш"
+            "VALID_EMAIL_WARNING_PLACEHOLDER_V2": "Введите адрес электронной почты или мы используем ваш",
+            "ADDRESS_PLACEHOLDER": "Введите адрес",
+            "CITY_PLACEHOLDER": "Введите город",
+            "ZIP_PLACEHOLDER": "Введите почтовый индекс",
+            "PLACEHOLDER_CARDHOLDER": "Введите имя держателя карты",
+            "INVALID_EMAIL_MESSAGE": "Недопустимый формат электронной почты",
+            "TAX_TYPE_PLACEHOLDER": "Выберите тип налога"
         },
         "STRIPE_INVOICE": {
             "MISSING_TAX_ID_ERROR_MESSAGE": "Отсутствует информация об идентификаторе налогоплательщика",
@@ -4844,7 +5124,13 @@
             "WIRE_TRANSFER_TEXT_PART_2": "свяжитесь с нами",
             "WIRE_TRANSFER_TEXT_PART_3": "добавить способ оплаты.",
             "WIRE_TRANSFER_TEXT_PART_4": "Чтобы добавить места,",
-            "UNPAID_INVOICE_WARNING_BANNER": "{ seatsLeft } Невозможно купить дополнительные места, пока у вас есть неоплаченный счет."
+            "UNPAID_INVOICE_WARNING_BANNER": "{ seatsLeft } Невозможно купить дополнительные места, пока у вас есть неоплаченный счет.",
+            "SCHEDULED_CURRENCY_CHANGE_WARNING_CH": "Начиная с { nextBillingDateStart } все платежи будут выставляться в { newCurrency } с добавлением НДС, поскольку страна в информации о клиенте была изменена на { newCountry }.",
+            "SCHEDULED_CURRENCY_CHANGE_WARNING": "Начиная с { nextBillingDateStart } все платежи будут выставляться в { newCurrency }, так как ваша страна информации о клиенте была изменена на { newCountry }.",
+            "SCHEDULED_ADDRESS_CHANGE_WARNING": "Начиная с { nextBillingDateStart } ваш адрес будет изменен на { newAddress }.",
+            "SCHEDULED_CURRENCY_AND_ADDRESS_CHANGE_WARNING_CH": "Начиная с { nextBillingDateStart } все платежи будут выставляться в { newCurrency } с добавлением НДС, поскольку страна в информации о клиенте была изменена на { newCountry }, а адрес будет изменен на { newAddress }.",
+            "SCHEDULED_CURRENCY_AND_ADDRESS_CHANGE_WARNING": "Начиная с { nextBillingDateStart } все расходы будут выставляться в счет { newCurrency }, так как страна с информацией о клиенте была изменена на { newCountry }, а адрес будет изменен на { newAddress }.",
+            "WIRE_TRANSFER_CUSTOMER_TEXT": "Для редактирования информации о клиенте нажмите { contactUs } или { addPaymentMethod }."
         },
         "INVOICES": {
             "PAST_BILLING_HEADER": "Прошлые выписки по счетам",
@@ -4874,7 +5160,11 @@
             "LIMITED": {
                 "NUMBER_OF_ADDITIONAL_SEATS_LABEL_PART_2": "{ count } ограниченное количество мест"
             },
-            "PAY_BTN": "Платить"
+            "PAY_BTN": "Платить",
+            "TOTAL_PRICE_PER_MONTH": "Цена в месяц",
+            "TOTAL_PRICE_PER_YEAR": "Цена в год",
+            "PRICE_CHANGE_WARNING_CH": "С вас будет немедленно списана пропорциональная цена с НДС за дополнительные места до конца расчетного периода. Когда наступит новый платежный цикл, с них будет взиматься плата в соответствии с их полной стоимостью.",
+            "PREVIEW_PRICE_ERROR": "Ошибка при расчете цены"
         },
         "PAYMENT_LABEL": "Оплата",
         "PLANS_LABEL": "Планы",
@@ -4910,7 +5200,8 @@
                     "TITLE": "Редактировать группу"
                 },
                 "DELETE": {
-                    "CONFIRM": "Вы уверены, что хотите удалить группу "
+                    "CONFIRM": "Вы уверены, что хотите удалить группу ",
+                    "CONFIRM_WITH_INTERPOLATION": "Вы уверены, что хотите удалить группу {value}?"
                 },
                 "FIND": "Найти пользователя или группу",
                 "ADD": {
@@ -4930,7 +5221,8 @@
                     "VALID": "Пожалуйста, введите действующий адрес электронной почты.",
                     "NOT_VALID": {
                         "ONE": "не является действительным адресом электронной почты.",
-                        "MANY": "недействительные электронные письма."
+                        "MANY": "недействительные электронные письма.",
+                        "ONE_WITH_INTERPOLATION": "{value} не является действительным адресом электронной почты."
                     },
                     "INVITED": {
                         "ONE": "уже приглашен.",
@@ -5028,7 +5320,8 @@
                 "SELECT_DAY": "Выберите день"
             },
             "SETTINGS_TOOLTIP": "Полные настройки экспорта",
-            "SETTINGS_TOOLTIP_NOT_FULL": "Параметры экспорта участников"
+            "SETTINGS_TOOLTIP_NOT_FULL": "Параметры экспорта участников",
+            "SEARCH_MEMBER": "Поиск участника"
         },
         "REMINDERS": {
             "DATE_RANGE": {
@@ -5099,7 +5392,8 @@
             }
         },
         "FEATURE": {
-            "STANDARD": "STANDARD особенность"
+            "STANDARD": "STANDARD особенность",
+            "PRO": "ПРО функция"
         },
         "USERS": {
             "SELECT": "Выбрать пользователя",
@@ -5121,9 +5415,10 @@
         "FILE": {
             "MEMBERS": "Clockify_Участники",
             "FULL_MEMBERS": "Clockify_Полные_члены",
-            "LIMITED_MEMBERS": "Clockify_Limited_Members",
-            "TEAM_GROUPS": "Clockify_Team_Groups"
-        }
+            "LIMITED_MEMBERS": "Clockify_Ограниченные_члены",
+            "TEAM_GROUPS": "Clockify_Командные_группы"
+        },
+        "SEARCH_MEMBERS": "Поиск участников"
     },
     "TIMESHEET2": {
         "FIX": "Исправить",
@@ -5262,7 +5557,8 @@
                 },
                 "GROUPS_TOOLTIP": "{ count } { count, plural, =0{} one{} other{ записей времени}} (щелкните для переключения)",
                 "MAX_HOURS_ENTERED": "Невозможно сохранить более 999 часов.",
-                "ADD_TO_FAVORITES_LABEL": "Добавить в избранное"
+                "ADD_TO_FAVORITES_LABEL": "Добавить в избранное",
+                "DESCRIPTION_WITH_INTERPOLATION": "Добавить описание…"
             },
             "WEEK_TOTAL": "Всего за неделю:",
             "BULK": {
@@ -5355,7 +5651,10 @@
             "ENTRY_RESTORED_SUCCESS": "Вход восстановлен",
             "ENTRIES_RESTORED_SUCCESS": "Записи восстановлены",
             "RESTORE_ENTRY_FAIL": "Вы не можете отменить удаленную запись, пока существует существующая запись времени.",
-            "BREAK_DUPLICATE_SUCCESS": "Запись о перерыве была продублирована"
+            "BREAK_DUPLICATE_SUCCESS": "Запись о перерыве была продублирована",
+            "CREATE_MULTIPLE_SUCCESS": "Записи времени созданы",
+            "RUNNING_ENTRY_EXISTS": "Невозможно создать запись времени, пока выполняется другая запись",
+            "BREAKS_DISABLED": "У вас нет разрешения на создание записи времени перерыва, так как функция перерыва не включена."
         },
         "STOP_BREAK": "Стоп перерыв",
         "START_BREAK": "Начать перерыв"
@@ -5381,7 +5680,8 @@
                     "RETYPE": "Введите новый адрес электронной почты еще раз",
                     "ERROR_MESSAGE": {
                         "VALID": "Введите действующий адрес электронной почты.",
-                        "MATCH": "Электронные письма не совпадают."
+                        "MATCH": "Электронные письма не совпадают.",
+                        "ACCOUNT_ALREADY_EXISTS": "Аккаунт с этим адресом электронной почты уже существует."
                     }
                 },
                 "NOTIFICATIONS": {
@@ -5477,7 +5777,8 @@
                 "ADD_LANGUAGE_LABEL": "Добавить перевод"
             },
             "TARGET": {
-                "NO_TARGET": "Участники команды не выбраны"
+                "NO_TARGET": "Участники команды не выбраны",
+                "NO_TARGET_WITH_INTERPOLATION": "Члены команды не выбраны:"
             },
             "EMAIL_PREFERENCES": {
                 "INFO_MESSAGE": "Выберите, какие типы уведомлений по электронной почте вы хотите получать.",
@@ -5804,7 +6105,8 @@
         "FIELD_REQUIRED": "требуется",
         "STOP_AT_SPECIFIED_TIME": "Автоматически останавливать таймер в указанное время суток",
         "STOP_TIME": "Остановить время",
-        "FORBIDDEN_CHARACTERS": "Вы ввели неправильное значение. Не используйте символы \"<\" и \">\""
+        "FORBIDDEN_CHARACTERS": "Вы ввели неправильное значение. Не используйте символы \"<\" и \">\"",
+        "NO_NEW_NOTIFICATIONSL_MESSAGE": "Сейчас у вас нет новых уведомлений"
     },
     "ENABLE_ALL_INTEGRATIONS": "Вы можете включить все, нажав кнопку «Включить все».",
     "REFRESH": "Обновить",
@@ -5846,7 +6148,8 @@
             },
             "LAUNCH": {
                 "INFO": "Выйдите из Clockify и войдите в",
-                "TITLE": "Запустить киоск"
+                "TITLE": "Запустить киоск",
+                "INFO_WITH_INTERPOLATION": "Выйдите из Clockify и войдите в {value}."
             },
             "EDIT": {
                 "TITLE": "Редактировать киоск"
@@ -6129,7 +6432,20 @@
     "APPROVALS": {
         "ARCHIVE_LABEL": "Архив",
         "LOCKED_TIME_ENTRY": "Не могу редактировать заблокированные записи.",
-        "LOCKED_EXPENSES": "Невозможно изменить заблокированные расходы. Свяжитесь с вашим администратором для получения дополнительной информации"
+        "LOCKED_EXPENSES": "Невозможно изменить заблокированные расходы. Свяжитесь с вашим администратором для получения дополнительной информации",
+        "APPROVAL_WITHDRAW_MODAL": {
+            "TITLE": "Ожидается вывод средств"
+        },
+        "PERIOD_APPROVAL_MODAL": {
+            "MESSAGE": "Для { period } все ожидающие записи и расходы будут отозваны и не будут доступны для утверждения, пока они не будут отправлены повторно.",
+            "MESSAGE1": "Для { period } все ожидающие записи и расходы будут отозваны и не будут доступны для утверждения, пока они не будут отправлены повторно.",
+            "INFO_MESSAGE": "Для { period } все ожидающие записи и расходы будут отозваны и не будут доступны для утверждения, пока они не будут отправлены повторно."
+        },
+        "APPROVAL_MODAL": {
+            "MESSAGE": "Для { from } – { to } все ожидающие записи и расходы будут отозваны и не будут доступны для утверждения, пока они не будут отправлены повторно.",
+            "MESSAGE1": "Для { from } – { to } все ожидающие записи и расходы будут отозваны и не будут доступны для утверждения, пока они не будут отправлены повторно.",
+            "INFO_MESSAGE": "Для { from } – { to } все ожидающие записи и расходы будут отозваны и не будут доступны для утверждения, пока они не будут отправлены повторно."
+        }
     },
     "AUDITLOG": {
         "AUTHORS": "Авторы",
@@ -6259,6 +6575,11 @@
     "exception": {
         "user": {
             "disabled": "Действие этого аккаунта приостановлено. Контактная поддержка."
+        },
+        "incorrect": {
+            "email": {
+                "password": "Неправильный адрес электронной почты или пароль"
+            }
         }
     },
     "SUSPENDED": {
@@ -6304,13 +6625,29 @@
                 "MODAL": {
                     "TITLE": "Удалить валюту"
                 }
-            }
+            },
+            "DELETE_CURRENCIES": "Если вы удалите, все суммы в валюте { currencyName } будут заменены валютой по умолчанию."
         },
         "DROPDOWN": {
             "UPGRADE_TEXT": "на PRO, чтобы изменить валюту"
         },
         "EMAIL_VERIFICATION_INVALID_TOKEN": "Ваш токен подтверждения недействителен.",
-        "EMAIL_VERIFICATION_EXPIRED": "Срок действия вашей ссылки для подтверждения истек."
+        "EMAIL_VERIFICATION_EXPIRED": "Срок действия вашей ссылки для подтверждения истек.",
+        "EMAIL_SUCCESSFULLY_VERIFIED_MSG": "Вы успешно подтвердили свой адрес электронной почты.",
+        "ACCOUNT_ALREADY_VERIFIED_TEXT": "Этот аккаунт уже подтвержден.",
+        "LINK_EXPIRED_TITLE": "Упс, срок действия ссылки истек!",
+        "RESEND_VERIFICATION_EMAIL_BTN": "Выслать повторно письмо для подтверждения",
+        "OPEN_GMAIL_BTN": "Открыть Gmail",
+        "OPEN_OUTLOOK_BTN": "Открыть Outlook",
+        "PENDING_EMAIL_CHANGE_BANNER": {
+            "PENDING_CHANGE_BANNER_TEXT": "Ожидается изменение адреса электронной почты",
+            "PENDING_CHANGE_BANNER_TOOLTIP": "Ожидается изменение адреса электронной почты: { userEmail }. Проверьте свой почтовый ящик и подтвердите новый адрес электронной почты, чтобы завершить процесс.",
+            "CANCEL_CHANGE_BTN": "Отменить изменение",
+            "EMAIL_CHANGE_CANCELED_MSG": "Изменение адреса электронной почты отменено"
+        },
+        "ACCOUNT_ALREADY_VERIFIED_TITLE": "Аккаунт уже подтвержден!",
+        "LINK_EXPIRED_TEXT": "Срок действия этой ссылки для проверки истек.",
+        "EMAIL_LINK_EXPIRED_TEXT": "Срок действия этой ссылки для подтверждения электронной почты истек."
     },
     "EXTENSION_FORBIDDEN_CHARACTERS": "Вы ввели неправильное значение. Не используйте символы \"<\" и \">\"",
     "GOBAL": {
@@ -6332,7 +6669,18 @@
         },
         "DELETE": {
             "SUCCESS": "{ name } удалено из избранного"
-        }
+        },
+        "DELETE_MODAL": {
+            "TITLE": "Удалить из Избранного",
+            "DESCRIPTION": "Это удалит запись из вашего списка избранного."
+        },
+        "MISSING_REQUIRED_FIELDS_MESSAGE": "Отсутствуют обязательные поля",
+        "EDIT_MODAL": {
+            "TITLE": "Исправить любимую запись"
+        },
+        "MAX_FAVORITES_CREATED_MESSAGE": "Достигнуто максимальное количество { count } избранных { count, plural, =0{} one{ записей} other{ записей} }.",
+        "DUPLICATE_FAVORITE_ERROR": "У вас уже есть фаворит с этими деталями",
+        "FAVORITE_TIME_ENTRY_ACTIVATED": "{ name } успешно запущен"
     },
     "PAYMENT": {
         "CUSTOMER_TYPE_LABEL": "Тип клиента",
@@ -6346,6 +6694,80 @@
         "COUNTRY_SEARCH_LABEL": "Найти страну",
         "STATE_LABEL": "Штат/провинция",
         "STATE_PLACEHOLDER": "Выберите штат/провинцию",
-        "STATE_SEARCH_LABEL": "Найти штат / провинцию"
+        "STATE_SEARCH_LABEL": "Найти штат / провинцию",
+        "ERRORS": {
+            "INVALID_TAX_ID": "Ваш идентификатор { displayName } ({ displayName2 }) должен выглядеть как { format } или { format2 }.",
+            "INVALID_TAX_ID_SINGLE_DISPLAY_NAME": "Ваш идентификатор { displayName } должен выглядеть как { format } или { format2 }.",
+            "INVALID_TAX_ID_SINGLE_DISPLAY_NAME_AND_FORMAT": "Ваш идентификатор { displayName } должен выглядеть как { format }",
+            "INVALID_TAX_ID_SINGLE_FORMAT": "Ваш идентификатор { displayName } ({ displayName2 }) должен выглядеть как { format }."
+        },
+        "CHANGE_COUNTRY_LABEL": "Выбрать страну",
+        "CHANGE_COUNTRY_MODAL_CONTENT": "Чтобы изменить страну, вы вернетесь к шагу 1, и вся информация о счетах и платежах будет удалена.",
+        "CANNOT_CHANGE_COUNTRY_MESSAGE": "Страна устанавливается на шаге 1 и не может быть изменена на этом шаге.",
+        "CHANGE_MIGHT_AFFECT_INVOICE_WARNING": "Изменение информации здесь может повлиять на поля в информации о счете.",
+        "CANNOT_SWITCH_TO_INDIVIDUAL": "Не могу переключиться на индивидуальный",
+        "CANNOT_CHANGE_COUNTRY": "Смена страны невозможна",
+        "CANCELED_CANNOT_MODIFY_CUSTOMER_WARNING": "Ваша подписка запланирована к отмене. Повторно активируйте подписку, чтобы изменить информацию о клиенте."
+    },
+    "CLIENTS": {
+        "MODALS": {
+            "ARCHIVE_MODAL": {
+                "ARCHIVE_MULTIPLE_CLIENTS_INFO_MESSAGE": "Выбранный { clientLabelPlural } не будет доступен при отслеживании времени.",
+                "ALSO_MARK_TASKS_AS_DONE_CHECKBOX": "Также отметьте все { taskLabelPlural } как выполненные.",
+                "RESTORE_MULTIPLE_CLIENTS_TITLE": "Восстановить { numberOfSelected } { clientLabelPlural }",
+                "RESTORE_MULTIPLE_TAGS_INFO_MESSAGE": "Выбранные теги будут доступны при отслеживании времени",
+                "ARCHIVE_MULTIPLE_TAGS_INFO_MESSAGE": "Выбранные теги не будут доступны при отслеживании времени",
+                "ARCHIVE_SINGLE_TITLE": "Архив { itemName }",
+                "ARCHIVE_SINGLE_INFO_MESSAGE": " не будет доступно при отслеживании времени",
+                "SINGLE_CLIENT_ALSO_ARCHIVE_PROJECTS_CHECKBOX": "Также заархивируйте все проекты, назначенные этому { clientLabel }.",
+                "ARCHIVE_MULTIPLE_CLIENTS_TITLE": "Архив { numberOfSelected } { clientLabelPlural }",
+                "MULTIPLE_CLIENTS_ALSO_ARCHIVE_PROJECTS_CHECKBOX": "Также заархивируйте все проекты, назначенные этим { clientLabelPlural }",
+                "RESTORE_SINGLE_TITLE": "Восстановить { itemName }",
+                "RESTORE_SINGLE_INFO_MESSAGE": "будет доступно при отслеживании времени",
+                "RESTORE_MULTIPLE_CLIENTS_INFO_MESSAGE": "Выбранный { clientLabelPlural } будет доступен при отслеживании времени.",
+                "ARCHIVE_MULTIPLE_TAGS_TITLE": "Архив тегов { numberOfSelected }",
+                "RESTORE_MULTIPLE_TAGS_TITLE": "Восстановить теги { numberOfSelected }",
+                "SINGLE_CLIENT_ALSO_ARCHIVE_PROJECTS_CHECKBOX_CUSTOM": "Также заархивируйте все { projectsLabel }, назначенные этому { clientLabel }",
+                "MULTIPLE_CLIENTS_ALSO_ARCHIVE_PROJECTS_CHECKBOX_CUSTOM": "Также заархивируйте все { projectsLabel }, назначенные на эти { clientLabelPlural }."
+            },
+            "DELETE_MODAL": {
+                "DELETE_SINGLE_ITEM_INFO_MESSAGE": "Вы уверены, что хотите удалить { itemName }?",
+                "DELETE_MULTIPLE_CLIENTS_MODAL_TEXT": "{ itemName } также будет удален из всех записей времени, которым они назначены. Это действие нельзя отменить.",
+                "TIME_APPROVAL_WARNING_FOR_TAG": "Утвержденное время для { tagName } потеряет информацию тега.",
+                "TIME_APPROVAL_WARNING_FOR_TAGS": "Информация об утвержденном времени для выбранных тегов будет потеряна.",
+                "DELETE_SINGLE_ITEM_MODAL_TEXT": "{ itemName } также будет удален из всех записей времени, которым они назначены. Это действие нельзя отменить.",
+                "DELETE_MULTIPLE_CLIENTS_INFO_MESSAGE": "Вы уверены, что хотите удалить { numberOfSelected } { clientLabelPlural }?",
+                "DELETE_MULTIPLE_TAGS_INFO_MESSAGE": "Вы уверены, что хотите удалить теги { numberOfSelected }?",
+                "DELETE_MULTIPLE_TAGS_MODAL_TEXT": "Теги также будут удалены из всех записей времени, которым они назначены. Это действие нельзя отменить.",
+                "TYPE_DELETE_TO_CONFIRM_LABEL": "Введите DELETE для подтверждения"
+            }
+        }
+    },
+    "EMAIL": {
+        "VERIFICATION": {
+            "CAMPAIGN": {
+                "TITLE": "Подтвердите Ваш электронный адрес",
+                "MESSAGE_2": "Чтобы беспрепятственно использовать Clockify в будущем, подтвердите свою учетную запись сегодня.",
+                "MESSAGE_6": "Последний звонок для подтверждения электронной почты! Без него вы не сможете использовать свою учетную запись Clockify.",
+                "MESSAGE_1": "В течение следующих 30 дней для беспрепятственного использования Clockify потребуется подтвержденная учетная запись.",
+                "MESSAGE_3": "Подтвердите свой адрес электронной почты и продолжайте использовать Clockify без каких-либо ограничений в будущем.",
+                "MESSAGE_4": "Без подтверждения электронной почты использование вашего приложения будет ограничено в течение 15&nbsp;дней.",
+                "MESSAGE_5": "Ваш адрес электронной почты должен быть подтвержден, иначе использование вашего приложения будет ограничено через 10 дней."
+            }
+        }
+    },
+    "GENERIC": {
+        "GOOGLE_CAPTCHA": "Этот сайт защищен reCAPTCHA и Google.",
+        "TERMS_OF_SERVICE": "Условия использования"
+    },
+    "REMINDERS": {
+        "REMINDER_ROW": {
+            "DELETE_ROW": "Удаление этого напоминания приведет к его окончательному удалению из системы."
+        }
+    },
+    "DATA_TRANSFER": {
+        "MESSAGES": {
+            "WORKSPACE_IS_LOCKED": "Рабочая область заблокирована из-за передачи данных"
+        }
     }
 }

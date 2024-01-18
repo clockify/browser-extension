@@ -8,6 +8,7 @@ import { checkConnection } from './components/check-connection';
 import ErrorBoundary from './components/error-boundary';
 import ClockifyButton from './components/integrationPopup/ClockifyButton';
 import { offlineStorage } from './helpers/offlineStorage';
+import { isChrome } from './helpers/browser-helper';
 
 offlineStorage.load();
 
@@ -98,11 +99,14 @@ function Mac() {
 }
 
 window.getAllDocuments = () => {
+	if (!isChrome()) return [document];
+
 	const iframes = Array.from(document.querySelectorAll('iframe'));
 	const iframeDocuments = iframes
 		.map(({ contentDocument }) => contentDocument)
-		.filter(Boolean);
-	const documents = [...iframeDocuments, document];
+		.filter((contentDocument) => Boolean(contentDocument))
+		.filter((contentDocument) => JSON.stringify(contentDocument) !== '{}');
+	const documents = [document, ...iframeDocuments];
 
 	return documents;
 };
@@ -112,8 +116,8 @@ const LoadingElement = () => {
 };
 
 function getSiblingButtonId(element) {
-	const previousSibling = element.parentElement.previousElementSibling;
-	const nextSibling = element.parentElement.nextElementSibling;
+	const previousSibling = element?.parentElement?.previousElementSibling;
+	const nextSibling = element?.parentElement?.nextElementSibling;
 
 	if (previousSibling && previousSibling.classList.contains('clockifyButton')) {
 		// Extract the ID from the class name

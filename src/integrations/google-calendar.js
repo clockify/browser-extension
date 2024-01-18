@@ -1,7 +1,7 @@
 clockifyButton.render(
 	'span[jsslot].JtukPc', // both event card & task card
 	{ observe: true },
-	function(elem) {
+	function (elem) {
 		function createClockifyElements() {
 			const getDescription = () => {
 				const descriptionSelector = $('[role="heading"]', elem);
@@ -11,10 +11,10 @@ clockifyButton.render(
 			let cardHeader = $('.wv9rPe');
 			if (cardHeader) {
 				const link = clockifyButton.createButton({
-					description: () => getDescription()
+					description: () => getDescription(),
 				});
 				const clockifyInput = clockifyButton.createInput({
-					description: () => getDescription()
+					description: () => getDescription(),
 				});
 				const clockifyContainer = createTag('div', 'clockify-widget-container');
 
@@ -31,7 +31,7 @@ clockifyButton.render(
 
 				const clockifyInputField = $('.clockify-input');
 				clockifyInputField.style.display = 'inline-block';
-				clockifyInputField.style.width = '120px';
+				clockifyInputField.style.width = '130px';
 				clockifyInputField.style.marginLeft = '7px';
 				clockifyInputField.style.boxShadow = 'none';
 				clockifyInputField.style.border = '1px solid #eaecf0';
@@ -39,13 +39,12 @@ clockifyButton.render(
 			}
 		}
 		if (!$('.clockify-widget-container')) {
-			createClockifyElements()
+			createClockifyElements();
 		}
-		$$('[role="button"][data-opens-details="true"]').forEach(item => {
-			item.addEventListener('click', event => {
+		$$('[role="button"][data-opens-details="true"]').forEach((item) => {
+			item.addEventListener('click', (event) => {
 				createClockifyElements();
-			})
-		})
+			});
+		});
 	}
 );
-

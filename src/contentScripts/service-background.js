@@ -113,9 +113,10 @@ class ClockifyService {
 					forceDescription: false,
 					forceProjects: false,
 					forceTasks: false,
+					projectPickerSpecialFilter: false,
 					forceTags: false,
 			  };
-		const usSettings = us
+		const userSettings = us
 			? JSON.parse(us)
 			: {
 				projectPickerSpecialFilter: false,
@@ -128,7 +129,7 @@ class ClockifyService {
 		} = wsSettings;
 		const {
 			projectPickerSpecialFilter,
-		} = usSettings;
+		} = userSettings;
 		return {
 			forceDescription,
 			forceProjects,
@@ -309,6 +310,7 @@ class ClockifyService {
 					/.* project for client  already exists./,
 					/Task name has to be between 1 and 1000 characters long/,
 					/.* project for client .* already exists./,
+					/Tag with name .* already exists/,
 				];
 				switch (response.status) {
 					case 400:
@@ -327,6 +329,19 @@ class ClockifyService {
 							`${clockifyLocales.YOU_ALREADY_HAVE_ENTRY_WITHOUT}. ${clockifyLocales.PLEASE_EDIT_YOUR_TIME_ENTRY}.`
 						);
 					case 403:
+						errorData = await response.json();
+						if (errorData) {
+							if (errorData.code === 406) {
+								this.handleBannedResponse(errorData);
+								return errorObj(response.status, errorData?.message, errorData);
+							} else if (errorData.code === 4017) {
+								aBrowser.runtime.sendMessage({
+									eventName: 'TOKEN_INVALID',
+									options: errorData,
+								});
+								return errorObj(response.status, 'Token invalid', errorData);
+							}
+						}
 						return errorObj(response.status, 'Unauthenticated');
 					case 404:
 						return errorObj(response.status, 'Not found');

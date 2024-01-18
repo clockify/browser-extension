@@ -145,6 +145,14 @@ hr {
 	content: url('../assets/images/loading.gif');
 }
 
+.loading-gif-before-load {
+	content: url('../assets/images/loading.gif');
+	position: relative;
+	margin-left: auto;
+	margin-right: auto;
+	top: 110px;
+}
+
 .loading-entries-gif {
 	padding-bottom: 20px;
 	text-align: center;

@@ -174,9 +174,8 @@ class EditForm extends React.Component {
 		}
 
 		if (!projectId || (forceTasks && !taskId)) {
-			const { projectDB, taskDB } = await this.checkDefaultProjectTask(
-				forceTasks
-			);
+			const projectDB = null;
+			const taskDB = null;
 
 			if (projectDB) {
 				const entry = await timeEntryHelper.updateProjectTask(
@@ -245,73 +244,6 @@ class EditForm extends React.Component {
 				offlineStorage.timeEntriesOffline = timeEntries;
 			}
 		}
-	}
-
-	async checkDefaultProjectTask(forceTasks) {
-		const { defaultProject } = await DefaultProject.getStorage();
-
-		if (defaultProject && defaultProject.enabled) {
-			const isLastUsedProject = defaultProject.project.id === 'lastUsedProject';
-			const isLastUsedProjectWithoutTask =
-				defaultProject.project.id === 'lastUsedProject' &&
-				!defaultProject.project.name.includes('task');
-			let lastEntry;
-			try {
-				const response = await getBrowser().runtime.sendMessage({
-					eventName: 'getLastUsedProjectFromTimeEntries',
-					options: {
-						forceTasks: !isLastUsedProjectWithoutTask,
-					},
-				});
-				if (!response.data) throw new Error(response);
-				lastEntry = {
-					project: !isLastUsedProjectWithoutTask
-						? response.data.project
-						: response.data,
-					task: !isLastUsedProjectWithoutTask ? response.data.task : null,
-				};
-			} catch (e) {
-				console.error('project not found');
-				setTimeout(() => {
-					this.toaster.toast(
-						'info',
-						`${locales.DEFAULT_PROJECT_NOT_AVAILABLE} ${locales.YOU_CAN_SET_A_NEW_ONE_IN_SETTINGS}`,
-						4
-					);
-				}, 2000);
-				return { projectDB: null, taskDB: null };
-			}
-
-			if (!isLastUsedProject) {
-				const { projectDB, taskDB, msg } =
-					await defaultProject.getProjectTaskFromDB(forceTasks);
-				if (msg) {
-					setTimeout(() => {
-						this.toaster.toast('info', msg, 4);
-					}, 2000);
-				}
-				return { projectDB, taskDB };
-			} else {
-				if (!lastEntry) {
-					setTimeout(() => {
-						this.toaster.toast(
-							'info',
-							`${locales.DEFAULT_PROJECT_NOT_AVAILABLE} ${locales.YOU_CAN_SET_A_NEW_ONE_IN_SETTINGS}`,
-							4
-						);
-					}, 2000);
-					return { projectDB: null, taskDB: null };
-				}
-				let { project, task } = lastEntry;
-
-				if (isLastUsedProjectWithoutTask) {
-					task = null;
-				}
-
-				return { projectDB: project, taskDB: task };
-			}
-		}
-		return { projectDB: null, taskDB: null };
 	}
 
 	async changeInterval(timeInterval) {

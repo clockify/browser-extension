@@ -1,30 +1,50 @@
-//Original Zoho Desk UI - places the start/stop timer button just under the Due Date in the Ticket Information Panel
+// Opened ticket view
 clockifyButton.render(
-	'.lhs-ticket-dtls:not(.clockify)',
+	'.zd_v2-ticketdetailview-container:not(.clockify)',
 	{ observe: true },
-	function (elem) {
-		const desc = $('#caseSubjectText').innerText;
-		const ticket = $('#caseNum').innerText;
-		const link = clockifyButton.createButton('[#' + ticket + '##] ' + desc);
-		link.dataset.title = '[#' + ticket + '##] ' + desc;
-		elem.append(link);
+	() => {
+		const ticketId = text('.zd_v2-ticketsubject-ticketIdText');
+		const ticketSubject = text('[data-id="caseSubjectText"]');
+
+		const description = `[#${ticketId}##] ${ticketSubject}`;
+
+		const link = clockifyButton.createButton({ description, small: true });
+
+		link.style.marginRight = '15px';
+
+		const actions = $('.zd_v2-ticketsubject-rightSideDiv');
+
+		actions.style.display = 'flex';
+		actions.style.alignItems = 'baseline';
+		actions.style.justifyContent = 'end';
+
+		actions.prepend(link);
 	}
 );
 
-//Newer Next Gen UI - places the start/stop timer in the ticket title bar after the ticket creation time.
+// Ticket card view
 clockifyButton.render(
-	'.zd-dvsubjectsection-timerWrapper:not(.clockify)',
+	'.zd_v2-ticketdvleftpanel-sectionContainer .zd_v2-kanbanlistitem-container:not(.clockify)',
 	{ observe: true },
-	function (elem) {
-		const desc = $('.zd-dvsubjectsection-subject').innerText;
-		const ticket = $('.zd-ticketsubject-ticketId').innerText;
-		const link = clockifyButton.createButton('[#' + ticket + '##] ' + desc);
-		link.style.display = 'block';
-		link.style.paddingTop = '0';
-		link.style.paddingBottom = '0';
-		link.style.paddingLeft = '10px';
-		link.style.marginBottom = '0';
-		link.style.cursor = 'pointer';
-		elem.append(link);
+	(ticketCard) => {
+		ticketCard.classList.add('clockify-trello-card');
+
+		ticketCard.addEventListener('mouseover', () => {
+			const isButtonAlreadyAdded = $('.clockifyButton', ticketCard);
+			if (isButtonAlreadyAdded) return;
+
+			const ticketId = text('a.zd_v2-ticketidwrapper-ticketId', ticketCard);
+			const ticketSubject = text('a .zd_v2-kanbanlistitem-subject', ticketCard);
+
+			const description = `[#${ticketId}##] ${ticketSubject}`;
+
+			const link = clockifyButton.createButton({ description, small: true });
+
+			link.style.position = 'absolute';
+			link.style.right = '64px';
+			link.style.bottom = '16px';
+
+			ticketCard.append(link);
+		});
 	}
 );

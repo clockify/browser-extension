@@ -57,6 +57,7 @@ class ProjectList extends React.Component {
 		this.forceProjects = this.props.workspaceSettings.forceProjects;
 		this.closeProjectList = this.closeProjectList.bind(this);
 		this.getProjects = debounce(this.getProjects.bind(this), 500);
+		this.handleScroll = this.handleScroll.bind(this);
 	}
 
 	get initialProjectList() {
@@ -70,6 +71,7 @@ class ProjectList extends React.Component {
 
 	async setAsyncStateItems() {
 		const isOffline = await localStorage.getItem('offline');
+		const darkMode = await this.isEnabledDarkMode();
 		let userRoles = (await localStorage.getItem('userRoles')) || [];
 		let projectManagerFor = userRoles
 			.find(({ role }) => role === 'PROJECT_MANAGER')
@@ -77,9 +79,9 @@ class ProjectList extends React.Component {
 		if (userRoles.length) {
 			userRoles = userRoles.map(({ role }) => role);
 		}
-		const workspaceSettings = await localStorage.getItem('workspaceSettings');
-		const isSpecialFilter = workspaceSettings
-			? JSON.parse(workspaceSettings).projectPickerSpecialFilter
+		const userSettings = await localStorage.getItem('userSettings');
+		const isSpecialFilter = userSettings
+			? JSON.parse(userSettings).projectPickerSpecialFilter
 			: false;
 		const color = await this.getColorForProject();
 		const preProjectList = (await localStorage.getItem('preProjectList')) || {};
@@ -99,6 +101,7 @@ class ProjectList extends React.Component {
 			clientProjects,
 			userRoles,
 			projectManagerFor,
+			darkMode,
 		}));
 	}
 
@@ -182,16 +185,28 @@ class ProjectList extends React.Component {
 					const projects = response.data;
 					const projectList =
 						page === 1 ? projects : this.state.projectList.concat(projects);
+					let projectListToPutInState;
+					if (this.state.filter.length > 0) {
+						projectListToPutInState = projectList.filter(
+							(project) => project.id !== 'no-project'
+						);
+					} else if (projectList.length > 0) {
+						projectListToPutInState = projectList;
+					}
+					if (
+						!this.forceProjects &&
+						!projectListToPutInState.find(
+							(project) => project.id === 'no-project'
+						)
+					) {
+						projectListToPutInState = [
+							_noProjectObj(),
+							...projectListToPutInState,
+						];
+					}
 					this.setState(
 						{
-							projectList:
-								this.state.filter.length > 0
-									? projectList.filter((project) => project.id !== 'no-project')
-									: projectList.length > 0
-									? projectList
-									: this.forceProjects
-									? []
-									: [_noProjectObj()],
+							projectList: projectListToPutInState,
 							page: this.state.page + 1,
 						},
 						() => {
@@ -278,6 +293,7 @@ class ProjectList extends React.Component {
 	}
 
 	getClients(projects) {
+		if (!projects) return [];
 		const { projectFavorites } = this.props.workspaceSettings;
 		if (projectFavorites) {
 			const clientProjects = this.groupByClientName(
@@ -431,17 +447,21 @@ class ProjectList extends React.Component {
 		);
 	}
 
-	async getColorForProject() {
+	async isEnabledDarkMode() {
 		const userId = await localStorage.getItem('userId');
 		const darkMode = await localStorage.getItem('darkMode');
 		const darkModeFromStorage = darkMode ? JSON.parse(darkMode) : [];
 
-		if (
+		return (
 			darkModeFromStorage.length > 0 &&
 			darkModeFromStorage.filter(
 				(darkMode) => darkMode.userId === userId && darkMode.enabled
 			).length > 0
-		) {
+		);
+	}
+
+	async getColorForProject() {
+		if (await this.isEnabledDarkMode()) {
 			return '#90A4AE';
 		} else {
 			return '#999999';
@@ -459,6 +479,15 @@ class ProjectList extends React.Component {
 			modalProject: project,
 			tasksModalOpen: true,
 		});
+	}
+
+	handleScroll(event) {
+		const bottom =
+			event.target.scrollHeight - event.target.scrollTop ===
+			event.target.clientHeight;
+		if (bottom && this.state.loadMore) {
+			this.loadMoreProjects();
+		}
 	}
 
 	render() {
@@ -590,7 +619,10 @@ class ProjectList extends React.Component {
 					></span>
 				</div>
 				{this.props.taskRequired && (
-					<div className="clokify-error">
+					<div
+						className="clokify-error"
+						style={{ color: this.state.darkMode ? 'white' : 'black' }}
+					>
 						{locales.CANT_SAVE_WITHOUT_REQUIRED_FIELDS} ({locales.TASK})
 					</div>
 				)}
@@ -603,7 +635,10 @@ class ProjectList extends React.Component {
 							id="project-dropdown"
 							ref={this.projectListDropdownRef}
 						>
-							<div className="project-list-dropdown--content">
+							<div
+								onScroll={this.handleScroll}
+								className="project-list-dropdown--content"
+							>
 								<div className="project-list-input">
 									<div className="project-list-input--border">
 										<input
@@ -787,14 +822,6 @@ class ProjectList extends React.Component {
 								>
 									<span>{this.state.specFilterNoTasksOrProject}</span>
 								</div>
-								{this.state.loadMore && (
-									<div
-										className="project-list-load"
-										onClick={this.loadMoreProjects.bind(this)}
-									>
-										{locales.LOAD_MORE}
-									</div>
-								)}
 								{isEnabledCreateProject && (
 									<>
 										<div className="projects-list__bottom-padding"></div>

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { getBrowser, isChrome } from '../helpers/browser-helper';
+import { getBrowser } from '../helpers/browser-helper';
 import Header from './header.component';
 import { debounce } from '../helpers/utils';
 import { getLocalStorageEnums } from '../enums/local-storage.enum';
@@ -10,12 +10,9 @@ import { getKeyCodes } from '../enums/key-codes.enum';
 import Pomodoro from './pomodoro.component';
 import DarkModeComponent from './dark-mode.component';
 import DefaultProject from './default-project.component';
-
 import Toaster from './toaster-component';
 import HomePage from './home-page.component';
 import locales from '../helpers/locales';
-
-import dateFnsLocale from './date-fns-locale';
 
 const htmlStyleHelpers = new HtmlStyleHelper();
 
@@ -24,40 +21,11 @@ class Settings extends Component {
 		super(props);
 
 		this.state = {
-			userEmail: '',
-			userPicture: '',
-			userTimeFormat: 'HOUR24',
-			createObjects: null,
-			appendWebsiteURL: false,
-			isSelfHosted: null,
-			idleDetection: false,
-			idleDetectionCounter: '',
-			timerShortcut: true,
-			reminder: false,
-			reminderFromTime: '',
-			reminderToTime: '',
-			reminderMinutesSinceLastEntry: 0,
-			contextMenuEnabled: true,
-			autoStartOnBrowserStart: false,
-			autoStopOnBrowserClose: false,
-			showPostStartPopup: true,
+			...this.props.userSettingsData,
 			changeSaved: false,
-			daysOfWeekLocales: [],
-			daysOfWeek: [
-				{ id: 1, name: 'MON', active: true },
-				{ id: 2, name: 'TUE', active: true },
-				{ id: 3, name: 'WED', active: true },
-				{ id: 4, name: 'THU', active: true },
-				{ id: 5, name: 'FRI', active: true },
-				{ id: 6, name: 'SAT', active: false },
-				{ id: 7, name: 'SUN', active: false },
-			],
-			stopTimerOnSelectedTime: false,
-			timeToStopTimer: '',
 		};
 
 		this.pomodoroEnd = React.createRef();
-		this.setAsyncStateItems = this.setAsyncStateItems.bind(this);
 		this.toggleDay = this.toggleDay.bind(this);
 		this.checkForRemindersDatesAndTimes =
 			this.checkForRemindersDatesAndTimes.bind(this);
@@ -65,190 +33,14 @@ class Settings extends Component {
 			this.toggleStopTimerOnSelectedTime.bind(this);
 	}
 
-	async setAsyncStateItems() {
-		const createObjects = JSON.parse(
-			await localStorage.getItem('createObjects', false)
-		);
-		const isSelfHosted = JSON.parse(
-			await localStorage.getItem('selfHosted', false)
-		);
-		const daysOfWeekLocales = await dateFnsLocale.getDaysShort();
-		const userEmail = await localStorage.getItem('userEmail');
-		const userPicture = await localStorage.getItem('profilePicture');
-		this.setState({
-			createObjects,
-			isSelfHosted,
-			daysOfWeekLocales,
-			userEmail,
-			userPicture,
-		});
-	}
-
 	componentDidMount() {
-		this.getUserSettings();
 		this.scrollIntoView = this.scrollIntoView.bind(this);
-		this.setAsyncStateItems();
 	}
 
 	scrollIntoView() {
 		setTimeout(() => {
 			this.pomodoroEnd.current.scrollIntoView({ behavior: 'smooth' });
 		}, 200);
-	}
-
-	async isAppendWebsiteURLOn() {
-		const appendWebsiteURL = await localStorage.getItem('appendWebsiteURL');
-		this.setState({
-			appendWebsiteURL,
-		});
-	}
-
-	async isIdleDetectionOn() {
-		const idleDetectionFromStorage = await localStorage.getItem(
-			'idleDetection'
-		);
-		const userId = await localStorage.getItem('userId');
-
-		this.setState({
-			idleDetectionCounter:
-				idleDetectionFromStorage &&
-				JSON.parse(idleDetectionFromStorage).filter(
-					(idleDetectionByUser) =>
-						idleDetectionByUser.userId === userId &&
-						idleDetectionByUser.counter > 0
-				).length > 0
-					? JSON.parse(idleDetectionFromStorage).filter(
-							(idleDetectionByUser) =>
-								idleDetectionByUser.userId === userId &&
-								idleDetectionByUser.counter > 0
-					  )[0].counter
-					: 0,
-			idleDetection: !!(
-				idleDetectionFromStorage &&
-				JSON.parse(idleDetectionFromStorage).filter(
-					(idleDetectionByUser) =>
-						idleDetectionByUser.userId === userId &&
-						idleDetectionByUser.counter > 0
-				).length > 0
-			),
-		});
-	}
-
-	async isShowPostStartPopup() {
-		const showPostStartPopup = JSON.parse(
-			await localStorage.getItem('permanent_showPostStartPopup', 'true')
-		);
-		this.setState({ showPostStartPopup });
-		localStorage.setItem(
-			'showPostStartPopup',
-			showPostStartPopup.toString(),
-			getLocalStorageEnums().PERMANENT_PREFIX
-		);
-	}
-
-	async isTimerShortcutOn() {
-		const timerShortcutFromStorage = await localStorage.getItem(
-			'timerShortcut'
-		);
-		const userId = await localStorage.getItem('userId');
-
-		this.setState({
-			timerShortcut:
-				timerShortcutFromStorage &&
-				JSON.parse(timerShortcutFromStorage).filter(
-					(timerShortcutByUser) =>
-						timerShortcutByUser &&
-						timerShortcutByUser.userId === userId &&
-						timerShortcutByUser.enabled
-				).length > 0,
-		});
-	}
-
-	async isContextMenuOn() {
-		const contextMenuEnabled = JSON.parse(
-			await localStorage.getItem('contextMenuEnabled', 'true')
-		);
-		this.setState({ contextMenuEnabled });
-	}
-
-	async isReminderOn() {
-		const reminderFromStorage = await localStorage.getItem('reminders');
-		const userId = await localStorage.getItem('userId');
-		const reminderFromStorageForUser = reminderFromStorage
-			? JSON.parse(reminderFromStorage).filter(
-					(reminder) => reminder.userId === userId
-			  )[0]
-			: null;
-
-		if (!reminderFromStorageForUser) {
-			return;
-		}
-
-		this.setState({
-			reminder: reminderFromStorageForUser.enabled,
-		});
-
-		setTimeout(() => this.checkForRemindersDatesAndTimes(), 200);
-	}
-
-	async getMemberProfile() {
-		const activeWorkspaceId = await localStorage.getItem('activeWorkspaceId');
-		getBrowser()
-			.runtime.sendMessage({
-				eventName: 'getMemberProfile',
-				options: { userId: this.state.userId, workspaceId: activeWorkspaceId },
-			})
-			.then((response) => {
-				console.log('member profile', response);
-				this.setState(
-					{
-						memberProfile: response.data,
-					},
-					() => {
-						this.isStopTimerOnSelectedTimeOn();
-					}
-				);
-			});
-	}
-
-	getDefaultStopTime(startTime) {
-		let formattedTime = '17:00';
-		// if (this.state.reminderSettings) {
-		if (this.state.memberProfile && this.state.memberProfile.workCapacity) {
-			let [hours, minutes] = startTime.split(':');
-
-			// Initialize a Date object with the current date and the specified hours and minutes
-			let date = new Date();
-			date.setHours(hours);
-			date.setMinutes(minutes);
-
-			function checkTime(i) {
-				if (i < 10) {
-					i = '0' + i;
-				}
-				return i;
-			}
-			// Extract the number of hours and minutes from the work capacity string
-			// The work capacity string is in the format "PT3H30M", where the number of hours is 3 and the number of minutes is 30
-			const capacityHours =
-				this.state.memberProfile.workCapacity.match(/\d+H/)[0]; // extract the number of hours
-			const capacityMinutes =
-				this.state.memberProfile.workCapacity.match(/\d+M/); // try to extract the number of minutes
-			const hoursAsNumber = parseInt(capacityHours.slice(0, -1), 10); // convert the hours string to a number
-			const minutesAsNumber = capacityMinutes
-				? parseInt(capacityMinutes[0].slice(0, -1), 10)
-				: 0; // convert the minutes string to a number, or use 0 if no minutes are present
-			const timeInHours = hoursAsNumber + minutesAsNumber / 60;
-
-			date.setMinutes(date.getMinutes() + parseFloat(timeInHours) * 60);
-			// Format the hours and minutes as a string in HH:mm format
-			let h = checkTime(date.getHours());
-			let m = checkTime(date.getMinutes());
-
-			formattedTime = `${h}:${m}`;
-		}
-
-		return formattedTime;
 	}
 
 	convert24To12(time) {
@@ -272,7 +64,7 @@ class Settings extends Component {
 		const stopTimerOnSelectedTime = await localStorage.getItem(
 			'stopTimerOnSelectedTime'
 		);
-		let defaultStopTime = this.getDefaultStopTime(
+		let defaultStopTime = this.props.getDefaultStopTime(
 			userData.settings.myStartOfDay
 		);
 		//if there is no stopTimerOnSelectedTime in local storage, set it to default
@@ -332,33 +124,6 @@ class Settings extends Component {
 		);
 	}
 
-	async isAutoStartStopOn() {
-		const userId = await localStorage.getItem('userId');
-		const autoStartOnBrowserStart = await localStorage.getItem(
-			'autoStartOnBrowserStart'
-		);
-		const autoStartFromStorage = autoStartOnBrowserStart
-			? JSON.parse(autoStartOnBrowserStart)
-			: [];
-		const autoStopOnBrowserClose = await localStorage.getItem(
-			'autoStopOnBrowserClose'
-		);
-		const autoStopFromStorage = autoStopOnBrowserClose
-			? JSON.parse(autoStopOnBrowserClose)
-			: [];
-
-		this.setState({
-			autoStartOnBrowserStart:
-				autoStartFromStorage.filter(
-					(autoStart) => autoStart.userId === userId && autoStart.enabled
-				).length > 0,
-			autoStopOnBrowserClose:
-				autoStopFromStorage.filter(
-					(autoStop) => autoStop.userId === userId && autoStop.enabled
-				).length > 0,
-		});
-	}
-
 	async checkForRemindersDatesAndTimes() {
 		const userId = await localStorage.getItem('userId');
 		const reminderDatesAndTimesFromStorageForUser = JSON.parse(
@@ -378,39 +143,6 @@ class Settings extends Component {
 				active: reminderDatesAndTimesFromStorageForUser.dates.includes(day.id),
 			})),
 		}));
-	}
-
-	getUserSettings() {
-		getBrowser()
-			.runtime.sendMessage({
-				eventName: 'getUser',
-			})
-			.then((response) => {
-				let data = response.data;
-				console.log('userData', data);
-				this.setState(
-					{
-						user: data,
-						userId: data.id,
-						userEmail: data.email,
-						userPicture: data.profilePicture,
-						userTimeFormat: data.settings.timeFormat,
-						userStartOfDay: data.settings.myStartOfDay,
-					},
-					() => {
-						localStorage.setItem('userEmail', this.state.userEmail);
-						localStorage.setItem('profilePicture', this.state.userPicture);
-						this.getMemberProfile();
-						this.isIdleDetectionOn();
-						this.isReminderOn();
-						this.isAutoStartStopOn();
-						this.isTimerShortcutOn();
-						this.isContextMenuOn();
-						this.isShowPostStartPopup();
-						this.isAppendWebsiteURLOn();
-					}
-				);
-			});
 	}
 
 	toggleShowPostStartPopup() {
@@ -700,10 +432,30 @@ class Settings extends Component {
 					return reminder;
 				});
 			} else {
+				const noDatesReminder = reminderDatesAndTimesFromStorage.find(
+					(reminder) =>
+						reminder.userId === userId && reminder.dates.length === 0
+				);
+
+				if (noDatesReminder) {
+					const resetDates = reminderDatesAndTimesFromStorage.map(
+						(reminder) => {
+							if (reminder.userId === userId && reminder.dates.length === 0) {
+								return { ...reminder, dates: [1, 2, 3, 4, 5] };
+							}
+							return reminder;
+						}
+					);
+					localStorage.setItem(
+						'reminderDatesAndTimes',
+						JSON.stringify(resetDates),
+						getLocalStorageEnums().PERMANENT_PREFIX
+					);
+				}
+
 				reminderToSaveInStorage = reminderFromStorage.map((reminder) => {
 					if (reminder.userId === userId) {
 						reminder.enabled = true;
-
 						this.setState(
 							{
 								reminder: true,
@@ -755,7 +507,7 @@ class Settings extends Component {
 				stopTimerOnSelectedTimeFromStorage.map((stopTimerOnSelectedTime) => {
 					if (stopTimerOnSelectedTime.userId === userId) {
 						stopTimerOnSelectedTime.enabled = true;
-						stopTimerOnSelectedTime.time = this.getDefaultStopTime(
+						stopTimerOnSelectedTime.time = this.props.getDefaultStopTime(
 							userSettings.myStartOfDay
 						);
 					}
@@ -919,6 +671,9 @@ class Settings extends Component {
 			if (reminder.userId === userId) {
 				if (reminder.dates.includes(day.id)) {
 					reminder.dates.splice(reminder.dates.indexOf(day.id), 1);
+					if (reminder.dates.length === 0) {
+						this.toggleReminder();
+					}
 					this.setState((state) => ({
 						daysOfWeek: state.daysOfWeek.map((day) => ({
 							...day,
@@ -1530,6 +1285,7 @@ class Settings extends Component {
 								value={moment(this.state.reminderFromTime, 'HH:mm')}
 								format="HH:mm"
 								size="small"
+								allowClear={false}
 								onChange={this.selectReminderFromTime.bind(this)}
 								onOpenChange={this.openReminderFromTimePicker.bind(this)}
 							/>
@@ -1542,6 +1298,7 @@ class Settings extends Component {
 								value={moment(this.state.reminderToTime, 'HH:mm')}
 								format="HH:mm"
 								size="small"
+								allowClear={false}
 								onChange={this.selectReminderToTime.bind(this)}
 								onOpenChange={this.openReminderToTimePicker.bind(this)}
 							/>
@@ -1553,6 +1310,7 @@ class Settings extends Component {
 							onBlur={this.changeReminderMinutes.bind(this)}
 							onKeyDown={this.changeReminderMinutesOnEnter.bind(this)}
 							onChange={this.changeReminderMinutesState.bind(this)}
+							maxLength={6}
 						/>
 						<p>{locales.MINUTES_SINCE_LAST_ENTRY}</p>
 					</div>
@@ -1616,6 +1374,7 @@ class Settings extends Component {
 							id="idleDetectionCounter"
 							value={this.state.idleDetectionCounter}
 							onBlur={this.changeIdleCounter.bind(this)}
+							maxLength={6}
 							onKeyDown={this.changeIdleCounterOnEnter.bind(this)}
 							onChange={this.changeIdleDetectionCounterState.bind(this)}
 						/>

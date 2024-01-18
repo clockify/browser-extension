@@ -221,7 +221,7 @@ function ClockifyButton(props) {
 		});
 		if (_clockifyShowPostStartPopup) {
 			// OpenPostStartPopupDlg(entry);
-			if (entry.message) alert(entry.message);
+			if (entry?.message) alert(entry.message);
 			setState((state) => ({
 				...state,
 				isPopupOpen: true,

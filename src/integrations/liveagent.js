@@ -29,9 +29,7 @@ clockifyButton.render(
 	'.ArticleDetails:not(.clockify)',
 	{ observe: true },
 	(articleDetails) => {
-		const articleHeader = $(
-			'.ArticleContentView .DialogTitle'
-		).textContent.trim();
+		const articleHeader = $('.KbTitle').textContent.trim();
 		const link = clockifyButton.createButton(articleHeader);
 		link.style.display = 'inline-block';
 		link.style.cursor = 'pointer';

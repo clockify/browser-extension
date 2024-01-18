@@ -10,6 +10,8 @@ import locales from '../helpers/locales';
 import WsChange2FAPopupComponent from '../components/ws-change-2fa-popup.component';
 import SelfHostedBootSettings from '../components/self-hosted-login-settings.component';
 import { logout } from '../helpers/utils';
+import dateFnsLocale from './date-fns-locale';
+import { getLocalStorageEnums } from '../enums/local-storage.enum';
 
 const environment = getEnv();
 const htmlStyleHelper = new HtmlStyleHelper();
@@ -30,6 +32,17 @@ class Menu extends React.Component {
 			workspaces: [],
 			selectedWorkspace: null,
 			previousWorkspace: null,
+			userSettingsData: {
+				daysOfWeek: [
+					{ id: 1, name: 'MON', active: true },
+					{ id: 2, name: 'TUE', active: true },
+					{ id: 3, name: 'WED', active: true },
+					{ id: 4, name: 'THU', active: true },
+					{ id: 5, name: 'FRI', active: true },
+					{ id: 6, name: 'SAT', active: false },
+					{ id: 7, name: 'SUN', active: false },
+				],
+			},
 		};
 
 		// this.onSetWorkspace = this.onSetWorkspace.bind(this);
@@ -45,6 +58,8 @@ class Menu extends React.Component {
 
 	componentDidMount() {
 		this.getWorkspaces();
+		this.getUserSettings();
+		this.setAsyncUserItems();
 	}
 
 	async componentDidUpdate(prevProps) {
@@ -57,6 +72,377 @@ class Menu extends React.Component {
 		if (this.props.workspaceSettings !== prevProps.workspaceSettings) {
 			this.getWorkspaces();
 		}
+	}
+
+	getUserSettings() {
+		getBrowser()
+			.runtime.sendMessage({
+				eventName: 'getUser',
+			})
+			.then((response) => {
+				let data = response.data;
+				this.setState(
+					(prevState) => ({
+						userSettingsData: {
+							...prevState.userSettingsData,
+							user: data,
+							userId: data.id,
+							userEmail: data.email,
+							userPicture: data.profilePicture,
+							userTimeFormat: data.settings.timeFormat,
+							userStartOfDay: data.settings.myStartOfDay,
+						},
+					}),
+					() => {
+						localStorage.setItem('userEmail', this.state.userEmail);
+						localStorage.setItem('profilePicture', this.state.userPicture);
+						this.getMemberProfile();
+						this.isIdleDetectionOn();
+						this.isReminderOn();
+						this.isAutoStartStopOn();
+						this.isTimerShortcutOn();
+						this.isContextMenuOn();
+						this.isShowPostStartPopup();
+						this.isAppendWebsiteURLOn();
+					}
+				);
+			});
+	}
+
+	async getMemberProfile() {
+		const activeWorkspaceId = await localStorage.getItem('activeWorkspaceId');
+		getBrowser()
+			.runtime.sendMessage({
+				eventName: 'getMemberProfile',
+				options: { userId: this.state.userId, workspaceId: activeWorkspaceId },
+			})
+			.then((response) => {
+				this.setState(
+					(prevState) => ({
+						userSettingsData: {
+							...prevState.userSettingsData,
+							memberProfile: response.data,
+						},
+					}),
+					() => {
+						this.isStopTimerOnSelectedTimeOn();
+					}
+				);
+			});
+	}
+
+	async isIdleDetectionOn() {
+		const idleDetectionFromStorage = await localStorage.getItem(
+			'idleDetection'
+		);
+		const userId = await localStorage.getItem('userId');
+
+		this.setState((prevState) => ({
+			userSettingsData: {
+				...prevState.userSettingsData,
+				idleDetectionCounter:
+					idleDetectionFromStorage &&
+					JSON.parse(idleDetectionFromStorage).filter(
+						(idleDetectionByUser) =>
+							idleDetectionByUser.userId === userId &&
+							idleDetectionByUser.counter > 0
+					).length > 0
+						? JSON.parse(idleDetectionFromStorage).filter(
+								(idleDetectionByUser) =>
+									idleDetectionByUser.userId === userId &&
+									idleDetectionByUser.counter > 0
+						  )[0].counter
+						: 0,
+				idleDetection: !!(
+					idleDetectionFromStorage &&
+					JSON.parse(idleDetectionFromStorage).filter(
+						(idleDetectionByUser) =>
+							idleDetectionByUser.userId === userId &&
+							idleDetectionByUser.counter > 0
+					).length > 0
+				),
+			},
+		}));
+	}
+
+	async isReminderOn() {
+		const reminderFromStorage = await localStorage.getItem('reminders');
+		const userId = await localStorage.getItem('userId');
+		const reminderFromStorageForUser = reminderFromStorage
+			? JSON.parse(reminderFromStorage).filter(
+					(reminder) => reminder.userId === userId
+			  )[0]
+			: null;
+
+		if (!reminderFromStorageForUser) {
+			return;
+		}
+
+		this.setState((prevState) => ({
+			userSettingsData: {
+				...prevState.userSettingsData,
+				reminder: reminderFromStorageForUser.enabled,
+			},
+		}));
+		setTimeout(() => this.checkForRemindersDatesAndTimes(), 200);
+	}
+
+	async isAutoStartStopOn() {
+		const userId = await localStorage.getItem('userId');
+		const autoStartOnBrowserStart = await localStorage.getItem(
+			'autoStartOnBrowserStart'
+		);
+		const autoStartFromStorage = autoStartOnBrowserStart
+			? JSON.parse(autoStartOnBrowserStart)
+			: [];
+		const autoStopOnBrowserClose = await localStorage.getItem(
+			'autoStopOnBrowserClose'
+		);
+		const autoStopFromStorage = autoStopOnBrowserClose
+			? JSON.parse(autoStopOnBrowserClose)
+			: [];
+
+		this.setState((prevState) => ({
+			userSettingsData: {
+				...prevState.userSettingsData,
+				autoStartOnBrowserStart:
+					autoStartFromStorage.filter(
+						(autoStart) => autoStart.userId === userId && autoStart.enabled
+					).length > 0,
+				autoStopOnBrowserClose:
+					autoStopFromStorage.filter(
+						(autoStop) => autoStop.userId === userId && autoStop.enabled
+					).length > 0,
+			},
+		}));
+	}
+
+	async isTimerShortcutOn() {
+		const timerShortcutFromStorage = await localStorage.getItem(
+			'timerShortcut'
+		);
+		const userId = await localStorage.getItem('userId');
+
+		this.setState((prevState) => ({
+			userSettingsData: {
+				...prevState.userSettingsData,
+				timerShortcut:
+					timerShortcutFromStorage &&
+					JSON.parse(timerShortcutFromStorage).filter(
+						(timerShortcutByUser) =>
+							timerShortcutByUser &&
+							timerShortcutByUser.userId === userId &&
+							timerShortcutByUser.enabled
+					).length > 0,
+			},
+		}));
+	}
+
+	async isContextMenuOn() {
+		const contextMenuEnabled = JSON.parse(
+			await localStorage.getItem('contextMenuEnabled', 'true')
+		);
+
+		this.setState((prevState) => ({
+			userSettingsData: {
+				...prevState.userSettingsData,
+				contextMenuEnabled,
+			},
+		}));
+	}
+
+	async isShowPostStartPopup() {
+		const showPostStartPopup = JSON.parse(
+			await localStorage.getItem('permanent_showPostStartPopup', 'true')
+		);
+		this.setState((prevState) => ({
+			userSettingsData: {
+				...prevState.userSettingsData,
+				showPostStartPopup,
+			},
+		}));
+		localStorage.setItem(
+			'showPostStartPopup',
+			showPostStartPopup.toString(),
+			getLocalStorageEnums().PERMANENT_PREFIX
+		);
+	}
+
+	async isAppendWebsiteURLOn() {
+		const appendWebsiteURL = await localStorage.getItem('appendWebsiteURL');
+		this.setState((prevState) => ({
+			userSettingsData: {
+				...prevState.userSettingsData,
+				appendWebsiteURL,
+			},
+		}));
+	}
+
+	async isStopTimerOnSelectedTimeOn() {
+		const userData = this.state.userSettingsData.user;
+		const stopTimerOnSelectedTime = await localStorage.getItem(
+			'stopTimerOnSelectedTime'
+		);
+		let defaultStopTime = this.getDefaultStopTime(
+			userData.settings.myStartOfDay
+		);
+		//if there is no stopTimerOnSelectedTime in local storage, set it to default
+		if (!stopTimerOnSelectedTime) {
+			localStorage.setItem(
+				'stopTimerOnSelectedTime',
+				JSON.stringify([
+					{
+						userId: userData.id,
+						enabled: false,
+						time: defaultStopTime,
+					},
+				]),
+				getLocalStorageEnums().PERMANENT_PREFIX
+			);
+			this.setState((prevState) => ({
+				userSettingsData: {
+					...prevState.userSettingsData,
+					timeToStopTimer: defaultStopTime,
+				},
+			}));
+			return;
+		}
+
+		const parsedStopTimerOnSelectedTime = JSON.parse(stopTimerOnSelectedTime);
+
+		let stopTimerOnSelectedTimeForUser = undefined;
+		if (stopTimerOnSelectedTime.length > 0) {
+			stopTimerOnSelectedTimeForUser = parsedStopTimerOnSelectedTime.find(
+				(stopTimerOnSelectedTime) => {
+					return stopTimerOnSelectedTime.userId === userData.id;
+				}
+			);
+		}
+		// if there is no stopTimerOnSelectedTime for the user, set it to default
+		if (!stopTimerOnSelectedTimeForUser) {
+			localStorage.setItem(
+				'stopTimerOnSelectedTime',
+				JSON.stringify([
+					...JSON.parse(stopTimerOnSelectedTime),
+					{
+						userId: userData.id,
+						enabled: false,
+						time: defaultStopTime,
+					},
+				]),
+				getLocalStorageEnums().PERMANENT_PREFIX
+			);
+			this.setState((prevState) => ({
+				userSettingsData: {
+					...prevState.userSettingsData,
+					timeToStopTimer: defaultStopTime,
+				},
+			}));
+			return;
+		}
+		this.setState(
+			(prevState) => ({
+				userSettingsData: {
+					...prevState.userSettingsData,
+					stopTimerOnSelectedTime: stopTimerOnSelectedTimeForUser.enabled,
+					timeToStopTimer: stopTimerOnSelectedTimeForUser.time,
+				},
+			}),
+			() => {
+				getBrowser().runtime.sendMessage({ eventName: 'createStopTimerEvent' });
+			}
+		);
+	}
+
+	getDefaultStopTime(startTime) {
+		let formattedTime = '17:00';
+		// if (this.state.reminderSettings) {
+		if (
+			this.state.userSettingsData.memberProfile &&
+			this.state.userSettingsData.memberProfile.workCapacity
+		) {
+			let [hours, minutes] = startTime.split(':');
+
+			// Initialize a Date object with the current date and the specified hours and minutes
+			let date = new Date();
+			date.setHours(hours);
+			date.setMinutes(minutes);
+
+			function checkTime(i) {
+				if (i < 10) {
+					i = '0' + i;
+				}
+				return i;
+			}
+			// Extract the number of hours and minutes from the work capacity string
+			// The work capacity string is in the format "PT3H30M", where the number of hours is 3 and the number of minutes is 30
+			const capacityHours =
+				this.state.userSettingsData.memberProfile.workCapacity.match(/\d+H/)[0]; // extract the number of hours
+			const capacityMinutes =
+				this.state.memberProfile.userSettingsData.workCapacity.match(/\d+M/); // try to extract the number of minutes
+			const hoursAsNumber = parseInt(capacityHours.slice(0, -1), 10); // convert the hours string to a number
+			const minutesAsNumber = capacityMinutes
+				? parseInt(capacityMinutes[0].slice(0, -1), 10)
+				: 0; // convert the minutes string to a number, or use 0 if no minutes are present
+			const timeInHours = hoursAsNumber + minutesAsNumber / 60;
+
+			date.setMinutes(date.getMinutes() + parseFloat(timeInHours) * 60);
+			// Format the hours and minutes as a string in HH:mm format
+			let h = checkTime(date.getHours());
+			let m = checkTime(date.getMinutes());
+
+			formattedTime = `${h}:${m}`;
+		}
+
+		return formattedTime;
+	}
+
+	async checkForRemindersDatesAndTimes() {
+		const userId = await localStorage.getItem('userId');
+		const reminderDatesAndTimesFromStorageForUser = JSON.parse(
+			await localStorage.getItem('reminderDatesAndTimes')
+		).filter(
+			(reminderDatesAndTimes) => reminderDatesAndTimes.userId === userId
+		)[0];
+
+		this.setState((prevState) => ({
+			userSettingsData: {
+				...prevState.userSettingsData,
+				reminderFromTime: reminderDatesAndTimesFromStorageForUser.timeFrom,
+				reminderToTime: reminderDatesAndTimesFromStorageForUser.timeTo,
+				reminderMinutesSinceLastEntry: parseInt(
+					reminderDatesAndTimesFromStorageForUser.minutesSinceLastEntry
+				),
+				daysOfWeek: prevState.userSettingsData.daysOfWeek.map((day) => ({
+					...day,
+					active: reminderDatesAndTimesFromStorageForUser.dates.includes(
+						day.id
+					),
+				})),
+			},
+		}));
+	}
+	async setAsyncUserItems() {
+		const createObjects = JSON.parse(
+			await localStorage.getItem('createObjects', false)
+		);
+		const isSelfHosted = JSON.parse(
+			await localStorage.getItem('selfHosted', false)
+		);
+		const daysOfWeekLocales = await dateFnsLocale.getDaysShort();
+		const userEmail = await localStorage.getItem('userEmail');
+		const userPicture = await localStorage.getItem('profilePicture');
+
+		this.setState((prevState) => ({
+			userSettingsData: {
+				...prevState.userSettingsData,
+				createObjects,
+				isSelfHosted,
+				daysOfWeekLocales,
+				userEmail,
+				userPicture,
+			},
+		}));
 	}
 
 	getWorkspaces() {
@@ -106,7 +492,11 @@ class Menu extends React.Component {
 		}
 		if (!JSON.parse(await localStorage.getItem('offline'))) {
 			window.reactRoot.render(
-				<Settings workspaceSettings={this.props.workspaceSettings} />
+				<Settings
+					userSettingsData={this.state.userSettingsData}
+					getDefaultStopTime={this.getDefaultStopTime}
+					workspaceSettings={this.props.workspaceSettings}
+				/>
 			);
 		}
 	}
@@ -121,7 +511,7 @@ class Menu extends React.Component {
 		this.disconnectWebSocket();
 		htmlStyleHelper.removeDarkModeClassFromBodyElement();
 		logout();
-		if (!isChrome()) localStorage.removeItem('subDomainName');
+		//if (!isChrome()) localStorage.removeItem('subDomainName');
 	}
 
 	async openWebDashboard() {

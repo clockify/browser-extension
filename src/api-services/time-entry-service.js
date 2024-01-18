@@ -233,17 +233,17 @@ class TimeEntry extends ClockifyService {
 
 		const endPoint = `${await this.getUrlTimeEntries()}/${id}/full`;
 
-		const { data: entry, error } = await this.apiCall(endPoint, 'PUT', body);
-		if (error) {
-			console.error('oh no, failed', error);
-			if (error.status === 400) {
+		const data = await this.apiCall(endPoint, 'PUT', body);
+		if (data.error) {
+			if (data.error.status === 400) {
+				return data;
 			}
 		} else {
 			aBrowser.action.setIcon({ path: iconPathEnded });
 			setTimeEntryInProgress(null);
 			aBrowser.runtime.sendMessage({ eventName: 'TIME_ENTRY_STOPPED' });
 		}
-		return { entry, error };
+		return data;
 	}
 
 	static async endInProgressAndStartNew(entry, description) {

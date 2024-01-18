@@ -40,6 +40,70 @@ const commands = {
 };
 Object.freeze(commands);
 
+aBrowser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
+	const isIdentityRedirectUrl = tab.url.includes(
+		aBrowser.identity.getRedirectURL()
+	);
+	if (!isIdentityRedirectUrl && tab.url.includes('clockify.me')) {
+		return;
+	}
+	if (isIdentityRedirectUrl) {
+		// to use frontendUrl?
+		try {
+			this.extractAndSaveToken(tab.url);
+		} catch (error) {
+			console.log(error);
+		} finally {
+			aBrowser.tabs.remove(tabId, () => {});
+		}
+		return;
+	}
+	if (changeInfo.status === 'complete') {
+		aBrowser.storage.local.get('permissions', async (result) => {
+			const isLoggedIn = await TokenService.isLoggedIn();
+			if (!tab.url.includes('chrome://') && isLoggedIn) {
+				const userLang = await localStorage.getItem('lang');
+				await clockifyLocales.onProfileLangChange(userLang);
+				let domainInfo = await extractDomainInfo(tab.url, result.permissions);
+				//TODO: find better solution when working with integrattion iframes
+				// since asana breaks on firefox when iframes are not loaded
+				if (domainInfo.file === 'asana.js' && !this.isChrome()) {
+					await pause(1000);
+				}
+				if (domainInfo.file) {
+					aBrowser.tabs.sendMessage(tabId, {
+						eventName: 'cleanup',
+					});
+					aBrowser.scripting.executeScript({
+						target: { tabId },
+						files: ['popupDlg/clockifyDebounce.js'],
+					});
+					aBrowser.scripting.executeScript(
+						{
+							target: { tabId },
+							files: ['contentScripts/clockifyLocales.js'],
+						},
+						() => {
+							aBrowser.scripting.executeScript(
+								{ target: { tabId }, files: ['popupDlg/clockifyButton.js'] },
+								() => {
+									IntegrationSelectors.fetchAndStore({
+										onlyIfPassedFollowingMinutesSinceLastFetch: 60 * 12,
+									});
+									loadScripts(tabId, domainInfo);
+									setTimeout(() => {
+										backgroundWebSocketConnect();
+									}, 1000);
+								}
+							);
+						}
+					);
+				}
+			}
+		});
+	}
+});
+
 function setTimeEntryInProgress(entry) {
 	if (entry?.timeInterval && entry.timeInterval.end !== null) {
 		return;
@@ -276,10 +340,6 @@ aBrowser.commands.onCommand.addListener(async (command) => {
 	}
 });
 
-function pause(ms) {
-	return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
 aBrowser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 	const isIdentityRedirectUrl = tab.url.includes(
 		aBrowser.identity.getRedirectURL()
@@ -298,11 +358,6 @@ aBrowser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 					tab.url,
 					result.permissions
 				);
-				//TODO: find better solution when working with integrattion iframes
-				// since asana breaks on firefox when iframes are not loaded
-				if (integrationInfo.file === 'asana.js' && !this.isChrome()) {
-					await pause(1000);
-				}
 				if (integrationInfo.file) {
 					aBrowser.tabs.sendMessage(tabId, {
 						eventName: 'cleanup',
@@ -320,13 +375,13 @@ aBrowser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 							aBrowser.scripting.executeScript(
 								{ target: { tabId }, files: ['popupDlg/clockifyButton.js'] },
 								() => {
-									IntegrationSelectors.fetchAndStore({
-										onlyIfPassedFollowingMinutesSinceLastFetch: 60 * 12,
-									});
 									loadScripts(tabId, integrationInfo);
 									setTimeout(() => {
 										backgroundWebSocketConnect();
 									}, 1000);
+									IntegrationSelectors.fetchAndStore({
+										onlyIfPassedFollowingMinutesSinceLastFetch: 60 * 12,
+									});
 								}
 							);
 						}

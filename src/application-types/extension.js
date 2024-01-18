@@ -23,6 +23,9 @@ export class Extension {
 		});
 	}
 
+	beforeLoad() {
+		window.reactRoot.render(<div className={'loading-gif-before-load'}></div>);
+	}
 	async afterLoad() {
 		const token = await localStorage.getItem('token');
 		const isOffline = await localStorage.getItem('offline');

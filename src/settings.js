@@ -356,7 +356,10 @@ function filterPermissions(e) {
 
 		if (child) {
 			const childInput = child.getElementsByTagName('input')[0];
-			if (!childInput.id.includes(e.target.value)) {
+
+			const searchTerm = e.target.value?.toLowerCase();
+
+			if (!childInput.id.includes(searchTerm)) {
 				child.style.display = 'none';
 			} else {
 				child.style.display = 'block';

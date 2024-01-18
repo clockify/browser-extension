@@ -236,7 +236,7 @@
 	},
 	"nozbe.com": {
 		"name": "Nozbe",
-		"link": "*://nozbe.app/*",
+		"link": "*://nozbe.app/*,*://*.nozbe.app/*,*://nozbe.com/*,*://*.nozbe.com/*",
 		"script": "nozbe.js"
 	},
 	"openproject.com": {
@@ -326,7 +326,7 @@
 	},
 	"teamwave.com": {
 		"name": "Teamwave",
-		"link": "*://*.teamwave.com/*",
+		"link": "*://*.teamwave.com/*,*://*.*.teamwave.com/*",
 		"script": "teamwave.js"
 	},
 	"teamwork.com": {
@@ -341,7 +341,7 @@
 	},
 	"todoist.com": {
 		"name": "Todoist",
-		"link": "*://todoist.com/*",
+		"link": "*://todoist.com/*,*://app.todoist.com/*",
 		"script": "todoist.js"
 	},
 	"toodledo.com": {

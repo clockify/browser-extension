@@ -48,7 +48,9 @@
             "REMIND_ALL_TITLE": "Lembre-se de aprovar o tempo",
             "REMIND_ALL_BODY": "Pronto para enviar lembretes por email aos gerentes de equipe que ainda não aprovaram as planilhas pendentes de sua equipe?",
             "SUBMIT_FOR_APPROVAL": "Pronto para enviar { startDate } - { endDate } para aprovação, para { userName }?",
-            "REMIND_SUBMIT_LOG_SELECTED_BODY": "Clockify enviará lembrete por e-mail para { users } para registrar seu tempo e enviar seu quadro de horários."
+            "REMIND_SUBMIT_LOG_SELECTED_BODY": "Clockify enviará lembrete por e-mail para { users } para registrar seu tempo e enviar seu quadro de horários.",
+            "APPROVE_ALL_BODY_WITH_INTERPOLATION": "Depois que tudo for aprovado, o tempo será bloqueado e ninguém poderá mais editá-lo.",
+            "REMIND_ALL_BODY_PM": "Pronto para enviar lembretes por e-mail aos gerentes de projeto que ainda não aprovaram as planilhas de horas pendentes dos membros do projeto?"
         },
         "MESSAGES": {
             "TIMESHEET_FAIL": "Falha na Aprovação",
@@ -83,10 +85,12 @@
             "APPROVED_BY": "Aprovado por",
             "WITHDRAWN_BY": "Retirado por",
             "APPROVE": "Aprovar",
-            "REJECT": "Rejeitar"
+            "REJECT": "Rejeitar",
+            "SUBMITTED_BY_WITH_INTERPOLATION": "Enviado por: {value}"
         },
         "GROUPS": {
-            "TOTAL_TIME": "Total"
+            "TOTAL_TIME": "Total",
+            "TOTAL_TIME_WITH_INTERPOLATION": "Total:"
         },
         "SORT_BY": {
             "WEEK": "Classificar por: Semana",
@@ -107,11 +111,16 @@
         "NO_TIMESHEETS_ON_UNSUBMITTED_LABEL": "Não há { value } planilhas de horas para { label }",
         "REMINDER": {
             "ASSIGN_TEAM_MANAGER_TOOLTIP": "Atribua gerentes de equipe para enviar lembretes.",
-            "SELECT_TO_REMIND_TOOLTIP": "Selecione todos os usuários que deseja lembrar."
+            "SELECT_TO_REMIND_TOOLTIP": "Selecione todos os usuários que deseja lembrar.",
+            "DISABLED": "O lembrete está desativado porque não pertence ao período de aprovação atualmente ativo. Para habilitá-lo, altere o período de aprovação nas configurações do WS"
         },
         "NO_TIMESHEETS_MESSAGE": "Sem { value } planilhas de horas",
         "NO_TIMESHEETS_AND_EXPENSES_ON_LABEL": "Não há { value } planilhas de horas e despesas",
-        "NO_TIMESHEETS_AND_EXPENSES_ON_UNSUBMITTED_LABEL": "Não há { value } planilhas de horas e despesas para { label }"
+        "NO_TIMESHEETS_AND_EXPENSES_ON_UNSUBMITTED_LABEL": "Não há { value } planilhas de horas e despesas para { label }",
+        "REMINDERS_TAB": {
+            "SECOND_PART": "tiver planilhas de horas e despesas não enviadas, envie-lhes um lembrete a cada",
+            "THIRD_PART": "do mês"
+        }
     },
     "CALENDAR": {
         "INTEGRATIONS": {
@@ -183,7 +192,8 @@
         },
         "FORM": {
             "DELETE_REASON_LABEL": "Estou excluindo minha conta porque",
-            "DELETE_REASON_BTN": "Selecione o motivo"
+            "DELETE_REASON_BTN": "Selecione o motivo",
+            "DELETE_REASON_LABEL_WITH_INTERPOLATION": "Estou excluindo minha conta porque:"
         },
         "DELETE_REASONS": {
             "REASON_1": "Não encontrei o que preciso",
@@ -199,7 +209,12 @@
         "WORKSPACE_NOT_EMPTY_WARNING": "Há pessoas que dependem dos seus espaços de trabalho",
         "WORKSPACE_NOT_EMPTY_STEP_2": "ou exclua todos os integrantes da equipe das áreas de trabalho",
         "DELETE_FROM_ALL_INFO": "Sua conta será excluída de todas essas áreas de trabalho",
-        "PLEASE_ENTER_EXACT_TEXT": "Por favor, insira o texto exatamente como exibido"
+        "PLEASE_ENTER_EXACT_TEXT": "Por favor, insira o texto exatamente como exibido",
+        "WORKSPACE_NOT_EMPTY_STEP_INFO_WITH_INTERPOLATION": "Antes de excluir sua conta, você deve:",
+        "WORKSPACE_NOT_EMPTY_STEP_FINAL_WITH_INTERPOLATION": "Quando terminar, você pode excluir sua conta com segurança.",
+        "DELETE_FROM_ALL_INFO_WITH_INTERPOLATION": "Sua conta será excluída de todos estes espaços de trabalho:",
+        "WORKSPACE_NOT_EMPTY_WARNING_WITH_INTERPOLATION": "Há pessoas que confiam em seus espaços de trabalho:",
+        "DELETE_ADDONS_INFO": "Ao excluir a conta Clockify, você também poderá perder a conta do Marketplace"
     },
     "REGISTER": {
         "LOGIN_COMMERCIAL": {
@@ -241,13 +256,18 @@
             "ENTER_PASSWORD_PLACEHOLDER": "Digite a senha",
             "ENTER_EMAIL_USERNAME_PLACEHOLDER": "Digite o e-mail/nome de usuário",
             "COUNTINUE_WITH_SAML2_LABEL": "Continue com SAML2",
-            "CONTINUE_WITH_SAML2_LABEL": "Continue com SAML2"
+            "CONTINUE_WITH_SAML2_LABEL": "Continue com SAML2",
+            "PASSWORD_REQUIRED_ERROR_LABEL": "Senha requerida",
+            "EMAIL_REQUIRED_ERROR_LABEL": "O e-mail é obrigatório",
+            "NO_ACCOUNT_SIGNUP_INSTEAD_LABEL": "Parece que você não tem uma conta,\ninscreva-se em vez disso."
         },
         "LOGIN": {
             "SAML2_LABEL": "Entrar com SAML2",
             "META_TITLE_LABEL": "Entrar - Clockify",
             "META_DESCRIPTION_LABEL": "Faça login na sua conta Clockify",
-            "SIGN_UP": "Inscreva-se - Clockify"
+            "SIGN_UP": "Inscreva-se - Clockify",
+            "LOGIN_MANUALLY_LABEL": "Faça login manualmente",
+            "LOGIN_WITH_EMAIL_LABEL": "Entrar com e-mail"
         },
         "SIGNUP_INVITE": {
             "ACCEPT_TOS_PART1": "Estou de acordo com",
@@ -261,7 +281,10 @@
             "NEW_INVITATION_INSTRUCTION_2": "Inscrever-se",
             "NEW_INVITATION_INSTRUCTION_3": " para criar um.",
             "INVITATION_TITLE_NOT_ACTIVE": "O link de convite não está mais ativo. Entre em contato com seu administrador se precisar de um novo.\nCaso você já tenha uma conta Clockify, vá para",
-            "INVITATION_TITLE_NOT_ACTIVE_PART_TWO": "e faça login."
+            "INVITATION_TITLE_NOT_ACTIVE_PART_TWO": "e faça login.",
+            "NAME_INPUT_LENGTH_ERROR_LABEL": "O nome deve ter pelo menos 2 caracteres",
+            "INVITATION_LINK_EXPIRED_TITLE_NEW_LABEL": "Este convite expirou.",
+            "CONTACT_ADMIN_OR_LOG_IN_MESSAGE": "Entre em contato com seu administrador ou "
         },
         "SIGNUP": {
             "AGREE_LABEL": "Estou de acordo com",
@@ -280,7 +303,16 @@
             "CREDIT_CARD_REQUIREMENT_REGIONAL": "Dados hospedados em { location }",
             "CREDIT_CARD_REQUIREMENT_REGIONAL_PART_2": "Cartão de crédito necessário",
             "CLOCKIFY_TERMS_OF_USE": "Eu concordo com Clockify",
-            "CAKE_TERMS_OF_USE": "Eu concordo com CAKE.com"
+            "CAKE_TERMS_OF_USE": "Eu concordo com CAKE.com",
+            "AGREE_TO": "eu concordo",
+            "CAKE_TOF": "Termos de uso do CAKE.com",
+            "CLOCKIFY_TOF": "Clockify Termos de Uso",
+            "PRIVACY_POLICY": "Política de Privacidade",
+            "EMAIL_FORMAT_INVALID": "O formato de e-mail não é válido",
+            "NEW_SIGNUP_TOF": "Eu concordo com { cakeComTermsOfService }, { clockifyTermsOfService } e { privacyPolicy }",
+            "PASSWORD_FORMAT_INVALID": "A senha não é válida",
+            "ACCOUNT_TEMPORARILY_LOCKED_MSG": "Sua conta está temporariamente bloqueada. Verifique seu e-mail para prosseguir.",
+            "SIGNUP_DISABLED_MESSAGE": "Inscrição desativada. Entre em contato com o proprietário do espaço de trabalho se precisar controlar o tempo neste subdomínio."
         },
         "NEW_PASSWORD": {
             "NEW_PASSWORD_PLACEHOLDER": "Insira a nova senha",
@@ -291,6 +323,15 @@
         },
         "VERIFY_EMAIL": {
             "TITLE": "Confirme email"
+        },
+        "ENTER_VERIFICATION_CODE": {
+            "CHECK_EMAIL_TITLE": "Verifique seu e-mail para obter um código",
+            "ENTER_CODE_MSG": "Digite o código de verificação enviado para { email }",
+            "RESEND_EMAIL_LINK": "reenviar email",
+            "ATTEMPTS_MAXED_OUT_MSG": "Você maximizou suas tentativas. Verifique seu e-mail para prosseguir.",
+            "CODE_NOT_VALID_MSG": "Esse código não é válido. Por favor, tente novamente.",
+            "RESEND_EMAIL_FOOTER": "Não consegue encontrar nosso e-mail? Verifique seu spam ou ",
+            "CODE_EXPIRED_MSG": "Esse código expirou."
         }
     },
     "SHARED_MODULES": {
@@ -301,7 +342,9 @@
             },
             "MANAGER_ROLE": {
                 "DESCRIPTION": "Em vez de nomear alguém como administrador, transforme alguém em <b> gerente de equipe </b> para que ele possa ver todo o tempo e despesas que os integrantes da equipe rastrearam e aprovar suas planilhas de horas. <br> <br> Ou atribua a alguém a função de <b> gerente de projeto </b> em vários projetos para que este possa ver todo o tempo e despesas monitorados nos projetos que gerencia e editar os projetos referidos (por exemplo: criar tarefas, adicionar integrantes ao projeto, definir estimativas, etc.).",
-                "TITLE": "Função de gerente"
+                "TITLE": "Função de gerente",
+                "DESCRIPTION_WITH_APPROVE": "Em vez de tornar alguém um administrador, torne alguém um <b>gerente de equipe</b> para que ele possa ver todo o tempo e despesas que os membros de sua equipe rastrearam e aprovar seus quadros de horários. <br><br> Ou atribua a alguém a função de <b>gerente de projeto</b> em vários projetos para que possa ver e aprovar todo o tempo e despesas rastreados nos projetos que gerencia e editar os referidos projetos (por exemplo, criar tarefas, adicionar membros ao projeto, definir estimativas, etc).",
+                "DESCRIPTION_PARAMETERS_DESCRIPTION": "Em vez de tornar alguém um administrador, torne alguém um { openingBoldTag }gerente de equipe{ closingBoldTag } para que ele possa ver todo o tempo e despesas que os membros da equipe acompanharam e aprovar suas planilhas de horas. { doubleBreaks } Ou dê a alguém uma função de { openingBoldTag }gerente de projeto{ closingBoldTag } em vários projetos para que ele possa ver todo o tempo e despesas monitorados nos projetos que gerencia e editar os referidos projetos (por exemplo, criar tarefas, adicionar membros ao projeto , definir estimativas, etc.)."
             },
             "INVOICING": {
                 "DESCRIPTION": "Crie faturas profissionais para clientes com base em tempo e despesas rastreados, baixe-as em PDF e acompanhe seu status."
@@ -358,7 +401,8 @@
             },
             "IMPORT_TIMESHEETS": {
                 "TITLE": "Importar planilhas de horas",
-                "DESCRIPTION": "Se você tiver dados históricos de planilhas no Excel, você pode importar tudo no Clockify para que seus relatórios possam incluir todos os seus dados anteriores e futuros. <br> A importação criará todos os projetos, tarefas, clientes, usuários e entradas de tempo necessários. Tudo que você precisa fazer é fornecer o arquivo."
+                "DESCRIPTION": "Se você tiver dados históricos de planilhas no Excel, você pode importar tudo no Clockify para que seus relatórios possam incluir todos os seus dados anteriores e futuros. <br> A importação criará todos os projetos, tarefas, clientes, usuários e entradas de tempo necessários. Tudo que você precisa fazer é fornecer o arquivo.",
+                "TAG_PARAMETERS_DESCRIPTION": "Se você tiver dados históricos de planilhas de horas no Excel, poderá importar tudo em Clockify para que seus relatórios incluam todos os seus dados passados e futuros. { break } A importação criará todos os projetos, tarefas, clientes, usuários e entradas de tempo necessários. Tudo que você precisa fazer é fornecer o arquivo."
             },
             "TASK_RATES": {
                 "DESCRIPTION": "Se você cobrar uma taxa diferente dependendo da tarefa que você faz, você pode definir uma taxa diferente para cada tarefa em um projeto. Você também pode controlar se as tarefas por padrão são faturáveis ou não faturáveis."
@@ -380,11 +424,14 @@
                 "TITLE": "Orçamento e estimativas",
                 "DESCRIPTION": "Defina estimativas em termos monetários para projetos de taxa fixa. Em seguida, você pode acompanhar o progresso com base em quanto dinheiro foi gasto e receber alertas quando o orçamento atingir um determinado percentual de conclusão. <br> Você também pode definir estimativas recorrentes para que o tempo e o progresso do orçamento sejam redefinidos a cada mês, além de ver as estimativas diretamente nos relatórios e exportá-las junto com o tempo rastreado.",
                 "DESCRIPTION_NEW": "Acompanhe o progresso do projeto com base em quanto tempo ou dinheiro foi gasto e receba alertas quando você ultrapassar o orçamento ou estimativa. <br> Você também pode determinar redefinições automáticas a cada mês, excluir tempo não faturável das estimativas e ver estimativas e orçamentos diretamente em relatórios (além de compartilhá-los e exportá-los).",
-                "DESCRIPTION_V2": "Defina uma estimativa monetária para projetos e tarefas e o Clockify acompanhará o progresso com base no valor faturável rastreado e enviará alertas quando você estiver prestes a ultrapassar o orçamento. Você também pode excluir o tempo não faturável das estimativas de tempo, fazer redefinições automáticas e comparar os valores reais com as estimativas nos relatórios."
+                "DESCRIPTION_V2": "Defina uma estimativa monetária para projetos e tarefas e o Clockify acompanhará o progresso com base no valor faturável rastreado e enviará alertas quando você estiver prestes a ultrapassar o orçamento. Você também pode excluir o tempo não faturável das estimativas de tempo, fazer redefinições automáticas e comparar os valores reais com as estimativas nos relatórios.",
+                "TAG_PARAMETERS_DESCRIPTION": "et estimativas em termos monetários para projetos de taxa fixa. Depois, você pode acompanhar o progresso com base em quanto dinheiro foi gasto e receber alertas quando o orçamento atingir uma determinada porcentagem de conclusão. { break } Você também pode definir estimativas recorrentes para que o progresso do tempo e do orçamento seja redefinido a cada mês, além de ver as estimativas diretamente nos relatórios e exportá-las junto com o tempo monitorado.",
+                "NEW_TAG_PARAMETERS_DESCRIPTION": "Acompanhe o progresso do projeto com base em quanto tempo ou dinheiro foi gasto e receba alertas quando ultrapassar o orçamento ou estimativa. { break } Você também pode definir redefinições automáticas a cada mês, excluir o tempo não faturável das estimativas e ver estimativas e orçamentos diretamente nos relatórios (além de compartilhá-los e exportá-los)."
             },
             "ALERTS": {
                 "DESCRIPTION": "Receba notificação de email quando um projeto atingir uma certa porcentagem de seu tempo estimado.",
-                "MARKETPLACE_DESCRIPTION": "Os alertas são enviados para os e-mails dos usuários, eles não chegarão à sua caixa de entrada"
+                "MARKETPLACE_DESCRIPTION": "Os alertas são enviados para os e-mails dos usuários, eles não chegarão à sua caixa de entrada",
+                "MARKETPLACE_DESCRIPTION_WITH_INTERPOLATION": "Os alertas são enviados para os e-mails dos usuários, eles não chegarão à sua caixa de entrada."
             },
             "FORCE_TIMER": {
                 "DESCRIPTION": "Desative o modo manual para que os usuários não adicionem tempo. Em vez disso, eles poderão criar entradas de tempo apenas usando o cronômetro. <br> <br> Isso também impedirá que usuários regulares editem os horários de início ou término em suas entradas de tempo existentes."
@@ -426,7 +473,8 @@
                 "DESCRIPTION": "Registre despesas relacionadas ao trabalho, como materiais e viagens, inserindo a soma total ou uma unidade personalizada (por exemplo, 10 milhas, 2 unidades ou 5 dias) e enviando um recibo. Posteriormente, inclua despesas faturáveis nas faturas."
             },
             "USER_SEATS": {
-                "DESCRIPTION": "Cada usuário ativo em seu espaço de trabalho ocupa um assento.<br><br>Usuários desativados não ocupam um assento, o que significa que você pode desativar alguém e preencher a vaga com outra pessoa.<br><br>Você pode comprar ou remover assentos a qualquer momento em sua página de Assinatura."
+                "DESCRIPTION": "Cada usuário ativo em seu espaço de trabalho ocupa um assento.<br><br>Usuários desativados não ocupam um assento, o que significa que você pode desativar alguém e preencher a vaga com outra pessoa.<br><br>Você pode comprar ou remover assentos a qualquer momento em sua página de Assinatura.",
+                "TAGS_PARAMETERS_DESCRIPTION": "Cada usuário ativo em seu espaço de trabalho ocupa uma licença de usuário. { doubleBreak } Os usuários desativados não ocupam uma vaga, o que significa que você pode desativar alguém e ocupar a vaga com outra pessoa.{ doubleBreak } Você pode comprar ou remover vagas a qualquer momento na sua página de assinatura."
             },
             "TIME_ROUNDING": {
                 "DESCRIPTION": "Ative e desative o arredondamento para que os números de duração nos relatórios pareçam mais limpos. Você pode arredondar para cima, para baixo ou para o minuto mais próximo."
@@ -445,7 +493,8 @@
             },
             "APPROVAL": {
                 "DESCRIPTION": "Sua equipe pode enviar suas planilhas e despesas semanais para revisão, que você pode aprovar ou rejeitar. Uma vez aprovado, o tempo e as despesas não podem mais ser alterados sem um registro permanente por escrito.",
-                "DESCRIPTION_2": "Sua equipe pode enviar suas planilhas e despesas para revisão, que você pode aprovar ou rejeitar. Uma vez aprovado, o tempo e as despesas não podem mais ser alterados sem um registro permanente por escrito."
+                "DESCRIPTION_2": "Sua equipe pode enviar suas planilhas e despesas para revisão, que você pode aprovar ou rejeitar. Uma vez aprovado, o tempo e as despesas não podem mais ser alterados sem um registro permanente por escrito.",
+                "DESCRIPTION_3": "Sua equipe ou membros do projeto podem enviar seus quadros de horários e despesas para revisão, que você pode aprovar ou rejeitar. Uma vez aprovado, o tempo e as despesas não podem mais ser alterados sem um registro permanente por escrito."
             },
             "BREAKS": {
                 "DESCRIPTION": "Permita que os funcionários indiquem quando estão em um intervalo por meio de um quiosque.<br><br> Enquanto estiverem no ponto, eles podem marcar o início e o término do intervalo usando seu terminal de quiosque.<br><br>Mais tarde, administradores e os gerentes podem ver quando e quanto cada funcionário estava de folga nos relatórios.",
@@ -459,10 +508,10 @@
                 "DESCRIPTION": "Cada usuário regular ativo em seu espaço de trabalho ocupa um assento regular.<br><br>Usuários regulares (incluindo gerentes e administradores) são usuários que têm e-mail e podem fazer login diretamente no Clockify.<br><br>Usuários desativados não ocupam um assento, o que significa que você pode desativar alguém e preencher seu assento com outra pessoa.<br><br>Você pode comprar ou remover assentos a qualquer momento na sua página de Assinatura."
             },
             "LIMITED_USER_SEATS": {
-                "DESCRIPTION": "Cada usuário limitado ativo em seu espaço de trabalho ocupa um assento limitado (que custa menos que uma licença completa).<br><br>Usuários limitados não têm e-mail e podem acompanhar o tempo apenas pelo Quiosque (você pode converter um usuário limitado em um usuário completo adicionando seu e-mail).<br><br>Usuários desativados não ocupam um assento, o que significa que você pode desativar um usuário e preencher o assento com outra pessoa.<br><br>Você pode comprar ou remover assentos a qualquer momento em sua página de Assinatura."
+                "DESCRIPTION": "Cada usuário limitado ativo em seu espaço de trabalho ocupa um assento limitado (que custa menos que um assento completo).<br><br>Usuários limitados não têm e-mail e podem acompanhar o tempo apenas pelo Quiosque (você pode converter um usuário limitado para um usuário completo adicionando seu e-mail).<br><br>Usuários desativados não ocupam um assento, o que significa que você pode desativar um usuário e preencher o assento com outra pessoa.<br><br>Você pode comprar ou remover assentos a qualquer momento em sua página de Assinatura."
             },
             "FULL_USER_SEATS": {
-                "DESCRIPTION": "Cada usuário completo ativo em seu workspace ocupa uma licença completa.<br><br>Usuários completos (incluindo gerentes e administradores) são usuários que têm e-mail e podem fazer login diretamente no Clockify.<br><br>Usuários desativados não ocupe um assento, o que significa que você pode desativar alguém e preencher o assento com outra pessoa.<br><br>Você pode comprar ou remover assentos a qualquer momento em sua página de Assinatura."
+                "DESCRIPTION": "Cada usuário completo ativo em seu espaço de trabalho ocupa um assento completo.<br><br>Usuários completos (incluindo gerentes e administradores) são usuários que têm e-mail e podem fazer login diretamente no Clockify.<br><br>Usuários desativados não ocupam um assento, o que significa que você pode desativar alguém e preencher o assento com outra pessoa.<br><br>Você pode comprar ou remover assentos a qualquer momento em sua página de Assinatura."
             },
             "CUSTOMIZE_KIOSK": {
                 "TITLE": "Personalizar quiosque",
@@ -484,11 +533,16 @@
             },
             "BREAK_ENTRY": {
                 "TITLE": "Pausa",
-                "DESCRIPTION": "Permita que os funcionários indiquem quando estão de folga.\n\nOs funcionários podem iniciar uma pausa em um quiosque enquanto estão com o ponto marcado ou podem iniciá-la em um dos aplicativos (web e móvel).\n\nMais tarde, os administradores e gerentes podem ver quando cada funcionário estava de folga e quanto em relatórios."
+                "DESCRIPTION": "Permita que os funcionários indiquem quando estão em um intervalo.<br><br> Os funcionários podem iniciar um intervalo em um quiosque enquanto estão com o ponto marcado ou podem iniciá-lo em um dos aplicativos (web e dispositivos móveis).&lt; br&gt;<br> Mais tarde, administradores e gerentes podem ver quando cada funcionário estava de folga e quanto em relatórios.",
+                "PARAMETERS_DESCRIPTION": "Permita que os funcionários indiquem quando estão de folga. { doubleBreak } Os funcionários podem iniciar um intervalo em um quiosque enquanto estão com o ponto de entrada ou podem iniciá-lo em um dos aplicativos (web e dispositivos móveis). { doubleBreak } Posteriormente, administradores e gerentes poderão ver quando cada funcionário estava de folga e quanto estava nos relatórios."
             },
             "MULTIPLE_CURRENCIES": {
                 "TITLE": "Várias moedas",
                 "DESCRIPTION": "Defina mais de uma moeda e atribua a cada cliente. Posteriormente, consulte os valores e custos em relatórios discriminados por moeda."
+            },
+            "DATA_REGIONS": {
+                "DESCRIPTION": "Hospede seus dados na UE (Alemanha), Reino Unido, EUA ou Austrália para garantir a conformidade legal.",
+                "TITLE": "Regiões de dados"
             }
         },
         "DROPDOWN_CHECKBOX_WRAPPER": {
@@ -569,7 +623,8 @@
             "CREATE_CUSTOM_FIELD_TITLE_TIME_ENTRY": "Criar campo personalizado de entrada de horas",
             "DEFAULT_VALUE_LABEL": "Valor padrão",
             "FIND_OPTION_LABEL": "Encontrar opção",
-            "REQUIRED_FIELD_ERROR": "Não é possível ocultar o campo obrigatório"
+            "REQUIRED_FIELD_ERROR": "Não é possível ocultar o campo obrigatório",
+            "SEARCH_OPTION_LABEL": "Opções de busca"
         },
         "DROPDOWN_CHECKBOX_LITE": {
             "FILTER_LIMIT": "Máximo de { filterLimit } filtros ativos"
@@ -594,7 +649,9 @@
             "FIND_PROJECT_CUSTOM_LABEL": "Encontre { projectLabel } ou { projectGroupingLabel }…",
             "FIND_TASK_CUSTOM_LABEL": "Encontre { taskLabel } @{ projectLabel } ou { projectGroupingLabel }…",
             "FIND_PROJECT_CUSTOM_LABEL_ELLIPSES": "Procurar { projectLabel } ou { projectGroupingLabel }…",
-            "CAN_NOT_SELECT_PROJECT": "Não é possível selecionar um projeto até que ele tenha pelo menos uma tarefa."
+            "CAN_NOT_SELECT_PROJECT": "Não é possível selecionar um projeto até que ele tenha pelo menos uma tarefa.",
+            "SEARCH_PROJECT_CUSTOM_LABEL": "Pesquise { projectLabel } ou { projectGroupingLabel }…",
+            "SEARCH_TASK_CUSTOM_LABEL": "Pesquise { taskLabel } @{ projectLabel } ou { projectGroupingLabel }…"
         },
         "SINGLE_DATE_PICKER": {
             "DATE_RANGE_ERROR_MSG": "Não é possível adicionar tempo ao período bloqueado",
@@ -607,7 +664,8 @@
                 "ENTRY_LOCKED_ADD_TIME_FAIL": "Não é possível adicionar tempo ao período bloqueado.",
                 "SET_TIME_AFTER_PARAM_FAIL": "Não é possível definir o tempo após { timeLimit }."
             },
-            "MAX_PTO_DATE_RANGE_INFO": "O período máximo é de 1 ano"
+            "MAX_PTO_DATE_RANGE_INFO": "O período máximo é de 1 ano",
+            "UPGRADE_TO_ENTERPRISE_PART_2_WITH_INTERPOLATION": "para selecionar um intervalo maior que um ano."
         },
         "SUBSCRIPTION_INCOMPLETE_MODAL": {
             "MODAL_TITLE": "A atualização falhou",
@@ -623,7 +681,11 @@
             "UPGRADE_EXPLANATION": "Você será cobrado um preço estimado em $ { price } e terá acesso imediato aos recursos { feature }.",
             "DOWNGRADE_EXPLANATION": "Assim que a assinatura atual terminar, você será rebaixado para o novo plano",
             "DOWNGRADE_BONUS": "(2 meses grátis).",
-            "REACTIVATE_SUBSCRIPTION": "Reative sua assinatura atual."
+            "REACTIVATE_SUBSCRIPTION": "Reative sua assinatura atual.",
+            "UPGRADE_EXPLANATION_CH": "Será cobrado imediatamente de você um preço rateado com IVA para atualização do plano pelo restante do ciclo de cobrança. Quando chegar um novo ciclo de cobrança, ele será cobrado de acordo com seu preço total.",
+            "UPGRADE_EXPLANATION_V2": "Será cobrado imediatamente de você um preço rateado pela atualização do plano pelo restante do ciclo de cobrança. Quando chegar um novo ciclo de cobrança, ele será cobrado de acordo com seu preço total.",
+            "ESTIMATED_PRICE": "Preço rateado estimado que será aplicado: { price }",
+            "BILLING_PRICE_V2": "Você será cobrado por um preço rateado estimado de { price }"
         },
         "TIME_ENTRY_BULK_EDIT": {
             "TITLE_PARAMS": "Edição em massa { count } { count, plural, =0{} one{entrada} other{entradas} }",
@@ -710,7 +772,8 @@
             "NO_TAGS_LABEL": "Ainda sem etiquetas",
             "NO_MATCHING_TAGS_INFO": "Nenhuma etiqueta correspondente",
             "CREATE_TAG": "criar { search } etiqueta.",
-            "PLACEHOLDER_LABEL": "Adicionar/encontrar etiquetas…"
+            "PLACEHOLDER_LABEL": "Adicionar/encontrar etiquetas…",
+            "SEARCH_PLACEHOLDER_LABEL": "Adicionar/pesquisar tags"
         },
         "STRIPE": {
             "LABEL_CARD_NUMBER": "Número do cartão",
@@ -771,7 +834,13 @@
                 "INCOMPLETE_EXPIRY": "A data de validade é inválida.",
                 "INCOMPLETE_CVC": "O número do CVC está incorreto."
             },
-            "VALID_EMAIL_WARNING_PLACEHOLDER_V2": "Digite o e-mail ou usaremos o seu"
+            "VALID_EMAIL_WARNING_PLACEHOLDER_V2": "Digite o e-mail ou usaremos o seu",
+            "ADDRESS_PLACEHOLDER": "Insira o endereço",
+            "CITY_PLACEHOLDER": "Digite a cidade",
+            "ZIP_PLACEHOLDER": "Digite o código postal",
+            "INVALID_EMAIL_MESSAGE": "O formato de e-mail não é válido",
+            "PLACEHOLDER_CARDHOLDER": "Insira o nome do titular do cartão",
+            "TAX_TYPE_PLACEHOLDER": "Escolha o tipo de imposto"
         },
         "STRIPE_INVOICE": {
             "MISSING_TAX_ID_ERROR_MESSAGE": "Falta de informações fiscais de ID",
@@ -1191,7 +1260,8 @@
                 "ANOTHER_TOOL_MSG2": "Para qual ferramenta você está mudando?",
                 "QUESTION3": "Qual seria o preço que você estaria disposto a pagar?"
             },
-            "UNPAID_INVOICE_WARNING": "Você tem uma fatura não paga. Entre em contato conosco em { email } para resolver o problema."
+            "UNPAID_INVOICE_WARNING": "Você tem uma fatura não paga. Entre em contato conosco em { email } para resolver o problema.",
+            "UNPAID_INVOICE_WARNING_V2": "Você tem uma fatura não paga. Pague a fatura ou entre em contato conosco em { email } para resolver o problema."
         },
         "CONFIRM_CANCELLATION_LABEL": "Confirme cancelamento",
         "CONTACT_SUPPORT_LABEL": "Contate o suporte",
@@ -1256,37 +1326,37 @@
         "PER_LIMITED_SEAT": "por assento limitado",
         "APPROVED_EXPENSE_ERROR_MESSAGE": "Não é possível editar despesas aprovadas.",
         "BUY_LABEL": "Comprar",
-        "NO_REGULAR_SEATS_LEFT": "Não há assentos regulares à esquerda.",
-        "NO_LIMITED_SEATS_LEFT": "Não restam assentos limitados.",
-        "EMPLOYEE_NAME": "Nome do empregado",
+        "NO_REGULAR_SEATS_LEFT": "Não há mais assentos regulares.",
+        "NO_LIMITED_SEATS_LEFT": "Não há mais assentos limitados.",
+        "EMPLOYEE_NAME": "Nome do funcionário",
         "ADD_EMAIL_LABEL": "Adicionar e-mail",
         "KIOSKS_LABEL": "Quiosques",
         "DEFAULT_LABEL": "Predefinição",
         "ENABLE_LABEL": "Permitir",
         "FULL_LABEL": "completo",
-        "FULL_MEMBERS_LABEL": "Integrantes plenos",
+        "FULL_MEMBERS_LABEL": "Integrantes completos",
         "NO_FULL_SEATS_LEFT": "Não sobraram assentos completos.",
         "REGULAR_LABEL": "Regular",
         "REGULAR_MEMBER_LABEL": "Integrante regular",
         "REGULAR_MEMBERS_LABEL": "Integrantes regulares",
         "DELETE_USER_TITLE": "Deletar usuário",
-        "DELETE_LIMITED_USER_INFO_MESSAGE": "O usuário limitado não poderá fazer o check-in via quiosque, mas seus dados rastreados permanecerão. Esta ação não pode ser revertida.",
+        "DELETE_LIMITED_USER_INFO_MESSAGE": "O usuário limitado não poderá fazer entrar com o quiosque, mas seus dados rastreados permanecerão. Esta ação não pode ser revertida.",
         "FULL_USER_SEATS_TITLE": "Assentos completos",
         "PER_FULL_SEAT": "por assento completo",
         "TOS_PART1": "Eu li e concordo com o",
-        "NO_SEATS_LEFT": "Nenhum lugar disponível",
+        "NO_SEATS_LEFT": "Nenhum assento disponível",
         "TOS_PART2": "Termos de uso",
         "FULL_MEMBER_LABEL": "Integrante completo",
         "PUBLISHED_LABEL": "Publicados",
         "PUBLISH_LABEL": "Publicar",
         "YES_LABEL": "Sim",
         "FIND_PLACEHOLDER_LABEL": "Encontrar { entity }",
-        "SELECT_ISSUE_DATE": "Selecione a data de emissão",
+        "SELECT_ISSUE_DATE": "Selecionar a data de emissão",
         "FIND_COMPANIES_LABEL": "Encontrar empresas...",
-        "ALL_TIME_LABEL": "Tempo todo",
-        "NO_YET_FILTER_NAME": "Não { filterName } ainda",
+        "ALL_TIME_LABEL": "Todo o tempo",
+        "NO_YET_FILTER_NAME": "Não há { filterName } ainda",
         "NO_MATCHING_ITEMS": "Nenhum item correspondente",
-        "NO_FILTER_RESULT": "Não {filterName } {pickerName} ",
+        "NO_FILTER_RESULT": "Não há {filterName } {pickerName} ",
         "FIND_USERS_OR_GROUPS": "Encontre usuários ou grupos…",
         "NO_CLIENT_LABEL_CUSTOM": "Sem { clientLabel }",
         "UPGRADE_TO_USE_FEATURE_PART_2": "usar { feature }, ou iniciar o teste",
@@ -1374,7 +1444,7 @@
         "UNDO_LABEL": "Desfazer",
         "VIEW_ON_MARKETPLACE": "Ver no mercado",
         "DETAILS": "Detalhes",
-        "FIND_TASK_LABEL": "Localizar tarefa...",
+        "FIND_TASK_LABEL": "Localizar tarefa…",
         "TEAM_MEMBERS_LABEL": "Membros do time",
         "PIN_LABEL": "ALFINETE",
         "FIND_CURRENCY_LABEL": "Encontrar moeda ...",
@@ -1386,7 +1456,47 @@
         "CUSTOMER_EXPLANATION_SHORT": "Informação do Cliente",
         "PAYMENT_INFORMATION_TITLE_SHORT": "informação de pagamento",
         "TAX_DISPLAY_NAME_LABEL": "{ displayName } ID",
-        "KEYBOARD_SHORTCUT_LABEL": "Atalho de teclado"
+        "KEYBOARD_SHORTCUT_LABEL": "Atalho de teclado",
+        "PREVIOUS_STEP_BTN": "Passo anterior",
+        "APPLIED_LABEL": "Aplicado",
+        "APPLYING_LABEL": "Aplicando",
+        "ACTION_LABEL_WITH_INTERPOLATION": "Ação:",
+        "DATE_LABEL_WITH_INTERPOLATION": "Data:",
+        "AUTHOR_LABEL_WITH_INTERPOLATION": "Autor:",
+        "BALANCE_LABEL_WITH_INTERPOLATION": "Equilíbrio:",
+        "ADD_TIME_OTHERS_TEXT_PART_WITH_INTERPOLATION": "para adicionar tempo para os outros.",
+        "TRACKED_LABEL_WITH_INTERPOLATION": "Monitorados:",
+        "TIME_LABEL_WITH_INTERPOLATION": "Tempo:",
+        "CONTINUE_WITH_EMAIL": "Continuar com e-mail",
+        "NEED_HELP_WITH_INTERPOLATION": "Preciso de ajuda?",
+        "GPS_TITLE_WITH_INTERPOLATION": "Rastreamento por GPS.",
+        "SCREENSHOT_TITLE_WITH_INTERPOLATION": "Capturas de tela.",
+        "COST_LABEL_WITH_INTERPOLATION": "Custo:",
+        "AMOUNT_LABEL_WITH_INTERPOLATION": "Quantia:",
+        "PROFIT_LABEL_WITH_INTERPOLATION": "Lucro:",
+        "EVERYONE_LABEL_WITH_INTERPOLATION": "Todos:",
+        "EDIT_INVOICE_INFORMATION_TITLE": "Editar informações da fatura",
+        "EDIT_PAYMENT_INFORMATION_TITLE": "Editar informações de pagamento",
+        "INVOICE_INFO_UPDATED_V2": "Informação alterada",
+        "BILLING_CHANGE_SUCCESS_BODY_V2": "Esta nova informação será aplicada em todas as suas faturas futuras",
+        "EDIT_CUSTOMER_INFORMATION_TITLE": "Editar informações do cliente",
+        "TAX_TYPE_LABEL": "Tipo de imposto",
+        "CONTACT_US": "Contate-Nos",
+        "ADD_PAYMENT_METHOD": "adicionar forma de pagamento",
+        "SUBMIT_FOR_APPROVAL": "Enviar para aprovação",
+        "WITHDRAW": "Retirar",
+        "ALL_TIME_FILE_LABEL": "Tempo todo",
+        "PROJECT_MANAGER": "Gestor de projeto",
+        "RESEND_BTN": "Reenviar",
+        "ADD": "Adicionar",
+        "PLEASE_LABEL": "Por favor",
+        "CONTACT_SUPPORT": "entre em contato com o suporte",
+        "START_DATA_TRANSFER": "Iniciar transferência de dados",
+        "YOUR_CLOCKIFY_PASSWORD": "Sua senha Clockify:",
+        "DATA_TRANSFER_STARTED": "Transferência de dados iniciada",
+        "SEARCH_USERS_OR_GROUPS": "Pesquisar usuários ou grupos",
+        "REPLACE": "Substituir",
+        "SELECT_DATES": "Selecione datas"
     },
     "USER_PROFILE": {
         "SETTINGS": {
@@ -1406,7 +1516,8 @@
                     "RETYPE": "Digite novamente o email novo",
                     "ERROR_MESSAGE": {
                         "VALID": "Insira um email válido.",
-                        "MATCH": "Emails não correspondem."
+                        "MATCH": "Emails não correspondem.",
+                        "ACCOUNT_ALREADY_EXISTS": "Já existe uma conta com este e-mail."
                     }
                 }
             },
@@ -1501,7 +1612,8 @@
                 "ADD_LANGUAGE_LABEL": "Adicionar tradução"
             },
             "TARGET": {
-                "NO_TARGET": "Nenhum integrante da equipe selecionado"
+                "NO_TARGET": "Nenhum integrante da equipe selecionado",
+                "NO_TARGET_WITH_INTERPOLATION": "Nenhum membro da equipe selecionado:"
             },
             "EMAIL_PREFERENCES": {
                 "INFO_MESSAGE": "Escolha quais tipos de notificações por email você deseja receber.",
@@ -1707,7 +1819,8 @@
             "SHOW_ENTRIES_LABEL_1": "Mostrando entradas:",
             "SHOW_ENTRIES_LABEL_2": "Mostrando todas as entradas de tempo.",
             "UPGRADE_TO_USE_AUDIT_PART_2": "usar auditoria",
-            "UPGRADE_TO_USE_AUDIT_COMPLETE": "Atualize para usar a auditoria"
+            "UPGRADE_TO_USE_AUDIT_COMPLETE": "Atualize para usar a auditoria",
+            "UPGRADE_TO_USE_AUDIT_PART_2_WITH_INTERPOLATION": "usar a auditoria."
         },
         "DETAILED_REPORT": {
             "QUICKBOOKS": {
@@ -1864,7 +1977,9 @@
                 "MY_REPORTS": "Meus relatórios",
                 "SHARED_WITH_ME": "Compartilhou comigo"
             },
-            "ASSIGNMENT_LABEL": "Atribuições"
+            "ASSIGNMENT_LABEL": "Atribuições",
+            "UPGRADE_TO_SCEDULE_REPORT_PART_2_WITH_INTERPOLATION": "para agendar relatórios.",
+            "SCHEDULED_LABEL_WITH_INTERPOLATION": "Agendado:"
         },
         "TABLE_INFO": {
             "HOUR_LABEL": "hora",
@@ -1965,11 +2080,12 @@
             "EXPENSE_DETAILED": "Clockify_Relatório_De_Despesas_Detalhado",
             "SCHEDULED_VS_TRACKED": "Clockify_Programado_x_Rastreado",
             "ASSIGNMENTS": "Clockify_Atribuições",
-            "ATTENDANCE": "Clockify_Team_Report_Attendance"
+            "ATTENDANCE": "Clockify_Team_Report_Attendance",
+            "INVOICE": "Clockify_Faturas"
         },
         "NO_INACTIVE_USERS": "Nenhum usuário inativo",
-        "NO_ARCHIVED_CLIENTS": "Não arquivado { clientsLabel }",
-        "NO_COMPLETED_TASKS": "Não concluído { tasksLabel }",
+        "NO_ARCHIVED_CLIENTS": "Nenhum { clientsLabel } arquivado",
+        "NO_COMPLETED_TASKS": "Nenhum { tasksLabel } concluído",
         "NO_ARCHIVED_CATEGORIES": "Nenhuma categoria arquivada",
         "NO_ARCHIVED_PROJECTS": "Nenhum { projectsLabel } arquivado",
         "NO_ARCHIVED_TAGS": "Nenhuma etiqueta arquivada",
@@ -1997,7 +2113,9 @@
                 "INFO": "Quem pode ver e alterar o status faturável das entradas de tempo",
                 "INFO_WHEN_EXPENSES_ENABLED": "Quem pode ver e alterar o status faturável das entradas de tempo",
                 "TITLE_WITH_EXPENSES_ENABLED": "Quem pode ver e alterar o status faturável de entradas de horas e despesas",
-                "TITLE": "Quem pode ver e alterar o status faturável das entradas de horas"
+                "TITLE": "Quem pode ver e alterar o status faturável das entradas de horas",
+                "INFO_MESSAGE": "Permita que as pessoas vejam e alterem o status faturável das entradas de horas.",
+                "INFO_MESSAGE_WITH_EXPENSES_ENABLED": "Permita que as pessoas vejam e alterem o status faturável de entradas de horas e despesas."
             },
             "UPGRADE_BTN_PART_2": "mudar a permissão",
             "ROLES": {
@@ -2025,7 +2143,8 @@
                 "TASKS_TITLE": "Quem pode criar { taskLabel }",
                 "TASKS_INFO": "Permitir que as pessoas criem novos { taskLabel } em seus { projectLabel }",
                 "TAGS_TITLE": "Quem pode criar etiquetas",
-                "TAGS_INFO": "Permitir que as pessoas criem novas etiquetas"
+                "TAGS_INFO": "Permitir que as pessoas criem novas etiquetas",
+                "TAGS_INFO_WITH_INTERPOLATION": "Permitir que as pessoas criem novas tags."
             },
             "CAN_SEE": {
                 "RULE_TITLE": "Usuários regulares podem ver",
@@ -2078,7 +2197,8 @@
             "WHO_CAN_CREATE_ASSIGNMENTS": {
                 "TITLE": "Quem pode criar atribuições",
                 "DESCRIPTION": "Permita que os gerentes de projeto criem atribuições para seus projetos.",
-                "INFO_MESSAGE": "Permita que os gerentes de projeto criem atribuições e metas para seus projetos."
+                "INFO_MESSAGE": "Permita que os gerentes de projeto criem atribuições e metas para seus projetos.",
+                "INFO_DESCRIPTION": "Permita que as pessoas criem e editem tarefas para seus { projectLabelPlural }."
             },
             "COST_RATES": {
                 "VIEW": {
@@ -2106,6 +2226,12 @@
             },
             "KIOSK_LOGIN_REQUIRED_DISABLED": {
                 "LABEL": "Qualquer pessoa com o link do quiosque poderá acessar a lista de usuários do quiosque."
+            },
+            "APPROVE_SUBMITTED_TIMESHEETS": {
+                "EXPENSES_SECTION": "e despesas",
+                "DESCRIPTION_1": "Permitir que os gerentes aprovem quadros de horários",
+                "DESCRIPTION_2": "enviados por sua equipe ou membros do projeto.",
+                "TITLE": "Quem pode aprovar planilhas de horas enviadas"
             }
         },
         "TIME_ROUNDING_MODAL": {
@@ -2138,7 +2264,11 @@
                         "EMAIL_AND_PASSWORD": "Faça login com email e senha",
                         "LDAP": "Entrar com LDAP",
                         "OAUTH": "Faça login com OAuth",
-                        "SAML2": "Faça login com SAML2"
+                        "SAML2": "Faça login com SAML2",
+                        "INFO_MESSAGES": {
+                            "EMAIL_LOGIN_MESSAGE": "Faça o login com o código enviado para o e-mail, ou com o e-mail e senha"
+                        },
+                        "EMAIL": "Entrar com e-mail"
                     }
                 }
             },
@@ -2169,7 +2299,29 @@
             "LOGO": {
                 "TITLE": "Logotipo",
                 "INFO_MESSAGE": "Aparece no botão “Login com SSO”. Formatos: png, jpg, gif. Tamanho máximo: 1 MB."
-            }
+            },
+            "DATA_REGION": {
+                "CURRENT_REGION": "Região de dados ({ region })",
+                "INFO_MESSAGE": "Escolha em qual país você deseja armazenar seus dados.",
+                "CHANGE_REGION": {
+                    "CHANGE_WARNING_MESSAGE_1": "Não há planos gratuitos, Básicos ou Padrão em servidores regionais. Se sua assinatura acabar, todos os recursos serão bloqueados.",
+                    "CHANGE_WARNING_MESSAGE_2": "Não oferecemos transferências de dados de servidores regionais para servidores globais."
+                },
+                "REGION": "Região de dados",
+                "DATA_TRANSFER": {
+                    "CONDITIONS_NOT_MET": "Condições não atendidas",
+                    "CANNOT_TRANSFER_REGION": "Não foi possível transferir seus dados para {region}. Alguns usuários no seu workspace já possuem uma conta nessa região.",
+                    "CONTACT_SUPPORT_LINK": "Por favor, { contactUs } para obter mais assistência.",
+                    "DATA_TRANSFER_TITLE": "Transferência de dados",
+                    "DATA_TRANSFER_LOGOUT_INFO": "Depois de inserir a senha, sua transferência de dados será iniciada e você será desconectado.",
+                    "FURTHER_INFO": "Para obter mais assistência.",
+                    "CONTACT_SUPPORT": "Por favor, { contactUs } para obter mais assistência.",
+                    "DATA_TRANSFER_INFO": "Você e os usuários neste espaço de trabalho serão desconectados e não poderão monitorar o tempo até 12 horas após o início da transferência de dados."
+                },
+                "CANNOT_CHANGE_REGION": "Não oferecemos transferências de dados de servidores regionais para servidores globais.",
+                "CHANGE_REGION_TITLE": "Mudar de região"
+            },
+            "DATA_REGION_LOADING_MESSAGE": "Verificando condições…"
         },
         "EDIT_LABEL": "Editar { label }",
         "IMPORT": {
@@ -2199,7 +2351,8 @@
             "UPGRADE_PART2": "importar entradas de tempo",
             "START_BTN": "Iniciar importação",
             "IN_PROGRESS": "Importação em andamento. Você receberá uma notificação quando terminar.",
-            "INSTRUCTION_MSG_PART1_CUSTOM_LABELS": "Importe vários { projectsLabel }, { clientsLabel }, { tasksLabel }, etiquetas e entradas de tempo de um arquivo. Por favor, prepare seus arquivos CSV no"
+            "INSTRUCTION_MSG_PART1_CUSTOM_LABELS": "Importe vários { projectsLabel }, { clientsLabel }, { tasksLabel }, etiquetas e entradas de tempo de um arquivo. Por favor, prepare seus arquivos CSV no",
+            "UPGRADE_PART2_WITH_INTERPOLATION": "para importar entradas de tempo."
         },
         "FEATURE": {
             "TYPES": {
@@ -2210,7 +2363,7 @@
                 "STANDARD": "Recursos STANDARD",
                 "PRO": "Recursos PRO",
                 "BASIC": "Recursos BASIC",
-                "FEATURE": "recurso {featureType}"
+                "FEATURE": "ferramenta de {featureType}"
             }
         },
         "ALERT": {
@@ -2248,7 +2401,8 @@
                     "SUPPORTED_SSO": "Sistemas SSO com suporte: LDAP, OAuth e SAML2 (todos os provedores de identidade cobertos: Google, Okta, OneLogin, Azure, Active Directory, etc).",
                     "CONFIGURE": "Configurar SSO",
                     "ADD": "Adicionar configuração SSO",
-                    "TITLE_SSO": "Configuração de SSO"
+                    "TITLE_SSO": "Configuração de SSO",
+                    "SUPPORTED_SSO_V2": "Sistemas SSO suportados: OAuth e SAML2 (todos os provedores de identidade cobertos: Google, Okta, OneLogin, Azure, etc.)"
                 },
                 "LDAP_FORM": {
                     "PROVIDER_URI": {
@@ -2365,7 +2519,7 @@
                         "LABEL": "Público-alvo (ID da entidade)"
                     },
                     "DEFAULT": {
-                        "RELAY": "Estado Padrão de Retransmissão"
+                        "RELAY": "Relay State predefinido"
                     }
                 },
                 "SECURITY": {
@@ -2401,13 +2555,15 @@
             "IDP_TEMPLATES": "Modelos de IdP",
             "SELECT_IDP_TEMPLATE": "Selecionar modelo de IdP",
             "CUSTOM_SAML2_PROVIDER": "Provedor SAML2 personalizado",
-            "CUSTOM_OAUTH2_PROVIDER": "Provedor OAuth2 personalizado"
+            "CUSTOM_OAUTH2_PROVIDER": "Provedor OAuth2 personalizado",
+            "TEST": "Configuração de teste"
         },
         "DELETE": {
             "CONFIRM": "Tem certeza de que deseja excluir",
             "INFO_MESSAGE": " Todo o tempo rastreado e projetos em { value } serão excluídos para sempre. Isso não pode ser revertido.",
             "SUBSCRIPTION": "Sua assinatura paga será automaticamente cancelada.",
-            "TO_CONFIRM": "confirmar"
+            "TO_CONFIRM": "confirmar",
+            "CONFIRM_WITH_INTERPOLATION": "Tem certeza de que deseja excluir {value}?"
         },
         "LEAVE": {
             "INFO_MESSAGE": "Se você sair, não poderá voltar, a menos que alguém o convide novamente. Você tem certeza de que quer sair?"
@@ -2438,7 +2594,8 @@
             "LABEL_NAME_EXISTS_ERROR_MSG": "{ labelName } com o nome { newLabelName } já existe.",
             "DELETE_TAG_MSG": "A etiqueta { tagName } também será removida de todas as entradas de tempo às quais está atribuída. Esta ação não pode ser revertida.",
             "DELETE_CLIENT_MSG": "O { clientName } { clientLabel } também será removido dos projetos aos quais está atribuído. Esta ação não pode ser revertida.",
-            "DELETE_CLIENT_MSG_CUSTOM": "O { clientName } { clientLabel } também será removido de { projectLabel } ao qual está atribuído. Esta ação não pode ser revertida."
+            "DELETE_CLIENT_MSG_CUSTOM": "{ clientName } { clientLabel } também será removido de { projectLabel } ao qual está atribuído. Esta ação não pode ser revertida.",
+            "UPGRADE_TO_USE_BULK_EDIT_PART_2": " para usar a edição em massa"
         },
         "IMPORT_CSV": {
             "VALIDATING_DATA_LOADER_MSG": "Validando dados ...",
@@ -2653,7 +2810,7 @@
                 "TOGGLE": "Ativar aprovação"
             },
             "TIMETRACKER_SETTING": {
-                "INFO_MESSAGE": "Acompanhe o tempo usando um cronômetro e veja todas as suas entradas de tempo.",
+                "INFO_MESSAGE": "Acompanhar o tempo usando um cronômetro e ver todas as suas entradas de tempo.",
                 "ACTIVATE": "Ativar rastreador"
             },
             "REGULAR_USER_ASSIGNMENTS": "O usuário comum pode ver as atribuições de todos",
@@ -2736,7 +2893,7 @@
         "ARCHIVE": {
             "CHECK_FOR_PROJECT": "Também arquivar todos os projetos atribuídos a este",
             "CONFIRM_ACTION": "Tem certeza que deseja arquivar",
-            "CHECK_FOR_PROJECT_CUSTOM": "Arquive também todos os { projectLabel } atribuídos a este"
+            "CHECK_FOR_PROJECT_CUSTOM": "Arquivar também todos os { projectLabel } atribuídos a este"
         },
         "RESTORE": {
             "CONFIRM_ACTION": "Tem certeza que deseja restaurar"
@@ -2914,7 +3071,9 @@
                 "ERROR_MESSAGE": "O dono do { workspace } ativou o requisito de autenticação de dois fatores. Por favor faça login novamente.",
                 "ERROR_MESSAGE_ONE_WORKSPACE": "Você foi desativado no espaço de trabalho { workspace }. Faça login novamente para criar um novo espaço de trabalho.",
                 "ERROR_MESSAGE_MULTI_WORKSPACES": "Você foi desativado no espaço de trabalho { workspace }. Faça login novamente para acessar outro espaço de trabalho."
-            }
+            },
+            "REGION_LOCKED": "Região bloqueada",
+            "WORKSPACE_LOCKED": "Espaço de trabalho bloqueado"
         },
         "GENERAL_SETTINGS_DATA_FORMAT_INFO_MESSAGE": "Escolha o número e o formato de moeda preferidos para todo o espaço de trabalho.",
         "GENERAL_SETTINGS_DATA_FORMAT_TYPE_NUMBER": "Formato numérico",
@@ -2954,7 +3113,9 @@
             "DUE": "Vence em",
             "ISSUE": "Data de emissão",
             "DAY_AGO": "{ value } dia atrás",
-            "DAYS_AGO": "{ value } dias atrás"
+            "DAYS_AGO": "{ value } dias atrás",
+            "CONFIRM_QUESTION_WITH_INTERPOLATION": "Tem certeza?",
+            "DELETE_MODAL_TEXT_WITH_INTERPOLATION": "Todas as entradas nesta fatura não serão faturadas."
         },
         "SHARED": {
             "SEARCH": "Procurar",
@@ -2992,7 +3153,8 @@
             "REMOVE_PAYMENT_LABEL": "Remover pagamento",
             "TOTAL_LABEL": "Total",
             "REMOVE_PAYMENTS_NOTE": "Todos os pagamentos serão removidos.",
-            "PAYMENT_NOTE_ERROR": "O comprimento da nota não deve exceder { length } caracteres"
+            "PAYMENT_NOTE_ERROR": "O comprimento da nota não deve exceder { length } caracteres",
+            "ISSUE_DATE_WITH_INTERPOLATION": "Data de emissão: "
         },
         "MESSAGES": {
             "CHANGE_STATUS_SUCCESS": "O status foi alterado.",
@@ -3019,7 +3181,7 @@
             "EDIT_SETTING_FAIL": "Falha ao editar as configurações da fatura.",
             "DUPLICATE_SUCCESS": "Fatura duplicada com sucesso.",
             "DUPLICATE_FAIL": "Falha na fatura duplicada.",
-            "CONFIRM_MULTIPLE_ITEMS_DELETE": "Tem certeza de que deseja excluir { count } { count, plural, =0{} one{item} other{items} }?",
+            "CONFIRM_MULTIPLE_ITEMS_DELETE": "Tem certeza de que deseja excluir { count } { count, plural, =0{} one{item} other{itens} }?",
             "DELETE_ITEMS_SUCCESS": "Itens excluídos com sucesso.",
             "DELETE_ITEMS_FAIL": "Falha ao excluir itens de fatura.",
             "EMAIL_FAILED": "Falha ao enviar e-mail",
@@ -3155,7 +3317,7 @@
                 "MODAL": {
                     "NAME": {
                         "FAILED_MESSAGE": "O nome da empresa deve ter entre 2 e 250 caracteres",
-                        "SAME_NAME": "A empresa com o nome { name } já existe"
+                        "SAME_NAME": "A empresa de nome { name } já existe"
                     },
                     "SUCCESS_MESSAGE": "Empresa foi criada.",
                     "FAILED_MESSAGE": "A criação da empresa falhou.",
@@ -3180,7 +3342,7 @@
             }
         },
         "PERMISSIONS": {
-            "SELECT_WHO_CAN_MANAGE": "Selecione os integrantes que podem gerenciar",
+            "SELECT_WHO_CAN_MANAGE": "Selecionar os integrantes que podem gerenciar",
             "ALLOW_PEOPLE": "Permitir que as pessoas criem e editem todas as faturas.",
             "WHO_CAN_MANAGE": "Quem pode gerenciar faturas"
         },
@@ -3228,6 +3390,23 @@
         "TOOLTIP": {
             "NO_CLIENT": "{ clientLabel } ausente. Adicione-os para enviar esta fatura.",
             "NO_COMPANY": "Empresa ausente. Adicione-a para enviar esta fatura."
+        },
+        "EXPENSES_REPORT": {
+            "WELCOME_MESSAGE": "Ei!",
+            "DESCRIPTION": "Para baixar o relatório de despesas, insira o código do e-mail. O link de download expira em { date }.",
+            "DOWNLOAD_LABEL": "Baixar relatório de despesas",
+            "EXPIRED_CODE_ERROR": "Este código expirou.",
+            "RESET_CODE": "Reiniciar código",
+            "TIMER_ERROR": "Você digitou um código incorreto 3 vezes. Tente novamente em { timer }",
+            "INCORRECT_CODE_ERROR": "Você digitou um código errado",
+            "LINK_EXPIRED": "Seu link expirou.",
+            "CONTACT_OWNER": "Entre em contato com o proprietário da fatura para gerar um novo link.",
+            "DOWNLOAD_COMPLETED": "Transferência concluída!",
+            "CODE_SENT": "Código enviado",
+            "DOWNLOAD_SUCCESS": "Você baixou com sucesso o relatório de despesas."
+        },
+        "EXPORT_SETTINGS": {
+            "TITLE": "Configurações de exportação de fatura"
         }
     },
     "TRACKER": {
@@ -3254,7 +3433,8 @@
                 },
                 "GROUPS_TOOLTIP": "{ count } { count, plural, =0{} one{} other{entradas de tempo} } (clique para alternar)",
                 "MAX_HOURS_ENTERED": "Não é possível salvar mais de 999 horas.",
-                "ADD_TO_FAVORITES_LABEL": "Adicionar como favorito"
+                "ADD_TO_FAVORITES_LABEL": "Adicionar como favorito",
+                "DESCRIPTION_WITH_INTERPOLATION": "Adicionar descrição…"
             },
             "DESCRIPTION_TOOLTIP": "Digite no que você está trabalhando",
             "START_TIMER_TOOLTIP": "Iniciar cronômetro",
@@ -3333,7 +3513,10 @@
             "ENTRY_RESTORED_SUCCESS": "Entrada restaurada",
             "ENTRIES_RESTORED_SUCCESS": "Entradas restauradas",
             "RESTORE_ENTRY_FAIL": "Você não pode desfazer a entrada excluída enquanto houver uma entrada de tempo existente em andamento",
-            "BREAK_DUPLICATE_SUCCESS": "A entrada do intervalo foi duplicada"
+            "BREAK_DUPLICATE_SUCCESS": "A entrada do intervalo foi duplicada",
+            "CREATE_MULTIPLE_SUCCESS": "As entradas de tempo foram criadas",
+            "RUNNING_ENTRY_EXISTS": "Não é possível criar uma entrada de tempo enquanto outra entrada está em execução",
+            "BREAKS_DISABLED": "Você não tem permissão para criar uma entrada de tempo de intervalo, pois o recurso de intervalo não está ativado."
         },
         "STOP": "Parar",
         "DEFAULT": "predefinição",
@@ -3394,12 +3577,31 @@
             },
             "DELETE": {
                 "SUCCESS_MESSAGE": "{ projectGroupingLabel } com o nome { client } foi excluído",
-                "ERROR_MESSAGE": "{ projectGroupingLabel } não excluído"
+                "ERROR_MESSAGE": "{ projectGroupingLabel } não excluído",
+                "SUCCESS": "{ clientLabel } excluído com sucesso"
             },
             "GET": {
                 "ERROR_MESSAGE": "Falha ao obter cliente"
             },
-            "NAME_EXISTS_ERROR_MESSAGE": "{ projectGroupingLabel } com o nome { projectName } já existe."
+            "NAME_EXISTS_ERROR_MESSAGE": "{ projectGroupingLabel } com o nome { projectName } já existe.",
+            "UPDATE_MULTIPLE": {
+                "SUCCESS_MESSAGE": "{ clientLabelPlural } foram atualizados"
+            },
+            "DELETE_MULTIPLE": {
+                "SUCCESS_MESSAGE": "{ clientLabel } excluído com sucesso"
+            },
+            "ARCHIVE": {
+                "SUCCESS_MESSAGE": "{ projectGroupingLabel } foi arquivado."
+            },
+            "ARCHIVE_MULTIPLE": {
+                "SUCCESS_MESSAGE": "{ clientLabelPlural } foram arquivados"
+            },
+            "RESTORE": {
+                "SUCCESS_MESSAGE": "{ projectGroupingLabel } foi restaurado."
+            },
+            "RESTORE_MULTIPLE": {
+                "SUCCESS_MESSAGE": "{ clientLabelPlural } foram restaurados"
+            }
         },
         "PROJECT": {
             "TASK": {
@@ -3490,7 +3692,8 @@
                 "ERROR_MESSAGE": "Lembrete não criado",
                 "NO_DAYS_ERROR_MESSAGE": "Não é possível criar lembrete sem dias adicionados.",
                 "NO_HOURS_ERROR_MESSAGE": "Não é possível criar lembrete sem horas adicionadas.",
-                "NO_TEAM_MEMBERS_ERROR_MESSAGE": "Não é possível criar um lembrete sem integrantes da equipe adicionados."
+                "NO_TEAM_MEMBERS_ERROR_MESSAGE": "Não é possível criar um lembrete sem integrantes da equipe adicionados.",
+                "NO_USER_NO_USERGROUPS": "Não é possível criar um lembrete sem escolher os membros da equipe"
             },
             "DELETE": {
                 "SUCCESS_MESSAGE": "Lembrete excluído com sucesso",
@@ -3498,7 +3701,8 @@
             },
             "GET": {
                 "ERROR_MESSAGE": "Não foi possível buscar lembretes"
-            }
+            },
+            "ALREADY_EXISTS": "O lembrete já existe"
         },
         "WORKSPACE": {
             "SETTINGS": {
@@ -3536,10 +3740,10 @@
                     "SUCCESS_MESSAGE": "Usuários limitados foram adicionados ao espaço de trabalho"
                 },
                 "INVITE_FULL": {
-                    "SUCCESS_MESSAGE": "Usuários completos foram convidados para o workspace"
+                    "SUCCESS_MESSAGE": "Usuários completos foram convidados para o espaço de trabalho"
                 },
                 "INVITE_REGULAR": {
-                    "SUCCESS_MESSAGE": "Os usuários regulares foram convidados para o workspace"
+                    "SUCCESS_MESSAGE": "Os usuários regulares foram convidados para o espaço de trabalho"
                 }
             }
         },
@@ -3572,10 +3776,29 @@
             },
             "DELETE": {
                 "SUCCESS_MESSAGE": "Etiqueta { tagName } foi excluída",
-                "ERROR_MESSAGE": "A exclusão da etiqueta falhou"
+                "ERROR_MESSAGE": "A exclusão da etiqueta falhou",
+                "SUCCESS": "Marca excluída com sucesso"
             },
             "GET": {
                 "ERROR_MESSAGE": "Falha ao obter etiquetas"
+            },
+            "UPDATE_MULTIPLE": {
+                "SUCCESS_MESSAGE": "As tags foram atualizadas"
+            },
+            "DELETE_MULTIPLE": {
+                "SUCCESS_MESSAGE": "Marcas excluídas com sucesso"
+            },
+            "ARCHIVE_MULTIPLE": {
+                "SUCCESS_MESSAGE": "As tags foram arquivadas"
+            },
+            "RESTORE_MULTIPLE": {
+                "SUCCESS_MESSAGE": "As tags foram restauradas"
+            },
+            "ARCHIVE": {
+                "SUCCESS_MESSAGE": "A etiqueta { tagName } foi arquivada"
+            },
+            "RESTORE": {
+                "SUCCESS_MESSAGE": "Tag { tagName } foi restaurada"
             }
         },
         "API_KEY": {
@@ -3614,7 +3837,8 @@
                     "SUCCESS_MESSAGE": {
                         "TITLE": "Email alterado",
                         "MESSAGE": "Por favor, verifique seu email para outras ações",
-                        "SUBTITLE": "O usuário deve confirmar a alteração do e-mail."
+                        "SUBTITLE": "O usuário deve confirmar a alteração do e-mail.",
+                        "FULL_MESSAGE": "E-mail alterado. Verifique sua caixa de entrada para outras ações"
                     }
                 }
             },
@@ -3653,6 +3877,9 @@
                 "GET": {
                     "ERROR_MESSAGE": "Falha ao obter configuração"
                 }
+            },
+            "TEST": {
+                "SUCCESS_MESSAGE": "O teste de configuração { type } foi bem-sucedido."
             }
         },
         "EDIT": {
@@ -3733,6 +3960,9 @@
             "UPDATE_GENERAL_QUANTITY_SEATS": {
                 "ADD": "Novos assentos adicionados",
                 "REMOVE": "Assentos removidos com sucesso"
+            },
+            "GET_SCHEDULED_INVOICE_INFO": {
+                "ERROR_MESSAGE": "Falha ao obter informações de fatura agendadas"
             }
         },
         "NO_PERMISSION_FOR_ACTION": "Você não tem permissão para realizar esta ação.",
@@ -3799,7 +4029,7 @@
                 "ADD_EMAIL": {
                     "UPDATE": {
                         "SUCCESS_MESSAGE": "O usuário completo foi adicionado ao espaço de trabalho.",
-                        "ERROR_MESSAGE": "O usuário normal não pôde ser adicionado ao workspace."
+                        "ERROR_MESSAGE": "O usuário regular não pôde ser adicionado ao espaço de trabalho."
                     }
                 }
             },
@@ -3971,7 +4201,8 @@
         "UNDO_DELETE": {
             "EXPENSE_RESTORED_SUCCESS": "Despesa restaurada",
             "EXPENSES_RESTORED_SUCCESS": "Despesas restauradas"
-        }
+        },
+        "TITLE_WITH_INTERPOLATION": "Despesas:"
     },
     "FIFTY_PLUS_INTEGRATIONS": "Mais de 50 integrações",
     "ENABLE_TIMESHEET_MODE": "Habilitar modo de planilha de horas",
@@ -4007,7 +4238,8 @@
                 "CUSTOMFIELDS": "Campos personalizados",
                 "END_DATE": "Data de finalização",
                 "KIOSK_NAME": "Nome do quiosque",
-                "KIOSK_ENTRY_TYPE": "Tipo"
+                "KIOSK_ENTRY_TYPE": "Tipo",
+                "SYSTEM": "Sistema"
             },
             "CLIENT": {
                 "NAME": "Nome do cliente",
@@ -4206,7 +4438,8 @@
         "KIOSK": {
             "BREAK_TYPE_LABEL": "Intervalo",
             "NON_BREAK_TYPE_LABEL": "Sem interrupção"
-        }
+        },
+        "ENABLED_ON_LABEL_WITH_INTERPOLATION": "Ativado em:"
     },
     "SUBSCRIPTION_TABS": {
         "INVOICES": {
@@ -4237,7 +4470,11 @@
             "LIMITED": {
                 "NUMBER_OF_ADDITIONAL_SEATS_LABEL_PART_2": "{ count } assentos limitados"
             },
-            "PAY_BTN": "Pagar"
+            "PAY_BTN": "Pagar",
+            "TOTAL_PRICE_PER_MONTH": "Preço por mês",
+            "TOTAL_PRICE_PER_YEAR": "Preço por ano",
+            "PRICE_CHANGE_WARNING_CH": "Será cobrado imediatamente de você um preço rateado com IVA para assentos adicionais pelo restante do ciclo de cobrança. Quando chegar um novo ciclo de cobrança, eles serão cobrados de acordo com o preço total.",
+            "PREVIEW_PRICE_ERROR": "Erro ao calcular o preço"
         },
         "SUBSCRIPTION_PAYMENT": {
             "UPDATING_LOADER_TITLE": "Atualizando",
@@ -4293,7 +4530,13 @@
             "WIRE_TRANSFER_TEXT_PART_2": "entre em contato conosco",
             "WIRE_TRANSFER_TEXT_PART_3": "adicione forma de pagamento.",
             "WIRE_TRANSFER_TEXT_PART_4": "Para adicionar assentos,",
-            "UNPAID_INVOICE_WARNING_BANNER": "{ seatsLeft } Não é possível comprar mais assentos enquanto você tem fatura não paga."
+            "UNPAID_INVOICE_WARNING_BANNER": "{ seatsLeft } Não é possível comprar mais assentos enquanto você tem fatura não paga.",
+            "SCHEDULED_ADDRESS_CHANGE_WARNING": "A partir de { nextBillingDateStart }, seu endereço será alterado para { newAddress }.",
+            "SCHEDULED_CURRENCY_AND_ADDRESS_CHANGE_WARNING": "A partir de { nextBillingDateStart }, todas as cobranças serão cobradas em { newCurrency }, pois o país das informações do cliente foi alterado para { newCountry } e o endereço será alterado para { newAddress }.",
+            "SCHEDULED_CURRENCY_CHANGE_WARNING_CH": "A partir de { nextBillingDateStart } todas as cobranças serão cobradas em { newCurrency } com IVA adicionado desde que o país das informações do cliente foi alterado para { newCountry }.",
+            "SCHEDULED_CURRENCY_CHANGE_WARNING": "A partir de { nextBillingDateStart } todas as cobranças serão cobradas em { newCurrency } desde que o país das informações do cliente foi alterado para { newCountry }.",
+            "SCHEDULED_CURRENCY_AND_ADDRESS_CHANGE_WARNING_CH": "A partir de { nextBillingDateStart } todas as cobranças serão cobradas em { newCurrency } com IVA adicionado, pois o país das informações do cliente foi alterado para { newCountry } e o endereço será alterado para { newAddress }.",
+            "WIRE_TRANSFER_CUSTOMER_TEXT": "Para editar as informações do cliente, { contactUs } ou { addPaymentMethod }."
         },
         "PAYMENT_LABEL": "Pagamento",
         "PLANS_LABEL": "Planos",
@@ -4301,11 +4544,11 @@
             "PAY_ANNUAL_LABEL": "anual"
         },
         "FULL_USER_SEATS": {
-            "REMOVE_SEATS_TITLE": "Remova os assentos cheios não utilizados",
+            "REMOVE_SEATS_TITLE": "Remova os assentos completos não utilizados",
             "BUY_SEATS_TITLE": "Compre assentos completos"
         },
         "REGULAR_USER_SEATS": {
-            "BUY_SEATS_TITLE": "Compre assentos regulares",
+            "BUY_SEATS_TITLE": "Comprar assentos regulares",
             "REMOVE_SEATS_TITLE": "Remova os assentos regulares não utilizados"
         },
         "LIMITED_USER_SEATS": {
@@ -4364,6 +4607,13 @@
         "ONBOARDING": {
             "TITLE": "Integração",
             "DESCRIPTION": "Receba uma série de e-mails sobre os principais recursos e atividades ao ingressar no Clockify."
+        },
+        "INTRO": {
+            "DESCRIPTION": "Você não receberá mais e-mails { emailPrefType } de Clockify."
+        },
+        "MESSAGE": {
+            "UPDATE_SUCCESS": "Suas preferências de e-mail foram atualizadas",
+            "SESSION_NOT_FOUND": "Sessão não encontrada"
         }
     },
     "LAYOUT": {
@@ -4425,9 +4675,11 @@
                 "NOTIFICATION": {
                     "PART_1": "Diferentes fusos horários em ",
                     "PART_2": "seu perfil",
-                    "PART_3": "e o navegador pode levar a relatórios incorretos."
+                    "PART_3": "e o navegador pode levar a relatórios incorretos.",
+                    "ENABLE_LOCATION_ACCESS": "Habilitar acesso à localização"
                 },
-                "CHANGE_TIMEZONE_NOTIFICATION": "Mudar para { suggestedTimeZone }"
+                "CHANGE_TIMEZONE_NOTIFICATION": "Mudar para { suggestedTimeZone }",
+                "BODY_TEXT": "Quando { profileLink } e os fusos horários do navegador não correspondem, isso pode levar a relatórios incorretos e alguns recursos podem não funcionar conforme o esperado."
             },
             "ACCEPT_LABEL": "Aceitar",
             "VERIFY_EMAIL_LABEL": "Verificar email",
@@ -4448,6 +4700,17 @@
         },
         "SHARED": {
             "WAIT_TEXT": "Por favor, espere"
+        },
+        "VERIFY_EMAIL_BANNER": {
+            "VERIFY_EMAIL_MESSAGE": "Verifique seu e-mail: { userEmail }",
+            "SEND_VERIFICATION_EMAIL_BTN": "Enviar e-mail de verificação",
+            "EMAIL_SENT_SUCCESS_MESSAGE": "E-mail enviado"
+        },
+        "ENFORCE_EMAIL_VERIFICATION": {
+            "VERIFY_EMAIL_TITLE": "Verifique seu e-mail!",
+            "VERIFY_EMAIL_MESSAGE": "{ userName }, para continuar usando sua conta clockify, você deve verificar seu endereço de e-mail: { userEmail }",
+            "SEND_VERIFICATION_EMAIL_BTN": "Enviar e-mail de verificação",
+            "CHANGE_EMAIL_FOOTER": "Está tendo problemas para acessar seu e-mail?"
         }
     },
     "PROJECTS": {
@@ -4465,7 +4728,8 @@
             "PROJECT_NAME_STATUS": "{ name } - Status",
             "PROJECT_NAME_TASKS": "{ name } - Tarefas",
             "PROJECT_NAME_SETTINGS": "{ name } - Configurações",
-            "PROJECT_NAME_TASKS_CUSTOM": "{ name } - { taskLabel }"
+            "PROJECT_NAME_TASKS_CUSTOM": "{ name } - { taskLabel }",
+            "PROJECT_NAME_FORECAST": "{ name } - Previsão"
         },
         "DROPDOWN": {
             "NO_ESTIMATE": "Sem estimativa",
@@ -4556,7 +4820,9 @@
             },
             "WEEK_LABEL": "semana",
             "MONTH_LABEL": "mês",
-            "YEAR_LABEL": "ano"
+            "YEAR_LABEL": "ano",
+            "UPGRADE_LABEL_EXCLUDE_WITH_INTERPOLATION": "para PRO para excluir tempo não faturável.",
+            "UPGRADE_LABEL_2_WITH_INTERPOLATION": "ao PRO para usar estimativas recorrentes."
         },
         "EDIT_PROJECT_STATUS": {
             "OVERAGE_LABEL": "Excesso",
@@ -4572,13 +4838,15 @@
             "MARK_AS_DONE_LABEL": "Marcar como concluído",
             "SET_LABEL": "Definir",
             "MARK_AS_DONE_LIST_KIOSKS": "Para arquivar { taskName }, primeiro remova-a de cada quiosque.",
-            "MARK_AS_DONE_WARNING": "Não é possível arquivar { taskLabel } porque é usada como padrão { taskLabel } no quiosque"
+            "MARK_AS_DONE_WARNING": "Não é possível arquivar { taskLabel } porque é usada como padrão { taskLabel } no quiosque",
+            "TASK_ACCESS_UPDATED": "Acesso à tarefa atualizado.",
+            "PROJECT_TASK_ACCESS_UPDATED": "Acesso a projetos e tarefas atualizado."
         },
         "FILTER_DROPDOWN": {
             "NO_MATCHING_ENTITIES_LABEL": "Sem correspondência { entityInPlural }",
             "NO_ENTITIES_YET_LABEL": "Não { entityInPlural } ainda",
             "NO_ENTITY_LABEL": "Sem { entity }",
-            "NO_ENTITIES_FOUND_LABEL": "Não { entityInPlural } encontrado"
+            "NO_ENTITIES_FOUND_LABEL": "{ entityInPlural } não encontrado"
         },
         "NEW_PROJECT": {
             "CUSTOM_COLOR_LABEL": "Cor customizada",
@@ -4670,7 +4938,8 @@
                 "WEEKLY": "cada { week } em { dayOfWeek } em { time } ({ timeZone }).",
                 "MONTHLY": "cada { month } no { dayOfMonth } em { time } ({ timeZone }).",
                 "YEARLY": "cada { year } no { dayOfMonth } de { month } em { time } ({ timeZone })."
-            }
+            },
+            "SEARCH_BY_NAME_LABEL": "Procura por nome"
         },
         "PROJECTS_CUSTOM_PAGE": {
             "DELETE_MULTIPLE_PROJECTS_WARNING": "Tem certeza de que deseja excluir { listLength } do { projectLabel }?",
@@ -4745,7 +5014,8 @@
             "OVERAGE_H": "Excedente (h)",
             "ESTIMATED_H": "Estimada (h)",
             "OVERAGE_H'": "Excedente (h)",
-            "TRACKED_BUDGET": "Rastreado ({currency})"
+            "TRACKED_BUDGET": "Rastreado ({currency})",
+            "TASKS": "Tarefas"
         }
     },
     "PAGES": {
@@ -4808,7 +5078,8 @@
                 "SEATS": {
                     "MIN_MESSAGE": "Você não pode comprar menos licenças do que usuários ativos."
                 },
-                "TOTAL": "Preço total"
+                "TOTAL": "Preço total",
+                "VAT_LABEL": "CUBA"
             }
         },
         "FEATURES": {
@@ -4834,7 +5105,7 @@
                 "MORE_TIME": "A avaliação gratuita já foi ativada neste espaço de trabalho. Se precisar de mais tempo, ative o teste em um novo espaço de trabalho.",
                 "NAME": "tentativas",
                 "BUTTON": "Iniciar teste",
-                "HAD_ALREADY_CUSTOM": "A avaliação gratuita já foi ativada neste workspace."
+                "HAD_ALREADY_CUSTOM": "A avaliação gratuita já foi ativada neste espaço de trabalho."
             },
             "FOR_WORKSPACE": "para { value } espaço de trabalho",
             "SUBSCRIPTION": {
@@ -4849,7 +5120,7 @@
                     "Q": "Posso experimentar primeiro?",
                     "A": "Absolutamente! Você pode experimentar recursos extras gratuitamente por 14 dias, sem necessidade de cartão de crédito.",
                     "A_ABSOLUTELY": "Absolutamente! Você pode",
-                    "A_START_TRIAL": "Iniciar teste",
+                    "A_START_TRIAL": "Iniciar um teste",
                     "A_PRO": "e experimente todos os recursos PRO gratuitamente por 7 dias, sem necessidade de cartão de crédito."
                 },
                 "SEAT": {
@@ -4882,8 +5153,8 @@
                     "A_V2": "Todos os preços são exibidos sem impostos e, se formos legalmente obrigados a cobrar o IVA do seu país, esse imposto será adicionado ao preço final que você verá na finalização da compra, antes de efetuar o pagamento."
                 },
                 "UPGRADE_PER_WORKSPACE": {
-                    "Q": "As atualizações são por workspace ou por conta?",
-                    "A": "A atualização é por área de trabalho e o preço da atualização é por estação para essa área de trabalho."
+                    "Q": "As atualizações são por espaço de trabalho ou por conta?",
+                    "A": "A atualização é por área de trabalho e o preço da atualização é por assento para essa área de trabalho."
                 }
             }
         }
@@ -4927,7 +5198,8 @@
                     "TITLE": "Editar grupo"
                 },
                 "DELETE": {
-                    "CONFIRM": "Tem certeza que deseja deletar o grupo "
+                    "CONFIRM": "Tem certeza que deseja deletar o grupo ",
+                    "CONFIRM_WITH_INTERPOLATION": "Tem certeza de que deseja excluir o grupo {value}?"
                 },
                 "ADD": {
                     "PLACEHOLDER": "Adicionar novo grupo de usuários"
@@ -4947,7 +5219,8 @@
                     "VALID": "Digite um endereço de email válido.",
                     "NOT_VALID": {
                         "ONE": "email não é válido.",
-                        "MANY": "emails não são válidos."
+                        "MANY": "emails não são válidos.",
+                        "ONE_WITH_INTERPOLATION": "{value} não é um e-mail válido."
                     },
                     "INVITED": {
                         "ONE": "já está convidado.",
@@ -5020,7 +5293,8 @@
                 "SELECT_DAY": "Selecione o dia"
             },
             "SETTINGS_TOOLTIP": "Configurações completas de exportação",
-            "SETTINGS_TOOLTIP_NOT_FULL": "Configurações de exportação de membros"
+            "SETTINGS_TOOLTIP_NOT_FULL": "Configurações de exportação de membros",
+            "SEARCH_MEMBER": "Pesquisar membro"
         },
         "CURRENT_USER_LABEL": "(você)",
         "REMINDERS": {
@@ -5092,7 +5366,8 @@
             "BUY": "Compre assentos"
         },
         "FEATURE": {
-            "STANDARD": "Recurso STANDARD"
+            "STANDARD": "Recurso STANDARD",
+            "PRO": "Recurso PRO"
         },
         "USERS": {
             "SELECT": "Selecione o usuário",
@@ -5109,14 +5384,15 @@
         "LIMITED_SEATS": {
             "UPGRADE_INFO_MESSAGE": "Para ativar usuários limitados adicionais, você precisa atualizar sua assinatura e comprar mais assentos de usuário."
         },
-        "NO_FULL_SEATS": "Não sobraram mais assentos completos.",
+        "NO_FULL_SEATS": "Não há mais assentos completos.",
         "FIND_MEMBERS": "Encontrar integrantes…",
         "FILE": {
-            "FULL_MEMBERS": "Clockify_Full_Members",
+            "FULL_MEMBERS": "Clockify_Membros_Completos",
             "MEMBERS": "Clockify_Membros",
-            "LIMITED_MEMBERS": "Clockify_Limited_Members",
-            "TEAM_GROUPS": "Clockify_Team_Groups"
-        }
+            "LIMITED_MEMBERS": "Clockify_Membros_Limitados",
+            "TEAM_GROUPS": "Clockify_Grupos_de_Equipe"
+        },
+        "SEARCH_MEMBERS": "Pesquisar membros"
     },
     "SHARED_FOLDER": {
         "CURRENT_LEGACY_PLAN_INFO": "No momento, você está usando um plano legado. Depois de cancelar a assinatura, é impossível voltar ao plano de preços antigo.",
@@ -5130,7 +5406,8 @@
         "NO_REFUNDS": "Não há reembolso.",
         "SAVE_PERCENT": "(economize 20%).",
         "KEEP_SUBSCRIPTION": "Manter assinatura",
-        "SUBSCRIPTION_END_CANT_TRACK_TIME_WARNING": "Você não poderá acompanhar o tempo quando a assinatura terminar."
+        "SUBSCRIPTION_END_CANT_TRACK_TIME_WARNING": "Você não poderá acompanhar o tempo quando a assinatura terminar.",
+        "CANCEL_REASON_LABEL_WITH_INTERPOLATION": "Estou cancelando porque:"
     },
     "IN_PROGRESS": "Importação em andamento. Você receberá uma notificação quando terminar.",
     "LETS_START_TRACKING": "Vamos começar a rastrear!",
@@ -5292,7 +5569,9 @@
                 "REPEAT_PART_1": "Repetir semanalmente para",
                 "LONG_ASSIGNMENT": "As atribuições devem ser inferiores a uma semana para repetir semanalmente",
                 "SUCCESS_MESSAGE_PLURAL": "Tarefas criadas com sucesso",
-                "FAILED_MESSAGE_PLURAL": "Falha ao salvar as atribuições"
+                "FAILED_MESSAGE_PLURAL": "Falha ao salvar as atribuições",
+                "WORKING_DAYS_WITH_INTERPOLATION": "Dias úteis:",
+                "TOTAL_HOURS_WITH_INTERPOLATION": "Total de horas:"
             },
             "EDIT_MODAL": {
                 "TITLE": "Editar atribuição",
@@ -5364,9 +5643,9 @@
             },
             "PERIOD_UPDATE_MODAL": {
                 "TITLE": "Atualizar série",
-                "EXPLANATION_PART_1": "Mude a série de",
+                "EXPLANATION_PART_1": "Mudar a série de",
                 "EXPLANATION_PART_2": "{ count, plural, =0{} one{semana} other{semanas} } a",
-                "EXPLANATION_PART_3": "{ count, plural, =0{} one{semana} other{semanas} } longa?",
+                "EXPLANATION_PART_3": "{ count, plural, =0{} one{semana} other{semanas} } de duração?",
                 "ASSIGNMENT_DELETE_WARRNING": "Isso excluirá as atribuições da última semana.",
                 "ASSIGNMENT_MULTIPLE_DELETE_WARRNING": "Isso excluirá atribuições das últimas { weekCount } semanas.",
                 "ASSIGNMENT_CREATE_WARRNING": "Isso criará novas atribuições no futuro.",
@@ -5391,7 +5670,7 @@
         },
         "NONWORKING_DAY": "Planejar para um dia de folga?",
         "ADD_MEMBERS_TO_PROJECT": {
-            "TEXT": "{ userName } não tem acesso ao Projeto { projectName }. Você deseja adicioná-los ao projeto?",
+            "TEXT": "{ userName } não tem acesso ao Projeto { projectName }. Você deseja adicioná-lo ao projeto?",
             "TITLE": "Adicionar integrante ao projeto",
             "NO_MATCHING": "(Nenhum integrante correspondente)",
             "NO_MORE": "(Sem integrantes)",
@@ -5405,7 +5684,11 @@
             "ADD_MEMBERS_TO_TASK_TITLE": "Adicionar integrantes ao projeto",
             "ADD_MEMBER_TO_PROJECT_AND_TASK_NO_CLIENT": "{ userName } não tem acesso a { projectName }: { taskName }. Deseja adicioná-los ao projeto e tarefa?",
             "ADD_MEMBER_TO_PROJECT_NO_CLIENT": "{ userName } não tem acesso a { projectName }. Deseja adicioná-los ao projeto?",
-            "ADD_MEMBERS_TO_TASK_NO_CLIENT": "Existem usuários { numberOfUsers } que não têm acesso a { projectName }. Deseja adicioná-los ao projeto?"
+            "ADD_MEMBERS_TO_TASK_NO_CLIENT": "Existem usuários { numberOfUsers } que não têm acesso a { projectName }. Deseja adicioná-los ao projeto?",
+            "ADD_MEMBER_TO_PROJECT_AND_TASK_BULK_TITLE": "Adicionar membros ao projeto e tarefa",
+            "ADD_MEMBER_TO_PROJECT_AND_TASK_BULK_MESSAGE": "Existem usuários { numberOfUsers } que não têm acesso a { projectName }: { taskName } - {clientName}. Deseja adicioná-los ao projeto e tarefa?",
+            "ADD_MEMBER_TO_PROJECT_AND_TASK_BULK_MESSAGE_NO_CLIENT": "Existem usuários { numberOfUsers } que não têm acesso a { projectName }: { taskName }. Deseja adicioná-los ao projeto e tarefa?",
+            "ADD_MEMBER_TO_TASK_MESSAGE_NO_CLIENT": "{ userName } não tem acesso a { projectName }: { taskName }. Deseja adicioná-los à tarefa?"
         },
         "SCHEDULE": "Planejar",
         "FULL": "Completo",
@@ -5457,7 +5740,9 @@
             "FROM": "a partir de",
             "TO": "para",
             "TOTAL_SHIFT": "para um deslocamento total de",
-            "CONFIRM_SHIFT": "Confirmar turno"
+            "CONFIRM_SHIFT": "Confirmar turno",
+            "FROM_WITH_INTERPOLATION": "de:",
+            "TO_WITH_INTERPOLATION": "para:"
         },
         "SHIFT_TIMELINE": {
             "FROM_DATE_LABEL": "Mudar atribuições de",
@@ -5488,6 +5773,15 @@
         "FILTER": {
             "SHOW_PUBLISHED": "Mostrar publicado",
             "SHOW_UNPUBLISHED": "Mostrar não publicado"
+        },
+        "ADD_MEMBER_TO_PROJECTS_AND_TASKS": {
+            "TITLE": "Adicionar membro a projetos e tarefas",
+            "DESCRIPTION": "Existem { numberOfProjectsAndTasks} projetos e tarefas aos quais { userName } não tem acesso. Deseja adicioná-los aos projetos e tarefas?",
+            "DESCRIPTION_BOTH": "Existem projetos { numberOfProjects } e tarefas { numberOfTasks } às quais { userName } não tem acesso. Deseja adicioná-los aos projetos e tarefas?"
+        },
+        "ADD_MEMBER_TO_PROJECTS": {
+            "DESCRIPTION": "Existem projetos { numberOfProjects } aos quais { userName } não tem acesso. Deseja adicioná-los aos projetos?",
+            "TITLE": "Adicionar membro aos projetos"
         }
     },
     "FAILED_TO_COPY_TIME": "Algumas entradas não puderam ser copiadas",
@@ -5650,13 +5944,20 @@
                 "REMOVE_FROM_HOLIDAYS_LABEL": "Arquivar este { entity } irá removê-lo das políticas de feriados:",
                 "REMOVE_FROM_POLICIES_AND_HOLIDAYS_LABEL": "Arquivar este { entity } irá removê-lo das políticas de folga: { policies } e feriados: { holidays }",
                 "ARCHIVE_PLURAL_MESSAGE": "Arquivar estes { entities } irá removê-los de:",
-                "ARCHIVE_SINGLE_MESSAGE": "Arquivar este { entity } irá removê-lo do:"
+                "ARCHIVE_SINGLE_MESSAGE": "Arquivar este { entity } irá removê-lo do:",
+                "REMOVE_FROM_POLICIES_PLURAL_LABEL": "Arquivar estes { entity } irá removê-los das políticas de folga:",
+                "REMOVE_FROM_HOLIDAYS_PLURAL_LABEL": "Arquivar estes { entity } irá removê-los dos feriados:"
             },
             "CHANGE_ENTRY_TYPE": {
                 "MARK_AS_REGULAR_LABEL": "Marcar como entrada de horário padrão",
                 "MARK_AS_BREAK_LABEL": "Marcar como entrada de intervalo",
                 "MARK_AS_TIME_OFF_LABEL": "Marcar como entrada de folga",
                 "MARK_AS_HOLIDAY_LABEL": "Marcar como entrada de feriado"
+            },
+            "TYPES": {
+                "TIME_OFF_ENTRY": "Intervalo",
+                "HOLIDAY_ENTRY_LABEL": "Feriado",
+                "REGULAR_ENTRY_LABEL": "entrada regular"
             }
         },
         "TIME_OFF_POLICIES_LABEL": "Políticas de folga"
@@ -5804,7 +6105,8 @@
         "FIELD_REQUIRED": "obrigatório",
         "STOP_AT_SPECIFIED_TIME": "Pare o cronômetro automaticamente em uma hora especifica do dia",
         "STOP_TIME": "Parar o tempo",
-        "FORBIDDEN_CHARACTERS": "Você digitou o valor errado. Não use os caracteres \"<\" e \">\""
+        "FORBIDDEN_CHARACTERS": "Você digitou o valor errado. Não use os caracteres \"<\" e \">\"",
+        "NO_NEW_NOTIFICATIONSL_MESSAGE": "No momento você não tem novas notificações"
     },
     "ENABLE_ALL_INTEGRATIONS": "Você pode habilitar tudo clicando no botão 'Habilitar tudo'.",
     "REFRESH": "Refrescar",
@@ -5846,14 +6148,15 @@
             },
             "LAUNCH": {
                 "INFO": "Saia do Clockify e faça login no",
-                "TITLE": "Lançar quiosque"
+                "TITLE": "Lançar quiosque",
+                "INFO_WITH_INTERPOLATION": "Saia de Clockify e faça login em {value}."
             },
             "EDIT": {
                 "TITLE": "Editar quiosque"
             },
             "CREATE": {
                 "TITLE": "Criar quiosque",
-                "NAME_PLACEHOLDER": "Insira o nome",
+                "NAME_PLACEHOLDER": "Inserir nome",
                 "INACTIVE_LABEL": "Quiosque criado (inativo)"
             },
             "KIOSK_NAME_IN_USE": "O nome do quiosque já existe"
@@ -5926,11 +6229,11 @@
                 "ALREADY_IN_USE": "Este PIN já está em uso"
             }
         },
-        "DEFAULT_BREAK_PROJECT": "Projeto de pausa padrão",
+        "DEFAULT_BREAK_PROJECT": "Pausa padrão do projeto",
         "DEFAULT_TASK": "Tarefa padrão",
         "DEFAULT_BREAK_TASK": "Pausa de tarefa padrão",
         "EMPTY_TABLE_INFO": "Nenhum quiosque encontrado",
-        "FILTER_EMPTY_TABLE_INFO": "Nenhum quiosque {valor}.",
+        "FILTER_EMPTY_TABLE_INFO": "Não há {valor} quiosques.",
         "SELECT_BREAK_PROJECT_LABEL": "Selecionar intervalo {projectLabel}",
         "SELECT_BREAK_TASK_LABEL": "Selecionar intervalo {taskLabel}",
         "DEFAULT_ENTITY": "{ label } padrão",
@@ -5965,9 +6268,9 @@
     "PROMO": {
         "SCHEDULING": {
             "LIST": {
-                "FIRST": "Planeje projetos e etapas em um linha do tempo",
+                "FIRST": "Planejar projetos e etapas em um linha do tempo",
                 "THIRD": "Atribuir quem precisa trabalhar no quê e quando",
-                "FOURTH": "Publique atribuições para que as pessoas possam ver sua programação",
+                "FOURTH": "Publicar atribuições para que todos possam ver suas programações",
                 "SECOND": "Veja quem está ocupado e quem está disponível rapidamente"
             },
             "LINK_TITLE": "Como funciona o planejamento",
@@ -5975,15 +6278,15 @@
         },
         "EXPENSES": {
             "LIST": {
-                "SECOND": "Registre por preço ou unidade (por exemplo, milhas)",
+                "SECOND": "Registrar por preço ou unidade (por exemplo, quilômetros)",
                 "THIRD": "Anexar e baixar recibos",
                 "FOURTH": "Aprovar e faturar despesas",
                 "FIFTH": "Incluir despesas nos orçamentos do projeto",
-                "FIRST": "Acompanhe e categorize as despesas",
+                "FIRST": "Acompanhar e categorizar as despesas",
                 "SIXTH": "Executar e exportar relatórios de despesas"
             },
             "LINK_TITLE": "Como funcionam as despesas",
-            "TITLE": "Acompanhe as despesas da empresa"
+            "TITLE": "Acompanhar as despesas da empresa"
         },
         "TIME_OFF": {
             "TITLE": "Gerenciar licenças e feriados",
@@ -6027,7 +6330,7 @@
         "INVOICING": {
             "TITLE": "Criar e gerenciar faturas",
             "LIST": {
-                "FIRST": "Crie faturas a partir do tempo rastreado",
+                "FIRST": "Criar faturas a partir do tempo rastreado",
                 "SECOND": "Editar e personalizar faturas",
                 "THIRD": "Enviar faturas para clientes e acompanhar seu status",
                 "FOURTH": "Acompanhar o que foi faturado"
@@ -6135,7 +6438,20 @@
     "APPROVALS": {
         "ARCHIVE_LABEL": "Arquivo",
         "LOCKED_TIME_ENTRY": "Não é possível editar entradas bloqueadas.",
-        "LOCKED_EXPENSES": "Não é possível editar despesas bloqueadas. Entre em contato com seu administrador para obter mais informações"
+        "LOCKED_EXPENSES": "Não é possível editar despesas bloqueadas. Entre em contato com seu administrador para obter mais informações",
+        "APPROVAL_WITHDRAW_MODAL": {
+            "TITLE": "Retirada pendente"
+        },
+        "PERIOD_APPROVAL_MODAL": {
+            "MESSAGE": "Para { period }, todas as entradas e despesas pendentes serão retiradas e não estarão disponíveis para aprovação a menos que sejam reenviadas.",
+            "MESSAGE1": "Para { period }, todas as entradas e despesas pendentes serão retiradas e não estarão disponíveis para aprovação a menos que sejam reenviadas.",
+            "INFO_MESSAGE": "Para { period }, todas as entradas e despesas pendentes serão retiradas e não estarão disponíveis para aprovação a menos que sejam reenviadas."
+        },
+        "APPROVAL_MODAL": {
+            "MESSAGE": "Para { from } - { to } , todas as entradas e despesas pendentes serão retiradas e não estarão disponíveis para aprovação a menos que sejam reenviadas.",
+            "MESSAGE1": "Para { from } - { to } , todas as entradas e despesas pendentes serão retiradas e não estarão disponíveis para aprovação a menos que sejam reenviadas.",
+            "INFO_MESSAGE": "Para { from } - { to } , todas as entradas e despesas pendentes serão retiradas e não estarão disponíveis para aprovação a menos que sejam reenviadas."
+        }
     },
     "SETTINGS": {
         "MESSAGES": {
@@ -6230,7 +6546,7 @@
             "ADMIN_USER_INFO": "Pronto para instalar seu primeiro complemento? Aprimore e adapte o Clockify às suas necessidades.",
             "ADMIN_USER_INFO_PT_TWO": "Melhore e adapte Clockify às suas necessidades."
         },
-        "DISABLE_INFO": "Ao desabilitar este complemento, seus locais de interface do usuário serão removidos e o complemento perderá o acesso ao seu espaço de trabalho. Você pode ativá-lo mais tarde.",
+        "DISABLE_INFO": "Ao desabilitar este complemento, seus locais de interface do usuário serão removidos e o add-on perderá o acesso ao seu espaço de trabalho. Você pode ativá-lo mais tarde.",
         "MY_ADDONS_LABEL": "MEUS COMPLEMENTOS",
         "FAILED_FETCH_WEBHOOKS": "Falha ao buscar webhooks de complemento"
     },
@@ -6259,6 +6575,11 @@
     "exception": {
         "user": {
             "disabled": "Esta conta foi suspensa. Entre em contato com o suporte."
+        },
+        "incorrect": {
+            "email": {
+                "password": "E-mail ou senha inválida"
+            }
         }
     },
     "SUSPENDED": {
@@ -6304,13 +6625,29 @@
                 "MODAL": {
                     "TITLE": "Excluir moeda"
                 }
-            }
+            },
+            "DELETE_CURRENCIES": "Se você excluir, todos os valores na moeda { currencyName } serão substituídos pela moeda padrão."
         },
         "DROPDOWN": {
             "UPGRADE_TEXT": "para PRO para mudar de moeda"
         },
         "EMAIL_VERIFICATION_EXPIRED": "Seu link de verificação expirou.",
-        "EMAIL_VERIFICATION_INVALID_TOKEN": "Seu token de verificação é inválido."
+        "EMAIL_VERIFICATION_INVALID_TOKEN": "Seu token de verificação é inválido.",
+        "EMAIL_SUCCESSFULLY_VERIFIED_MSG": "Você verificou seu e-mail com sucesso.",
+        "ACCOUNT_ALREADY_VERIFIED_TITLE": "Conta já verificada!",
+        "ACCOUNT_ALREADY_VERIFIED_TEXT": "Esta conta já foi verificada.",
+        "LINK_EXPIRED_TITLE": "Ops, o link expirou!",
+        "RESEND_VERIFICATION_EMAIL_BTN": "Reenviar email de verificação",
+        "OPEN_GMAIL_BTN": "Abra o Gmail",
+        "OPEN_OUTLOOK_BTN": "Abra o Outlook",
+        "PENDING_EMAIL_CHANGE_BANNER": {
+            "PENDING_CHANGE_BANNER_TEXT": "Alteração de e-mail pendente",
+            "PENDING_CHANGE_BANNER_TOOLTIP": "Alteração pendente no e-mail: { userEmail }. Verifique sua caixa de entrada de e-mail e verifique o novo e-mail para concluir o processo.",
+            "CANCEL_CHANGE_BTN": "Cancelar alteração",
+            "EMAIL_CHANGE_CANCELED_MSG": "Alteração de e-mail cancelada"
+        },
+        "LINK_EXPIRED_TEXT": "Este link de verificação expirou.",
+        "EMAIL_LINK_EXPIRED_TEXT": "Este link de verificação de e-mail expirou."
     },
     "EXTENSION_FORBIDDEN_CHARACTERS": "Você digitou o valor errado. Não use os caracteres \"<\" e \">\"",
     "GOBAL": {
@@ -6332,7 +6669,18 @@
         },
         "DELETE": {
             "SUCCESS": "{ name } removido dos favoritos"
-        }
+        },
+        "DELETE_MODAL": {
+            "TITLE": "Remover dos favoritos",
+            "DESCRIPTION": "Isso removerá a entrada de sua lista de favoritos."
+        },
+        "MISSING_REQUIRED_FIELDS_MESSAGE": "Campos obrigatórios ausentes",
+        "EDIT_MODAL": {
+            "TITLE": "Corrigir entrada favorita"
+        },
+        "MAX_FAVORITES_CREATED_MESSAGE": "Atingiu o máximo de { count } favorito { count, plural, =0{} one{entrada} other{entradas} }.",
+        "DUPLICATE_FAVORITE_ERROR": "Você já tem um favorito com esses detalhes",
+        "FAVORITE_TIME_ENTRY_ACTIVATED": "{ name } iniciado com sucesso"
     },
     "PAYMENT": {
         "CUSTOMER_TYPE_LABEL": "Tipo de Cliente",
@@ -6346,6 +6694,80 @@
         "STATE_LABEL": "Estado / Província",
         "STATE_PLACEHOLDER": "Selecione o estado/província",
         "STATE_SEARCH_LABEL": "Encontrar estado/província",
-        "CUSTOMER_TYPE_PLACEHOLDER": "Selecione o tipo de cliente"
+        "CUSTOMER_TYPE_PLACEHOLDER": "Selecione o tipo de cliente",
+        "ERRORS": {
+            "INVALID_TAX_ID": "Seu ID { displayName } ({ displayName2 }) deve se parecer com { format } ou { format2 }",
+            "INVALID_TAX_ID_SINGLE_FORMAT": "Seu ID { displayName } ({ displayName2 }) deve se parecer com { format }",
+            "INVALID_TAX_ID_SINGLE_DISPLAY_NAME_AND_FORMAT": "Seu ID { displayName } deve se parecer com { format }",
+            "INVALID_TAX_ID_SINGLE_DISPLAY_NAME": "Seu ID { displayName } deve se parecer com { format } ou { format2 }"
+        },
+        "CHANGE_COUNTRY_LABEL": "Alterar país",
+        "CANNOT_CHANGE_COUNTRY_MESSAGE": "O país é definido na Etapa 1 e não pode ser alterado nesta etapa.",
+        "CHANGE_COUNTRY_MODAL_CONTENT": "Para alterar o país, você retornará à Etapa 1 e todas as informações de fatura e pagamento serão apagadas.",
+        "CHANGE_MIGHT_AFFECT_INVOICE_WARNING": "A alteração de informações aqui pode afetar os campos nas informações da fatura.",
+        "CANNOT_SWITCH_TO_INDIVIDUAL": "Não é possível mudar para individual",
+        "CANNOT_CHANGE_COUNTRY": "Não é possível alterar o país",
+        "CANCELED_CANNOT_MODIFY_CUSTOMER_WARNING": "Sua assinatura está agendada para cancelamento. Reative sua assinatura para alterar as informações do cliente."
+    },
+    "CLIENTS": {
+        "MODALS": {
+            "ARCHIVE_MODAL": {
+                "ARCHIVE_MULTIPLE_CLIENTS_TITLE": "Arquivo { numberOfSelected } { clientLabelPlural }",
+                "RESTORE_MULTIPLE_TAGS_INFO_MESSAGE": "As tags selecionadas estarão disponíveis ao rastrear o tempo",
+                "ARCHIVE_SINGLE_TITLE": "Arquivo { itemName }",
+                "ARCHIVE_SINGLE_INFO_MESSAGE": " não estará disponível ao rastrear o tempo",
+                "SINGLE_CLIENT_ALSO_ARCHIVE_PROJECTS_CHECKBOX": "Arquive também todos os projetos atribuídos a este { clientLabel }",
+                "ARCHIVE_MULTIPLE_CLIENTS_INFO_MESSAGE": "{ clientLabelPlural } selecionado não estará disponível ao rastrear o tempo",
+                "MULTIPLE_CLIENTS_ALSO_ARCHIVE_PROJECTS_CHECKBOX": "Arquive também todos os projetos atribuídos a estes { clientLabelPlural }",
+                "ALSO_MARK_TASKS_AS_DONE_CHECKBOX": "Marque também todos os { taskLabelPlural } como concluídos",
+                "RESTORE_SINGLE_TITLE": "Restaurar { itemName }",
+                "RESTORE_SINGLE_INFO_MESSAGE": "estará disponível quando o tempo de rastreamento",
+                "RESTORE_MULTIPLE_CLIENTS_INFO_MESSAGE": "{ clientLabelPlural } selecionado estará disponível ao rastrear o tempo",
+                "RESTORE_MULTIPLE_CLIENTS_TITLE": "Restaurar { numberOfSelected } { clientLabelPlural }",
+                "ARCHIVE_MULTIPLE_TAGS_TITLE": "Arquivar tags { numberOfSelected }",
+                "ARCHIVE_MULTIPLE_TAGS_INFO_MESSAGE": "As tags selecionadas não estarão disponíveis ao rastrear o tempo",
+                "RESTORE_MULTIPLE_TAGS_TITLE": "Restaurar tags { numberOfSelected }",
+                "SINGLE_CLIENT_ALSO_ARCHIVE_PROJECTS_CHECKBOX_CUSTOM": "Arquive também todos os { projectsLabel } atribuídos a este { clientLabel }",
+                "MULTIPLE_CLIENTS_ALSO_ARCHIVE_PROJECTS_CHECKBOX_CUSTOM": "Arquive também todos os { projectsLabel } atribuídos a estes { clientLabelPlural }"
+            },
+            "DELETE_MODAL": {
+                "DELETE_MULTIPLE_TAGS_MODAL_TEXT": "As tags também serão removidas de todas as entradas de tempo às quais estão atribuídas. Esta ação não pode ser revertida.",
+                "TIME_APPROVAL_WARNING_FOR_TAG": "O tempo aprovado para { tagName } perderá as informações da etiqueta.",
+                "DELETE_SINGLE_ITEM_INFO_MESSAGE": "Tem certeza de que deseja excluir { itemName }?",
+                "DELETE_SINGLE_ITEM_MODAL_TEXT": "{ itemName } também será removido de todas as entradas de tempo às quais estão atribuídos. Esta ação não pode ser revertida.",
+                "DELETE_MULTIPLE_CLIENTS_INFO_MESSAGE": "Tem certeza de que deseja excluir { numberOfSelected } { clientLabelPlural }?",
+                "DELETE_MULTIPLE_CLIENTS_MODAL_TEXT": "{ itemName } também será removido de todas as entradas de tempo às quais estão atribuídos. Esta ação não pode ser revertida.",
+                "DELETE_MULTIPLE_TAGS_INFO_MESSAGE": "Tem certeza de que deseja excluir as tags { numberOfSelected }?",
+                "TYPE_DELETE_TO_CONFIRM_LABEL": "Digite DELETE para confirmar",
+                "TIME_APPROVAL_WARNING_FOR_TAGS": "O tempo aprovado para as etiquetas selecionadas perderá as informações."
+            }
+        }
+    },
+    "EMAIL": {
+        "VERIFICATION": {
+            "CAMPAIGN": {
+                "TITLE": "Verifique seu e-mail",
+                "MESSAGE_1": "Nos próximos 30 dias, será necessária uma conta verificada para continuar usando o Clockify sem problemas.",
+                "MESSAGE_3": "Verifique seu endereço de e-mail e continue usando o Clockify sem quaisquer limitações futuras.",
+                "MESSAGE_4": "Sem a verificação por e-mail, o uso do seu aplicativo ficará limitado em 15 dias.",
+                "MESSAGE_6": "Última chamada para verificar seu e-mail! Sem ele, você não poderá usar sua conta Clockify.",
+                "MESSAGE_2": "Para um uso contínuo do Clockify no futuro, verifique sua conta hoje mesmo.",
+                "MESSAGE_5": "Seu endereço de e-mail deve ser verificado, caso contrário, o uso do aplicativo ficará restrito em 10 dias."
+            }
+        }
+    },
+    "GENERIC": {
+        "GOOGLE_CAPTCHA": "Este site é protegido pelo reCAPTCHA e pelo Google",
+        "TERMS_OF_SERVICE": "Termos de serviço"
+    },
+    "REMINDERS": {
+        "REMINDER_ROW": {
+            "DELETE_ROW": "Excluir este lembrete irá removê-lo permanentemente do sistema."
+        }
+    },
+    "DATA_TRANSFER": {
+        "MESSAGES": {
+            "WORKSPACE_IS_LOCKED": "Espaço de trabalho bloqueado devido à transferência de dados"
+        }
     }
 }

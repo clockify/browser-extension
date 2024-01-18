@@ -33,6 +33,7 @@ class TagsList extends React.Component {
 		this.selectTag = this.selectTag.bind(this);
 		this.toggleTagsList = this.toggleTagsList.bind(this);
 		this.setAsyncStateItems = this.setAsyncStateItems.bind(this);
+		this.handleScroll = this.handleScroll.bind(this);
 	}
 
 	async setAsyncStateItems() {
@@ -271,6 +272,20 @@ class TagsList extends React.Component {
 		});
 	}
 
+	handleScroll(event) {;
+		if ((event.target.scrollHeight - event.target.scrollTop < 221) && this.state.loadMore) {
+				if (this.state.page === 1) {
+					this.setState({
+						page: 2,
+					}, () => {
+						this.loadMoreTags();
+					})
+				} else {
+					this.loadMoreTags();
+				}
+		}
+	}
+
 	render() {
 		const noMatcingTags = locales.NO_MATCHING('tags');
 
@@ -333,7 +348,10 @@ class TagsList extends React.Component {
 					ref={this.tagListDropdownRef}
 					className={this.state.isOpen ? 'tag-list-dropdown' : 'disabled'}
 				>
-					<div className="tag-list-dropdown--content">
+					<div
+						onScroll={this.handleScroll}
+						className="tag-list-dropdown--content"
+					>
 						<div className="tag-list-input">
 							<div className="tag-list-input--border">
 								<input
@@ -356,17 +374,18 @@ class TagsList extends React.Component {
 							{this.state.tagsList.length > 0 ? (
 								this.state.tagsList.map((tag, index) => {
 									return (
-										<div
-											data-pw={`tag-list-item-${index}`}
-											onClick={this.selectTag}
-											key={tag.id}
-											tabIndex={'0'}
-											onKeyDown={(e) => {
-												if (e.key === 'Enter') this.selectTag(e);
-											}}
-											value={JSON.stringify(tag)}
-											className="tag-list-item-row"
-										>
+										<>
+											{tag && <div
+												data-pw={`tag-list-item-${index}`}
+												onClick={this.selectTag}
+												key={tag?.id}
+												tabIndex={'0'}
+												onKeyDown={(e) => {
+													if (e.key === 'Enter') this.selectTag(e);
+												}}
+												value={JSON.stringify(tag)}
+												className="tag-list-item-row"
+											>
 											<span
 												value={JSON.stringify(tag)}
 												className={
@@ -387,24 +406,19 @@ class TagsList extends React.Component {
 													}
 												/>
 											</span>
-											<span
-												value={JSON.stringify(tag)}
-												className="tag-list-item"
-											>
+												<span
+													value={JSON.stringify(tag)}
+													className="tag-list-item"
+												>
 												{tag.name}
 											</span>
-										</div>
+											</div>}
+										</>
 									);
 								})
 							) : (
 								<span className="tag-list--not_tags">{noMatcingTags}</span>
 							)}
-						</div>
-						<div
-							className={this.state.loadMore ? 'tag-list-load' : 'disabled'}
-							onClick={this.loadMoreTags.bind(this)}
-						>
-							{locales.LOAD_MORE}
 						</div>
 						<div
 							className={

@@ -72,12 +72,11 @@ class Duration extends React.Component {
 	async setAsyncStateItems() {
 		const manualModeDisabled = await localStorage.getItem('manualModeDisabled');
 		const lang = await localStorage.getItem('lang');
-		const { timeZone } =
-			JSON.parse(await localStorage.getItem('userSettings'));
+		const { timeZone } = JSON.parse(await localStorage.getItem('userSettings'));
 		this.setState({
 			manualModeDisabled: JSON.parse(manualModeDisabled),
 			lang,
-			timeZone: timeZone
+			timeZone: timeZone,
 		});
 	}
 
@@ -252,6 +251,21 @@ class Duration extends React.Component {
 	}
 
 	render() {
+		const renderDayContents = (day, date) => {
+			const isDayDisabled = new Date(this.state.dayAfterLockedEntries) > date;
+			const tooltipText = isDayDisabled
+				? `Can't add time to locked period.`
+				: '';
+			return (
+				<div
+					title={tooltipText}
+					style={{ textDecoration: isDayDisabled ? 'line-through' : 'none' }}
+				>
+					{day}
+				</div>
+			);
+		};
+
 		return (
 			<div className="duration">
 				<div className="duration-time">
@@ -259,43 +273,52 @@ class Duration extends React.Component {
 						{locales.START}:
 					</label>
 					<span className="ant-time-picker duration-start ant-time-picker-small">
-						{this.state.timeZone && <MyTimePicker
-							id="startTimePicker"
-							value={momentTimezone(this.state.startTime).tz(this.state.timeZone)}
-							className="ant-time-picker-input"
-							format={this.state.timeFormat}
-							size="small"
-							use12Hours={this.props.timeFormat === 'HOUR12'}
-							onChange={this.selectStartTime}
-							editDisabled={this.state.manualModeDisabled}
-							title={
-								this.state.manualModeDisabled
-									? locales.DISABLED_MANUAL_MODE
-									: ''
-							}
-						/>}
+						{this.state.timeZone && (
+							<MyTimePicker
+								id="startTimePicker"
+								value={momentTimezone(this.state.startTime).tz(
+									this.state.timeZone
+								)}
+								className="ant-time-picker-input"
+								format={this.state.timeFormat}
+								size="small"
+								use12Hours={this.props.timeFormat === 'HOUR12'}
+								onChange={this.selectStartTime}
+								editDisabled={this.state.manualModeDisabled}
+								title={
+									this.state.manualModeDisabled
+										? locales.DISABLED_MANUAL_MODE
+										: ''
+								}
+							/>
+						)}
 					</span>
 					<label className={this.state.end ? 'duration-dash' : 'disabled'}>
 						-
 					</label>
 					<span className="ant-time-picker duration-end ant-time-picker-small">
-						{this.state.timeZone && <MyTimePicker
-							id="endTimePicker"
-							value={momentTimezone(this.state.endTime).tz(this.state.timeZone)}
-							className={this.state.end ? 'ant-time-picker-input' : 'disabled'}
-							isDisabled={!this.state.end}
-							format={this.state.timeFormat}
-							size="small"
-							use12Hours={this.props.timeFormat === 'HOUR12'}
-							onChange={this.selectEndTime}
-							editDisabled={this.state.manualModeDisabled}
-							title={
-								this.state.manualModeDisabled
-									? locales.DISABLED_MANUAL_MODE
-									: ''
-							}
-						/>
-						}
+						{this.state.timeZone && (
+							<MyTimePicker
+								id="endTimePicker"
+								value={momentTimezone(this.state.endTime).tz(
+									this.state.timeZone
+								)}
+								className={
+									this.state.end ? 'ant-time-picker-input' : 'disabled'
+								}
+								isDisabled={!this.state.end}
+								format={this.state.timeFormat}
+								size="small"
+								use12Hours={this.props.timeFormat === 'HOUR12'}
+								onChange={this.selectEndTime}
+								editDisabled={this.state.manualModeDisabled}
+								title={
+									this.state.manualModeDisabled
+										? locales.DISABLED_MANUAL_MODE
+										: ''
+								}
+							/>
+						)}
 					</span>
 					<span
 						style={{
@@ -320,13 +343,9 @@ class Duration extends React.Component {
 								onChange={this.selectDate.bind(this)}
 								customInput={<img src="./assets/images/calendar.png" />}
 								withPortal
-								min={moment(new Date(this.state.dayAfterLockedEntries))}
-								max={
-									!this.props.end
-										? moment(/*this.props.start*/)
-										: moment().add(10, 'years')
-								}
+								minDate={new Date(this.state.dayAfterLockedEntries)}
 								disabled={this.state.manualModeDisabled}
+								renderDayContents={renderDayContents}
 								title={
 									this.state.manualModeDisabled
 										? locales.DISABLED_MANUAL_MODE

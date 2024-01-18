@@ -705,10 +705,10 @@
     "message": "Eintrag kann nicht ohne Projekt, Aufgabe, Beschreibung oder Tags beendet werden"
   },
   "STOP_TIME": {
-    "message": "Stoppen Sie die Zeit"
+    "message": "Stoppe die Zeit"
   },
   "STOP_AT_SPECIFIED_TIME": {
-    "message": "Stoppen Sie den Timer automatisch zu einer bestimmten Tageszeit"
+    "message": "Stoppe den Timer automatisch zu einer bestimmten Tageszeit"
   },
   "YOU_MUST_BE_LOGGED_IN_TO_START": {
     "message": "Du musst angemeldet sein, um den Zeiteintrag zu starten"
@@ -882,7 +882,7 @@
     "message": "Fertig"
   },
   "SIGNUP_TITLE": {
-    "message": "Start mit Clockify"
+    "message": "Mit Clockify starten"
   },
   "CREATE_ACCOUNT_EXPLANATION": {
     "message": "Erstelle ein kostenloses Konto, um mit der Zeiterfassung zu beginnen und deine Produktivität zu steigern."
@@ -897,7 +897,7 @@
     "message": "Registrieren"
   },
   "LOAD_MORE": {
-    "message": "Mehr Informationen"
+    "message": "Mehr laden"
   },
   "SUBMITTING": {
     "message": "Einreichen…"
@@ -1026,19 +1026,19 @@
     "message": "Dieser Arbeitsbereich ist deaktiviert."
   },
   "BANNED__INFO_MODAL__TITLE": {
-    "message": "Sie wurden abgemeldet"
+    "message": "Du wurdest abgemeldet"
   },
   "BANNED__INFO_MODAL__MESSAGE_PART_ONE": {
-    "message": "Sie wurden abgemeldet, da Ihr Konto deaktiviert wurde."
+    "message": "Du wurdest abgemeldet, da dein Konto deaktiviert wurde."
   },
   "BANNED__INFO_MODAL__MESSAGE_PART_TWO": {
-    "message": "Wenden Sie sich bitte"
+    "message": "Wende dich bitte an"
   },
   "BANNED__INFO_MODAL__MESSAGE_PART_THREE": {
     "message": "für mehr Informationen."
   },
   "BANNED__INFO_MODAL__WORKSPACE_MESSAGE_PART_ONE": {
-    "message": "Sie wurden abgemeldet, seit Ihr { workspaceName } gesperrt wurde."
+    "message": "Du wurdest abgemeldet, seit dein { workspaceName } gesperrt wurde."
   },
   "BANNED__ACCOUNT_SUSPENDED": {
     "message": "Dieses Konto wurde gesperrt"
@@ -1071,7 +1071,7 @@
     "message": "Gib die erforderlichen Felder ein oder bearbeite optional deine Arbeitsbereichseinstellungen."
   },
   "FORBIDDEN_CHARACTERS": {
-    "message": "Sie haben einen falschen Wert eingegeben. Verwenden Sie keine < und > Zeichen"
+    "message": "Du hast einen falschen Wert eingegeben. Verwende keine &lt; und &gt; Zeichen"
   },
   "appName": {
     "message": "Clockify-Zeiterfassung",

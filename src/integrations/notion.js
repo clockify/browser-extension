@@ -1,5 +1,6 @@
-observeThemeChange();
-updateColorStyle();
+clockifyButton.observeDarkMode(() => {
+	return document.body.classList.contains('dark');
+})
 
 //window
 clockifyButton.render(
@@ -74,46 +75,4 @@ function blockNotionKeyEvents(clockifyInput) {
 			event.stopPropagation()
 		)
 	);
-}
-
-function observeThemeChange() {
-	const themeObserver = new MutationObserver(updateColorStyle);
-
-	themeObserver.observe(document.body, { attributes: true });
-}
-
-function updateColorStyle() {
-	return isThemeDark() ? addDarkThemeStyle() : removeDarkThemeStyle();
-}
-
-function isThemeDark() {
-	return document.body.classList.contains('dark') ? true : false;
-}
-
-function addDarkThemeStyle() {
-	if ($('.clockify-custom-style-dark')) return;
-
-	const darkThemeStyle = `
-		.clockify-input {
-			background: #333 !important;
-			border: #444 !important;
-			color: #f4f4f4 !important;
-		}
-
-		.clockify-button-inactive {
-			color: rgba(255, 255, 255, 0.81) !important;
-		}
-	`;
-
-	const style = createTag(
-		'style',
-		'clockify-custom-style-dark',
-		darkThemeStyle
-	);
-
-	document.head.append(style);
-}
-
-function removeDarkThemeStyle() {
-	$('.clockify-custom-style-dark')?.remove();
 }

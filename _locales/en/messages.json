@@ -573,7 +573,7 @@
     "message": "Add task"
   },
   "ADD_TIME_MANUAL": {
-    "message": "Add time (eg. 15m)"
+    "message": "Add time (e.g. 15m)"
   },
   "SHORTCUT": {
     "message": "Shortcut"
@@ -738,7 +738,7 @@
     "message": "If you use a tool hosted on a custom domain, you can enable it here"
   },
   "ENTER_TIME": {
-    "message": "Enter time (eg. 1.5)"
+    "message": "Enter time (e.g. 1.5)"
   },
   "ENTRY_MODE": {
     "message": "Entry mode"

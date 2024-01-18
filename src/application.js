@@ -14,6 +14,7 @@ export class Application {
 		this.setWebSocketParamsToStorage();
 		this.setBaseUrl();
 		this.setHomeUrl();
+		extension.beforeLoad();
 		extension.afterLoad();
 
 		aBrowser.runtime.onMessage.addListener(this.backgroundMessageListener);

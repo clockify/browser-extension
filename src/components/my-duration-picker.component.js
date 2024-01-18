@@ -95,7 +95,9 @@ class MyDurationPicker extends React.Component {
 				this.props.onChange(null, timeEntryDurationInput)
 			);
 		}
-		this.setState({ timeEntryDurationBackup: timeEntryDurationInput });
+		this.setState({ timeEntryDurationBackup: timeEntryDurationInput }, () => {
+			this.doTheJob();
+		});
 	}
 
 	render() {

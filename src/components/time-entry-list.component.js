@@ -3,11 +3,71 @@ import React from 'react';
 import TimeEntry from './time-entry.component';
 import locales from '../helpers/locales';
 import { isEqual } from 'lodash';
+import { duration } from 'moment/moment';
+import { Application } from '../application';
+import { toDecimalFormat } from '../helpers/time.helper';
 
 class TimeEntryList extends React.Component {
 	constructor(props) {
 		super(props);
+		this.state = {
+			timeEntry: {},
+			time: moment().hour(0).minute(0).second(0).format('HH:mm:ss'),
+			wsSettings: {},
+		};
+		this.application = new Application();
 		this.handleRefresh = this.handleRefresh.bind(this);
+	}
+
+	componentDidMount() {
+		this.getTimeFormat();
+	}
+
+	async getTimeFormat() {
+		const wsSettings = JSON.parse(
+			await localStorage.getItem('workspaceSettings')
+		);
+		this.setState({
+			wsSettings,
+		});
+	}
+
+	getTotalWeekTimeFormatted(total) {
+		if (this.state.wsSettings?.decimalFormat) {
+			if (!isNaN(Number(total))) {
+				const result =
+					Number(total) + Number(toDecimalFormat(duration(this.state.time)));
+				return result.toFixed(2);
+			}
+			return total;
+		}
+
+		return duration(total)
+			.add(this.state.time)
+			.format(
+				this.state.wsSettings?.trackTimeDownToSecond ? 'HH:mm:ss' : 'h:mm',
+				{ trim: false }
+			);
+	}
+
+	componentDidUpdate(prevProps, prevState, snapshot) {
+		if (prevProps.timeChange !== this.props.timeChange) {
+			if (this.props.timeChange === '00:00:00') {
+				setTimeout(() => {
+					this.setState({
+						time: this.props.timeChange,
+					});
+				}, 315);
+			} else {
+				this.setState({
+					time: this.props.timeChange,
+				});
+			}
+		}
+
+		if (prevProps.groups !== this.props.groups) {
+			this.getTimeFormat();
+		}
 	}
 
 	playTimeEntry(timeEntry) {
@@ -107,7 +167,9 @@ class TimeEntryList extends React.Component {
 											{group.totalTitle}{' '}
 										</span>
 										<span className="week-header-total-time">
-											{group.total}
+											{group.title === locales.THIS_WEEK
+												? this.getTotalWeekTimeFormatted(group.total)
+												: group.total}
 										</span>
 									</span>
 								</div>
@@ -119,7 +181,11 @@ class TimeEntryList extends React.Component {
 										const lastPart = parts.pop();
 										const firstPart = parts.join('-');
 										return (
-											<div className="time-entries-list" key={day} data-pw={`time-entries-list-${index}`}>
+											<div
+												className="time-entries-list"
+												key={day}
+												data-pw={`time-entries-list-${index}`}
+											>
 												<div className="time-entries-list-time">
 													<span className="time-entries-list-day">
 														{firstPart}
@@ -136,16 +202,16 @@ class TimeEntryList extends React.Component {
 												{this.props.timeEntries
 													.filter((timeEntry) => timeEntry.start === firstPart)
 													.sort((a, b) => {
-														const aMoment = moment(a.timeInterval.end);
-														const bMoment = moment(b.timeInterval.end);
-														const aSeconds =
-															aMoment.hours() * 3600 +
-															aMoment.minutes() * 60 +
-															aMoment.seconds();
-														const bSeconds =
-															bMoment.hours() * 3600 +
-															bMoment.minutes() * 60 +
-															bMoment.seconds();
+														const aSeconds = moment(
+															a.timeInterval.start
+														).unix();
+														const bSeconds = moment(
+															b.timeInterval.start
+														).unix();
+
+														if (aSeconds === bSeconds) {
+															return isChrome() ? -1 : 1;
+														}
 
 														return aSeconds - bSeconds;
 													})

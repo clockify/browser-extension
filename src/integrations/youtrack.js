@@ -64,26 +64,59 @@ clockifyButton.render(
 	}
 );
 
-// Agile board
+// Cards view
 clockifyButton.render(
 	'.yt-agile-card:not(.clockify)',
 	{ observe: true },
-	function (elem) {
-		const container = $('.yt-agile-card__summary', elem);
-		const projectName = $('.yt-issue-id').textContent.split('-');
+	(youtrackCard) => {
+		const cardId = () =>
+			text('.yt-agile-card__summary span:nth-child(1) a', youtrackCard);
+		const cardTitle = () =>
+			text('.yt-agile-card__summary span:nth-child(2)', youtrackCard);
 
-		const description = function () {
-			const text = $('.yt-agile-card__summary span', elem).textContent;
-			const id = $('.yt-agile-card__summary a', elem).textContent;
-			return (id ? id + ' ' : '') + (text ? text.trim() : '');
-		};
+		const description = () => `${cardId()} ${cardTitle()}`;
+		const projectName = () => cardId();
+		const tagNames = () => textList('.yt-issue-tags__tag', youtrackCard);
 
-		if (projectName.length > 1) {
-			projectName.pop();
-		}
+		const entry = { description, projectName, tagNames, small: true };
 
-		const link = clockifyButton.createButton(description, projectName.join(''));
-		link.style.paddingLeft = '15px';
-		container.appendChild(link);
+		const link = clockifyButton.createButton(entry);
+
+		link.style.position = 'absolute';
+		link.style.top = '10px';
+		link.style.right = '10px';
+
+		youtrackCard.append(link);
+	}
+);
+
+// Modal view
+clockifyButton.render(
+	'[data-test*="ticket-view-dialog"]:not(.clockify)',
+	{ observe: true },
+	async (taskModal) => {
+		await timeout({ milliseconds: 1000 });
+		await waitForElement('[data-test="fields-sidebar"]', taskModal);
+
+		const ticketId = () => text('[id*="id-link"]', taskModal);
+		const ticketTitle = () => text('[data-test="ticket-summary"]', taskModal);
+
+		const description = () => `${ticketId()} ${ticketTitle()}`;
+		const projectName = () => ticketId();
+		const tagNames = () => textList('[class*="tags"] a', taskModal);
+
+		const entry = { description, projectName, tagNames };
+
+		const link = clockifyButton.createButton(entry);
+		const input = clockifyButton.createInput(entry);
+
+		link.style.display = 'inline';
+		link.style.margin = '20px 0 10px 16px';
+		input.style.marginLeft = '16px';
+
+		const modalSidebar = $('[data-test="fields-sidebar"]', taskModal);
+
+		modalSidebar.append(link);
+		modalSidebar.append(input);
 	}
 );

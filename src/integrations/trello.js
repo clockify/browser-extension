@@ -1,8 +1,14 @@
+clockifyButton.observeDarkMode(() => {
+	return document.documentElement.getAttribute('data-color-mode') === 'dark';
+});
+
 setTimeout(() => {
 	clockifyButton.render(
 		'.window-sidebar:not(.clockify)',
 		{ observe: true },
 		(elem) => {
+			addPopupElementToIngnoredList();
+
 			const root = $('div[id="trello-root"]');
 			const container = elem.lastChild.childNodes[1];
 			const htmlTag = createTag('div', 'button-link');
@@ -34,40 +40,34 @@ setTimeout(() => {
 
 	/* List cards */
 	clockifyButton.render(
-		'.list-cards .list-card:not(.clockify)',
+		'[data-testid="trello-card"]:not(.clockify)',
 		{ observe: true },
-		(elem) => {
-			elem.style.minHeight = '60px';
-			elem.style.paddingRight = '15px';
-			elem.classList.add('clockify-trello-card');
+		(card) => {
+			const root = $('div[id="trello-root"]');
 
-			// const editIcon = $(
-			// 	'.icon-sm.icon-edit.list-card-operation.js-open-quick-card-editor.js-card-menu'
-			// );
-			// editIcon.style.border = '1px solid red';
+			const description = () => text('[data-testid="card-name"]', card);
+			const projectName = () => text('.board-header h1', root);
 
-			elem.addEventListener('mouseover', () => {
-				const isButtonAlreadyAdded = $('.clockifyButton', elem);
-				if (isButtonAlreadyAdded) return;
+			const entry = { description, projectName, small: true };
 
-				const root = $('div[id="trello-root"]');
+			const link = clockifyButton.createButton(entry);
 
-				const description = () => $('.list-card-title', elem).innerText.trim();
-				const projectName = $('.board-header h1', root)?.textContent?.trim();
+			/* Show button on hover effect */
+			applyStyles(`
+				[data-testid="trello-card"] .clockifyButton:not(.active) { display: none !important; }
+				[data-testid="trello-card"]:hover .clockifyButton { display: flex !important; }
+			`);
 
-				const link = clockifyButton.createButton({
-					description,
-					projectName,
-					small: true,
-				});
+			card.style.minHeight = '60px';
+			card.style.paddingRight = '15px';
 
-				link.style.position = 'absolute';
-				link.style.right = '2px';
-				link.style.bottom = '8px';
-				link.style.zIndex = '9999';
-				link.style.display = 'flex';
-				elem.prepend(link);
-			});
+			link.style.position = 'absolute';
+			link.style.right = '2px';
+			link.style.bottom = '8px';
+			link.style.zIndex = '9999';
+			link.style.display = 'flex';
+
+			card.prepend(link);
 		}
 	);
 
@@ -96,3 +96,59 @@ setTimeout(() => {
 		}
 	);
 }, 1000);
+
+async function addPopupElementToIngnoredList() {
+	/*
+	 *	Whenever the user clicks on an element outside the Task modal, Trello app calls click event handler which closes both the Trello task modal and the Clockify integration popup.
+	 *
+	 *	However, if the element the user clicked on contains a specific selector (eg: .smart-links-hover-preview) then the handler will not be called.
+	 *
+	 *	This function adds that selector to the integration popup so that users can use the integration popup without closing it.
+	 */
+
+	const integrationPopup = await waitForElement('.clockify-integration-popup');
+
+	integrationPopup.classList.add('smart-links-hover-preview');
+}
+
+function observeThemeChange() {
+	const themeObserver = new MutationObserver(updateColorStyle);
+
+	themeObserver.observe(document.body, { attributes: true });
+}
+
+function updateColorStyle() {
+	return isThemeDark() ? addDarkThemeStyle() : removeDarkThemeStyle();
+}
+
+function isThemeDark() {
+	return document.documentElement.getAttribute('data-color-mode') === 'dark';
+}
+
+function addDarkThemeStyle() {
+	if ($('.clockify-custom-style-dark')) return;
+
+	const darkThemeStyle = `
+		.clockify-input {
+			background: #333 !important;
+			border: #444 !important;
+			color: #f4f4f4 !important;
+		}
+
+		.clockify-button-inactive {
+			color: rgba(255, 255, 255, 0.81) !important;
+		}
+	`;
+
+	const style = createTag(
+		'style',
+		'clockify-custom-style-dark',
+		darkThemeStyle
+	);
+
+	document.head.append(style);
+}
+
+function removeDarkThemeStyle() {
+	$('.clockify-custom-style-dark')?.remove();
+}

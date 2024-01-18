@@ -1,231 +1,126 @@
-getProject = () => {
-	const currentlyOpenedSectionTitle = $(
-		'[class*="TopbarPageHeader"][class*="Typography--h4"]'
-	);
-	const firstProjectInListInOpenTask = $(
-		'.TaskPane .TaskProjectToken .TokenizerPillBase-name'
-	);
-	const replaceNbspsInString = (str) => {
-		const regex = new RegExp(String.fromCharCode(160), 'g');
-		return str.replace(regex, ' ');
-	};
-	let project;
-	if (currentlyOpenedSectionTitle) {
-		const currentlyOpenedSectionTitleText = replaceNbspsInString(
-			currentlyOpenedSectionTitle.innerText
-		);
-		const allProjectsListInOpenTask = Array.from(
-			$$('.TaskPane .TaskProjectToken .TokenizerPillBase-name')
-		);
-		const allProjectsListInOpenTaskNames = allProjectsListInOpenTask.map(
-			(project) => project.innerText
-		);
-		project = allProjectsListInOpenTaskNames.includes(
-			currentlyOpenedSectionTitleText
-		)
-			? currentlyOpenedSectionTitle
-			: firstProjectInListInOpenTask;
+// Side panel view - Task or Subtask
+clockifyButton.render(
+	'.TaskPaneToolbarAnimation-row:not(.clockify)',
+	{ observe: true },
+	(sidepanelHeader) => {
+		$('.clockify-widget-container', sidepanelHeader)?.remove();
+
+		const sidepanel = $('.TaskPaneBody-main');
+		const isSubtaskOpened = $('.TaskAncestry');
+
+		const asanaTaskname = () =>
+			text('[role="heading"] textarea', sidepanel) ||
+			/* text('[aria-label="Task Name"]') || */
+			text('.TaskPane-titleRow textarea') ||
+			text('.TaskPane-titleRow :first-child');
+		const asanaTaskTags = () => textList('.TaskTags .TokenizerPillBase-name');
+
+		const description = asanaTaskname;
+		const projectName = () =>
+			isSubtaskOpened
+				? text('.TaskAncestry-ancestorProject')
+				: text('.TaskProjects .TokenizerPillBase-name');
+		const taskName = asanaTaskname;
+		const tagNames = asanaTaskTags;
+
+		const entry = { description, projectName, taskName, tagNames };
+
+		const link = clockifyButton.createButton(entry);
+		const input = clockifyButton.createInput(entry);
+
+		const container = createTag('div', 'clockify-widget-container');
+
+		container.append(link);
+		container.append(input);
+
+		sidepanelHeader.append(container);
 	}
-	if (!project) {
-		project = $(
-			'div.FullWidthPageStructureWithDetailsOverlay-detailsOverlay .TaskProjects .TokenizerPillBase-name'
-		);
-		if (!project) project = $('.TaskPane .TaskAncestry-ancestorProjects');
-		if (!project)
-			// project = $('h1.TopbarPageHeaderStructure-title')
-			project = $(
-				'div.FullWidthPageStructureWithDetailsOverlay-detailsOverlay .TaskAncestry-ancestorProjects'
-			);
-		if (!project)
-			//asana inbox
-			project = $(
-				'div.Pane.Inbox-pane.Inbox-detailsPane .TaskProjects-projectList .TokenizerPillBase-name'
-			);
-		if (!project) project = firstProjectInListInOpenTask;
+);
+
+// Side panel view - Subtask list
+clockifyButton.render(
+	'.SubtaskGrid .TaskList [data-task-id]:not(.clockify)',
+	{ observe: true },
+	(subtask) => {
+		const actions = $('.ItemRowTwoColumnStructure-right', subtask);
+
+		const description = () => text('[id*="Task"]', subtask);
+		const projectName = () =>
+			text('.TaskProjects .TokenizerPillBase-name') ||
+			text('.TaskAncestry-ancestorProject');
+		const taskName = () => text('[id*="Task"]', subtask);
+
+		const entry = { description, projectName, taskName, small: true };
+
+		const link = clockifyButton.createButton(entry);
+
+		if ($('div.clockifyButton', actions)) return;
+		actions.prepend(link);
 	}
-	return project?.textContent;
-};
+);
 
-getTask = () => {
-	const containerElem = $('.TaskPane');
-	//if the user can only see the task name and not edit it (permissions) then the textarea will not be there
-	const taskSelector =
-		$('.TaskPane-titleRow textarea') ?? $('.TaskPane-titleRow')?.firstChild;
-	const subTask = $(
-		'.TaskAncestry-ancestorLink.SecondaryNavigationLink',
-		containerElem
-	);
-	const mainTask = taskSelector ? taskSelector.textContent : null;
-	const taskName = () => {
-		const subTaskName = subTask ? subTask.textContent : null;
-		return subTaskName ?? mainTask;
-	};
-	return { description: mainTask ?? '', taskName: taskName() };
-};
+applyStyles(`
+	.clockify-widget-container {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin: 10px 5px;
+		height: 34px;
+		width: 230px;
+	}
+	#clockify-manual-input-form input {
+		width: 110px;
+		box-shadow: none;
+		border: 1px solid white;
+		padding: 0 8px;
+		font-size: 12px;
+		border-radius: 5px;
+	}
+	#clockify-manual-input-form input:hover {
+		border-color: #afabac;
+		transition: border-color 100ms;
+	}
+	.TaskPaneToolbarAnimation-row {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+	.TaskPane .TaskPane-body .DropTargetRow #clockifySmallButton {
+		display: none;
+	}
+	.TaskPane .TaskPane-body .DropTargetRow:hover #clockifySmallButton,
+	.TaskPane .TaskPane-body .DropTargetRow #clockifySmallButton.active {
+		display: inline-flex;
+	}
+`);
 
-function createClockifyElements() {
-	const containerElem = $('.TaskPane');
-	const clockifyButtonElement = $('#clockifyButton');
-	const clockifyInputElement = $('.clockify-input-container');
-	if (clockifyButtonElement) clockifyButtonElement.remove();
-	if (clockifyInputElement) clockifyInputElement.remove();
-	container = $('.TaskPane-body', containerElem);
-	const tags = () =>
-		[
-			...$$('ul.TaskTagTokenPills span.TokenizerPillBase-name', containerElem),
-		].map((e) => e.innerText);
+initializeBodyObserver();
 
-	const clockifyContainer = createTag('div', 'clockify-widget-container');
-	link = clockifyButton.createButton({
-		description: () => {
-			return getTask().description;
-		},
-		projectName: () => getProject(),
-		taskName: () => {
-			return getTask().taskName;
-		},
-		tagNames: tags,
-	});
-	clockifyContainer.appendChild(link);
+function initializeBodyObserver() {
+	const bodyObserver = new MutationObserver(applyManualInputStyles);
 
-	const htmlTagInput = createTag('div', 'clockify-input-container');
-	const inputForm = clockifyButton.createInput({
-		description: () => {
-			return getTask().description;
-		},
-		projectName: () => getProject(),
-		taskName: () => {
-			return getTask().taskName;
-		},
-		tagNames: tags,
-	});
-	htmlTagInput.append(inputForm);
-	clockifyContainer.appendChild(htmlTagInput);
-	container.prepend(clockifyContainer);
-	$('.clockify-widget-container').style.display = 'flex';
-	$('.clockify-widget-container').style.margin = '10px 0px 10px 0px';
-	$('.clockify-widget-container').style.height = '34px';
+	const observationTarget = document.body;
+	const observationConfig = { childList: true };
 
-	$('.clockify-input').style.width = '100%';
-	$('.clockify-input').style.boxShadow = 'none';
-	$('.clockify-input').style.border = '1px solid #eaecf0';
-	$('.clockify-input').style.marginLeft = '10px';
-	$('.clockify-input').style.padding = '0 8px';
-	$('.clockify-input').style.fontSize = '12px';
-	$('.clockify-input').style.borderRadius = '5px';
+	bodyObserver.observe(observationTarget, observationConfig);
 }
 
-function observeProjects() {
-	const projectList = $('.TaskProjects-projectList');
-	if (projectList) {
-		const projectListObserver = new MutationObserver(
-			clockifyDebounce(function (mutationList, observer) {
-				createClockifyElements();
-			})
-		);
-		projectListObserver.observe(projectList, { childList: true });
-	}
+function applyManualInputStyles() {
+	const darkThemeClass = 'DesignTokenThemeSelectors-theme--darkMode';
+	const isDarkThemeEnabled = document.body.classList.contains(darkThemeClass);
+
+	const darkStyles = `
+		#clockify-manual-input-form input { background: #1e1f21 !important; color: #f5f4f3 !important; border: 0.5px solid #1e1f21 !important; }
+		#clockify-manual-input-form input:hover { border-color: #6a696a !important; transition: border-color 100ms; }
+		.clockify-button-inactive { color: #f5f4f3 !important; }
+	`;
+	const lightStyles = `
+		.clockify-input { background: white !important; color: #1e1f21 !important; border: 1px solid white !important; }
+		.clockify-input:hover { border-color: #cfcbcb !important; transition: border-color 100ms; }
+		.clockify-button-inactive { color: #444444 !important };
+	`;
+
+	const stylesToApply = isDarkThemeEnabled ? darkStyles : lightStyles;
+
+	applyStyles(stylesToApply, 'clockify-theme-dependent-styles');
 }
-
-// New task pane list detail modal
-setTimeout(() => {
-	clockifyButton.render(
-		'.TaskPane:not(.clockify)',
-		{ observe: true },
-		(elem) => {
-			createClockifyElements();
-		}
-	);
-}, 500);
-
-// subtasks
-setTimeout(() => {
-	clockifyButton.render(
-		'.SubtaskTaskRow:not(.clockify)',
-		{ observe: true },
-		(elem) => {
-			let appendElementsTo = $('.ItemRowTwoColumnStructure-left', elem);
-			const containerElem = $('.TaskPane');
-			//if the user can only see the task name and not edit it (permissions) then the textarea will not be there
-			const taskSelector =
-				$('.TaskPane-titleRow textarea') ?? $('.TaskPane-titleRow')?.firstChild;
-			const mainTask = taskSelector ? taskSelector.textContent : null;
-			const subTask = () => $('textarea', appendElementsTo).textContent;
-			const clockifyElements = createTag('div', 'clockify-elements-container');
-			description = () => subTask() ?? '';
-			taskName = () => subTask() ?? mainTask;
-			const tags = () =>
-				[
-					...$$(
-						'ul.TaskTagTokenPills span.TokenizerPillBase-name',
-						containerElem
-					),
-				].map((e) => e.innerText);
-			const link = clockifyButton.createButton({
-				description,
-				projectName: () => getProject(),
-				taskName,
-				tagNames: tags,
-			});
-
-			appendElementsTo.style.width = '100%';
-			clockifyElements.style.marginLeft = 'auto';
-			clockifyElements.appendChild(link);
-			const clockifyElementsContainer = $('.clockify-elements-container', elem);
-			if (clockifyElementsContainer) {
-				clockifyElementsContainer.remove();
-			}
-			appendElementsTo.appendChild(clockifyElements);
-		}
-	);
-}, 500);
-
-// comment only subtasks
-setTimeout(() => {
-	clockifyButton.render(
-		'.CommentOnlySubtaskTaskRow:not(.clockify)',
-		{ observe: true },
-		(elem) => {
-			let appendElementsTo = $(
-				'.CommentOnlySubtaskTaskRow-detailsButton',
-				elem
-			);
-			const containerElem = $('.TaskPane');
-			//if the user can only see the task name and not edit it (permissions) then the textarea will not be there
-			const taskSelector =
-				$('.TaskPane-titleRow textarea', containerElem) ??
-				$('.TaskPane-titleRow', containerElem)?.firstChild;
-			const mainTask = taskSelector ? taskSelector.textContent : null;
-			const subTask = () =>
-				$('.CommentOnlySubtaskTaskRow-name', elem).textContent;
-			const clockifyElements = createTag('div', 'clockify-elements-container');
-			description = () => subTask() ?? '';
-			taskName = () => subTask() ?? mainTask;
-			const tags = () =>
-				[
-					...$$(
-						'ul.TaskTagTokenPills span.TokenizerPillBase-name',
-						containerElem
-					),
-				].map((e) => e.innerText);
-			const link = clockifyButton.createButton({
-				description,
-				projectName: () => getProject(),
-				taskName,
-				tagNames: tags,
-			});
-
-			link.style.marginLeft = '10px';
-			clockifyElements.prepend(link);
-			const clockifyElementsContainer = $('.clockify-elements-container', elem);
-			if (clockifyElementsContainer) {
-				clockifyElementsContainer.remove();
-			}
-			appendElementsTo.appendChild(clockifyElements);
-		}
-	);
-}, 500);
-
-if (window.observeProjectsTimeout) clearTimeout(window.observeProjectsTimeout);
-
-window.observeProjectsTimeout = setTimeout(() => observeProjects(), 1000);

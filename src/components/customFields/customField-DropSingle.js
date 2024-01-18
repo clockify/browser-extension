@@ -106,10 +106,6 @@ const CustomFieldDropSingle = ({ cf, updateValue, setIsValid }) => {
 	const isNotValid = required && !value;
 
 	useEffect(() => {
-		setValue(cf.value);
-	}, [cf.value]);
-
-	useEffect(() => {
 		setIsValid({ id: id, isValid: !(required && !value) });
 	}, [value]);
 

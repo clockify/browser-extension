@@ -415,6 +415,48 @@ var clockifyButton = {
 		};
 		return form;
 	},
+
+	observeDarkMode: (isThemeDark) => {
+		function observeThemeChange() {
+			const themeObserver = new MutationObserver(updateColorStyle);
+
+			themeObserver.observe(document.body, { attributes: true });
+		}
+
+		function updateColorStyle() {
+			return isThemeDark() ? addDarkThemeStyle() : removeDarkThemeStyle();
+		}
+
+		function addDarkThemeStyle() {
+			if ($('.clockify-custom-style-dark')) return;
+
+			const darkThemeStyle = `
+	  .clockify-input {
+		background: #333 !important;
+		border: #444 !important;
+		color: #f4f4f4 !important;
+	  }
+
+	  .clockify-button-inactive {
+		color: rgba(255, 255, 255, 0.81) !important;
+	  }`;
+
+			const style = createTag(
+				'style',
+				'clockify-custom-style-dark',
+				darkThemeStyle
+			);
+
+			document.head.append(style);
+		}
+
+		function removeDarkThemeStyle() {
+			$('.clockify-custom-style-dark')?.remove();
+		}
+
+		observeThemeChange();
+		updateColorStyle();
+	},
 };
 
 function objectFromParams(first, second, third) {
@@ -444,8 +486,12 @@ function $$$(selector, contexts = documents) {
 		.flat();
 }
 
-function text(selector, context) {
+function text(selector, context = document) {
 	return $(selector, context)?.textContent?.trim();
+}
+
+function value(selector, context = document) {
+	return $(selector, context)?.value?.trim();
 }
 
 function textList(selector, context = document, withoutDuplicates = true) {
@@ -461,6 +507,45 @@ function textList(selector, context = document, withoutDuplicates = true) {
 
 function timeout({ milliseconds }) {
 	return new Promise((resolve) => setTimeout(resolve, milliseconds));
+}
+
+function waitForElement(selector, context = document) {
+	return new Promise((resolve) => {
+		if ($(selector, context)) return resolve($(selector, context));
+
+		const observer = new MutationObserver(observeBodyChanges);
+
+		const observationTarget = document.body;
+		const observationConfig = { childList: true, subtree: true };
+
+		observer.observe(observationTarget, observationConfig);
+
+		function observeBodyChanges() {
+			const element = $(selector, context);
+
+			if (element) {
+				observer.disconnect();
+				resolve(element);
+			}
+		}
+	});
+}
+
+function applyStyles(css, classNames = 'clockify-custom-styles') {
+	removeStyles(classNames);
+
+	const style = createTag('style', classNames, css);
+
+	document.head.append(style);
+}
+
+function removeStyles(classNames = 'clockify-custom-styles') {
+	const selector = classNames
+		.split(' ')
+		.map((className) => `.${className}`)
+		.join('');
+
+	$(selector)?.remove();
 }
 
 async function getSelectors(integrationName, viewName, selectorsName) {
@@ -482,7 +567,7 @@ async function getSelectors(integrationName, viewName, selectorsName) {
 }
 
 function invokeIfFunction(trial) {
-	return trial instanceof Function ? trial() : trial;
+	return trial instanceof Function ? invokeIfFunction(trial()) : trial;
 }
 
 function objInvokeIfFunction(obj) {
@@ -724,6 +809,9 @@ if (!window.clockifyListeners) {
 }
 
 function removeAllButtons(wrapperClass) {
+	// Fix for bug with deleting and appending Clockify elements on every click (Google Docs integration)
+	if (location.hostname.startsWith('docs.google.')) return;
+
 	const buttons = $$$(
 		wrapperClass || '.clockifyButton, #clockify-manual-input-form'
 	);

@@ -28,6 +28,7 @@ class ClientListComponent extends Component {
 		this.clientDropdownRef = null;
 		this.filterClients = this.filterClients.bind(this);
 		this.getClients = debounce(this.getClients, 500);
+		this.handleScroll = this.handleScroll.bind(this);
 	}
 
 	async setAsyncStateItems() {
@@ -174,7 +175,6 @@ class ClientListComponent extends Component {
 				},
 			})
 			.then((response) => {
-				console.log('response', response);
 				if (response.error)
 					return this.props.errorMessage(response.error?.message);
 
@@ -205,6 +205,15 @@ class ClientListComponent extends Component {
 		});
 	}
 
+	handleScroll(event) {
+		const bottom =
+			event.target.scrollHeight - event.target.scrollTop ===
+			event.target.clientHeight;
+		if (bottom && this.state.loadMore) {
+			this.loadMoreClients();
+		}
+	}
+
 	render() {
 		return (
 			<div>
@@ -230,7 +239,10 @@ class ClientListComponent extends Component {
 						className="client-list-dropdown"
 						ref={(el) => (this.clientDropdownRef = el)}
 					>
-						<div className="client-list-dropdown--content">
+						<div
+							onScroll={this.handleScroll}
+							className="client-list-dropdown--content"
+						>
 							<div className="client-list-input">
 								<div className="client-list-input--border">
 									<input
@@ -265,14 +277,6 @@ class ClientListComponent extends Component {
 									</div>
 								);
 							})}
-							<div
-								className={
-									this.state.loadMore ? 'client-list-load' : 'disabled'
-								}
-								onClick={this.loadMoreClients.bind(this)}
-							>
-								{locales.LOAD_MORE}
-							</div>
 							<div className="client-list__bottom-padding"></div>
 							<div
 								className="client-list__create-client"

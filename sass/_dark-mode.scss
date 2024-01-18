@@ -42,7 +42,8 @@ body.clockify-dark-mode,
 		box-shadow: none;
 	}
 	.dropdown-header,
-	.dropdown-item {
+	.dropdown-item,
+	.dropdown-subitem {
 		color: variables.$bg-04;
 	}
 	.dropdown-divider {
@@ -103,7 +104,8 @@ body.clockify-dark-mode,
 	.no-description {
 		color: variables.$bg-04;
 	}
-	.dropdown-item:hover {
+	.dropdown-item:hover,
+	.dropdown-subitem:hover {
 		background: variables.$bg-10;
 	}
 	.duration,
@@ -424,7 +426,8 @@ body.clockify-dark-mode,
 		height: 5px;
 		content: url('../assets/images/arrow-dark-mode-up.png');
 	}
-	.dropdown-item:hover {
+	.dropdown-item:hover,
+	.dropdown-subitem:hover {
 		background: variables.$bg-10;
 	}
 	.workspace-list-item:hover {
@@ -648,5 +651,8 @@ body.clockify-dark-mode,
 	}
 	&.clockify-integration-popup {
 		color: variables.$light_text;
+	}
+	.clockify-manual-entry-header-text {
+		color: #f4f4f4;
 	}
 }

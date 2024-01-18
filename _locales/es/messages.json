@@ -342,7 +342,7 @@
     "message": "Descripción acortada (longitud máxima { limit } caracteres)"
   },
   "INSTAL_AND_TRACK_ANYWHERE": {
-    "message": "Instala Clockify y rastrea el tiempo en cualquier lugar."
+    "message": "Instala Clockify y controla el tiempo en cualquier lugar."
   },
   "TEMPLATE_WITH_NAME_EXISTS_PART_TWO": {
     "message": "ya existe"
@@ -651,13 +651,13 @@
     "message": "No hay entradas recientes para mostrar"
   },
   "YOU_HAVE_NOT_TRACKED": {
-    "message": "Parece que no has rastreado ningún tiempo últimamente"
+    "message": "Parece que no has registrado ningún tiempo últimamente"
   },
   "GET_ONLINE": {
     "message": "Conéctate para ver tus entradas"
   },
   "YOU_CAN_STILL_TRACK_TIME": {
-    "message": "Mientras tanto, aún puedes seguir el tiempo, incluso si no estás conectado"
+    "message": "Mientras tanto, aún puedes registrar el tiempo, incluso si no estás conectado"
   },
   "ENABLE_DARK_MODE": {
     "message": "Habilitar modo oscuro"
@@ -681,7 +681,7 @@
     "message": "Mostrar ventana emergente posterior al inicio"
   },
   "REMIND_ME_TO_TRACK_TIME": {
-    "message": "Recuérdame seguir el tiempo"
+    "message": "Recuérdame registrar el tiempo"
   },
   "MINUTES_SINCE_LAST_ENTRY": {
     "message": "minutos desde la última entrada"
@@ -855,7 +855,7 @@
     "message": "Acepto Clockify"
   },
   "CAKE_TERMS_OF_USE": {
-    "message": "Estoy de acuerdo con CAKE.com"
+    "message": "Acepto CAKE.com"
   },
   "TOS": {
     "message": "Condiciones de Uso"
@@ -885,7 +885,7 @@
     "message": "Empieza a usar Clockify"
   },
   "CREATE_ACCOUNT_EXPLANATION": {
-    "message": "Crea una cuenta gratis para empezar a seguir el tiempo y aumentar tu productividad."
+    "message": "Crea una cuenta gratis para empezar a controlar el tiempo y aumentar tu productividad."
   },
   "CUSTOM_DOMAIN_URL": {
     "message": "URL de dominio personalizado"
@@ -939,7 +939,7 @@
     "message": "Temporizador Pomodoro"
   },
   "REMINDER_MESSAGE": {
-    "message": "¡No olvides seguir tu tiempo! ({ minutes }min transcurridos desde la última actividad)"
+    "message": "¡No olvides de registrar tu tiempo! ({ minutes }min transcurridos desde la última actividad)"
   },
   "ADD_MISSING_TIME": {
     "message": "Añadir tiempo que falta"
@@ -960,10 +960,10 @@
     "message": "Haz clic aquí para descartar la inactividad y detener la entrada."
   },
   "IDLE_MESSAGE": {
-    "message": "Has estado inactivo durante { hours }h { minutes }min mientras rastreabas { desc }."
+    "message": "Has estado inactivo durante { hours }h { minutes }min mientras registrabas { desc }."
   },
   "IDLE_MESSAGE_MINUTES": {
-    "message": "Has estado inactivo durante { minutes }min mientras rastreabas { desc }."
+    "message": "Has estado inactivo durante { minutes }min mientras registrabas { desc }."
   },
   "CLIENTS": {
     "message": "Clientes"
@@ -1078,7 +1078,7 @@
     "description": "El título de la aplicación, que se muestra en la tienda web."
   },
   "appDesc": {
-    "message": "Sigue el tiempo desde cualquier lugar de la web y mejora la productividad.",
+    "message": "Registra el tiempo desde cualquier lugar de la web y mejora la productividad.",
     "description": "La descripción de la aplicación, que se muestra en la tienda web."
   }
 }

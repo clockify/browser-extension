@@ -1,6 +1,6 @@
 class TaskService extends ClockifyService {
 	constructor() {}
-	
+
 	static async getUrlProjects() {
 		const apiEndpoint = await this.apiEndpoint;
 		const workspaceId = await this.workspaceId;

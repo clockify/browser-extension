@@ -150,7 +150,7 @@ class ProjectTaskService extends ClockifyService {
 			});
 
 			// backend returns a list of tasks, but we only want the one with the exact name
-			data  = data?.filter(t => t.name.includes(taskName));
+			data = data?.filter((t) => t.name === taskName);
 
 			task = data && data.length > 0 ? data[0] : null;
 			error = err;
@@ -162,7 +162,7 @@ class ProjectTaskService extends ClockifyService {
 				data,
 				error: err,
 				status,
-			} = await this.createTask({projectId: project.id, name: taskName});
+			} = await this.createTask({ projectId: project.id, name: taskName });
 			task = data;
 			if (status === 201) {
 				// created: true
@@ -178,10 +178,12 @@ class ProjectTaskService extends ClockifyService {
 	}
 
 	static async getProjectWithFilter(filter, page, pageSize) {
+		const { projectPickerSpecialFilter } = JSON.parse(await localStorage.getItem('userSettings'));
 		const filterTrimmedEncoded = encodeURIComponent(filter.trim());
 		const apiEndpoint = await this.apiEndpoint;
 		const workspaceId = await this.workspaceId;
-		const endPoint = `${apiEndpoint}/workspaces/${workspaceId}/project-picker/projects?page=${page}&search=${filterTrimmedEncoded}`; // &favorites
+		const searchKeyWord = projectPickerSpecialFilter? 'search=@' : 'search=';
+		const endPoint = `${apiEndpoint}/workspaces/${workspaceId}/project-picker/projects?page=${page}&${searchKeyWord}${filterTrimmedEncoded}`; // &favorites
 		const { data: projects, error } = await this.apiCall(endPoint);
 		return { projects, error };
 	}
@@ -205,19 +207,20 @@ class ProjectTaskService extends ClockifyService {
 		const urlProjects = await this.getUrlProjects();
 		let data, error, status;
 
-		if(forceTasks){
-			({ data, error, status } = await this.getLastUsedProjectAndTaskFromTimeEntries());
+		if (forceTasks) {
+			({ data, error, status } =
+				await this.getLastUsedProjectAndTaskFromTimeEntries());
 		}
-		
+
 		// if both project and task are found, return them
 		// otherwise, return only the project
-		if(data){
+		if (data) {
 			return { data, error, status };
-		}else{
+		} else {
 			const endPoint = `${urlProjects}/lastUsed?type=PROJECT`;
 			({ data, error, status } = await this.apiCall(endPoint));
 		}
-		 
+
 		return { data, error, status };
 	}
 
@@ -279,8 +282,7 @@ class ProjectTaskService extends ClockifyService {
 		return null;
 	}
 
-	static async getTaskOfProject({projectId, taskName}) {
-
+	static async getTaskOfProject({ projectId, taskName }) {
 		const urlProjects = await this.getUrlProjects();
 		const endPoint = `${urlProjects}/${projectId}/tasks?name=${taskName}&strict-name-search=true`;
 		const { data, error, status } = await this.apiCall(endPoint, 'GET');

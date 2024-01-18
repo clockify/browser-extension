@@ -89,6 +89,7 @@ class HomePage extends Component {
 			pomodoroShortBreak: 5,
 			pomodoroLongBreak: 15,
 			wasRegionalEverAllowed: null,
+			time: moment().hour(0).minute(0).second(0).format('HH:mm:ss'),
 		};
 
 		this.application = new Application();
@@ -117,6 +118,7 @@ class HomePage extends Component {
 		this.clearEntries = this.clearEntries.bind(this);
 		this.triggerOfflineEntrySync = this.triggerOfflineEntrySync.bind(this);
 		this.backgroundMessageListener = this.backgroundMessageListener.bind(this);
+		this.preventDragHandler = this.preventDragHandler.bind(this);
 
 		offlineStorage.load();
 	}
@@ -1088,6 +1090,12 @@ class HomePage extends Component {
 		);
 	}
 
+	startTimeChanged(time) {
+		this.setState({
+			time: time,
+		});
+	}
+
 	inProgress(inProgress) {
 		this.setState(
 			{
@@ -1458,6 +1466,9 @@ class HomePage extends Component {
 			: null;
 	}
 
+	preventDragHandler(e) {
+		e.preventDefault()
+	}
 	render() {
 		const {
 			inProgress,
@@ -1496,6 +1507,8 @@ class HomePage extends Component {
 			!features.includes('TIME_TRACKING');
 		return (
 			<div
+				onDragStart={this.preventDragHandler}
+				onDrop={this.preventDragHandler}
 				className="home_page"
 				style={{ paddingTop: isTrackingDisabled ? '200px' : '134px' }}
 			>
@@ -1557,6 +1570,7 @@ class HomePage extends Component {
 						endStarted={this.handleRefresh}
 						setTimeEntryInProgress={this.inProgress.bind(this)}
 						workspaceSettings={workspaceSettings}
+						startTimeChanged={this.startTimeChanged.bind(this)}
 						features={features}
 						timeEntries={timeEntries}
 						timeFormat={userSettings.timeFormat}
@@ -1623,6 +1637,7 @@ class HomePage extends Component {
 							isLoading={!this.state.ready}
 							dates={dates}
 							groups={groups}
+							timeChange={this.state.time}
 							selectTimeEntry={this.continueTimeEntry.bind(this)}
 							pullToRefresh={pullToRefresh}
 							handleRefresh={this.handleRefresh}

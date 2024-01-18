@@ -20,9 +20,7 @@ class SignUp extends React.Component {
 			email: props.email ? props.email : '',
 			password: '',
 			passwordAlert: false,
-			clockifyTermsOfUse: false,
 			cakeTermsOfUse: false,
-			clockifyTermsAlert: false,
 			cakeTermsAlert: false,
 			emailAlert: false,
 			emailExists: false,
@@ -43,7 +41,6 @@ class SignUp extends React.Component {
 		this.setState(
 			{
 				emailAlert: false,
-				clockifyTermsAlert: false,
 				cakeTermsAlert: false,
 				passwordAlert: false,
 				emailExists: false,
@@ -53,14 +50,12 @@ class SignUp extends React.Component {
 					{
 						emailAlert:
 							!this.state.email.includes('@') || this.state.email.length < 3,
-						clockifyTermsAlert: !this.state.clockifyTermsOfUse,
 						cakeTermsAlert: !this.state.cakeTermsOfUse,
 						passwordAlert: this.state.password.length < 6,
 					},
 					() => {
 						if (
 							!this.state.emailAlert &&
-							!this.state.clockifyTermsAlert &&
 							!this.state.cakeTermsAlert &&
 							!this.state.passwordAlert
 						) {
@@ -100,9 +95,9 @@ class SignUp extends React.Component {
 								})
 								.catch((error) => {
 									disabledSignup = false;
-									if (error.response.data.code === 503) {
+									if (error.response?.data?.code === 503) {
 										this.setState({
-											signupDisabledMessage: error.response.data.message,
+											signupDisabledMessage: error.response?.data?.message,
 										});
 									} else {
 										this.setState({
@@ -143,22 +138,11 @@ class SignUp extends React.Component {
 		});
 	}
 
-	toggleClockifyTermsOfUse() {
-		this.setState({
-			clockifyTermsOfUse: !this.state.clockifyTermsOfUse,
-			clockifyTermsAlert: this.state.clockifyTermsOfUse,
-		});
-	}
-
 	toggleCakeTermsOfUse() {
 		this.setState({
 			cakeTermsOfUse: !this.state.cakeTermsOfUse,
 			cakeTermsAlert: this.state.cakeTermsOfUse,
 		});
-	}
-
-	clockifyTermsOfUse() {
-		window.open(`${environment.clockifyTerms}`, '_blank');
 	}
 
 	cakeTermsOfUse() {
@@ -256,40 +240,6 @@ class SignUp extends React.Component {
 						<label
 							className={
 								this.state.cakeTermsAlert ? 'signup-alert' : 'disabled'
-							}
-						>
-							{locales.TOS_ACCEPT_ERROR}
-						</label>
-					</div>
-					<div className="signup-terms_and_alert">
-						<div className="signup-terms">
-							<span
-								className={
-									this.state.clockifyTermsOfUse
-										? 'signup-checkbox checked'
-										: 'signup-checkbox'
-								}
-								onClick={this.toggleClockifyTermsOfUse.bind(this)}
-							>
-								<img
-									src="./assets/images/checked.png"
-									className={
-										this.state.clockifyTermsOfUse
-											? 'signup-checked-img'
-											: 'signup-checked-img-hidden'
-									}
-								/>
-							</span>
-							<span className="signup-terms--agree">
-								{locales.CLOCKIFY_TERMS_OF_USE}
-								<a onClick={this.clockifyTermsOfUse.bind(this)}>
-									{locales.TOS}
-								</a>
-							</span>
-						</div>
-						<label
-							className={
-								this.state.clockifyTermsAlert ? 'signup-alert' : 'disabled'
 							}
 						>
 							{locales.TOS_ACCEPT_ERROR}

@@ -33,7 +33,7 @@
 	},
 	"wrike": {
 		"taskView": {
-			"hanger": "action-panel.header__action-panel:not(.clockify), .task-view-header__actions.action-bar:not(.clockify), .wrike-panel-header-toolbar:not(.clockify)",
+			"hanger": "action-panel.header__action-panel:not(.clockify), .task-view-header__actions.action-bar:not(.clockify), .wrike-panel-header-toolbar:not(.clockify), action-panel.work-item-header__action-panel:not(.clockify)",
 			"description": ".title__ghost",
 			"projectFromTaskTag": ".folder-tag-label__item--name",
 			"projectFromPageHeader": "header .flex-text-input__ghost",

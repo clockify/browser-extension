@@ -10,7 +10,7 @@ import { Application } from '../application';
 import { TimeEntryHelper } from '../helpers/timeEntry-helper';
 import { getKeyCodes } from '../enums/key-codes.enum';
 import { getBrowser } from '../helpers/browser-helper';
-
+import { getRequiredMissingCustomFields } from '../helpers/utils';
 import { offlineStorage } from '../helpers/offlineStorage';
 import locales from '../helpers/locales';
 import debounce from 'lodash.debounce';
@@ -33,6 +33,8 @@ class StartTimer extends Component {
 		};
 		this.application = new Application();
 		this.startNewEntry = this.startNewEntry.bind(this);
+		this.startNewEntryWithoutGoingToEdit =
+			this.startNewEntryWithoutGoingToEdit.bind(this);
 		this.setAsyncStateItems = this.setAsyncStateItems.bind(this);
 		this.setDescription = this.setDescription.bind(this);
 		this.handleInputChange = debounce(this.handleInputChange.bind(this), 200);
@@ -69,6 +71,10 @@ class StartTimer extends Component {
 			this.props.timeEntries !== prevProps.timeEntries
 		) {
 			this.getRecentEntries();
+		}
+
+		if (this.state.time !== prevState.time) {
+			this.props.startTimeChanged(this.state.time);
 		}
 	}
 
@@ -191,6 +197,9 @@ class StartTimer extends Component {
 					let currentPeriod = moment().diff(
 						moment(timeEntry.timeInterval.start)
 					);
+					this.setState({
+						time: duration(currentPeriod).format('HH:mm:ss', { trim: false }),
+					});
 					interval = setInterval(() => {
 						currentPeriod = currentPeriod + 1000;
 						this.setState({
@@ -420,6 +429,109 @@ class StartTimer extends Component {
 		}
 	}
 
+	async startNewEntryWithoutGoingToEdit() {
+		if (interval) {
+			clearInterval(interval);
+		}
+		if (await isOffline()) {
+			this.setState(
+				{
+					timeEntry: {
+						workspaceId: await localStorage.getItem('activeWorkspaceId'),
+						id: offlineStorage.timeEntryIdTemp,
+						description: this.state.timeEntry.description,
+						projectId: this.state.timeEntry.projectId,
+						timeInterval: {
+							start: moment(),
+						},
+						customFieldValues: offlineStorage.customFieldValues, // generated from wsCustomFields
+					},
+				},
+				() => {
+					offlineStorage.timeEntryInOffline = this.state.timeEntry;
+					this.props.changeMode('timer');
+					this.props.setTimeEntryInProgress(this.state.timeEntry);
+				}
+			);
+		} else {
+			let { projectId, billable, task, description, customFieldValues, tags } =
+				this.state.timeEntry;
+
+			if (/<[^>]+>/.test(description)) {
+				return this.props.toaster.toast(
+					'error',
+					locales.FORBIDDEN_CHARACTERS,
+					2
+				);
+			}
+			let taskId = task ? task.id : null;
+			const tagIds = tags ? tags.map((tag) => tag.id) : [];
+
+			const { forceProjects, forceTasks } = this.props.workspaceSettings;
+			//if (forceProjects && (!projectId || forceTasks && !taskId)) {
+			if (!projectId || (forceTasks && !taskId)) {
+				const { projectDB, taskDB } = await this.checkDefaultProjectTask(
+					forceTasks
+				);
+				if (projectDB) {
+					projectId = projectDB.id;
+					if (taskDB) {
+						taskId = taskDB.id;
+					}
+					billable = projectDB.billable;
+				}
+			}
+			const cfs =
+				customFieldValues && customFieldValues.length > 0
+					? customFieldValues
+							.filter((cf) => cf.customFieldDto.status === 'VISIBLE')
+							.map(({ type, customFieldId, value }) => ({
+								customFieldId,
+								sourceType: 'TIMEENTRY',
+								value: type === 'NUMBER' ? parseFloat(value) : value,
+							}))
+					: [];
+			getBrowser()
+				.runtime.sendMessage({
+					eventName: 'startWithDescription',
+					options: {
+						projectId,
+						description,
+						billable: null,
+						start: null,
+						end: null,
+						taskId,
+						tagIds,
+						customFields: cfs,
+					},
+				})
+				.then((response) => {
+					let data = response.data;
+					this.setState(
+						{
+							timeEntry: data,
+						},
+						() => {
+							this.props.changeMode('timer');
+							this.props.setTimeEntryInProgress(data);
+							this.application.setIcon(getIconStatus().timeEntryStarted);
+
+							getBrowser().runtime.sendMessage({
+								eventName: 'addIdleListenerIfIdleIsEnabled',
+							});
+							getBrowser().runtime.sendMessage({
+								eventName: 'removeReminderTimer',
+							});
+							localStorage.setItem({
+								timeEntryInProgress: data,
+							});
+						}
+					);
+				})
+				.catch(() => {});
+		}
+	}
+
 	async checkRequiredFields() {
 		const isOff = await isOffline();
 		if (this.state.stopDisabled) return;
@@ -439,10 +551,14 @@ class StartTimer extends Component {
 		this.setState({
 			stopDisabled: true,
 		});
-
 		const { forceDescription, forceProjects, forceTasks, forceTags } =
 			this.props.workspaceSettings;
 		const { description, project, task, tags } = this.state.timeEntry;
+
+		const requiredAndMissingCustomFields = await getRequiredMissingCustomFields(
+			project,
+			this.state.timeEntry
+		);
 
 		if (isOff) {
 			this.stopEntryInProgress();
@@ -453,6 +569,8 @@ class StartTimer extends Component {
 		} else if (forceTasks && !task) {
 			this.goToEdit({ inProgress: true });
 		} else if (forceTags && (!tags || !tags.length > 0)) {
+			this.goToEdit({ inProgress: true });
+		} else if (requiredAndMissingCustomFields.length) {
 			this.goToEdit({ inProgress: true });
 		} else {
 			this.stopEntryInProgress();
@@ -489,7 +607,11 @@ class StartTimer extends Component {
 				.runtime.sendMessage({
 					eventName: 'endInProgress',
 				})
-				.then(() => {
+				.then((data) => {
+					if (data.status === 400) {
+						this.goToEdit({ inProgress: true });
+						return;
+					}
 					localStorage.setItem('timeEntryInProgress', null);
 					getBrowser().runtime.sendMessage({
 						eventName: 'restartPomodoro',
@@ -514,7 +636,7 @@ class StartTimer extends Component {
 
 					this.application.setIcon(getIconStatus().timeEntryEnded);
 				})
-				.catch((res) => {
+				.catch(() => {
 					this.props.log('timeEntryService.stopEntryInProgress error');
 					// if error message says that some fields are required, open the edit page
 					if (res.response?.data?.message?.includes('required')) {
@@ -609,6 +731,7 @@ class StartTimer extends Component {
 			!this.state.timeEntry.id
 		);
 	}
+
 	showManualInputPlaceholder() {
 		return (
 			this.props.mode === 'manual' &&
@@ -743,7 +866,7 @@ class StartTimer extends Component {
 								? 'start-timer_button-start'
 								: 'disabled'
 						}
-						onClick={this.startNewEntry}
+						onClick={this.startNewEntryWithoutGoingToEdit}
 					>
 						<span>{locales.START}</span>
 					</button>

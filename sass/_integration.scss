@@ -46,6 +46,7 @@
 	}
 	&-header {
 		height: 20px;
+		width: fit-content;
 	}
 
 	.toaster__container {
@@ -82,8 +83,8 @@
 .clockify-input {
 	border: 1px solid #c6d2d9;
 	border-radius: 2px;
-	width: 134px;
-	padding-left: 7px;
+	width: 136px;
+	padding-left: 4px;
 	height: 30px;
 	font-size: 14px;
 }

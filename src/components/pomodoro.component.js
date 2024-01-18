@@ -325,6 +325,7 @@ class Pomodoro extends Component {
 									value={this.state.timerInterval}
 									onBlur={this.changePomodoroProperty.bind(this)}
 									onKeyDown={this.changePomodoroPropertyOnEnter.bind(this)}
+									maxLength={6}
 									onChange={this.changePomodoroPropertyState.bind(this)}
 								/>
 								<p>{locales.MINUTES}</p>
@@ -337,6 +338,7 @@ class Pomodoro extends Component {
 									id="shortBreak"
 									value={this.state.shortBreak}
 									onBlur={this.changePomodoroProperty.bind(this)}
+									maxLength={6}
 									onKeyDown={this.changePomodoroPropertyOnEnter.bind(this)}
 									onChange={this.changePomodoroPropertyState.bind(this)}
 								/>
@@ -356,6 +358,7 @@ class Pomodoro extends Component {
 									id="longBreak"
 									value={this.state.longBreak}
 									onBlur={this.changePomodoroProperty.bind(this)}
+									maxLength={6}
 									onKeyDown={this.changePomodoroPropertyOnEnter.bind(this)}
 									onChange={this.changePomodoroPropertyState.bind(this)}
 								/>
@@ -369,6 +372,7 @@ class Pomodoro extends Component {
 									id="breakCounter"
 									value={this.state.breakCounter}
 									onBlur={this.changePomodoroProperty.bind(this)}
+									maxLength={6}
 									onKeyDown={this.changePomodoroPropertyOnEnter.bind(this)}
 									onChange={this.changePomodoroPropertyState.bind(this)}
 								/>

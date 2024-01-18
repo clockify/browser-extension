@@ -38,7 +38,7 @@ class DefaultProjectList extends React.PureComponent {
 	constructor(props) {
 		super(props);
 
-		const { forceProjects, forceTasks, projectPickerSpecialFilter } =
+		const { forceProjects, forceTasks } =
 			this.props.workspaceSettings;
 		this.initProjectList = [_lastUsedProject, _lastUsedProjectAndTask];
 		if (forceTasks) this.initProjectList = [_lastUsedProjectAndTask];
@@ -83,8 +83,6 @@ class DefaultProjectList extends React.PureComponent {
 			taskDoesNotExist: false,
 			taskRequired: false,
 			taskDone: false,
-
-			isSpecialFilter: projectPickerSpecialFilter,
 			msg: null,
 			offline: null,
 		};
@@ -96,9 +94,15 @@ class DefaultProjectList extends React.PureComponent {
 		this.setAsyncStateItems = this.setAsyncStateItems.bind(this);
 		this.projectFilterRef = null;
 		this.projectDropdownRef = null;
+		this.handleScroll = this.handleScroll.bind(this);
 	}
 
 	async setAsyncStateItems() {
+		const userSettings = await localStorage.getItem('userSettings');
+		const isSpecialFilter = userSettings
+			? JSON.parse(userSettings).projectPickerSpecialFilter
+			: false;
+
 		const darkMode = await this.getDarkMode();
 		_lastUsedProject.color = this.getColorForProject(darkMode);
 		_lastUsedProjectAndTask.color = this.getColorForProject(darkMode);
@@ -114,6 +118,7 @@ class DefaultProjectList extends React.PureComponent {
 		this.setState({
 			projectList,
 			clientProjects,
+			isSpecialFilter
 		});
 	}
 
@@ -451,6 +456,15 @@ class DefaultProjectList extends React.PureComponent {
 		}
 	}
 
+	handleScroll(event) {
+		const { loadMore } = this.state;
+		const bottom =
+			event.target.scrollHeight - event.target.scrollTop ===
+			event.target.clientHeight;
+		if (bottom && loadMore) {
+			this.loadMoreProjects();
+		}
+	}
 	render() {
 		const {
 			selectedProject,
@@ -570,7 +584,10 @@ class DefaultProjectList extends React.PureComponent {
 							id="project-dropdown"
 							ref={(ref) => (this.projectDropdownRef = ref)}
 						>
-							<div className="project-list-dropdown--content">
+							<div
+								onScroll={this.handleScroll}
+								className="project-list-dropdown--content"
+							>
 								<div className="project-list-input">
 									<div className="project-list-input--border">
 										<input
@@ -698,12 +715,6 @@ class DefaultProjectList extends React.PureComponent {
 									}
 								>
 									<span>{specFilterNoTasksOrProject}</span>
-								</div>
-								<div
-									className={loadMore ? 'project-list-load' : 'disabled'}
-									onClick={this.loadMoreProjects.bind(this)}
-								>
-									{locales.LOAD_MORE}
 								</div>
 							</div>
 						</div>

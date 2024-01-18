@@ -241,13 +241,43 @@ class EditFormManual extends React.Component {
 
 	async checkDefaultProjectTask(forceTasks) {
 		const { defaultProject } = await DefaultProject.getStorage();
-
 		if (defaultProject && defaultProject.enabled) {
+			let lastEntry;
 			const isLastUsedProject = defaultProject.project.id === 'lastUsedProject';
 			const isLastUsedProjectWithoutTask =
 				defaultProject.project.id === 'lastUsedProject' &&
 				!defaultProject.project.name.includes('task');
-			let lastEntry;
+
+			if (!isLastUsedProject) {
+				if (!isLastUsedProject) {
+					const { projectDB, taskDB, msg } =
+						await defaultProject.getProjectTaskFromDB(forceTasks);
+					if (msg) {
+						setTimeout(() => {
+							this.toaster.toast('info', msg, 5);
+						}, 2000);
+					}
+					return { projectDB, taskDB };
+				} else {
+					if (!lastEntry) {
+						setTimeout(() => {
+							this.toaster.toast(
+								'info',
+								`${locales.DEFAULT_PROJECT_NOT_AVAILABLE} ${locales.YOU_CAN_SET_A_NEW_ONE_IN_SETTINGS}`,
+								5
+							);
+						}, 2000);
+						return { projectDB: null, taskDB: null };
+					}
+					let { project, task } = lastEntry;
+
+					if (isLastUsedProjectWithoutTask) {
+						task = null;
+					}
+
+					return { projectDB: project, taskDB: task };
+				}
+			}
 			try {
 				const response = await getBrowser().runtime.sendMessage({
 					eventName: 'getLastUsedProjectFromTimeEntries',
@@ -255,7 +285,6 @@ class EditFormManual extends React.Component {
 						forceTasks: !isLastUsedProjectWithoutTask,
 					},
 				});
-
 				if (!response.data) throw new Error(response);
 				if (!response.data) throw new Error(response);
 				lastEntry = {
@@ -264,6 +293,12 @@ class EditFormManual extends React.Component {
 						: response.data,
 					task: !isLastUsedProjectWithoutTask ? response.data.task : null,
 				};
+				let { project, task } = lastEntry;
+
+				if (isLastUsedProjectWithoutTask) {
+					task = null;
+				}
+				return { projectDB: project, taskDB: task };
 			} catch (e) {
 				console.error('project not found', e);
 				setTimeout(() => {
@@ -279,34 +314,6 @@ class EditFormManual extends React.Component {
 					);
 				}, 1000);
 				return { projectDB: null, taskDB: null };
-			}
-			if (!isLastUsedProject) {
-				const { projectDB, taskDB, msg } =
-					await defaultProject.getProjectTaskFromDB(forceTasks);
-				if (msg) {
-					setTimeout(() => {
-						this.toaster.toast('info', msg, 5);
-					}, 2000);
-				}
-				return { projectDB, taskDB };
-			} else {
-				if (!lastEntry) {
-					setTimeout(() => {
-						this.toaster.toast(
-							'info',
-							`${locales.DEFAULT_PROJECT_NOT_AVAILABLE} ${locales.YOU_CAN_SET_A_NEW_ONE_IN_SETTINGS}`,
-							5
-						);
-					}, 2000);
-					return { projectDB: null, taskDB: null };
-				}
-				let { project, task } = lastEntry;
-
-				if (isLastUsedProjectWithoutTask) {
-					task = null;
-				}
-
-				return { projectDB: project, taskDB: task };
 			}
 		}
 		return { projectDB: null, taskDB: null };
