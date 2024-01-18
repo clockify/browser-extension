@@ -106,22 +106,29 @@ class ClockifyService {
 
 	static async getForces() {
 		const ws = await localStorage.getItem('workspaceSettings');
+		const us = await localStorage.getItem('userSettings');
 		const wsSettings = ws
 			? JSON.parse(ws)
 			: {
 					forceDescription: false,
 					forceProjects: false,
 					forceTasks: false,
-					projectPickerSpecialFilter: false,
 					forceTags: false,
 			  };
+		const usSettings = us
+			? JSON.parse(us)
+			: {
+				projectPickerSpecialFilter: false,
+			};
 		const {
 			forceDescription,
 			forceProjects,
 			forceTasks,
-			projectPickerSpecialFilter,
 			forceTags,
 		} = wsSettings;
+		const {
+			projectPickerSpecialFilter,
+		} = usSettings;
 		return {
 			forceDescription,
 			forceProjects,
