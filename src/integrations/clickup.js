@@ -16,7 +16,7 @@ clockifyButton.render(
 				? headerElements[2].textContent
 				: headerElements[1].textContent;
 
-			const description = () => $('.cu-task-title__overlay').textContent;
+			const description = () => $('title').text();
 			const projectName = () => folderName ?? listName;
 			const taskName = () => (folderName ? listName : '');
 			const tagNames = () =>
