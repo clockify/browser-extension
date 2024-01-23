@@ -49,12 +49,12 @@
 		"MergeRequestAndIssueView": {
 			"hanger": ".issue-details .detail-page-description:not(.clockify), .merge-request-details.issuable-details > .detail-page-description:not(.clockify)",
 			"breadcrumbs": ".breadcrumbs",
-			"breadcrumbsList": ".breadcrumbs-list li",
+			"breadcrumbsList": ".breadcrumbs-list li, .js-breadcrumbs-list li",
 			"anchor": "a",
 			"groupName": ".group-path",
 			"id": "[data-testid=\"breadcrumb-current-link\"] a",
 			"issueTitle": "h1.title",
-			"projectName": ".breadcrumb-item-text",
+			"projectName": ".breadcrumb-item-text, .js-breadcrumb-item-text",
 			"label": "div.labels .gl-label-link",
 			"firstSpan": "span:nth-child(1)",
 			"secondSpan": "span:nth-child(2)"
