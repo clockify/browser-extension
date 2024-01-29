@@ -15,7 +15,7 @@
     "message": "Загрузка, пожалуйста подождите."
   },
   "TRACKER__DEFAULT": {
-    "message": "дефолт"
+    "message": "по умолчанию"
   },
   "STOP": {
     "message": "Стоп"
@@ -30,7 +30,7 @@
     "message": "Напечатайте, над чем вы работаете"
   },
   "START_TIMER": {
-    "message": "Старт таймер"
+    "message": "Запустить таймер"
   },
   "TRACKER__TIME_TRACKER__ENTRY__TRACK__MANUAL_M": {
     "message": "Руководство (м)"
@@ -48,7 +48,7 @@
     "message": "Добавить описание"
   },
   "TRACKER__TIME_TRACKER__ENTRY__CONTINUE": {
-    "message": "Продолжить таймер для этого занятия"
+    "message": "Продолжить таймер для текущей записи"
   },
   "DELETE_MULTIPLE_ENTRIES": {
     "message": "Вы уверены, что хотите удалить { entries } записи?"
@@ -60,7 +60,7 @@
     "message": "Вы уверены, что хотите удалить запись?"
   },
   "TRACKER__TIME_TRACKER__RECORDER__ADD_TIME_MANUALLY_TOOLTIP": {
-    "message": "Добавьте время вручную здесь"
+    "message": "Добавьте время вручную"
   },
   "BILLABLE_LABEL": {
     "message": "Оплачиваемый"
@@ -195,7 +195,7 @@
     "message": "Доступ"
   },
   "ADD": {
-    "message": "Добавлять"
+    "message": "Добавить"
   },
   "ADD_TAGS": {
     "message": "Добавить теги"
@@ -207,19 +207,19 @@
     "message": "Биллинг"
   },
   "GLOBAL__CHANGE_LABEL": {
-    "message": "Изменять"
+    "message": "Изменить"
   },
   "GLOBAL__CHANGE_NAME_LABEL": {
     "message": "Изменить имя"
   },
   "GLOBAL__CLOSE_BTN": {
-    "message": "Закрывать"
+    "message": "Закрыть"
   },
   "GLOBAL__CREATE_LABEL": {
-    "message": "Создавать"
+    "message": "Создать"
   },
   "GLOBAL__CREATE_NEW_TITLE": {
-    "message": "Создайте новый"
+    "message": "Создать новый"
   },
   "GLOBAL__FAILED_MESSAGE": {
     "message": "Не смогли"
@@ -246,19 +246,19 @@
     "message": "Никто"
   },
   "OK_BTN": {
-    "message": "Ok"
+    "message": "Ок"
   },
   "GLOBAL__PRIVATE_LABEL": {
-    "message": "Частный"
+    "message": "Приватный"
   },
   "PROJECTS": {
     "message": "Проекты"
   },
   "PUBLIC": {
-    "message": "Общественные"
+    "message": "Публичный"
   },
   "GLOBAL__REMOVE_LABEL": {
-    "message": "Удалять"
+    "message": "Удалить"
   },
   "SAVE": {
     "message": "Сохранить"
@@ -267,16 +267,16 @@
     "message": "Показать"
   },
   "GLOBAL__FORM_LABEL_START_TIME": {
-    "message": "Старт время"
+    "message": "Запустить таймер"
   },
   "GLOBAL__SUCCESS_MSG": {
     "message": "Успех!"
   },
   "TAG": {
-    "message": "Ярлык"
+    "message": "Тэг"
   },
   "TASKS": {
-    "message": "Задания"
+    "message": "Задачи"
   },
   "GLOBAL__TIME_LABEL": {
     "message": "Время"
@@ -306,7 +306,7 @@
     "message": "Применить фильтр"
   },
   "SUBMIT": {
-    "message": "Представлять на рассмотрение"
+    "message": "Предоставить на рассмотрение"
   },
   "FIND_PROJECTS": {
     "message": "Найти проекты ..."
@@ -324,10 +324,10 @@
     "message": "Без описания"
   },
   "GLOBAL__SEARCH_PLACEHOLDER": {
-    "message": "Искать ..."
+    "message": "Поиск ..."
   },
   "GLOBAL__NOW_LABEL": {
-    "message": "Теперь"
+    "message": "Сейчас"
   },
   "GLOBAL__IN_PROGRESS_LABEL": {
     "message": "В ходе выполнения"
@@ -339,7 +339,7 @@
     "message": "Введите имя"
   },
   "DESCRIPTION_LIMIT_ERROR_MSG": {
-    "message": "Описание сокращено (максимальная длина { limit } символа)"
+    "message": "Краткое описание (максимальная длина { limit } символа)"
   },
   "INSTAL_AND_TRACK_ANYWHERE": {
     "message": "Установите Clockify и отслеживайте время где угодно."
@@ -396,7 +396,7 @@
     "message": "Выключатель"
   },
   "SELECT": {
-    "message": "Выбирать"
+    "message": "Выбрать"
   },
   "SHARED_MODULES__CUSTOM_FIELD__OPTION_PART_LABEL": {
     "message": "Вариант"
@@ -417,13 +417,13 @@
     "message": "Добавить вариант"
   },
   "SHARED_MODULES__CUSTOM_FIELD__PLACEHOLDER_LABEL": {
-    "message": "Заполнитель"
+    "message": "Заполнить"
   },
   "SHARED_MODULES__CUSTOM_FIELD__VALUE_LABEL": {
     "message": "Ценить"
   },
   "SHARED_MODULES__CUSTOM_FIELD__DEFAULT_LABEL": {
-    "message": "Дефолт: "
+    "message": "По умолчанию: "
   },
   "SHARED_MODULES__CUSTOM_FIELD__AVAILABLE_FIELD_INFO_HEADER": {
     "message": "Доступные поля"
@@ -549,13 +549,13 @@
     "message": "Суббота"
   },
   "SATURDAY_SHORT": {
-    "message": "Суб"
+    "message": "Сб"
   },
   "SUNDAY": {
     "message": "Воскресенье"
   },
   "SUNDAY_SHORT": {
-    "message": "Вос"
+    "message": "Вс"
   },
   "NO_MATCHING": {
     "message": "Нет совпадений { entityInPlural }"
@@ -579,7 +579,7 @@
     "message": "Ярлык"
   },
   "START_TIMER_WHEN_BROWSER_STARTS": {
-    "message": "Таймер запуска при запуске браузера"
+    "message": "Запустить таймер при открытии браузера"
   },
   "STOP_TIMER_WHEN_BROWSER_CLOSES": {
     "message": "Остановить таймер при закрытии браузера"
@@ -594,7 +594,7 @@
     "message": "Ярлык запуска / остановки таймера"
   },
   "DEFAULT_PROJECT_ARCHIVED": {
-    "message": "Ваш проект по умолчанию заархивирован."
+    "message": "Проект по умолчанию заархивирован."
   },
   "DEFAULT_TASK_DONE": {
     "message": "Ваша задача по умолчанию - Готово, больше не доступна."
@@ -609,19 +609,19 @@
     "message": "Вы можете установить новый в настройках."
   },
   "COMPLETE_CURRENT_ENTRY": {
-    "message": "Пожалуйста, сначала заполните текущую заявку!"
+    "message": "Пожалуйста, сначала заполните текущую запись!"
   },
   "ENTER_REQUIRED_FIELDS": {
-    "message": "Заполните обязательные поля или, при желании, отредактируйте настройки рабочего пространства."
+    "message": "Заполните обязательные поля или отредактируйте настройки рабочего пространства."
   },
   "CANNOT_START_ENTRY_WITHOUT_PROJECT": {
     "message": "Невозможно начать запись без проекта, задачи, описания или тегов."
   },
   "EDIT_YOUR_TIME_ENTRY": {
-    "message": "Измените запись времени."
+    "message": "Изменить запись"
   },
   "CREATE_TIME_ENTRY_USING_DASHBOARD": {
-    "message": "Создайте запись времени с помощью дашборда или отредактируйте настройки рабочего пространства."
+    "message": "Создайте запись с помощью дашборда или отредактируйте настройки рабочего пространства."
   },
   "ENABLE_INTEGRATIONS": {
     "message": "Включить интеграции"
@@ -648,10 +648,10 @@
     "message": "Порты не поддерживаются"
   },
   "NO_RECENT_ENTRIES_TO_SHOW": {
-    "message": "Нет недавних записей для отображения"
+    "message": "Нет записей для показа"
   },
   "YOU_HAVE_NOT_TRACKED": {
-    "message": "Похоже, вы в последнее время не отслеживали"
+    "message": "Вы ничего не отслеживали"
   },
   "GET_ONLINE": {
     "message": "Подключитесь к Интернету, чтобы увидеть свои записи"
@@ -690,16 +690,16 @@
     "message": "Включить контекстное меню"
   },
   "IDLE_DETECTION": {
-    "message": "Обнаружение холостого хода"
+    "message": "Обнаружение простоя"
   },
   "DETECT_IDLE_TIME": {
-    "message": "Определить время простоя, если неактивен для"
+    "message": "Определить время простоя, при отсутствии активности"
   },
   "CANT_START_ENTRY_WITHOUT_PROJECT": {
     "message": "Невозможно начать запись без проекта, задачи, описания или тегов"
   },
   "PLEASE_EDIT_YOUR_TIME_ENTRY": {
-    "message": "Измените запись времени"
+    "message": "Отредактируйте запись"
   },
   "CANNOT_END_ENTRY": {
     "message": "Невозможно завершить запись без проекта, задачи, описания или тегов"
@@ -717,7 +717,7 @@
     "message": "У вас уже есть незавершенная запись без проекта / задачи / описания или тегов"
   },
   "ENTER_REQUIRED_FIELDS_OR_EDIT_WORKSPACE_SETTINGS": {
-    "message": "Введите необходимые поля или, при желании, отредактируйте настройки рабочего пространства"
+    "message": "Введите необходимые поля или отредактируйте настройки рабочего пространства"
   },
   "EXT_RELOADED": {
     "message": "Расширение было перезагружено"
@@ -765,7 +765,7 @@
     "message": "Название и цвет обязательны"
   },
   "ENABLE_POMODORO_TIMER": {
-    "message": "Включить таймер помидора"
+    "message": "Режим pomodoro"
   },
   "TIMER_INTERVAL": {
     "message": "Интервал таймера"
@@ -798,7 +798,7 @@
     "message": "Выберите цвет"
   },
   "ADD_TIME": {
-    "message": "ДОБАВИТЬ ВРЕМЯ"
+    "message": "Добавить время"
   },
   "BACK": {
     "message": "Назад"
@@ -816,7 +816,7 @@
     "message": "От"
   },
   "TO": {
-    "message": "К"
+    "message": "Кому"
   },
   "CREATE_NEW_TAG": {
     "message": "Создать новый тег"
@@ -825,7 +825,7 @@
     "message": "требуется"
   },
   "ENABLE_ALL_INTEGRATIONS": {
-    "message": "Вы можете включить все, нажав кнопку «Включить все»."
+    "message": "Включить все интеграции"
   },
   "PROJECT_NAME": {
     "message": "Название проекта"
@@ -924,7 +924,7 @@
     "message": "Нажмите здесь, чтобы запустить таймер."
   },
   "CLICK_HERE_TO_START_BREAK": {
-    "message": "Нажмите здесь, чтобы начать перерыв."
+    "message": "Начать короткий перерыв."
   },
   "SESSION": {
     "message": "(Сессия { number })."
@@ -933,7 +933,7 @@
     "message": "Вы работали { minLength } минут. Пора сделать большой перерыв!"
   },
   "CLICK_HERE_TO_START_LONG_BREAK": {
-    "message": "Нажмите здесь, чтобы начать длинный перерыв."
+    "message": "Начать длинный перерыв."
   },
   "POMODORO_TIMER": {
     "message": "Таймер помидора"
@@ -951,7 +951,7 @@
     "message": "Отменить и продолжить"
   },
   "FOCUS_MODE": {
-    "message": "Режим фокусировки"
+    "message": "Режим фокусирования"
   },
   "IDLE_TIME_DETECTED": {
     "message": "Обнаружено время простоя"
@@ -1017,7 +1017,7 @@
     "message": "Требуется повышенная безопасность"
   },
   "WORKSPACE__TWO_FACTOR__MODAL__INFO_MESSAGE": {
-    "message": "требуется двухфакторная аутентификация (2FA). После включения вам нужно будет проверять свою электронную почту при входе в систему."
+    "message": "требуется двухфакторная аутентификация (2FA). После включения вам нужно будет проверить свою электронную почту для входа в систему."
   },
   "WORKSPACE__TWO_FACTOR__MODAL__ENABLE": {
     "message": "Включить двухфакторную аутентификацию"
