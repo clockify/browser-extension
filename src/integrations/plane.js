@@ -7,7 +7,7 @@ clockifyButton.render(
 		const taskName = () => elem.textContent;
 		const projectName = () => $('.line-clamp-1').textContent;
 		const link = clockifyButton.createSmallButton({ description, taskName, projectName });
-		link.style.marginLeft = '2px';
+		link.style.marginLeft = '3px';
 		link.style.bottom = '-2px';
 		link.style.position = 'relative';
 		elem.append(link);
