@@ -284,6 +284,11 @@
 		"link": "*://*.plaky.com/*",
 		"script": "plaky.js"
 	},
+	"plane.so": {
+		"name": "Plane",
+		"link": "*://app.plane.so/*",
+		"script": "plane.js"
+	},
 	"plutio.com": {
 		"name": "Plutio",
 		"link": "*://*.plutio.com/*",
