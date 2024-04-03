@@ -3,7 +3,7 @@ clockifyButton.render(
 	'.w-full .text-base:not(.clockify)',
 	{ observe: true },
 	async (elem) => {
-		const description = () => $('*[placeholder="Issue title"]', elem.parentNode).textContent;
+		const description = () => elem.textContent + ': ' +$('*[placeholder="Issue title"]', elem.parentNode).textContent;
 		const taskName = () => elem.textContent;
 		const projectName = () => $('.line-clamp-1').textContent;
 		const link = clockifyButton.createSmallButton({ description, taskName, projectName });
