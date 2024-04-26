@@ -6,11 +6,11 @@ clockifyButton.render(
 		cardId = $('span.card-id').innerText;
 		description = cardId + ' ' + $('span.card-title').innerText;
 
-		function findProjectNameInCustomFields(customFields) {
+        function findProjectNameInCustomFields(customFields) {
+            projectName = false;
 			for (let field of customFields) {
 				if (
-					field.querySelector('.eve-form-label').innerText ===
-					'Clockify Project'
+					field.querySelector('.eve-form-label') && field.querySelector('.eve-form-label').innerText === 'Clockify Project'
 				) {
 					projectName = field.querySelector('input.eve-input.js-value').value;
 				}
