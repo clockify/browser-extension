@@ -41,6 +41,10 @@ const CustomFieldDropMultiple = ({ cf, updateValue, setIsValid }) => {
 	const [tagList, setTagList] = useState(allowedValues ? newList(value) : []);
 
 	useEffect(() => {
+		storeValue();
+	}, [value])
+
+	useEffect(() => {
 		setValue(cf.value);
 	}, [cf.value]);
 

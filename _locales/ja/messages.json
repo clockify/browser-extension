@@ -1073,6 +1073,156 @@
   "FORBIDDEN_CHARACTERS": {
     "message": "間違った値を入力しました。 \"<\" および \">\" 文字は使用しないでください"
   },
+  "WORKSPACE_LOCKED": {
+    "message": "ワークスペースがロックされました"
+  },
+  "SWITCH_WORKSPACE": {
+    "message": "ワークスペースを切り替える"
+  },
+  "VERIFY_EMAIL_MESSAGE": {
+    "message": "メールアドレスを確認してください: { userEmail }"
+  },
+  "SEND_VERIFICATION_EMAIL_BTN": {
+    "message": "確認メールを送信"
+  },
+  "EMAIL_SENT_SUCCESS_MESSAGE": {
+    "message": "メールを送信しました"
+  },
+  "VERIFY_EMAIL_TITLE": {
+    "message": "あなたの電子メールを確認します！"
+  },
+  "LONG_VERIFY_EMAIL_MESSAGE": {
+    "message": "{ userName }、Clockify アカウントの使用を続けるには、メール アドレスを確認する必要があります: { userEmail }"
+  },
+  "CHANGE_EMAIL_FOOTER": {
+    "message": "メールへのアクセスに問題がありますか?"
+  },
+  "CHANGE_EMAIL_TITLE": {
+    "message": "メールアドレスを変更"
+  },
+  "NOTIFICATIONS_TITLE": {
+    "message": "通知"
+  },
+  "NO_NEW_NOTIFICATIONS_TITLE": {
+    "message": "新しい通知はありません"
+  },
+  "NO_NEW_NOTIFICATIONS_MESSAGE": {
+    "message": "現在、新しい通知はありません"
+  },
+  "CLEAR_ALL": {
+    "message": "すべてクリア"
+  },
+  "WORKSPACE_INVITATION_NOTIFICATION_TITLE": {
+    "message": "ワークスペースの招待"
+  },
+  "LAYOUT__NOTIFICATIONS__WORKSPACE_INVITATION__FULL_ACCOUNT_ACCESS_INVITATION__PART_1": {
+    "message": "あなたは参加するように招待されています "
+  },
+  "LAYOUT__NOTIFICATIONS__WORKSPACE_INVITATION__FULL_ACCOUNT_ACCESS_INVITATION__PART_2": {
+    "message": " ワークスペース。同意すると、{ workspaceName }管理者は"
+  },
+  "LAYOUT__NOTIFICATIONS__WORKSPACE_INVITATION__ACCESS_INVITATION__PART_1": {
+    "message": "時間を追跡するようにあなたを招待しました"
+  },
+  "LAYOUT__NOTIFICATIONS__WORKSPACE_INVITATION__ACCESS_INVITATION__PART_2": {
+    "message": "ワークスペース。"
+  },
+  "LAYOUT__NOTIFICATIONS__WORKSPACE_INVITATION__FULL_ACCOUNT_ACCESS_INVITATION__PART_3": {
+    "message": " 全権アクセス "
+  },
+  "LAYOUT__NOTIFICATIONS__ACCEPT_LABEL": {
+    "message": "承認"
+  },
+  "LAYOUT__NOTIFICATIONS__DECLINE_LABEL": {
+    "message": "却下"
+  },
+  "GLOBAL__LEARN_MORE_LINK": {
+    "message": "もっと詳しく知る"
+  },
+  "NOTIFICATION__TRIAL__LINK": {
+    "message": "PRO機能のしくみ"
+  },
+  "LAYOUT__NOTIFICATIONS__VERIFY_EMAIL_LABEL": {
+    "message": "Eメールを確認します"
+  },
+  "LAYOUT__NOTIFICATIONS__UNVERIFIED_EMAIL_NOTIFICATION": {
+    "message": "メールアドレスはまだ確認されていません。"
+  },
+  "LAYOUT__NOTIFICATIONS__RESEND_EMAIL_LABEL": {
+    "message": "メールを再送"
+  },
+  "LAYOUT__NOTIFICATIONS__RECEIVE_UPDATES_LABEL": {
+    "message": "更新を受け取る"
+  },
+  "GLOBAL__GO_TO_SUBSCRIPTION_LABEL": {
+    "message": "サブスクリプションに移動"
+  },
+  "EMAIL__VERIFICATION__SUCCESS": {
+    "message": "確認用の電子メールが正常に送信されました"
+  },
+  "USER__SETTINGS__SAVE__SUCCESS": {
+    "message": "設定が正常に保存されました"
+  },
+  "INVITATION_DECLINED_MESSAGE": {
+    "message": "ユーザー{ name }への招待は拒否されました。"
+  },
+  "VERIFY_EMAIL_MSG_1": {
+    "message": "確認してください"
+  },
+  "VERIFY_EMAIL_MSG_2": {
+    "message": "最初にメールしてください。"
+  },
+  "WORKSPACE_DEFAULT_SUCCESS_MESSAGE": {
+    "message": "デフォルトのワークスペースが変更されました"
+  },
+  "EMAIL__VERIFICATION__CAMPAIGN__TITLE": {
+    "message": "あなたの電子メールを確認します"
+  },
+  "EMAIL__VERIFICATION__CAMPAIGN__MESSAGE_1": {
+    "message": "今後 30 日間、Clockify をシームレスに使用し続けるには認証済みアカウントが必要になります。"
+  },
+  "EMAIL__VERIFICATION__CAMPAIGN__MESSAGE_2": {
+    "message": "将来的に Clockify をシームレスに使用するには、今すぐアカウントを確認してください。"
+  },
+  "EMAIL__VERIFICATION__CAMPAIGN__MESSAGE_3": {
+    "message": "メール アドレスを確認して、今後の制限なしで Clockify を使い続けてください。"
+  },
+  "EMAIL__VERIFICATION__CAMPAIGN__MESSAGE_4": {
+    "message": "メール認証を行わないと、アプリの使用は 15 日以内に制限されます。"
+  },
+  "EMAIL__VERIFICATION__CAMPAIGN__MESSAGE_5": {
+    "message": "メール アドレスを確認する必要があります。確認しないと、アプリの使用が 10 日以内に制限されます。"
+  },
+  "EMAIL__VERIFICATION__CAMPAIGN__MESSAGE_6": {
+    "message": "メールアドレスを確認するための最後の電話です。これがないと、Clockify アカウントを使用できません。"
+  },
+  "TIMEZONE_MISMATCH__TITLE": {
+    "message": "タイムゾーンの不一致"
+  },
+  "TIMEZONE_MISMATCH__BODY_TEXT": {
+    "message": "{ profileLink } とブラウザのタイムゾーンが一致しない場合、不正確なレポートが生成され、一部の機能が期待どおりに動作しない可能性があります。"
+  },
+  "TIMEZONE_MISMATCH__NOTIFICATION__PART_2": {
+    "message": "あなたのプロフィール"
+  },
+  "CHANGE_TIMEZONE_NOTIFICATION": {
+    "message": "{ suggestedTimeZone }に変更します"
+  },
+  "GLOBAL__OR_LABEL": {
+    "message": "また"
+  },
+  "TIMEZONE_MISMATCH__NOTIFICATION__ENABLE_LOCATION_ACCESS": {
+    "message": "位置情報アクセスを有効にする"
+  },
+  "TIMEZONE__UPDATE__SUCCESS_MESSAGE": {
+    "message": "タイムゾーンが正常に更新されました"
+  },
+  "TIMEZONE__UPDATE__ERROR_MESSAGE": {
+    "message": "更新されたタイムゾーンが失敗しました"
+  },
+  "GLOBAL__DUPLICATE_SUCCESS_MSG": {
+    "message": "時間入力が重複しています"
+  },
   "appName": {
     "message": "Clockifyタイムトラッカー",
     "description": "Webストアに表示されるアプリケーションのタイトル。"

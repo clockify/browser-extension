@@ -56,6 +56,10 @@
 		background: white;
 		border-radius: 2px;
 	}
+	&:focus-within {
+		border: 1px solid variables.$bg-04 !important;
+		border-radius: 2px !important;
+	}
 }
 
 .description-textarea > textarea {

@@ -12,13 +12,17 @@ import DeleteEntryConfirmationComponent from './delete-entry-confirmation.compon
 import HomePage from './home-page.component';
 import Toaster from './toaster-component';
 import { getBrowser } from '../helpers/browser-helper';
+import {
+	getRequiredAndMissingCustomFieldNames,
+	getRequiredAndMissingFieldNames,
+} from '../helpers/utils';
+import { TimeEntryTypeEnum } from '../enums/timeEntry-type.enum';
 
 class TimeEntry extends React.Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
-			ready: false,
 			title: '',
 			tagTitle: '',
 			showGroup: false,
@@ -51,10 +55,7 @@ class TimeEntry extends React.Component {
 	}
 
 	componentDidMount() {
-		const { project } = this.props;
-		if (project !== undefined && this.props.task !== undefined) {
-			this.createTitle();
-		}
+		this.createTitle();
 	}
 
 	async goToEdit() {
@@ -128,17 +129,10 @@ class TimeEntry extends React.Component {
 				tags.map((tag) => tag.name).join('\n');
 		}
 
-		this.setState(
-			{
-				title: title,
-				tagTitle: tagTitle,
-			},
-			() => {
-				this.setState({
-					ready: true,
-				});
-			}
-		);
+		this.setState({
+			title: title,
+			tagTitle: tagTitle,
+		});
 	}
 
 	changeMode(mode) {
@@ -160,8 +154,39 @@ class TimeEntry extends React.Component {
 		});
 	}
 
-	onClickDuplicateEntry(e) {
+	async onClickDuplicateEntry(e) {
 		e.stopPropagation();
+		const workspaceSettings = this.props.workspaceSettings;
+
+		const { project } = this.props.timeEntry;
+		const requiredAndMissingCustomFieldNames =
+			await getRequiredAndMissingCustomFieldNames(
+				project,
+				this.props.timeEntry
+			);
+		const requiredAndMissingFieldNames = getRequiredAndMissingFieldNames(
+			this.props.timeEntry,
+			workspaceSettings
+		);
+		const missingFields = requiredAndMissingFieldNames.concat(
+			requiredAndMissingCustomFieldNames
+		);
+
+		// Admin and Owners can duplicate a Holiday/TimeOff TimeEntry even if they have missing fields.
+		const canDuplicate =
+			workspaceSettings.timeOff.active &&
+			this.props.isUserOwnerOrAdmin &&
+			(this.props.timeEntry.type === TimeEntryTypeEnum.TIME_OFF ||
+				this.props.timeEntry.type === TimeEntryTypeEnum.HOLIDAY);
+
+		if (missingFields.length > 0 && !canDuplicate) {
+			const errorMessage = `${locales.CANT_SAVE_WITHOUT_REQUIRED_FIELDS.replace(
+				'.',
+				''
+			)}: ${missingFields.join(', ')}`;
+			this.toaster.toast('error', errorMessage, 3);
+			return;
+		}
 		this.toggleEntryDropdownMenu();
 		getBrowser()
 			.runtime.sendMessage({
@@ -172,6 +197,7 @@ class TimeEntry extends React.Component {
 			})
 			.then(() => {
 				this.props.handleRefresh();
+				this.toaster.toast('success', locales.GLOBAL__DUPLICATE_SUCCESS_MSG, 2);
 			})
 			.catch((error) => {
 				this.toaster.toast(
@@ -204,7 +230,7 @@ class TimeEntry extends React.Component {
 						entryId,
 					},
 				})
-				.then((response) => {
+				.then(() => {
 					this.toggleDeleteConfirmationModal();
 					this.props.handleRefresh();
 				})
@@ -223,7 +249,7 @@ class TimeEntry extends React.Component {
 						entryIds,
 					},
 				})
-				.then((response) => {
+				.then(() => {
 					this.toggleDeleteConfirmationModal();
 					this.props.handleRefresh();
 				})
@@ -256,219 +282,225 @@ class TimeEntry extends React.Component {
 	}
 
 	render() {
-		const { timeEntry, project, groupedEntries } = this.props;
-		if (project !== undefined && this.props.task !== undefined) {
-			if (this.state.ready) {
-				let entryDuration = timeEntry.duration;
-				const decimalFormat = this.props.workspaceSettings?.decimalFormat;
-				if (!!groupedEntries?.length) {
-					entryDuration = groupedEntries.reduce(
-						(prev, curr) =>
-							duration(prev + duration(curr.timeInterval.duration)),
-						duration(0)
-					);
-					entryDuration = decimalFormat
-						? toDecimalFormat(entryDuration)
-						: entryDuration.format(
-								this.props.workspaceSettings?.trackTimeDownToSecond
-									? 'HH:mm:ss'
-									: 'h:mm',
-								{ trim: false }
-						  );
-				}
-				const entryClassNames = [];
-				if (
-					(timeEntry.isLocked && !this.props.isUserOwnerOrAdmin) ||
-					timeEntry.approvalRequestId
-				) {
-					entryClassNames.push('time-entry time-entry-locked');
-				} else {
-					entryClassNames.push('time-entry');
-				}
-				if (this.props.collapsedEntry) {
-					entryClassNames.push('time-entry--collapsed');
-				}
-				if (this.state.entryDropdownShown) {
-					entryClassNames.push('time-entry--focused');
-				}
+		const {
+			timeEntry,
+			project,
+			task,
+			groupedEntries,
+			workspaceSettings,
+			isUserOwnerOrAdmin,
+			collapsedEntry,
+			timeEntryIndex,
+		} = this.props;
 
-				return (
-					<React.Fragment>
-						<Toaster
-							ref={(instance) => {
-								this.toaster = instance;
-							}}
-						/>
-						<div>
+		let entryDuration = timeEntry.duration;
+		const decimalFormat = workspaceSettings?.decimalFormat;
+		if (!!groupedEntries?.length) {
+			entryDuration = groupedEntries.reduce(
+				(prev, curr) => duration(prev + duration(curr.timeInterval.duration)),
+				duration(0)
+			);
+			entryDuration = decimalFormat
+				? toDecimalFormat(entryDuration)
+				: entryDuration.format(
+						workspaceSettings?.trackTimeDownToSecond ? 'HH:mm:ss' : 'h:mm',
+						{ trim: false }
+				  );
+		}
+		const entryClassNames = [];
+		if (
+			(timeEntry.isLocked && !isUserOwnerOrAdmin) ||
+			timeEntry.approvalRequestId
+		) {
+			entryClassNames.push('time-entry time-entry-locked');
+		} else {
+			entryClassNames.push('time-entry');
+		}
+		if (collapsedEntry) {
+			entryClassNames.push('time-entry--collapsed');
+		}
+		if (this.state.entryDropdownShown) {
+			entryClassNames.push('time-entry--focused');
+		}
+
+		return (
+			<React.Fragment>
+				<Toaster
+					ref={(instance) => {
+						this.toaster = instance;
+					}}
+				/>
+				<div>
+					<div
+						data-pw={`time-entry-${timeEntryIndex}`}
+						className={entryClassNames.join(' ')}
+						title={this.state.title}
+						key={timeEntry.id}
+						onClick={this.goToEdit.bind(this)}
+					>
+						{!!groupedEntries?.length && (
 							<div
-								data-pw={`time-entry-${this.props.timeEntryIndex}`}
-								className={entryClassNames.join(' ')}
-								title={this.state.title}
-								key={timeEntry.id}
-								onClick={this.goToEdit.bind(this)}
+								className="time-entry-group-number"
+								onClick={this.handleGroupClick}
 							>
-								{!!groupedEntries?.length && (
-									<div
-										className="time-entry-group-number"
-										onClick={this.handleGroupClick}
-									>
-										{groupedEntries.length}
-									</div>
-								)}
-								<div
-									className="time-entry-description"
-									data-pw={`time-entry-description-${this.props.timeEntryIndex}`}
-								>
-									<div
-										className={
-											timeEntry.description ? 'description' : 'no-description'
-										}
-									>
-										{timeEntry.description
-											? timeEntry.description
-											: locales.NO_DESCRIPTION}
-									</div>
-									<div
-										style={project ? { color: project.color } : {}}
-										className={project ? 'time-entry-project' : 'disabled'}
-									>
-										<div className="time-entry__project-wrapper">
-											<div
-												style={project ? { background: project.color } : {}}
-												className="dot"
-											></div>
-											<span className="time-entry__project-name">
-												{project ? project.name : ''}
-												{this.props.task ? ': ' + this.props.task.name : ''}
-											</span>
-										</div>
-										<span className="time-entry__client-name">
-											{project && project.clientName
-												? ' - ' + project.clientName
-												: ''}
-										</span>
-									</div>
-								</div>
-								<div className="time-entry__right-side">
-									<div
-										className="time-entry__right-side__tag_billable_and_lock"
-										onClick={this.goToEdit.bind(this)}
-									>
-										<span
-											title={this.state.tagTitle}
-											className={
-												timeEntry.tags && timeEntry.tags.length > 0
-													? 'time-entry__right-side__tag'
-													: 'disabled'
-											}
-										></span>
-										<span
-											className={
-												timeEntry.billable && !this.state.hideBillable
-													? 'time-entry__right-side__billable'
-													: 'disabled'
-											}
-										></span>
-										<span
-											className={
-												timeEntry.type === 'BREAK'
-													? 'time-entry__right-side__break'
-													: 'disabled'
-											}
-										></span>
-										<span
-											className={
-												timeEntry.approvalRequestId
-													? 'time-entry__right-side__approved'
-													: 'disabled'
-											}
-										>
-											<img src="./assets/images/approved.png" />
-										</span>
-										<span
-											className={
-												timeEntry.isLocked &&
-												!this.props.isUserOwnerOrAdmin &&
-												!timeEntry.approvalRequestId
-													? 'time-entry__right-side__lock'
-													: 'disabled'
-											}
-										>
-											<img src="./assets/images/lock-indicator.png" />
-										</span>
-									</div>
-									<div className="time-entry__right-side__lock_and_play">
-										<span className="time-entry__right-side--duration">
-											{entryDuration}
-										</span>
-										<span
-											onClick={this.continueTimeEntry.bind(this)}
-											className="time-entry-arrow"
-										>
-											<img
-												id="play-icon"
-												src="./assets/images/play-normal.png"
-											/>
-										</span>
-										<span className="time-entry-menu">
-											<img
-												onClick={(e) => this.toggleEntryDropdownMenu(e)}
-												className="time-entry-menu__icon"
-												src="./assets/images/menu-dots-vertical.svg"
-											/>
-											{this.state.entryDropdownShown && (
-												<TimeEntryDropdown
-													entry={timeEntry}
-													group={groupedEntries}
-													onDelete={(e) =>
-														this.toggleDeleteConfirmationModal(e)
-													}
-													onDuplicate={(e) => this.onClickDuplicateEntry(e)}
-													toggleDropdown={this.toggleEntryDropdownMenu}
-													manualModeDisabled={this.props.manualModeDisabled}
-												/>
-											)}
-										</span>
-									</div>
-								</div>
+								{groupedEntries.length}
 							</div>
-							{this.state.showGroup &&
-								groupedEntries
-									?.sort(this.byTimeDate)
-									?.map((entry, index) => (
-										<TimeEntry
-											timeEntryIndex={index}
-											key={entry.id}
-											timeEntry={entry}
-											project={entry.project ? entry.project : null}
-											task={entry.task ? entry.task : null}
-											playTimeEntry={this.props.playTimeEntry}
-											changeMode={this.props.changeMode}
-											timeFormat={this.props.timeFormat}
-											workspaceSettings={this.props.workspaceSettings}
-											features={this.props.features}
-											isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}
-											userSettings={this.props.userSettings}
-											collapsedEntry={true}
-											handleRefresh={this.props.handleRefresh}
+						)}
+						<div
+							className="time-entry-description"
+							data-pw={`time-entry-description-${timeEntryIndex}`}
+						>
+							<div
+								className={
+									timeEntry.description ? 'description' : 'no-description'
+								}
+							>
+								{timeEntry.description
+									? timeEntry.description
+									: locales.NO_DESCRIPTION}
+							</div>
+							<div
+								style={project ? { color: project.color } : {}}
+								className={project ? 'time-entry-project' : 'disabled'}
+							>
+								<div className="time-entry__project-wrapper">
+									<div
+										style={project ? { background: project.color } : {}}
+										className="dot"
+									></div>
+									<span className="time-entry__project-name">
+										{project ? project.name : ''}
+										{task ? ': ' + task.name : ''}
+									</span>
+								</div>
+								<span className="time-entry__client-name">
+									{project && project.clientName
+										? ' - ' + project.clientName
+										: ''}
+								</span>
+							</div>
+						</div>
+						<div className="time-entry__right-side">
+							<div className="time-entry__right-side__icons">
+								{timeEntry.type === TimeEntryTypeEnum.HOLIDAY && (
+									<img
+										src="./assets/images/time-off.png"
+										title="Holiday"
+										alt="Holiday"
+									/>
+								)}
+
+								{timeEntry.type === TimeEntryTypeEnum.TIME_OFF && (
+									<img
+										src="./assets/images/time-off.png"
+										title="Time off"
+										alt="Time Off"
+									/>
+								)}
+
+								{timeEntry.approvalRequestId && (
+									<img
+										src="./assets/images/approved.png"
+										title="Approved"
+										alt="Approved"
+									/>
+								)}
+
+								{timeEntry.isLocked &&
+									!isUserOwnerOrAdmin &&
+									!timeEntry.approvalRequestId && (
+										<img
+											src="./assets/images/lock-indicator.png"
+											title="Locked"
+											alt="Locked"
+										/>
+									)}
+
+								{timeEntry.tags && timeEntry.tags.length > 0 && (
+									<img
+										src="./assets/images/tag.png"
+										title={this.state.tagTitle}
+										alt="Tags"
+									/>
+								)}
+
+								{timeEntry.billable && !this.state.hideBillable && (
+									<img
+										src="./assets/images/billable.png"
+										title="Billable"
+										alt="Billable"
+									/>
+								)}
+
+								{timeEntry.type === TimeEntryTypeEnum.BREAK && (
+									<img
+										src="./assets/images/break.png"
+										title="Break"
+										alt="Break"
+									/>
+								)}
+							</div>
+							<div className="time-entry__right-side__lock_and_play">
+								<span className="time-entry__right-side--duration">
+									{entryDuration}
+								</span>
+								<span
+									className="time-entry-arrow"
+									onClick={this.continueTimeEntry.bind(this)}
+									title="Continue timer for this activity"
+								/>
+								<span className="time-entry-menu">
+									<img
+										onClick={(e) => this.toggleEntryDropdownMenu(e)}
+										className="time-entry-menu__icon"
+										src="./assets/images/menu-dots-vertical.svg"
+										alt="Menu"
+									/>
+									{this.state.entryDropdownShown && (
+										<TimeEntryDropdown
+											entry={timeEntry}
+											group={groupedEntries}
+											onDelete={(e) => this.toggleDeleteConfirmationModal(e)}
+											onDuplicate={(e) => this.onClickDuplicateEntry(e)}
+											toggleDropdown={this.toggleEntryDropdownMenu}
 											manualModeDisabled={this.props.manualModeDisabled}
 										/>
-									))}
+									)}
+								</span>
+							</div>
 						</div>
-						<DeleteEntryConfirmationComponent
-							askToDeleteEntry={this.state.askToDeleteEntry}
-							canceled={this.toggleDeleteConfirmationModal}
-							confirmed={this.onClickDeleteEntries}
-							multiple={this.props.groupedEntries}
-						/>
-					</React.Fragment>
-				);
-			} else {
-				return null;
-			}
-		} else {
-			return null;
-		}
+					</div>
+					{this.state.showGroup &&
+						groupedEntries
+							?.sort(this.byTimeDate)
+							?.map((entry, index) => (
+								<TimeEntry
+									timeEntryIndex={index}
+									key={entry.id}
+									timeEntry={entry}
+									project={entry.project ? entry.project : null}
+									task={entry.task ? entry.task : null}
+									playTimeEntry={this.props.playTimeEntry}
+									changeMode={this.props.changeMode}
+									timeFormat={this.props.timeFormat}
+									workspaceSettings={workspaceSettings}
+									features={this.props.features}
+									isUserOwnerOrAdmin={isUserOwnerOrAdmin}
+									userSettings={this.props.userSettings}
+									collapsedEntry={true}
+									handleRefresh={this.props.handleRefresh}
+									manualModeDisabled={this.props.manualModeDisabled}
+								/>
+							))}
+				</div>
+				<DeleteEntryConfirmationComponent
+					askToDeleteEntry={this.state.askToDeleteEntry}
+					canceled={this.toggleDeleteConfirmationModal}
+					confirmed={this.onClickDeleteEntries}
+					multiple={this.props.groupedEntries}
+				/>
+			</React.Fragment>
+		);
 	}
 }
 export default TimeEntry;

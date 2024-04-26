@@ -134,6 +134,11 @@
 		"link": "*://docs.google.com/*",
 		"script": "google-docs.js"
 	},
+	"clockify.me": {
+		"name": "Clockify",
+		"link": "*://*.clockify.me/*",
+		"script": "clockify-me.js"
+	},
 	"kanbanize.com": {
 		"name": "Kanbanize",
 		"link": "*://*.kanbanize.com/*",
@@ -331,7 +336,7 @@
 	},
 	"teamwork.com": {
 		"name": "Teamwork",
-		"link": "*://*.teamwork.com/*",
+		"link": "*://*.teamwork.com/*,*://*.*.teamwork.com/*",
 		"script": "teamwork.js"
 	},
 	"ticktick.com": {
@@ -426,7 +431,7 @@
 	},
 	"figma.com": {
 		"name": "Figma",
-		"link": "*://*.figma.com/*",
+		"link": "*://*.figma.com/*,*://figma.com/*",
 		"script": "figma.js"
 	},
 	"freshrelease.com": {
@@ -458,5 +463,15 @@
 		"name": "Zoho Connect",
 		"link": "*://connect.zoho.*/*",
 		"script": "zohoconnect.js"
+	},
+	"app.slack.com": {
+		"name": "Slack",
+		"link": "*://*.slack.com/*",
+		"script": "slack.js"
+	},
+	"app.pumble.com": {
+		"name": "Pumble",
+		"link": "*://app.pumble.com/*",
+		"script": "pumble.js"
 	}
 }

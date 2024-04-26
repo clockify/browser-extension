@@ -1,7 +1,7 @@
 (() => {
 	//Lightning view - task, accounts, contacts
 	clockifyButton.render(
-		'[role="group"].actionsContainer:not(.clockify), [data-aura-class="forceListViewManagerHeader"]:not(.clockify) .branding-actions:not(.clockify), [data-aura-class="forceActionsContainer"] [data-target-selection-name]:not(.clockify)',
+		'.slds-page-header .test-lvmForceActionsContainer:not(.clockify)',
 		{ observe: true },
 		(elem) => {
 			let description = '';
@@ -23,7 +23,7 @@
 	);
 	//Lightning view - single lead,contact,account...
 	clockifyButton.render(
-		'.slds-page-header__controls .slds-button-group-list:not(.clockify)',
+		'.highlights .actionsContainer .slds-button-group-list:not(.clockify), .forceHighlightsPanel .actionsContainer .slds-button-group:not(.clockify)',
 		{ observe: true },
 		(elem) => {
 			let description = '';
@@ -35,11 +35,14 @@
 
 			description += document.title.replace(' | Salesforce', '');
 			const link = clockifyButton.createButton(description);
-			link.style.marginLeft = '10px';
-			elem.appendChild(link);
+			link.style.marginRight = '10px';
+			const container = elem.parentElement;
+			container.style.display = 'flex';
+			container.style.alignItems = 'center';
+			container.prepend(link);
 
 			if (!elem.querySelector('#clockifyButton')) {
-				elem.appendChild(link);
+				container.prepend(link);
 			}
 		}
 	);
@@ -64,6 +67,27 @@
 
 			if (!elem.querySelector('#clockifyButton')) {
 				elem.prepend(link);
+			}
+		}
+	);
+
+	//Salesforce Calendar event
+	clockifyButton.render(
+		'.uiPanel--calendarEventPreview .moreDetails:not(.clockify)',
+		{ observe: true },
+		(elem) => {
+			let description = text('.uiPanel--calendarEventPreview .header h2');
+
+			const link = clockifyButton.createSmallButton(description);
+
+			const container = elem.lastElementChild;
+			link.style.marginRight = '10px';
+			container.style.display = 'flex';
+			container.style.alignItems = 'center';
+			container.prepend(link);
+
+			if (!elem.querySelector('#clockifyButton')) {
+				container.prepend(link);
 			}
 		}
 	);

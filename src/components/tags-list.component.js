@@ -34,6 +34,7 @@ class TagsList extends React.Component {
 		this.toggleTagsList = this.toggleTagsList.bind(this);
 		this.setAsyncStateItems = this.setAsyncStateItems.bind(this);
 		this.handleScroll = this.handleScroll.bind(this);
+		this.getTagsInitial = this.getTagsInitial.bind(this);
 	}
 
 	async setAsyncStateItems() {
@@ -42,24 +43,9 @@ class TagsList extends React.Component {
 		if (userRoles.length) {
 			userRoles = userRoles.map(({ role }) => role);
 		}
-		let tagsListExistingInLocalStorage = await localStorage.getItem(
-			'preTagsList'
-		);
-		let currentWorkspaceId = await localStorage.getItem('activeWorkspaceId');
-		if (
-			tagsListExistingInLocalStorage &&
-			tagsListExistingInLocalStorage[0]?.workspaceId !== currentWorkspaceId
-		) {
-			await localStorage.removeItem('preTagsList');
-			await this.getTags(this.state.page, pageSize);
-		}
-		let tagsList = (await localStorage.getItem('preTagsList')) || [];
-		if (tagsList?.length) {
-			tagsList = sortHelpers.sortArrayByStringProperty(tagsList, 'name');
-		}
+		await this.getTagsInitial(this.state.page, pageSize);
 		this.setState({
 			isOffline: JSON.parse(isOffline),
-			tagsList,
 			isEnabledCreateTag:
 				!this.props.integrationMode &&
 				(this.props.workspaceSettings.entityCreationPermissions
@@ -109,9 +95,6 @@ class TagsList extends React.Component {
 							tagsList: sortHelpers.sortArrayByStringProperty(tagsList, 'name'),
 							page: this.state.page + 1,
 							loadMore: data.length === pageSize ? true : false,
-						},
-						() => {
-							localStorage.setItem('preTagsList', this.state.tagsList);
 						}
 					);
 				})
@@ -119,6 +102,30 @@ class TagsList extends React.Component {
 		}
 	}
 
+	async getTagsInitial(page, pageSize) {
+		const offline = await localStorage.getItem('offline');
+		if (!JSON.parse(offline)) {
+			getBrowser()
+				.runtime.sendMessage({
+				eventName: 'getTags',
+				options: { page, pageSize, filter: this.state.filter },
+			})
+				.then((response) => {
+					const { data } = response;
+					if (response && !data) {
+						console.log('getTags error: ', response);
+						return;
+					}
+					const tagsList = data;
+					this.setState(
+						{
+							tagsList: sortHelpers.sortArrayByStringProperty(tagsList, 'name'),
+						}
+					);
+				})
+				.catch(() => {});
+		}
+	}
 	closeTagsList() {
 		this.tagListDropdownRef.current.scroll(0, 0);
 		this.setState(
@@ -272,35 +279,40 @@ class TagsList extends React.Component {
 		});
 	}
 
-	handleScroll(event) {;
-		if ((event.target.scrollHeight - event.target.scrollTop < 221) && this.state.loadMore) {
-				if (this.state.page === 1) {
-					this.setState({
+	handleScroll(event) {
+		if (
+			event.target.scrollHeight - event.target.scrollTop < 221 &&
+			this.state.loadMore
+		) {
+			if (this.state.page === 1) {
+				this.setState(
+					{
 						page: 2,
-					}, () => {
+					},
+					() => {
 						this.loadMoreTags();
-					})
-				} else {
-					this.loadMoreTags();
-				}
+					}
+				);
+			} else {
+				this.loadMoreTags();
+			}
 		}
 	}
 
 	render() {
+		this.getTags(this.state.page, pageSize);
 		const noMatcingTags = locales.NO_MATCHING('tags');
-
 		const { tags } = this.props;
 
 		let title = '';
 		if (tags && tags.length > 0) {
-			title =
-				(tags.length > 1 ? `${locales.TAGS}:\n` : `${locales.TAG}: `) +
-				tags.map((tag) => tag.name).join('\n');
+			title = tags.map((tag) => tag.name).join('\n');
 		}
 
 		return (
-			<div className="tag-list" title={title}>
+			<div className="tag-list">
 				<div
+					title={title}
 					className={
 						this.state.isOffline
 							? 'tag-list-button-offline'
@@ -374,7 +386,7 @@ class TagsList extends React.Component {
 							{this.state.tagsList.length > 0 ? (
 								this.state.tagsList.map((tag, index) => {
 									return (
-										<>
+										<div key={index}>
 											{tag && <div
 												data-pw={`tag-list-item-${index}`}
 												onClick={this.selectTag}
@@ -413,7 +425,7 @@ class TagsList extends React.Component {
 												{tag.name}
 											</span>
 											</div>}
-										</>
+										</div>
 									);
 								})
 							) : (

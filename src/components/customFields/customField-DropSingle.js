@@ -38,37 +38,17 @@ const CustomFieldDropSingle = ({ cf, updateValue, setIsValid }) => {
 	const [tagList, setTagList] = useState(allowedValues ? newList(value) : []);
 
 	useEffect(() => {
+		storeValue();
+	}, [value])
+
+	useEffect(() => {
 		setTagList(newList(value));
 	}, [value]);
 
-	// useEffect(()=> {
-	//     setOpen(false)
-	// }, [redrawCounter])
 
 	useOnClickOutside(menuRef, () => setOpen(false));
 
 	const tagsRequired = false;
-
-	// useEffect(() => {
-	//     if(!isOpen && !isDisabled){
-	//         hanldeChange();
-	//     }
-	// }, [isOpen]);
-
-	// const hanldeChange = async () => {
-	//     const isOff = await isOffline();
-	//     if (!(manualMode || isOff)) {
-	//         storeValue();
-	//     }
-	// };
-
-	// const handleChangeDelayed = useRef(debounce(async () => {
-	// updateValue(id, val);
-	// const isOff = await isOffline();
-	// if (!(manualMode || isOff)) {
-	// storeValue();
-	// }
-	// }, 0));
 
 	const selectTag = (tagId) => {
 		const tag = tagList.find((t) => t.id === tagId);

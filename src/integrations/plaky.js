@@ -1,5 +1,5 @@
 clockifyButton.render(
-	'.offcanvas > .border-bottom:not(.clockify)',
+	'.offcanvas-sticky-header .offcanvas-header:not(.clockify)',
 	{ observe: true },
 	async (elem) => {
 		await timeout({ milliseconds: 500 });
@@ -19,7 +19,7 @@ clockifyButton.render(
 		container.append(link);
 		container.append(input);
 
-		elem.before(container);
+		elem.after(container);
 
 		addCustomCSS();
 	}
@@ -38,9 +38,23 @@ function getProjectTask() {
 	return { projectName, taskName };
 }
 
-function addCustomCSS() {
-	if ($('.clockify-custom-css')) return;
+initializeBodyObserver();
 
+async function initializeBodyObserver() {
+	const bodyObserver = new MutationObserver(addCustomCSS);
+
+	const observationTarget = await waitForElement('.icon-sun', document.body);
+	const observationConfig = { childList: true, attributes: true };
+
+	bodyObserver.observe(observationTarget, observationConfig);
+}
+
+function addCustomCSS() {
+	$('.clockify-custom-css')?.remove();
+
+	const isThemeLight = window.localStorage['theme'].includes('light');
+
+	// const isThemeLight = Boolean($('.icon-sun--on'));
 	const style = createTag('style', 'clockify-custom-css');
 
 	style.innerHTML = `
@@ -51,13 +65,14 @@ function addCustomCSS() {
 		}
 
 		.clockify-input {
-			color: rgba(242,242,248, 0.87) !important;
 			border-color: rgba(121,120,156, 0.3) !important;
 			background-color: rgba(121,120,156, 0.3) !important;
 		}
 
-		.clockify-button-inactive {
-			color: rgba(242,242,248,.87) !important;
+		.clockify-button-inactive,  .clockify-input{
+			color: ${
+				isThemeLight ? '#444 !important;' : 'rgba(242,242,248,.87) !important;'
+			}
 		}
 
 		#clockifyButton {

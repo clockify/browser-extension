@@ -18,13 +18,23 @@ const colorList = [
 	'#607D8B',
 ];
 
+function getRandomInt(min, max) {
+	min = Math.ceil(min);
+	max = Math.floor(max);
+	return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 class ColorPicker extends React.Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
-			selectedColor: null,
+			selectedColor: colorList[getRandomInt(0, colorList.length)],
 		};
+	}
+
+	componentDidMount() {
+		this.props.selectedColor(this.state.selectedColor);
 	}
 
 	selectColor(event) {

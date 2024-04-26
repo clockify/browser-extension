@@ -25,7 +25,8 @@ try {
 		'contentScripts/notification-background.js',
 		'contentScripts/stop-timer-at-background.js',
 		'contentScripts/reminder-background.js',
-		'contentScripts/pomodoro-background.js'
+		'contentScripts/pomodoro-background.js',
+		'api-services/notification-service.js'
 	);
 } catch (error) {
 	console.log(error);

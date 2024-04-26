@@ -30,6 +30,10 @@ const CustomFieldCheckbox = ({ cf, updateValue, setIsValid }) => {
 	};
 
 	useEffect(() => {
+		storeValue();
+	}, [value])
+
+	useEffect(() => {
 		setValue(cf.value);
 	}, [cf.value]);
 

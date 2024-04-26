@@ -495,7 +495,8 @@
             "CONTACT_OWNER": "Bitte wende dich an den Rechnungsinhaber, um einen neuen Link zu erstellen.",
             "DOWNLOAD_COMPLETED": "Download abgeschlossen!",
             "DOWNLOAD_SUCCESS": "Du hast die Spesenabrechnung erfolgreich heruntergeladen.",
-            "CODE_SENT": "Code gesendet"
+            "CODE_SENT": "Code gesendet",
+            "DOWNLOAD_FAILED": "Herunterladen fehlgeschlagen"
         },
         "EXPORT_SETTINGS": {
             "TITLE": "Einstellungen für den Rechnungsexport"
@@ -854,7 +855,8 @@
             },
             "WORKSPACE_NAME": {
                 "TITLE": "Name des Arbeitsbereichs",
-                "LENGTH_ERROR_MESSAGE": "Der Name des Arbeitsbereichs muss zwischen 2 und 250 Zeichen lang sein"
+                "LENGTH_ERROR_MESSAGE": "Der Name des Arbeitsbereichs muss zwischen 2 und 250 Zeichen lang sein",
+                "ERROR_MESSAGE_LENGTH": "Der Name des Arbeitsbereichs muss zwischen 2 und 50 Zeichen lang sein"
             },
             "TIMESHEET_SETTING": {
                 "INFO_MESSAGE": "Gib die Zeit für Aufgaben und Projekte mithilfe einer wöchentlichen Arbeitszeittabelle-Ansicht ein. Wenn aktiviert, ist das Projekt ein Pflichtfeld für den gesamten Arbeitsbereich.",
@@ -1067,7 +1069,8 @@
             "BILLABLE_HOURS": {
                 "TITLE": "Abrechenbare Stunden",
                 "INFO": "Du kannst Stundensätze festlegen und Einnahmen aufgrund von abrechenbaren Stunden sehen.",
-                "LABEL": "Abrechenbare Stunden aktivieren"
+                "LABEL": "Abrechenbare Stunden aktivieren",
+                "INFO_CONTENT": "Lege abrechnungsfähige Tarife fest und sieh dir die Einnahmen basierend auf den abrechnungsfähigen Stunden an."
             },
             "BILLABLE_RATES": {
                 "INFO": "Wer kann Stundensätze und Beträge sehen",
@@ -1165,7 +1168,8 @@
                         "INFO_MESSAGES": {
                             "EMAIL_LOGIN_MESSAGE": "Melde dich mit dem per E-Mail gesendeten Code oder mit E-Mail und Passwort an"
                         },
-                        "EMAIL": "Melde dich mit E-Mail an"
+                        "EMAIL": "Melde dich mit E-Mail an",
+                        "OAUTH2": "Melden Sie sich mit OAuth2 an"
                     }
                 }
             },
@@ -1191,7 +1195,10 @@
                     "CONTACT_SUPPORT": "Bitte { contactUs } für weitere Hilfe.",
                     "CONTACT_SUPPORT_LINK": "Bitte { contactUs } für weitere Hilfe.",
                     "DATA_TRANSFER_INFO": "Du und die Benutzer in diesem Arbeitsbereich werdet abgemeldet und könnt die Zeit bis zu 12 Stunden nach Beginn der Datenübertragung nicht verfolgen.",
-                    "DATA_TRANSFER_LOGOUT_INFO": "Nach Eingabe des Passwortes startet die Datenübertragung und du wirst abgemeldet."
+                    "DATA_TRANSFER_LOGOUT_INFO": "Nach Eingabe des Passwortes startet die Datenübertragung und du wirst abgemeldet.",
+                    "CONFIRM_DATA_TRANSFER_TITLE": "Bestätigen Sie die Datenübertragung",
+                    "DATA_TRANSFER_CODE_LOGOUT_INFO": "Nach Eingabe des Codes startet die Datenübertragung und Sie werden abgemeldet.",
+                    "ENTER_ONE_TIME_CODE": "Einmalcode eingeben:"
                 },
                 "CHANGE_REGION_TITLE": "Region ändern",
                 "CANNOT_CHANGE_REGION": "Wir bieten keine Datenübertragungen von regionalen auf globale Server an."
@@ -1607,7 +1614,8 @@
             "OWNER_DELETE_WORKSPACE_ERROR_MSG": "Besitzer können einen Arbeitsbereich erst dann löschen, wenn sie entweder den Besitz an eine andere Person übertragen oder das einzige verbliebene Mitglied im Arbeitsbereich sind.",
             "OWNER_LEAVE_WORKSPACE_ERROR_MSG": "Besitzer können den Arbeitsbereich erst dann verlassen, wenn sie entweder den Besitz an eine andere Person übertragen oder das einzige verbliebene Mitglied im Arbeitsbereich sind.",
             "DELETE_WORKSPACE_ERROR_MSG": "Der Arbeitsbereich kann erst dann gelöscht werden, wenn entweder der Besitz an eine andere Person übertragen wird oder man das einzige verbliebene Mitglied in diesem Arbeitsbereich ist.",
-            "LEAVE_WORKSPACE_ERROR_MSG": "Der Arbeitsbereich kann erst dann verlassen werden, wenn entweder der Besitz an eine andere Person übertragen wird oder man das einzige verbliebene Mitglied im Arbeitsbereich ist."
+            "LEAVE_WORKSPACE_ERROR_MSG": "Der Arbeitsbereich kann erst dann verlassen werden, wenn entweder der Besitz an eine andere Person übertragen wird oder man das einzige verbliebene Mitglied im Arbeitsbereich ist.",
+            "WILL_BE_REMOVED_LABEL": "Der Arbeitsbereich wird entfernt"
         },
         "ACCOUNTS_USER_SERVICE": {
             "GET_USERS_ERROR_MSG": "Abrufen von Benutzern fehlgeschlagen.",
@@ -1771,7 +1779,7 @@
             "USER_GROUP_UPDATED_LABEL": "Benutzergruppe aktualisiert",
             "USER_GROUP_DELETED_LABEL": "Benutzergruppe gelöscht",
             "CLIENT_UPDATED_LABEL": "Kunde aktualisiert",
-            "CLIENT_DELETED_LABEL": "Mandant gelöscht",
+            "CLIENT_DELETED_LABEL": "Kunde gelöscht",
             "EXPENSE_UPDATED_LABEL": "Ausgaben aktualisiert",
             "PROJECT_DELETED_LABEL": "Projekt gelöscht",
             "PROJECT_UPDATED_LABEL": "Projekt aktualisiert",
@@ -1855,7 +1863,7 @@
             "TIMESHEET_SUCCESS": "Arbeitszeittabelle genehmigt",
             "SUBMIT_SUCCESS": "Erfolgreich eingereicht",
             "APPROVAL_FAIL": "Genehmigung nicht erhalten",
-            "APPROVAL_DASHBOARD_FAIL": "Get Approval Dashboard fehlgeschlagen",
+            "APPROVAL_DASHBOARD_FAIL": "Genehmigung erhalten-Dashboard fehlgeschlagen",
             "APPROVED_SUCCESS": "Erfolgreich genehmigt",
             "APPROVED_FAIL": "Alle Genehmigen fehlgeschlagen",
             "TIMESHEET_FAIL": "Genehmigung fehlgeschlagen",
@@ -1915,7 +1923,8 @@
         "REMINDER": {
             "SELECT_TO_REMIND_TOOLTIP": "Wähle alle Benutzer aus, die du erinnern möchtest.",
             "ASSIGN_TEAM_MANAGER_TOOLTIP": "Weise Teammanagern zu, ihnen Erinnerungen zu senden.",
-            "DISABLED": "Die Erinnerung ist deaktiviert, da sie nicht zum aktuell aktiven Genehmigungszeitraum gehört. Um es zu aktivieren, ändere bitte den Genehmigungszeitraum in deinen WS-Einstellungen"
+            "DISABLED": "Die Erinnerung ist deaktiviert, da sie nicht zum aktuell aktiven Genehmigungszeitraum gehört. Um es zu aktivieren, ändere bitte den Genehmigungszeitraum in deinen WS-Einstellungen",
+            "ASSIGN_PROJECT_MANAGER_TOOLTIP": "Weisen Sie Projektmanager zu, ihnen Erinnerungen zu senden."
         },
         "NO_TIMESHEETS_MESSAGE": "Keine { value } Arbeitszeittabellen",
         "NO_TIMESHEETS_ON_UNSUBMITTED_LABEL": "Keine { value } Arbeitszeittabellen für { label }",
@@ -2285,7 +2294,8 @@
             },
             "ASSIGNMENT_LABEL": "Aufgaben",
             "UPGRADE_TO_SCEDULE_REPORT_PART_2_WITH_INTERPOLATION": "um Berichte zu planen.",
-            "SCHEDULED_LABEL_WITH_INTERPOLATION": "Geplant:"
+            "SCHEDULED_LABEL_WITH_INTERPOLATION": "Geplant:",
+            "REPORT_NAME_MIN_INFO": "Der Berichtsname muss mindestens { value } Zeichen enthalten."
         },
         "WEEKLY": {
             "WITHOUT_LABELS": {
@@ -2345,7 +2355,7 @@
         "NO_INACTIVE_USERS": "Keine inaktiven Benutzer",
         "NO_ARCHIVED_CLIENTS": "Keine archivierten { clientsLabel }",
         "NO_ARCHIVED_PROJECTS": "Keine archivierten { projectsLabel }",
-        "NO_COMPLETED_TASKS": "Nein abgeschlossen { tasksLabel }",
+        "NO_COMPLETED_TASKS": "Keine abgeschlossen { tasksLabel }",
         "NO_ARCHIVED_CATEGORIES": "Keine archivierten Kategorien",
         "NO_ARCHIVED_TAGS": "Keine archivierten Tags",
         "SCHEDULED_VS_TRACKED": {
@@ -2527,7 +2537,8 @@
                 "ALL_ADMINS": "Alle Administratoren"
             },
             "ERRORS": {
-                "NO_ASSIGNEES_ADDED": "Keine Erinnerung kann erstellt werden, ohne dass Aufgabenempfänger hinzugefügt wurden."
+                "NO_ASSIGNEES_ADDED": "Keine Erinnerung kann erstellt werden, ohne dass Aufgabenempfänger hinzugefügt wurden.",
+                "NO_DAYS_ADDED": "Um die Erinnerung zu aktualisieren, wähle mindestens einen Wochentag aus"
             },
             "CREATE": {
                 "SENTENCE": {
@@ -2550,7 +2561,10 @@
                 "TITLE": "Erinnerung löschen",
                 "CONFIRM": "Möchtest du die Erinnerung wirklich löschen?"
             },
-            "TITLE": "Erinnerungen"
+            "TITLE": "Erinnerungen",
+            "TOOLTIP": {
+                "INACTIVE_USERS_INFO": "Inaktive Benutzer erhalten keine Erinnerungen."
+            }
         },
         "CURRENT_USER_LABEL": "(du)",
         "SEATS": {
@@ -2674,7 +2688,7 @@
             }
         },
         "DASHBOARD": {
-            "ME": "Mir",
+            "ME": "Ich",
             "SORT": "Sortieren",
             "DROPDOWN": {
                 "TOP_10": "Top 10"
@@ -2770,7 +2784,7 @@
                         "TITLE": "E-Mail geändert",
                         "MESSAGE": "Bitte überprüfe deine E-Mail für weitere Aktionen",
                         "SUBTITLE": "Der Benutzer muss die geänderte E-Mail bestätigen.",
-                        "FULL_MESSAGE": "E-Mail geändert. Überprüfen Sie Ihren Posteingang auf weitere Aktionen"
+                        "FULL_MESSAGE": "E-Mail geändert. Überprüfe deinen Posteingang auf weitere Aktionen"
                     }
                 }
             },
@@ -2890,7 +2904,8 @@
             },
             "RESTORE_MULTIPLE": {
                 "SUCCESS_MESSAGE": "{ clientLabelPlural } wurden wiederhergestellt"
-            }
+            },
+            "UNKNOWN_ERROR": "Etwas ist schief gelaufen. Bitte versuche es erneut."
         },
         "CUSTOM_FIELD": {
             "CREATE": {
@@ -3054,14 +3069,17 @@
                 "NO_DAYS_ERROR_MESSAGE": "Kann keine Erinnerung erstellen, ohne Tage hinzuzufügen.",
                 "NO_HOURS_ERROR_MESSAGE": "Kann keine Erinnerung erstellen, ohne Stunden hinzuzufügen.",
                 "NO_TEAM_MEMBERS_ERROR_MESSAGE": "Ohne hinzugefügte Teammitglieder kann keine Erinnerung erstellt werden.",
-                "NO_USER_NO_USERGROUPS": "Ohne Auswahl von Teammitgliedern kann keine Erinnerung erstellt werden"
+                "NO_USER_NO_USERGROUPS": "Um eine Erinnerung hinzufügen, wähle mindestens ein Teammitglied aus",
+                "NO_DATES_ERROR_MESSAGE": "Ohne hinzugefügte Daten kann keine Erinnerung erstellt werden."
             },
             "UPDATE": {
                 "SUCCESS_MESSAGE": "Erinnerung erfolgreich aktualisiert",
                 "NO_DAYS_ERROR_MESSAGE": "Kann die Erinnerung nicht bearbeiten, ohne Tage hinzuzufügen.",
                 "NO_HOURS_ERROR_MESSAGE": "Kann die Erinnerung nicht bearbeiten, ohne Stunden hinzuzufügen.",
                 "ERROR_MESSAGE": "Erinnerung wird nicht aktualisiert",
-                "NO_TEAM_MEMBERS_ERROR_MESSAGE": "Die Erinnerung kann nicht bearbeitet werden, wenn keine Teammitglieder hinzugefügt wurden."
+                "NO_TEAM_MEMBERS_ERROR_MESSAGE": "Die Erinnerung kann nicht bearbeitet werden, wenn keine Teammitglieder hinzugefügt wurden.",
+                "NO_DATES_ERROR_MESSAGE": "Die Erinnerung kann ohne hinzugefügte Daten nicht bearbeitet werden.",
+                "NO_USER_NO_USERGROUPS": "Um die Erinnerung zu aktualisieren, wähle mindestens ein Teammitglied aus"
             },
             "DELETE": {
                 "SUCCESS_MESSAGE": "Erinnerung wird erfolgreich gelöscht",
@@ -3763,7 +3781,8 @@
             "DATE_RANGE_MUST_BE_1_MONTH": "Der Datumsbereich muss 1 Monat umfassen",
             "MAX_DATE_RANGE_1_YEAR": "Max. Datumsbereich umfasst 1 Jahr",
             "DATE_RANGE_MUST_BE_1_WEEK": "Der Datumsbereich muss 1 Woche betragen",
-            "DATE_RANGE_MUST_BE_1_YEAR": "Der Datumsbereich muss 1 Jahr betragen"
+            "DATE_RANGE_MUST_BE_1_YEAR": "Der Datumsbereich muss 1 Jahr betragen",
+            "YOURE_NOT_LOGGED_WITH_THIS_ACCOUNT": "Du bist nicht mit diesem Konto angemeldet"
         },
         "UPGRADE_TO_USE_FEATURE_PART_2_NO_TRIAL": "um { feature } zu verwenden",
         "ATTENDANCE_LABEL": "Anwesenheit",
@@ -3810,9 +3829,9 @@
         "TERMS_OF_USE": "Nutzungsbedingungen",
         "UNDO_LABEL": "Rückgängig machen",
         "VIEW_ON_MARKETPLACE": "Auf dem Marktplatz ansehen",
-        "BROWSE_MARKETPLACE": "Durchsuchen Sie den Marktplatz",
+        "BROWSE_MARKETPLACE": "Marktplatz durchsuchen",
         "SEE_ALL": "Alles sehen",
-        "NO_TASK": "Nicht fragen",
+        "NO_TASK": "Keine Aufgabe",
         "DETAILS": "Einzelheiten",
         "FIND_TASK_LABEL": "Aufgabe finden...",
         "FIND_CURRENCY_LABEL": "Währung finden...",
@@ -3866,7 +3885,25 @@
         "DATA_TRANSFER_STARTED": "Die Datenübertragung wurde gestartet",
         "SEARCH_USERS_OR_GROUPS": "Such nach Benutzern oder Gruppen",
         "REPLACE": "Ersetzen",
-        "SELECT_DATES": "Wählen Sie Daten aus"
+        "SELECT_DATES": "Daten auswählen",
+        "LOGOUT_LABEL": "Abmelden",
+        "TRANSFER_CONFIRM_LABEL": "Bestätigen",
+        "LABELS": {
+            "REGION": "Region"
+        },
+        "MANAGER": "Manager",
+        "SEARCH_CLIENT_LABEL": "Suche { client }",
+        "PROJECT_CUSTOM_SEARCH": "Suche { projectLabel }",
+        "SEARCH_COMPANIES_LABEL": "Suchen Sie nach Unternehmen",
+        "SEARCH_PLACEHOLDER_LABEL": "Suche { client }",
+        "SEARCH_TAGS_LABEL": "Tags suchen",
+        "SEARCH_CURRENCY": "Suchwährung",
+        "SEARCH_CURRENCIES": "Währungen suchen",
+        "ADD_SEARCH_PLACEHOLDER_LABEL": "Hinzufügen/Suchen { entity }",
+        "LOG_IN_LABEL_V2": "Anmelden",
+        "HIDE_ALL_LABEL": "Versteck alles",
+        "SET_NEW_PASSWORD": "Neues Passwort setzen",
+        "CREATE_PASSWORD_LABEL": "Passwort erstellen"
     },
     "PROJECTS": {
         "EDIT_PROJECT_SETTINGS": {
@@ -4349,7 +4386,8 @@
                 "MARKETPLACE_DESCRIPTION_WITH_INTERPOLATION": "Benachrichtigungen werden an die E-Mail-Adresse des Benutzers gesendet und erreichen Ihren Posteingang nicht."
             },
             "FORCE_TIMER": {
-                "DESCRIPTION": "Wenn du den manuellen Modus deaktivierst, können Benutzer die Zeit nicht manuell hinzufügen. Stattdessen können sie Zeiteinträge nur mithilfe des Timers erstellen.<br><br>Dadurch wird auch verhindert, dass reguläre Benutzer Start- oder Endzeiten in ihren vorhandenen Zeiteinträgen bearbeiten."
+                "DESCRIPTION": "Wenn du den manuellen Modus deaktivierst, können Benutzer die Zeit nicht manuell hinzufügen. Stattdessen können sie Zeiteinträge nur mithilfe des Timers erstellen.<br><br>Dadurch wird auch verhindert, dass reguläre Benutzer Start- oder Endzeiten in ihren vorhandenen Zeiteinträgen bearbeiten.",
+                "TAG_PARAMETERS_DESCRIPTION": "Deaktivieren Sie den manuellen Modus, damit Benutzer keine Zeit manuell hinzufügen können. Stattdessen können sie Zeiteinträge nur mithilfe des Timers erstellen. { doubleBreak } Dadurch wird auch verhindert, dass normale Benutzer Start- oder Endzeiten in ihren vorhandenen Zeiteinträgen bearbeiten."
             },
             "GPS_TRACKING": {
                 "DESCRIPTION": "Deine Außendienstmitarbeiter können sich über ihre mobile App anmelden, wenn sie einen Kunden besuchen, sodass du später alle an diesem Tag besuchten Arbeitsplätze sehen kannst."
@@ -4392,7 +4430,8 @@
                 "DESCRIPTION": "Bearbeite die Details deiner Teammitglieder wie Name, E-Mail, Wochenstart und Kapazität direkt selbst."
             },
             "SCHEDULING": {
-                "DESCRIPTION": "Die Zeitplanung hilft dir, Projektzuweisungen und -schichten zu visualisieren, damit du auf einen Blick weißt, wie beschäftigt dein Team ist. <br> Plane Projekte auf einer Zeitachse, weise zu, wer wann woran arbeiten muss, siehe, wer über- oder unterfordert ist, und lass dein Team seine Aufgaben im Kalender sehen."
+                "DESCRIPTION": "Die Zeitplanung hilft dir, Projektzuweisungen und -schichten zu visualisieren, damit du auf einen Blick weißt, wie beschäftigt dein Team ist. <br> Plane Projekte auf einer Zeitachse, weise zu, wer wann woran arbeiten muss, siehe, wer über- oder unterfordert ist, und lass dein Team seine Aufgaben im Kalender sehen.",
+                "TAG_PARAMETERS_DESCRIPTION": "Mithilfe der Terminplanung können Sie Projektzuweisungen und Schichten visualisieren, sodass Sie auf einen Blick wissen, wie beschäftigt Ihr Team ist. { break } Planen Sie Projekte auf einer Zeitachse, weisen Sie zu, wer wann an was arbeiten muss, sehen Sie, wer über- oder unterlastet ist, und lassen Sie Ihr Team seine Aufgaben im Kalender sehen."
             },
             "HIDE_PAGES": {
                 "TITLE": "Seiten ausblenden",
@@ -4418,13 +4457,15 @@
                 "DESCRIPTION_PARAMETERS_DESCRIPTION": "Anstatt jemanden zum Administrator zu machen, mache jemanden zum { openingBoldTag }Teammanager{ closingBoldTag }, damit er alle von seinen Teammitgliedern erfassten Zeiten und Ausgaben sehen und ihre Stundenzettel genehmigen kann. { doubleBreaks } Oder gib jemandem die Rolle eines { openingBoldTag }Projektmanagers{ closingBoldTag } für mehrere Projekte, damit er die gesamte erfasste Zeit und Ausgaben für die von ihm verwalteten Projekte sehen und diese Projekte bearbeiten kann (z. B. Aufgaben erstellen, Mitglieder zum Projekt hinzufügen, Schätzungen festlegen usw.)."
             },
             "AUDIT_LOG": {
-                "DESCRIPTION": "Zeichne in Clockify alles, was deine Benutzer tun, auf und führe später einen Auditbericht aus, um zu sehen, wer was wann getan hat (z. B. wenn jemand einen Zeiteintrag bearbeitet, ein Projekt gelöscht hat usw.).<br><br> Du kannst die Protokolle auch exportieren und die Daten in Excel analysieren oder sie als Backup speichern."
+                "DESCRIPTION": "Zeichne in Clockify alles, was deine Benutzer tun, auf und führe später einen Auditbericht aus, um zu sehen, wer was wann getan hat (z. B. wenn jemand einen Zeiteintrag bearbeitet, ein Projekt gelöscht hat usw.).<br><br> Du kannst die Protokolle auch exportieren und die Daten in Excel analysieren oder sie als Backup speichern.",
+                "TAG_PARAMETERS_DESCRIPTION": "Zeichnen Sie alles auf, was Ihre Benutzer in Clockify tun, und führen Sie später einen Prüfbericht aus, um zu sehen, wer was wann getan hat (z. B. ob jemand einen Zeiteintrag bearbeitet, ein Projekt gelöscht hat usw.). { doubleBreak } Sie können die Protokolle auch exportieren und die Daten in Excel analysieren oder als Backup speichern."
             },
             "USER_FIELDS": {
                 "DESCRIPTION": "Mit Benutzerfeldern kannst du zusätzliche Informationen zu Teammitgliedern hinzufügen (z. B. Berufsbezeichnung, Position, Telefon, Abteilung, Benutzer-ID) und diese später zusammen mit der Zeit exportieren."
             },
             "MULTI_FACTOR_AUTHENTICATION": {
-                "DESCRIPTION": "Sichere deinen Arbeitsbereich, indem du für alle deine Benutzer eine Zwei-Faktor-Authentifizierung verlangst. <br>\nAlle Benutzer, die in ihrem Profil keine 2FA aktiviert haben, werden gezwungen, sie zu aktivieren, um auf den Arbeitsbereich zugreifen zu können. Sobald 2FA aktiviert ist, müssen Benutzer zusätzlich zum Passwort ihre E-Mails überprüfen, um einen einmaligen Code für die Anmelden zu erhalten."
+                "DESCRIPTION": "Sichere deinen Arbeitsbereich, indem du für alle deine Benutzer eine Zwei-Faktor-Authentifizierung verlangst. <br>\nAlle Benutzer, die in ihrem Profil keine 2FA aktiviert haben, werden gezwungen, sie zu aktivieren, um auf den Arbeitsbereich zugreifen zu können. Sobald 2FA aktiviert ist, müssen Benutzer zusätzlich zum Passwort ihre E-Mails überprüfen, um einen einmaligen Code für die Anmelden zu erhalten.",
+                "TAG_PARAMETERS_DESCRIPTION": "Sichern Sie Ihren Arbeitsbereich, indem Sie für alle Ihre Benutzer eine Zwei-Faktor-Authentifizierung verlangen. { break }\nAlle Benutzer, die 2FA in ihrem Profil nicht aktiviert haben, müssen es aktivieren, um auf den Arbeitsbereich zugreifen zu können. Sobald 2FA aktiviert ist, müssen Benutzer zusätzlich zum Passwort in ihren E-Mails nach einem Einmalcode suchen, um sich anzumelden."
             },
             "APPROVAL": {
                 "DESCRIPTION": "Dein Team kann seine wöchentlichen Arbeitszeittabellen und Ausgaben zur Überprüfung einreichen, die du genehmigen oder ablehnen kannst. Nach der Genehmigung können Zeit und Ausgaben nicht mehr ohne einen dauerhaften schriftlichen Nachweis geändert werden.",
@@ -4433,24 +4474,29 @@
             },
             "BREAKS": {
                 "DESCRIPTION": "Lasse Mitarbeiter über einen Kiosk angeben, wann sie eine Pause machen.<br><br> Während der Arbeitszeit können sie an deinem Kioskterminal den Beginn und das Ende der Pause eintragen.<br><br> Später können Administratoren und Manager in Berichten sehen, wann und wie lange jeder Mitarbeiter eine Pause eingelegt hat.",
-                "TITLE": "Pause (Kiosk)"
+                "TITLE": "Pause (Kiosk)",
+                "TAG_PARAMETERS_DESCRIPTION": "Ermöglichen Sie Ihren Mitarbeitern, über einen Kiosk anzugeben, wann sie eine Pause machen. { doubleBreak } Während sie eingestempelt sind, können sie über Ihr Kiosk-Terminal Start- und Endpausen eingeben. { doubleBreak } Später können Administratoren und Manager in Berichten sehen, wann jeder Mitarbeiter eine Pause gemacht hat und wie viel."
             },
             "PIN": {
                 "TITLE": "PIN (Kiosk)",
-                "DESCRIPTION": "Verlange von den Mitarbeitern die Eingabe einer PIN, um sich über den Kiosk anzumelden.<br><br>Jeder Mitarbeiter erhält eine persönliche PIN, damit andere nicht für ihn einstempeln können. Administratoren erhalten außerdem eine universelle PIN, mit der sie sich für jedes Teammitglied ein- und ausstempeln können."
+                "DESCRIPTION": "Verlange von den Mitarbeitern die Eingabe einer PIN, um sich über den Kiosk anzumelden.<br><br>Jeder Mitarbeiter erhält eine persönliche PIN, damit andere nicht für ihn einstempeln können. Administratoren erhalten außerdem eine universelle PIN, mit der sie sich für jedes Teammitglied ein- und ausstempeln können.",
+                "TAG_PARAMETERS_DESCRIPTION": "Fordern Sie die Mitarbeiter auf, eine PIN einzugeben, um sich am Kiosk einzustempeln. { doubleBreak } Jeder Mitarbeiter erhält eine persönliche PIN, damit andere nicht für ihn stempeln können. Administratoren erhalten außerdem eine universelle PIN, mit der sie sich für jedes Teammitglied ein- und ausstempeln können."
             },
             "LIMITED_USER_SEATS": {
-                "DESCRIPTION": "Jeder aktive eingeschränkte Benutzer in deinem Workspace belegt einen eingeschränkten Platz (der weniger kostet als ein voller Platz).<br><br>Eingeschränkte Benutzer haben keine E-Mail und können die Zeit nur über den Kiosk erfassen (du kannst einen eingeschränkten Benutzer in einen Vollbenutzer umwandeln, indem du seine E-Mail hinzufügst).<br><br>Deaktivierte Benutzer nehmen keinen Platz ein, d. h. dass du kannst jemanden deaktivieren und seinen Platz stattdessen mit jemand anderem besetzen.<br><br>Du kannst jederzeit auf deiner Abonnement-Seite Plätze kaufen oder entfernen."
+                "DESCRIPTION": "Jeder aktive eingeschränkte Benutzer in deinem Workspace belegt einen eingeschränkten Platz (der weniger kostet als ein voller Platz).<br><br>Eingeschränkte Benutzer haben keine E-Mail und können die Zeit nur über den Kiosk erfassen (du kannst einen eingeschränkten Benutzer in einen Vollbenutzer umwandeln, indem du seine E-Mail hinzufügst).<br><br>Deaktivierte Benutzer nehmen keinen Platz ein, d. h. dass du kannst jemanden deaktivieren und seinen Platz stattdessen mit jemand anderem besetzen.<br><br>Du kannst jederzeit auf deiner Abonnement-Seite Plätze kaufen oder entfernen.",
+                "TAGS_PARAMETERS_DESCRIPTION": "Jeder aktive eingeschränkte Benutzer in Ihrem Arbeitsbereich nimmt einen begrenzten Platz ein (der weniger kostet als ein voller Platz). { doubleBreak } Eingeschränkte Benutzer haben keine E-Mail-Adresse und können die Zeit nur über den Kiosk verfolgen (Sie können einen eingeschränkten Benutzer in einen vollwertigen Benutzer umwandeln, indem Sie ihre E-Mail-Adresse hinzufügen). { doubleBreak } Deaktivierte Benutzer nehmen keinen Platz ein, d. h. Sie können jemanden deaktivieren und seinen Platz stattdessen mit jemand anderem besetzen. { doubleBreak } Sie können jederzeit auf Ihrer Abonnementseite Plätze kaufen oder entfernen."
             },
             "REGULAR_USER_SEATS": {
                 "DESCRIPTION": "Jeder aktive reguläre Benutzer in deinem Workspace belegt einen regulären Platz.<br><br>Normale Benutzer (einschließlich Manager und Administratoren) sind Benutzer, die eine E-Mail haben und sich direkt bei Clockify anmelden können.<br><br>Deaktivierte Benutzer nehmen keinen Platz ein, d. h. du kannst jemanden deaktivieren und seinen Platz stattdessen mit jemand anderem besetzen.<br><br>Du kannst jederzeit auf deiner Abonnement-Seite Plätze kaufen oder entfernen."
             },
             "FULL_USER_SEATS": {
-                "DESCRIPTION": "Jeder aktive Vollbenutzer in deinem Arbeitsbereich belegt einen regulären Sitzplatz.<br><br>Vollbenutzer (einschließlich Manager und Administratoren) sind Benutzer, die über E-Mail verfügen und sich direkt bei Clockify anmelden können.<br><br>Deaktivierte Benutzer nehmen keinen Platz ein, d. h. du kannst jemanden deaktivieren und seinen Platz stattdessen mit jemand anderem besetzen.<br><br>Du kannst jederzeit auf deiner Abonnement-Seite Plätze kaufen oder entfernen."
+                "DESCRIPTION": "Jeder aktive Vollbenutzer in deinem Arbeitsbereich belegt einen regulären Sitzplatz.<br><br>Vollbenutzer (einschließlich Manager und Administratoren) sind Benutzer, die über E-Mail verfügen und sich direkt bei Clockify anmelden können.<br><br>Deaktivierte Benutzer nehmen keinen Platz ein, d. h. du kannst jemanden deaktivieren und seinen Platz stattdessen mit jemand anderem besetzen.<br><br>Du kannst jederzeit auf deiner Abonnement-Seite Plätze kaufen oder entfernen.",
+                "TAGS_PARAMETERS_DESCRIPTION": "Jeder aktive Vollbenutzer in Ihrem Arbeitsbereich belegt einen Vollplatz. { doubleBreak } Vollständige Benutzer (einschließlich Manager und Administratoren) sind Benutzer, die über E-Mail-Adressen verfügen und sich direkt bei Clockify anmelden können. { doubleBreak } Deaktivierte Benutzer nehmen keinen Platz ein, d. h. Sie können jemanden deaktivieren und seinen Platz stattdessen mit jemand anderem besetzen. { doubleBreak } Sie können jederzeit auf Ihrer Abonnementseite Plätze kaufen oder entfernen."
             },
             "CUSTOMIZE_KIOSK": {
                 "TITLE": "Kiosk personalisieren",
-                "DESCRIPTION": "Wenn du den Kiosk öffnest, bleibt er für 24 Stunden geöffnet. Danach läuft die Sitzung ab und der Administrator muss sich erneut anmelden. Wenn du möchtest, dass es länger oder kürzer geöffnet bleibt, kannst du eine beliebige Anzahl von Stunden einstellen.<br><br>Du kannst auch ein Firmenlogo hochladen, um das Clockify-Logo auf dem Kioskbildschirm zu ersetzen."
+                "DESCRIPTION": "Wenn du den Kiosk öffnest, bleibt er für 24 Stunden geöffnet. Danach läuft die Sitzung ab und der Administrator muss sich erneut anmelden. Wenn du möchtest, dass es länger oder kürzer geöffnet bleibt, kannst du eine beliebige Anzahl von Stunden einstellen.<br><br>Du kannst auch ein Firmenlogo hochladen, um das Clockify-Logo auf dem Kioskbildschirm zu ersetzen.",
+                "TAG_PARAMETERS_DESCRIPTION": "Wenn Sie den Kiosk öffnen, bleibt er 24 Stunden lang geöffnet. Danach läuft die Sitzung ab und der Administrator muss sich erneut anmelden. Wenn Sie möchten, dass es länger oder kürzer geöffnet bleibt, können Sie eine beliebige Anzahl von Stunden einstellen. { doubleBreak } Sie können auch ein Firmenlogo hochladen, um das Clockify-Logo auf dem Kioskbildschirm zu ersetzen."
             },
             "TIME_OFF": {
                 "DESCRIPTION": "Du kannst Freizeit- und Urlaubsregelungen definieren, Urlaubsanträge einreichen und sie genehmigen, sehen, wer wann abwesend ist, und die aufgelaufenen und verbleibenden Guthaben verfolgen."
@@ -4499,7 +4545,8 @@
             "FIND_PROJECT_CUSTOM_LABEL_ELLIPSES": "{ projectLabel } oder { projectGroupingLabel } suchen…",
             "CAN_NOT_SELECT_PROJECT": "Ein Projekt kann erst ausgewählt werden, wenn es mindestens eine Aufgabe hat.",
             "SEARCH_PROJECT_CUSTOM_LABEL": "Suche nach { projectLabel } oder { projectGroupingLabel }…",
-            "SEARCH_TASK_CUSTOM_LABEL": "Suche nach { taskLabel } @{ projectLabel } oder { projectGroupingLabel }…"
+            "SEARCH_TASK_CUSTOM_LABEL": "Suche nach { taskLabel } @{ projectLabel } oder { projectGroupingLabel }…",
+            "SEARCH_PROJECT_CUSTOM_LABEL_NO_DOTS": "Suchen Sie nach { projectLabel } oder { projectGroupingLabel }"
         },
         "SINGLE_DATE_PICKER": {
             "DATE_RANGE_ERROR_MSG": "Zeit kann nicht zum gesperrten Zeitraum hinzugefügt werden",
@@ -4544,7 +4591,7 @@
         "UPGRADE_PLANS": {
             "UPGRADE_SUCCESSFUL_MSG": "Erfolgreich auf { planName }-Preismodell aktualisiert",
             "ALREADY_USING_PLAN": {
-                "PART_1": "Du verwendest bereits einen",
+                "PART_1": "Du verwendest bereits ein",
                 "PART_2": " Preismodell."
             },
             "GET_MORE_PROMO": "Mehr von Clockify erhalten!",
@@ -4688,7 +4735,7 @@
             "ZIP_PLACEHOLDER": "Bitte Postleitzahl eingeben",
             "INVALID_EMAIL_MESSAGE": "Das E-Mail-Format ist ungültig",
             "PLACEHOLDER_CARDHOLDER": "Gib den Namen des Karteninhabers ein",
-            "TAX_TYPE_PLACEHOLDER": "Wählen Sie die Steuerart"
+            "TAX_TYPE_PLACEHOLDER": "Wähle die Steuerart"
         },
         "STRIPE_INVOICE": {
             "MISSING_TAX_ID_ERROR_MESSAGE": "Fehlende Steuer-ID-Informationen",
@@ -4718,7 +4765,8 @@
             "NO_GROUPS_LABEL": "Noch keine Gruppen",
             "NO_MATCHING_GROUP_LABEL": "Keine passende Gruppe",
             "CREATE_GROUP": "{ search }-Gruppe erstellen.",
-            "ADD_OR_FIND_GROUPS_PLACEHOLDER": "Gruppen hinzufügen/suchen..."
+            "ADD_OR_FIND_GROUPS_PLACEHOLDER": "Gruppen hinzufügen/suchen...",
+            "ADD_OR_SEARCH_GROUPS_PLACEHOLDER": "Gruppen hinzufügen/suchen"
         },
         "SHARED_BY": "Geteilt von:",
         "ENTITY_TEMPLATES_LABEL": "Vorlagen",
@@ -4801,8 +4849,8 @@
             "REMOVE_SEATS_TITLE": "Ungenutzte Plätze entfernen",
             "ADD_SEATS_LABEL": "Mehr Benutzerplätze hinzufügen",
             "SEATS_OF_COUNT_LABEL": "von { count }",
-            "PER_SEAT_MONTH_LABEL": "pro Arbeitsplatz/Monat",
-            "PER_SEAT_YEAR_LABEL": "pro Arbeitsplatz/Jahr",
+            "PER_SEAT_MONTH_LABEL": "pro Benutzerplatz/Monat",
+            "PER_SEAT_YEAR_LABEL": "pro Benutzerplatz/Jahr",
             "REMOVE_SEAT_NO_REFUND_WARNING": " Es gibt keine Rückerstattung für entfernte Plätze",
             "PRICE_CHANGE_WARNING": "Für den Rest des Abrechnungszeitraums wird dir sofort ein anteiliger Preis für zusätzliche Plätze in Rechnung gestellt. Bei einem neuen Abrechnungszeitraum wird dir dann der volle Preis berechnet.",
             "NUMBER_OF_ADDITIONAL_SEATS_LABEL_PART_1": "Anzahl der zusätzlichen Plätze:",
@@ -4962,7 +5010,8 @@
                         "VALID": "Du sollst eine gültige E-Mail eingeben.",
                         "MATCH": "Die E-Mails stimmen nicht überein.",
                         "ACCOUNT_ALREADY_EXISTS": "Das Konto mit dieser E-Mail-Adresse existiert bereits."
-                    }
+                    },
+                    "CURRENT_EMAIL_LABEL": "Aktuelle E-Mail"
                 }
             },
             "PHOTO": {
@@ -5072,6 +5121,9 @@
                 "INFO_MESSAGE": "Beim Zugriff auf Clockify von unbekannten Browsern aus einen an deine E-Mail gesendeten Anmeldecode verlangen.",
                 "TOGGLE": "2FA aktivieren",
                 "ALL_WORKSPACES_INFO": "2FA kann nicht deaktiviert werden, da es für all deine Arbeitsbereiche erforderlich ist"
+            },
+            "TWO_FACTOR": {
+                "LOGOUT_INFO": "Dieser Arbeitsbereich erfordert 2FA. Nach der Bestätigung wirst du abgemeldet."
             }
         },
         "CHANGE_EMAIL": {
@@ -5258,7 +5310,7 @@
                 "LONG_ASSIGNMENT": "Aufgaben müssen kürzer als eine Woche sein, um wöchentlich wiederholt zu werden",
                 "FAILED_MESSAGE_PLURAL": "Aufgaben konnten nicht gespeichert werden",
                 "SUCCESS_MESSAGE_PLURAL": "Aufgaben erfolgreich erstellt",
-                "WORKING_DAYS_WITH_INTERPOLATION": "Werktags:",
+                "WORKING_DAYS_WITH_INTERPOLATION": "Arbeitstage:",
                 "TOTAL_HOURS_WITH_INTERPOLATION": "Gesamtstunden:"
             },
             "EDIT_MODAL": {
@@ -5576,7 +5628,8 @@
             "COUNTINUE_WITH_SAML2_LABEL": "Mit SAML2 fortsetzen",
             "PASSWORD_REQUIRED_ERROR_LABEL": "Passwort wird benötigt",
             "EMAIL_REQUIRED_ERROR_LABEL": "E-Mail ist erforderlich",
-            "NO_ACCOUNT_SIGNUP_INSTEAD_LABEL": "Es sieht so aus, als hättest du kein Konto.\nMelde dich stattdessen an."
+            "NO_ACCOUNT_SIGNUP_INSTEAD_LABEL": "Es sieht so aus, als hättest du kein Konto.\nMelde dich stattdessen an.",
+            "LOGIN_ATTEMPT_MESSAGE": "Vielen Dank für deinen Anmeldeversuch. Wenn deine E-Mail-Adresse registriert ist, senden wir dir in Kürze einen sicheren Anmeldelink."
         },
         "VERIFY_EMAIL": {
             "TITLE": "E-Mail bestätigen"
@@ -5884,9 +5937,10 @@
             "BREAK_DUPLICATE_SUCCESS": "Der Pauseneintrag wurde dupliziert",
             "CREATE_MULTIPLE_SUCCESS": "Zeiteinträge wurden erstellt",
             "RUNNING_ENTRY_EXISTS": "Zeiteintrag kann nicht erstellt werden, während ein anderer Eintrag läuft",
-            "BREAKS_DISABLED": "Du bist nicht berechtigt, einen Pausenzeiteintrag zu erstellen, da die Pausenfunktion nicht aktiviert ist."
+            "BREAKS_DISABLED": "Du bist nicht berechtigt, einen Pausenzeiteintrag zu erstellen, da die Pausenfunktion nicht aktiviert ist.",
+            "CREATE_FAIL_SPLITTING": "Ein Zeiteintrag konnte nicht aufgeteilt werden. Bitte versuche es erneut"
         },
-        "STOP_BREAK": "Pause halt",
+        "STOP_BREAK": "Pause stoppen",
         "START_BREAK": "Pause beginnen"
     },
     "LETS_START_TRACKING": "Beginnen wir mit der Verfolgung!",
@@ -5948,8 +6002,11 @@
             "DESCRIPTION": "Du erhältst keine { emailPrefType } E-Mails mehr von Clockify."
         },
         "MESSAGE": {
-            "UPDATE_SUCCESS": "Deine E-Mail-Einstellungen wurden aktualisiert",
-            "SESSION_NOT_FOUND": "Sitzung nicht gefunden"
+            "UPDATE_SUCCESS": "Deine E-Mail-Einstellungen wurden aktualisiert.",
+            "SESSION_NOT_FOUND": "Sitzung nicht gefunden",
+            "UPDATE_TITLE": "Erfolg!",
+            "UPDATE_ERROR": "Hoppla, Sitzung abgelaufen!",
+            "UPDATE_ERROR_DESCRIPTION": "Deine Sitzung ist abgelaufen. Bitte melde dich an, um deine E-Mail-Einstellungen zu verwalten."
         }
     },
     "FAILED_TO_COPY_TIME": "Einige Einträge konnten nicht kopiert werden",
@@ -6106,7 +6163,9 @@
         "STOP_AT_SPECIFIED_TIME": "Stoppe den Timer automatisch zu einer bestimmten Tageszeit",
         "STOP_TIME": "Stoppe die Zeit",
         "FORBIDDEN_CHARACTERS": "Du hast einen falschen Wert eingegeben. Verwende keine &lt; und &gt; Zeichen",
-        "NO_NEW_NOTIFICATIONSL_MESSAGE": "Du hast derzeit keine neuen Benachrichtigungen"
+        "NO_NEW_NOTIFICATIONSL_MESSAGE": "Du hast derzeit keine neuen Benachrichtigungen",
+        "WORKSPACE_LOCKED": "Arbeitsbereich gesperrt",
+        " SWITCH_WORKSPACE": "Arbeitsbereich wechseln"
     },
     "ENABLE_ALL_INTEGRATIONS": "Du kannst alles aktivieren, indem du auf die Schaltfläche \"Alle aktivieren\" klickst.",
     "REFRESH": "Aktualisieren",
@@ -6433,7 +6492,8 @@
         "AUTHORS": "Autoren",
         "FIND_AUTHORS": "Autoren suchen",
         "SELECT_AUTHOR": "Autor auswählen",
-        "AUTHOR": "Autor"
+        "AUTHOR": "Autor",
+        "SEARCH_AUTHORS": "Autoren suchen"
     },
     "APPROVALS": {
         "ARCHIVE_LABEL": "Archiv",
@@ -6546,9 +6606,16 @@
         "DROPDOWN": {
             "REGULAR_USER_INFO": "Nur Administratoren können Add-ons sehen und installieren. Du kannst den Marktplatz weiterhin durchsuchen und den Administratoren Add-ons vorschlagen.",
             "ADMIN_USER_INFO": "Bist du bereit, dein erstes Add-on zu installieren?",
-            "ADMIN_USER_INFO_PT_TWO": "Erweitere und passe Clockify an deine Bedürfnisse an."
+            "ADMIN_USER_INFO_PT_TWO": "Erweitere und passe Clockify an deine Bedürfnisse an.",
+            "SELECT_OPTION_LABEL": "Wähle eine Option",
+            "SELECT_OPTIONS_LABEL": "Optionen wählen"
         },
-        "FAILED_FETCH_WEBHOOKS": "Add-on-Webhooks konnten nicht abgerufen werden"
+        "FAILED_FETCH_WEBHOOKS": "Add-on-Webhooks konnten nicht abgerufen werden",
+        "EVENTS": {
+            "NAVIGATION": {
+                "ERROR": "Route existiert nicht"
+            }
+        }
     },
     "MESSAGES": {
         "ERROR_MISSING_FIELDS_IS_REQUIRED": "{ fields } ist erforderlich."
@@ -6602,7 +6669,8 @@
             "ADDON_UNINSTALLED_SUCCESS_LABEL": "Add-on erfolgreich deinstalliert",
             "ADDON_INSTALLED_FAIL_LABEL": "Add-on konnte nicht installiert werden",
             "ADDON_DEACTIVATED_LABEL": "Add-on deaktiviert"
-        }
+        },
+        "NOT_AVAILABLE_ON_TEST_ACCOUNTS": "Nicht verfügbar für Testkonten"
     },
     "SHARED": {
         "CURRENCIES": {
@@ -6644,10 +6712,13 @@
             "PENDING_CHANGE_BANNER_TEXT": "Ausstehende E-Mail-Änderung",
             "PENDING_CHANGE_BANNER_TOOLTIP": "Ausstehende Änderung an E-Mail: { userEmail }. Überprüfe deinen E-Mail-Posteingang und bestätige die neue E-Mail, um den Vorgang abzuschließen.",
             "CANCEL_CHANGE_BTN": "Änderung abbrechen",
-            "EMAIL_CHANGE_CANCELED_MSG": "E-Mail-Änderung abgebrochen"
+            "EMAIL_CHANGE_CANCELED_MSG": "E-Mail-Änderung abgebrochen",
+            "PENDING_CHANGE_BANNER_TOOLTIP_TEAMS_PAGE": "Ausstehende Änderung an E-Mail: { userEmail }. Der Vorgang wird abgeschlossen, wenn der Benutzer die neue E-Mail bestätigt."
         },
         "EMAIL_SUCCESSFULLY_VERIFIED_MSG": "Du hast deine E-Mail-Adresse erfolgreich bestätigt.",
-        "EMAIL_LINK_EXPIRED_TEXT": "Dieser E-Mail-Bestätigungslink ist abgelaufen."
+        "EMAIL_LINK_EXPIRED_TEXT": "Dieser E-Mail-Bestätigungslink ist abgelaufen.",
+        "RESEND_EMAIL_BTN": "E-Mail zurücksenden",
+        "EMAIL_SUCCESSFULLY_VERIFIED_MSG_2": "Du hast deine E-Mail-Adresse erfolgreich bestätigt."
     },
     "EXTENSION_FORBIDDEN_CHARACTERS": "Sie haben einen falschen Wert eingegeben. Verwenden Sie keine „<“ und „>“-Zeichen",
     "GOBAL": {
@@ -6727,8 +6798,8 @@
                 "RESTORE_MULTIPLE_CLIENTS_TITLE": "Wiederherstellen { numberOfSelected } { clientLabelPlural }",
                 "ARCHIVE_MULTIPLE_TAGS_TITLE": "Archiviere { numberOfSelected }-Tags",
                 "RESTORE_MULTIPLE_TAGS_TITLE": "{ numberOfSelected }-Tags wiederherstellen",
-                "SINGLE_CLIENT_ALSO_ARCHIVE_PROJECTS_CHECKBOX_CUSTOM": "Archivieren Sie auch alle { projectsLabel }, die diesem { clientLabel } zugewiesen sind.",
-                "MULTIPLE_CLIENTS_ALSO_ARCHIVE_PROJECTS_CHECKBOX_CUSTOM": "Archivieren Sie auch alle { projectsLabel }, die diesen { clientLabelPlural } zugeordnet sind."
+                "SINGLE_CLIENT_ALSO_ARCHIVE_PROJECTS_CHECKBOX_CUSTOM": "Archiviere auch alle { projectsLabel }, die diesem { clientLabel } zugewiesen sind.",
+                "MULTIPLE_CLIENTS_ALSO_ARCHIVE_PROJECTS_CHECKBOX_CUSTOM": "Archiviere auch alle { projectsLabel }, die diesen { clientLabelPlural } zugeordnet sind."
             },
             "DELETE_MODAL": {
                 "DELETE_SINGLE_ITEM_INFO_MESSAGE": "Bist du sicher, dass du { itemName } löschen möchtest?",
@@ -6769,5 +6840,13 @@
         "MESSAGES": {
             "WORKSPACE_IS_LOCKED": "Arbeitsbereich wegen Datenübertragung gesperrt"
         }
-    }
+    },
+    "TAGS": {
+        "MODALS": {
+            "DELETE_MODAL": {
+                "DELETE_SINGLE_ITEM_MODAL_TEXT": "{ itemName } wird auch aus allen Zeiteinträgen entfernt, denen es zugewiesen ist. Diese Aktion kann nicht rückgängig gemacht werden."
+            }
+        }
+    },
+    "SET_PASSWORD_MODAL_BODY": "Wenn du auf „Passwort festlegen“ klickst, wird eine E-Mail zur Passworteinrichtung an { email } gesendet."
 }

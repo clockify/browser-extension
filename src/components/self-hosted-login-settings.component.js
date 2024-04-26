@@ -35,7 +35,7 @@ class SelfHostedBootSettings extends React.Component {
 				>
 					{({ error, result, loading }) => {
 						if (error) {
-							return <Login logout={{isTrue: true}} />;
+							return <Login logout={{ isTrue: true }} />;
 						}
 						if (loading) {
 							return (
@@ -74,10 +74,22 @@ class SelfHostedBootSettings extends React.Component {
 									if (webSocketEndPoint.startsWith('/')) {
 										webSocketEndPoint = `wss://${data.frontendUrl}${websockets.apps.extension.endpoint}`;
 									}
+									console.log(
+										'self-hosted-login-settings.component.js | line 78 | webSocketEndPoint:',
+										webSocketEndPoint
+									);
 									extParameters.setWebSocketUrl(webSocketEndPoint);
 								}
 							} catch (error) {
 								baseUrl = `${this.state.homeUrl}/api`;
+								console.log(
+									'self-hosted-login-settings.component.js | line 86 | error:',
+									error
+								);
+								console.log(
+									'self-hosted-login-settings.component.js | line 90 | baseUrl:',
+									baseUrl
+								);
 							}
 							extParameters.setBaseUrl(baseUrl);
 							extParameters.setHomeUrl(this.state.homeUrl);

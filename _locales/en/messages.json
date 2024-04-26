@@ -1073,6 +1073,156 @@
   "FORBIDDEN_CHARACTERS": {
     "message": "You entered wrong value. Don't use \"<\" and \">\" characters"
   },
+  "WORKSPACE_LOCKED": {
+    "message": "Workspace locked"
+  },
+  "SWITCH_WORKSPACE": {
+    "message": "Switch workspace"
+  },
+  "VERIFY_EMAIL_MESSAGE": {
+    "message": "Verify your email: { userEmail }"
+  },
+  "SEND_VERIFICATION_EMAIL_BTN": {
+    "message": "Send verification email"
+  },
+  "EMAIL_SENT_SUCCESS_MESSAGE": {
+    "message": "Email sent"
+  },
+  "VERIFY_EMAIL_TITLE": {
+    "message": "Verify your email!"
+  },
+  "LONG_VERIFY_EMAIL_MESSAGE": {
+    "message": "{ userName }, to continue using your clockify account, you must verify your email address: { userEmail }"
+  },
+  "CHANGE_EMAIL_FOOTER": {
+    "message": "Having troubles accessing your email?"
+  },
+  "CHANGE_EMAIL_TITLE": {
+    "message": "Change email"
+  },
+  "NOTIFICATIONS_TITLE": {
+    "message": "Notifications"
+  },
+  "NO_NEW_NOTIFICATIONS_TITLE": {
+    "message": "No new notifications"
+  },
+  "NO_NEW_NOTIFICATIONS_MESSAGE": {
+    "message": "You currently have no new notifications"
+  },
+  "CLEAR_ALL": {
+    "message": "Clear all"
+  },
+  "WORKSPACE_INVITATION_NOTIFICATION_TITLE": {
+    "message": "Workspace invite"
+  },
+  "LAYOUT__NOTIFICATIONS__WORKSPACE_INVITATION__FULL_ACCOUNT_ACCESS_INVITATION__PART_1": {
+    "message": "You are invited to join "
+  },
+  "LAYOUT__NOTIFICATIONS__WORKSPACE_INVITATION__FULL_ACCOUNT_ACCESS_INVITATION__PART_2": {
+    "message": " workspace. Once you accept, { workspaceName } administrator will have"
+  },
+  "LAYOUT__NOTIFICATIONS__WORKSPACE_INVITATION__ACCESS_INVITATION__PART_1": {
+    "message": "has invited you to track time on"
+  },
+  "LAYOUT__NOTIFICATIONS__WORKSPACE_INVITATION__ACCESS_INVITATION__PART_2": {
+    "message": "workspace."
+  },
+  "LAYOUT__NOTIFICATIONS__WORKSPACE_INVITATION__FULL_ACCOUNT_ACCESS_INVITATION__PART_3": {
+    "message": " full access "
+  },
+  "LAYOUT__NOTIFICATIONS__ACCEPT_LABEL": {
+    "message": "Accept"
+  },
+  "LAYOUT__NOTIFICATIONS__DECLINE_LABEL": {
+    "message": "Decline"
+  },
+  "GLOBAL__LEARN_MORE_LINK": {
+    "message": "Learn more"
+  },
+  "NOTIFICATION__TRIAL__LINK": {
+    "message": "How PRO features work"
+  },
+  "LAYOUT__NOTIFICATIONS__VERIFY_EMAIL_LABEL": {
+    "message": "Verify email"
+  },
+  "LAYOUT__NOTIFICATIONS__UNVERIFIED_EMAIL_NOTIFICATION": {
+    "message": "You haven't verified your email yet."
+  },
+  "LAYOUT__NOTIFICATIONS__RESEND_EMAIL_LABEL": {
+    "message": "Resend email"
+  },
+  "LAYOUT__NOTIFICATIONS__RECEIVE_UPDATES_LABEL": {
+    "message": "Receive updates"
+  },
+  "GLOBAL__GO_TO_SUBSCRIPTION_LABEL": {
+    "message": "Go to subscription"
+  },
+  "EMAIL__VERIFICATION__SUCCESS": {
+    "message": "E-mail for verification successfully sent"
+  },
+  "USER__SETTINGS__SAVE__SUCCESS": {
+    "message": "Settings successfully saved"
+  },
+  "INVITATION_DECLINED_MESSAGE": {
+    "message": "Invitation for user { name } has been declined."
+  },
+  "VERIFY_EMAIL_MSG_1": {
+    "message": "Please verify your"
+  },
+  "VERIFY_EMAIL_MSG_2": {
+    "message": "email first."
+  },
+  "WORKSPACE_DEFAULT_SUCCESS_MESSAGE": {
+    "message": "Default workspace changed"
+  },
+  "EMAIL__VERIFICATION__CAMPAIGN__TITLE": {
+    "message": "Verify your email"
+  },
+  "EMAIL__VERIFICATION__CAMPAIGN__MESSAGE_1": {
+    "message": "In the next 30 days, a verified account will be required to continue using Clockify seamlessly."
+  },
+  "EMAIL__VERIFICATION__CAMPAIGN__MESSAGE_2": {
+    "message": "For a seamless Clockify usage in the future, verify your account today."
+  },
+  "EMAIL__VERIFICATION__CAMPAIGN__MESSAGE_3": {
+    "message": "Verify your email address and keep using Clockify without any future limitations."
+  },
+  "EMAIL__VERIFICATION__CAMPAIGN__MESSAGE_4": {
+    "message": "Without email verification, your app usage will become limited within 15 days."
+  },
+  "EMAIL__VERIFICATION__CAMPAIGN__MESSAGE_5": {
+    "message": "Your email address must be verified, otherwise, your app usage will become restricted in 10 days."
+  },
+  "EMAIL__VERIFICATION__CAMPAIGN__MESSAGE_6": {
+    "message": "Last call to verify your email! Without it, you won’t be able to use your Clockify account."
+  },
+  "TIMEZONE_MISMATCH__TITLE": {
+    "message": "Timezone mismatch"
+  },
+  "TIMEZONE_MISMATCH__BODY_TEXT": {
+    "message": "When { profileLink } and browser time zones don't match, it can lead to incorrect reports, and some features may not work as expected."
+  },
+  "TIMEZONE_MISMATCH__NOTIFICATION__PART_2": {
+    "message": "your profile"
+  },
+  "CHANGE_TIMEZONE_NOTIFICATION": {
+    "message": "Change to { suggestedTimeZone }"
+  },
+  "GLOBAL__OR_LABEL": {
+    "message": "OR"
+  },
+  "TIMEZONE_MISMATCH__NOTIFICATION__ENABLE_LOCATION_ACCESS": {
+    "message": "Enable location access"
+  },
+  "TIMEZONE__UPDATE__SUCCESS_MESSAGE": {
+    "message": "Successfully updated timezone"
+  },
+  "TIMEZONE__UPDATE__ERROR_MESSAGE": {
+    "message": "Updated timezone failed"
+  },
+  "GLOBAL__DUPLICATE_SUCCESS_MSG": {
+    "message": "Time entry has been duplicated"
+  },
   "appName": {
     "message": "Clockify Time Tracker",
     "description": "The title of the application, displayed in the web store."

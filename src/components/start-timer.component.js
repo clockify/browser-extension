@@ -314,8 +314,8 @@ class StartTimer extends Component {
 		let timeEntry = {
 			timeInterval: {
 				start: moment(),
-				end,
-			},
+				end: end
+			}
 		};
 
 		this.setState({
@@ -559,6 +559,8 @@ class StartTimer extends Component {
 			project,
 			this.state.timeEntry
 		);
+
+		console.log(requiredAndMissingCustomFields);
 
 		if (isOff) {
 			this.stopEntryInProgress();

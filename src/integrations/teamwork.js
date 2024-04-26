@@ -178,24 +178,13 @@ clockifyButton.render(
 	'[data-task-detail-panel-id]:not(.clockify)',
 	{ observe: true },
 	(elem) => {
-		const description = () =>
-			$('.taskLinkName', elem)?.textContent.trim();
-		const projectName = () =>
-			$('.tw-toolbar-title > span')?.textContent?.trim() || '';
-		const tagNames = () => [
-			...new Set(
-				Array.from($$('.v-chip__content span', elem)).map((tag) =>
-					tag.textContent.trim()
-				)
-			),
-		];
+		const description = () => text('.taskLinkName', elem);
+		const projectName = () => text('.tw-toolbar-title > span');
+		const tagNames = () => textList('.v-chip__content span', elem);
 
-		const link = clockifyButton.createButton({
-			description,
-			projectName,
-			tagNames,
-			small: true,
-		});
+		const entry = { description, projectName, tagNames, small: true };
+
+		const link = clockifyButton.createButton(entry);
 
 		elem.style.marginLeft = '28px';
 		link.style.position = 'absolute';

@@ -117,6 +117,10 @@ span.project-list-name-client {
 	background: white;
 	padding: 10px;
 
+	input {
+		background-color: white !important;
+	}
+
 	&--border {
 		position: relative;
 	}
@@ -141,8 +145,8 @@ span.project-list-name-client {
 	}
 	&:focus {
 		outline: none;
-		border: 2px solid #0f3beb;
-		border-radius: 5px;
+		border: 1px solid variables.$bg-04 !important;
+		border-radius: 3px !important;
 	}
 }
 

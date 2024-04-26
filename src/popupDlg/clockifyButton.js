@@ -67,6 +67,7 @@ var clockifyButton = {
 			}
 		},
 	},
+
 	observeDescription: (selector) => {
 		if (!selector) return;
 		setInterval(() => {
@@ -78,6 +79,7 @@ var clockifyButton = {
 			startTimerButton.setAttribute('title', descriptionToObserve.textContent);
 		}, 500);
 	},
+
 	render: (selector, opts, renderer, mutationSelector, descriptionSelector) => {
 		clockifyButton.mutationObserver.start(
 			selector,
@@ -88,6 +90,7 @@ var clockifyButton = {
 		clockifyButton.observeDescription(descriptionSelector);
 		clockifyButton.renderTo(selector, renderer);
 	},
+
 	renderTo: (selector, renderer) => {
 		const elements = $$$(selector);
 
@@ -249,6 +252,17 @@ var clockifyButton = {
 		form.onsubmit = async (e) => {
 			e.preventDefault();
 			e.stopPropagation();
+			console.log('SUBMITTED')
+
+
+			const response = await 	aBrowser.runtime.sendMessage({
+				eventName: 'getEntryInProgress',
+			})
+			if (response === 'Forbidden') {
+				alert(clockifyLocales.WORKSPACE_LOCKED)
+				return;
+			}
+
 			let workspaceSettings = await localStorage.getItem('workspaceSettings');
 			workspaceSettings = JSON.parse(workspaceSettings);
 			if (
@@ -409,7 +423,6 @@ var clockifyButton = {
 			} catch (e) {
 				console.error(e);
 			}
-
 			// don't reload the page
 			return false;
 		};

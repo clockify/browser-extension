@@ -29,7 +29,23 @@ class ProjectItem extends React.Component {
 		this.getMyTasks = this.getMyTasks.bind(this);
 	}
 
-	componentDidMount() {}
+	componentDidMount() {
+		const { page } = this.state;
+		this.props
+			.getProjectTasks(this.props.project.id, '', page)
+			.then((response) => {
+				this.setState({
+					tasks: [...this.state.tasks, ...response.data],
+				}, () => {
+					if (this.state.tasks.some(task => task.id === this.props.selectedTask?.id)) {
+						this.setState({
+							taskCount: this.state.taskCount - 1,
+						})
+					}
+				});
+			})
+			.catch(() => {});
+	}
 
 	getMyTasks() {
 		const { page } = this.state;
@@ -42,6 +58,12 @@ class ProjectItem extends React.Component {
 						page === 1 ? !this.state.isTaskOpen : this.state.isTaskOpen,
 					loadMore: response.data.length >= pageSize ? true : false,
 					page: page + 1,
+				}, () => {
+					if (this.state.tasks.some(task => task.id === this.props.selectedTask?.id)) {
+						this.setState({
+							taskCount: this.state.taskCount - 1,
+						})
+					}
 				});
 			})
 			.catch(() => {});
@@ -56,6 +78,12 @@ class ProjectItem extends React.Component {
 				this.setState({
 					tasks: [...this.state.taskList],
 					isTaskOpen: !this.state.isTaskOpen,
+				}, () => {
+					if (this.state.tasks.some(task => task.id === this.props.selectedTask?.id)) {
+						this.setState({
+							taskCount: this.state.taskCount - 1,
+						})
+					}
 				});
 			} else {
 				if (!JSON.parse(await localStorage.getItem('offline'))) {
@@ -70,7 +98,6 @@ class ProjectItem extends React.Component {
 	}
 
 	chooseProject() {
-		 
 		this.props.selectProject(this.props.project);
 	}
 
@@ -98,15 +125,17 @@ class ProjectItem extends React.Component {
 	}
 
 	render() {
-		const { project, noTasks } = this.props;
+		const { project, noTasks, selectedProject, projectId, defaultProjectList } = this.props;
 		const {
-			taskCount,
 			isTaskOpen,
 			favorite,
 			client,
 			projectFavorites,
 			favHovered,
+			taskCount
 		} = this.state;
+		let shouldBeVisible = taskCount === 0 ? projectId !== selectedProject?.id : true;
+		if (defaultProjectList) shouldBeVisible = true;
 		let name = project.name;
 		let locale = project.getLocale && project.getLocale();
 		let title = locale || project.name;
@@ -123,144 +152,149 @@ class ProjectItem extends React.Component {
 			this.props.workspaceSettings.forceTasks && !this.props.isLastUsedProject;
 
 		return (
-			<div>
-				<ul className="project-item" title={title} data-pw={`project-item-${this.props.projectItemIndex}`}>
+			<>
+				{shouldBeVisible &&
+					<div>
+					<ul className="project-item" title={title} data-pw={`project-item-${this.props.projectItemIndex}`}>
 					<li
-						className="project-item-dot"
-						style={{ background: project.color }}
+					className="project-item-dot"
+					style={{ background: project.color }}
 					></li>
 					<li
-						className="project-item-name"
-						onClick={
-							forceTasksButNotLastUsedProject
-								? () => this.openTasks()
-								: () => this.chooseProject()
-						}
-						tabIndex={'0'}
-						title={title}
-						onKeyDown={(e) => {
-							if (e.key === 'Enter')
-								forceTasksButNotLastUsedProject
-									? this.openTasks()
-									: this.chooseProject();
-						}}
+					className="project-item-name"
+					onClick={
+					forceTasksButNotLastUsedProject
+					? () => this.openTasks()
+					: () => this.chooseProject()
+				}
+					tabIndex={'0'}
+					title={title}
+					onKeyDown={(e) => {
+					if (e.key === 'Enter')
+					forceTasksButNotLastUsedProject
+					? this.openTasks()
+					: this.chooseProject();
+				}}
 					>
-						{locale || name} <i>{clientName}</i>
+				{locale || name} <i>{clientName}</i>
 					</li>
 
-					{!noTasks && taskCount === 0 && !this.props.disableCreateTask && (
-						<span
-							className="project-item-create-task"
-							onClick={() => this.props.openCreateTaskModal(project)}
-						>
-							{locales.CREATE_TASK}
-						</span>
+				{!noTasks && this.state.taskCount === 0 && !this.props.disableCreateTask && (
+					<span
+					className="project-item-create-task"
+					onClick={() => this.props.openCreateTaskModal(project)}
+					>
+				{locales.CREATE_TASK}
+					</span>
 					)}
-					{!noTasks && taskCount > 0 && (
-						<li
-							className="project-item-tasks"
-							onClick={this.openTasks}
-							title={locales.EXPAND}
-						>
-							<span
-								style={{
-									display: 'flex',
-									float: 'right',
-									paddingRight: '5px',
-									alignItems: 'center',
-								}}
-							>
-								{locales.TASKS_NUMBER(taskCount)}
-								{isTaskOpen ? (
-									<img
-										style={{ height: 'fit-content' }}
-										src={getBrowser().runtime.getURL(
-											'assets/images/filter-arrow-down.png'
-										)}
-										className="tasks-arrow-down"
-									/>
-								) : (
-									<img
-										style={{ height: 'fit-content' }}
-										src={getBrowser().runtime.getURL(
-											'assets/images/filter-arrow-right.png'
-										)}
-										className="tasks-arrow-right"
-									/>
-								)}
-							</span>
-						</li>
+				{!noTasks && this.state.taskCount > 0 && (
+					<li
+					className="project-item-tasks"
+					onClick={this.openTasks}
+					title={locales.EXPAND}
+					>
+					<span
+					style={{
+					display: 'flex',
+					float: 'right',
+					paddingRight: '5px',
+					alignItems: 'center',
+				}}
+					>
+				{locales.TASKS_NUMBER(this.state.taskCount)}
+				{isTaskOpen ? (
+					<img
+					style={{ height: 'fit-content' }}
+					src={getBrowser().runtime.getURL(
+					'assets/images/filter-arrow-down.png'
 					)}
-					{projectFavorites && (
-						<li className="project-item-favorite" title={locales.FAVORITE}>
-							{project.id !== 'no-project' && (
-								<a
-									style={{
-										display: 'inline-block',
-										background: `url(${getBrowser().runtime.getURL(
-											favorite
-												? 'assets/images/ui-icons/favorites-active.svg'
-												: favHovered
-												? 'assets/images/ui-icons/favorites-hover.svg'
-												: 'assets/images/ui-icons/favorites-normal.svg'
-										)})`,
-									}}
-									className={`cl-dropdown-star ${favorite ? 'cl-active' : ''}`}
-									onClick={this.toggleFavorite}
-									onMouseEnter={() => this.setState({ favHovered: true })}
-									onMouseLeave={() => this.setState({ favHovered: false })}
-								></a>
-							)}
-						</li>
+					className="tasks-arrow-down"
+					/>
+					) : (
+					<img
+					style={{ height: 'fit-content' }}
+					src={getBrowser().runtime.getURL(
+					'assets/images/filter-arrow-right.png'
 					)}
-				</ul>
-				<div
+					className="tasks-arrow-right"
+					/>
+					)}
+					</span>
+					</li>
+					)}
+				{projectFavorites && (
+					<li className="project-item-favorite" title={locales.FAVORITE}>
+				{project.id !== 'no-project' && (
+					<a
+					style={{
+					display: 'inline-block',
+					background: `url(${getBrowser().runtime.getURL(
+					favorite
+					? 'assets/images/ui-icons/favorites-active.svg'
+					: favHovered
+					? 'assets/images/ui-icons/favorites-hover.svg'
+					: 'assets/images/ui-icons/favorites-normal.svg'
+					)})`,
+				}}
+					className={`cl-dropdown-star ${favorite ? 'cl-active' : ''}`}
+					onClick={this.toggleFavorite}
+					onMouseEnter={() => this.setState({ favHovered: true })}
+					onMouseLeave={() => this.setState({ favHovered: false })}
+					></a>
+					)}
+					</li>
+					)}
+					</ul>
+					<div
 					className={
-						this.state.isTaskOpen && !noTasks ? 'task-list' : 'disabled'
-					}
-				>
-					{this.state.tasks.map((task) => {
-						return (
-							<div
-								key={task.id}
-								value={JSON.stringify(task)}
-								onClick={this.chooseTask.bind(this)}
-								className="task-item"
-							>
-								<span value={JSON.stringify(task)}>{task.name}</span>
-							</div>
-						);
-					})}
-					{this.state.loadMore && (
-						<div
-							key="load-more"
-							className="project-list-load task-item"
-							style={{ marginTop: '0px' }}
-							onClick={this.getMyTasks}
-						>
-							{locales.LOAD_MORE}
-						</div>
+					this.state.isTaskOpen && !noTasks ? 'task-list' : 'disabled'
+				}
+					>
+				{this.state.tasks.filter(task => this.props.selectedTask?.id !== task.id)
+					.map((task) => {
+					return (
+					<div
+					key={task.id}
+					value={JSON.stringify(task)}
+					onClick={this.chooseTask.bind(this)}
+					className={`task-item`}
+					>
+					<span value={JSON.stringify(task)}>{task.name}</span>
+					</div>
+					);
+				})}
+				{this.state.loadMore && (
+					<div
+					key="load-more"
+					className="project-list-load task-item"
+					style={{ marginTop: '0px' }}
+					onClick={this.getMyTasks}
+					>
+				{locales.LOAD_MORE}
+					</div>
 					)}
-					{!this.props.disableCreateTask && (
-						<div
-							className="projects-list__create-task"
-							onClick={() => this.props.openCreateTaskModal(project)}
-						>
-							<span
-								className="projects-list__create-task--icon"
-								style={{
-									content: `url(${getBrowser().runtime.getURL(
-										'assets/images/create.png'
-									)})`,
-								}}
-							></span>
-							<span className="projects-list__create-task--text">
-								{locales.CREATE_NEW_TASK}
-							</span>
-						</div>
+				{!this.props.disableCreateTask && this.state.taskCount !== 0 && (
+					<div
+					className="projects-list__create-task"
+					onClick={() => this.props.openCreateTaskModal(project)}
+					>
+					<span
+					className="projects-list__create-task--icon"
+					style={{
+					content: `url(${getBrowser().runtime.getURL(
+					'assets/images/create.png'
+					)})`,
+				}}
+					></span>
+					<span className="projects-list__create-task--text">
+				{locales.CREATE_NEW_TASK}
+					</span>
+					</div>
 					)}
-				</div>
-			</div>
+					</div>
+					</div>
+				}
+			</>
 		);
 	}
 }

@@ -1073,6 +1073,156 @@
   "FORBIDDEN_CHARACTERS": {
     "message": "Has introducido un valor incorrecto. No uses los caracteres \" < \" y \" > \""
   },
+  "WORKSPACE_LOCKED": {
+    "message": "Espacio de trabajo bloqueado"
+  },
+  "SWITCH_WORKSPACE": {
+    "message": "Cambiar de espacio de trabajo"
+  },
+  "VERIFY_EMAIL_MESSAGE": {
+    "message": "Verifica tu correo electrónico: { userEmail }"
+  },
+  "SEND_VERIFICATION_EMAIL_BTN": {
+    "message": "Envía un correo electrónico de verificación"
+  },
+  "EMAIL_SENT_SUCCESS_MESSAGE": {
+    "message": "Correo electrónico enviado"
+  },
+  "VERIFY_EMAIL_TITLE": {
+    "message": "¡Verifica tu correo electrónico!"
+  },
+  "LONG_VERIFY_EMAIL_MESSAGE": {
+    "message": "{ userName }, para continuar usando tu cuenta de clockify debes verificar tu correo electrónico: { userEmail }"
+  },
+  "CHANGE_EMAIL_FOOTER": {
+    "message": "¿Tienes problemas para acceder a tu correo electrónico?"
+  },
+  "CHANGE_EMAIL_TITLE": {
+    "message": "Cambiar correo electrónico"
+  },
+  "NOTIFICATIONS_TITLE": {
+    "message": "Notificaciones"
+  },
+  "NO_NEW_NOTIFICATIONS_TITLE": {
+    "message": "No hay notificaciones nuevas"
+  },
+  "NO_NEW_NOTIFICATIONS_MESSAGE": {
+    "message": "Actualmente no tienes notificaciones nuevas"
+  },
+  "CLEAR_ALL": {
+    "message": "Borrar todo"
+  },
+  "WORKSPACE_INVITATION_NOTIFICATION_TITLE": {
+    "message": "Invitación al espacio de trabajo"
+  },
+  "LAYOUT__NOTIFICATIONS__WORKSPACE_INVITATION__FULL_ACCOUNT_ACCESS_INVITATION__PART_1": {
+    "message": "Estás invitado a unirse al espacio de trabajo de "
+  },
+  "LAYOUT__NOTIFICATIONS__WORKSPACE_INVITATION__FULL_ACCOUNT_ACCESS_INVITATION__PART_2": {
+    "message": " Una vez que aceptes, el administrador de { workspaceName } tendrá"
+  },
+  "LAYOUT__NOTIFICATIONS__WORKSPACE_INVITATION__ACCESS_INVITATION__PART_1": {
+    "message": "te ha invitado a registrar el tiempo en"
+  },
+  "LAYOUT__NOTIFICATIONS__WORKSPACE_INVITATION__ACCESS_INVITATION__PART_2": {
+    "message": "espacio de trabajo."
+  },
+  "LAYOUT__NOTIFICATIONS__WORKSPACE_INVITATION__FULL_ACCOUNT_ACCESS_INVITATION__PART_3": {
+    "message": " acceso completo "
+  },
+  "LAYOUT__NOTIFICATIONS__ACCEPT_LABEL": {
+    "message": "Aceptar"
+  },
+  "LAYOUT__NOTIFICATIONS__DECLINE_LABEL": {
+    "message": "Rechazar"
+  },
+  "GLOBAL__LEARN_MORE_LINK": {
+    "message": "Más información"
+  },
+  "NOTIFICATION__TRIAL__LINK": {
+    "message": "Cómo funcionan las funciones PRO"
+  },
+  "LAYOUT__NOTIFICATIONS__VERIFY_EMAIL_LABEL": {
+    "message": "Verificar correo electrónico"
+  },
+  "LAYOUT__NOTIFICATIONS__UNVERIFIED_EMAIL_NOTIFICATION": {
+    "message": "Aún no has verificado tu correo electrónico."
+  },
+  "LAYOUT__NOTIFICATIONS__RESEND_EMAIL_LABEL": {
+    "message": "Reenviar correo electrónico"
+  },
+  "LAYOUT__NOTIFICATIONS__RECEIVE_UPDATES_LABEL": {
+    "message": "Recibir actualizaciones"
+  },
+  "GLOBAL__GO_TO_SUBSCRIPTION_LABEL": {
+    "message": "Ir a suscripción"
+  },
+  "EMAIL__VERIFICATION__SUCCESS": {
+    "message": "Correo electrónico de verificación enviado con éxito"
+  },
+  "USER__SETTINGS__SAVE__SUCCESS": {
+    "message": "Configuración guardada con éxito"
+  },
+  "INVITATION_DECLINED_MESSAGE": {
+    "message": "Se ha rechazado la invitación para el usuario { name }."
+  },
+  "VERIFY_EMAIL_MSG_1": {
+    "message": "Por favor, primero verifica tu"
+  },
+  "VERIFY_EMAIL_MSG_2": {
+    "message": "correo electrónico."
+  },
+  "WORKSPACE_DEFAULT_SUCCESS_MESSAGE": {
+    "message": "Se cambió el espacio de trabajo predeterminado"
+  },
+  "EMAIL__VERIFICATION__CAMPAIGN__TITLE": {
+    "message": "Verifica tu correo electrónico"
+  },
+  "EMAIL__VERIFICATION__CAMPAIGN__MESSAGE_1": {
+    "message": "En los próximos 30 días, se requiere verificar la cuenta para seguir usando Clockify sin interrupciones."
+  },
+  "EMAIL__VERIFICATION__CAMPAIGN__MESSAGE_2": {
+    "message": "Para el uso futuro de Clockify sin interrupciones, verifica tu cuenta hoy."
+  },
+  "EMAIL__VERIFICATION__CAMPAIGN__MESSAGE_3": {
+    "message": "Verifica tu correo electrónico y continúa usando Clockify sin limitaciones futuras."
+  },
+  "EMAIL__VERIFICATION__CAMPAIGN__MESSAGE_4": {
+    "message": "Sin la verificación del correo electrónico, el uso de tu aplicación quedará limitado dentro de 15 días."
+  },
+  "EMAIL__VERIFICATION__CAMPAIGN__MESSAGE_5": {
+    "message": "Tu correo electrónico se debe verificar, de lo contrario, el uso de tu aplicación quedará restringido en 10 días."
+  },
+  "EMAIL__VERIFICATION__CAMPAIGN__MESSAGE_6": {
+    "message": "¡Última llamada para verificar tu correo electrónico! Sin él no podrás utilizar tu cuenta de Clockify."
+  },
+  "TIMEZONE_MISMATCH__TITLE": {
+    "message": "Discrepancia de zona horaria"
+  },
+  "TIMEZONE_MISMATCH__BODY_TEXT": {
+    "message": "Cuando { profileLink } y las zonas horarias del navegador no coinciden, se pueden generar informes incorrectos y es posible que algunas funciones no funcionen como se esperaba."
+  },
+  "TIMEZONE_MISMATCH__NOTIFICATION__PART_2": {
+    "message": "tu perfil"
+  },
+  "CHANGE_TIMEZONE_NOTIFICATION": {
+    "message": "Cambiar a { suggestedTimeZone }"
+  },
+  "GLOBAL__OR_LABEL": {
+    "message": "O"
+  },
+  "TIMEZONE_MISMATCH__NOTIFICATION__ENABLE_LOCATION_ACCESS": {
+    "message": "Habilitar acceso a la ubicación"
+  },
+  "TIMEZONE__UPDATE__SUCCESS_MESSAGE": {
+    "message": "Zona horaria actualizada con éxito"
+  },
+  "TIMEZONE__UPDATE__ERROR_MESSAGE": {
+    "message": "Error al actualizar la zona horaria"
+  },
+  "GLOBAL__DUPLICATE_SUCCESS_MSG": {
+    "message": "La entrada de tiempo se ha duplicado"
+  },
   "appName": {
     "message": "Clockify Rastreador de tiempo",
     "description": "El título de la aplicación, que se muestra en la tienda web."

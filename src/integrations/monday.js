@@ -4,8 +4,10 @@
 	// "Main table", "Kanban", "My work", "Cards" and "Modal" view
 	clockifyButton.render(selectors.hanger, { observe: true }, (elem) => {
 		const boardName =
-			text(selectors.boardName) || text(selectors.boardNameFromMainTable);
-		const hasBoardNameColon = boardName.includes(':');
+			text(selectors.boardName) ||
+			text(selectors.boardNameFromMainTable) ||
+			text('[data-testid="object-name"]');
+		const hasBoardNameColon = boardName?.includes(':');
 		const beforeColon = boardName.split(':')[0].trim();
 		const afterColon = boardName.split(':').slice(1).join('').trim();
 

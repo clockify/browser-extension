@@ -27,7 +27,11 @@ class Duration extends React.Component {
 	constructor(props) {
 		super(props);
 
-		const { start, end } = this.props.timeEntry.timeInterval;
+		const {
+			start,
+			end,
+			duration: intervalDuration,
+		} = this.props.timeEntry.timeInterval;
 		let startTime = moment(start);
 		let endTime = null;
 		if (end) {
@@ -48,7 +52,7 @@ class Duration extends React.Component {
 			dayAfterLockedEntries: 'January 1, 1970, 00:00:00 UTC',
 			manualModeDisabled: null,
 			time: duration(
-				end ? moment(end).diff(start) : moment().diff(moment(start))
+				intervalDuration ? intervalDuration : moment().diff(moment(start))
 			),
 			lang: 'en',
 		};
@@ -331,7 +335,7 @@ class Duration extends React.Component {
 								style={{
 									position: 'absolute',
 									right: '5px',
-									bottom: '-9px',
+									bottom: '-12px',
 									wordBreak: 'keep-all',
 								}}
 							>

@@ -9,9 +9,8 @@ function renderCardButton() {
 			'.page-actions__left:not(.clockify)',
 			{ observe: true },
 			(elem) => {
-				const ticketSubject = () => $('.ticket-subject-heading').innerText;
-				const ticketNumber = () => $('.breadcrumb__item.active').innerText;
-
+				const ticketSubject = () => text('.sentiment-ticket-heading');
+				const ticketNumber = () => text('.breadcrumb__item.active');
 				const description = () => `[#${ticketNumber()}] ${ticketSubject()}`;
 
 				const link = clockifyButton.createButton({ description });

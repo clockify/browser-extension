@@ -32,7 +32,6 @@ class EditFormManual extends React.Component {
 			forceTasks: false,
 			askToDeleteEntry: false,
 			tags: this.props.timeEntry.tags ? this.props.timeEntry.tags : [],
-			redrawCustomFields: 0,
 			inProgress: null,
 			workspaceSettings: null,
 			autocompleteItems: [],
@@ -41,14 +40,13 @@ class EditFormManual extends React.Component {
 		this.notify = this.notify.bind(this);
 		this.editProject = this.editProject.bind(this);
 		this.editTask = this.editTask.bind(this);
-		this.onChangeProjectRedrawCustomFields =
-			this.onChangeProjectRedrawCustomFields.bind(this);
 		this.updateCustomFields = this.updateCustomFields.bind(this);
 		this.setAsyncStateItems = this.setAsyncStateItems.bind(this);
 		this.handleInputChange = debounce(this.handleInputChange.bind(this), 200);
 		this.checkIfTaskBillable = this.checkIfTaskBillable.bind(this);
 		this.areCustomFieldsValid = this.areCustomFieldsValid.bind(this);
 		this.cfContainsWrongChars = this.cfContainsWrongChars.bind(this);
+		this.checkRequiredFields = this.checkRequiredFields.bind(this);
 	}
 
 	async setAsyncStateItems() {
@@ -121,7 +119,10 @@ class EditFormManual extends React.Component {
 
 			if (!timeEntry.customFieldValues || this.props.afterCreateProject)
 				timeEntry.customFieldValues = offlineStorage.customFieldValues; // generate from wsCustomFields
+		} else {
+			offlineStorage.wsCustomFields = [];
 		}
+
 
 		// if (await isOffline()) {
 		//     if (offlineStorage.timeEntryInOffline) {
@@ -229,14 +230,6 @@ class EditFormManual extends React.Component {
 				);
 			}
 		}
-	}
-
-	async onChangeProjectRedrawCustomFields() {
-		const { redrawCustomFields } = this.state;
-
-		this.setState({
-			redrawCustomFields: redrawCustomFields + 1,
-		});
 	}
 
 	async checkDefaultProjectTask(forceTasks) {
@@ -513,7 +506,7 @@ class EditFormManual extends React.Component {
 
 		const isOnline = !(await isOffline());
 
-		if (typeof this.props.workspaceSettings.forceDescription !== 'undefined') {
+		if (typeof this.props?.workspaceSettings?.forceDescription !== 'undefined') {
 			workspaceSettings = this.props.workspaceSettings;
 		} else {
 			let wss = await localStorage.getItem('workspaceSettings');
@@ -946,9 +939,7 @@ class EditFormManual extends React.Component {
 								editForm={false}
 								userSettings={this.props.userSettings}
 								integrationMode={this.props.integrationMode}
-								onChangeProjectRedrawCustomFields={
-									this.onChangeProjectRedrawCustomFields
-								}
+								checkRequiredFields={this.checkRequiredFields}
 							/>
 						</div>
 						<TagsList
@@ -1009,7 +1000,6 @@ class EditFormManual extends React.Component {
 									key="customFieldsContainer"
 									timeEntry={timeEntry}
 									isUserOwnerOrAdmin={this.state.isUserOwnerOrAdmin}
-									// redrawCustomFields={redrawCustomFields}
 									manualMode={true}
 									updateCustomFields={this.updateCustomFields}
 									areCustomFieldsValid={this.areCustomFieldsValid}

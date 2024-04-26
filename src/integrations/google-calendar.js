@@ -1,5 +1,5 @@
 clockifyButton.render(
-	'span[jsslot].JtukPc', // both event card & task card
+	'span[jsslot].kma42e', // both event card & task card
 	{ observe: true },
 	function (elem) {
 		function createClockifyElements() {

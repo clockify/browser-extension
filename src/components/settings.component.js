@@ -64,7 +64,7 @@ class Settings extends Component {
 		const stopTimerOnSelectedTime = await localStorage.getItem(
 			'stopTimerOnSelectedTime'
 		);
-		let defaultStopTime = this.props.getDefaultStopTime(
+		let defaultStopTime = this.getDefaultStopTime(
 			userData.settings.myStartOfDay
 		);
 		//if there is no stopTimerOnSelectedTime in local storage, set it to default
@@ -503,18 +503,21 @@ class Settings extends Component {
 		let stopTimerOnSelectedTimeToSaveInStorage;
 
 		if (!stopTimerOnSelectedTimeForCurrentUser) {
-			stopTimerOnSelectedTimeToSaveInStorage =
-				stopTimerOnSelectedTimeFromStorage.map((stopTimerOnSelectedTime) => {
-					if (stopTimerOnSelectedTime.userId === userId) {
-						stopTimerOnSelectedTime.enabled = true;
-						stopTimerOnSelectedTime.time = this.props.getDefaultStopTime(
-							userSettings.myStartOfDay
-						);
-					}
-					return stopTimerOnSelectedTime;
-				});
+			const defaultStopTime = this.getDefaultStopTime(
+				userSettings.myStartOfDay
+			);
+
+			stopTimerOnSelectedTimeToSaveInStorage = [
+				...stopTimerOnSelectedTimeFromStorage,
+				{
+					userId,
+					enabled: true,
+					time: defaultStopTime,
+				},
+			];
 
 			this.setState({
+				timeToStopTimer: defaultStopTime,
 				stopTimerOnSelectedTime: true,
 			});
 		} else {

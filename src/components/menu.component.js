@@ -46,7 +46,6 @@ class Menu extends React.Component {
 		};
 
 		// this.onSetWorkspace = this.onSetWorkspace.bind(this);
-		this.selectWorkspace = this.selectWorkspace.bind(this);
 		this.changeToSubdomainWorkspace =
 			this.changeToSubdomainWorkspace.bind(this);
 		this.cancelSubdomainWorkspaceChange =
@@ -534,68 +533,6 @@ class Menu extends React.Component {
 		}
 	}
 
-	selectWorkspace(workspace) {
-		this.props.clearEntries();
-
-		const workspaceId = workspace.id;
-		const workspaceName = workspace.name;
-
-		this.props.beforeWorkspaceChange();
-
-		this.setState((state) => ({
-			revert: false,
-			selectedWorkspaceId: workspaceId,
-			workspaceNameSelected: workspaceName,
-			previousWorkspace: state.selectedWorkspace,
-			selectedWorkspace: workspace,
-		}));
-		getBrowser()
-			.runtime.sendMessage({
-				eventName: 'setDefaultWorkspace',
-				options: {
-					workspaceId,
-				},
-			})
-			.then((response) => {
-				const subDomainName = response.headers
-					? response.headers['sub-domain-name']
-					: null;
-				if (subDomainName) {
-					this.setState({
-						revert: false,
-						workspaceChangeConfirmationIsOpen: true,
-						subDomainName: subDomainName,
-					});
-					return;
-				}
-				localStorage.setItem('activeWorkspaceId', workspaceId);
-				localStorage.removeItem('preProjectList');
-				localStorage.removeItem('preTagsList');
-
-				getBrowser().storage.local.set({
-					activeWorkspaceId: workspaceId,
-				});
-
-				this.setState({
-					defaultProjectEnabled: false,
-				});
-
-				// getBrowser().extension.getBackgroundPage().restartPomodoro();
-				getBrowser().runtime.sendMessage({
-					eventName: 'restartPomodoro',
-				});
-
-				this.props.workspaceChanged();
-			})
-			.catch((error) => {
-				if (error.response?.data.code === 1013) {
-					this.setState({
-						show2FAPopup: true,
-					});
-				}
-			});
-	}
-
 	cancelSubdomainWorkspaceChange() {
 		this.setState({
 			revert: true,
@@ -682,7 +619,7 @@ class Menu extends React.Component {
 						<div className="dropdown-divider"></div>
 						<WorkspaceList
 							revert={this.state.revert}
-							selectWorkspace={this.selectWorkspace}
+							selectWorkspace={this.props.selectWorkspace}
 							workspaces={this.state.workspaces}
 							selectedWorkspace={this.state.selectedWorkspace}
 							previousWorkspace={this.state.previousWorkspace}

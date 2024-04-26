@@ -67,6 +67,7 @@ class CreateTask extends React.Component {
 				this.goBackToEdit(timeEntry);
 			})
 			.catch((error) => {
+				console.log(error)
 				this.toaster.toast(
 					'error',
 					locales.replaceLabels(error.response.data.message),
@@ -85,19 +86,17 @@ class CreateTask extends React.Component {
 		this.goBackToEdit(this.props.timeEntry);
 	}
 
-	goBackToEdit(timeEntry) {
-		if (timeEntry.projectId && timeEntry.taskId && timeEntry.id) {
-			getBrowser().runtime.sendMessage({
-				eventName: 'editTask',
-				options: {
-					task: timeEntry.taskId,
-					project: timeEntry.projectId,
-					id: timeEntry.id,
-				},
+	goBackToEdit() {
+		try {
+			this.props.refreshProjectList().then(() => {
+				if (this.props.setShouldAddNewTask) {
+					this.props.setShouldAddNewTask();
+				}
+				this.props.closeModal();
 			});
+		} catch {
+			this.props.closeModal();
 		}
-
-		this.props.closeModal();
 	}
 
 	render() {

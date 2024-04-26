@@ -330,7 +330,8 @@
             "DOWNLOAD_COMPLETED": "다운로드가 완료되었습니다!",
             "DOWNLOAD_SUCCESS": "지출 보고서를 성공적으로 다운로드했습니다.",
             "CODE_SENT": "코드 전송됨",
-            "CONTACT_OWNER": "새 링크를 생성하려면 송장 소유자에게 문의하세요."
+            "CONTACT_OWNER": "새 링크를 생성하려면 송장 소유자에게 문의하세요.",
+            "DOWNLOAD_FAILED": "다운로드 실패"
         },
         "EXPORT_SETTINGS": {
             "TITLE": "송장 내보내기 설정"
@@ -340,7 +341,8 @@
         "REMINDER": {
             "SELECT_TO_REMIND_TOOLTIP": "알림을 보내고 싶은 모든 사용자를 선택하기",
             "ASSIGN_TEAM_MANAGER_TOOLTIP": "알림을 보낼 팀 관리자를 지정하기",
-            "DISABLED": "현재 활성화된 승인 기간에 속하지 않으므로 알림이 비활성화되었습니다. 활성화하려면 WS 설정에서 승인 기간을 변경하세요."
+            "DISABLED": "현재 활성화된 승인 기간에 속하지 않으므로 알림이 비활성화되었습니다. 활성화하려면 WS 설정에서 승인 기간을 변경하세요.",
+            "ASSIGN_PROJECT_MANAGER_TOOLTIP": "프로젝트 관리자를 지정하여 알림을 보내세요."
         },
         "NO_TIMESHEETS_MESSAGE": "{ value } 작업표 없음",
         "NO_TIMESHEETS_ON_LABEL": "{ value } 작업표 없음",
@@ -656,7 +658,8 @@
                         "EMAIL": "이메일로 로그인",
                         "INFO_MESSAGES": {
                             "EMAIL_LOGIN_MESSAGE": "이메일로 전송된 코드 또는 이메일과 비밀번호로 로그인"
-                        }
+                        },
+                        "OAUTH2": "OAuth2로 로그인"
                     },
                     "TITLE": "로그인 설정",
                     "INFO_MESSAGE": "이메일 및 비밀번호로 로그인을 비활성화하여 모든 사람이 SSO 자격 증명으로 로그인하도록 합니다."
@@ -710,7 +713,10 @@
                     "CONTACT_SUPPORT_LINK": "추가 지원이 필요하면 { contactUs }하세요.",
                     "DATA_TRANSFER_TITLE": "데이터 전송",
                     "DATA_TRANSFER_INFO": "귀하와 이 작업 공간의 사용자는 로그아웃되며 데이터 전송을 시작한 후 최대 12시간 동안 시간을 추적할 수 없습니다.",
-                    "DATA_TRANSFER_LOGOUT_INFO": "비밀번호를 입력하면 데이터 전송이 시작되고 로그아웃됩니다."
+                    "DATA_TRANSFER_LOGOUT_INFO": "비밀번호를 입력하면 데이터 전송이 시작되고 로그아웃됩니다.",
+                    "DATA_TRANSFER_CODE_LOGOUT_INFO": "코드를 입력하면 데이터 전송이 시작되고 로그아웃됩니다.",
+                    "CONFIRM_DATA_TRANSFER_TITLE": "데이터 전송 확인",
+                    "ENTER_ONE_TIME_CODE": "일회용 코드를 입력하세요:"
                 },
                 "CHANGE_REGION_TITLE": "지역 변경",
                 "CANNOT_CHANGE_REGION": "우리는 지역 서버에서 글로벌 서버로의 데이터 전송을 제공하지 않습니다."
@@ -750,7 +756,8 @@
             },
             "WORKSPACE_NAME": {
                 "TITLE": "작업 공간 이름",
-                "LENGTH_ERROR_MESSAGE": "작업공간 이름은 2~250자 사이여야 합니다."
+                "LENGTH_ERROR_MESSAGE": "작업공간 이름은 2~250자 사이여야 합니다.",
+                "ERROR_MESSAGE_LENGTH": "작업공간 이름은 2~50자(영문 기준) 사이여야 합니다."
             },
             "TIMESHEET_SETTING": {
                 "INFO_MESSAGE": "주간 작업표 보기를 사용하여 작업 및 프로젝트에 시간을 입력합니다. 활성화된 동안 프로젝트는 전체 작업 공간에 대한 필수 필드입니다.",
@@ -1056,7 +1063,8 @@
             "BILLABLE_HOURS": {
                 "TITLE": "청구 가능 시간",
                 "INFO": "시간당 요금을 설정하고 청구 가능한 시간을 기준으로 수입을 확인합니다.",
-                "LABEL": "청구 가능 시간 활성화"
+                "LABEL": "청구 가능 시간 활성화",
+                "INFO_CONTENT": "청구 가능 요율을 설정하고 청구 가능 시간을 기준으로 수입을 확인하세요."
             },
             "WHO_CAN_CREATE_ASSIGNMENTS": {
                 "TITLE": "누가 과제를 만들 수 있습니까?",
@@ -1318,7 +1326,8 @@
             "OWNER_DELETE_WORKSPACE_ERROR_MSG": "소유자는 소유권을 다른 사람에게 양도하거나 작업 영역에 유일한 구성원이 될 때까지 작업 영역을 삭제할 수 없습니다.",
             "OWNER_LEAVE_WORKSPACE_ERROR_MSG": "소유자는 소유권을 다른 사람에게 양도하거나 작업 영역에 유일한 구성원이 될 때까지 작업 영역을 떠날 수 없습니다.",
             "DELETE_WORKSPACE_ERROR_MSG": "다른 사람에게 소유권을 이전하거나 작업 영역에 유일한 구성원이 될 때까지 작업 영역을 삭제할 수 없습니다.",
-            "LEAVE_WORKSPACE_ERROR_MSG": "다른 사람에게 소유권을 이전하거나 작업 영역에 유일한 구성원이 될 때까지 작업 영역을 나갈 수 없습니다."
+            "LEAVE_WORKSPACE_ERROR_MSG": "다른 사람에게 소유권을 이전하거나 작업 영역에 유일한 구성원이 될 때까지 작업 영역을 나갈 수 없습니다.",
+            "WILL_BE_REMOVED_LABEL": "작업공간이 삭제됩니다"
         },
         "NEW": {
             "MODAL_TITLE": "새 작업 공간 만들기"
@@ -1741,7 +1750,8 @@
             },
             "RESTORE": {
                 "SUCCESS_MESSAGE": "{ projectGroupingLabel }이(가) 복원되었습니다."
-            }
+            },
+            "UNKNOWN_ERROR": "문제가 발생했습니다. 다시 시도해 주세요."
         },
         "CUSTOM_FIELD": {
             "UPDATE": {
@@ -1997,14 +2007,17 @@
                 "NO_DAYS_ERROR_MESSAGE": "날짜를 추가하지 않으면 알림을 생성할 수 없습니다.",
                 "NO_HOURS_ERROR_MESSAGE": "시간을 추가하지 않으면 알림을 생성할 수 없습니다.",
                 "NO_TEAM_MEMBERS_ERROR_MESSAGE": "팀원을 추가하지 않으면 알림을 생성할 수 없습니다.",
-                "NO_USER_NO_USERGROUPS": "팀 구성원을 선택하지 않으면 알림을 만들 수 없습니다"
+                "NO_USER_NO_USERGROUPS": "팀 구성원을 선택하지 않으면 알림을 만들 수 없습니다",
+                "NO_DATES_ERROR_MESSAGE": "날짜를 추가하지 않으면 알림을 만들 수 없습니다."
             },
             "UPDATE": {
                 "SUCCESS_MESSAGE": "알림이 업데이트되었습니다.",
                 "NO_DAYS_ERROR_MESSAGE": "날짜를 추가하지 않으면 알림을 수정할 수 없습니다.",
                 "NO_HOURS_ERROR_MESSAGE": "시간을 추가하지 않으면 알림을 수정할 수 없습니다.",
                 "NO_TEAM_MEMBERS_ERROR_MESSAGE": "팀원을 추가하지 않으면 알림을 수정할 수 없습니다.",
-                "ERROR_MESSAGE": "알림이 업데이트되지 않음"
+                "ERROR_MESSAGE": "알림이 업데이트되지 않음",
+                "NO_DATES_ERROR_MESSAGE": "날짜를 추가하지 않으면 알림을 수정할 수 없습니다.",
+                "NO_USER_NO_USERGROUPS": "알림을 업데이트하려면 팀 구성원을 한 명 이상 선택하세요."
             },
             "DELETE": {
                 "SUCCESS_MESSAGE": "알림이 성공적으로 삭제되었습니다.",
@@ -2663,7 +2676,8 @@
             "MIN_DATE_RANGE_7_DAYS": "최소 기간은 7일입니다.",
             "DATE_RANGE_MIN_MONTHS": "최소 날짜 범위는 { count } { count, plural, =0{} one{월} other{개월} } 입니다.",
             "DATE_RANGE_MUST_BE_1_WEEK": "날짜 범위는 1주일이어야 합니다.",
-            "DATE_RANGE_MUST_BE_1_YEAR": "날짜 범위는 1년이어야 합니다."
+            "DATE_RANGE_MUST_BE_1_YEAR": "날짜 범위는 1년이어야 합니다.",
+            "YOURE_NOT_LOGGED_WITH_THIS_ACCOUNT": "이 계정으로 로그인되어 있지 않습니다."
         },
         "UPGRADE_TO_USE_FEATURE_PART_2_NO_TRIAL": "{ feature }를 사용하다",
         "ATTENDANCE_LABEL": "출석",
@@ -2766,7 +2780,25 @@
         "DATA_TRANSFER_STARTED": "데이터 전송이 시작되었습니다.",
         "SEARCH_USERS_OR_GROUPS": "사용자 또는 그룹 검색",
         "REPLACE": "바꾸다",
-        "SELECT_DATES": "날짜를 선택하세요"
+        "SELECT_DATES": "날짜를 선택하세요",
+        "LOGOUT_LABEL": "로그아웃",
+        "TRANSFER_CONFIRM_LABEL": "확인하다",
+        "LABELS": {
+            "REGION": "지역"
+        },
+        "MANAGER": "관리자",
+        "SEARCH_CLIENT_LABEL": "검색 { client }",
+        "PROJECT_CUSTOM_SEARCH": "검색 { projectLabel }",
+        "SEARCH_COMPANIES_LABEL": "회사 검색",
+        "SEARCH_PLACEHOLDER_LABEL": "검색 { client }",
+        "ADD_SEARCH_PLACEHOLDER_LABEL": "추가/검색 { entity }",
+        "SEARCH_TAGS_LABEL": "태그 검색",
+        "SEARCH_CURRENCY": "통화 검색",
+        "SEARCH_CURRENCIES": "통화 검색",
+        "LOG_IN_LABEL_V2": "로그인",
+        "HIDE_ALL_LABEL": "모두 숨기기",
+        "SET_NEW_PASSWORD": "새 비밀번호 설정",
+        "CREATE_PASSWORD_LABEL": "비밀번호 생성"
     },
     "PTO": {
         "REQUESTS_TAB": {
@@ -3130,7 +3162,8 @@
             "MY_REPORTS_HEADER": "공유 보고서",
             "ASSIGNMENT_LABEL": "과제",
             "UPGRADE_TO_SCEDULE_REPORT_PART_2_WITH_INTERPOLATION": "보고서를 예약합니다.",
-            "SCHEDULED_LABEL_WITH_INTERPOLATION": "예정:"
+            "SCHEDULED_LABEL_WITH_INTERPOLATION": "예정:",
+            "REPORT_NAME_MIN_INFO": "보고서 이름은 { value }자 이상이어야 합니다."
         },
         "SHARED": {
             "GROUP_BY_LABEL": "그룹화 기준:",
@@ -3844,7 +3877,8 @@
         "FEATURES_INFO_TYPES": {
             "CUSTOMIZE_KIOSK": {
                 "TITLE": "키오스크 사용자 정의",
-                "DESCRIPTION": "키오스크를 열면 24시간 열려 있습니다. 그 후에 세션이 만료되고 관리자는 다시 로그인해야 합니다. 더 오래 또는 더 짧게 유지하려면 원하는 시간을 설정할 수 있습니다.<br><br>키오스크 화면에서 회사 로고를 업로드하여 Clockify 로고를 대체할 수도 있습니다."
+                "DESCRIPTION": "키오스크를 열면 24시간 열려 있습니다. 그 후에 세션이 만료되고 관리자는 다시 로그인해야 합니다. 더 오래 또는 더 짧게 유지하려면 원하는 시간을 설정할 수 있습니다.<br><br>키오스크 화면에서 회사 로고를 업로드하여 Clockify 로고를 대체할 수도 있습니다.",
+                "TAG_PARAMETERS_DESCRIPTION": "키오스크를 열면 24시간 열려있습니다. 그 후에는 세션이 만료되며 관리자는 다시 로그인해야 합니다. 더 길게 또는 더 짧게 열어두기를 원하는 경우 원하는 시간을 설정할 수 있습니다. { doubleBreak } 회사 로고를 업로드하여 키오스크 화면의 Clockify 로고를 대체할 수도 있습니다."
             },
             "USER_SEATS": {
                 "DESCRIPTION": "작업 공간의 각 활성 사용자는 하나의 사용자 자리를 차지합니다.<br><br>비활성화된 사용자는 자리를 차지하지 않습니다. 즉, 누군가를 비활성화하고 대신 다른 사람으로 자리를 채울 수 있습니다.<br><br>다음을 수행할 수 있습니다. 구독 페이지에서 언제든지 시트를 구매하거나 제거할 수 있습니다.",
@@ -3947,7 +3981,8 @@
                 "MARKETPLACE_DESCRIPTION_WITH_INTERPOLATION": "경고는 사용자 이메일로 전송되며 받은 편지함에 도달하지 않습니다."
             },
             "FORCE_TIMER": {
-                "DESCRIPTION": "사용자가 수동으로 시간을 추가할 수 없도록 수동 모드를 비활성화합니다. 대신 타이머를 사용해야만 시간 항목을 만들 수 있습니다.<br><br>이렇게 하면 일반 사용자가 기존 시간 항목에서 시작 또는 종료 시간을 편집할 수 없습니다."
+                "DESCRIPTION": "사용자가 수동으로 시간을 추가할 수 없도록 수동 모드를 비활성화합니다. 대신 타이머를 사용해야만 시간 항목을 만들 수 있습니다.<br><br>이렇게 하면 일반 사용자가 기존 시간 항목에서 시작 또는 종료 시간을 편집할 수 없습니다.",
+                "TAG_PARAMETERS_DESCRIPTION": "사용자가 수동으로 시간을 추가할 수 없도록 수동 모드를 비활성화합니다. 대신 타이머를 사용해서만 시간 항목을 생성할 수 있습니다. { doubleBreak } 이는 또한 일반 사용자가 기존 시간 항목의 시작 또는 종료 시간을 편집하는 것을 방지합니다."
             },
             "GPS_TRACKING": {
                 "DESCRIPTION": "원격 현장 작업자는 클라이언트를 방문할 때 모바일 앱을 통해 로그인할 수 있으므로 나중에 그날 방문한 모든 작업 현장을 볼 수 있습니다."
@@ -3986,14 +4021,16 @@
                 "DESCRIPTION": "재료비 및 출장비와 같은 업무 관련 비용을 총액 또는 사용자 지정 단위(예: 10마일, 2단위 또는 5일)를 입력하고 영수증을 업로드하여 기록합니다. 나중에 청구 가능한 비용을 인보이스에 포함합니다."
             },
             "AUDIT_LOG": {
-                "DESCRIPTION": "사용자가 Clockify에 수행하는 모든 작업을 기록하고 나중에 감사 보고서를 실행하여 누가 무엇을 언제 수행했는지 확인합니다(예: 누군가가 시간 항목을 편집하거나 프로젝트를 삭제한 경우 등).<br><br> 다음을 수행할 수 있습니다. 또한 로그를 내보내고 Excel에서 데이터를 분석하거나 백업으로 저장할 수 있습니다."
+                "DESCRIPTION": "사용자가 Clockify에 수행하는 모든 작업을 기록하고 나중에 감사 보고서를 실행하여 누가 무엇을 언제 수행했는지 확인합니다(예: 누군가가 시간 항목을 편집하거나 프로젝트를 삭제한 경우 등).<br><br> 다음을 수행할 수 있습니다. 또한 로그를 내보내고 Excel에서 데이터를 분석하거나 백업으로 저장할 수 있습니다.",
+                "TAG_PARAMETERS_DESCRIPTION": "사용자가 Clockify에서 수행하는 모든 작업을 기록하고 나중에 감사 보고서를 실행하여 누가 언제 무엇을 했는지 확인하십시오(예: 누군가가 시간 항목을 편집했는지, 프로젝트를 삭제했는지 등). { doubleBreak } 로그를 내보내고 데이터를 Excel로 분석하거나 백업으로 저장할 수도 있습니다."
             },
             "EDIT_MEMBER_PROFILE": {
                 "TITLE": "프로필 수정",
                 "DESCRIPTION": "이름, 이메일, 주 시작 및 정원과 같은 팀원의 세부 정보를 직접 편집합니다."
             },
             "SCHEDULING": {
-                "DESCRIPTION": "일정은 프로젝트 할당 및 교대 근무를 시각화하는 데 도움이 되므로 팀이 얼마나 바쁜지 한 눈에 알 수 있습니다. <br> 타임라인에 따라 프로젝트를 계획하고, 누가 무엇을 언제 작업해야 하는지 지정하고, 정원이 초과되거나 부족한 사람을 확인하고, 팀이 캘린더에서 할당된 업무를 볼 수 있도록 합니다."
+                "DESCRIPTION": "일정은 프로젝트 할당 및 교대 근무를 시각화하는 데 도움이 되므로 팀이 얼마나 바쁜지 한 눈에 알 수 있습니다. <br> 타임라인에 따라 프로젝트를 계획하고, 누가 무엇을 언제 작업해야 하는지 지정하고, 정원이 초과되거나 부족한 사람을 확인하고, 팀이 캘린더에서 할당된 업무를 볼 수 있도록 합니다.",
+                "TAG_PARAMETERS_DESCRIPTION": "일정을 설정하면 프로젝트 할당 및 교대 근무를 시각화하여 팀이 얼마나 바쁜지 한눈에 알 수 있습니다. { break } 타임라인에 따라 프로젝트를 계획하고, 누가 무엇을 언제 작업해야 하는지 지정하고, 누가 용량 초과 또는 부족인지 확인하고, 팀이 달력에서 자신의 할당을 확인할 수 있도록 하세요."
             },
             "APPROVAL": {
                 "DESCRIPTION": "팀은 검토를 위해 주간 작업표와 경비를 제출할 수 있으며 승인 또는 거부할 수 있습니다. 일단 승인되면 영구적인 서면 기록 없이는 더 이상 시간과 비용을 변경할 수 없습니다.",
@@ -4004,24 +4041,29 @@
                 "DESCRIPTION": "사용자 필드를 사용하여 팀 구성원에게 추가 정보(예: 직위, 직위, 전화, 부서, 사용자 ID)를 추가하고 나중에 시간과 함께 내보낼 수 있습니다."
             },
             "MULTI_FACTOR_AUTHENTICATION": {
-                "DESCRIPTION": "모든 사용자에게 이중 인증을 요구하여 작업 공간을 보호하십시오. <br>\n프로필에서 2FA를 활성화하지 않은 모든 사용자는 작업 공간에 액세스하기 위해 2FA를 활성화해야 합니다. 2FA가 활성화되면 사용자는 비밀번호 외에 이메일을 확인하여 로그인할 1회용 코드를 확인해야 합니다."
+                "DESCRIPTION": "모든 사용자에게 이중 인증을 요구하여 작업 공간을 보호하십시오. <br>\n프로필에서 2FA를 활성화하지 않은 모든 사용자는 작업 공간에 액세스하기 위해 2FA를 활성화해야 합니다. 2FA가 활성화되면 사용자는 비밀번호 외에 이메일을 확인하여 로그인할 1회용 코드를 확인해야 합니다.",
+                "TAG_PARAMETERS_DESCRIPTION": "모든 사용자에게 2단계 인증을 요구하여 작업 공간을 보호하세요. { break }\n프로필에 2FA가 활성화되어 있지 않은 모든 사용자는 작업 공간에 액세스하려면 이를 활성화해야 합니다. 2FA가 활성화되면 사용자는 비밀번호 외에도 로그인하려면 이메일에서 일회용 코드를 확인해야 합니다."
             },
             "BREAKS": {
                 "DESCRIPTION": "직원이 키오스크를 통해 휴식 시간을 알릴 수 있습니다.<br><br> 근무 시간에 직원이 키오스크 터미널을 사용하여 시작 및 종료 시간을 알릴 수 있습니다.<br><br>나중에 관리자 및 관리자는 보고서에서 각 직원이 휴식을 취한 시간과 시간을 확인할 수 있습니다.",
-                "TITLE": "휴식(키오스크)"
+                "TITLE": "휴식(키오스크)",
+                "TAG_PARAMETERS_DESCRIPTION": "직원들이 휴식 시간을 키오스크를 통해 표시할 수 있도록 허용합니다. { doubleBreak } 시간이 기록되는 동안 키오스크 단말기를 사용하여 펀치 시작 및 종료 브레이크를 수행할 수 있습니다. { doubleBreak } 나중에 관리자와 관리자는 각 직원이 휴식을 취한 시간과 보고서에서 휴식 시간을 확인할 수 있습니다."
             },
             "PIN": {
                 "TITLE": "PIN(키오스크)",
-                "DESCRIPTION": "직원이 키오스크를 통해 로그인하려면 PIN을 입력해야 합니다.<br><br>각 직원은 다른 사람이 시간을 확인할 수 없도록 개인 PIN을 받습니다. 관리자는 또한 모든 팀 구성원의 출입을 허용하는 범용 PIN을 받습니다."
+                "DESCRIPTION": "직원이 키오스크를 통해 로그인하려면 PIN을 입력해야 합니다.<br><br>각 직원은 다른 사람이 시간을 확인할 수 없도록 개인 PIN을 받습니다. 관리자는 또한 모든 팀 구성원의 출입을 허용하는 범용 PIN을 받습니다.",
+                "TAG_PARAMETERS_DESCRIPTION": "직원이 키오스크를 통해 출근하려면 PIN을 입력해야 합니다. { doubleBreak } 각 직원은 개인 PIN을 받게 되므로 다른 직원이 대신 근무할 수 없습니다. 또한 관리자는 모든 팀원의 출퇴근 시간을 확인할 수 있는 범용 PIN을 받습니다."
             },
             "LIMITED_USER_SEATS": {
-                "DESCRIPTION": "작업 공간의 각 활성 제한된 사용자는 하나의 제한된 좌석을 차지합니다(전체 좌석보다 비용이 적게 듭니다).<br><br>제한된 사용자는 이메일이 없으며 키오스크를 통해서만 시간을 추적할 수 있습니다(제한된 사용자를 이메일을 추가하여 전체 사용자).<br><br>비활성화된 사용자는 자리를 차지하지 않습니다. 즉, 누군가를 비활성화하고 대신 다른 사람으로 자리를 채울 수 있습니다.<br><br>구매하거나 제거할 수 있습니다. 구독 페이지에서 언제든지 좌석을 확보할 수 있습니다."
+                "DESCRIPTION": "작업 공간의 각 활성 제한된 사용자는 하나의 제한된 좌석을 차지합니다(전체 좌석보다 비용이 적게 듭니다).<br><br>제한된 사용자는 이메일이 없으며 키오스크를 통해서만 시간을 추적할 수 있습니다(제한된 사용자를 이메일을 추가하여 전체 사용자).<br><br>비활성화된 사용자는 자리를 차지하지 않습니다. 즉, 누군가를 비활성화하고 대신 다른 사람으로 자리를 채울 수 있습니다.<br><br>구매하거나 제거할 수 있습니다. 구독 페이지에서 언제든지 좌석을 확보할 수 있습니다.",
+                "TAGS_PARAMETERS_DESCRIPTION": "작업 공간의 각 활성 제한된 사용자는 하나의 제한된 시트를 차지합니다(전체 시트보다 비용이 저렴함). { doubleBreak } 제한된 사용자는 이메일이 없으며 키오스크를 통해서만 시간을 추적할 수 있습니다. (이메일을 추가하여 제한된 사용자를 정식 사용자로 전환할 수 있습니다.) { doubleBreak } 비활성화된 사용자는 자리를 차지하지 않습니다. 즉, 누군가를 비활성화하고 대신 다른 사람으로 자리를 채울 수 있습니다. { doubleBreak } 구독 페이지에서 언제든지 좌석을 구매하거나 제거할 수 있습니다."
             },
             "REGULAR_USER_SEATS": {
                 "DESCRIPTION": "작업 공간의 각 활성 일반 사용자는 하나의 일반 시트를 차지합니다.<br><br>일반 사용자(관리자 및 관리자 포함)는 이메일이 있고 Clockify에 직접 로그인할 수 있는 사용자입니다.<br><br>비활성화된 사용자는 다음을 수행하지 않습니다. 자리를 차지하지 마십시오. 즉, 누군가를 비활성화하고 대신 다른 사람으로 자리를 채울 수 있습니다.<br><br>구독 페이지에서 언제든지 시트를 구매하거나 제거할 수 있습니다."
             },
             "FULL_USER_SEATS": {
-                "DESCRIPTION": "작업 공간의 각 활성 전체 사용자는 한 자리를 차지합니다.<br><br>정규 사용자(관리자 및 관리자 포함)는 이메일이 있고 Clockify에 직접 로그인할 수 있는 사용자입니다.<br><br>비활성화된 사용자는 다음을 수행하지 않습니다. 자리를 차지하지 마십시오. 즉, 누군가를 비활성화하고 대신 다른 사람으로 자리를 채울 수 있습니다.<br><br>구독 페이지에서 언제든지 시트를 구매하거나 제거할 수 있습니다."
+                "DESCRIPTION": "작업 공간의 각 활성 전체 사용자는 한 자리를 차지합니다.<br><br>정규 사용자(관리자 및 관리자 포함)는 이메일이 있고 Clockify에 직접 로그인할 수 있는 사용자입니다.<br><br>비활성화된 사용자는 다음을 수행하지 않습니다. 자리를 차지하지 마십시오. 즉, 누군가를 비활성화하고 대신 다른 사람으로 자리를 채울 수 있습니다.<br><br>구독 페이지에서 언제든지 시트를 구매하거나 제거할 수 있습니다.",
+                "TAGS_PARAMETERS_DESCRIPTION": "작업 공간의 각 활성 전체 사용자는 하나의 전체 시트를 차지합니다. { doubleBreak } 전체 사용자(관리자 및 관리자 포함)는 이메일이 있고 Clockify에 직접 로그인할 수 있는 사용자입니다. { doubleBreak } 비활성화된 사용자는 자리를 차지하지 않습니다. 즉, 누군가를 비활성화하고 대신 다른 사람으로 자리를 채울 수 있습니다. { doubleBreak } 구독 페이지에서 언제든지 좌석을 구매하거나 제거할 수 있습니다."
             },
             "TIME_OFF": {
                 "DESCRIPTION": "휴가 정책 및 휴일을 정의하고, 휴가 요청을 제출 및 승인하고, 누가 언제 부재 중인지 확인하고, 적치휴가 및 남은 잔액을 추적합니다."
@@ -4107,7 +4149,8 @@
             "FIND_PROJECT_CUSTOM_LABEL_ELLIPSES": "{ projectLabel } 또는 { projectGroupingLabel } 찾기…",
             "CAN_NOT_SELECT_PROJECT": "작업이 하나 이상 있을 때까지 프로젝트를 선택할 수 없습니다.",
             "SEARCH_PROJECT_CUSTOM_LABEL": "{ projectLabel } 또는 { projectGroupingLabel } 검색…",
-            "SEARCH_TASK_CUSTOM_LABEL": "{ taskLabel } @{ projectLabel } 또는 { projectGroupingLabel } 검색…"
+            "SEARCH_TASK_CUSTOM_LABEL": "{ taskLabel } @{ projectLabel } 또는 { projectGroupingLabel } 검색…",
+            "SEARCH_PROJECT_CUSTOM_LABEL_NO_DOTS": "{ projectLabel } 또는 { projectGroupingLabel } 검색"
         },
         "SINGLE_DATE_PICKER": {
             "DATE_RANGE_ERROR_MSG": "잠긴 기간에 시간을 추가할 수 없음",
@@ -4259,7 +4302,8 @@
             "NO_GROUPS_LABEL": "아직 그룹이 없습니다.",
             "NO_MATCHING_GROUP_LABEL": "일치하는 그룹이 없습니다",
             "CREATE_GROUP": "{ search } 그룹을 만듭니다.",
-            "ADD_OR_FIND_GROUPS_PLACEHOLDER": "그룹 추가/찾기..."
+            "ADD_OR_FIND_GROUPS_PLACEHOLDER": "그룹 추가/찾기...",
+            "ADD_OR_SEARCH_GROUPS_PLACEHOLDER": "그룹 추가/검색"
         },
         "SHARED_BY": "공유:",
         "ENTITY_TEMPLATES_LABEL": "템플릿",
@@ -4466,9 +4510,13 @@
                 "ALL_ADMINS": "모든 관리자"
             },
             "ERRORS": {
-                "NO_ASSIGNEES_ADDED": "작업 담당자를 추가하지 않으면 미리 알림을 생성할 수 없습니다."
+                "NO_ASSIGNEES_ADDED": "작업 담당자를 추가하지 않으면 미리 알림을 생성할 수 없습니다.",
+                "NO_DAYS_ADDED": "알림을 업데이트하려면 최소 일주일을 선택하세요."
             },
-            "MORE_LABEL": "더"
+            "MORE_LABEL": "더",
+            "TOOLTIP": {
+                "INACTIVE_USERS_INFO": "비활성 사용자는 알림을 받지 않습니다."
+            }
         },
         "SHARED": {
             "LESS_LABEL": "더 적은"
@@ -4710,7 +4758,8 @@
             "BREAK_DUPLICATE_SUCCESS": "브레이크 항목이 중복되었습니다",
             "CREATE_MULTIPLE_SUCCESS": "시간 항목이 생성되었습니다.",
             "RUNNING_ENTRY_EXISTS": "다른 항목이 실행 중인 동안에는 시간 항목을 작성할 수 없습니다.",
-            "BREAKS_DISABLED": "휴식 기능이 활성화되어 있지 않으므로 휴식 시간 항목을 생성할 수 있는 권한이 없습니다."
+            "BREAKS_DISABLED": "휴식 기능이 활성화되어 있지 않으므로 휴식 시간 항목을 생성할 수 있는 권한이 없습니다.",
+            "CREATE_FAIL_SPLITTING": "시간 항목을 분할하지 못했습니다. 다시 시도해 주세요."
         },
         "APPROVALS": {
             "ZONE": {
@@ -4750,7 +4799,8 @@
                         "VALID": "유효한 이메일을 입력하세요.",
                         "MATCH": "이메일이 일치하지 않습니다.",
                         "ACCOUNT_ALREADY_EXISTS": "이 이메일을 사용하는 계정이 이미 존재합니다."
-                    }
+                    },
+                    "CURRENT_EMAIL_LABEL": "현재 이메일"
                 },
                 "NOTIFICATIONS": {
                     "TITLE": "이메일 알림",
@@ -4875,6 +4925,9 @@
             "TARGET": {
                 "NO_TARGET": "선택된 팀원이 없습니다.",
                 "NO_TARGET_WITH_INTERPOLATION": "선택된 팀원 없음:"
+            },
+            "TWO_FACTOR": {
+                "LOGOUT_INFO": "이 작업공간에는 2FA가 필요합니다. 확인 후 로그아웃됩니다."
             }
         },
         "EMAIL": {
@@ -5076,7 +5129,8 @@
             "CONTINUE_WITH_SAML2_LABEL": "SAML2 계속",
             "EMAIL_REQUIRED_ERROR_LABEL": "이메일은 필수입니다",
             "PASSWORD_REQUIRED_ERROR_LABEL": "비밀번호가 필요합니다",
-            "NO_ACCOUNT_SIGNUP_INSTEAD_LABEL": "계정이 없는 것 같습니다.\n대신 가입하세요."
+            "NO_ACCOUNT_SIGNUP_INSTEAD_LABEL": "계정이 없는 것 같습니다.\n대신 가입하세요.",
+            "LOGIN_ATTEMPT_MESSAGE": "로그인을 시도해 주셔서 감사합니다. 귀하의 이메일이 등록된 경우 보안 로그인 링크를 곧 보내드리겠습니다."
         },
         "LOGIN_COMMERCIAL": {
             "PUMBLE_TITLE": "무료 팀 채팅 앱",
@@ -5685,7 +5739,10 @@
         },
         "MESSAGE": {
             "UPDATE_SUCCESS": "이메일 환경설정이 업데이트되었습니다.",
-            "SESSION_NOT_FOUND": "세션을 찾을 수 없습니다"
+            "SESSION_NOT_FOUND": "세션을 찾을 수 없습니다",
+            "UPDATE_TITLE": "성공!",
+            "UPDATE_ERROR": "이런, 세션이 만료되었습니다!",
+            "UPDATE_ERROR_DESCRIPTION": "세션이 만료되었습니다. 이메일 기본 설정을 관리하려면 로그인하세요."
         }
     },
     "NO_TEMPLATE": "템플릿 없음",
@@ -5816,7 +5873,9 @@
         "STOP_AT_SPECIFIED_TIME": "지정된 시간에 타이머를 자동으로 중지",
         "STOP_TIME": "정지 시간",
         "FORBIDDEN_CHARACTERS": "잘못된 값을 입력했습니다. \"<\" 및 \">\" 문자를 사용하지 마십시오.",
-        "NO_NEW_NOTIFICATIONSL_MESSAGE": "현재 새 알림이 없습니다."
+        "NO_NEW_NOTIFICATIONSL_MESSAGE": "현재 새 알림이 없습니다.",
+        "WORKSPACE_LOCKED": "작업공간이 잠겼습니다.",
+        " SWITCH_WORKSPACE": "작업 공간 전환"
     },
     "REFRESH": "새로 고치다",
     "KIOSK": {
@@ -6443,7 +6502,8 @@
         "AUTHORS": "저자",
         "SELECT_AUTHOR": "작성자 선택",
         "FIND_AUTHORS": "저자 찾기",
-        "AUTHOR": "작가"
+        "AUTHOR": "작가",
+        "SEARCH_AUTHORS": "작성자 검색"
     },
     "SETTINGS": {
         "MESSAGES": {
@@ -6534,13 +6594,20 @@
         "DROPDOWN": {
             "REGULAR_USER_INFO": "관리자만 추가 기능을 보고 설치할 수 있습니다. 여전히 Marketplace를 탐색하고 관리자에게 추가 기능을 제안할 수 있습니다.",
             "ADMIN_USER_INFO": "첫 번째 애드온을 설치할 준비가 되셨습니까? 필요에 따라 Clockify를 개선하고 적용하십시오.",
-            "ADMIN_USER_INFO_PT_TWO": "필요에 따라 Clockify를 개선하고 조정하십시오."
+            "ADMIN_USER_INFO_PT_TWO": "필요에 따라 Clockify를 개선하고 조정하십시오.",
+            "SELECT_OPTION_LABEL": "옵션을 선택하세요",
+            "SELECT_OPTIONS_LABEL": "옵션 선택"
         },
         "DISABLE_INFO": "이 추가 기능을 비활성화하면 UI 위치가 제거되고 추가 기능이 작업 공간에 대한 액세스 권한을 잃게 됩니다. 나중에 활성화할 수 있습니다.",
         "UNINSTALL_INFO_PART_TWO": "추가 기능에 따라",
         "UNINSTALL_INFO_PART_THREE": "추가 기능에 의해 저장된 데이터가 손실될 수 있습니다.",
         "MY_ADDONS_LABEL": "내 애드온",
-        "FAILED_FETCH_WEBHOOKS": "애드온 웹후크를 가져오지 못했습니다."
+        "FAILED_FETCH_WEBHOOKS": "애드온 웹후크를 가져오지 못했습니다.",
+        "EVENTS": {
+            "NAVIGATION": {
+                "ERROR": "경로가 존재하지 않습니다"
+            }
+        }
     },
     "MESSAGES": {
         "ERROR_MISSING_FIELDS_IS_REQUIRED": "{ fields }가 필요합니다."
@@ -6594,7 +6661,8 @@
             "ADDON_UNINSTALLED_SUCCESS_LABEL": "애드온이 성공적으로 제거되었습니다.",
             "ADDON_DEACTIVATED_LABEL": "애드온 비활성화됨",
             "ADDON_INSTALLED_FAIL_LABEL": "애드온 설치 실패"
-        }
+        },
+        "NOT_AVAILABLE_ON_TEST_ACCOUNTS": "테스트 계정에서는 사용할 수 없습니다."
     },
     "SHARED": {
         "CURRENCIES": {
@@ -6633,13 +6701,16 @@
             "PENDING_CHANGE_BANNER_TEXT": "이메일 변경 대기 중",
             "CANCEL_CHANGE_BTN": "변경 취소",
             "EMAIL_CHANGE_CANCELED_MSG": "이메일 변경이 취소되었습니다.",
-            "PENDING_CHANGE_BANNER_TOOLTIP": "이메일 변경 보류 중: { userEmail }. 이메일 받은 편지함을 확인하고 새 이메일을 확인하여 프로세스를 완료하세요."
+            "PENDING_CHANGE_BANNER_TOOLTIP": "이메일 변경 보류 중: { userEmail }. 이메일 받은 편지함을 확인하고 새 이메일을 확인하여 프로세스를 완료하세요.",
+            "PENDING_CHANGE_BANNER_TOOLTIP_TEAMS_PAGE": "이메일 변경 보류 중: { userEmail }. 사용자가 새 이메일을 확인하면 프로세스가 완료됩니다."
         },
         "ACCOUNT_ALREADY_VERIFIED_TITLE": "계정이 이미 확인되었습니다!",
         "ACCOUNT_ALREADY_VERIFIED_TEXT": "이 계정은 이미 확인되었습니다.",
         "LINK_EXPIRED_TEXT": "이 확인 링크는 만료되었습니다.",
         "OPEN_OUTLOOK_BTN": "아웃룩 열기",
-        "EMAIL_LINK_EXPIRED_TEXT": "이 이메일 확인 링크는 만료되었습니다."
+        "EMAIL_LINK_EXPIRED_TEXT": "이 이메일 확인 링크는 만료되었습니다.",
+        "RESEND_EMAIL_BTN": "이메일 재전송",
+        "EMAIL_SUCCESSFULLY_VERIFIED_MSG_2": "이메일을 성공적으로 확인했습니다."
     },
     "EXTENSION_FORBIDDEN_CHARACTERS": "잘못된 값을 입력했습니다. \"<\" 및 \">\" 문자를 사용하지 마십시오.",
     "GOBAL": {
@@ -6761,5 +6832,13 @@
         "MESSAGES": {
             "WORKSPACE_IS_LOCKED": "데이터 전송으로 인해 작업공간이 잠겼습니다."
         }
-    }
+    },
+    "TAGS": {
+        "MODALS": {
+            "DELETE_MODAL": {
+                "DELETE_SINGLE_ITEM_MODAL_TEXT": "{ itemName }은(는) 할당된 모든 시간 항목에서도 제거됩니다. 이 작업은 되돌릴 수 없습니다."
+            }
+        }
+    },
+    "SET_PASSWORD_MODAL_BODY": "\"비밀번호 설정\"을 클릭하면 비밀번호 설정을 위한 이메일이 { email }로 전송됩니다."
 }

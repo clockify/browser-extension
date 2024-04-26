@@ -381,7 +381,8 @@
             "BILLABLE_HOURS": {
                 "TITLE": "請求可能な時間",
                 "INFO": "時間料金を設定し、請求可能な時間に基づいて収益を確認します。",
-                "LABEL": "請求可能な時間をアクティブにする"
+                "LABEL": "請求可能な時間をアクティブにする",
+                "INFO_CONTENT": "請求可能な料金を設定し、請求可能な時間に基づいて収益を確認します。"
             },
             "BILLABLE_RATES": {
                 "INFO": "時給と金額を見ることができるのは誰ですか",
@@ -703,7 +704,8 @@
                         "EMAIL": "メールでログイン",
                         "INFO_MESSAGES": {
                             "EMAIL_LOGIN_MESSAGE": "電子メールに送信されたコード、または電子メールとパスワードを使用してログインします"
-                        }
+                        },
+                        "OAUTH2": "OAuth2でログインする"
                     }
                 }
             },
@@ -727,7 +729,10 @@
                     "CONDITIONS_NOT_MET": "条件が満たされていません",
                     "FURTHER_INFO": "さらなる支援のために。",
                     "CONTACT_SUPPORT_LINK": "さらにサポートが必要な場合は、{ contactUs } してください。",
-                    "DATA_TRANSFER_LOGOUT_INFO": "パスワードを入力するとデータ転送が開始され、ログアウトされます。"
+                    "DATA_TRANSFER_LOGOUT_INFO": "パスワードを入力するとデータ転送が開始され、ログアウトされます。",
+                    "CONFIRM_DATA_TRANSFER_TITLE": "データ転送の確認",
+                    "DATA_TRANSFER_CODE_LOGOUT_INFO": "コードを入力するとデータ転送が開始され、ログアウトされます。",
+                    "ENTER_ONE_TIME_CODE": "ワンタイムコードを入力してください:"
                 },
                 "CHANGE_REGION_TITLE": "地域を変更する",
                 "CANNOT_CHANGE_REGION": "リージョンサーバーからグローバルサーバーへのデータ転送は提供していません。"
@@ -839,7 +844,8 @@
             "OWNER_DELETE_WORKSPACE_ERROR_MSG": "所有者は、所有権を他の誰かに譲渡するか、ワークスペースに残っている唯一のメンバーになるまで、ワークスペースを削除できません。",
             "OWNER_LEAVE_WORKSPACE_ERROR_MSG": "所有者は、所有権を他の誰かに譲渡するか、ワークスペースに残された唯一のメンバーになるまで、ワークスペースを離れることはできません。",
             "DELETE_WORKSPACE_ERROR_MSG": "所有権を他の誰かに譲渡するか、ワークスペースに残っている唯一のメンバーになるまで、ワークスペースを削除することはできません。",
-            "LEAVE_WORKSPACE_ERROR_MSG": "所有権を他の誰かに譲渡するか、ワークスペースに残っている唯一のメンバーになるまで、ワークスペースを離れることはできません。"
+            "LEAVE_WORKSPACE_ERROR_MSG": "所有権を他の誰かに譲渡するか、ワークスペースに残っている唯一のメンバーになるまで、ワークスペースを離れることはできません。",
+            "WILL_BE_REMOVED_LABEL": "ワークスペースは削除されます"
         },
         "ACCOUNTS_USER_SERVICE": {
             "GET_USERS_ERROR_MSG": "ユーザーの取得に失敗しました。",
@@ -861,7 +867,8 @@
             },
             "WORKSPACE_NAME": {
                 "TITLE": "ワークスペース名",
-                "LENGTH_ERROR_MESSAGE": "ワークスペース名は2〜250文字の長さである必要があります"
+                "LENGTH_ERROR_MESSAGE": "ワークスペース名は2〜250文字の長さである必要があります",
+                "ERROR_MESSAGE_LENGTH": "ワークスペース名の長さは 2 ～ 50 文字にする必要があります"
             },
             "TIMESHEET_SETTING": {
                 "INFO_MESSAGE": "毎週のタイムシートビューを使用して、タスクとプロジェクトの時間を入力します。アクティブ化されている間、プロジェクトはワークスペース全体の必須フィールドです。",
@@ -1623,7 +1630,8 @@
             },
             "RESTORE": {
                 "SUCCESS_MESSAGE": "{ projectGroupingLabel }が復元されました。"
-            }
+            },
+            "UNKNOWN_ERROR": "何か問題が発生しました。もう一度試してください。"
         },
         "CUSTOM_FIELD": {
             "CREATE": {
@@ -1797,14 +1805,17 @@
                 "NO_DAYS_ERROR_MESSAGE": "日を追加しないとリマインダーを作成できません。",
                 "NO_HOURS_ERROR_MESSAGE": "時間を追加せずにリマインダーを作成することはできません。",
                 "NO_TEAM_MEMBERS_ERROR_MESSAGE": "チームメンバーを追加せずにリマインダーを作成することはできません。",
-                "NO_USER_NO_USERGROUPS": "チームメンバーを選択しないとリマインダーを作成できません"
+                "NO_USER_NO_USERGROUPS": "チームメンバーを選択しないとリマインダーを作成できません",
+                "NO_DATES_ERROR_MESSAGE": "日付を追加しないとリマインダーを作成できません。"
             },
             "UPDATE": {
                 "SUCCESS_MESSAGE": "リマインダーが正常に更新されました",
                 "NO_DAYS_ERROR_MESSAGE": "日を追加せずにリマインダーを編集することはできません。",
                 "NO_HOURS_ERROR_MESSAGE": "時間を追加せずにリマインダーを編集することはできません。",
                 "NO_TEAM_MEMBERS_ERROR_MESSAGE": "チームメンバーを追加せずにリマインダーを編集することはできません。",
-                "ERROR_MESSAGE": "リマインダーは更新されていません"
+                "ERROR_MESSAGE": "リマインダーは更新されていません",
+                "NO_DATES_ERROR_MESSAGE": "日付を追加しないとリマインダーを編集できません。",
+                "NO_USER_NO_USERGROUPS": "リマインダーを更新するには、少なくとも 1 人のチームメンバーを選択してください"
             },
             "DELETE": {
                 "SUCCESS_MESSAGE": "リマインダーが正常に削除されました",
@@ -2524,7 +2535,8 @@
             "MIN_DATE_RANGE_3_MONTHS": "最小期間は 3 か月です",
             "DATE_RANGE_MIN_MONTHS": "最小の日付範囲は { count } { count, plural、=0{} one{月} other{月} }",
             "DATE_RANGE_MUST_BE_1_WEEK": "期間は 1 週間にする必要があります",
-            "DATE_RANGE_MUST_BE_1_YEAR": "期間は 1 年である必要があります"
+            "DATE_RANGE_MUST_BE_1_YEAR": "期間は 1 年である必要があります",
+            "YOURE_NOT_LOGGED_WITH_THIS_ACCOUNT": "このアカウントでログインしていません"
         },
         "ADD_FIND_PLACEHOLDER_LABEL_CLIENT": "クライアントの追加/検索…",
         "UPGRADE_TO_USE_FEATURE_PART_2_NO_TRIAL": "{ feature }を使用する",
@@ -2627,7 +2639,25 @@
         "DATA_TRANSFER_STARTED": "データ転送を開始しました",
         "SEARCH_USERS_OR_GROUPS": "ユーザーまたはグループを検索する",
         "REPLACE": "交換する",
-        "SELECT_DATES": "日付を選択してください"
+        "SELECT_DATES": "日付を選択してください",
+        "LOGOUT_LABEL": "ログアウト",
+        "TRANSFER_CONFIRM_LABEL": "確認",
+        "LABELS": {
+            "REGION": "地域"
+        },
+        "MANAGER": "マネージャー",
+        "SEARCH_CLIENT_LABEL": "{ client }を検索",
+        "PROJECT_CUSTOM_SEARCH": "{ projectLabel }を検索",
+        "SEARCH_CURRENCIES": "通貨を検索する",
+        "SEARCH_COMPANIES_LABEL": "会社を探す",
+        "SEARCH_PLACEHOLDER_LABEL": "{ client }を検索",
+        "ADD_SEARCH_PLACEHOLDER_LABEL": "追加・検索 { entity }",
+        "SEARCH_CURRENCY": "通貨の検索",
+        "SEARCH_TAGS_LABEL": "タグを検索",
+        "LOG_IN_LABEL_V2": "ログイン",
+        "HIDE_ALL_LABEL": "すべて隠す",
+        "SET_NEW_PASSWORD": "新しいパスワードを設定する",
+        "CREATE_PASSWORD_LABEL": "パスワードの作成"
     },
     "AUDIT_LOG": {
         "FILTERS": {
@@ -2918,8 +2948,11 @@
             "DESCRIPTION": "Clockify から { emailPrefType } メールを受信しなくなります。"
         },
         "MESSAGE": {
-            "UPDATE_SUCCESS": "メール設定が更新されました",
-            "SESSION_NOT_FOUND": "セッションが見つかりません"
+            "UPDATE_SUCCESS": "メール設定が更新されました。",
+            "SESSION_NOT_FOUND": "セッションが見つかりません",
+            "UPDATE_TITLE": "成功！",
+            "UPDATE_ERROR": "おっと、セッションの有効期限が切れました。",
+            "UPDATE_ERROR_DESCRIPTION": "セッションの有効期限が切れました。電子メール設定を管理するにはログインしてください。"
         }
     },
     "FAILED_TO_COPY_TIME": "一部のエントリをコピーできませんでした",
@@ -3143,7 +3176,8 @@
         "REMINDER": {
             "ASSIGN_TEAM_MANAGER_TOOLTIP": "チームマネージャーを割り当てて、リマインダーを送信します。",
             "SELECT_TO_REMIND_TOOLTIP": "通知するすべてのユーザーを選択します。",
-            "DISABLED": "現在有効な承認期間に属していないため、リマインダーは無効になっています。有効にするには、WS 設定で承認期間を変更してください。"
+            "DISABLED": "現在有効な承認期間に属していないため、リマインダーは無効になっています。有効にするには、WS 設定で承認期間を変更してください。",
+            "ASSIGN_PROJECT_MANAGER_TOOLTIP": "プロジェクト マネージャーを割り当てて、リマインダーを送信します。"
         },
         "NO_TIMESHEETS_MESSAGE": "{ value }タイムシートはありません",
         "NO_TIMESHEETS_ON_UNSUBMITTED_LABEL": "{ label }の{ value }タイムシートはありません",
@@ -3615,7 +3649,8 @@
             "CONTACT_OWNER": "新しいリンクを生成するには、請求書の所有者に連絡してください。",
             "DOWNLOAD_COMPLETED": "ダウンロード完了！",
             "DOWNLOAD_SUCCESS": "経費レポートが正常にダウンロードされました。",
-            "CODE_SENT": "送信されたコード"
+            "CODE_SENT": "送信されたコード",
+            "DOWNLOAD_FAILED": "ダウンロードに失敗しました"
         },
         "EXPORT_SETTINGS": {
             "TITLE": "請求書のエクスポート設定"
@@ -4136,7 +4171,8 @@
             "CONTINUE_WITH_SAML2_LABEL": "SAML2を続行します",
             "PASSWORD_REQUIRED_ERROR_LABEL": "パスワードが必要",
             "EMAIL_REQUIRED_ERROR_LABEL": "メールアドレスは必須です",
-            "NO_ACCOUNT_SIGNUP_INSTEAD_LABEL": "アカウントをお持ちではないようですが、\n代わりにサインアップしてください。"
+            "NO_ACCOUNT_SIGNUP_INSTEAD_LABEL": "アカウントをお持ちではないようですが、\n代わりにサインアップしてください。",
+            "LOGIN_ATTEMPT_MESSAGE": "ログインをお試しいただきありがとうございます。メールアドレスが登録されている場合は、間もなく安全なログイン リンクが送信されます。"
         },
         "ENTER_VERIFICATION_CODE": {
             "CHECK_EMAIL_TITLE": "メールでコードを確認してください",
@@ -4317,7 +4353,8 @@
             },
             "ASSIGNMENT_LABEL": "課題",
             "UPGRADE_TO_SCEDULE_REPORT_PART_2_WITH_INTERPOLATION": "レポートのスケジュールを設定します。",
-            "SCHEDULED_LABEL_WITH_INTERPOLATION": "予定:"
+            "SCHEDULED_LABEL_WITH_INTERPOLATION": "予定:",
+            "REPORT_NAME_MIN_INFO": "レポート名には少なくとも { value } 文字が必要です。"
         },
         "SUMMARY": {
             "SORT_BY_TITLE_ASC_LABEL": "タイトル（上）",
@@ -4674,7 +4711,8 @@
                 "MARKETPLACE_DESCRIPTION_WITH_INTERPOLATION": "アラートはユーザーの電子メールに送信されますが、受信箱には届きません。"
             },
             "FORCE_TIMER": {
-                "DESCRIPTION": "手動モードを無効にして、ユーザーが手動で時間を追加できないようにします。代わりに、タイマーを使用するだけで時間エントリを作成できます。<br> <br>これにより、通常のユーザーが既存の時間エントリの開始時刻または終了時刻を編集することもできなくなります。"
+                "DESCRIPTION": "手動モードを無効にして、ユーザーが手動で時間を追加できないようにします。代わりに、タイマーを使用するだけで時間エントリを作成できます。<br> <br>これにより、通常のユーザーが既存の時間エントリの開始時刻または終了時刻を編集することもできなくなります。",
+                "TAG_PARAMETERS_DESCRIPTION": "手動モードを無効にして、ユーザーが手動で時間を追加できないようにします。代わりに、タイマーを使用することによってのみ時間エントリを作成できるようになります。 { doubleBreak } これにより、通常のユーザーは既存の時間エントリの開始時刻または終了時刻を編集できなくなります。"
             },
             "GPS_TRACKING": {
                 "DESCRIPTION": "リモートフィールドワーカーは、クライアントにアクセスしたときにモバイルアプリを介してクロックインできるため、後でその日にアクセスしたすべてのジョブサイトを確認できます。"
@@ -4713,20 +4751,23 @@
                 "DESCRIPTION": "合計額またはカスタム単位（10マイル、2単位、5日など）を入力し、領収書をアップロードして、資材や旅費などの仕事関連の費用を記録します。後で、請求可能な費用を請求書に含めます。"
             },
             "AUDIT_LOG": {
-                "DESCRIPTION": "ユーザーが行ったすべてのことをClockifyに記録し、後で監査レポートを実行して、誰がいつ何をしたかを確認します（たとえば、誰かが時間エントリを編集したか、プロジェクトを削除したかなど）。<br> <br>次のことができます。また、ログをエクスポートしてExcelでデータを分析するか、バックアップとして保存します。"
+                "DESCRIPTION": "ユーザーが行ったすべてのことをClockifyに記録し、後で監査レポートを実行して、誰がいつ何をしたかを確認します（たとえば、誰かが時間エントリを編集したか、プロジェクトを削除したかなど）。<br> <br>次のことができます。また、ログをエクスポートしてExcelでデータを分析するか、バックアップとして保存します。",
+                "TAG_PARAMETERS_DESCRIPTION": "Clockify でユーザーが行うすべてのことを記録し、後で監査レポートを実行して、誰がいつ何をしたかを確認します (例: 誰かが時間エントリを編集したか、プロジェクトを削除したかなど)。 { doubleBreak } ログをエクスポートして Excel でデータを分析したり、バックアップとして保存したりすることもできます。"
             },
             "EDIT_MEMBER_PROFILE": {
                 "TITLE": "プロファイルを編集する",
                 "DESCRIPTION": "チームメンバーの名前、メールアドレス、週の始まり、定員など、チームメンバーの詳細を自分で直接編集します。"
             },
             "SCHEDULING": {
-                "DESCRIPTION": "スケジューリングは、プロジェクトの割り当てとシフトを視覚化するのに役立ち、チームがどれだけ忙しいかが一目でわかります。 <br>タイムラインでプロジェクトを計画し、誰がいつ何に取り組む必要があるかを割り当て、誰がキャパシティを超過または不足しているかを確認し、チームにカレンダーでの割り当てを確認させます。"
+                "DESCRIPTION": "スケジューリングは、プロジェクトの割り当てとシフトを視覚化するのに役立ち、チームがどれだけ忙しいかが一目でわかります。 <br>タイムラインでプロジェクトを計画し、誰がいつ何に取り組む必要があるかを割り当て、誰がキャパシティを超過または不足しているかを確認し、チームにカレンダーでの割り当てを確認させます。",
+                "TAG_PARAMETERS_DESCRIPTION": "スケジュール機能を使用すると、プロジェクトの割り当てとシフトを視覚化できるため、チームの忙しさが一目でわかります。 { break } タイムラインでプロジェクトを計画し、誰がいつ何に取り組む必要があるかを割り当て、誰がキャパシティを超えているか、誰が不足しているかを確認し、チームがカレンダーで割り当てを確認できるようにします。"
             },
             "USER_FIELDS": {
                 "DESCRIPTION": "ユーザーフィールドを使用すると、チームメンバーに追加情報（役職、役職、電話番号、部門、ユーザーIDなど）を追加し、後でそれを時間とともにエクスポートできます。"
             },
             "MULTI_FACTOR_AUTHENTICATION": {
-                "DESCRIPTION": "すべてのユーザーに2要素認証を要求することにより、ワークスペースを保護します。 <br>\nプロファイルで2FAを有効にしていないすべてのユーザーは、ワークスペースにアクセスするために2FAを有効にするように強制されます。 2FAを有効にすると、パスワードに加えて、ユーザーはログインするための1回限りのコードがないかメールを確認する必要があります。"
+                "DESCRIPTION": "すべてのユーザーに2要素認証を要求することにより、ワークスペースを保護します。 <br>\nプロファイルで2FAを有効にしていないすべてのユーザーは、ワークスペースにアクセスするために2FAを有効にするように強制されます。 2FAを有効にすると、パスワードに加えて、ユーザーはログインするための1回限りのコードがないかメールを確認する必要があります。",
+                "TAG_PARAMETERS_DESCRIPTION": "すべてのユーザーに 2 要素認証を要求することで、ワークスペースを保護します。 【X81X】\nプロファイルで 2FA が有効になっていないすべてのユーザーは、ワークスペースにアクセスするために強制的に有効にする必要があります。 2FA が有効になると、ユーザーはパスワードに加えて、ログインするためのワンタイム コードを電子メールで確認する必要があります。"
             },
             "APPROVAL": {
                 "DESCRIPTION": "チームは毎週のタイムシートと経費をレビューのために提出でき、承認または却下できます。承認されると、時間と費用は恒久的な書面による証跡なしでは変更できなくなります。",
@@ -4735,24 +4776,29 @@
             },
             "BREAKS": {
                 "TITLE": "休憩（キオスク）",
-                "DESCRIPTION": "従業員がキオスクを介して休憩中を示すことができるようにします。<br><br>出勤中に、キオスク端末を使用して休憩の開始と終了をパンチできます。<br> <br>後で、管理者と管理者は、各従業員が休憩している時期とレポートの量を確認できます。"
+                "DESCRIPTION": "従業員がキオスクを介して休憩中を示すことができるようにします。<br><br>出勤中に、キオスク端末を使用して休憩の開始と終了をパンチできます。<br> <br>後で、管理者と管理者は、各従業員が休憩している時期とレポートの量を確認できます。",
+                "TAG_PARAMETERS_DESCRIPTION": "従業員がキオスク経由で休憩中であることを通知できるようにします。 { doubleBreak } 打刻中、キオスク端末を使用して開始および終了ブレイクをパンチできます。 { doubleBreak } 後で、管理者とマネージャーは、各従業員がいつ休憩していたか、どれくらい休憩したかをレポートで確認できます。"
             },
             "CUSTOMIZE_KIOSK": {
                 "TITLE": "キオスクをカスタマイズする",
-                "DESCRIPTION": "キオスクを開くと、24時間開いたままになります。その後、セッションは期限切れになり、管理者は再度ログインする必要があります。開いたままにする時間を長くしたり短くしたりする場合は、任意の時間数を設定できます。<br> <br>キオスク画面のClockifyロゴの代わりに、会社のロゴをアップロードすることもできます。"
+                "DESCRIPTION": "キオスクを開くと、24時間開いたままになります。その後、セッションは期限切れになり、管理者は再度ログインする必要があります。開いたままにする時間を長くしたり短くしたりする場合は、任意の時間数を設定できます。<br> <br>キオスク画面のClockifyロゴの代わりに、会社のロゴをアップロードすることもできます。",
+                "TAG_PARAMETERS_DESCRIPTION": "キオスクを開くと、24 時間開いたままになります。その後、セッションが期限切れになるため、管理者は再度ログインする必要があります。より長くまたはより短く開いたままにしたい場合は、好きな時間数を設定できます。 { doubleBreak } 会社のロゴをアップロードして、キオスク画面上の Clockify ロゴを置き換えることもできます。"
             },
             "PIN": {
                 "TITLE": "PIN（キオスク）",
-                "DESCRIPTION": "キオスクを介して出勤するには、従業員にPINの入力を要求します。<br> <br>各従業員は個人のPINを取得するため、他の人は出勤できません。管理者は、チームメンバーの出勤と退勤を可能にするユニバーサルPINも取得します。"
+                "DESCRIPTION": "キオスクを介して出勤するには、従業員にPINの入力を要求します。<br> <br>各従業員は個人のPINを取得するため、他の人は出勤できません。管理者は、チームメンバーの出勤と退勤を可能にするユニバーサルPINも取得します。",
+                "TAG_PARAMETERS_DESCRIPTION": "従業員がキオスク経由で出勤するために PIN を入力するように要求します。 { doubleBreak } 各従業員は個人の PIN を取得するため、他の従業員が代わりに打刻することはできません。管理者は、チーム メンバーの出入りを記録できるユニバーサル PIN も取得します。"
             },
             "LIMITED_USER_SEATS": {
-                "DESCRIPTION": "ワークスペース内のアクティブな制限付きユーザーはそれぞれ1つの制限付きシートを占有します（フルシートよりも安価です）。<br> <br>制限付きユーザーはメールを持たず、キオスク経由でのみ時間を追跡できます（制限付きユーザーをメールを追加してフルユーザーになります。<br><br>非アクティブ化されたユーザーは席に着きません。つまり、誰かを非アクティブ化し、代わりに他の人で席を埋めることができます。<br><br>購入または削除できますサブスクリプションページのいつでも座席。"
+                "DESCRIPTION": "ワークスペース内のアクティブな制限付きユーザーはそれぞれ1つの制限付きシートを占有します（フルシートよりも安価です）。<br> <br>制限付きユーザーはメールを持たず、キオスク経由でのみ時間を追跡できます（制限付きユーザーをメールを追加してフルユーザーになります。<br><br>非アクティブ化されたユーザーは席に着きません。つまり、誰かを非アクティブ化し、代わりに他の人で席を埋めることができます。<br><br>購入または削除できますサブスクリプションページのいつでも座席。",
+                "TAGS_PARAMETERS_DESCRIPTION": "ワークスペース内のアクティブな制限付きユーザーはそれぞれ 1 つの制限付きシートを占有します (フルシートよりもコストがかかりません)。 { doubleBreak } 制限付きユーザーは電子メールを持たず、キオスク経由でのみ時間を追跡できます (電子メールを追加することで、制限付きユーザーを完全ユーザーに変換できます)。 { doubleBreak } 非アクティブ化されたユーザーは席を占有しません。つまり、誰かを非アクティブ化して、代わりに別のユーザーがその席を埋めることができます。 { doubleBreak } サブスクリプション ページでいつでもシートを購入または削除できます。"
             },
             "REGULAR_USER_SEATS": {
                 "DESCRIPTION": "ワークスペース内のアクティブな通常のユーザーはそれぞれ1つの通常のシートを占有します。<br><br>通常のユーザー（マネージャーと管理者を含む）は、電子メールを持ち、Clockifyに直接ログインできるユーザーです。<br><br>非アクティブ化されたユーザーは席をとらないでください。つまり、誰かを非アクティブにして、代わりに他の誰かで席を埋めることができます。<br> <br>サブスクリプションページで、いつでも席を購入または削除できます。"
             },
             "FULL_USER_SEATS": {
-                "DESCRIPTION": "ワークスペース内のアクティブなフルユーザーはそれぞれ1つのフルシートを占有します。<br><br>フルユーザー（マネージャーと管理者を含む）は、電子メールを持ち、Clockifyに直接ログインできるユーザーです。<br><br>非アクティブ化されたユーザーは席をとらないでください。つまり、誰かを非アクティブにして、代わりに他の誰かで席を埋めることができます。<br> <br>サブスクリプションページで、いつでも席を購入または削除できます。"
+                "DESCRIPTION": "ワークスペース内のアクティブなフルユーザーはそれぞれ1つのフルシートを占有します。<br><br>フルユーザー（マネージャーと管理者を含む）は、電子メールを持ち、Clockifyに直接ログインできるユーザーです。<br><br>非アクティブ化されたユーザーは席をとらないでください。つまり、誰かを非アクティブにして、代わりに他の誰かで席を埋めることができます。<br> <br>サブスクリプションページで、いつでも席を購入または削除できます。",
+                "TAGS_PARAMETERS_DESCRIPTION": "ワークスペース内のアクティブなフル ユーザーはそれぞれ 1 つのフル シートを占有します。 { doubleBreak } フル ユーザー (マネージャーおよび管理者を含む) は、電子メールを持ち、Clockify に直接ログインできるユーザーです。 { doubleBreak } 非アクティブ化されたユーザーは席を占有しません。つまり、誰かを非アクティブ化して、代わりに別のユーザーがその席を埋めることができます。 { doubleBreak } サブスクリプション ページでいつでもシートを購入または削除できます。"
             },
             "TIME_OFF": {
                 "DESCRIPTION": "休暇ポリシーと休日を定義し、休暇申請を送信して承認し、誰がいつ不在であるかを確認し、見越額と残りの残高を追跡します。"
@@ -4801,7 +4847,8 @@
             "FIND_PROJECT_CUSTOM_LABEL_ELLIPSES": "{ projectLabel } または { projectGroupingLabel } を検索…",
             "CAN_NOT_SELECT_PROJECT": "少なくとも 1 つのタスクがなければ、プロジェクトを選択できません。",
             "SEARCH_PROJECT_CUSTOM_LABEL": "{ projectLabel } または { projectGroupingLabel } を検索…",
-            "SEARCH_TASK_CUSTOM_LABEL": "{ taskLabel } @{ projectLabel } または { projectGroupingLabel } を検索…"
+            "SEARCH_TASK_CUSTOM_LABEL": "{ taskLabel } @{ projectLabel } または { projectGroupingLabel } を検索…",
+            "SEARCH_PROJECT_CUSTOM_LABEL_NO_DOTS": "{ projectLabel } または { projectGroupingLabel } で検索します"
         },
         "SINGLE_DATE_PICKER": {
             "DATE_RANGE_ERROR_MSG": "ロックされた期間に時間を追加できません",
@@ -5032,7 +5079,8 @@
             "NO_GROUPS_LABEL": "グループはまだありません",
             "NO_MATCHING_GROUP_LABEL": "一致するグループがありません",
             "CREATE_GROUP": "{ search } グループを作成します。",
-            "ADD_OR_FIND_GROUPS_PLACEHOLDER": "グループの追加/検索..."
+            "ADD_OR_FIND_GROUPS_PLACEHOLDER": "グループの追加/検索...",
+            "ADD_OR_SEARCH_GROUPS_PLACEHOLDER": "グループの追加/検索"
         },
         "ENTITY_TEMPLATES_LABEL": "テンプレート",
         "ENTITY_TEMPLATES_LABEL_PLURAL": "テンプレート",
@@ -5320,7 +5368,8 @@
                 "ALL_ADMINS": "すべての管理者"
             },
             "ERRORS": {
-                "NO_ASSIGNEES_ADDED": "タスクの担当者を追加せずにリマインダーを作成することはできません。"
+                "NO_ASSIGNEES_ADDED": "タスクの担当者を追加せずにリマインダーを作成することはできません。",
+                "NO_DAYS_ADDED": "リマインダーを更新するには、少なくとも 1 つの曜日を選択してください"
             },
             "TITLE": "リマインダー",
             "CREATE": {
@@ -5344,7 +5393,10 @@
                 "TITLE": "リマインダーを削除",
                 "CONFIRM": "リマインダーを削除してもよろしいですか？"
             },
-            "MORE_LABEL": "もっと"
+            "MORE_LABEL": "もっと",
+            "TOOLTIP": {
+                "INACTIVE_USERS_INFO": "非アクティブなユーザーはリマインダーを受け取りません。"
+            }
         },
         "SEATS": {
             "NO_AVAILABLE": {
@@ -5620,7 +5672,8 @@
             "BREAK_DUPLICATE_SUCCESS": "ブレークエントリが重複しています",
             "CREATE_MULTIPLE_SUCCESS": "時間エントリが作成されました",
             "RUNNING_ENTRY_EXISTS": "別のエントリの実行中は時間エントリを作成できません",
-            "BREAKS_DISABLED": "休憩機能が有効になっていないため、休憩時間エントリを作成する権限がありません。"
+            "BREAKS_DISABLED": "休憩機能が有効になっていないため、休憩時間エントリを作成する権限がありません。",
+            "CREATE_FAIL_SPLITTING": "時間エントリを分割できませんでした。もう一度お試しください。"
         },
         "CURSOR": {
             "POINTER": "ポインタ"
@@ -5650,7 +5703,8 @@
                         "VALID": "有効なメールアドレスを入力してください。",
                         "MATCH": "メールが一致しません。",
                         "ACCOUNT_ALREADY_EXISTS": "このメールアドレスを持つアカウントはすでに存在します。"
-                    }
+                    },
+                    "CURRENT_EMAIL_LABEL": "現在のメール"
                 },
                 "NOTIFICATIONS": {
                     "TITLE": "電子メール通知",
@@ -5767,6 +5821,9 @@
                 "TOGGLE": "2FAを有効にする",
                 "ALL_WORKSPACES_INFO": "すべてのワークスペースで必要なため、2FAを無効にすることはできません",
                 "TITLE": "二要素認証"
+            },
+            "TWO_FACTOR": {
+                "LOGOUT_INFO": "このワークスペースには 2FA が必要です。確認後ログアウトされます。"
             }
         },
         "COMPACT_PROJECT": {
@@ -6125,7 +6182,9 @@
         "STOP_AT_SPECIFIED_TIME": "指定した時刻にタイマーを自動的に停止する",
         "STOP_TIME": "停止時間",
         "FORBIDDEN_CHARACTERS": "間違った値を入力しました。 \"<\" および \">\" 文字は使用しないでください",
-        "NO_NEW_NOTIFICATIONSL_MESSAGE": "現在、新しい通知はありません"
+        "NO_NEW_NOTIFICATIONSL_MESSAGE": "現在、新しい通知はありません",
+        "WORKSPACE_LOCKED": "ワークスペースがロックされました",
+        " SWITCH_WORKSPACE": "ワークスペースを切り替える"
     },
     "KIOSK": {
         "EMPTY_COMPONENT": {
@@ -6447,7 +6506,8 @@
         "AUTHORS": "著者",
         "SELECT_AUTHOR": "著者を選択",
         "FIND_AUTHORS": "著者を探す",
-        "AUTHOR": "著者"
+        "AUTHOR": "著者",
+        "SEARCH_AUTHORS": "著者を検索する"
     },
     "SETTINGS": {
         "MESSAGES": {
@@ -6541,10 +6601,17 @@
         "DROPDOWN": {
             "REGULAR_USER_INFO": "管理者のみがアドオンを表示およびインストールできます。マーケットプレイスを参照して、管理者にアドオンを提案することもできます。",
             "ADMIN_USER_INFO": "最初のアドオンをインストールする準備はできましたか? Clockify をニーズに合わせて強化し、適応させます。",
-            "ADMIN_USER_INFO_PT_TWO": "Clockify をニーズに合わせて強化し、適応させます。"
+            "ADMIN_USER_INFO_PT_TWO": "Clockify をニーズに合わせて強化し、適応させます。",
+            "SELECT_OPTION_LABEL": "オプションを選択してください",
+            "SELECT_OPTIONS_LABEL": "オプションを選択"
         },
         "UNINSTALL_INFO_PART_TWO": "アドオンによっては",
-        "FAILED_FETCH_WEBHOOKS": "アドオン Webhook の取得に失敗しました"
+        "FAILED_FETCH_WEBHOOKS": "アドオン Webhook の取得に失敗しました",
+        "EVENTS": {
+            "NAVIGATION": {
+                "ERROR": "ルートが存在しません"
+            }
+        }
     },
     "MESSAGES": {
         "ERROR_MISSING_FIELDS_IS_REQUIRED": "{ fields }が必要です。"
@@ -6598,7 +6665,8 @@
             "ADDON_UNINSTALLED_SUCCESS_LABEL": "アドオンが正常にアンインストールされました",
             "ADDON_INSTALLED_FAIL_LABEL": "アドオンのインストールに失敗しました",
             "ADDON_STATUS_TOGGLE_FAILED_LABEL": "ステータスを更新できませんでした"
-        }
+        },
+        "NOT_AVAILABLE_ON_TEST_ACCOUNTS": "テストアカウントでは利用できません"
     },
     "SHARED": {
         "CURRENCIES": {
@@ -6641,9 +6709,12 @@
             "PENDING_CHANGE_BANNER_TEXT": "メールアドレスの変更が保留中",
             "PENDING_CHANGE_BANNER_TOOLTIP": "電子メールへの変更が保留中: { userEmail }。電子メールの受信箱を確認し、新しい電子メールを確認してプロセスを完了します。",
             "CANCEL_CHANGE_BTN": "変更をキャンセル",
-            "EMAIL_CHANGE_CANCELED_MSG": "メールアドレスの変更がキャンセルされました"
+            "EMAIL_CHANGE_CANCELED_MSG": "メールアドレスの変更がキャンセルされました",
+            "PENDING_CHANGE_BANNER_TOOLTIP_TEAMS_PAGE": "電子メールへの保留中の変更: { userEmail }。ユーザーが新しいメールを確認すると、プロセスは完了します。"
         },
-        "EMAIL_LINK_EXPIRED_TEXT": "このメール認証リンクの有効期限が切れています。"
+        "EMAIL_LINK_EXPIRED_TEXT": "このメール認証リンクの有効期限が切れています。",
+        "RESEND_EMAIL_BTN": "メールを再送",
+        "EMAIL_SUCCESSFULLY_VERIFIED_MSG_2": "メールアドレスが正常に認証されました。"
     },
     "EXTENSION_FORBIDDEN_CHARACTERS": "間違った値を入力しました。 「<」および「>」文字を使用しないでください",
     "GOBAL": {
@@ -6765,5 +6836,13 @@
         "MESSAGES": {
             "WORKSPACE_IS_LOCKED": "データ転送のためワークスペースがロックされました"
         }
-    }
+    },
+    "TAGS": {
+        "MODALS": {
+            "DELETE_MODAL": {
+                "DELETE_SINGLE_ITEM_MODAL_TEXT": "{ itemName } は、割り当てられているすべての時間エントリからも削除されます。このアクションを元に戻すことはできません。"
+            }
+        }
+    },
+    "SET_PASSWORD_MODAL_BODY": "「パスワードを設定」をクリックすると、{ email }にパスワード設定用のメールが送信されます。"
 }

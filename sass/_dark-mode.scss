@@ -5,13 +5,18 @@ body.clockify-dark-mode,
 	background-color: variables.$bg-09;
 	.logo {
 		width: 98px;
+		background-image: url('../assets/images/clockify_logo_dark.svg') !important;
+		background-size: contain;
+		background-repeat: no-repeat;
 	}
-	.home_page,
+	/* 	.home_page,
 	.settings_page {
 		.header .logo {
-			background-image: url('../assets/images/clockify_logo_dark.svg');
+			background-image: url('../assets/images/clockify_logo_dark.svg') !important;
+			background-size: contain;
+			background-repeat: no-repeat;
 		}
-	}
+	} */
 	.header_and_timer {
 		background-color: variables.$bg-09;
 	}
@@ -83,10 +88,10 @@ body.clockify-dark-mode,
 		}
 	}
 	.week-header {
-		color: #c6d2d9;
+		color: variables.$light_text;
 		&-total {
 			&-time {
-				color: #c6d2d9;
+				color: variables.$light_text;
 			}
 			&-label {
 				color: #90a4ae;
@@ -134,7 +139,7 @@ body.clockify-dark-mode,
 	}
 
 	textarea.custom-field-text {
-		color: #c6d2d9;
+		color: variables.$light_text;
 		background-color: #263238;
 		border: 1px solid variables.$bg-12;
 
@@ -148,7 +153,8 @@ body.clockify-dark-mode,
 			}
 		}
 		&::placeholder {
-			color: #c6d2d9;
+			color: #607d8b !important;
+			opacity: 1;
 		}
 	}
 
@@ -187,11 +193,12 @@ body.clockify-dark-mode,
 		background-color: transparent !important;
 		input {
 			background-color: #263238 !important;
-			color: white !important;
-			border: 0 !important;
+			color: variables.$light_text !important;
+			border: 1px solid #12191d;
 			outline: none !important;
 			&::placeholder {
-				color: #c6d2d9;
+				color: #607d8b !important;
+				opacity: 1;
 			}
 		}
 		&-disabled {
@@ -234,7 +241,7 @@ body.clockify-dark-mode,
 	}
 	.tag-list-add,
 	.edit-form-billable {
-		color: variables.$bg-04;
+		color: variables.$light_text !important;
 	}
 	.checked {
 		width: 18px;
@@ -262,9 +269,9 @@ body.clockify-dark-mode,
 	}
 	.project-list-input,
 	.tag-list-input {
-		background: variables.$bg-12;
+		background: variables.$bg-12 !important;
 		input {
-			background: variables.$bg-10;
+			background: variables.$bg-10 !important;
 			border: 1px solid variables.$bg-12;
 			color: variables.$bg-04;
 
@@ -590,11 +597,11 @@ body.clockify-dark-mode,
 		box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 		.cl-modal-title,
 		.custom-field-link-label {
-			color: #c6d2d9;
+			color: variables.$light_text;
 		}
 		.custom-field-link {
 			background-color: #263238;
-			color: #c6d2d9;
+			color: variables.$light_text;
 		}
 		.cl-close {
 			background: none;
@@ -624,7 +631,7 @@ body.clockify-dark-mode,
 		font-size: 14px;
 	}
 	.loading-entries {
-		color: #c6d2d9;
+		color: variables.$light_text;
 	}
 
 	.autocomplete-dropdown-item {
@@ -652,7 +659,26 @@ body.clockify-dark-mode,
 	&.clockify-integration-popup {
 		color: variables.$light_text;
 	}
+
+	div.custom-field-ta {
+		background-color: variables.$bg-09 !important;
+	}
+
 	.clockify-manual-entry-header-text {
 		color: #f4f4f4;
+	}
+
+	.notification {
+		& .notification-title {
+			color: #c6d2d9 !important;
+		}
+
+		& .notification-message {
+			color: #c6d2d9 !important;
+		}
+
+		&:hover {
+			background-color: #263238 !important;
+		}
 	}
 }

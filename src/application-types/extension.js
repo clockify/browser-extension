@@ -7,6 +7,10 @@ import { getLocalStorageEnums } from '../enums/local-storage.enum';
 import locales from '../helpers/locales';
 import { HtmlStyleHelper } from '../helpers/html-style-helper';
 import { logout } from '../helpers/utils';
+import useWorkspaceStore from '../zustand/stores/workspaceStore';
+import useUserStore from '../zustand/stores/userStore';
+import useBootStore from '../zustand/stores/bootStore';
+import useUIStore from '../zustand/stores/UIStore';
 
 const htmlStyleHelper = new HtmlStyleHelper();
 let messageListener = null;
@@ -47,6 +51,8 @@ export class Extension {
 					.then(async (response) => {
 						if (response.data) {
 							let data = response.data;
+							useUserStore.getState().setUserData(data);
+
 							localStorage.setItem('userEmail', data.email);
 							localStorage.setItem('userId', data.id);
 							localStorage.setItem('activeWorkspaceId', data.activeWorkspace);
@@ -68,6 +74,7 @@ export class Extension {
 								})
 								.then((response) => {
 									const { data } = response;
+									useBootStore.getState().setBootData(data);
 									const { selfHosted } = data;
 									if (data.synchronization && data.synchronization.websockets) {
 										const { websockets } = data.synchronization;
@@ -148,6 +155,27 @@ export class Extension {
 				case 'USER_BANNED':
 				case 'TOKEN_INVALID':
 					logout(request.eventName, request.options);
+					break;
+				case 'WORKSPACE_LOCKED':
+					useWorkspaceStore.getState().setWorkspaceLocked(true);
+					useWorkspaceStore
+						.getState()
+						.setWorkspaceLockedMessage(request?.options?.message);
+					break;
+				case 'VERIFY_EMAIL_ENFORCED':
+					useUIStore.getState().setEmailEnforcedModalVisible(true);
+					break;
+				case 'USER_EMAIL_VERIFIED':
+					getBrowser()
+						.runtime.sendMessage({
+							eventName: 'getUser',
+						})
+						.then(async (response) => {
+							if (response.data) {
+								let data = response.data;
+								useUserStore.getState().setUserData(data);
+							}
+						});
 					break;
 			}
 		};

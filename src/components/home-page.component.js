@@ -14,7 +14,8 @@ import { Application } from '../application';
 import { getBrowser } from '../helpers/browser-helper';
 import { getWebSocketEventsEnums } from '../enums/web-socket-events.enum';
 import CountdownTimer from './countdown-timer.component';
-
+import ModalsContainer from './notification-modals/modals-container';
+import withZustandStore from '../zustand/withZustandStore';
 import { getWorkspacePermissionsEnums } from '../enums/workspace-permissions.enum';
 import { getLocalStorageEnums } from '../enums/local-storage.enum';
 import { HtmlStyleHelper } from '../helpers/html-style-helper';
@@ -25,6 +26,7 @@ import Logger from './logger-component';
 import { offlineStorage } from '../helpers/offlineStorage';
 import locales from '../helpers/locales';
 import { toDecimalFormat } from '../helpers/time.helper';
+import BannerContainer from './notification-banners/banner-container';
 
 const messages = [
 	'TIME_ENTRY_STARTED',
@@ -35,6 +37,7 @@ const messages = [
 	'WORKSPACE_SETTINGS_UPDATED',
 	'CHANGED_ADMIN_PERMISSION',
 	'ACTIVE_WORKSPACE_CHANGED',
+	'WORKSPACE_LOCKED_FOR_TRANSFER',
 ];
 const htmlStyleHelper = new HtmlStyleHelper();
 let websocketHandlerListener = null;
@@ -210,6 +213,7 @@ class HomePage extends Component {
 	}
 
 	async componentDidMount() {
+		this.handleRefresh();
 		const workspaceSettings = await localStorage.getItem('workspaceSettings');
 		if (!workspaceSettings) {
 			getBrowser().storage.onChanged.addListener(this.onStorageChange);
@@ -228,7 +232,13 @@ class HomePage extends Component {
 		this.setAsyncStateItems();
 	}
 
-	componentDidUpdate() {
+	componentDidUpdate(prevProps) {
+		if (
+			prevProps.workspaceLockData.workspaceLocked !==
+			this.props.workspaceLockData.workspaceLocked
+		) {
+			this.workspaceChanged();
+		}
 		localStorage
 			.getItem('activeWorkspaceId')
 			.then((activeWorkspaceId) => {
@@ -289,9 +299,13 @@ class HomePage extends Component {
 			this.enableAllIntegrationsButtonIfNoneIsEnabled();
 			this.enableTimerShortcutForFirstTime();
 			if (isOnline) {
-				getBrowser().runtime.sendMessage({
-					eventName: 'webSocketConnect',
-				});
+				getBrowser()
+					.runtime.sendMessage({
+						eventName: 'webSocketConnect',
+					})
+					.catch((error) => {
+						console.log('home-page.component.js | line 306 | error:', error);
+					});
 				_webSocketConnectExtensionDone = true;
 			}
 			this.getEntryFromPomodoroAndIdleEvents();
@@ -416,8 +430,9 @@ class HomePage extends Component {
 					eventName: 'getPermissionsForUser',
 				})
 				.then((response) => {
+					if (!response?.data) return;
 					const isUserOwnerOrAdmin =
-						response.data.filter(
+						response?.data.filter(
 							(permission) =>
 								permission.name ===
 									getWorkspacePermissionsEnums().WORKSPACE_OWN ||
@@ -480,6 +495,12 @@ class HomePage extends Component {
 									.then((response) => {
 										if (this.start)
 											this.start.setTimeEntryInProgress(response.data);
+									})
+									.catch((error) => {
+										console.log(
+											'home-page.component.js | line 500 | error:',
+											error
+										);
 									});
 								break;
 							case getWebSocketEventsEnums().TIME_ENTRY_CREATED:
@@ -496,6 +517,12 @@ class HomePage extends Component {
 									})
 									.then((response) => {
 										this.start.setTimeEntryInProgress(response.data);
+									})
+									.catch((error) => {
+										console.log(
+											'home-page.component.js | line 522 | error:',
+											error
+										);
 									});
 								this.getTimeEntries();
 								break;
@@ -506,6 +533,12 @@ class HomePage extends Component {
 									})
 									.then((response) => {
 										this.start.setTimeEntryInProgress(response.data);
+									})
+									.catch((error) => {
+										console.log(
+											'home-page.component.js | line 538 | error:',
+											error
+										);
 									});
 								this.getTimeEntries();
 								break;
@@ -513,6 +546,9 @@ class HomePage extends Component {
 								this.workspaceChanged();
 								break;
 							case getWebSocketEventsEnums().ACTIVE_WORKSPACE_CHANGED:
+								this.workspaceChanged();
+								break;
+							case getWebSocketEventsEnums().WORKSPACE_LOCKED_FOR_TRANSFER:
 								this.workspaceChanged();
 								break;
 							case getWebSocketEventsEnums().CHANGED_ADMIN_PERMISSION:
@@ -641,6 +677,9 @@ class HomePage extends Component {
 				}
 				let { workspaceSettings, features, featureSubscriptionType } =
 					response.data;
+				const userHasCustomFieldsFeature =
+					workspaceSettings?.features?.customFields;
+				if (!userHasCustomFieldsFeature) offlineStorage.wsCustomFields = [];
 				workspaceSettings.projectPickerSpecialFilter =
 					this.state.userSettings.projectPickerTaskFilter;
 				if (!workspaceSettings.hasOwnProperty('timeTrackingMode')) {
@@ -938,16 +977,14 @@ class HomePage extends Component {
 						.add(60 - (diffInSeconds % 60), 'seconds');
 				}
 			}
-			const durationDiff = duration(
-				moment(timeEntry.timeInterval.end)
-					.tz(timeZone)
-					.diff(timeEntry.timeInterval.start)
-			);
 			timeEntry.duration = decimalFormat
-				? toDecimalFormat(durationDiff)
-				: durationDiff.format(trackTimeDownToSeconds ? 'HH:mm:ss' : 'h:mm', {
-						trim: false,
-				  });
+				? toDecimalFormat(duration(timeEntry.timeInterval.duration))
+				: duration(timeEntry.timeInterval.duration).format(
+						trackTimeDownToSeconds ? 'HH:mm:ss' : 'h:mm',
+						{
+							trim: false,
+						}
+				  );
 			if (dates.indexOf(timeEntry.start) === -1) {
 				dates.push(timeEntry.start);
 				const index = groups.findIndex((group) => {
@@ -1058,7 +1095,9 @@ class HomePage extends Component {
 							}
 						);
 					})
-					.catch(() => {});
+					.catch((error) => {
+						console.log('home-page.component.js | line 1097 | error:', error);
+					});
 			}
 		);
 	}
@@ -1288,34 +1327,11 @@ class HomePage extends Component {
 				offlineStorage.timeEntryInOffline = timeEntryOffline;
 				this.start.setTimeEntryInProgress(timeEntryOffline);
 			} else {
-				const { projectId, billable, task, description, tags } = timeEntry;
-				const taskId = task ? task.id : null;
-				const tagIds = tags ? tags.map((tag) => tag.id) : [];
-				const { customFieldValues } = timeEntry;
-
-				const cfs =
-					customFieldValues && customFieldValues.length > 0
-						? customFieldValues
-								.filter((cf) => cf.customFieldDto.status === 'VISIBLE')
-								.map(({ type, customFieldId, value }) => ({
-									customFieldId,
-									sourceType: 'TIMEENTRY',
-									value: type === 'NUMBER' ? parseFloat(value) : value,
-								}))
-						: [];
-
 				getBrowser()
 					.runtime.sendMessage({
-						eventName: 'startWithDescription',
+						eventName: 'continueEntry',
 						options: {
-							projectId,
-							description,
-							billable,
-							start: null,
-							end: null,
-							taskId,
-							tagIds,
-							customFields: cfs,
+							timeEntryId: timeEntry.id,
 						},
 					})
 					.then((response) => {
@@ -1467,7 +1483,7 @@ class HomePage extends Component {
 	}
 
 	preventDragHandler(e) {
-		e.preventDefault()
+		e.preventDefault();
 	}
 	render() {
 		const {
@@ -1499,6 +1515,10 @@ class HomePage extends Component {
 				!timeEntry.workspaceId || timeEntry.workspaceId === activeWorkspaceId
 		);
 
+		const { workspaceLockData } = this.props;
+		// const { workspaceLocked } = workspaceLockData;
+		const workspaceLocked = false;
+
 		const isTrackingDisabled =
 			!selfHosted &&
 			ready &&
@@ -1510,151 +1530,162 @@ class HomePage extends Component {
 				onDragStart={this.preventDragHandler}
 				onDrop={this.preventDragHandler}
 				className="home_page"
-				style={{ paddingTop: isTrackingDisabled ? '200px' : '134px' }}
+				style={{
+					paddingTop:
+						isTrackingDisabled || this.props.bannerVisible ? '220px' : '134px',
+				}}
 			>
 				{_withLogger && <Logger ref={this.loggerRef} />}
 
 				{isTrackingDisabled && (
 					<div className="clockify-subscription-expired-overlay"></div>
 				)}
-				<div className="header_and_timer">
-					{isTrackingDisabled && (
-						<div className="clockify-subscription-expired-overlay"></div>
-					)}
-					<Header
-						ref={(instance) => {
-							this.header = instance;
-						}}
-						showActions={true}
-						showSync={true}
-						changeMode={this.changeMode}
-						disableManual={!!inProgress}
-						disableAutomatic={false}
-						handleRefresh={this.handleRefresh}
-						workspaceSettings={workspaceSettings}
-						isTrackerPage={true}
-						workspaceChanged={this.workspaceChanged}
-						isOffline={isOffline}
-						toaster={this.toaster}
-						mode={mode}
-						manualModeDisabled={manualModeDisabled}
-						clearEntries={this.clearEntries}
-						isTrackingDisabled={isTrackingDisabled}
-					/>
-					{isTrackingDisabled && (
-						<div className="clockify-subscription-expired-message">
-							<img src="../assets/images/warning_24px.png" />
-							<p>
-								{!wasRegionalEverAllowed
-									? isUserOwnerOrAdmin
-										? locales.UPGRADE_REGIONAL_ADMIN
-										: locales.UPGRADE_REGIONAL
-									: isUserOwnerOrAdmin
-									? locales.SUBSCRIPTION_EXPIRED
-									: locales.FEATURE_DISABLED_CONTACT_ADMIN}
-							</p>
+				<ModalsContainer />
+				{!workspaceLocked && (
+					<>
+						<div className="header_and_timer">
+							{isTrackingDisabled && (
+								<div className="clockify-subscription-expired-overlay"></div>
+							)}
+							<Header
+								ref={(instance) => {
+									this.header = instance;
+								}}
+								showActions={true}
+								showSync={true}
+								changeMode={this.changeMode}
+								disableManual={!!inProgress}
+								disableAutomatic={false}
+								handleRefresh={this.handleRefresh}
+								workspaceSettings={workspaceSettings}
+								isTrackerPage={true}
+								workspaceChanged={this.workspaceChanged}
+								isOffline={isOffline}
+								toaster={this.toaster}
+								mode={mode}
+								manualModeDisabled={manualModeDisabled}
+								clearEntries={this.clearEntries}
+								isTrackingDisabled={isTrackingDisabled}
+							/>
+							{isTrackingDisabled && (
+								<div className="clockify-subscription-expired-message">
+									<img src="../assets/images/warning_24px.png" />
+									<p>
+										{!wasRegionalEverAllowed
+											? isUserOwnerOrAdmin
+												? locales.UPGRADE_REGIONAL_ADMIN
+												: locales.UPGRADE_REGIONAL
+											: isUserOwnerOrAdmin
+											? locales.SUBSCRIPTION_EXPIRED
+											: locales.FEATURE_DISABLED_CONTACT_ADMIN}
+									</p>
+								</div>
+							)}
+							<BannerContainer />
+							<Toaster
+								ref={(instance) => {
+									this.toaster = instance;
+								}}
+							/>
+							<StartTimer
+								ref={(instance) => {
+									this.start = instance;
+								}}
+								message={this.showMessage.bind(this)}
+								mode={mode}
+								changeMode={this.changeMode}
+								endStarted={this.handleRefresh}
+								setTimeEntryInProgress={this.inProgress.bind(this)}
+								workspaceSettings={workspaceSettings}
+								startTimeChanged={this.startTimeChanged.bind(this)}
+								features={features}
+								timeEntries={timeEntries}
+								timeFormat={userSettings.timeFormat}
+								userSettings={userSettings}
+								toaster={this.toaster}
+								log={this.log}
+								activeWorkspaceId={this.state.activeWorkspaceId}
+							/>
 						</div>
-					)}
-					<Toaster
-						ref={(instance) => {
-							this.toaster = instance;
-						}}
-					/>
-					<StartTimer
-						ref={(instance) => {
-							this.start = instance;
-						}}
-						message={this.showMessage.bind(this)}
-						mode={mode}
-						changeMode={this.changeMode}
-						endStarted={this.handleRefresh}
-						setTimeEntryInProgress={this.inProgress.bind(this)}
-						workspaceSettings={workspaceSettings}
-						startTimeChanged={this.startTimeChanged.bind(this)}
-						features={features}
-						timeEntries={timeEntries}
-						timeFormat={userSettings.timeFormat}
-						userSettings={userSettings}
-						toaster={this.toaster}
-						log={this.log}
-						activeWorkspaceId={this.state.activeWorkspaceId}
-					/>
-				</div>
-				<div
-					className={
-						!isOffline && timeEntriesOffline && timeEntriesOffline.length > 0
-							? ''
-							: 'disabled'
-					}
-				>
-					{!isOffline && timeEntriesOffline.length > 0 && (
-						<TimeEntryListNotSynced
-							inProgress={inProgress}
-							timeEntries={timeEntriesOffline}
-							pullToRefresh={pullToRefresh}
-							handleRefresh={this.handleRefresh}
-							triggerOfflineEntrySync={this.triggerOfflineEntrySync}
-							workspaceSettings={workspaceSettings}
-							features={features}
-							timeFormat={userSettings.timeFormat}
-							userSettings={userSettings}
-							isUserOwnerOrAdmin={isUserOwnerOrAdmin}
-							manualModeDisabled={this.state.manualModeDisabled}
-						/>
-					)}
-				</div>
-				{pomodoroEnabled && isFocusModeEnabled && inProgress ? (
-					<div>
-						<CountdownTimer
-							interval={
-								inProgress.description === 'Pomodoro break'
-									? pomodoroShortBreak
-									: inProgress.description === 'Pomodoro long break'
-									? pomodoroLongBreak
-									: pomodoroTimeInterval
+						<div
+							className={
+								!isOffline &&
+								timeEntriesOffline &&
+								timeEntriesOffline.length > 0
+									? ''
+									: 'disabled'
 							}
-							currentTime={
-								inProgress?.timeInterval?.start
-									? moment(inProgress.timeInterval.start)
-									: moment()
-							}
-							isBreak={
-								inProgress.description === 'Pomodoro break' ||
-								inProgress.description === 'Pomodoro long break'
-							}
-						/>
-					</div>
-				) : (
-					<div
-						className={
-							timeEntries.length === 0
-								? 'time-entry-list__offline'
-								: 'time-entry-list'
-						}
-					>
-						<TimeEntryList
-							timeEntries={timeEntries}
-							isLoading={!this.state.ready}
-							dates={dates}
-							groups={groups}
-							timeChange={this.state.time}
-							selectTimeEntry={this.continueTimeEntry.bind(this)}
-							pullToRefresh={pullToRefresh}
-							handleRefresh={this.handleRefresh}
-							changeMode={this.changeMode}
-							timeFormat={userSettings.timeFormat}
-							workspaceSettings={workspaceSettings}
-							features={features}
-							userSettings={userSettings}
-							isOffline={isOffline}
-							isUserOwnerOrAdmin={isUserOwnerOrAdmin}
-							manualModeDisabled={this.state.manualModeDisabled}
-						/>
-					</div>
+						>
+							{!isOffline && timeEntriesOffline.length > 0 && (
+								<TimeEntryListNotSynced
+									inProgress={inProgress}
+									timeEntries={timeEntriesOffline}
+									pullToRefresh={pullToRefresh}
+									handleRefresh={this.handleRefresh}
+									triggerOfflineEntrySync={this.triggerOfflineEntrySync}
+									workspaceSettings={workspaceSettings}
+									features={features}
+									timeFormat={userSettings.timeFormat}
+									userSettings={userSettings}
+									isUserOwnerOrAdmin={isUserOwnerOrAdmin}
+									manualModeDisabled={this.state.manualModeDisabled}
+								/>
+							)}
+						</div>
+						{pomodoroEnabled && isFocusModeEnabled && inProgress ? (
+							<div>
+								<CountdownTimer
+									interval={
+										inProgress.description === 'Pomodoro break'
+											? pomodoroShortBreak
+											: inProgress.description === 'Pomodoro long break'
+											? pomodoroLongBreak
+											: pomodoroTimeInterval
+									}
+									currentTime={
+										inProgress?.timeInterval?.start
+											? moment(inProgress.timeInterval.start)
+											: moment()
+									}
+									isBreak={
+										inProgress.description === 'Pomodoro break' ||
+										inProgress.description === 'Pomodoro long break'
+									}
+								/>
+							</div>
+						) : (
+							<div
+								className={
+									timeEntries.length === 0
+										? 'time-entry-list__offline'
+										: 'time-entry-list'
+								}
+							>
+								<TimeEntryList
+									timeEntries={timeEntries}
+									isLoading={!this.state.ready}
+									dates={dates}
+									groups={groups}
+									timeChange={this.state.time}
+									selectTimeEntry={this.continueTimeEntry.bind(this)}
+									pullToRefresh={pullToRefresh}
+									handleRefresh={this.handleRefresh}
+									changeMode={this.changeMode}
+									timeFormat={userSettings.timeFormat}
+									workspaceSettings={workspaceSettings}
+									features={features}
+									userSettings={userSettings}
+									isOffline={isOffline}
+									isUserOwnerOrAdmin={isUserOwnerOrAdmin}
+									manualModeDisabled={this.state.manualModeDisabled}
+								/>
+							</div>
+						)}
+					</>
 				)}
 			</div>
 		);
 	}
 }
 
-export default HomePage;
+export default withZustandStore(HomePage);

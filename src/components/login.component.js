@@ -79,6 +79,7 @@ class Login extends React.Component {
 		this.onChange = this.onChange.bind(this);
 		this.forgotPassword = this.forgotPassword.bind(this);
 		this.openLoginPage = this.openLoginPage.bind(this);
+		this.openSignupPage = this.openSignupPage.bind(this);
 		this.setAsyncStateItems = this.setAsyncStateItems.bind(this);
 	}
 
@@ -138,16 +139,34 @@ class Login extends React.Component {
 	}
 
 	async openLoginPage() {
+		await localStorage.setItem('signupExpected', 'false');
 		const homeUrl = await localStorage.getItem('homeUrl');
 		let redirectNumb = mozzilaRedirectNumb;
 		if (isChrome()) {
 			redirectNumb = chromeRedirectNumb;
 		}
 		if (isChrome()) {
-			window.open(`${homeUrl}/redirect/${redirectNumb}`, '_blank');
+			window.open(`${homeUrl}/redirect/${redirectNumb}?type=login`, '_blank');
 		} else {
 			browser.tabs.create({
-				url: `${homeUrl}/redirect/${redirectNumb}`,
+				url: `${homeUrl}/redirect/${redirectNumb}?type=login`,
+			});
+		}
+		window.close();
+	}
+
+	async openSignupPage() {
+		await localStorage.setItem('signupExpected', 'true');
+		const homeUrl = await localStorage.getItem('homeUrl');
+		let redirectNumb = mozzilaRedirectNumb;
+		if (isChrome()) {
+			redirectNumb = chromeRedirectNumb;
+		}
+		if (isChrome()) {
+			window.open(`${homeUrl}/redirect/${redirectNumb}?type=signup`, '_blank');
+		} else {
+			browser.tabs.create({
+				url: `${homeUrl}/redirect/${redirectNumb}?type=signup`,
 			});
 		}
 		window.close();
@@ -263,7 +282,7 @@ class Login extends React.Component {
 					<hr className="login__divider" />
 					<div className={this.state.isSubDomain || this.state.selfHosted? 'disabled' : 'new-account'}>
 						<p>{locales.NEW_HERE}?</p>
-						<a onClick={this.signup}>{locales.CREATE_AN_ACCOUNT}</a>
+						<a onClick={this.openSignupPage}>{locales.CREATE_AN_ACCOUNT}</a>
 					</div>
 					<div
 						className={

@@ -1073,6 +1073,156 @@
   "FORBIDDEN_CHARACTERS": {
     "message": "잘못된 값을 입력했습니다. \"<\" 및 \">\" 문자를 사용하지 마십시오."
   },
+  "WORKSPACE_LOCKED": {
+    "message": "작업공간이 잠겼습니다."
+  },
+  "SWITCH_WORKSPACE": {
+    "message": "작업 공간 전환"
+  },
+  "VERIFY_EMAIL_MESSAGE": {
+    "message": "이메일을 확인하세요: { userEmail }"
+  },
+  "SEND_VERIFICATION_EMAIL_BTN": {
+    "message": "확인 이메일 보내기"
+  },
+  "EMAIL_SENT_SUCCESS_MESSAGE": {
+    "message": "이메일이 전송되었습니다"
+  },
+  "VERIFY_EMAIL_TITLE": {
+    "message": "이메일을 인증하세요!"
+  },
+  "LONG_VERIFY_EMAIL_MESSAGE": {
+    "message": "{ userName }, clockify 계정을 계속 사용하려면 이메일 주소를 확인해야 합니다: { userEmail }"
+  },
+  "CHANGE_EMAIL_FOOTER": {
+    "message": "이메일에 액세스하는 데 문제가 있나요?"
+  },
+  "CHANGE_EMAIL_TITLE": {
+    "message": "이메일을 바꾸다"
+  },
+  "NOTIFICATIONS_TITLE": {
+    "message": "알림"
+  },
+  "NO_NEW_NOTIFICATIONS_TITLE": {
+    "message": "새 알림 없음"
+  },
+  "NO_NEW_NOTIFICATIONS_MESSAGE": {
+    "message": "현재 새 알림이 없습니다."
+  },
+  "CLEAR_ALL": {
+    "message": "모두 지우기"
+  },
+  "WORKSPACE_INVITATION_NOTIFICATION_TITLE": {
+    "message": "작업 공간 초대"
+  },
+  "LAYOUT__NOTIFICATIONS__WORKSPACE_INVITATION__FULL_ACCOUNT_ACCESS_INVITATION__PART_1": {
+    "message": "당신은 가입에 초대되었습니다 "
+  },
+  "LAYOUT__NOTIFICATIONS__WORKSPACE_INVITATION__FULL_ACCOUNT_ACCESS_INVITATION__PART_2": {
+    "message": " 작업 공간. 수락하면 { workspaceName } 관리자는"
+  },
+  "LAYOUT__NOTIFICATIONS__WORKSPACE_INVITATION__ACCESS_INVITATION__PART_1": {
+    "message": "에서 시간을 추적하도록 초대했습니다."
+  },
+  "LAYOUT__NOTIFICATIONS__WORKSPACE_INVITATION__ACCESS_INVITATION__PART_2": {
+    "message": "작업 공간."
+  },
+  "LAYOUT__NOTIFICATIONS__WORKSPACE_INVITATION__FULL_ACCOUNT_ACCESS_INVITATION__PART_3": {
+    "message": " 전체 권한 "
+  },
+  "LAYOUT__NOTIFICATIONS__ACCEPT_LABEL": {
+    "message": "수용하다"
+  },
+  "LAYOUT__NOTIFICATIONS__DECLINE_LABEL": {
+    "message": "감소"
+  },
+  "GLOBAL__LEARN_MORE_LINK": {
+    "message": "더 알아보기"
+  },
+  "NOTIFICATION__TRIAL__LINK": {
+    "message": "PRO 기능 작동 방식"
+  },
+  "LAYOUT__NOTIFICATIONS__VERIFY_EMAIL_LABEL": {
+    "message": "이메일 확인"
+  },
+  "LAYOUT__NOTIFICATIONS__UNVERIFIED_EMAIL_NOTIFICATION": {
+    "message": "아직 이메일을 확인하지 않았습니다."
+  },
+  "LAYOUT__NOTIFICATIONS__RESEND_EMAIL_LABEL": {
+    "message": "이메일 재전송"
+  },
+  "LAYOUT__NOTIFICATIONS__RECEIVE_UPDATES_LABEL": {
+    "message": "업데이트 받기"
+  },
+  "GLOBAL__GO_TO_SUBSCRIPTION_LABEL": {
+    "message": "구독하러 가기"
+  },
+  "EMAIL__VERIFICATION__SUCCESS": {
+    "message": "확인용 이메일이 성공적으로 전송되었습니다"
+  },
+  "USER__SETTINGS__SAVE__SUCCESS": {
+    "message": "설정이 성공적으로 저장되었습니다."
+  },
+  "INVITATION_DECLINED_MESSAGE": {
+    "message": "사용자 { name }의 초대가 거부되었습니다."
+  },
+  "VERIFY_EMAIL_MSG_1": {
+    "message": "귀하의"
+  },
+  "VERIFY_EMAIL_MSG_2": {
+    "message": "먼저 이메일."
+  },
+  "WORKSPACE_DEFAULT_SUCCESS_MESSAGE": {
+    "message": "기본 작업 공간이 변경됨"
+  },
+  "EMAIL__VERIFICATION__CAMPAIGN__TITLE": {
+    "message": "이메일을 확인하세요"
+  },
+  "EMAIL__VERIFICATION__CAMPAIGN__MESSAGE_1": {
+    "message": "앞으로 30일 동안 Clockify를 계속해서 원활하게 사용하려면 확인된 계정이 필요합니다."
+  },
+  "EMAIL__VERIFICATION__CAMPAIGN__MESSAGE_2": {
+    "message": "향후 원활한 Clockify 사용을 위해 오늘 계정을 확인하세요."
+  },
+  "EMAIL__VERIFICATION__CAMPAIGN__MESSAGE_3": {
+    "message": "이메일 주소를 인증하고 향후 제한 없이 Clockify를 계속 사용하세요."
+  },
+  "EMAIL__VERIFICATION__CAMPAIGN__MESSAGE_4": {
+    "message": "이메일 확인이 없으면 15일 이내에 앱 사용이 제한됩니다."
+  },
+  "EMAIL__VERIFICATION__CAMPAIGN__MESSAGE_5": {
+    "message": "이메일 주소를 확인해야 합니다. 그렇지 않으면 10일 후에 앱 사용이 제한됩니다."
+  },
+  "EMAIL__VERIFICATION__CAMPAIGN__MESSAGE_6": {
+    "message": "이메일 확인을 위한 마지막 전화입니다! 해당 정보가 없으면 Clockify 계정을 사용할 수 없습니다."
+  },
+  "TIMEZONE_MISMATCH__TITLE": {
+    "message": "시간대 불일치"
+  },
+  "TIMEZONE_MISMATCH__BODY_TEXT": {
+    "message": "{ profileLink }와 브라우저 시간대가 일치하지 않으면 잘못된 보고가 발생할 수 있으며 일부 기능이 예상대로 작동하지 않을 수 있습니다."
+  },
+  "TIMEZONE_MISMATCH__NOTIFICATION__PART_2": {
+    "message": "당신의 프로필"
+  },
+  "CHANGE_TIMEZONE_NOTIFICATION": {
+    "message": "{ suggestedTimeZone }으로 변경"
+  },
+  "GLOBAL__OR_LABEL": {
+    "message": "또는"
+  },
+  "TIMEZONE_MISMATCH__NOTIFICATION__ENABLE_LOCATION_ACCESS": {
+    "message": "위치 액세스 활성화"
+  },
+  "TIMEZONE__UPDATE__SUCCESS_MESSAGE": {
+    "message": "시간대 업데이트 완료"
+  },
+  "TIMEZONE__UPDATE__ERROR_MESSAGE": {
+    "message": "업데이트된 시간대 실패"
+  },
+  "GLOBAL__DUPLICATE_SUCCESS_MSG": {
+    "message": "시간 입력이 중복되었습니다."
+  },
   "appName": {
     "message": "Clockify 시간 추적기",
     "description": "웹 스토어에 표시되는 애플리케이션의 제목입니다."

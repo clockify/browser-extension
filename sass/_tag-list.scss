@@ -15,7 +15,7 @@
 
 	&-name {
 		display: inline-block !important;
-		padding: 0px 5px !important;
+		padding: 0 !important;
 		width: 85% !important;
 		font-size: 14px !important;
 		overflow: hidden !important;
@@ -25,7 +25,7 @@
 
 	&-button {
 		// padding: 6px 0;
-		padding: 0px 6px;
+		padding: 0px 7px;
 		background: white;
 		border: 1px solid variables.$border;
 		border-radius: 2px;
@@ -110,7 +110,7 @@
 		display: inline-block;
 		padding: 5px 10px 5px 0px;
 		font-size: 14px;
-		color: variables.$lighter_text;
+		color: #666;
 	}
 
 	&-selected {
@@ -138,18 +138,18 @@
 		}
 	}
 	&-input {
-		background: white;
+		background: white !important;
 		padding: 10px;
 
 		&--border {
 			position: relative;
 		}
 		.tag-list-filter {
-			background-color: white !important;
+			background-color: white;
 			&:focus {
 				outline: none;
-				border: 2px solid #0f3beb;
-				border-radius: 5px;
+				border: 1px solid variables.$bg-04 !important;
+				border-radius: 3px !important;
 			}
 		}
 	}
@@ -212,8 +212,8 @@
 		font-size: 14px;
 		// line-height: 16px;
 		margin-left: 10px;
-		color: variables.$middle_light_text;
 		&-row {
+			color: variables.$middle_light_text;
 			padding: 7px 15px;
 			cursor: pointer;
 			text-overflow: ellipsis;
@@ -222,6 +222,9 @@
 			line-height: 1;
 			&:hover {
 				background-color: variables.$entries_header;
+			}
+			& label {
+				color: variables.$middle_light_text;
 			}
 		}
 	}

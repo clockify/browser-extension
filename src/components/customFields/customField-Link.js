@@ -9,6 +9,7 @@ const CustomFieldLink = ({
 	updateValue,
 	setIsValid,
 	cfContainsWrongChars,
+	projectId
 }) => {
 	const [value, setValue] = useState(cf.value);
 
@@ -26,6 +27,7 @@ const CustomFieldLink = ({
 		},
 		storeValue,
 	] = useCustomField(cf, updateValue, value);
+
 
 	const [valueTemp, setValueTemp] = useState(null);
 	const handleChangeTemp = (e) => {
@@ -84,12 +86,29 @@ const CustomFieldLink = ({
 	const isNotValid = required && !value;
 
 	useEffect(() => {
+		storeValue();
+	}, [value])
+
+	useEffect(() => {
 		setValue(cf.value);
 	}, [cf.value]);
 
 	useEffect(() => {
 		setIsValid({ id: id, isValid: !(required && !value) });
 	}, [value]);
+
+	useEffect(() => {
+		if (value === undefined) setValueStay('')
+	}, [value]);
+
+	useEffect(() => {
+		setValue(cf.value);
+		setValueTemp(cf.value);
+		setValueStay(cf.value);
+
+	}, [projectId]);
+
+
 	return (
 		<>
 			<div>

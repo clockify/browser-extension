@@ -140,7 +140,9 @@ class WorkspaceList extends React.Component {
 										title={
 											workspace.accessEnabled
 												? workspace.name
-												: locales.WORKSPACE__DISABLED_TOOLTIP
+												: workspace.reason
+											  ? workspace.reason
+												:	locales.WORKSPACE__DISABLED_TOOLTIP
 										}
 										data-pw={`workspace-list-item-${index}`}
 									>

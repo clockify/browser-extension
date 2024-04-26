@@ -111,7 +111,8 @@
         "REMINDER": {
             "ASSIGN_TEAM_MANAGER_TOOLTIP": "Assign team managers to send them reminders.",
             "SELECT_TO_REMIND_TOOLTIP": "Select all the users you wish to remind.",
-            "DISABLED": "Reminder is disabled as it does not belong to the currently active approval period. To enable it, please change the approval period in your WS settings"
+            "DISABLED": "Reminder is disabled as it does not belong to the currently active approval period. To enable it, please change the approval period in your WS settings",
+            "ASSIGN_PROJECT_MANAGER_TOOLTIP": "Assign project managers to send them reminders."
         },
         "NO_TIMESHEETS_MESSAGE": "No { value } timesheets",
         "NO_TIMESHEETS_ON_UNSUBMITTED_LABEL": "No { value } timesheets for { label }",
@@ -538,7 +539,8 @@
             "CONTACT_OWNER": "Please contact the invoice owner to generate a new link.",
             "DOWNLOAD_COMPLETED": "Download completed!",
             "DOWNLOAD_SUCCESS": "You have successfully downloaded the expense report.",
-            "CODE_SENT": "Code sent"
+            "CODE_SENT": "Code sent",
+            "DOWNLOAD_FAILED": "Download failed"
         },
         "EXPORT_SETTINGS": {
             "TITLE": "Invoice export settings"
@@ -1035,7 +1037,7 @@
             "NEW_SIGNUP_TOF": "I agree to { cakeComTermsOfService }, { clockifyTermsOfService } and { privacyPolicy }",
             "EMAIL_FORMAT_INVALID": "Email format is not valid",
             "PASSWORD_FORMAT_INVALID": "Password is not valid",
-            "ACCOUNT_TEMPORARILY_LOCKED_MSG": "Your account is temporarily locked. Check your email to proceed",
+            "ACCOUNT_TEMPORARILY_LOCKED_MSG": "Your account is temporarily locked. Check your email to proceed.",
             "SIGNUP_DISABLED_MESSAGE": "Signup disabled. Contact workspace owner if you need to track time on this subdomain."
         },
         "VERIFY_EMAIL": {
@@ -1059,7 +1061,8 @@
             "CONTINUE_WITH_SAML2_LABEL": "Continue with SAML2",
             "PASSWORD_REQUIRED_ERROR_LABEL": "Password is required",
             "EMAIL_REQUIRED_ERROR_LABEL": "Email is required",
-            "NO_ACCOUNT_SIGNUP_INSTEAD_LABEL": "It looks like you don’t have an account,\nsign up instead."
+            "NO_ACCOUNT_SIGNUP_INSTEAD_LABEL": "It looks like you don’t have an account,\nsign up instead.",
+            "LOGIN_ATTEMPT_MESSAGE": "Thank you for attempting to log in. If your email is registered, we will send a secure login link shortly."
         },
         "ENTER_VERIFICATION_CODE": {
             "CHECK_EMAIL_TITLE": "Check your email for a code",
@@ -1068,7 +1071,8 @@
             "RESEND_EMAIL_LINK": "resend email",
             "ATTEMPTS_MAXED_OUT_MSG": "You've maxed out your attempts. Check your email to proceed.",
             "CODE_NOT_VALID_MSG": "That code isn't valid. Please try again.",
-            "CODE_EXPIRED_MSG": "That code has expired."
+            "CODE_EXPIRED_MSG": "That code has expired.",
+            "WORKSPACE_LOCKED_FOR_TRANSFER": "Workspace locked due to data transfer"
         }
     },
     "REPORTS": {
@@ -1240,7 +1244,8 @@
             },
             "ASSIGNMENT_LABEL": "Assignments",
             "UPGRADE_TO_SCEDULE_REPORT_PART_2_WITH_INTERPOLATION": "to schedule reports.",
-            "SCHEDULED_LABEL_WITH_INTERPOLATION": "Scheduled:"
+            "SCHEDULED_LABEL_WITH_INTERPOLATION": "Scheduled:",
+            "REPORT_NAME_MIN_INFO": "Report name must have at least { value } characters."
         },
         "SUMMARY": {
             "SORT_BY_TITLE_ASC_LABEL": "Title (up)",
@@ -1733,7 +1738,8 @@
             "FIND_PROJECT_CUSTOM_LABEL_ELLIPSES": "Find { projectLabel } or { projectGroupingLabel }…",
             "CAN_NOT_SELECT_PROJECT": "Can't select a project until it has at least one task.",
             "SEARCH_PROJECT_CUSTOM_LABEL": "Search { projectLabel } or { projectGroupingLabel }…",
-            "SEARCH_TASK_CUSTOM_LABEL": "Search { taskLabel } @{ projectLabel } or { projectGroupingLabel }…"
+            "SEARCH_TASK_CUSTOM_LABEL": "Search { taskLabel } @{ projectLabel } or { projectGroupingLabel }…",
+            "SEARCH_PROJECT_CUSTOM_LABEL_NO_DOTS": "Search { projectLabel } or { projectGroupingLabel }"
         },
         "SINGLE_DATE_PICKER": {
             "DATE_RANGE_ERROR_MSG": "Can't add time to locked period",
@@ -1964,7 +1970,8 @@
             "NO_GROUPS_LABEL": "No groups yet",
             "NO_MATCHING_GROUP_LABEL": "No matching group",
             "CREATE_GROUP": "create { search } group.",
-            "ADD_OR_FIND_GROUPS_PLACEHOLDER": "Add/Find groups..."
+            "ADD_OR_FIND_GROUPS_PLACEHOLDER": "Add/Find groups...",
+            "ADD_OR_SEARCH_GROUPS_PLACEHOLDER": "Add/Search groups"
         },
         "SHARED_BY": "Shared by:",
         "ENTITY_TEMPLATES_LABEL": "templates",
@@ -2252,7 +2259,8 @@
                 "ALL_ADMINS": "All admins"
             },
             "ERRORS": {
-                "NO_ASSIGNEES_ADDED": "Can't create reminder without task assignees added."
+                "NO_ASSIGNEES_ADDED": "To add a reminder select at least one team member",
+                "NO_DAYS_ADDED": "To update the reminder select at least one week day"
             },
             "TITLE": "Reminders",
             "CREATE": {
@@ -2274,9 +2282,12 @@
             },
             "DELETE": {
                 "TITLE": "Delete reminder",
-                "CONFIRM": "Are you sure you want to delete reminder?"
+                "CONFIRM": "Deleting this reminder will permanently remove it from the system."
             },
-            "MORE_LABEL": "More"
+            "MORE_LABEL": "More",
+            "TOOLTIP": {
+                "INACTIVE_USERS_INFO": "Inactive users don't receive reminders."
+            }
         },
         "SEATS": {
             "NO_AVAILABLE": {
@@ -2369,7 +2380,7 @@
             "CONTAINS_ACTIVITIES": "This template contains activities and time.",
             "EMPTY_TEMPLATE_WARNING": "You should delete this template because it's empty",
             "ACTIVATE": {
-                "SUCCESS": "Template activated"
+                "SUCCESS": "Template applied"
             }
         },
         "ACTIONS": {
@@ -2555,7 +2566,8 @@
             "BREAK_DUPLICATE_SUCCESS": "Break entry has been duplicated",
             "CREATE_MULTIPLE_SUCCESS": "Time entries have been created",
             "RUNNING_ENTRY_EXISTS": "Can't create time entry while another entry is running",
-            "BREAKS_DISABLED": "You don't have permission to create break time entry since break feature is not enabled."
+            "BREAKS_DISABLED": "You don't have permission to create break time entry since break feature is not enabled.",
+            "CREATE_FAIL_SPLITTING": "Failed to split a time entry, please try again"
         },
         "STOP_BREAK": "Stop break",
         "START_BREAK": "Start break"
@@ -2572,7 +2584,10 @@
             },
             "PERSONAL": {
                 "TITLE": "Personal info",
-                "INFO_MESSAGE": "Your log-in credentials and the name that is displayed in reports."
+                "INFO_MESSAGE": "Your log-in credentials and the name that is displayed in reports.",
+                "USERNAME": {
+                    "LENGTH_ERROR_MESSAGE": "Username has to be between { minimumLength } and { maximumLength } characters long."
+                }
             },
             "EMAIL": {
                 "CHANGE": {
@@ -2583,7 +2598,8 @@
                         "VALID": "Enter a valid email.",
                         "MATCH": "Emails don't match.",
                         "ACCOUNT_ALREADY_EXISTS": "Account with this email already exists."
-                    }
+                    },
+                    "CURRENT_EMAIL_LABEL": "Current email"
                 },
                 "NOTIFICATIONS": {
                     "TITLE": "Email notifications",
@@ -2700,6 +2716,9 @@
                 "INFO_MESSAGE": "Require a login code sent to your email when accessing Clockify from unknown browsers.",
                 "TOGGLE": "Enable 2FA",
                 "ALL_WORKSPACES_INFO": "Can’t disable 2FA because it’s required on all your workspaces"
+            },
+            "TWO_FACTOR": {
+                "LOGOUT_INFO": "This workspace requires 2FA. You will be logged out after confirmation."
             }
         },
         "COMPACT_PROJECT": {
@@ -3093,7 +3112,8 @@
             "BILLABLE_HOURS": {
                 "TITLE": "Billable hours",
                 "INFO": "Set hourly rates and see earnings based on billable hours.",
-                "LABEL": "Activate billable hours"
+                "LABEL": "Activate billable hours",
+                "INFO_CONTENT": "Set billable rates and see earnings based on billable hours."
             },
             "BILLABLE_RATES": {
                 "INFO": "Who can see hourly rates and amounts",
@@ -3218,7 +3238,7 @@
                     "CONFIGURE": "Configure SSO",
                     "ADD": "Add SSO Configuration",
                     "TITLE_SSO": "SSO configuration",
-                    "SUPPORTED_SSO_V2": "Supported SSO systems: OAuth and SAML2 (all identity providers covered: Google, Okta, OneLogin, Azure, etc)"
+                    "SUPPORTED_SSO_V2": "Supported SSO systems: OAuth2 and SAML2 (all identity providers covered: Google, Okta, OneLogin, Azure, etc)"
                 },
                 "LDAP_FORM": {
                     "PROVIDER_URI": {
@@ -3415,7 +3435,8 @@
                         "EMAIL": "Log in with email",
                         "INFO_MESSAGES": {
                             "EMAIL_LOGIN_MESSAGE": "Log in with code sent to email, or with email and password."
-                        }
+                        },
+                        "OAUTH2": "Log in with OAuth2"
                     }
                 }
             },
@@ -3441,7 +3462,10 @@
                     "CONTACT_SUPPORT_LINK": "Please { contactUs } for further assistance.",
                     "DATA_TRANSFER_TITLE": "Data transfer",
                     "DATA_TRANSFER_INFO": "You and users in this workspace will be logged out and won’t be able to track time up to 12 hours after starting data transfer.",
-                    "DATA_TRANSFER_LOGOUT_INFO": "After you enter the password your data transfer will start and you'll be logged out."
+                    "DATA_TRANSFER_LOGOUT_INFO": "After you enter the password your data transfer will start and you'll be logged out.",
+                    "CONFIRM_DATA_TRANSFER_TITLE": "Confirm data transfer",
+                    "DATA_TRANSFER_CODE_LOGOUT_INFO": "After you enter the code your data transfer will start and you'll be logged out.",
+                    "ENTER_ONE_TIME_CODE": "Enter one-time code:"
                 }
             },
             "DATA_REGION_LOADING_MESSAGE": "Checking conditions…"
@@ -3489,7 +3513,7 @@
             "DELETE_TAG_MSG": "The { tagName } tag will also be removed from all time entries it is assigned to. This action cannot be reversed.",
             "DELETE_CLIENT_MSG": "The { clientName } { clientLabel } will also be removed from projects it is assigned to. This action cannot be reversed.",
             "DELETE_CLIENT_MSG_CUSTOM": "The { clientName } { clientLabel } will also be removed from { projectLabel } it is assigned to. This action cannot be reversed.",
-            "UPGRADE_TO_USE_BULK_EDIT_PART_2": " to use bulk edit"
+            "UPGRADE_TO_USE_BULK_EDIT_PART_2": " to use bulk edit."
         },
         "IMPORT_CSV": {
             "VALIDATING_DATA_LOADER_MSG": "Validating data...",
@@ -3551,7 +3575,8 @@
             "OWNER_DELETE_WORKSPACE_ERROR_MSG": "Owners can't delete workspace until they either transfer ownership to someone else or are the only member left in the workspace.",
             "OWNER_LEAVE_WORKSPACE_ERROR_MSG": "Owners can't leave workspace until they either transfer ownership to someone else or are the only member left in the workspace.",
             "DELETE_WORKSPACE_ERROR_MSG": "Can't delete workspace until they either transfer ownership to someone else or are the only member left in the workspace.",
-            "LEAVE_WORKSPACE_ERROR_MSG": "Can't leave workspace until they either transfer ownership to someone else or are the only member left in the workspace."
+            "LEAVE_WORKSPACE_ERROR_MSG": "Can't leave workspace until they either transfer ownership to someone else or are the only member left in the workspace.",
+            "WILL_BE_REMOVED_LABEL": "Workspace will be removed"
         },
         "ACCOUNTS_USER_SERVICE": {
             "GET_USERS_ERROR_MSG": "Get users failed.",
@@ -3573,7 +3598,8 @@
             },
             "WORKSPACE_NAME": {
                 "TITLE": "Workspace name",
-                "LENGTH_ERROR_MESSAGE": "Workspace name has to be between 2 and 250 characters long"
+                "LENGTH_ERROR_MESSAGE": "Workspace name has to be between 2 and 250 characters long",
+                "ERROR_MESSAGE_LENGTH": "Workspace name has to be between 2 and 50 characters long"
             },
             "TIMESHEET_SETTING": {
                 "INFO_MESSAGE": "Enter time on tasks and projects using a weekly timesheet view. While activated, project is a required field for the whole workspace.",
@@ -4002,7 +4028,7 @@
                     "ERROR_MESSAGE": "Password confirmation unsuccessful, please try again"
                 },
                 "RESET": {
-                    "SUCCESS_MESSAGE": "We sent an email with instructions to reset your password"
+                    "SUCCESS_MESSAGE": "If account exists an email with instructions to reset your password will be sent. "
                 },
                 "CHANGE": {
                     "SUCCESS_MESSAGE": "Your password has been changed",
@@ -4106,17 +4132,18 @@
                 "SUCCESS_MESSAGE": "{ clientLabelPlural } successfully deleted"
             },
             "ARCHIVE": {
-                "SUCCESS_MESSAGE": "{ projectGroupingLabel } has been archived."
+                "SUCCESS_MESSAGE": "{ clientLabel } successfully archived"
             },
             "ARCHIVE_MULTIPLE": {
-                "SUCCESS_MESSAGE": "{ clientLabelPlural } have been archived"
+                "SUCCESS_MESSAGE": "{ clientLabelPlural } successfully archived"
             },
             "RESTORE_MULTIPLE": {
-                "SUCCESS_MESSAGE": "{ clientLabelPlural } have been restored"
+                "SUCCESS_MESSAGE": "{ clientLabelPlural } successfully restored"
             },
             "RESTORE": {
-                "SUCCESS_MESSAGE": "{ projectGroupingLabel } has been restored."
-            }
+                "SUCCESS_MESSAGE": "{ clientLabel } successfully restored"
+            },
+            "UNKNOWN_ERROR": "Something went wrong. Please, try again."
         },
         "CUSTOM_FIELD": {
             "CREATE": {
@@ -4287,17 +4314,20 @@
             "CREATE": {
                 "SUCCESS_MESSAGE": "Reminder created",
                 "ERROR_MESSAGE": "Reminder not created",
-                "NO_DAYS_ERROR_MESSAGE": "Can't create reminder without days added.",
+                "NO_DAYS_ERROR_MESSAGE": "To add a reminder select at least one week day",
                 "NO_HOURS_ERROR_MESSAGE": "Can't create reminder without hours added.",
                 "NO_TEAM_MEMBERS_ERROR_MESSAGE": "Can't create reminder without team members added.",
-                "NO_USER_NO_USERGROUPS": "Can’t create a reminder without choosing team members"
+                "NO_USER_NO_USERGROUPS": "To add a reminder select at least one team member",
+                "NO_DATES_ERROR_MESSAGE": "To add a reminder select at least one date"
             },
             "UPDATE": {
-                "SUCCESS_MESSAGE": "Reminder successfully updated",
-                "NO_DAYS_ERROR_MESSAGE": "Can't edit reminder without days added.",
+                "SUCCESS_MESSAGE": "Reminder updated",
+                "NO_DAYS_ERROR_MESSAGE": "To update the reminder select at least one week day",
                 "NO_HOURS_ERROR_MESSAGE": "Can't edit reminder without hours added.",
                 "NO_TEAM_MEMBERS_ERROR_MESSAGE": "Can't edit reminder without team members added.",
-                "ERROR_MESSAGE": "Reminder not updated"
+                "ERROR_MESSAGE": "Reminder not updated",
+                "NO_DATES_ERROR_MESSAGE": "To update the reminder select at least one date",
+                "NO_USER_NO_USERGROUPS": "To update the reminder select at least one team member"
             },
             "DELETE": {
                 "SUCCESS_MESSAGE": "Reminder successfully deleted",
@@ -4349,16 +4379,16 @@
                 "SUCCESS_MESSAGE": "Tags successfully deleted"
             },
             "ARCHIVE_MULTIPLE": {
-                "SUCCESS_MESSAGE": "Tags have been archived"
+                "SUCCESS_MESSAGE": "Tags successfully archived"
             },
             "RESTORE_MULTIPLE": {
-                "SUCCESS_MESSAGE": "Tags have been restored"
+                "SUCCESS_MESSAGE": "Tags successfully restored"
             },
             "ARCHIVE": {
-                "SUCCESS_MESSAGE": "Tag { tagName } has been archived"
+                "SUCCESS_MESSAGE": "Tag successfully archived"
             },
             "RESTORE": {
-                "SUCCESS_MESSAGE": "Tag { tagName } has been restored"
+                "SUCCESS_MESSAGE": "Tag successfully restored"
             }
         },
         "TIMER": {
@@ -5017,7 +5047,8 @@
             "MAX_DATE_RANGE_1_YEAR": "Max date range is 1 year",
             "MIN_DATE_RANGE_3_MONTHS": "Min date range is 3 months",
             "DATE_RANGE_MUST_BE_1_WEEK": "Date range must be 1 week",
-            "DATE_RANGE_MUST_BE_1_YEAR": "Date range must be 1 year"
+            "DATE_RANGE_MUST_BE_1_YEAR": "Date range must be 1 year",
+            "YOURE_NOT_LOGGED_WITH_THIS_ACCOUNT": "You're not logged with this account"
         },
         "ADD_FIND_PLACEHOLDER_LABEL_CLIENT": "Add/Find client…",
         "UPGRADE_TO_USE_FEATURE_PART_2_NO_TRIAL": "to use { feature }",
@@ -5055,7 +5086,7 @@
         "ALLOWED_USERS": "Allowed users per workspace: { usersCount }",
         "HIDE_LABEL": "Hide",
         "SPLIT_AT_LABEL": "Split at",
-        "CANNOT_SPLIT_MESSAGE": "Time entry shorter than 2 minutes cannot be split",
+        "CANNOT_SPLIT_MESSAGE": "Time entries shorter than 2 minutes cannot be split",
         "TO_SPLIT_TIME": "to Split time",
         "HOLIDAY_LABEL": "Holiday",
         "MANUAL_MODE_LABEL": "Manual Mode",
@@ -5122,7 +5153,25 @@
         "DATA_TRANSFER_STARTED": "Data transfer started",
         "SEARCH_USERS_OR_GROUPS": "Search users or groups",
         "REPLACE": "Replace",
-        "SELECT_DATES": "Select dates"
+        "SELECT_DATES": "Select dates",
+        "LOGOUT_LABEL": "Log out",
+        "TRANSFER_CONFIRM_LABEL": "Confirm",
+        "LABELS": {
+            "REGION": "Region"
+        },
+        "MANAGER": "manager",
+        "SEARCH_CLIENT_LABEL": "Search { client }",
+        "PROJECT_CUSTOM_SEARCH": "Search { projectLabel }",
+        "SEARCH_TAGS_LABEL": "Search tags",
+        "SEARCH_CURRENCY": "Search currency",
+        "SEARCH_CURRENCIES": "Search currencies",
+        "SEARCH_COMPANIES_LABEL": "Search companies",
+        "SEARCH_PLACEHOLDER_LABEL": "Search { entity }",
+        "ADD_SEARCH_PLACEHOLDER_LABEL": "Add/Search { entity }",
+        "HIDE_ALL_LABEL": "Hide all",
+        "LOG_IN_LABEL_V2": "Log in",
+        "SET_NEW_PASSWORD": "Set new password",
+        "CREATE_PASSWORD_LABEL": "Create password"
     },
     "EXPENSES": {
         "TITLE": "Expenses",
@@ -5554,8 +5603,11 @@
             "DESCRIPTION": "You’ll no longer receive { emailPrefType } emails from Clockify."
         },
         "MESSAGE": {
-            "UPDATE_SUCCESS": "Your email preferences have been updated",
-            "SESSION_NOT_FOUND": "Session not found"
+            "UPDATE_SUCCESS": "Your email preferences have been updated.",
+            "SESSION_NOT_FOUND": "Session not found",
+            "UPDATE_TITLE": "Success!",
+            "UPDATE_ERROR": "Oops, session expired!",
+            "UPDATE_ERROR_DESCRIPTION": "Your session has expired, please log in to manage your email preferences."
         }
     },
     "validation": {
@@ -6110,7 +6162,9 @@
         "STOP_AT_SPECIFIED_TIME": "Stop timer automatically at a specified time of day",
         "STOP_TIME": "Stop time",
         "FORBIDDEN_CHARACTERS": "You entered wrong value. Don't use \"<\" and \">\" characters",
-        "NO_NEW_NOTIFICATIONSL_MESSAGE": "You currently have no new notifications"
+        "NO_NEW_NOTIFICATIONSL_MESSAGE": "You currently have no new notifications",
+        "WORKSPACE_LOCKED": "Workspace locked",
+        " SWITCH_WORKSPACE": "Switch workspace"
     },
     "ENABLE_ALL_INTEGRATIONS": "You can enable everything by clicking the 'Enable all' button.",
     "REFRESH": "Refresh",
@@ -6454,7 +6508,8 @@
         "AUTHORS": "Authors",
         "SELECT_AUTHOR": "Select author",
         "FIND_AUTHORS": "Find authors",
-        "AUTHOR": "Author"
+        "AUTHOR": "Author",
+        "SEARCH_AUTHORS": "Search authors"
     },
     "SETTINGS": {
         "MESSAGES": {
@@ -6545,13 +6600,20 @@
         "DROPDOWN": {
             "REGULAR_USER_INFO": "Only admins can see and install add-ons. You can still browse the Marketplace and suggest add-ons to the admins.",
             "ADMIN_USER_INFO": "Ready to install your first add-on?",
-            "ADMIN_USER_INFO_PT_TWO": "Enhance and adapt Clockify to your needs."
+            "ADMIN_USER_INFO_PT_TWO": "Enhance and adapt Clockify to your needs.",
+            "SELECT_OPTION_LABEL": "Select option",
+            "SELECT_OPTIONS_LABEL": "Select options"
         },
         "DISABLE_INFO": "When you disable this add-on it will disappear from Clockify interface and the add-on will lose access to your workspace. You can enable it later.",
         "UNINSTALL_INFO_PART_ONE": "Add-on will be removed from your workspace.",
         "UNINSTALL_INFO_PART_TWO": "Depending on the add-on",
         "UNINSTALL_INFO_PART_THREE": "you might lose data stored by the add-on.",
-        "FAILED_FETCH_WEBHOOKS": "Failed to fetch addon webhooks"
+        "FAILED_FETCH_WEBHOOKS": "Failed to fetch addon webhooks",
+        "EVENTS": {
+            "NAVIGATION": {
+                "ERROR": "Route does not exist"
+            }
+        }
     },
     "MESSAGES": {
         "ERROR_MISSING_FIELDS_IS_REQUIRED": "{ fields } is required."
@@ -6605,7 +6667,8 @@
             "ADDON_INSTALLED_SUCCESS_LABEL": "Addon successfully installed",
             "ADDON_UNINSTALLED_SUCCESS_LABEL": "Addon successfully uninstalled",
             "ADDON_INSTALLED_FAIL_LABEL": "Failed to install addon"
-        }
+        },
+        "NOT_AVAILABLE_ON_TEST_ACCOUNTS": "Not available on test accounts"
     },
     "SHARED": {
         "CURRENCIES": {
@@ -6648,9 +6711,12 @@
             "PENDING_CHANGE_BANNER_TEXT": "Pending email change",
             "PENDING_CHANGE_BANNER_TOOLTIP": "Pending change to email: { userEmail }. Check your email inbox and verify new email to complete the process.",
             "CANCEL_CHANGE_BTN": "Cancel change",
-            "EMAIL_CHANGE_CANCELED_MSG": "Email change canceled"
+            "EMAIL_CHANGE_CANCELED_MSG": "Email change canceled",
+            "PENDING_CHANGE_BANNER_TOOLTIP_TEAMS_PAGE": "Pending change to email: { userEmail }. Process will be completed when user verifies new email."
         },
-        "EMAIL_LINK_EXPIRED_TEXT": "This email verification link has expired."
+        "EMAIL_LINK_EXPIRED_TEXT": "This email verification link has expired.",
+        "RESEND_EMAIL_BTN": "Resend email",
+        "EMAIL_SUCCESSFULLY_VERIFIED_MSG_2": "You have successfully verified your email."
     },
     "EXTENSION_FORBIDDEN_CHARACTERS": "You entered wrong value. Don't use \"<\" and \">\" characters",
     "GOBAL": {
@@ -6735,7 +6801,7 @@
             },
             "DELETE_MODAL": {
                 "DELETE_SINGLE_ITEM_INFO_MESSAGE": "Are you sure you want to delete { itemName }?",
-                "DELETE_SINGLE_ITEM_MODAL_TEXT": "{ itemName } will also be removed from all time entries it is assigned to. This action cannot be reversed.",
+                "DELETE_SINGLE_ITEM_MODAL_TEXT": "{ itemName } will also be removed from all time entries they are assigned to. This action cannot be reversed.",
                 "DELETE_MULTIPLE_CLIENTS_INFO_MESSAGE": "Are you sure you want to delete { numberOfSelected } { clientLabelPlural }?",
                 "DELETE_MULTIPLE_CLIENTS_MODAL_TEXT": "{ clientLabelPlural } will also be removed from all time entries they are assigned to. This action cannot be reversed.",
                 "DELETE_MULTIPLE_TAGS_INFO_MESSAGE": "Are you sure you want to delete { numberOfSelected } tags?",
@@ -6772,5 +6838,13 @@
         "MESSAGES": {
             "WORKSPACE_IS_LOCKED": "Workspace locked due to data transfer"
         }
-    }
+    },
+    "TAGS": {
+        "MODALS": {
+            "DELETE_MODAL": {
+                "DELETE_SINGLE_ITEM_MODAL_TEXT": "{ itemName } will also be removed from all time entries it is assigned to. This action cannot be reversed."
+            }
+        }
+    },
+    "SET_PASSWORD_MODAL_BODY": "By clicking \"Set Password\", an email will be sent to { email } for password setup."
 }

@@ -6,7 +6,7 @@
 	// Issue view & Merge Request view
 	clockifyButton.render(selectors.hanger, { observe: true }, () => {
 		const breadcrumbs = $(selectors.breadcrumbs);
-		const breadcrumbsList = Array.from($$(selectors.breadcrumbsList));
+		const breadcrumbsList = Array.from($$('li', breadcrumbs));
 
 		const lastBreadcrumbItemIndex = breadcrumbsList.length - 1;
 		const thirdToLastBreadcrumbItemIndex = breadcrumbsList.length - 3;
@@ -31,10 +31,8 @@
 				return isLabelScoped ? `${firstSpan}:${secondSpan}` : firstSpan;
 			});
 
-		const projectName = $(
-			selectors.projectName,
-			projectBreadcrumb
-		)?.textContent?.trim();
+		const projectName = projectBreadcrumb.textContent.trim();
+
 		const description = () => `${groupName}/${projectName}${id} ${title()}`;
 		const taskName = () => `${id} ${title()}`;
 		const tagNames = () => [...new Set(labelsFormated())];
@@ -74,6 +72,10 @@
 				display: flex;
 				align-items: center;
 				justify-content: space-between;
+			}
+			
+			.top-bar-fixed {
+				width: auto !important;
 			}
 		`;
 

@@ -28,11 +28,11 @@ const toString = (number, { fixSeparator } = {}) => {
 		const { decimalSeparator } = getSeparators();
 
 		if (decimalSeparator === '.') {
-			return number.replace(',', decimalSeparator);
+			return number?.replace(',', decimalSeparator);
 		}
 
 		if (decimalSeparator === ',') {
-			return number.replace('.', decimalSeparator);
+			return number?.replace('.', decimalSeparator);
 		}
 	}
 
@@ -224,6 +224,11 @@ const CustomFieldNumber = ({ cf, updateValue, numberFormat, setIsValid }) => {
 		manualMode && updateValue(id, delocalizedNumber);
 		!manualMode && storeValue(delocalizedNumber);
 	};
+
+	useEffect(() => {
+		const delocalizedNumber = delocalizeNumber(value);
+		storeValue(delocalizedNumber);
+	}, [value])
 
 	useEffect(() => {
 		const initialValue = sanitizeInitialValue(cf.value);

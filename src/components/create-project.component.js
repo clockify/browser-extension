@@ -30,7 +30,11 @@ class CreateProjectComponent extends React.Component {
 		const isProjectPublicByDefault = wsSettings
 			? JSON.parse(wsSettings).isProjectPublicByDefault
 			: false;
+		const forceTasks = wsSettings
+			? JSON.parse(wsSettings).forceTasks
+			: false;
 		this.setState({
+			forceTasks,
 			billable,
 			public: isProjectPublicByDefault,
 		});
@@ -104,13 +108,10 @@ class CreateProjectComponent extends React.Component {
 				if (response.error)
 					return this.toaster.toast('error', response.error?.message, 2);
 
-				const timeEntry = Object.assign(this.props.timeEntry, {
-					projectId: response.data.id,
-					billable,
-					project,
-					taskId: null,
-					task: null,
-				});
+				if (!this.state.forceTasks) {
+					this.props.selectProject(response.data);
+				}
+
 				getBrowser()
 					.runtime.sendMessage({
 						eventName: 'getUserRoles',
@@ -122,10 +123,10 @@ class CreateProjectComponent extends React.Component {
 						} else {
 						}
 						this.props.checkRequiredFields();
-						this.goBackToEdit(timeEntry);
+						this.goBackToEdit();
 					})
 					.catch((error) => {
-						this.goBackToEdit(timeEntry);
+						this.goBackToEdit();
 					});
 			})
 			.catch((error) => {
@@ -144,19 +145,19 @@ class CreateProjectComponent extends React.Component {
 	}
 
 	cancel() {
-		this.goBackToEdit(this.props.timeEntry);
+		this.goBackToEdit();
 	}
 
 	goBackToEdit(timeEntry) {
-		if (timeEntry.projectId) {
-			getBrowser().runtime.sendMessage({
-				eventName: 'editProject',
-				options: {
-					id: timeEntry.id,
-					project: timeEntry.projectId,
-				},
-			});
-		}
+		// if (timeEntry.projectId) {
+		// 	getBrowser().runtime.sendMessage({
+		// 		eventName: 'editProject',
+		// 		options: {
+		// 			id: timeEntry.id,
+		// 			project: timeEntry.projectId,
+		// 		},
+		// 	});
+		// }
 
 		this.props.closeModal();
 	}

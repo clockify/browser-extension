@@ -105,7 +105,7 @@ class ClientListComponent extends Component {
 					page,
 					pageSize,
 					filter: this.state.filter,
-					archived: false
+					archived: false,
 				},
 			})
 			.then((response) => {
@@ -182,6 +182,7 @@ class ClientListComponent extends Component {
 
 				this.setState(
 					{
+						clientName: '',
 						selectedClient: response.data,
 						createFormOpened: false,
 						clientList: this.state.clientList.concat(response.data),

@@ -1,10 +1,12 @@
 import * as React from 'react';
 import Menu from './menu.component';
+import Notifications from './notifications.component';
 import { getEnv } from '../environment';
 
 import { getLocalStorageEnums } from '../enums/local-storage.enum';
 import locales from '../helpers/locales';
 import { isLoggedIn } from '../helpers/utils';
+import { getBrowser } from '../helpers/browser-helper';
 
 const environment = getEnv();
 
@@ -19,21 +21,23 @@ class Header extends React.Component {
 		super(props);
 
 		this.state = {
-			menuOpen: false,
+			isMenuOpen: false,
 			showScreenshotNotification: false,
 			screenshotMessage: locales.SCREENSHOT_RECORDING,
 			showScreenshotLink: false,
 			isLoggedIn: false,
 			clockifyLink: '',
+			isNotificationsDropdownOpen: false,
 		};
 
-		this.closeMenu = this.closeMenu.bind(this);
+		this.closeMenus = this.closeMenus.bind(this);
 		this.showScreenshotNotifications =
 			this.showScreenshotNotifications.bind(this);
 		// this.processNotifications = this.processNotifications.bind(this);
 		this.handleRefresh = this.handleRefresh.bind(this);
 		this.returnClockifyLink = this.returnClockifyLink.bind(this);
 		// this.checkScreenshotNotifications = this.checkScreenshotNotifications.bind(this);
+		this.selectWorkspace = this.selectWorkspace.bind(this);
 	}
 
 	componentDidMount() {
@@ -89,24 +93,93 @@ class Header extends React.Component {
 
 	openMenu() {
 		this.setState({
-			menuOpen: true,
+			isMenuOpen: true,
 		});
 	}
 
-	closeMenu() {
+	openNotificationsDropdown() {
 		this.setState({
-			menuOpen: false,
+			isNotificationsDropdownOpen: true,
+		});
+	}
+
+	closeMenus() {
+		this.setState({
+			isMenuOpen: false,
+			isNotificationsDropdownOpen: false,
 		});
 	}
 
 	changeToManualMode() {
-		this.closeMenu();
+		this.closeMenus();
 		this.props.changeMode('manual');
 	}
 
 	changeToTimerMode() {
-		this.closeMenu();
+		this.closeMenus();
 		this.props.changeMode('timer');
+	}
+
+	selectWorkspace(workspace) {
+		this.props.clearEntries();
+
+		const workspaceId = workspace.id;
+		const workspaceName = workspace.name;
+
+		this.beforeWorkspaceChange();
+
+		this.setState((state) => ({
+			revert: false,
+			selectedWorkspaceId: workspaceId,
+			workspaceNameSelected: workspaceName,
+			previousWorkspace: state.selectedWorkspace,
+			selectedWorkspace: workspace,
+		}));
+		getBrowser()
+			.runtime.sendMessage({
+				eventName: 'setDefaultWorkspace',
+				options: {
+					workspaceId,
+				},
+			})
+			.then((response) => {
+				const subDomainName = response.headers
+					? response.headers['sub-domain-name']
+					: null;
+				if (subDomainName) {
+					this.setState({
+						revert: false,
+						workspaceChangeConfirmationIsOpen: true,
+						subDomainName: subDomainName,
+					});
+					return;
+				}
+				localStorage.setItem('activeWorkspaceId', workspaceId);
+				localStorage.removeItem('preProjectList');
+				localStorage.removeItem('preTagsList');
+
+				getBrowser().storage.local.set({
+					activeWorkspaceId: workspaceId,
+				});
+
+				this.setState({
+					defaultProjectEnabled: false,
+				});
+
+				// getBrowser().extension.getBackgroundPage().restartPomodoro();
+				getBrowser().runtime.sendMessage({
+					eventName: 'restartPomodoro',
+				});
+
+				this.props.workspaceChanged();
+			})
+			.catch((error) => {
+				if (error.response?.data.code === 1013) {
+					this.setState({
+						show2FAPopup: true,
+					});
+				}
+			});
 	}
 
 	async returnClockifyLink() {
@@ -312,8 +385,12 @@ class Header extends React.Component {
 		return (
 			<div>
 				<div
-					className={this.state.menuOpen ? 'invisible-menu' : 'disabled'}
-					onClick={this.closeMenu.bind(this)}
+					className={
+						this.state.isMenuOpen || this.state.isNotificationsDropdownOpen
+							? 'invisible-menu'
+							: 'disabled'
+					}
+					onClick={this.closeMenus.bind(this)}
 				></div>
 				<div className={this.props.isOffline ? 'header-offline' : 'disabled'}>
 					Offline
@@ -331,13 +408,21 @@ class Header extends React.Component {
 							className={this.props.showSync ? 'refresh-icon' : 'disabled'}
 						></div>
 						{this.props.showActions && (
+							<Notifications
+								onClick={this.openNotificationsDropdown.bind(this)}
+								isDropdownOpen={this.state.isNotificationsDropdownOpen}
+								toaster={this.props.toaster}
+								changeWorkspaceTo={this.selectWorkspace}
+							/>
+						)}
+						{this.props.showActions && (
 							<div
 								className={this.props.showActions ? 'actions' : 'disabled'}
 								title={locales.SETTINGS}
 								onClick={this.openMenu.bind(this)}
 							>
 								<Menu
-									isOpen={this.state.menuOpen}
+									isOpen={this.state.isMenuOpen}
 									mode={this.props.mode}
 									manualModeDisabled={this.props.manualModeDisabled}
 									changeModeToManual={this.changeToManualMode.bind(this)}
@@ -350,6 +435,7 @@ class Header extends React.Component {
 									toaster={this.props.toaster}
 									clearEntries={this.props.clearEntries}
 									isTrackingDisabled={this.props.isTrackingDisabled}
+									selectWorkspace={this.selectWorkspace}
 								/>
 							</div>
 						)}
@@ -378,7 +464,9 @@ class Header extends React.Component {
 										target={'_blank'}
 										className="screenshot-notification__action_buttons--help"
 									>
-										{locales.ACTIVITY_TABS__SCREENSHOTS__NO_SCREENSHOTS_PROMO_BTN}
+										{
+											locales.ACTIVITY_TABS__SCREENSHOTS__NO_SCREENSHOTS_PROMO_BTN
+										}
 									</a>
 								)}
 							</span>

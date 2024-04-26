@@ -10,6 +10,8 @@
 			const taskCode = $(selectors.taskCode, elem).textContent;
 			const taskDescription = $(selectors.taskDescription, elem).textContent;
 
+			const linkPlaceholder = createTag('div', 'clockify-button-placeholder');
+
 			const description = `${taskCode} ${taskDescription}`;
 			const projectName = $(selectors.projectName).textContent;
 
@@ -21,7 +23,9 @@
 
 			link.style.margin = '0 8px';
 
-			ambraClockifyButton.replaceWith(link);
+			ambraClockifyButton?.replaceWith(linkPlaceholder);
+
+			$('.clockify-button-placeholder', elem)?.after(link);
 		}
 	);
 

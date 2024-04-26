@@ -94,6 +94,7 @@ class TimeEntryList extends React.Component {
 			customFieldValues,
 			type: type1,
 		} = entry1;
+
 		const {
 			billable: billable2,
 			isLocked: isLocked2,
@@ -106,7 +107,24 @@ class TimeEntryList extends React.Component {
 			type: type2,
 		} = entry2;
 
-		if (
+		const isEmptyOrFalsey = (value) => {
+			return !value || (Array.isArray(value) && value.length === 0);
+		};
+
+		const checkCustomFields = (cfs1, cfs2) => {
+			if (cfs1.length === 0 && cfs2.every((cv) => isEmptyOrFalsey(cv.value)))
+				return true;
+			if (cfs2.length === 0 && cfs1.every((cv) => isEmptyOrFalsey(cv.value)))
+				return true;
+			if (cfs1.length !== cfs2.length) return false;
+
+			return cfs1.every((cf1) => {
+				const cf2 = cfs2.find((cf2) => cf1.customFieldId === cf2.customFieldId);
+				return cf2 && isEqual(cf1.value, cf2.value);
+			});
+		};
+
+		return (
 			billable === billable2 &&
 			isLocked === isLocked2 &&
 			start === start2 &&
@@ -116,16 +134,8 @@ class TimeEntryList extends React.Component {
 			tags.length === tags2.length &&
 			type1 === type2 &&
 			isEqual(tags, tags2) &&
-			customFieldValues.every((cf) => {
-				const cf2 = customFieldValues2.find(
-					(cf2) => cf.customFieldId === cf2.customFieldId
-				);
-				return cf && cf2 && isEqual(cf.value, cf2.value);
-			})
-		) {
-			return true;
-		}
-		return false;
+			checkCustomFields(customFieldValues, customFieldValues2)
+		);
 	}
 
 	render() {

@@ -89,10 +89,9 @@ export default (function () {
 				if (!messageObject || !messageObject.message) return messageObject;
 				let message = messageObject.message;
 
-				params.forEach((param) => {
-					message = message.replace(/\{ .+ \}/, param);
-				});
-
+				for (let i = 0; i < params.length; i++) {
+					message = message.replace(/\{ .+?}/, params[i]);
+				}
 				return message;
 			};
 

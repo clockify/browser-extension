@@ -89,7 +89,7 @@ class MyDurationPicker extends React.Component {
 		}
 		const isEmpty =
 			newDuration === '00:00:00' || newDuration === '00:00' || !newDuration;
-		timeEntryDurationInput = isEmpty ? '' : newDuration;
+		timeEntryDurationInput = newDuration;
 		if (timeEntryDurationInput !== this.state.timeEntryDurationBackup) {
 			this.setState({ timeEntryDurationInput }, () =>
 				this.props.onChange(null, timeEntryDurationInput)

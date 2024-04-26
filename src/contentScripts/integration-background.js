@@ -710,6 +710,19 @@ class ClockifyIntegrationBase {
 		sendResponse({ data, status });
 	}
 
+	static async resendVerificationEmail(sendResponse) {
+		if (await isNavigatorOffline()) {
+			sendResponse('Connection is offline', 0);
+			return;
+		}
+		const { data, error, status } = await UserService.resendVerificationEmail();
+		if (error) {
+			sendResponse(error.message, error.status);
+			return;
+		}
+		sendResponse({ data, status });
+	}
+
 	static async getPermissionsForUser(sendResponse) {
 		if (await isNavigatorOffline()) {
 			sendResponse('Connection is offline', 0);
@@ -953,6 +966,19 @@ class ClockifyIntegrationBase {
 		}
 		sendResponse({ data, status });
 	}
+	static async continueEntry({ timeEntryId }, sendResponse) {
+		if (await isNavigatorOffline()) {
+			sendResponse('Connection is offline', 0);
+			return;
+		}
+
+		const { data, error, status } = await TimeEntry.continueEntry(timeEntryId);
+		if (error) {
+			sendResponse(error.message, error.status);
+			return;
+		}
+		sendResponse({ data, status });
+	}
 	static async deleteTimeEntry({ entryId }, sendResponse) {
 		if (await isNavigatorOffline()) {
 			sendResponse('Connection is offline', 0);
@@ -979,6 +1005,23 @@ class ClockifyIntegrationBase {
 		}
 		sendResponse({ data, status });
 	}
+	static async updateTimeEntryValues({ entryId, body }, sendResponse) {
+		if (await isNavigatorOffline()) {
+			sendResponse('Connection is offline', 0);
+			return;
+		}
+
+		const { data, error, status } = await TimeEntry.updateTimeEntryValues(
+			entryId,
+			body
+		);
+		if (error) {
+			sendResponse(error.message, error.status);
+			return;
+		}
+		sendResponse({ data, status });
+	}
+
 	static async duplicateTimeEntry({ entryId }, sendResponse) {
 		if (await isNavigatorOffline()) {
 			sendResponse('Connection is offline', 0);
@@ -992,7 +1035,6 @@ class ClockifyIntegrationBase {
 		}
 		sendResponse({ data, status });
 	}
-
 	static async searchEntries({ searchValue }, sendResponse) {
 		if (await isNavigatorOffline()) {
 			sendResponse('Connection is offline', 0);
@@ -1048,6 +1090,227 @@ class ClockifyIntegrationBase {
 		} catch (e) {
 			console.error('API call failed:', e);
 		}
+	}
+
+	static async getNotificationsForUser(sendResponse) {
+		if (await isNavigatorOffline()) {
+			sendResponse('Connection is offline', 0);
+			return;
+		}
+
+		const { data, error, status } =
+			await NotificationService.getNotificationsForUser();
+
+		if (error) {
+			sendResponse({ error });
+			return;
+		}
+		sendResponse({ data, status });
+	}
+
+	static async getVerificationNotificationsForUser(sendResponse) {
+		if (await isNavigatorOffline()) {
+			sendResponse('Connection is offline', 0);
+			return;
+		}
+
+		const { data, error, status } =
+			await NotificationService.getVerificationNotificationsForUser();
+
+		if (error) {
+			sendResponse({ error });
+			return;
+		}
+		sendResponse({ data, status });
+	}
+
+	static async getNewsForUser(sendResponse) {
+		if (await isNavigatorOffline()) {
+			sendResponse('Connection is offline', 0);
+			return;
+		}
+
+		const { data, error, status } = await NotificationService.getNewsForUser();
+
+		if (error) {
+			sendResponse({ error });
+			return;
+		}
+		sendResponse({ data, status });
+	}
+
+	static async readSingleNotificationForUser({ notificationId }, sendResponse) {
+		console.log('readSingleNotificationForUser', { notificationId });
+		if (await isNavigatorOffline()) {
+			sendResponse('Connection is offline', 0);
+			return;
+		}
+
+		const { data, error, status } =
+			await NotificationService.readSingleNotificationForUser({
+				notificationId,
+			});
+
+		if (error) {
+			sendResponse({ error });
+			return;
+		}
+		sendResponse({ data, status });
+	}
+
+	static async readSingleOrMultipleVerificationNotificationForUser(
+		options,
+		sendResponse
+	) {
+		if (await isNavigatorOffline()) {
+			sendResponse('Connection is offline', 0);
+			return;
+		}
+
+		const { data, error, status } =
+			await NotificationService.readSingleOrMultipleVerificationNotificationForUser(
+				options
+			);
+
+		if (error) {
+			sendResponse({ error });
+			return;
+		}
+		sendResponse({ data, status });
+	}
+
+	static async readSingleOrMultipleNewsForUser({ newsIds }, sendResponse) {
+		console.log('readSingleOrMultipleNewsForUser', { newsIds });
+		if (await isNavigatorOffline()) {
+			sendResponse('Connection is offline', 0);
+			return;
+		}
+
+		const { data, error, status } =
+			await NotificationService.readSingleOrMultipleNewsForUser({
+				newsIds,
+			});
+
+		if (error) {
+			sendResponse({ error });
+			return;
+		}
+		sendResponse({ data, status });
+	}
+
+	static async readManyNotificationsForUser({ notificationIds }, sendResponse) {
+		if (await isNavigatorOffline()) {
+			sendResponse('Connection is offline', 0);
+			return;
+		}
+
+		const { data, error, status } =
+			await NotificationService.readManyNotificationsForUser({
+				notificationIds,
+			});
+
+		if (error) {
+			sendResponse({ error });
+			return;
+		}
+		sendResponse({ data, status });
+	}
+
+	static async sendEmailVerification(sendResponse) {
+		if (await isNavigatorOffline()) {
+			sendResponse('Connection is offline', 0);
+			return;
+		}
+
+		const { data, error, status } = await UserService.sendEmailVerification();
+
+		if (error) {
+			sendResponse({ error });
+			return;
+		}
+		sendResponse({ data, status });
+	}
+
+	static async subscribeToNewsletter(sendResponse) {
+		if (await isNavigatorOffline()) {
+			sendResponse('Connection is offline', 0);
+			return;
+		}
+
+		const { data, error, status } = await UserService.subscribeToNewsletter();
+
+		if (error) {
+			sendResponse({ error });
+			return;
+		}
+		sendResponse({ data, status });
+	}
+
+	static async removeDeclinedUserFromWorkspace(options, sendResponse) {
+		if (await isNavigatorOffline()) {
+			sendResponse('Connection is offline', 0);
+			return;
+		}
+
+		const { data, error, status } =
+			await UserService.removeDeclinedUserFromWorkspace(options);
+
+		if (error) {
+			sendResponse({ error });
+			return;
+		}
+		sendResponse({ data, status });
+	}
+
+	static async changeWorkspaceStatus(options, sendResponse) {
+		if (await isNavigatorOffline()) {
+			sendResponse('Connection is offline', 0);
+			return;
+		}
+
+		const { data, error, status } = await UserService.changeWorkspaceStatus(
+			options
+		);
+
+		console.log('changeworkspace data:', data);
+
+		if (error) {
+			sendResponse({ error });
+			return;
+		}
+		sendResponse({ data, status });
+	}
+
+	static async setDefaultUserWorkspace(options, sendResponse) {
+		if (await isNavigatorOffline()) {
+			sendResponse('Connection is offline', 0);
+			return;
+		}
+
+		const { data, error, status } = await UserService.setDefaultUserWorkspace(
+			options
+		);
+
+		if (error) {
+			sendResponse({ error });
+			return;
+		}
+		sendResponse({ data, status });
+	}
+
+	static async changeTimezone(options, sendResponse) {
+		if (await isNavigatorOffline()) {
+			sendResponse('Connection is offline', 0);
+			return;
+		}
+
+		const { data, error, status } = await UserService.changeTimezone(options);
+
+		if (error) {
+			sendResponse({ error });
+			return;
+		}
+		sendResponse({ data, status });
 	}
 }
 

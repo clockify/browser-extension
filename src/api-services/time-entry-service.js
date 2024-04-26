@@ -147,6 +147,27 @@ class TimeEntry extends ClockifyService {
 		return { data, error };
 	}
 
+	static async continueEntry(timeEntryId) {
+		const apiEndpoint = await this.apiEndpoint;
+		const wsId = await this.workspaceId;
+		const endPoint = `${apiEndpoint}/workspaces/${wsId}/time-entries/${timeEntryId}/continue`;
+
+		const { data, error } = await this.apiCall(endPoint, 'POST', {});
+		if (error) {
+			console.error('oh no, failed', error);
+		}
+		return { data, error };
+	}
+
+	static async updateTimeEntryValues(entryId, body) {
+		const apiEndpoint = await this.apiEndpoint;
+		const workspaceId = await this.workspaceId;
+
+		const endPoint = `${apiEndpoint}/workspaces/${workspaceId}/timeEntries/${entryId}`;
+
+		return await this.apiCall(endPoint, 'PUT', body);
+	}
+
 	static async duplicateTimeEntry(entryId) {
 		const apiEndpoint = await this.apiEndpoint;
 		const workspaceId = await this.workspaceId;
@@ -156,7 +177,7 @@ class TimeEntry extends ClockifyService {
 
 		const { data, error } = await this.apiCall(endPoint, 'POST');
 		if (error) {
-			console.error('oh no, failed', error);
+			console.error('failed', error);
 		}
 		return { data, error };
 	}
@@ -583,6 +604,10 @@ class TimeEntry extends ClockifyService {
 
 			if (!billable) {
 				billable = projectDB ? projectDB.billable : false;
+			}
+
+			if (task) {
+				billable = task.billable;
 			}
 		}
 		let tags = null;

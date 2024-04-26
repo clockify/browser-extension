@@ -1,5 +1,7 @@
 import React from 'react';
 import Login from '../components/login.component';
+import locales from './locales';
+import { getWSCustomFields } from './offlineStorage';
 
 export const logout = (reason, data) => {
 	if (!document.getElementById('mount')) return;
@@ -32,14 +34,16 @@ export const debounce = ({ func, delay, isImmediate }) => {
 	};
 };
 
-export 	const getRequiredMissingCustomFields = async (project, timeEntry) => {
-	const requiredAndMissingCustomFields = [];
+
+export const getAllCustomFieldsForProject = async (project) => {
+	const { data } = await getWSCustomFields();
+
+	let allCustomFieldsForProject;
 
 	const wsCustomFieldsFromStorage = await localStorage.getItem('wsCustomFields');
-	const wsCustomFields = wsCustomFieldsFromStorage ? JSON.parse(wsCustomFieldsFromStorage) : [];
+	const wsCustomFields = data? data : wsCustomFieldsFromStorage? JSON.parse(wsCustomFieldsFromStorage) : [];
 	const visibleCustomFieldsForAllProjects = wsCustomFields.filter(customField => customField.status === 'VISIBLE');
 
-	let customFieldsForTimeEntry;
 	if (project) {
 		const visibleCustomFieldsForThisProject = [];
 		wsCustomFields.forEach(customField => {
@@ -69,24 +73,69 @@ export 	const getRequiredMissingCustomFields = async (project, timeEntry) => {
 				});
 			});
 		}
-		customFieldsForTimeEntry = visibleCustomFields.filter(fieldVisible =>
+		allCustomFieldsForProject = visibleCustomFields.filter(fieldVisible =>
 			!invisibleCustomFieldsForThisProject.some(fieldInvisible =>
 				fieldInvisible.id === fieldVisible.id));
 	} else {
-		customFieldsForTimeEntry = visibleCustomFieldsForAllProjects;
+		allCustomFieldsForProject = visibleCustomFieldsForAllProjects;
 	}
-	const requiredCustomFieldsForTimeEntry = customFieldsForTimeEntry.filter(
+	return allCustomFieldsForProject;
+}
+
+export 	const getRequiredMissingCustomFields = async (project, timeEntry) => {
+
+	const requiredAndMissingCustomFields = [];
+	const allCustomFieldsForProject = await getAllCustomFieldsForProject(project);
+
+	const requiredCustomFieldsForTimeEntry = allCustomFieldsForProject.filter(
 		customField => customField.required === true
 	)
 	if (requiredCustomFieldsForTimeEntry) {
 		for (let requiredField of requiredCustomFieldsForTimeEntry) {
 			let matchingField = timeEntry.customFieldValues.find(field =>
 				field.customFieldId === requiredField.id);
-			if (matchingField && matchingField.type !== "CHECKBOX" && !matchingField.value) {
+			if (matchingField &&
+				  matchingField.type !== "CHECKBOX" &&
+				  ((matchingField.type !== "NUMBER" && (!matchingField.value || !matchingField.value.length))
+					||
+					(matchingField.type === "NUMBER" && matchingField.value !== 0 && !matchingField.value))
+			) {
 				requiredAndMissingCustomFields.push(matchingField)
+			}
+			if (requiredField && matchingField === undefined) {
+				requiredAndMissingCustomFields.push(requiredField)
 			}
 		}
 	}
-
 	return requiredAndMissingCustomFields;
+}
+
+export const getRequiredAndMissingCustomFieldNames = async (project, timeEntry) => {
+	const requiredAndMissingCustomFields = await getRequiredMissingCustomFields(project, timeEntry);
+	const requiredAndMissingCustomFieldNames = [];
+	requiredAndMissingCustomFields.forEach(customField => {
+		requiredAndMissingCustomFieldNames.push(customField.name)
+	})
+	return requiredAndMissingCustomFieldNames;
+}
+export const getRequiredAndMissingFieldNames = (timeEntry, workspaceSettings) => {
+	const requiredAndMissingFieldNames = [];
+
+	const { forceDescription, forceProjects, forceTags, forceTasks, projectLabel, taskLabel } = workspaceSettings;
+
+	if (forceProjects && !timeEntry.project) {
+		requiredAndMissingFieldNames.push(projectLabel === 'project'? locales.PROJECT.toLowerCase() : projectLabel.toLowerCase());
+	}
+	if (forceTasks && !timeEntry.task) {
+		requiredAndMissingFieldNames.push(taskLabel === 'task'? locales.TASK.toLowerCase() : taskLabel.toLowerCase())
+	}
+	if (forceTags && !timeEntry.tags.length) {
+		requiredAndMissingFieldNames.push(locales.TAG.toLowerCase())
+	}
+	if (forceDescription && !timeEntry.description) {
+		requiredAndMissingFieldNames.push(locales.DESCRIPTION_LABEL.toLowerCase())
+	}
+
+	return requiredAndMissingFieldNames;
+
 }

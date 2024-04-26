@@ -1,47 +1,53 @@
-// Render in side-bar of card Modal
+// Card sidebar
 clockifyButton.render(
-	'.eve-accordions:not(.clockify)',
+	'.modal-card-details:not(.clockify)',
 	{ observe: true },
-	function (elem) {
-		cardId = $('span.card-id').innerText;
-		description = cardId + ' ' + $('span.card-title').innerText;
+	(modal) => {
+		const modalNavbar = $('.modal-tabs .eve-navigation-bar');
+		const cardId = text('span.card-id');
+		const cardTitle = text('span.card-title');
 
-        function findProjectNameInCustomFields(customFields) {
-            projectName = false;
-			for (let field of customFields) {
-				if (
-					field.querySelector('.eve-form-label') && field.querySelector('.eve-form-label').innerText === 'Clockify Project'
-				) {
-					projectName = field.querySelector('input.eve-input.js-value').value;
-				}
-			}
-			return projectName;
-		}
+		const description = () => `${cardId} ${cardTitle}`;
+		const projectName = () => findProjectNameInCustomFields();
+		const taskName = () => `${cardId} ${cardTitle}`;
+		const tagNames = () => textList('.card-details-tags .eve-chip-text');
 
-		// Allow defining Clockify Project Name in Custom Field.
-		// Use card name as sensible default if undefined.
-		customFields = document.querySelectorAll('div.card-custom-field');
-		projectName = findProjectNameInCustomFields(customFields) || '';
+		const entry = { description, projectName, taskName, tagNames };
 
-		button = clockifyButton.createButton({
-			description: description,
-			projectName: projectName,
-			taskName: description,
-			tagNames: [],
-		});
-		button.className = 'eve-cell';
-		input = clockifyButton.createInput({
-			description: description,
-			projectName: projectName,
-			taskName: description,
-			tagNames: [],
-		});
-		input.className = 'eve-cell';
-		wrapperDiv = createTag('div');
-		wrapperDiv.className = 'eve-grid';
-		wrapperDiv.style.marginBottom = '10px';
-		wrapperDiv.appendChild(input);
-		wrapperDiv.appendChild(button);
-		elem.parentNode.insertBefore(wrapperDiv, elem);
+		const link = clockifyButton.createButton(entry);
+		const input = clockifyButton.createInput(entry);
+
+		container = createTag('div', 'clockify-widget-container');
+
+		container.style.display = 'flex';
+		container.style.alignItems = 'center';
+		container.style.position = 'absolute';
+		container.style.right = '40px';
+		container.style.top = '18px';
+		link.style.marginRight = '70px';
+
+		container.append(link);
+		container.append(input);
+
+		modalNavbar.append(container);
 	}
 );
+
+// Project should be content of custom field with name "Clockify Project" if exist
+function findProjectNameInCustomFields() {
+	const contentOfCustomFieldForPickingUp = 'Clockify Project';
+	const findCustomFieldForPickingUp = (customField) =>
+		text('.card-custom-field-name', customField) ===
+		contentOfCustomFieldForPickingUp;
+
+	const customFields = Array.from($$('.card-custom-field') || []);
+	const customFieldForPickingUp = customFields.find(
+		findCustomFieldForPickingUp
+	);
+
+	const projectName = customFieldForPickingUp
+		? value('input', customFieldForPickingUp)
+		: null;
+
+	return projectName;
+}

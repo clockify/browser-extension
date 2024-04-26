@@ -1073,6 +1073,156 @@
   "FORBIDDEN_CHARACTERS": {
     "message": "Вы ввели неправильное значение. Не используйте символы \"<\" и \">\""
   },
+  "WORKSPACE_LOCKED": {
+    "message": "Рабочая область заблокирована"
+  },
+  "SWITCH_WORKSPACE": {
+    "message": "Переключить рабочее пространство"
+  },
+  "VERIFY_EMAIL_MESSAGE": {
+    "message": "Подтвердите свой адрес электронной почты: { userEmail }"
+  },
+  "SEND_VERIFICATION_EMAIL_BTN": {
+    "message": "Отправить письмо с подтверждением"
+  },
+  "EMAIL_SENT_SUCCESS_MESSAGE": {
+    "message": "Письмо отправлено"
+  },
+  "VERIFY_EMAIL_TITLE": {
+    "message": "Подтвердите Ваш электронный адрес!"
+  },
+  "LONG_VERIFY_EMAIL_MESSAGE": {
+    "message": "{ userName }, чтобы продолжить использовать свою учетную запись clockify, вы должны подтвердить свой адрес электронной почты: { userEmail }"
+  },
+  "CHANGE_EMAIL_FOOTER": {
+    "message": "Возникли проблемы с доступом к электронной почте?"
+  },
+  "CHANGE_EMAIL_TITLE": {
+    "message": "Изменить e-mail"
+  },
+  "NOTIFICATIONS_TITLE": {
+    "message": "Уведомления"
+  },
+  "NO_NEW_NOTIFICATIONS_TITLE": {
+    "message": "Нет новых уведомлений"
+  },
+  "NO_NEW_NOTIFICATIONS_MESSAGE": {
+    "message": "Сейчас у вас нет новых уведомлений"
+  },
+  "CLEAR_ALL": {
+    "message": "Очистить все"
+  },
+  "WORKSPACE_INVITATION_NOTIFICATION_TITLE": {
+    "message": "Приглашение в рабочую область"
+  },
+  "LAYOUT__NOTIFICATIONS__WORKSPACE_INVITATION__FULL_ACCOUNT_ACCESS_INVITATION__PART_1": {
+    "message": "Вас приглашают присоединиться "
+  },
+  "LAYOUT__NOTIFICATIONS__WORKSPACE_INVITATION__FULL_ACCOUNT_ACCESS_INVITATION__PART_2": {
+    "message": " рабочая среда. Как только вы примете согласие, администратор { workspaceName } получит"
+  },
+  "LAYOUT__NOTIFICATIONS__WORKSPACE_INVITATION__ACCESS_INVITATION__PART_1": {
+    "message": "пригласил вас отслеживать время на"
+  },
+  "LAYOUT__NOTIFICATIONS__WORKSPACE_INVITATION__ACCESS_INVITATION__PART_2": {
+    "message": "рабочая среда."
+  },
+  "LAYOUT__NOTIFICATIONS__WORKSPACE_INVITATION__FULL_ACCOUNT_ACCESS_INVITATION__PART_3": {
+    "message": " полный доступ "
+  },
+  "LAYOUT__NOTIFICATIONS__ACCEPT_LABEL": {
+    "message": "Принимать"
+  },
+  "LAYOUT__NOTIFICATIONS__DECLINE_LABEL": {
+    "message": "Отклонить"
+  },
+  "GLOBAL__LEARN_MORE_LINK": {
+    "message": "Учить больше"
+  },
+  "NOTIFICATION__TRIAL__LINK": {
+    "message": "Как работают функции PRO"
+  },
+  "LAYOUT__NOTIFICATIONS__VERIFY_EMAIL_LABEL": {
+    "message": "Подтвердить электронную почту"
+  },
+  "LAYOUT__NOTIFICATIONS__UNVERIFIED_EMAIL_NOTIFICATION": {
+    "message": "Вы еще не подтвердили свой адрес электронной почты."
+  },
+  "LAYOUT__NOTIFICATIONS__RESEND_EMAIL_LABEL": {
+    "message": "Повторно отправить электронное письмо"
+  },
+  "LAYOUT__NOTIFICATIONS__RECEIVE_UPDATES_LABEL": {
+    "message": "Получать обновления"
+  },
+  "GLOBAL__GO_TO_SUBSCRIPTION_LABEL": {
+    "message": "Перейти к подписке"
+  },
+  "EMAIL__VERIFICATION__SUCCESS": {
+    "message": "Электронное письмо для проверки успешно отправлено"
+  },
+  "USER__SETTINGS__SAVE__SUCCESS": {
+    "message": "Настройки успешно сохранены"
+  },
+  "INVITATION_DECLINED_MESSAGE": {
+    "message": "Приглашение для пользователя { name } было отклонено."
+  },
+  "VERIFY_EMAIL_MSG_1": {
+    "message": "Пожалуйста, подтвердите свой"
+  },
+  "VERIFY_EMAIL_MSG_2": {
+    "message": "электронная почта в первую очередь."
+  },
+  "WORKSPACE_DEFAULT_SUCCESS_MESSAGE": {
+    "message": "Рабочее пространство по умолчанию изменено"
+  },
+  "EMAIL__VERIFICATION__CAMPAIGN__TITLE": {
+    "message": "Подтвердите Ваш электронный адрес"
+  },
+  "EMAIL__VERIFICATION__CAMPAIGN__MESSAGE_1": {
+    "message": "В течение следующих 30 дней для беспрепятственного использования Clockify потребуется подтвержденная учетная запись."
+  },
+  "EMAIL__VERIFICATION__CAMPAIGN__MESSAGE_2": {
+    "message": "Чтобы беспрепятственно использовать Clockify в будущем, подтвердите свою учетную запись сегодня."
+  },
+  "EMAIL__VERIFICATION__CAMPAIGN__MESSAGE_3": {
+    "message": "Подтвердите свой адрес электронной почты и продолжайте использовать Clockify без каких-либо ограничений в будущем."
+  },
+  "EMAIL__VERIFICATION__CAMPAIGN__MESSAGE_4": {
+    "message": "Без подтверждения электронной почты использование вашего приложения будет ограничено в течение 15&nbsp;дней."
+  },
+  "EMAIL__VERIFICATION__CAMPAIGN__MESSAGE_5": {
+    "message": "Ваш адрес электронной почты должен быть подтвержден, иначе использование вашего приложения будет ограничено через 10 дней."
+  },
+  "EMAIL__VERIFICATION__CAMPAIGN__MESSAGE_6": {
+    "message": "Последний звонок для подтверждения электронной почты! Без него вы не сможете использовать свою учетную запись Clockify."
+  },
+  "TIMEZONE_MISMATCH__TITLE": {
+    "message": "Несоответствие часового пояса"
+  },
+  "TIMEZONE_MISMATCH__BODY_TEXT": {
+    "message": "Если { profileLink } и часовые пояса браузера не совпадают, это может привести к неправильным отчетам, а некоторые функции могут работать не так, как ожидалось."
+  },
+  "TIMEZONE_MISMATCH__NOTIFICATION__PART_2": {
+    "message": "твой профиль"
+  },
+  "CHANGE_TIMEZONE_NOTIFICATION": {
+    "message": "Изменить на { suggestedTimeZone }"
+  },
+  "GLOBAL__OR_LABEL": {
+    "message": "ИЛИ"
+  },
+  "TIMEZONE_MISMATCH__NOTIFICATION__ENABLE_LOCATION_ACCESS": {
+    "message": "Включить доступ к местоположению"
+  },
+  "TIMEZONE__UPDATE__SUCCESS_MESSAGE": {
+    "message": "Часовой пояс обновлен"
+  },
+  "TIMEZONE__UPDATE__ERROR_MESSAGE": {
+    "message": "Не удалось обновить часовой пояс"
+  },
+  "GLOBAL__DUPLICATE_SUCCESS_MSG": {
+    "message": "Запись времени была продублирована"
+  },
   "appName": {
     "message": "Clockify Отслеживание времени",
     "description": "Название приложения, отображаемое в интернет-магазине."

@@ -44,17 +44,30 @@ aBrowser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 	const isIdentityRedirectUrl = tab.url.includes(
 		aBrowser.identity.getRedirectURL()
 	);
-	if (!isIdentityRedirectUrl && tab.url.includes('clockify.me')) {
-		return;
-	}
+
+	//Commented because of integration to *.clockify.me/*
+	// if (!isIdentityRedirectUrl && tab.url.includes('clockify.me')) {
+	// 	return;
+	// }
+
 	if (isIdentityRedirectUrl) {
 		// to use frontendUrl?
 		try {
-			this.extractAndSaveToken(tab.url);
+			await this.extractAndSaveToken(tab.url);
 		} catch (error) {
 			console.log(error);
 		} finally {
-			aBrowser.tabs.remove(tabId, () => {});
+			const signupExpected = await localStorage.getItem('signupExpected');
+			const homeUrl = await localStorage.getItem('permanent_homeUrl');
+			const urlToUpdate = homeUrl || 'https://app.clockify.me/tracker';
+			if (JSON.parse(signupExpected)) {
+				aBrowser.tabs.update(tabId, {
+					url: urlToUpdate,
+				});
+			} else {
+				aBrowser.tabs.remove(tabId, () => {});
+			}
+			await localStorage.setItem('signupExpected', 'false');
 		}
 		return;
 	}
@@ -65,11 +78,6 @@ aBrowser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 				const userLang = await localStorage.getItem('lang');
 				await clockifyLocales.onProfileLangChange(userLang);
 				let domainInfo = await extractDomainInfo(tab.url, result.permissions);
-				//TODO: find better solution when working with integrattion iframes
-				// since asana breaks on firefox when iframes are not loaded
-				if (domainInfo.file === 'asana.js' && !this.isChrome()) {
-					await pause(1000);
-				}
 				if (domainInfo.file) {
 					aBrowser.tabs.sendMessage(tabId, {
 						eventName: 'cleanup',
@@ -340,64 +348,6 @@ aBrowser.commands.onCommand.addListener(async (command) => {
 	}
 });
 
-aBrowser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
-	const isIdentityRedirectUrl = tab.url.includes(
-		aBrowser.identity.getRedirectURL()
-	);
-	if (!isIdentityRedirectUrl && tab.url.includes('clockify.me')) {
-		return;
-	}
-
-	if (changeInfo.status === 'complete') {
-		aBrowser.storage.local.get('permissions', async (result) => {
-			const isLoggedIn = await TokenService.isLoggedIn();
-			if (!tab.url.includes('chrome://') && isLoggedIn) {
-				const userLang = await localStorage.getItem('lang');
-				await clockifyLocales.onProfileLangChange(userLang);
-				let integrationInfo = await extractDomainInfo(
-					tab.url,
-					result.permissions
-				);
-				if (integrationInfo.file) {
-					aBrowser.tabs.sendMessage(tabId, {
-						eventName: 'cleanup',
-					});
-					aBrowser.scripting.executeScript({
-						target: { tabId },
-						files: ['popupDlg/clockifyDebounce.js'],
-					});
-					aBrowser.scripting.executeScript(
-						{
-							target: { tabId },
-							files: ['contentScripts/clockifyLocales.js'],
-						},
-						() => {
-							aBrowser.scripting.executeScript(
-								{ target: { tabId }, files: ['popupDlg/clockifyButton.js'] },
-								() => {
-									loadScripts(tabId, integrationInfo);
-									setTimeout(() => {
-										backgroundWebSocketConnect();
-									}, 1000);
-									IntegrationSelectors.fetchAndStore({
-										onlyIfPassedFollowingMinutesSinceLastFetch: 60 * 12,
-									});
-								}
-							);
-						}
-					);
-				}
-			} else {
-				if (tab.url.includes(aBrowser.identity.getRedirectURL())) {
-					// to use frontendUrl?
-					this.extractAndSaveToken(tab.url);
-					aBrowser.tabs.remove(tabId, () => {});
-				}
-			}
-		});
-	}
-});
-
 function loadScripts(tabId, integrationInfo) {
 	try {
 		aBrowser.scripting
@@ -441,6 +391,10 @@ async function extractAndSaveToken(url) {
 
 	const lang = await localStorage.getItem('lang');
 	clockifyLocales.onProfileLangChange(lang);
+	const isLoggedIn = await TokenService.isLoggedIn();
+	const inProgress = await TimeEntry.getEntryInProgress();
+	if (isLoggedIn && inProgress.entry)
+		aBrowser.action.setIcon({ path: iconPathStarted });
 	TimeEntry.getTimeEntries(1, 50).then(async (timeEntries) => {
 		if (timeEntries && timeEntries.data) {
 			await localStorage.setItem('preData', {
@@ -545,11 +499,17 @@ aBrowser.runtime.onMessage.addListener((request, sender, sendResponse) => {
 		case 'getUserRoles':
 		case 'getBoot':
 		case 'getPermissionsForUser':
+		case 'getNotificationsForUser':
+		case 'getNewsForUser':
+		case 'getVerificationNotificationsForUser':
 		case 'getWorkspaceSettings':
 		case 'getWorkspacesOfUser':
 		case 'getWasRegionalEverAllowed':
 		case 'invalidateToken':
 		case 'checkInternetConnection':
+		case 'resendVerificationEmail':
+		case 'sendEmailVerification':
+		case 'updateNewsSubscription':
 			return ClockifyIntegration.callFunction(
 				request.eventName,
 				null,
@@ -565,6 +525,14 @@ aBrowser.runtime.onMessage.addListener((request, sender, sendResponse) => {
 		case 'setDescription':
 		case 'removeProject':
 		case 'getProjects':
+		case 'readSingleOrMultipleNewsForUser':
+		case 'readSingleNotificationForUser':
+		case 'readSingleOrMultipleVerificationNotificationForUser':
+		case 'readManyNotificationsForUser':
+		case 'changeTimezone':
+		case 'removeDeclinedUserFromWorkspace':
+		case 'changeWorkspaceStatus':
+		case 'setDefaultUserWorkspace':
 		case 'getLastUsedProjectFromTimeEntries':
 		case 'getProjectTasks':
 		case 'getTaskOfProject':
@@ -577,8 +545,10 @@ aBrowser.runtime.onMessage.addListener((request, sender, sendResponse) => {
 		case 'createTag':
 		case 'editTags':
 		case 'deleteTimeEntry':
+		case 'continueEntry':
 		case 'searchEntries':
 		case 'duplicateTimeEntry':
+		case 'updateTimeEntryValues':
 		case 'deleteTimeEntries':
 		case 'removeProjectAsFavorite':
 		case 'makeProjectFavorite':

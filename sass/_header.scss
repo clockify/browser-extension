@@ -19,6 +19,8 @@
 	width: 100px;
 	height: 25px;
 	background-image: url('../assets/images/clockify_logo.svg');
+	background-size: contain;
+	background-repeat: no-repeat;
 	cursor: pointer;
 }
 

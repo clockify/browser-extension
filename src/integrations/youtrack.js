@@ -43,24 +43,37 @@ clockifyButton.render(
 // lite view for single issues
 // $('h1[data-test="ticket-summary"]')
 clockifyButton.render(
-	'div[data-test="issue-container"] summary > h1:not(.clockify)',
+	'[data-test="issue-container"]:not(.clockify)',
 	{ observe: true },
-	function (elem) {
-		const summary = () => {
-			return $('div[data-test="issue-container"] summary > h1');
-		};
+	async (elem) => {
+		if ($('.clockify-container', elem)) return;
 
-		const issueId = () => {
-			return $('div[data-test="issue-container"] a[data-test="ring-link"]')
-				.textContent;
-		};
+		await timeout({ milliseconds: 1000 });
+		const ticketId = () => text('[id*="id-link"]', elem);
+		const ticketTitle = () => text('[data-test="ticket-summary"]', elem);
 
-		const desc = () => {
-			return issueId() + ' ' + summary().textContent.trim();
-		};
-		const link = clockifyButton.createButton(desc, issueId().split('-')[0]);
-		link.style.paddingLeft = '15px';
-		elem.parentElement.appendChild(link);
+		const description = () => `${ticketId()} ${ticketTitle()}`;
+		// const projectName = () => ticketId();
+		const projectName = () =>
+			text('[aria-label="Project"] span[class^="fieldValue"]');
+		const tagNames = () => textList('[class*="tags"] a', elem);
+
+		const entry = { description, projectName, tagNames, small: true };
+
+		const link = clockifyButton.createButton(entry);
+		const input = clockifyButton.createInput(entry);
+
+		input.style.marginLeft = '16px';
+
+		const clockifyContainer = createTag('div', 'clockify-container');
+		clockifyContainer.style.display = 'flex';
+		clockifyContainer.style.alignItems = 'center';
+		clockifyContainer.append(link);
+		clockifyContainer.append(input);
+
+		const modalHeader = $('.summaryToolbar__c23', elem);
+		const firstChild = $('div', modalHeader);
+		modalHeader.insertBefore(clockifyContainer, firstChild.nextSibling);
 	}
 );
 
@@ -75,7 +88,9 @@ clockifyButton.render(
 			text('.yt-agile-card__summary span:nth-child(2)', youtrackCard);
 
 		const description = () => `${cardId()} ${cardTitle()}`;
-		const projectName = () => cardId();
+		// const projectName = () => cardId();
+		const projectName = () =>
+			document.title.split(' – ')[0].split(' ').slice(0, -1).join(' ');
 		const tagNames = () => textList('.yt-issue-tags__tag', youtrackCard);
 
 		const entry = { description, projectName, tagNames, small: true };
@@ -102,21 +117,65 @@ clockifyButton.render(
 		const ticketTitle = () => text('[data-test="ticket-summary"]', taskModal);
 
 		const description = () => `${ticketId()} ${ticketTitle()}`;
-		const projectName = () => ticketId();
+		// const projectName = () => ticketId();
+		const projectName = () =>
+			text('[aria-label="Project"] span[class^="fieldValue"]');
 		const tagNames = () => textList('[class*="tags"] a', taskModal);
 
 		const entry = { description, projectName, tagNames };
 
-		const link = clockifyButton.createButton(entry);
+		const link = clockifyButton.createSmallButton(entry);
 		const input = clockifyButton.createInput(entry);
 
-		link.style.display = 'inline';
-		link.style.margin = '20px 0 10px 16px';
 		input.style.marginLeft = '16px';
 
-		const modalSidebar = $('[data-test="fields-sidebar"]', taskModal);
+		const clockifyContainer = createTag('div');
+		clockifyContainer.style.display = 'flex';
+		clockifyContainer.style.alignItems = 'center';
+		clockifyContainer.append(link);
+		clockifyContainer.append(input);
 
-		modalSidebar.append(link);
-		modalSidebar.append(input);
+		const modalHeader = $('.summaryToolbar__c23', taskModal);
+		modalHeader.append(clockifyContainer);
 	}
 );
+
+applyStyles(`
+	.clockify-container {
+		display: flex;
+		flex: 1;
+		justify-content: end;
+	}
+`);
+
+initializeBodyObserver();
+
+function initializeBodyObserver() {
+	const bodyObserver = new MutationObserver(applyManualInputStyles);
+
+	const observationTarget = document.body;
+	const observationConfig = { childList: true, attributes: true };
+
+	bodyObserver.observe(observationTarget, observationConfig);
+}
+
+function applyManualInputStyles() {
+	const isDarkThemeEnabled = Array.from(document.body.classList)
+		.join(' ')
+		.includes('dark');
+
+	const darkStyles = `
+		#clockify-manual-input-form input { background: #28343d !important; color: #f5f4f3 !important; border: 0.5px solid #28343d !important; }
+		#clockify-manual-input-form input:hover { border-color: #6a696a !important; transition: border-color 100ms; }
+		.clockify-button-inactive { color: #f5f4f3 !important; }
+	`;
+	const lightStyles = `
+		.clockify-input { background: white !important; color: #28343d !important; border: 1px solid white !important; }
+		.clockify-input:hover { border-color: #cfcbcb !important; transition: border-color 100ms; }
+		.clockify-button-inactive { color: #444444 !important };
+	`;
+
+	const stylesToApply = isDarkThemeEnabled ? darkStyles : lightStyles;
+
+	applyStyles(stylesToApply, 'clockify-theme-dependent-styles');
+}

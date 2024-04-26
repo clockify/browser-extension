@@ -1,5 +1,6 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useContext } from 'react';
 import { getBrowser } from '../../helpers/browser-helper';
+import CustomFieldsContext from './CustomFieldsContext';
 
 // Hook
 const useCustomField = (cf, updateValue, value) => {
@@ -9,7 +10,6 @@ const useCustomField = (cf, updateValue, value) => {
 		value: initialValue,
 		index,
 		isUserOwnerOrAdmin,
-		redrawCounter,
 		manualMode,
 		required,
 	} = cf;
@@ -31,32 +31,16 @@ const useCustomField = (cf, updateValue, value) => {
 
 	const isDisabled = onlyAdminCanEdit && !isUserOwnerOrAdmin;
 
+	const { addCustomFieldValuesToState } = useContext(CustomFieldsContext);
+
 	const storeValue = useCallback(
 		(optionalValue) => {
-			getBrowser().runtime.sendMessage(
-				{
-					eventName: 'submitCustomField',
-					options: {
-						timeEntryId: timeEntryId,
-						customFieldId: id,
-						value: optionalValue === undefined ? value : optionalValue,
-					},
-				},
-				(response) => {
-					if (!response) {
-						return response;
-					}
-					const { data, status } = response;
-					if (status !== 201) {
-						if (status === 400) {
-							console.log('Problem with Custom Field Value.');
-						}
-					} else {
-						updateValue(id, value);
-						// setValue(data);
-					}
-				}
-			);
+			const customFieldToBeSentToBackend = {
+				timeEntryId: timeEntryId,
+				customFieldId: id,
+				value: optionalValue === undefined ? value : optionalValue,
+			}
+			addCustomFieldValuesToState(customFieldToBeSentToBackend);
 		},
 		[value]
 	);
@@ -71,7 +55,6 @@ const useCustomField = (cf, updateValue, value) => {
 			placeHolderOrName,
 			title,
 			allowedValues,
-			redrawCounter,
 			manualMode,
 			required,
 			name,

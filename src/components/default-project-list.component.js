@@ -106,7 +106,7 @@ class DefaultProjectList extends React.PureComponent {
 		const darkMode = await this.getDarkMode();
 		_lastUsedProject.color = this.getColorForProject(darkMode);
 		_lastUsedProjectAndTask.color = this.getColorForProject(darkMode);
-		const preProjectList = (await localStorage.getItem('preProjectList')) || {};
+		const preProjectList = {};
 		let { projectList = [], clientProjects = {} } = preProjectList;
 		if (this.state.forceTasks) {
 			projectList = projectList.filter((project) => project.taskCount > 0);
@@ -648,6 +648,7 @@ class DefaultProjectList extends React.PureComponent {
 										: []
 									).map((project, index) => (
 										<ProjectItem
+											defaultProjectList={true}
 											key={project.id + index}
 											project={project}
 											noTasks={this.props.noTasks}
@@ -681,6 +682,7 @@ class DefaultProjectList extends React.PureComponent {
 												</div>
 												{clientProjects[client].map((project) => (
 													<ProjectItem
+														defaultProjectList={true}
 														key={project.id}
 														project={project}
 														noTasks={this.props.noTasks}

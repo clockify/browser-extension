@@ -31,7 +31,8 @@
 			"contentScripts/notification-background.js",
 			"contentScripts/stop-timer-at-background.js",
 			"contentScripts/reminder-background.js",
-			"contentScripts/pomodoro-background.js"
+			"contentScripts/pomodoro-background.js",
+			"api-services/notification-service.js"
 		]
 	},
 	"browser_specific_settings": {
@@ -40,7 +41,7 @@
 			"strict_min_version": "57.0a1"
 		}
 	},
-	"version": "2.10.10",
+	"version": "2.10.18",
 	"browser_action": {
 		"default_popup": "index.html",
 		"default_title": "Clockify"

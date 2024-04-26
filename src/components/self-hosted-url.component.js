@@ -50,6 +50,20 @@ class SelfHostedUrl extends React.Component {
 							{locales.CUSTOM_DOMAIN_DESCRIPTION}
 						</p>
 						<input
+							onBlur={(event) => {
+								const urlParts = event.target.value.split('.');
+								const topLevelDomainAndRest = urlParts.slice().reverse()[0];
+								const topLevelDomain = topLevelDomainAndRest.split('/')[0];
+								const urlWithoutTopLevelDomainAndRest = urlParts
+									.slice(0, -1)
+									.join('.');
+								const url = [
+									urlWithoutTopLevelDomainAndRest,
+									topLevelDomain,
+								].join('.');
+
+								this.setState({ url });
+							}}
 							required={true}
 							id="selfHostedurl"
 							value={this.state.selfHostedInput}

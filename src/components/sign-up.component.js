@@ -145,9 +145,9 @@ class SignUp extends React.Component {
 		});
 	}
 
-	cakeTermsOfUse() {
+	/* 	cakeTermsOfUse() {
 		window.open(`${environment.cakeTerms}`, '_blank');
-	}
+	} */
 
 	backToLogin() {
 		window.reactRoot.render(<Login />);
@@ -234,7 +234,10 @@ class SignUp extends React.Component {
 							</span>
 							<span className="signup-terms--agree">
 								{locales.CAKE_TERMS_OF_USE}
-								<a onClick={this.cakeTermsOfUse.bind(this)}>{locales.TOS}</a>
+								<a href={environment.cakeTerms} target="_blank">
+									{locales.TOS}
+								</a>
+								{/* <a onClick={this.cakeTermsOfUse.bind(this)}>{locales.TOS}</a> */}
 							</span>
 						</div>
 						<label

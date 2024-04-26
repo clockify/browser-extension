@@ -60,42 +60,27 @@
 		align-items: center;
 		position: relative;
 		margin-left: auto;
-		&__tag_billable_and_lock {
+		&__icons {
 			display: flex;
 			margin-right: 5px;
 			max-width: 100px;
 			align-items: center;
-			justify-content: space-between;
+			gap: 5px;
+
+			& img {
+				height: 14px;
+			}
 		}
+
 		&__lock_and_play {
 			display: flex;
 			align-items: center;
 		}
-		&__billable {
-			content: url('../assets/images/billable.png');
-			margin-right: 5px;
-		}
-		&__break {
-			content: url('../assets/images/break.png');
-			margin-right: 5px;
-			width: 12px;
-			margin-top: 1px;
-			padding: 0 3px;
-		}
-		&__approved {
-			margin-right: 5px;
-		}
-		&__tag {
-			content: url('../assets/images/tag.png');
-			padding: 3px 5px;
-		}
+
 		&__duration_and_play {
 			display: flex;
 			margin-left: 5px;
 			align-items: center;
-		}
-		&__lock {
-			display: block;
 		}
 	}
 	&:hover,
@@ -122,14 +107,13 @@
 }
 
 .time-entry-arrow {
-	position: relative;
-	padding-left: 6px;
-	content: url('../assets/images/play-normal.png');
-}
-
-.time-entry-arrow:hover {
-	content: url('../assets/images/play-hover.png');
 	cursor: pointer;
+	height: 16px;
+	margin-left: 5px;
+	content: url('../assets/images/play-normal.png');
+	&:hover {
+		content: url('../assets/images/play-hover.png');
+	}
 }
 
 .time-entry-menu {
@@ -143,7 +127,6 @@
 		position: absolute;
 		width: 140px;
 		bottom: 0;
-		right: 0;
 		height: auto;
 		min-height: 100px;
 		top: 5px;

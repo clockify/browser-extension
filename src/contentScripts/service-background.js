@@ -63,6 +63,9 @@ class ClockifyService {
 		return localStorage.getItem('userId');
 	}
 
+	static get userEmail() {
+		return localStorage.getItem('userEmail');
+	}
 	static get workspaceId() {
 		return localStorage.getItem('activeWorkspaceId');
 	}
@@ -71,6 +74,9 @@ class ClockifyService {
 		return localStorage.getItem('permanent_baseUrl');
 	}
 
+	static get user() {
+		return localStorage.getItem('user')
+	}
 	// Here we have a list of endpoints that we want to cache
 	// and the time they should be cached for
 	static routesToCache = [
@@ -311,6 +317,7 @@ class ClockifyService {
 					/Task name has to be between 1 and 1000 characters long/,
 					/.* project for client .* already exists./,
 					/Tag with name .* already exists/,
+					/Manual time tracking disabled on .*/,
 				];
 				switch (response.status) {
 					case 400:
@@ -340,6 +347,8 @@ class ClockifyService {
 									options: errorData,
 								});
 								return errorObj(response.status, 'Token invalid', errorData);
+							} else if (errorData.code === 4030 ) {
+								return errorObj(response.status, 'Manual time tracking disabled', errorData);
 							}
 						}
 						return errorObj(response.status, 'Unauthenticated');
@@ -354,6 +363,12 @@ class ClockifyService {
 					case 401:
 						errorData = await response.json();
 						if (errorData) {
+							if (errorData.code === 4019) {
+								aBrowser.runtime.sendMessage({
+									eventName: 'VERIFY_EMAIL_ENFORCED',
+									message: {}
+								}).then((response) => {console.log(response)}).catch((error) => console.log(error));
+							}
 							if (errorData.code === 406) {
 								this.handleBannedResponse(errorData);
 								return errorObj(response.status, errorData?.message, errorData);
@@ -364,8 +379,24 @@ class ClockifyService {
 								});
 								return errorObj(response.status, 'Token invalid', errorData);
 							}
+							if (errorData.code === 1000) {
+								aBrowser.runtime.sendMessage({
+									eventName: 'TOKEN_INVALID',
+									options: errorData,
+								});
+								return errorObj(response.status, errorData);
+							}
 						}
 						return errorObj(response.status, 'Forbidden');
+					case 423:
+						errorData = await response.json();
+						const { code } = errorData;
+						if (code === 4023) {
+							aBrowser.runtime.sendMessage({
+								eventName: 'WORKSPACE_LOCKED',
+								options: { ...errorData },
+							});
+						}
 					default:
 					// fall through
 				}
@@ -396,7 +427,6 @@ class ClockifyService {
 				}
 			})
 			.catch((error) => {
-				// TODO
 				// this.setOffline();
 				console.error(
 					'There has been a problem with your fetch operation: ',

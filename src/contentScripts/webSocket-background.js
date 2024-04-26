@@ -11,6 +11,9 @@ const webSocketEventsEnums = {
 	CHANGED_ADMIN_PERMISSION: 'CHANGED_ADMIN_PERMISSION',
 	PROFILE_UPDATED: 'PROFILE_UPDATED',
 	USER_SETTINGS_UPDATED: 'USER_SETTINGS_UPDATED',
+	WORKSPACE_LOCKED_FOR_TRANSFER: 'WORKSPACE_LOCKED_FOR_TRANSFER',
+	USER_EMAIL_VERIFIED: 'USER_EMAIL_VERIFIED',
+	USER_LOGGEDOUT_FROM_WEB_APP: 'USER_LOGGEDOUT',
 };
 Object.freeze(webSocketEventsEnums);
 
@@ -190,6 +193,19 @@ async function messageHandler(event) {
 			this.sendWebSocketEventToExtension(event.data);
 			UserWorkspaceStorage.getSetWorkspaceSettings();
 			UserService.getSetUserRoles();
+			break;
+		case webSocketEventsEnums.WORKSPACE_LOCKED_FOR_TRANSFER:
+			this.sendWebSocketEventToExtension(event.data);
+			break;
+		case webSocketEventsEnums.USER_EMAIL_VERIFIED:
+			aBrowser.runtime.sendMessage({
+				eventName: 'USER_EMAIL_VERIFIED',
+			});
+			break;
+		case webSocketEventsEnums.USER_LOGGEDOUT_FROM_WEB_APP:
+			aBrowser.action.setIcon({
+				path: iconPathEnded,
+			});
 			break;
 	}
 }

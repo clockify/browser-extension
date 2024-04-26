@@ -8,8 +8,12 @@
 	width: 100%;
 	input:focus {
 		outline: none;
-		border: 2px solid #0f3beb;
-		border-radius: 5px;
+		box-shadow: none;
+		border: 1px solid variables.$bg-04 !important;
+		border-radius: 2px !important;
+	}
+	input:hover {
+		box-shadow: none;
 	}
 }
 
@@ -35,6 +39,7 @@
 
 .custom-field-number {
 	position: relative;
+	font-size: 14px;
 	.input-stepper {
 		position: absolute;
 		top: 11px;
@@ -68,7 +73,6 @@ div.custom-field-ta {
 	padding: 0px !important;
 	border: 0px solid #c6d2d9 !important;
 	border-image-width: 0 !important;
-	background-color: white !important;
 	margin: 8px 0px 0px 0px !important;
 	height: 40px !important;
 
@@ -78,7 +82,7 @@ div.custom-field-ta {
 		border-image-width: 0 !important;
 		margin: 8px 0px 0px 0px !important;
 		height: 45px !important;
-		background-color: #eff4f7 !important;
+		//background-color: #eff4f7 !important;
 	}
 }
 
@@ -137,12 +141,20 @@ textarea.custom-field-text {
 	resize: none !important;
 	font-size: 14px !important;
 	outline: none !important;
-	color: #333333;
+	color: variables.$dark_text;
 	padding: 5px 8px !important;
 	word-wrap: break-word !important;
 	background-color: white;
 	border-image-width: 0 !important;
 	text-overflow: ellipsis !important;
+	&::placeholder {
+		color: variables.$lighter_text;
+		opacity: 1;
+	}
+	&:focus {
+		border: 1px solid variables.$bg-04 !important;
+		border-radius: 2px !important;
+	}
 
 	&-disabled {
 		box-sizing: border-box;
@@ -178,7 +190,12 @@ input.custom-field-number {
 	overflow: hidden !important;
 	text-overflow: ellipsis !important;
 	border: 1px solid #c6d2d9;
+	color: variables.$dark_text;
 	background-color: white !important;
+	&::placeholder {
+		color: variables.$lighter_text;
+		opacity: 1;
+	}
 	&-disabled {
 		box-sizing: border-box;
 		border: 1px solid #c6d2d9;
@@ -200,8 +217,11 @@ input.custom-field-number {
 
 .custom-field-link {
 	box-sizing: border-box;
-	border: 0 !important;
 	width: 100% !important;
+	&::placeholder {
+		color: variables.$lighter_text;
+		opacity: 1;
+	}
 	&.custom-field-required {
 		border: 1px solid variables.$red !important;
 	}
@@ -381,13 +401,17 @@ input.clockify-link-input {
 	font-size: 14px !important;
 	font-weight: 400 !important;
 	line-height: 21px !important;
-	color: #333 !important;
+	color: variables.$dark_text;
 	background-color: #fff !important;
 	background-clip: padding-box !important;
-	border: 1px solid #c6d2d9 !important;
+	border: 1px solid #c6d2d9;
 	border-radius: 0px !important;
 	transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out !important;
 	box-shadow: none !important;
+	&::placeholder {
+		color: variables.$lighter_text;
+		opacity: 1;
+	}
 	&-disabled {
 		box-sizing: border-box;
 		display: block !important;
@@ -407,8 +431,8 @@ input.clockify-link-input {
 		background-color: #eff4f7 !important;
 	}
 	&:focus {
-		border: 2px solid #0f3beb !important;
-		border-radius: 5px !important;
+		border: 1px solid variables.$bg-04 !important;
+		border-radius: 2px !important;
 	}
 }
 
@@ -429,8 +453,8 @@ input.clockify-link-input-modal {
 	transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out !important;
 	box-shadow: none !important;
 	&:focus {
-		border: 2px solid #0f3beb !important;
-		border-radius: 5px !important;
+		border: 1px solid variables.$bg-04 !important;
+		border-radius: 2px !important;
 	}
 }
 

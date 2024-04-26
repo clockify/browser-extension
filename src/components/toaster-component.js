@@ -82,7 +82,7 @@ class Toaster extends React.Component {
 		toastMessageContainer.appendChild(toastMessageContent);
 
 		const toasterContainer = document.getElementById('toaster-container');
-
+		toasterContainer.style.zIndex = '99999';
 		toasterContainer.appendChild(toastMessageContainer);
 	}
 

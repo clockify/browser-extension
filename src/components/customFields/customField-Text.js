@@ -42,6 +42,10 @@ const CustomFieldText = ({
 	const isNotValid = required && !value;
 
 	useEffect(() => {
+		storeValue();
+	}, [value])
+
+	useEffect(() => {
 		setValue(cf.value);
 	}, [cf.value]);
 
