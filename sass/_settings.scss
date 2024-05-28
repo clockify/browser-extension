@@ -50,7 +50,8 @@
 	display: inline-block;
 	width: 32px;
 	height: 32px;
-	border-radius: 16px;
+	border-radius: 50%;
+	object-fit: cover;
 }
 
 .user-settings span:last-child {
