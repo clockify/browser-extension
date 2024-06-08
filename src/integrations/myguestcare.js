@@ -4,7 +4,7 @@
 		{ observe: false },
 		async (elem) => {
 
-			const container = $('.navbar-top-name>span');
+			const container = $('.navbar-top-name .change-client');
 			const tenantCode = $('.navbar-top-name>span').textContent;
 
 
@@ -14,7 +14,9 @@
 				description,
 				projectName: 'SUP - Supporto Telefonico' ,
 				taskName: 'Generico',
-				small: true,
+				small: false,
 			});
-			container.appendChild(link);
+			container.append(link);
+					}
+	);
 })();
