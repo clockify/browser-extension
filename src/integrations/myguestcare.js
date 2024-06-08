@@ -8,10 +8,15 @@
 
 			const description = `[${tenantCode}] `;
 
+			const defaults = {
+				...JSON.parse( (await localStorage.getItem('clockify_defaults')) || '{}'),
+				...JSON.parse( (await sessionStorage.getItem('clockify_defaults')) || '{}'),
+			};
+
 			const link = clockifyButton.createButton({
-				...localStorage.getItem('clockify_defaults'),
-				...sessionStorage.getItem('clockify_defaults'),
 				description,
+				projectName: defaults.projectName,
+				taskName: defaults.taskName,
 				small: false,
 			});
 			container.append(link);
