@@ -9,6 +9,7 @@
 			const description = `[${tenantCode}] `;
 
 			const defaults = {
+				small: false,
 				...JSON.parse( (await localStorage.getItem('clockify_defaults')) || '{}'),
 				...JSON.parse( (await sessionStorage.getItem('clockify_defaults')) || '{}'),
 			};
@@ -17,7 +18,7 @@
 				description,
 				projectName: defaults.projectName,
 				taskName: defaults.taskName,
-				small: false,
+				small: defaults.small,
 			});
 			container.append(link);
 		}
