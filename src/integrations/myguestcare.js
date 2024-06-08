@@ -4,7 +4,7 @@
 		{ observe: false },
 		async (elem) => {
 
-			const container = $('.navbar-top-name>span');// elem.querySelector('.navbar-top-name');
+			const container = $('.navbar-top-name>span');
 			const tenantCode = $('.navbar-top-name>span').textContent;
 
 
