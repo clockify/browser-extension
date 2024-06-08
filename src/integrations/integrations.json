@@ -234,6 +234,11 @@
 		"link": "*://*.myfocusspace.com/*",
 		"script": "myfocusspace.js"
 	},
+	"myguestcare.com": {
+		"name": "MyGuestcare",
+		"link": "*://*.myguestcare.com/*",
+		"script": "myguestcare.js"
+	},
 	"notion.so": {
 		"name": "Notion",
 		"link": "*://*.notion.so/*,*://notion.so/*",
