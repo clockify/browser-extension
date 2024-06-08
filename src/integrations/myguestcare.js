@@ -6,13 +6,13 @@
 			const container = $('.navbar-top-name .change-client');
 			const tenantCode = $('.navbar-top-name>span').textContent;
 
-			const description = `[${tenantCode}] `;
-
 			const defaults = {
 				small: false,
 				...JSON.parse( (await localStorage.getItem('clockify_defaults')) || '{}'),
 				...JSON.parse( (await sessionStorage.getItem('clockify_defaults')) || '{}'),
 			};
+
+			const description = `[${tenantCode}] `;
 
 			const link = clockifyButton.createButton({
 				description,
@@ -21,6 +21,10 @@
 				small: defaults.small,
 			});
 			container.append(link);
+
+			setTimeout( () => {
+				link.title = `Project: ${defaults.projectName || 'Empty'}\nTask: ${defaults.taskName || 'Empty'}`;
+			}, 1000);
 		}
 	);
 })();
