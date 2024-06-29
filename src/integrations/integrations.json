@@ -294,6 +294,11 @@
 		"link": "*://*.plutio.com/*",
 		"script": "plutio.js"
 	},
+	"pyrus.com": {
+		"name": "Pyrus",
+		"link": "*://pyrus.com/*",
+		"script": "pyrus.js"
+	},
 	"redbooth.com": {
 		"name": "Redbooth",
 		"link": "*://redbooth.com/*",
