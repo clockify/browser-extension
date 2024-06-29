@@ -1,3 +1,7 @@
+clockifyButton.observeDarkMode(() => {
+	return document.body?.dataset?.theme === 'dark';
+});
+
 clockifyButton.render(
 	'.sideBySideHeader:not(.clockify)',
 	{ observe: true },
