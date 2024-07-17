@@ -11,49 +11,18 @@ setTimeout(() => {
 		const plackerInputContainer = document.createElement('placker-input-container');
 		const label = document.createElement('label');
 
-		label.classList.add('plackerInput__label');
-		label.innerText = 'Clockify';
-
-		inputForm.classList.add('m-b-0');
-
-		input.classList.add('plackerInput');
-		input.classList.add('plackerInput--fullWidth');
-		input.classList.add('plackerInput--transparent');
-		input.classList.add('plackerInput--condensed');
-		input.classList.remove('clockify-input');
-		input.classList.remove('clockify-input-default');
-
-		link.classList.add('plackerButton');
-		link.classList.add('plackerButton--secondary');
-		link.classList.add('plackerButton--fullWidth');
-		link.classList.add('plackerButton--centered');
-		link.classList.add('m-b-8');
-		link.style.height = '32px';
-
-		plackerInputContainer.append(label);
-		plackerInputContainer.append(link);
-		plackerInputContainer.append(inputForm);
-
-		plackerInputContainer.style.display = 'flex';
-		plackerInputContainer.style.width = '100%';
-		plackerInputContainer.style.flexDirection = 'column';
-
-		elem.prepend(plackerInputContainer);
+		addToRightPanel({ input, label, inputForm, link, plackerInputContainer, elem });
 	});
 
-	/* Checklist buttons in card overview */
+	/* Checklist items in card overview */
 	clockifyButton.render('card-checklist-item-component:not(.clockify)', { observe: true }, (elem) => {
 		const checklist = elem.parentNode.parentNode;
-		const checklistTitle = $('.cardChecklistItemsListComponentNew__checklistTitleInput', checklist)?.value?.trim();
+		const checklistTitle = checklist.dataset?.checklistTitle;
+		const boardTitle = checklist.dataset?.boardTitle;
+		const cardTitle = checklist.dataset?.cardTitle;
 		const itemTitle = $('.cardChecklistItemComponent__titleText', elem)?.textContent?.trim();
-		const cardOverview = $('card-overview-component');
-		const taskTitle = checklistTitle + ' - ' + itemTitle;
+		const taskTitle = cardTitle + '-' + checklistTitle + ' - ' + itemTitle;
 		const linkContainer = $('.cardChecklistItemComponent__contentBottom', elem);
-		let boardTitle = '';
-
-		if (cardOverview) {
-			boardTitle = $('.breadcrumbComponent__item a', cardOverview)?.textContent?.trim();
-		}
 
 		const link = clockifyButton.createButton({
 			description: taskTitle,
@@ -83,44 +52,66 @@ setTimeout(() => {
 		linkContainer.append(link);
 	});
 
-	/* Right panel in gantt chart */
-	clockifyButton.render('.plackerSidebar--right:not(.clockify)', { observe: true }, (elem) => {
-		const cardTitle = $('input[name="title"]', elem)?.value?.trim();
+	/* Right panel cards in gantt chart */
+	clockifyButton.render('.cardDetails .cardDetails__hiddenAttributes:not(.clockify)', { observe: true }, (elem) => {
+		const cardTitle = elem.dataset?.cardTitle?.trim();
+		const boardTitle = elem.dataset?.boardTitle?.trim();
 
-		const link = clockifyButton.createButton({ description: cardTitle, projectName: '' });
-		const inputForm = clockifyButton.createInput({ description: cardTitle, projectName: '' });
+		const link = clockifyButton.createButton({ description: cardTitle, projectName: boardTitle });
+		const inputForm = clockifyButton.createInput({ description: cardTitle, projectName: boardTitle });
 		const input = inputForm.firstElementChild;
 		const plackerInputContainer = document.createElement('placker-input-container');
 		const label = document.createElement('label');
-		const container = $('.cardDetails__attributes', elem);
 
-		label.classList.add('plackerInput__label');
-		label.innerText = 'Clockify';
+		addToRightPanel({ input, label, inputForm, link, plackerInputContainer, elem });
+	});
 
-		inputForm.classList.add('m-b-0');
+	/* Right panel items in gantt chart */
+	clockifyButton.render('.checklistItemDetails .cardDetails__hiddenAttributes:not(.clockify)', { observe: true }, (elem) => {
+		const cardTitle = elem.dataset?.cardTitle?.trim();
+		const boardTitle = elem.dataset?.boardTitle?.trim();
+		const checklistTitle = elem.dataset?.checklistTitle?.trim();
+		const checklistItemTitle = elem.dataset?.checklistItemTitle?.trim();
+		const taskTitle = cardTitle + ' - ' + checklistTitle + ' - ' + checklistItemTitle;
 
-		input.classList.add('plackerInput');
-		input.classList.add('plackerInput--fullWidth');
-		input.classList.add('plackerInput--transparent');
-		input.classList.add('plackerInput--condensed');
-		input.classList.remove('clockify-input');
-		input.classList.remove('clockify-input-default');
+		const link = clockifyButton.createButton({ description: taskTitle, projectName: boardTitle });
+		const inputForm = clockifyButton.createInput({ description: taskTitle, projectName: boardTitle });
+		const input = inputForm.firstElementChild;
+		const plackerInputContainer = document.createElement('placker-input-container');
+		const label = document.createElement('label');
 
-		link.classList.add('plackerButton');
-		link.classList.add('plackerButton--secondary');
-		link.classList.add('plackerButton--fullWidth');
-		link.classList.add('plackerButton--centered');
-		link.classList.add('m-b-8');
-		link.style.height = '32px';
-
-		plackerInputContainer.append(label);
-		plackerInputContainer.append(link);
-		plackerInputContainer.append(inputForm);
-
-		plackerInputContainer.style.display = 'flex';
-		plackerInputContainer.style.width = '100%';
-		plackerInputContainer.style.flexDirection = 'column';
-
-		container.prepend(plackerInputContainer);
+		addToRightPanel({ input, label, inputForm, link, plackerInputContainer, elem });
 	});
 }, 1000);
+
+
+function addToRightPanel({ input, label, inputForm, link, plackerInputContainer, elem}) {
+	label.classList.add('plackerInput__label');
+	label.innerText = 'Clockify';
+
+	inputForm.classList.add('m-b-0');
+
+	input.classList.add('plackerInput');
+	input.classList.add('plackerInput--fullWidth');
+	input.classList.add('plackerInput--transparent');
+	input.classList.add('plackerInput--condensed');
+	input.classList.remove('clockify-input');
+	input.classList.remove('clockify-input-default');
+
+	link.classList.add('plackerButton');
+	link.classList.add('plackerButton--secondary');
+	link.classList.add('plackerButton--fullWidth');
+	link.classList.add('plackerButton--centered');
+	link.classList.add('m-b-8');
+	link.style.height = '32px';
+
+	plackerInputContainer.append(label);
+	plackerInputContainer.append(link);
+	plackerInputContainer.append(inputForm);
+
+	plackerInputContainer.style.display = 'flex';
+	plackerInputContainer.style.width = '100%';
+	plackerInputContainer.style.flexDirection = 'column';
+
+	elem.prepend(plackerInputContainer);
+}
