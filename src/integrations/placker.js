@@ -1,6 +1,6 @@
 setTimeout(() => {
 	/* Card overview */
-	clockifyButton.render('.dialogOverviewCardContent__right:not(.clockify)', { observe: true }, (elem) => {
+	clockifyButton.render('.dialogOverviewCardContent__right .cardDetails__hiddenAttributes:not(.clockify)', { observe: true }, (elem) => {
 		const cardOverview = $('card-overview-component');
 		const cardTitle = $('.dialogCardHeaderOverviewComponent__titleInput', cardOverview).textContent.trim();
 		const boardTitle = $('.breadcrumbComponent__item a', cardOverview)?.textContent?.trim();
