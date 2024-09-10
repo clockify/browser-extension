@@ -59,3 +59,103 @@ clockifyButton.render(
 		sidepanelHeader.append(container);
 	}
 );
+
+// Project View (kanban cards)
+(async () => {
+	const selector_card = '.board-view-column-card:not(.clockify)';
+	const selector_card_header = 'div[data-testid=board-card-header]';
+
+	const storage = await localStorage.aBrowser.storage.local.get();
+	const projects = storage.preProjectList.projectList.map((r)=> {return {name: r.name, id: r.id}});
+	//console.debug('known projects: ', projects);
+
+	const ScopedSingleton = function(){
+		this.project=null;
+		this.repositoryName = null;
+		this.locatedIssueBasedRepoName = false;
+		
+		this.processUrl = function(url) {
+			const url_parts = url.split('/');
+
+			if (url_parts.length >= 5) {
+				this.locatedIssueBasedRepoName = true;
+				this.repositoryName = url_parts[4];
+				this.project = projects.find((p)=> p.name === this.repositoryName);
+				if (!this.project) {
+					let repo_url = url.substring(0, url.lastIndexOf('/issues'));
+					console.warn("Clockify: Unable to locate existing project (by name) for repo of this github project board: "+ this.repositoryName, repo_url, projects.map(x=> x.name));
+				}
+			}
+			return this.repositoryName;
+		}.bind(this);
+		return this;
+	}();
+	
+	clockifyButton.render(
+		selector_card,
+		{ observe: true },
+		(card) => {
+			if (!card) return;
+
+			// by default, use the name of the board as the project...
+			if (!ScopedSingleton.repositoryName) {
+				ScopedSingleton.repositoryName = text('h1[class*=Text-sc]', document);
+			}
+			// ideally we'd locate at least one card with the repository link the first time this code runs. 
+			// the only way to attain the Repository id from the Project View, is if one of the cards contains the issue link (which happens to contain the url of the repository).
+			// i see no other way, outside of utilizing github API to fetch it, which would be overkill and require the repo to be public or oauth'd. Way beyond scope no?
+			if (!ScopedSingleton.locatedIssueBasedRepoName) {
+				let target = $(`${selector_card} ${selector_card_header} + a[href*=github]`);
+				if (target) {
+					ScopedSingleton.processUrl(target.getAttribute('href'));
+					//console.debug(ScopedSingleton.repositoryName);
+				}
+			}
+
+			const card_header = $(selector_card_header, card);
+			if (!card_header) return; // lazy-loaded cards can't be processed yet.
+			
+			let desired_container = null;
+			try {
+				// try and find the container where the button should be placed. It will fail for cards that are not yet lazy-loaded due to scroll visibility.
+				desired_container = $('& div[class*=Box-sc]:last-child', card_header);
+			}
+			catch(ex) {
+				//console.debug(ex);
+				return; // silently fail, it will be processed later when user scrolls.
+			}
+			//console.debug(card_header, desired_container);
+
+			const card_id = card.getAttribute('data-board-card-id');
+			const card_title = text('h3', card);
+			//console.debug(card_id, card_title);
+
+			let issueId = null;
+			const issue_link = $(`${selector_card_header} + a[href*=github]`, card)?.getAttribute('href');
+			//console.debug(issue_link);
+			if (issue_link) {
+				issueId = '#'+issue_link.split('/').pop();
+			}
+
+			const description = [card_title, issueId].filter(x=> x).join(' ');
+			const projectName = ScopedSingleton.repositoryName;
+
+			const taskName = [issueId, card_title].filter(x=> x).join(' ');;
+			// github Labels may or may not be visible based on user's board configuration. Let's try to nab them..
+			const tagNames = textList('ul[data-testid=card-labels] li span[class*=Text-sc]', card);
+
+			const entry = { description, projectName, taskName, tagNames };
+			//console.debug(entry);
+
+			const buttonOptions = {
+				...entry,
+				small: true,
+			}
+			const link = clockifyButton.createButton(buttonOptions);
+			link.style.padding = '3px 14px';
+
+			// append to the end of the "Draft" or "Issue #id" container.
+			desired_container.append(link);
+		}
+	);
+})();
