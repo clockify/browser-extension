@@ -62,64 +62,63 @@ clockifyButton.render(
 );
 
 
-class ScopedSingleton_GitHubProjectView {
-	constructor(projects) {
-		this.projects=projects;
-	}
+if (typeof ScopedSingleton_GitHubProjectView === 'undefined') {
+	function ScopedSingleton_GitHubProjectView() {
+		this.init = async () => {
+			// todo: there should be a better way to do this using available helper module in this extension.
+			const storage = await localStorage.aBrowser.storage.local.get();
+			this.projects = storage.preProjectList.projectList.map((r) => {
+				return { name: r.name, id: r.id };
+			});
 
-	static async createInstance() {
-		const storage = await localStorage.aBrowser.storage.local.get();
-		const projects = storage.preProjectList.projectList.map((r) => {
-			return { name: r.name, id: r.id };
-		});
+			this.setProjectFromPage();
+		};
 
-		return new ScopedSingleton_GitHubProjectView(projects).setProjectFromPage();
-	}
-
-	setProjectFromPage() {
-		this.githubProjectName = this.getProjectNameOnProjectView();
-		this.project = this.matchProjectNameAgainstKnownProjects(this.githubProjectName, this.projects);
-		if (!this.project) {
-			console.warn("Clockify: Unable to locate existing project (by name) for this github project board: "+ this.githubProjectName, this.projects.map(x=> x.name));
-			this.projectName = this.githubProjectName;
-		}
-		else {
-			//console.debug("Clockify: Located existing project for this GitHub project board: " + this.githubProjectName, this.project);
-			this.projectName = this.project.name;
-		}
-		return this;
-	}
-
-	processIssueUrl(url) {
-		const url_parts = url.split('/');
-
-		if (url_parts.length >= 5) {
-			this.githubProjectName = url_parts[4];
+		this.setProjectFromPage = () => {
+			this.githubProjectName = this.getProjectNameOnProjectView();
 			this.project = this.matchProjectNameAgainstKnownProjects(this.githubProjectName, this.projects);
 			if (!this.project) {
-				let repo_url = url.substring(0, url.lastIndexOf('/issues'));
-				console.warn("Clockify: Unable to locate existing project (by name) for repo of this github project board: "+ this.githubProjectName, repo_url, this.projects.map(x=> x.name));
-
+				console.warn("Clockify: Unable to locate existing project (by name) for this github project board: "+ this.githubProjectName, this.projects.map(x=> x.name));
 				this.projectName = this.githubProjectName;
 			}
 			else {
+				//console.debug("Clockify: Located existing project for this GitHub project board: " + this.githubProjectName, this.project);
 				this.projectName = this.project.name;
 			}
-		}
-		else {
-			//console.debug('Clockify: URL of issue link is not in expected format: ', url);
-		}
-		return this.projectName;
-	}
+		};
 
-	getProjectNameOnProjectView = () => {
-		const projectName = text('h1[class^=Text]');
-		return projectName;
-	}
-	matchProjectNameAgainstKnownProjects = (projectName, projects) => {
-		const project = projects.find((p) => projectName.toLowerCase().includes(p.name.toLowerCase()));
-		return project;
-	}
+		this.processIssueUrl = (url) => {
+			const url_parts = url.split('/');
+
+			if (url_parts.length >= 5) {
+				this.githubProjectName = url_parts[4];
+				this.project = this.matchProjectNameAgainstKnownProjects(this.githubProjectName, this.projects);
+				if (!this.project) {
+					let repo_url = url.substring(0, url.lastIndexOf('/issues'));
+					console.warn("Clockify: Unable to locate existing project (by name) for repo of this github project board: "+ this.githubProjectName, repo_url, this.projects.map(x=> x.name));
+
+					this.projectName = this.githubProjectName;
+				}
+				else {
+					this.projectName = this.project.name;
+				}
+			}
+			else {
+				//console.debug('Clockify: URL of issue link is not in expected format: ', url);
+			}
+			return this.projectName;
+		};
+
+		this.getProjectNameOnProjectView = () => {
+			const projectName = text('h1[class^=Text]');
+			return projectName;
+		};
+
+		this.matchProjectNameAgainstKnownProjects = (projectName, projects) => {
+			const project = projects.find((p) => projectName.toLowerCase().includes(p.name.toLowerCase()));
+			return project;
+		};
+	};
 }
 
 // Project View (kanban cards)
@@ -127,7 +126,8 @@ class ScopedSingleton_GitHubProjectView {
 	const selector_card = '.board-view-column-card:not(.clockify)';
 	const selector_card_header = 'div[data-testid=board-card-header]';
 
-	const singleton = await ScopedSingleton_GitHubProjectView.createInstance();
+	const singleton = new ScopedSingleton_GitHubProjectView();
+	await singleton.init();
 	
 	clockifyButton.render(
 		selector_card,
@@ -200,7 +200,8 @@ class ScopedSingleton_GitHubProjectView {
 
 // Project view (table perspective)
 (async () => {
-	const singleton = await ScopedSingleton_GitHubProjectView.createInstance();
+	const singleton = new ScopedSingleton_GitHubProjectView();
+	await singleton.init();
 
 	// in table mode, we need to handle the Header row first, to identify which column position contains the "Title" column. If there is no Title configured for the user, then how can we possible attain the task name? In that case, we skip all functionality here.
 	// our selector below for clockifyButton.render Includes the first row of the table, which is the header row.
@@ -210,7 +211,7 @@ class ScopedSingleton_GitHubProjectView {
 		{ observe: true },
 		(row) => {
 			if (!row) return;
-			console.log(row);
+			
 			if ($('div[data-testid^=TableColumnHeader]', row)) {
 				// this is the header row. We need to locate the column position of the "Title" column.
 				const columns = $$('div[data-testid^=TableColumnHeader]', row);
