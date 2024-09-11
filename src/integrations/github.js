@@ -294,8 +294,7 @@ class ScopedSingleton_GitHubProjectView {
 
 			// append to the end of Title row. absolutely in "overlay" css mode.
 			desired_container.append(link);
-		},
-		':not(.react-found)'
+		}
 	);
 })();
 
