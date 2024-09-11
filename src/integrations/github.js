@@ -52,6 +52,7 @@ if (typeof ScopedSingleton_GitHubProjectView === 'undefined') {
 		};
 
 		this.processIssueUrl = (url) => {
+			if (!url) url = window.location.href;
 			const url_parts = url.split('/');
 
 			if (url_parts.length >= 5) {
