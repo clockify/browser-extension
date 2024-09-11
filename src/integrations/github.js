@@ -102,10 +102,28 @@ clockifyButton.render(
 	async (sidepanelHeader) => {
 		await timeout({ milliseconds: 1200 });
 
+		const singleton = new ScopedSingleton_GitHubProjectView();
+		await singleton.init();
+
+		// if we couldn't locate a clockify project based one the name of the Github project, we can instead try to locate the repo name from any issue link on the board (if any exists).
+		if (!singleton.project) {
+			// first try and attain it from the page again..
+			singleton.processIssueUrl();
+
+			if (!singleton.project) {
+				console.debug('unable to locate a project based on the name of the Github project. Trying to locate the repo name from any issue link on the board (if any exists).');
+				let target = $(`[data-test-cell-is-focused="true"] a`);
+				if (target) {
+					singleton.processIssueUrl(target.getAttribute('href'));
+					//console.debug(singleton.projectName);
+				}
+			}
+		}
+
 		const issueId = text('span', sidepanelHeader);
 		const issueTitle = text('bdi', sidepanelHeader);
-		const openedIssue = $('[data-test-cell-is-focused="true"] a');
-		const repositoryName = openedIssue.href.split('/')[4];
+		//const openedIssue = $('[data-test-cell-is-focused="true"] a');
+		const repositoryName = singleton.projectName;// const repositoryName = openedIssue.href.split('/')[4];
 
 		const description = `${issueId} ${issueTitle}`;
 		const projectName = repositoryName;
