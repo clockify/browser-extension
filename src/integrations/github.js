@@ -118,6 +118,14 @@ if (typeof ScopedSingleton_GitHubProjectView === 'undefined') {
 			const project = projects.find((p) => projectName.toLowerCase().includes(p.name.toLowerCase()));
 			return project;
 		};
+
+		this.setTitleColumnIndex = (idx) => {
+			this.titleColumnIndex = idx;
+		};
+
+		this.setLabelsColumnIndex = (idx) => {
+			this.labelsColumnIndex = idx;
+		};
 	};
 }
 
@@ -215,21 +223,22 @@ if (typeof ScopedSingleton_GitHubProjectView === 'undefined') {
 			if ($('div[data-testid^=TableColumnHeader]', row)) {
 				// this is the header row. We need to locate the column position of the "Title" column.
 				const columns = $$('div[data-testid^=TableColumnHeader]', row);
+				//console.debug(columns);
 				columns.forEach((column, idx) => {
 					const column_config_name = column.getAttribute('data-testid');
 					if (column_config_name.includes('id: Title')) {
 						//console.debug('Located the "Title" column in the table view. It is at position: ', idx);
-						singleton.titleColumnIndex = idx;
+						singleton.setTitleColumnIndex(idx);
 					}
 					else if (column_config_name.includes('id: Labels')) {
 						//console.debug('Located the "Labels" column in the table view. It is at position: ', idx);
-						singleton.labelsColumnIndex = idx;
+						singleton.setLabelsColumnIndex(idx);
 					}
 				});
 				return; // we handled the header row. process nothing else.
 			}
 
-			if (!singleton.titleColumnIndex && !singleton.hasWarnedMissingTitle) {
+			if (typeof singleton.titleColumnIndex == 'undefined' && !singleton.hasWarnedMissingTitle) {
 				singleton.hasWarnedMissingTitle=true;
 				console.warn('Clockify: Unable to locate the "Title" column in the table view. Skipping processing for current page perspective.');
 				return;
