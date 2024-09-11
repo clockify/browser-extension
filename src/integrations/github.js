@@ -1,4 +1,4 @@
-/*
+
 // Issue view, PR view
 clockifyButton.render(
 	'.gh-header-actions:not(.clockify)',
@@ -61,36 +61,73 @@ clockifyButton.render(
 	}
 );
 
+
+const getProjectNameOnProjectView = () => {
+	const projectName = text('h1[class^=Text]');
+	return projectName;
+};
+const matchProjectNameAgainstKnownProjects = (projectName, projects) => {
+	const project = projects.find((p) => projectName.toLowerCase().includes(p.name.toLowerCase()));
+	return project;
+};
+
+class ScopedSingleton_GitHubProjectView {
+    constructor(projects) {
+		this.projects=projects;
+    }
+
+    static async createInstance() {
+        const storage = await localStorage.aBrowser.storage.local.get();
+        const projects = storage.preProjectList.projectList.map((r) => {
+            return { name: r.name, id: r.id };
+        });
+
+        return new ScopedSingleton_GitHubProjectView(projects).setProjectFromPage();
+    }
+
+	setProjectFromPage() {
+		this.githubProjectName = getProjectNameOnProjectView();
+		this.project = matchProjectNameAgainstKnownProjects(this.githubProjectName, this.projects);
+		if (!this.project) {
+			console.warn("Clockify: Unable to locate existing project (by name) for this github project board: "+ this.githubProjectName, this.projects.map(x=> x.name));
+			this.projectName = this.githubProjectName;
+		}
+		else {
+            //console.debug("Clockify: Located existing project for this GitHub project board: " + this.githubProjectName, this.project);
+			this.projectName = this.project.name;
+        }
+		return this;
+	}
+
+    processIssueUrl(url) {
+        const url_parts = url.split('/');
+
+		if (url_parts.length >= 5) {
+			this.githubProjectName = url_parts[4];
+			this.project = matchProjectNameAgainstKnownProjects(this.githubProjectName, this.projects);
+			if (!this.project) {
+				let repo_url = url.substring(0, url.lastIndexOf('/issues'));
+				console.warn("Clockify: Unable to locate existing project (by name) for repo of this github project board: "+ this.githubProjectName, repo_url, this.projects.map(x=> x.name));
+
+				this.projectName = this.githubProjectName;
+			}
+			else {
+				this.projectName = this.project.name;
+			}
+		}
+		else {
+			//console.debug('Clockify: URL of issue link is not in expected format: ', url);
+		}
+		return this.projectName;
+    }
+}
+
 // Project View (kanban cards)
 (async () => {
 	const selector_card = '.board-view-column-card:not(.clockify)';
 	const selector_card_header = 'div[data-testid=board-card-header]';
 
-	const storage = await localStorage.aBrowser.storage.local.get();
-	const projects = storage.preProjectList.projectList.map((r)=> {return {name: r.name, id: r.id}});
-	//console.debug('known projects: ', projects);
-
-	const ScopedSingleton = function(){
-		this.project=null;
-		this.repositoryName = null;
-		this.locatedIssueBasedRepoName = false;
-		
-		this.processUrl = function(url) {
-			const url_parts = url.split('/');
-
-			if (url_parts.length >= 5) {
-				this.locatedIssueBasedRepoName = true;
-				this.repositoryName = url_parts[4];
-				this.project = projects.find((p)=> p.name === this.repositoryName);
-				if (!this.project) {
-					let repo_url = url.substring(0, url.lastIndexOf('/issues'));
-					console.warn("Clockify: Unable to locate existing project (by name) for repo of this github project board: "+ this.repositoryName, repo_url, projects.map(x=> x.name));
-				}
-			}
-			return this.repositoryName;
-		}.bind(this);
-		return this;
-	}();
+	const singleton = await ScopedSingleton_GitHubProjectView.createInstance();
 	
 	clockifyButton.render(
 		selector_card,
@@ -98,18 +135,18 @@ clockifyButton.render(
 		(card) => {
 			if (!card) return;
 
-			// by default, use the name of the board as the project...
-			if (!ScopedSingleton.repositoryName) {
-				ScopedSingleton.repositoryName = text('h1[class*=Text-sc]', document);
-			}
-			// ideally we'd locate at least one card with the repository link the first time this code runs. 
-			// the only way to attain the Repository id from the Project View, is if one of the cards contains the issue link (which happens to contain the url of the repository).
-			// i see no other way, outside of utilizing github API to fetch it, which would be overkill and require the repo to be public or oauth'd. Way beyond scope no?
-			if (!ScopedSingleton.locatedIssueBasedRepoName) {
-				let target = $(`${selector_card} ${selector_card_header} + a[href*=github]`);
-				if (target) {
-					ScopedSingleton.processUrl(target.getAttribute('href'));
-					//console.debug(ScopedSingleton.repositoryName);
+			// if we couldn't locate a clockify project based one the name of the Github project, we can instead try to locate the repo name from any issue link on the board (if any exists).
+			if (!singleton.project) {
+				// first try and attain it from the page again..
+				singleton.processIssueUrl();
+
+				if (!singleton.project) {
+					console.debug('unable to locate a project based on the name of the Github project. Trying to locate the repo name from any issue link on the board (if any exists).');
+					let target = $(`${selector_card} ${selector_card_header} + a[href*=github]`);
+					if (target) {
+						singleton.processIssueUrl(target.getAttribute('href'));
+						//console.debug(singleton.projectName);
+					}
 				}
 			}
 
@@ -119,7 +156,7 @@ clockifyButton.render(
 			let desired_container = null;
 			try {
 				// try and find the container where the button should be placed. It will fail for cards that are not yet lazy-loaded due to scroll visibility.
-				desired_container = $('& div[class*=Box-sc]:last-child', card_header);
+				desired_container = $('& div[class^=Box-sc]:last-child', card_header);
 			}
 			catch(ex) {
 				//console.debug(ex);
@@ -139,11 +176,11 @@ clockifyButton.render(
 			}
 
 			const description = [card_title, issueId].filter(x=> x).join(' ');
-			const projectName = ScopedSingleton.repositoryName;
+			const projectName = singleton.projectName;
 
 			const taskName = [issueId, card_title].filter(x=> x).join(' ');;
 			// github Labels may or may not be visible based on user's board configuration. Let's try to nab them..
-			const tagNames = textList('ul[data-testid=card-labels] li span[class*=Text-sc]', card);
+			const tagNames = textList('ul[data-testid=card-labels] li span[class^=Text-sc]', card);
 
 			const entry = { description, projectName, taskName, tagNames };
 			//console.debug(entry);
@@ -160,93 +197,107 @@ clockifyButton.render(
 		}
 	);
 })();
-*/
-
-// Project View (slideout detail panel)
-
 
 // Project view (table perspective)
 (async () => {
-	const ScopedSingleton = function(){
-		this.thread = null;
-		this.pageLoadData = null;
-		this.trackedRows = [];
-		this.initialUrl = window.location.href;
-		try {
-			this.pageLoadData = JSON.parse(document.querySelector('script#memex-items-data').textContent);
-			//console.debug(this.data);
-		}catch{}
+	const singleton = await ScopedSingleton_GitHubProjectView.createInstance();
 
-		this.thread = setInterval(() => {
-			//console.log(Object.keys(document.querySelector('div.table-row__StyledTableRow-sc-57569b15-0')));
-			if (!window.location.href.includes(this.initialUrl)) {
-				console.debug('killing observer for table view due to detected url change.');
-				clearInterval(this.thread);
-				return;
-			}
-
-			this.trackedRows.map((row)=> {
-				if (!row) return;
-				if (!Object.keys(row).length) return;
-				if (row.classList.includes('react-found')) return;
-				row.classList.push('react-found');
-
-				// get the hidden internal properties from react, we need details..  example: "__reactProps$b30sfm8f6q7"
-				const react_props_key = Object.keys(row).find((k)=> k.startsWith('__reactProps$'));
-				const react_props = row[react_props_key];
-				console.log(react_props);
-			});
-		}, 1000);
-		return this;
-	}();
+	// in table mode, we need to handle the Header row first, to identify which column position contains the "Title" column. If there is no Title configured for the user, then how can we possible attain the task name? In that case, we skip all functionality here.
+	// our selector below for clockifyButton.render Includes the first row of the table, which is the header row.
 	
 	clockifyButton.render(
-		'div[data-testid=table-scroll-container] > div > div:last-child div[role="row"]:not(.clockify):not(.react-found)',
+		'div[data-testid=table-root] div[data-testid=table-scroll-container] div[role="row"]:not(.clockify)',
 		{ observe: true },
 		(row) => {
 			if (!row) return;
-			if (!ScopedSingleton.trackedRows.includes(row)) {
-				ScopedSingleton.trackedRows.push(row);
+			if ($('div[data-testid^=TableColumnHeader]', row)) {
+				// this is the header row. We need to locate the column position of the "Title" column.
+				const columns = $$('div[data-testid^=TableColumnHeader]', row);
+				columns.forEach((column, idx) => {
+					const column_config_name = column.getAttribute('data-testid');
+					if (column_config_name.includes('id: Title')) {
+						//console.debug('Located the "Title" column in the table view. It is at position: ', idx);
+						singleton.titleColumnIndex = idx;
+					}
+					else if (column_config_name.includes('id: Labels')) {
+						//console.debug('Located the "Labels" column in the table view. It is at position: ', idx);
+						singleton.labelsColumnIndex = idx;
+					}
+				});
+				return; // we handled the header row. process nothing else.
 			}
-			if (Object.keys(row).length) console.log('hit');
 
-			setTimeout(() => {
-				const elementKeys = Object.keys(row);
-				const reactRootKey = elementKeys.find(key => key.startsWith('__reactRoot'));
-				if (reactRootKey) {
-					const reactRoot = row[reactRootKey];
-					console.log(reactRoot);
+			if (!singleton.titleColumnIndex && !singleton.hasWarnedMissingTitle) {
+				singleton.hasWarnedMissingTitle=true;
+				console.warn('Clockify: Unable to locate the "Title" column in the table view. Skipping processing for current page perspective.');
+				return;
+			}
+
+			// if we couldn't locate a clockify project based one the name of the Github project, we can instead try to locate the repo name from any issue link on the board (if any exists).
+			if (!singleton.project) {
+				// first try and attain it from the page again..
+				singleton.processIssueUrl();
+
+				if (!singleton.project) {
+					console.debug('unable to locate a project based on the name of the Github project. Trying to locate the repo name from any issue link on the board (if any exists).');
+					let target = $(`${selector_card} ${selector_card_header} + a[href*=github]`);
+					if (target) {
+						singleton.processIssueUrl(target.getAttribute('href'));
+						//console.debug(singleton.projectName);
+					}
 				}
-			}, 100); // Adjust the delay as needed
-			// we must wait for react to render cycle, so we can get the internal props. So we'll use our own "mutation observer".
+			}
+
+			// at this point, we are operating on a valid "issue" row in a table view. And we have a valid title index, so we know where to scan for a task title.
+			const offset = 1 + 1; // 1 for 0-based index, and 1 for the "Actions" cell that Github puts at the start of each row..
+			const taskTitle_row_selector = `& > div:nth-child(${singleton.titleColumnIndex + offset})`;
+			const taskTitle_row_text_selector = `${taskTitle_row_selector} span[class^=Text]`;
+			const taskTitle = text(taskTitle_row_text_selector, row);
+			
+			// when taskTitle is undefined, it's likely the final row -- the one used to Add a new row in Github.
+			if (!taskTitle) {
+				return;
+			}
+
+			let desired_container = null;
+			try {
+				// try and find the container where the button should be placed. It will fail for rows that are not yet lazy-loaded due to scroll visibility.
+				desired_container = $(taskTitle_row_selector, row);
+			}
+			catch(ex) {
+				//console.debug(ex);
+				return; // silently fail, it will be processed later when user scrolls.
+			}
+
+			// let's try and grab any labels that are visible in the table view.
+			let tagNames = [];
+			if (typeof(singleton.labelsColumnIndex)!=='undefined') {
+				const label_selector = `& > div:nth-child(${singleton.labelsColumnIndex + offset}) span[class^=Text]`;
+				tagNames = textList(label_selector, row);
+				//console.debug(tagNames);
+			}
+
+			const entry = { description: taskTitle, projectName: singleton.projectName, tagNames };
+			console.debug(entry);
+
+			const buttonOptions = {
+				...entry,
+				small: true,
+			}
+			const link = clockifyButton.createButton(buttonOptions);
+			link.style.padding = '3px 14px';
+			link.style.position = 'absolute';
+			link.style.right = '0px';
+			link.style.top = '7px';
+			link.style.zIndex = '9';
+			desired_container.style.position = 'relative';
+
+			// append to the end of Title row. absolutely in "overlay" css mode.
+			desired_container.append(link);
 		},
 		':not(.react-found)'
 	);
 })();
 
-var documents = window.getAllDocuments();
-documents.forEach((document) => {
-	const targetNode = document.querySelector('#memex-root');
-	const config = { attributes: true, childList: true, subtree: true };
-	if (!targetNode) return;
-	console.log(Object.keys(targetNode));
+// Project View (slideout detail panel, common to both Table and Kanban perspectives)
 
-	const callback = (mutationsList, observer) => {
-		for (const mutation of mutationsList) {
-			if (mutation.type === 'childList') {
-				const element = mutation.target;
-				const elementKeys = Object.keys(element);
-				const reactRootKey = elementKeys.find(key => key.startsWith('__reactRoot'));
-				if (reactRootKey) {
-					const reactRoot = element[reactRootKey];
-					console.log(reactRoot);
-					observer.disconnect(); // Stop observing once the property is found
-					break;
-				}
-			}
-		}
-	};
-
-	const observer = new MutationObserver(callback);
-	observer.observe(targetNode, config);
-});
