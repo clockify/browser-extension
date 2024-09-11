@@ -42,7 +42,7 @@ if (typeof ScopedSingleton_GitHubProjectView === 'undefined') {
 			this.githubProjectName = this.getProjectNameOnProjectView();
 			this.project = this.matchProjectNameAgainstKnownProjects(this.githubProjectName, this.projects);
 			if (!this.project) {
-				console.warn("Clockify: Unable to locate existing project (by name) for this github project board: "+ this.githubProjectName, this.projects.map(x=> x.name));
+				//console.warn("Clockify: Unable to locate existing project (by name) for this github project board: "+ this.githubProjectName, this.projects.map(x=> x.name));
 				this.projectName = this.githubProjectName;
 			}
 			else {
@@ -79,6 +79,7 @@ if (typeof ScopedSingleton_GitHubProjectView === 'undefined') {
 		};
 
 		this.matchProjectNameAgainstKnownProjects = (projectName, projects) => {
+			if (!projectName || projectName.length<1) return;
 			const project = projects.find((p) => projectName.toLowerCase().includes(p.name.toLowerCase()));
 			return project;
 		};
