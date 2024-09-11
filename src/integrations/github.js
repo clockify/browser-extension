@@ -159,3 +159,34 @@ clockifyButton.render(
 		}
 	);
 })();
+
+
+// Project View (slideout detail panel)
+
+
+// Project view (table perspective)
+(async () => {
+	const ScopedSingleton = function(){
+		this.data = null;
+		try {
+			this.data = JSON.parse(document.querySelector('script#memex-items-data').textContent);
+			//console.debug(this.data);
+		}catch{}
+		return this;
+	}();
+	clockifyButton.render(
+		'div[data-testid=table-scroll-container] div[role="row"]:not(.clockify)',
+		{ observe: true },
+		(row) => {
+			console.log(row);
+			if (!row) return;
+			if (!Object.keys(row).length) return;
+			row.classList.push('react-found');
+
+			// get the hidden internal property from react, we need details..  example: "__reactProps$b30sfm8f6q7"
+			const react_props = Object.keys(row).find((k)=> k.startsWith('__reactProps$'));
+			console.log(react_props);
+		},
+		':not(.react-found)'
+	);
+})();
