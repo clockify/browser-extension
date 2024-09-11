@@ -280,7 +280,7 @@ if (typeof ScopedSingleton_GitHubProjectView === 'undefined') {
 			}
 
 			const entry = { description: taskTitle, projectName: singleton.projectName, tagNames };
-			console.debug(entry);
+			//console.debug(entry);
 
 			const buttonOptions = {
 				...entry,
