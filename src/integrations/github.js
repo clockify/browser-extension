@@ -62,49 +62,40 @@ clockifyButton.render(
 );
 
 
-const getProjectNameOnProjectView = () => {
-	const projectName = text('h1[class^=Text]');
-	return projectName;
-};
-const matchProjectNameAgainstKnownProjects = (projectName, projects) => {
-	const project = projects.find((p) => projectName.toLowerCase().includes(p.name.toLowerCase()));
-	return project;
-};
-
 class ScopedSingleton_GitHubProjectView {
-    constructor(projects) {
+	constructor(projects) {
 		this.projects=projects;
-    }
+	}
 
-    static async createInstance() {
-        const storage = await localStorage.aBrowser.storage.local.get();
-        const projects = storage.preProjectList.projectList.map((r) => {
-            return { name: r.name, id: r.id };
-        });
+	static async createInstance() {
+		const storage = await localStorage.aBrowser.storage.local.get();
+		const projects = storage.preProjectList.projectList.map((r) => {
+			return { name: r.name, id: r.id };
+		});
 
-        return new ScopedSingleton_GitHubProjectView(projects).setProjectFromPage();
-    }
+		return new ScopedSingleton_GitHubProjectView(projects).setProjectFromPage();
+	}
 
 	setProjectFromPage() {
-		this.githubProjectName = getProjectNameOnProjectView();
-		this.project = matchProjectNameAgainstKnownProjects(this.githubProjectName, this.projects);
+		this.githubProjectName = this.getProjectNameOnProjectView();
+		this.project = this.matchProjectNameAgainstKnownProjects(this.githubProjectName, this.projects);
 		if (!this.project) {
 			console.warn("Clockify: Unable to locate existing project (by name) for this github project board: "+ this.githubProjectName, this.projects.map(x=> x.name));
 			this.projectName = this.githubProjectName;
 		}
 		else {
-            //console.debug("Clockify: Located existing project for this GitHub project board: " + this.githubProjectName, this.project);
+			//console.debug("Clockify: Located existing project for this GitHub project board: " + this.githubProjectName, this.project);
 			this.projectName = this.project.name;
-        }
+		}
 		return this;
 	}
 
-    processIssueUrl(url) {
-        const url_parts = url.split('/');
+	processIssueUrl(url) {
+		const url_parts = url.split('/');
 
 		if (url_parts.length >= 5) {
 			this.githubProjectName = url_parts[4];
-			this.project = matchProjectNameAgainstKnownProjects(this.githubProjectName, this.projects);
+			this.project = this.matchProjectNameAgainstKnownProjects(this.githubProjectName, this.projects);
 			if (!this.project) {
 				let repo_url = url.substring(0, url.lastIndexOf('/issues'));
 				console.warn("Clockify: Unable to locate existing project (by name) for repo of this github project board: "+ this.githubProjectName, repo_url, this.projects.map(x=> x.name));
@@ -119,7 +110,16 @@ class ScopedSingleton_GitHubProjectView {
 			//console.debug('Clockify: URL of issue link is not in expected format: ', url);
 		}
 		return this.projectName;
-    }
+	}
+
+	getProjectNameOnProjectView = () => {
+		const projectName = text('h1[class^=Text]');
+		return projectName;
+	}
+	matchProjectNameAgainstKnownProjects = (projectName, projects) => {
+		const project = projects.find((p) => projectName.toLowerCase().includes(p.name.toLowerCase()));
+		return project;
+	}
 }
 
 // Project View (kanban cards)
@@ -206,10 +206,11 @@ class ScopedSingleton_GitHubProjectView {
 	// our selector below for clockifyButton.render Includes the first row of the table, which is the header row.
 	
 	clockifyButton.render(
-		'div[data-testid=table-root] div[data-testid=table-scroll-container] div[role="row"]:not(.clockify)',
+		'div[data-testid=table-scroll-container] div[role="row"]:not(.clockify)',
 		{ observe: true },
 		(row) => {
 			if (!row) return;
+			console.log(row);
 			if ($('div[data-testid^=TableColumnHeader]', row)) {
 				// this is the header row. We need to locate the column position of the "Title" column.
 				const columns = $$('div[data-testid^=TableColumnHeader]', row);
@@ -294,7 +295,8 @@ class ScopedSingleton_GitHubProjectView {
 
 			// append to the end of Title row. absolutely in "overlay" css mode.
 			desired_container.append(link);
-		}
+		},
+		'div[data-testid=app-root] div[id^=project-view] div'
 	);
 })();
 
