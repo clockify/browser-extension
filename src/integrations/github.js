@@ -1,3 +1,4 @@
+/*
 // Issue view, PR view
 clockifyButton.render(
 	'.gh-header-actions:not(.clockify)',
@@ -159,7 +160,7 @@ clockifyButton.render(
 		}
 	);
 })();
-
+*/
 
 // Project View (slideout detail panel)
 
@@ -167,26 +168,85 @@ clockifyButton.render(
 // Project view (table perspective)
 (async () => {
 	const ScopedSingleton = function(){
-		this.data = null;
+		this.thread = null;
+		this.pageLoadData = null;
+		this.trackedRows = [];
+		this.initialUrl = window.location.href;
 		try {
-			this.data = JSON.parse(document.querySelector('script#memex-items-data').textContent);
+			this.pageLoadData = JSON.parse(document.querySelector('script#memex-items-data').textContent);
 			//console.debug(this.data);
 		}catch{}
+
+		this.thread = setInterval(() => {
+			//console.log(Object.keys(document.querySelector('div.table-row__StyledTableRow-sc-57569b15-0')));
+			if (!window.location.href.includes(this.initialUrl)) {
+				console.debug('killing observer for table view due to detected url change.');
+				clearInterval(this.thread);
+				return;
+			}
+
+			this.trackedRows.map((row)=> {
+				if (!row) return;
+				if (!Object.keys(row).length) return;
+				if (row.classList.includes('react-found')) return;
+				row.classList.push('react-found');
+
+				// get the hidden internal properties from react, we need details..  example: "__reactProps$b30sfm8f6q7"
+				const react_props_key = Object.keys(row).find((k)=> k.startsWith('__reactProps$'));
+				const react_props = row[react_props_key];
+				console.log(react_props);
+			});
+		}, 1000);
 		return this;
 	}();
+	
 	clockifyButton.render(
-		'div[data-testid=table-scroll-container] div[role="row"]:not(.clockify)',
+		'div[data-testid=table-scroll-container] > div > div:last-child div[role="row"]:not(.clockify):not(.react-found)',
 		{ observe: true },
 		(row) => {
-			console.log(row);
 			if (!row) return;
-			if (!Object.keys(row).length) return;
-			row.classList.push('react-found');
+			if (!ScopedSingleton.trackedRows.includes(row)) {
+				ScopedSingleton.trackedRows.push(row);
+			}
+			if (Object.keys(row).length) console.log('hit');
 
-			// get the hidden internal property from react, we need details..  example: "__reactProps$b30sfm8f6q7"
-			const react_props = Object.keys(row).find((k)=> k.startsWith('__reactProps$'));
-			console.log(react_props);
+			setTimeout(() => {
+				const elementKeys = Object.keys(row);
+				const reactRootKey = elementKeys.find(key => key.startsWith('__reactRoot'));
+				if (reactRootKey) {
+					const reactRoot = row[reactRootKey];
+					console.log(reactRoot);
+				}
+			}, 100); // Adjust the delay as needed
+			// we must wait for react to render cycle, so we can get the internal props. So we'll use our own "mutation observer".
 		},
 		':not(.react-found)'
 	);
 })();
+
+var documents = window.getAllDocuments();
+documents.forEach((document) => {
+	const targetNode = document.querySelector('#memex-root');
+	const config = { attributes: true, childList: true, subtree: true };
+	if (!targetNode) return;
+	console.log(Object.keys(targetNode));
+
+	const callback = (mutationsList, observer) => {
+		for (const mutation of mutationsList) {
+			if (mutation.type === 'childList') {
+				const element = mutation.target;
+				const elementKeys = Object.keys(element);
+				const reactRootKey = elementKeys.find(key => key.startsWith('__reactRoot'));
+				if (reactRootKey) {
+					const reactRoot = element[reactRootKey];
+					console.log(reactRoot);
+					observer.disconnect(); // Stop observing once the property is found
+					break;
+				}
+			}
+		}
+	};
+
+	const observer = new MutationObserver(callback);
+	observer.observe(targetNode, config);
+});
