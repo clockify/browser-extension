@@ -473,5 +473,10 @@
 		"name": "Pumble",
 		"link": "*://app.pumble.com/*",
 		"script": "pumble.js"
+	},
+	"app.isoplus.online": {
+		"name": "ISO+",
+		"link": "*://app.isoplus.online/*",
+		"script": "isoplus.js"
 	}
 }
