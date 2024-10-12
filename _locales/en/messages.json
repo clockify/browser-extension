@@ -1092,7 +1092,7 @@
     "message": "Verify your email!"
   },
   "LONG_VERIFY_EMAIL_MESSAGE": {
-    "message": "{ userName }, to continue using your clockify account, you must verify your email address: { userEmail }"
+    "message": "{ userName }, to continue using your Clockify account, you must verify your email address: { userEmail }"
   },
   "CHANGE_EMAIL_FOOTER": {
     "message": "Having troubles accessing your email?"
@@ -1222,6 +1222,12 @@
   },
   "GLOBAL__DUPLICATE_SUCCESS_MSG": {
     "message": "Time entry has been duplicated"
+  },
+  "CAN_NOT_CREATE_PROJECT_MISSING_PERMISSIONS": {
+    "message": "You don't have permissions to create project"
+  },
+  "ENTRY_IN_PROGRESS_EXISTS": {
+    "message": "You have time entry in progress!"
   },
   "appName": {
     "message": "Clockify Time Tracker",

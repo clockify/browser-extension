@@ -1,10 +1,10 @@
 import * as React from 'react';
 import HomePage from './home-page.component';
-import Header from './header.component';
+import Header from './header.component.jsx';
 import * as ReactDOM from 'react-dom';
-import { getEnv } from '../environment';
+import { getEnv } from '~/environment';
 import * as moment from 'moment-timezone';
-import { getBrowser } from '../helpers/browser-helper';
+import { getBrowser } from '~/helpers/browser-helper';
 import Login from './login.component';
 import locales from '../helpers/locales';
 
@@ -106,9 +106,9 @@ class SignUp extends React.Component {
 									}
 								});
 						}
-					}
+					},
 				);
-			}
+			},
 		);
 	}
 

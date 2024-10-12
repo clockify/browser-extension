@@ -462,10 +462,12 @@ async function startBreak(description, endDate) {
 				// Although start-timer-component will set DeafultPoject (if defined)
 			}
 
-			const res = await TimeEntry.endInProgress(
-				Object.assign({}, timeEntryInProgress, { isWebSocketHeader }),
-				endDate
-			);
+			const res = await TimeEntry.endInProgress({
+				timeEntry: Object.assign({}, timeEntryInProgress, {
+					isWebSocketHeader,
+				}),
+				end: endDate,
+			});
 			const error = res && res.error;
 
 			//this.sendPomodoroEvent(null);
@@ -617,10 +619,10 @@ async function continueLastEntryByPomodoro(endDate) {
 	const { entry: lastEntry, error: err } =
 		await TimeEntry.getLastPomodoroEntry();
 	const isWebSocketHeader = true;
-	const res = await TimeEntry.endInProgress(
-		Object.assign({}, lastEntry, { isWebSocketHeader }),
-		endDate
-	);
+	const res = await TimeEntry.endInProgress({
+		timeEntry: Object.assign({}, lastEntry, { isWebSocketHeader }),
+		end: endDate,
+	});
 	const error = res && res.error;
 	this.clearNotification('breakOver');
 	//this.sendPomodoroEvent(null);

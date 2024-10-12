@@ -1,53 +1,36 @@
-setTimeout(() => {
+(async () => {
+	const selectors = await getSelectors('zendesk', 'singleTicketView');
+
 	clockifyButton.render(
-		'.pane_header:not(.clockify)',
-		{ observe: true },
-		function (elem) {
-			let description;
-			const projectName = $('title').textContent;
+		selectors.hanger,
+		{ observe: true, onNavigationRerender: true },
+		async navBar => {
+			const ticketNumber = () => location.href.match(/tickets\/(\d+)/)[1];
+			const ticketSubject = () => value(selectors.ticketSubject);
 
-			const titleFunc = function () {
-				const titleElem = $('.editable .ember-view input', elem);
-				const ticketNum = location.href.match(/tickets\/(\d+)/);
+			const description = () => `#${ticketNumber()} ${ticketSubject()}`;
+			const tagNames = () => textList(selectors.ticketTags);
 
-				if (titleElem !== null) {
-					description = titleElem.value.trim();
-				}
+			const link = clockifyButton.createButton({ description, tagNames });
+			const input = clockifyButton.createInput({ description, tagNames });
 
-				if (ticketNum) {
-					description = '#' + ticketNum[1].trim() + ' ' + description;
-				}
-				return description;
-			};
+			const container = createTag('div', 'clockify-widget-container');
 
-			const link = clockifyButton.createButton(
-				titleFunc,
-				projectName && projectName.split(' - ').shift()
-			);
+			container.append(link);
+			container.append(input);
 
-			if (elem.querySelector('#clockifyButton')) {
-				elem.removeChild(elem.querySelector('#clockifyButton'));
-			}
-
-			elem.insertBefore(link, elem.querySelector('.btn-group'));
+			navBar.append(container);
 		}
 	);
-}, 1000);
+})();
 
-setTimeout(() => {
-	clockifyButton.render(
-		'input[data-test-id="omni-header-subject"]:not(.clockify)',
-		{ observe: true },
-		(elem) => {
-			const ticketNum = location.href.match(/tickets\/(\d+)/);
-			const description = ticketNum
-				? '#' + ticketNum[1].trim() + ' ' + elem.value.trim()
-				: elem.value.trim();
-
-			const link = clockifyButton.createButton(description);
-
-			elem.parentElement.prepend(link);
-			clockifyButton.disconnectObserver();
-		}
-	);
-}, 1000);
+applyStyles(`
+	.clockify-widget-container {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		height: 28px;
+		width: 260px; 
+		padding-left: 30px;
+	}
+`);

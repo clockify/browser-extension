@@ -3,11 +3,11 @@ import useCustomField from './useCustomField';
 import locales from '../../helpers/locales';
 
 const CustomFieldText = ({
-	cf,
-	updateValue,
-	setIsValid,
-	cfContainsWrongChars,
-}) => {
+													 cf,
+													 updateValue,
+													 setIsValid,
+													 cfContainsWrongChars
+												 }) => {
 	const [value, setValue] = useState(cf.value);
 
 	const [
@@ -19,9 +19,9 @@ const CustomFieldText = ({
 			title,
 			manualMode,
 			required,
-			description,
+			description
 		},
-		storeValue,
+		storeValue
 	] = useCustomField(cf, updateValue, value);
 
 	const handleChange = (event) => {
@@ -32,25 +32,31 @@ const CustomFieldText = ({
 	};
 
 	const handleBlur = (event) => {
-		const enteredValue = event.target.value;
+		const enteredValue = event.target.value.trim();
+
+		if (!enteredValue) {
+			setValue('');
+		}
+
 		event.preventDefault();
 		event.stopPropagation();
+		setValue(enteredValue);
 		storeValue();
 		manualMode && updateValue(id, enteredValue);
 	};
 
-	const isNotValid = required && !value;
+	const isNotValid = required && !value?.trim();
 
 	useEffect(() => {
 		storeValue();
-	}, [value])
+	}, [value]);
 
 	useEffect(() => {
 		setValue(cf.value);
 	}, [cf.value]);
 
 	useEffect(() => {
-		setIsValid({ id: id, isValid: !(required && !value) });
+		setIsValid({ id: id, isValid: !(required && !value?.trim()) });
 	}, [value]);
 
 	return (

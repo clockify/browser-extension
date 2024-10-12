@@ -231,7 +231,11 @@ var offlineStorage = {
 
 	async getIsUserOwnerOrAdmin() {
 		const isUserOwnerOrAdmin = await localStorage.getItem('isUserOwnerOrAdmin');
-		return isUserOwnerOrAdmin ? JSON.parse(isUserOwnerOrAdmin) : false;
+		const isValueAlreadyParsed = typeof isUserOwnerOrAdmin === 'object';
+		const parsedValue = isValueAlreadyParsed
+			? isUserOwnerOrAdmin
+			: JSON.parse(isUserOwnerOrAdmin);
+		return isUserOwnerOrAdmin ? parsedValue : false;
 	},
 
 	updateCustomFieldValues(timeEntry, customFields) {

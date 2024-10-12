@@ -12,6 +12,8 @@ import { isChrome } from './helpers/browser-helper';
 
 offlineStorage.load();
 
+let HTMLButtonsWithClickListener = [];
+
 function getInactiveIcon() {
 	//return '<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" height="16" width="16"><path d="m 10.461549,5.5284395 3.642277,-3.6422765 1.040649,1.0406505 -3.642276,3.642309 z M 8.9656137,9.3008298 c -0.7154471,0 -1.300813,-0.5853659 -1.300813,-1.300813 0,-0.7154472 0.5853659,-1.300813 1.300813,-1.300813 0.7154472,0 1.3008133,0.5853658 1.3008133,1.300813 0,0.7154471 -0.5853661,1.300813 -1.3008133,1.300813 z m 6.2439023,3.7723572 -1.04065,1.04065 -3.642276,-3.642276 1.04065,-1.0407149 z" fill="#5A6B7B"></path><path d="m 9.0306543,13.593496 c 0.7154472,0 1.4308947,-0.130081 2.0813017,-0.390244 l 1.821138,1.821139 C 11.762362,15.674797 10.461549,16 9.095695,16 4.6729307,16 1.0956949,12.422765 1.0956949,8.0000004 1.0956949,3.5772361 4.6729307,3.65e-7 9.095695,3.65e-7 c 1.430895,0 2.731708,0.390243865 3.837399,0.975609665 L 11.176996,2.7317077 C 10.52659,2.4715451 9.8111421,2.3414637 9.095695,2.3414637 c -3.1219513,0 -5.593496,2.5365854 -5.593496,5.593496 -0.06504,3.1219513 2.4065041,5.6585363 5.5284553,5.6585363 z" fill="#5A6B7B"></path></svg>';
 	return `<svg width="16" 	height="16" 	viewBox="0 0 16 16" 	xmlns="http://www.w3.org/2000/svg" > 	<path 		d="M11.0065 2.04616C11.4838 1.56806 11.3811 0.764579 10.7508 0.522636C9.8712 0.185007 8.91622 0 7.91809 0C3.54505 0 0 3.5511 0 7.93162C0 12.3121 3.54505 15.8632 7.91809 15.8632C8.91006 15.8632 9.85941 15.6805 10.7345 15.3468C11.3664 15.1059 11.4702 14.3009 10.992 13.8219C10.6822 13.5115 10.2133 13.4391 9.79745 13.5775C9.20813 13.7738 8.57779 13.88 7.92268 13.88C4.6429 13.88 1.9841 11.2167 1.9841 7.93131C1.9841 4.64592 4.6429 1.98259 7.92268 1.98259C8.58253 1.98259 9.21724 2.09041 9.81022 2.28937C10.2263 2.42902 10.6962 2.35702 11.0065 2.04616Z" 		fill="#60747D" 	/> 	<path 		d="M9.11681 8.02279C9.11681 8.57666 8.66782 9.02564 8.11396 9.02564C7.5601 9.02564 7.11111 8.57666 7.11111 8.02279C7.11111 7.46893 7.5601 7.01994 8.11396 7.01994C8.66782 7.01994 9.11681 7.46893 9.11681 8.02279Z" 		fill="#60747D" 	/> 	<path 		d="M9.65974 5.15543C9.3005 5.5124 9.3005 6.09115 9.65974 6.44812C10.019 6.80509 10.6014 6.80509 10.9607 6.44812L13.9528 3.47494C14.312 3.11797 14.312 2.53922 13.9528 2.18225C13.5936 1.8253 13.0111 1.8253 12.6519 2.18225L9.65974 5.15543Z" 		fill="#60747D" 	/> 	<path 		d="M9.65974 10.7078C9.3005 10.3508 9.3005 9.7721 9.65974 9.41513C10.019 9.05816 10.6014 9.05816 10.9607 9.41513L13.9528 12.3883C14.312 12.7453 14.312 13.324 13.9528 13.681C13.5936 14.0379 13.0111 14.0379 12.6519 13.681L9.65974 10.7078Z" 		fill="#60747D" 	/> </svg>`;
@@ -29,9 +31,9 @@ function getClockifyButtonHTML(props) {
 	const text = document.createElement('span');
 
 	const containerStyles = {
-		display: 'flex',
+		/* 		display: 'flex',
 		alignItems: 'center',
-		cursor: 'pointer',
+		cursor: 'pointer', */
 	};
 	Object.assign(container.style, containerStyles);
 
@@ -45,7 +47,7 @@ function getClockifyButtonHTML(props) {
 	const textStyles = {
 		marginLeft: '5px',
 		float: 'none',
-		position: 'relative',
+		position: 'relative'
 	};
 
 	if (active) {
@@ -73,7 +75,7 @@ function Mac() {
 		window.screenLeft > window.screen.width ||
 		window.screenTop > window.screen.height
 	) {
-		chrome.runtime.getPlatformInfo(function (info) {
+		chrome.runtime.getPlatformInfo(function(info) {
 			if (info.os === 'mac') {
 				const fontFaceSheet = new CSSStyleSheet();
 				fontFaceSheet.insertRule(`
@@ -91,10 +93,7 @@ function Mac() {
           animation: redraw 1s linear infinite;
         }
       `);
-				document.adoptedStyleSheets = [
-					...document.adoptedStyleSheets,
-					fontFaceSheet,
-				];
+				document.adoptedStyleSheets = [...document.adoptedStyleSheets, fontFaceSheet];
 			}
 		});
 	}
@@ -120,8 +119,8 @@ window.getAllDocuments = () => {
 	const iframes = Array.from(document.querySelectorAll('iframe'));
 	const iframeDocuments = iframes
 		.map(({ contentDocument }) => contentDocument)
-		.filter((contentDocument) => Boolean(contentDocument))
-		.filter((contentDocument) => JSON.stringify(contentDocument) !== '{}');
+		.filter(contentDocument => Boolean(contentDocument))
+		.filter(contentDocument => JSON.stringify(contentDocument) !== '{}');
 	const documents = [document, ...iframeDocuments];
 
 	return documents;
@@ -131,9 +130,10 @@ const LoadingElement = () => {
 	return <div className="clockify-splash-screen"></div>;
 };
 
-function getSiblingButtonId(element) {
-	const previousSibling = element?.parentElement?.previousElementSibling;
-	const nextSibling = element?.parentElement?.nextElementSibling;
+function getSiblingButtonId(origin) {
+	const previousSibling = origin.previousElementSibling;
+	const nextSibling = origin.nextElementSibling;
+	const parentContainer = origin.closest('.clockify-widget-container');
 
 	if (previousSibling && previousSibling.classList.contains('clockifyButton')) {
 		// Extract the ID from the class name
@@ -144,6 +144,14 @@ function getSiblingButtonId(element) {
 	if (nextSibling && nextSibling.classList.contains('clockifyButton')) {
 		// Extract the ID from the class name
 		const id = nextSibling.className.match(/clockifyButtonId(\d+)/)[1];
+		return id;
+	}
+
+	if (parentContainer && parentContainer.querySelector('.clockifyButton')) {
+		// Extract the ID from the class name
+		const id = parentContainer
+			.querySelector('.clockifyButton')
+			.className.match(/clockifyButtonId(\d+)/)[1];
 		return id;
 	}
 
@@ -182,15 +190,14 @@ if (
 	const renderClockifyButton = (props, buttonId) => {
 		let counter = 0;
 		if (buttonId === undefined || buttonId === null) {
-			buttonId = getSiblingButtonId(props.popupProps?.inputElement) || 0;
+			buttonId = getSiblingButtonId(props.popupProps?.origin) || 0;
 		}
 		const intervalId = setTimeout(() => {
 			const documents = getAllDocuments();
 			const [entryPoint] = documents
-				.map((document) =>
-					document.querySelector(`.clockifyButtonId${buttonId}`)
-				)
+				.map(document => document.querySelector(`.clockifyButtonId${buttonId}`))
 				.filter(Boolean);
+
 			if (entryPoint) {
 				const currBtnProps = props?.btnProps[buttonId];
 				if (!currBtnProps) return;
@@ -200,22 +207,24 @@ if (
 				} else {
 					entryPoint.classList.toggle('active', false);
 				}
+
 				function createHTMLButton() {
 					currBtnProps.newRoot = false;
 					entryPoint.innerHTML = '';
 					entryPoint.appendChild(getClockifyButtonHTML(currBtnProps));
 				}
+
 				function renderToRoot(args = { forceStartTimer: false }) {
 					integrationRoots[buttonId].render(
 						<ErrorBoundary fallback={<p>Clockify: reload page</p>}>
 							<ClockifyButton
 								{...currBtnProps}
-								{...(props.popupProps?.manualMode
+								{...(props.popupProps?.manualMode || props.popupProps?.copyAsEntry
 									? props.popupProps
 									: {
-											inProgressDescription:
-												props.popupProps.inProgressDescription,
-									  })}
+										inProgressDescription:
+										props.popupProps.inProgressDescription
+									})}
 								updateButtonProps={(btnProps, popupProps) =>
 									window.updateButtonProperties(
 										btnProps
@@ -233,18 +242,47 @@ if (
 				function createReactRoot() {
 					removeReactRoot();
 					integrationRoots[buttonId] = createRoot(entryPoint, {
-						identifierPrefix: buttonId,
+						identifierPrefix: buttonId
 					});
 				}
 
 				function addClickHandlerToHTMLButton() {
+					const entryPointAlreadyHasClickListener = HTMLButtonsWithClickListener.find(
+						element => entryPoint.isSameNode(element)
+					);
+
+					if (entryPointAlreadyHasClickListener) return;
+
 					function clickHandler(e) {
+						const isButtonReactApp = e.target.closest('#clockifyButtonReact');
+
+						// React button has its own click handler
+						// in ClockifyButton.js  file
+						if (isButtonReactApp) return;
+
 						e.preventDefault();
 						e.stopPropagation();
 						createReactRoot();
 						renderToRoot({ forceStartTimer: true });
 					}
+
+					function removeStaleElements(array) {
+						const HTMLButtonsWithClickListenerRefreshed = array.filter(
+							({ isConnected }) => Boolean(isConnected)
+						);
+
+						HTMLButtonsWithClickListener = HTMLButtonsWithClickListenerRefreshed;
+					}
+
 					entryPoint.addEventListener('click', clickHandler, false);
+
+					aBrowser.runtime.onMessage.addListener((request) => {
+						if (request.eventName === 'stopTimerWithShortcut') {
+							clickHandler();
+						}
+					});
+					HTMLButtonsWithClickListener.push(entryPoint);
+					removeStaleElements(HTMLButtonsWithClickListener);
 				}
 
 				//helpers for creating HTML/React button
@@ -252,7 +290,8 @@ if (
 					return (
 						currBtnProps.newRoot &&
 						!integrationRoots[buttonId] &&
-						!props.popupProps?.manualMode
+						!props.popupProps?.manualMode &&
+						!props.popupProps?.copyAsEntry
 					);
 				}
 
@@ -260,7 +299,8 @@ if (
 					return (
 						!currBtnProps.newRoot &&
 						!integrationRoots[buttonId] &&
-						!props.popupProps?.manualMode
+						!props.popupProps?.manualMode &&
+						!props.popupProps?.copyAsEntry
 					);
 				}
 
@@ -270,6 +310,7 @@ if (
 						delete integrationRoots[buttonId];
 					}
 				}
+
 				//if react mount point exists, render to it
 				if (integrationRoots[buttonId]) {
 					// if entry point is empty, it means that button was removed from DOM,
@@ -281,6 +322,7 @@ if (
 						createHTMLButton();
 						addClickHandlerToHTMLButton();
 					} else {
+						addClickHandlerToHTMLButton();
 						renderToRoot();
 					}
 				} else {
@@ -289,7 +331,7 @@ if (
 						addClickHandlerToHTMLButton();
 					} else if (isUpdatedHTMLButton()) {
 						createHTMLButton();
-					} else if (props.popupProps?.manualMode) {
+					} else if (props.popupProps?.manualMode || props.popupProps?.copyAsEntry) {
 						createReactRoot();
 						renderToRoot();
 					}
@@ -309,7 +351,7 @@ if (
 	window.updateButtonProperties = ((
 		props = {
 			popupProps: {},
-			btnProps: [],
+			btnProps: []
 		}
 	) => {
 		return (newBtnProps, newPopupProps) => {
@@ -330,13 +372,16 @@ if (
 				}
 				props.btnProps[newBtnProps.buttonId] = {
 					...props.btnProps[newBtnProps.buttonId],
-					...newBtnProps,
+					...newBtnProps
 				};
 			}
 
 			if (newPopupProps) {
 				if (!('manualMode' in newPopupProps)) {
 					newPopupProps.manualMode = false;
+				}
+				if (!('copyAsEntry' in newPopupProps)) {
+					newPopupProps.copyAsEntry = false;
 				}
 				props.popupProps = { ...props.popupProps, ...newPopupProps };
 			}

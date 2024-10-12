@@ -18,7 +18,7 @@ function isChrome() {
 async function createHttpHeaders(token) {
 	let headers = {
 		Accept: 'application/json',
-		'Content-Type': 'application/json',
+		'Content-Type': 'application/json'
 	};
 
 	if (token) {
@@ -51,13 +51,14 @@ function errorObj(status, message, errorData) {
 		error: {
 			status,
 			message,
-			errorData,
-		},
+			errorData
+		}
 	};
 }
 
 class ClockifyService {
-	constructor() {}
+	constructor() {
+	}
 
 	static get userId() {
 		return localStorage.getItem('userId');
@@ -66,6 +67,7 @@ class ClockifyService {
 	static get userEmail() {
 		return localStorage.getItem('userEmail');
 	}
+
 	static get workspaceId() {
 		return localStorage.getItem('activeWorkspaceId');
 	}
@@ -75,15 +77,16 @@ class ClockifyService {
 	}
 
 	static get user() {
-		return localStorage.getItem('user')
+		return localStorage.getItem('user');
 	}
+
 	// Here we have a list of endpoints that we want to cache
 	// and the time they should be cached for
 	static routesToCache = [
 		{ path: '/auth/token/refresh', expiresInMilliseconds: 3 * 1000 },
 		{
 			path: '/timeEntries/recent?limit=',
-			expiresInMilliseconds: 1 * 1000,
+			expiresInMilliseconds: 1000,
 		},
 	];
 	// Here we store the cached data
@@ -92,7 +95,7 @@ class ClockifyService {
 	static addToCache(endpoint, data) {
 		this.cache[endpoint] = {
 			...data,
-			timestamp: new Date().getTime(),
+			timestamp: new Date().getTime()
 		};
 	}
 
@@ -107,7 +110,7 @@ class ClockifyService {
 
 	// This function will check if the endpoint is in the list of endpoints to cache
 	static isEndpointInRoutesToCache(endpoint) {
-		return this.routesToCache.find((route) => endpoint.includes(route.path));
+		return this.routesToCache.find(route => endpoint.includes(route.path));
 	}
 
 	static async getForces() {
@@ -116,32 +119,32 @@ class ClockifyService {
 		const wsSettings = ws
 			? JSON.parse(ws)
 			: {
-					forceDescription: false,
-					forceProjects: false,
-					forceTasks: false,
-					projectPickerSpecialFilter: false,
-					forceTags: false,
-			  };
+				forceDescription: false,
+				forceProjects: false,
+				forceTasks: false,
+				projectPickerSpecialFilter: false,
+				forceTags: false
+			};
 		const userSettings = us
 			? JSON.parse(us)
 			: {
-				projectPickerSpecialFilter: false,
-			};
+				projectPickerSpecialFilter: false
+			  };
 		const {
 			forceDescription,
 			forceProjects,
 			forceTasks,
-			forceTags,
+			forceTags
 		} = wsSettings;
 		const {
-			projectPickerSpecialFilter,
+			projectPickerSpecialFilter
 		} = userSettings;
 		return {
 			forceDescription,
 			forceProjects,
 			forceTasks,
 			projectPickerSpecialFilter,
-			forceTags,
+			forceTags
 		};
 	}
 
@@ -157,9 +160,9 @@ class ClockifyService {
 		let userRoles = await localStorage.getItem('userRoles');
 		userRoles = userRoles.map((userRole) => userRole.role);
 		const { whoCanCreateProjectsAndClients } =
-			workspaceSettings?.entityCreationPermissions || {
-				whoCanCreateProjectsAndClients: 'ADMINS',
-			};
+		workspaceSettings?.entityCreationPermissions || {
+			whoCanCreateProjectsAndClients: 'ADMINS'
+		};
 		const isEnabledCreateProject =
 			whoCanCreateProjectsAndClients === 'EVERYONE' ||
 			userRoles.includes('WORKSPACE_ADMIN') ||
@@ -175,9 +178,9 @@ class ClockifyService {
 		let userRoles = await localStorage.getItem('userRoles');
 		userRoles = userRoles.map((userRole) => userRole.role);
 		const { whoCanCreateTasks } =
-			workspaceSettings?.entityCreationPermissions || {
-				whoCanCreateTasks: 'ADMINS',
-			};
+		workspaceSettings?.entityCreationPermissions || {
+			whoCanCreateTasks: 'ADMINS'
+		};
 		const isEnabledCreateTask =
 			whoCanCreateTasks === 'EVERYONE' ||
 			userRoles.includes('WORKSPACE_ADMIN') ||
@@ -190,11 +193,10 @@ class ClockifyService {
 		let workspaceSettings = await localStorage.getItem('workspaceSettings');
 		workspaceSettings = JSON.parse(workspaceSettings);
 		let userRoles = await localStorage.getItem('userRoles');
-		userRoles = userRoles.map((userRole) => userRole.role);
-		const { whoCanCreateTags } =
-			workspaceSettings?.entityCreationPermissions || {
-				whoCanCreateTags: 'ADMINS',
-			};
+		userRoles = userRoles.map(userRole => userRole.role);
+		const { whoCanCreateTags } = workspaceSettings?.entityCreationPermissions || {
+			whoCanCreateTags: 'ADMINS',
+		};
 		const isEnabledCreateTags =
 			whoCanCreateTags === 'EVERYONE' ||
 			userRoles.includes('WORKSPACE_ADMIN') ||
@@ -231,7 +233,7 @@ class ClockifyService {
 			const workspaceId = regexMatch[1]; // Extract the workspace ID from the first capture group
 			aBrowser.runtime.sendMessage({
 				eventName: 'WORKSPACE_BANNED',
-				options: { ...errorData, workspaceId },
+				options: { ...errorData, workspaceId }
 			});
 		} else if (
 			errorData.message?.includes('Access to workspace is denied') ||
@@ -239,7 +241,7 @@ class ClockifyService {
 		) {
 			aBrowser.runtime.sendMessage({
 				eventName: 'USER_BANNED',
-				options: errorData,
+				options: errorData
 			});
 		}
 	}
@@ -262,9 +264,7 @@ class ClockifyService {
 		}
 
 		const hdrs = await createHttpHeaders(token);
-		const mergedHeaders = additionalHeaders
-			? { ...hdrs, ...additionalHeaders }
-			: hdrs;
+		const mergedHeaders = additionalHeaders ? { ...hdrs, ...additionalHeaders } : hdrs;
 		const headers = new Headers(mergedHeaders);
 
 		//TODO: this is a temporary fix for the sub-domain-name header
@@ -278,7 +278,7 @@ class ClockifyService {
 		// Check if the data is in the cache and not expired
 		// if it is, return it and don't make the request
 		if (routeToCache) {
-			const cachedData = this.cache[routeToCache.path];
+			const cachedData = this.cache[endpoint];
 			// Check if the data is in the cache and not expired
 			if (
 				cachedData &&
@@ -288,10 +288,10 @@ class ClockifyService {
 			}
 
 			// Check if the request was already fired but did not yet get saved to the cache
-			if (this.requestQueue[routeToCache.path]) {
-				const requestData = await this.requestQueue[routeToCache.path];
+			if (this.requestQueue[endpoint]) {
+				const requestData = await this.requestQueue[endpoint];
 				// once the request is done, delete it from the queue
-				delete this.requestQueue[routeToCache.path];
+				delete this.requestQueue[endpoint];
 				return Promise.resolve(requestData);
 			}
 		}
@@ -299,11 +299,11 @@ class ClockifyService {
 		const request = new Request(endpoint, {
 			method,
 			headers,
-			body: body ? JSON.stringify(body) : null,
+			body: body ? JSON.stringify(body) : null
 		});
 
 		const fetchRequest = fetch(request)
-			.then(async (response) => {
+			.then(async response => {
 				if (response.type === 'error') {
 					this.setOffline();
 					// return Network errors
@@ -318,6 +318,7 @@ class ClockifyService {
 					/.* project for client .* already exists./,
 					/Tag with name .* already exists/,
 					/Manual time tracking disabled on .*/,
+					/Task with name '.*' already exists/
 				];
 				switch (response.status) {
 					case 400:
@@ -325,7 +326,7 @@ class ClockifyService {
 						const { message } = await response.json();
 
 						const returnMessageToComponent =
-							errorMessagesThatShouldBeReturnedToComponent.find((pattern) =>
+							errorMessagesThatShouldBeReturnedToComponent.find(pattern =>
 								pattern.test(message)
 							);
 
@@ -344,11 +345,19 @@ class ClockifyService {
 							} else if (errorData.code === 4017) {
 								aBrowser.runtime.sendMessage({
 									eventName: 'TOKEN_INVALID',
-									options: errorData,
+									options: errorData
 								});
 								return errorObj(response.status, 'Token invalid', errorData);
-							} else if (errorData.code === 4030 ) {
-								return errorObj(response.status, 'Manual time tracking disabled', errorData);
+							} else if (errorData.code === 4030) {
+								return errorObj(
+									response.status,
+									'Manual time tracking disabled',
+									errorData
+								);
+							} else if (errorData.code === 501) {
+								return errorObj(response.status, 'Access Denied', errorData);
+							} else if (errorData.code === 1003) {
+								return errorObj(response.status, 'Can\'t edit locked time entry.', errorData);
 							}
 						}
 						return errorObj(response.status, 'Unauthenticated');
@@ -364,39 +373,35 @@ class ClockifyService {
 						errorData = await response.json();
 						if (errorData) {
 							if (errorData.code === 4019) {
-								aBrowser.runtime.sendMessage({
-									eventName: 'VERIFY_EMAIL_ENFORCED',
-									message: {}
-								}).then((response) => {console.log(response)}).catch((error) => console.log(error));
+								aBrowser.runtime
+									.sendMessage({
+										eventName: 'VERIFY_EMAIL_ENFORCED',
+										message: {},
+									})
+									.then(response => {
+										console.log(response);
+									})
+									.catch(error => console.log(error));
 							}
 							if (errorData.code === 406) {
 								this.handleBannedResponse(errorData);
 								return errorObj(response.status, errorData?.message, errorData);
-							} else if (errorData.code === 4017) {
+							} else if (errorData.code === 4017 || errorData.code === 4023) {
 								aBrowser.runtime.sendMessage({
 									eventName: 'TOKEN_INVALID',
-									options: errorData,
+									options: errorData
 								});
 								return errorObj(response.status, 'Token invalid', errorData);
 							}
 							if (errorData.code === 1000) {
 								aBrowser.runtime.sendMessage({
 									eventName: 'TOKEN_INVALID',
-									options: errorData,
+									options: errorData
 								});
 								return errorObj(response.status, errorData);
 							}
 						}
 						return errorObj(response.status, 'Forbidden');
-					case 423:
-						errorData = await response.json();
-						const { code } = errorData;
-						if (code === 4023) {
-							aBrowser.runtime.sendMessage({
-								eventName: 'WORKSPACE_LOCKED',
-								options: { ...errorData },
-							});
-						}
 					default:
 					// fall through
 				}
@@ -409,15 +414,15 @@ class ClockifyService {
 					}
 					// If the endpoint is in the routesToCache, cache the result
 					if (routeToCache) {
-						this.addToCache(routeToCache.path, {
+						this.addToCache(endpoint, {
 							data,
 							error: null,
-							status: response.status,
+							status: response.status
 						});
 
 						// Schedule cache busting after the expiresInMilliseconds duration
 						setTimeout(() => {
-							this.removeFromCache(routeToCache.path);
+							this.removeFromCache(endpoint);
 						}, routeToCache.expiresInMilliseconds);
 					}
 					return { data, error: null, status: response.status };
@@ -426,12 +431,9 @@ class ClockifyService {
 					return errorObj(response.status, errorMessage);
 				}
 			})
-			.catch((error) => {
+			.catch(error => {
 				// this.setOffline();
-				console.error(
-					'There has been a problem with your fetch operation: ',
-					error
-				); // error.message
+				console.error('There has been a problem with your fetch operation: ', error); // error.message
 
 				return errorObj(0, error);
 			});
@@ -439,7 +441,7 @@ class ClockifyService {
 		// If the endpoint is in the routesToCache, add the request	to the requestQueue
 		// so that if the same request is made again, we can return the same promise
 		if (routeToCache) {
-			this.requestQueue[routeToCache.path] = fetchRequest;
+			this.requestQueue[endpoint] = fetchRequest;
 		}
 
 		// TODO Take care request failed, probably because of wrong permissions

@@ -1,20 +1,19 @@
 import * as React from 'react';
 import Settings from './settings.component';
-import { getBrowser, isChrome } from '../helpers/browser-helper';
-import { getEnv } from '../environment';
-import { HtmlStyleHelper } from '../helpers/html-style-helper';
+import { getBrowser, isChrome } from '~/helpers/browser-helper';
+import { getEnv } from '~/environment';
 import WorkspaceList from './workspace-list.component';
 import WorkspaceChangeConfirmation from './workspace-change-confirmation.component';
-import { ExtParameters } from '../wrappers/ext-parameters';
+import { ExtParameters } from '~/wrappers/ext-parameters';
 import locales from '../helpers/locales';
 import WsChange2FAPopupComponent from '../components/ws-change-2fa-popup.component';
 import SelfHostedBootSettings from '../components/self-hosted-login-settings.component';
-import { logout } from '../helpers/utils';
+import { logout } from '~/helpers/utils';
 import dateFnsLocale from './date-fns-locale';
-import { getLocalStorageEnums } from '../enums/local-storage.enum';
+import { getLocalStorageEnums } from '~/enums/local-storage.enum';
+import { removeDarkModeClassFromBodyElement } from '~/zustand/slices/darkThemeSlice';
 
 const environment = getEnv();
-const htmlStyleHelper = new HtmlStyleHelper();
 const extParameters = new ExtParameters();
 
 class Menu extends React.Component {
@@ -46,10 +45,8 @@ class Menu extends React.Component {
 		};
 
 		// this.onSetWorkspace = this.onSetWorkspace.bind(this);
-		this.changeToSubdomainWorkspace =
-			this.changeToSubdomainWorkspace.bind(this);
-		this.cancelSubdomainWorkspaceChange =
-			this.cancelSubdomainWorkspaceChange.bind(this);
+		this.changeToSubdomainWorkspace = this.changeToSubdomainWorkspace.bind(this);
+		this.cancelSubdomainWorkspaceChange = this.cancelSubdomainWorkspaceChange.bind(this);
 		this.changeModeToManual = this.changeModeToManual.bind(this);
 		this.getWorkspaces = this.getWorkspaces.bind(this);
 		this.handleIntegrationsRefresh = this.handleIntegrationsRefresh.bind(this);
@@ -78,10 +75,10 @@ class Menu extends React.Component {
 			.runtime.sendMessage({
 				eventName: 'getUser',
 			})
-			.then((response) => {
+			.then(response => {
 				let data = response.data;
 				this.setState(
-					(prevState) => ({
+					prevState => ({
 						userSettingsData: {
 							...prevState.userSettingsData,
 							user: data,
@@ -99,10 +96,8 @@ class Menu extends React.Component {
 						this.isIdleDetectionOn();
 						this.isReminderOn();
 						this.isAutoStartStopOn();
-						this.isTimerShortcutOn();
-						this.isContextMenuOn();
-						this.isShowPostStartPopup();
 						this.isAppendWebsiteURLOn();
+						this.getAppVersion();
 					}
 				);
 			});
@@ -115,9 +110,9 @@ class Menu extends React.Component {
 				eventName: 'getMemberProfile',
 				options: { userId: this.state.userId, workspaceId: activeWorkspaceId },
 			})
-			.then((response) => {
+			.then(response => {
 				this.setState(
-					(prevState) => ({
+					prevState => ({
 						userSettingsData: {
 							...prevState.userSettingsData,
 							memberProfile: response.data,
@@ -131,23 +126,20 @@ class Menu extends React.Component {
 	}
 
 	async isIdleDetectionOn() {
-		const idleDetectionFromStorage = await localStorage.getItem(
-			'idleDetection'
-		);
+		const idleDetectionFromStorage = await localStorage.getItem('idleDetection');
 		const userId = await localStorage.getItem('userId');
 
-		this.setState((prevState) => ({
+		this.setState(prevState => ({
 			userSettingsData: {
 				...prevState.userSettingsData,
 				idleDetectionCounter:
 					idleDetectionFromStorage &&
 					JSON.parse(idleDetectionFromStorage).filter(
-						(idleDetectionByUser) =>
-							idleDetectionByUser.userId === userId &&
-							idleDetectionByUser.counter > 0
+						idleDetectionByUser =>
+							idleDetectionByUser.userId === userId && idleDetectionByUser.counter > 0
 					).length > 0
 						? JSON.parse(idleDetectionFromStorage).filter(
-								(idleDetectionByUser) =>
+								idleDetectionByUser =>
 									idleDetectionByUser.userId === userId &&
 									idleDetectionByUser.counter > 0
 						  )[0].counter
@@ -155,9 +147,8 @@ class Menu extends React.Component {
 				idleDetection: !!(
 					idleDetectionFromStorage &&
 					JSON.parse(idleDetectionFromStorage).filter(
-						(idleDetectionByUser) =>
-							idleDetectionByUser.userId === userId &&
-							idleDetectionByUser.counter > 0
+						idleDetectionByUser =>
+							idleDetectionByUser.userId === userId && idleDetectionByUser.counter > 0
 					).length > 0
 				),
 			},
@@ -168,16 +159,14 @@ class Menu extends React.Component {
 		const reminderFromStorage = await localStorage.getItem('reminders');
 		const userId = await localStorage.getItem('userId');
 		const reminderFromStorageForUser = reminderFromStorage
-			? JSON.parse(reminderFromStorage).filter(
-					(reminder) => reminder.userId === userId
-			  )[0]
+			? JSON.parse(reminderFromStorage).filter(reminder => reminder.userId === userId)[0]
 			: null;
 
 		if (!reminderFromStorageForUser) {
 			return;
 		}
 
-		this.setState((prevState) => ({
+		this.setState(prevState => ({
 			userSettingsData: {
 				...prevState.userSettingsData,
 				reminder: reminderFromStorageForUser.enabled,
@@ -188,88 +177,33 @@ class Menu extends React.Component {
 
 	async isAutoStartStopOn() {
 		const userId = await localStorage.getItem('userId');
-		const autoStartOnBrowserStart = await localStorage.getItem(
-			'autoStartOnBrowserStart'
-		);
+		const autoStartOnBrowserStart = await localStorage.getItem('autoStartOnBrowserStart');
 		const autoStartFromStorage = autoStartOnBrowserStart
 			? JSON.parse(autoStartOnBrowserStart)
 			: [];
-		const autoStopOnBrowserClose = await localStorage.getItem(
-			'autoStopOnBrowserClose'
-		);
+		const autoStopOnBrowserClose = await localStorage.getItem('autoStopOnBrowserClose');
 		const autoStopFromStorage = autoStopOnBrowserClose
 			? JSON.parse(autoStopOnBrowserClose)
 			: [];
 
-		this.setState((prevState) => ({
+		this.setState(prevState => ({
 			userSettingsData: {
 				...prevState.userSettingsData,
 				autoStartOnBrowserStart:
 					autoStartFromStorage.filter(
-						(autoStart) => autoStart.userId === userId && autoStart.enabled
+						autoStart => autoStart.userId === userId && autoStart.enabled
 					).length > 0,
 				autoStopOnBrowserClose:
 					autoStopFromStorage.filter(
-						(autoStop) => autoStop.userId === userId && autoStop.enabled
+						autoStop => autoStop.userId === userId && autoStop.enabled
 					).length > 0,
 			},
 		}));
-	}
-
-	async isTimerShortcutOn() {
-		const timerShortcutFromStorage = await localStorage.getItem(
-			'timerShortcut'
-		);
-		const userId = await localStorage.getItem('userId');
-
-		this.setState((prevState) => ({
-			userSettingsData: {
-				...prevState.userSettingsData,
-				timerShortcut:
-					timerShortcutFromStorage &&
-					JSON.parse(timerShortcutFromStorage).filter(
-						(timerShortcutByUser) =>
-							timerShortcutByUser &&
-							timerShortcutByUser.userId === userId &&
-							timerShortcutByUser.enabled
-					).length > 0,
-			},
-		}));
-	}
-
-	async isContextMenuOn() {
-		const contextMenuEnabled = JSON.parse(
-			await localStorage.getItem('contextMenuEnabled', 'true')
-		);
-
-		this.setState((prevState) => ({
-			userSettingsData: {
-				...prevState.userSettingsData,
-				contextMenuEnabled,
-			},
-		}));
-	}
-
-	async isShowPostStartPopup() {
-		const showPostStartPopup = JSON.parse(
-			await localStorage.getItem('permanent_showPostStartPopup', 'true')
-		);
-		this.setState((prevState) => ({
-			userSettingsData: {
-				...prevState.userSettingsData,
-				showPostStartPopup,
-			},
-		}));
-		localStorage.setItem(
-			'showPostStartPopup',
-			showPostStartPopup.toString(),
-			getLocalStorageEnums().PERMANENT_PREFIX
-		);
 	}
 
 	async isAppendWebsiteURLOn() {
 		const appendWebsiteURL = await localStorage.getItem('appendWebsiteURL');
-		this.setState((prevState) => ({
+		this.setState(prevState => ({
 			userSettingsData: {
 				...prevState.userSettingsData,
 				appendWebsiteURL,
@@ -277,14 +211,20 @@ class Menu extends React.Component {
 		}));
 	}
 
+	async getAppVersion() {
+		const appVersion = await localStorage.getItem('appVersion');
+		this.setState(prevState => ({
+			userSettingsData: {
+				...prevState.userSettingsData,
+				appVersion,
+			},
+		}));
+	}
+
 	async isStopTimerOnSelectedTimeOn() {
 		const userData = this.state.userSettingsData.user;
-		const stopTimerOnSelectedTime = await localStorage.getItem(
-			'stopTimerOnSelectedTime'
-		);
-		let defaultStopTime = this.getDefaultStopTime(
-			userData.settings.myStartOfDay
-		);
+		const stopTimerOnSelectedTime = await localStorage.getItem('stopTimerOnSelectedTime');
+		let defaultStopTime = this.getDefaultStopTime(userData.settings.myStartOfDay);
 		//if there is no stopTimerOnSelectedTime in local storage, set it to default
 		if (!stopTimerOnSelectedTime) {
 			localStorage.setItem(
@@ -298,7 +238,7 @@ class Menu extends React.Component {
 				]),
 				getLocalStorageEnums().PERMANENT_PREFIX
 			);
-			this.setState((prevState) => ({
+			this.setState(prevState => ({
 				userSettingsData: {
 					...prevState.userSettingsData,
 					timeToStopTimer: defaultStopTime,
@@ -312,7 +252,7 @@ class Menu extends React.Component {
 		let stopTimerOnSelectedTimeForUser = undefined;
 		if (stopTimerOnSelectedTime.length > 0) {
 			stopTimerOnSelectedTimeForUser = parsedStopTimerOnSelectedTime.find(
-				(stopTimerOnSelectedTime) => {
+				stopTimerOnSelectedTime => {
 					return stopTimerOnSelectedTime.userId === userData.id;
 				}
 			);
@@ -331,7 +271,7 @@ class Menu extends React.Component {
 				]),
 				getLocalStorageEnums().PERMANENT_PREFIX
 			);
-			this.setState((prevState) => ({
+			this.setState(prevState => ({
 				userSettingsData: {
 					...prevState.userSettingsData,
 					timeToStopTimer: defaultStopTime,
@@ -340,7 +280,7 @@ class Menu extends React.Component {
 			return;
 		}
 		this.setState(
-			(prevState) => ({
+			prevState => ({
 				userSettingsData: {
 					...prevState.userSettingsData,
 					stopTimerOnSelectedTime: stopTimerOnSelectedTimeForUser.enabled,
@@ -400,11 +340,9 @@ class Menu extends React.Component {
 		const userId = await localStorage.getItem('userId');
 		const reminderDatesAndTimesFromStorageForUser = JSON.parse(
 			await localStorage.getItem('reminderDatesAndTimes')
-		).filter(
-			(reminderDatesAndTimes) => reminderDatesAndTimes.userId === userId
-		)[0];
+		).filter(reminderDatesAndTimes => reminderDatesAndTimes.userId === userId)[0];
 
-		this.setState((prevState) => ({
+		this.setState(prevState => ({
 			userSettingsData: {
 				...prevState.userSettingsData,
 				reminderFromTime: reminderDatesAndTimesFromStorageForUser.timeFrom,
@@ -412,27 +350,21 @@ class Menu extends React.Component {
 				reminderMinutesSinceLastEntry: parseInt(
 					reminderDatesAndTimesFromStorageForUser.minutesSinceLastEntry
 				),
-				daysOfWeek: prevState.userSettingsData.daysOfWeek.map((day) => ({
+				daysOfWeek: prevState.userSettingsData.daysOfWeek.map(day => ({
 					...day,
-					active: reminderDatesAndTimesFromStorageForUser.dates.includes(
-						day.id
-					),
+					active: reminderDatesAndTimesFromStorageForUser.dates.includes(day.id),
 				})),
 			},
 		}));
 	}
 	async setAsyncUserItems() {
-		const createObjects = JSON.parse(
-			await localStorage.getItem('createObjects', false)
-		);
-		const isSelfHosted = JSON.parse(
-			await localStorage.getItem('selfHosted', false)
-		);
+		const createObjects = JSON.parse(await localStorage.getItem('createObjects', false));
+		const isSelfHosted = JSON.parse(await localStorage.getItem('selfHosted', false));
 		const daysOfWeekLocales = await dateFnsLocale.getDaysShort();
 		const userEmail = await localStorage.getItem('userEmail');
 		const userPicture = await localStorage.getItem('profilePicture');
 
-		this.setState((prevState) => ({
+		this.setState(prevState => ({
 			userSettingsData: {
 				...prevState.userSettingsData,
 				createObjects,
@@ -449,13 +381,11 @@ class Menu extends React.Component {
 			.runtime.sendMessage({
 				eventName: 'getWorkspacesOfUser',
 			})
-			.then(async (response) => {
+			.then(async response => {
 				let data = response.data;
-				const activeWorkspaceId = await localStorage.getItem(
-					'activeWorkspaceId'
-				);
+				const activeWorkspaceId = await localStorage.getItem('activeWorkspaceId');
 				let selectedWorkspace = data.filter(
-					(workspace) => workspace.id === activeWorkspaceId
+					workspace => workspace.id === activeWorkspaceId
 				)[0];
 				this.setState({
 					workspaces: data,
@@ -508,7 +438,7 @@ class Menu extends React.Component {
 	handleLogoutClick() {
 		if (this.state.isOffline) return;
 		this.disconnectWebSocket();
-		htmlStyleHelper.removeDarkModeClassFromBodyElement();
+		removeDarkModeClassFromBodyElement();
 		logout();
 		//if (!isChrome()) localStorage.removeItem('subDomainName');
 	}
@@ -551,9 +481,7 @@ class Menu extends React.Component {
 		this.handleLogoutClick.bind(this)();
 		setTimeout(() => {
 			window.reactRoot.render(
-				<SelfHostedBootSettings
-					url={`https://${this.state.subDomainName}.clockify.me`}
-				/>
+				<SelfHostedBootSettings url={`https://${this.state.subDomainName}.clockify.me`} />
 			);
 		}, 200);
 	}
@@ -566,7 +494,7 @@ class Menu extends React.Component {
 
 	render() {
 		const title = this.props.disableManual
-			? 'You have time entry in progress!'
+			? locales.ENTRY_IN_PROGRESS_EXISTS
 			: this.props.manualModeDisabled
 			? locales.DISABLED_MANUAL_MODE
 			: '';
@@ -589,8 +517,7 @@ class Menu extends React.Component {
 							}
 							href="#"
 							onClick={this.changeModeToManual}
-							title={title}
-						>
+							title={title}>
 							<span className="menu-manual-img"></span>
 							<span
 								className={
@@ -598,9 +525,8 @@ class Menu extends React.Component {
 									this.props.isTrackingDisabled
 										? 'disable-manual'
 										: ''
-								}
-							>
-								{locales.MANUAL}
+								}>
+								{locales.TRACKER__TIME_TRACKER__ENTRY__TRACK__MANUAL_M}
 							</span>
 						</a>
 						<a
@@ -611,10 +537,11 @@ class Menu extends React.Component {
 									: 'dropdown-item'
 							}
 							href="#"
-							onClick={this.changeModeToTimer.bind(this)}
-						>
+							onClick={this.changeModeToTimer.bind(this)}>
 							<span className="menu-timer-img"></span>
-							<span>{locales.TIMER}</span>
+							<span>
+								{locales.TRACKER__TIME_TRACKER__ENTRY__TRACK__TIMER_N}
+							</span>
 						</a>
 						<div className="dropdown-divider"></div>
 						<WorkspaceList
@@ -627,15 +554,13 @@ class Menu extends React.Component {
 						<a
 							onClick={this.openSettings.bind(this)}
 							className="dropdown-item"
-							href="#"
-						>
+							href="#">
 							<span
 								className={
 									this.state.isOffline || this.props.isTrackingDisabled
 										? 'disable-manual'
 										: ''
-								}
-							>
+								}>
 								{locales.SETTINGS}
 							</span>
 						</a>
@@ -644,15 +569,13 @@ class Menu extends React.Component {
 								className="dropdown-subitem"
 								href="#"
 								onClick={this.openUrlPermissions.bind(this)}
-								style={{ width: '100%' }}
-							>
+								style={{ width: '100%' }}>
 								<span
 									className={
 										this.state.isOffline || this.props.isTrackingDisabled
 											? 'disable-manual'
 											: ''
-									}
-								>
+									}>
 									{locales.INTEGRATIONS}
 								</span>
 							</a>
@@ -660,23 +583,20 @@ class Menu extends React.Component {
 								className="dropdown-subitem"
 								href="#"
 								onClick={this.handleIntegrationsRefresh}
-								title={locales.REFRESH}
-							>
+								title={locales.REFRESH}>
 								<span className="refresh-icon" style={{ margin: '0' }}></span>
 							</a>
 						</span>
 						<a
 							onClick={this.openWebDashboard.bind(this)}
 							className="dropdown-item"
-							href="#"
-						>
+							href="#">
 							<span
 								className={
 									this.state.isOffline || this.props.isTrackingDisabled
 										? 'disable-manual'
 										: ''
-								}
-							>
+								}>
 								{locales.DASHBOARD}
 							</span>
 							<span className="menu-img-right"></span>
@@ -684,8 +604,7 @@ class Menu extends React.Component {
 						<a
 							onClick={this.handleLogoutClick.bind(this)}
 							className="dropdown-item"
-							href="#"
-						>
+							href="#">
 							<span className={this.state.isOffline ? 'disable-manual' : ''}>
 								{locales.LOG_OUT}
 							</span>
@@ -703,9 +622,7 @@ class Menu extends React.Component {
 
 					{this.state.show2FAPopup && (
 						<WsChange2FAPopupComponent
-							cancel={() =>
-								this.setState({ show2FAPopup: false, revert: true })
-							}
+							cancel={() => this.setState({ show2FAPopup: false, revert: true })}
 							workspaceName={this.state.workspaceNameSelected}
 						/>
 					)}

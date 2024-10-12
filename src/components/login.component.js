@@ -1,23 +1,23 @@
 import React from 'react';
-import { getEnv } from '../environment';
-import Header from './header.component';
+import { getEnv } from '~/environment';
+import Header from './header.component.jsx';
 import SignUp from './sign-up.component';
 import packageJson from '../../package';
 import SelfHostedUrl from './self-hosted-url.component';
 
-import { getLocalStorageEnums } from '../enums/local-storage.enum';
-import { getBrowser, isChrome } from '../helpers/browser-helper';
-import { HtmlStyleHelper } from '../helpers/html-style-helper';
+import { getLocalStorageEnums } from '~/enums/local-storage.enum';
+import { getBrowser, isChrome } from '~/helpers/browser-helper';
 import SubDomainName from './sub-domain-name.component';
 import locales from '../helpers/locales';
 import { checkConnection } from './check-connection';
+import { removeDarkModeClassFromBodyElement } from '~/zustand/slices/darkThemeSlice';
+import { mapStateToProps } from '~/zustand/mapStateToProps';
 
 const environment = getEnv();
-const htmlStyleHelper = new HtmlStyleHelper();
 const mozzilaRedirectNumb = 4;
 const chromeRedirectNumb = 3;
 
-const ErrorMessageComponent = (props) => {
+const ErrorMessageComponent = props => {
 	const { type, data } = props;
 
 	switch (type) {
@@ -51,9 +51,8 @@ const ErrorMessageComponent = (props) => {
 			return (
 				<div>
 					<p className="login-error-message">
-						Your session has expired. Please try to log in again. For other
-						issues, please contact{' '}
-						<a href="mailto:support@clockify.me">support@clockify.me</a>
+						Your session has expired. Please try to log in again. For other issues,
+						please contact <a href="mailto:support@clockify.me">support@clockify.me</a>
 					</p>
 				</div>
 			);
@@ -84,7 +83,7 @@ class Login extends React.Component {
 	}
 
 	componentDidMount() {
-		this.removeDarkMode();
+		removeDarkModeClassFromBodyElement();
 		this.setAppVersionToStorage();
 		// this.setAppType();
 		this.setAsyncStateItems();
@@ -95,9 +94,7 @@ class Login extends React.Component {
 	}
 
 	async setAsyncStateItems() {
-		const selfHosted = JSON.parse(
-			await localStorage.getItem('selfHosted', false)
-		);
+		const selfHosted = JSON.parse(await localStorage.getItem('selfHosted', false));
 		const isSubDomain = !!(await localStorage.getItem('subDomainName'));
 		this.setState({
 			selfHosted,
@@ -118,10 +115,6 @@ class Login extends React.Component {
 		getBrowser().runtime.sendMessage({
 			eventName: 'removeStopTimerEvent',
 		});
-	}
-
-	removeDarkMode() {
-		htmlStyleHelper.removeDarkModeClassFromBodyElement();
 	}
 
 	setAppVersionToStorage() {
@@ -190,11 +183,7 @@ class Login extends React.Component {
 			environment.endpoint,
 			getLocalStorageEnums().PERMANENT_PREFIX
 		);
-		localStorage.setItem(
-			'homeUrl',
-			environment.home,
-			getLocalStorageEnums().PERMANENT_PREFIX
-		);
+		localStorage.setItem('homeUrl', environment.home, getLocalStorageEnums().PERMANENT_PREFIX);
 		localStorage.clearByPrefixes([
 			getLocalStorageEnums().SELF_HOSTED_PREFIX,
 			getLocalStorageEnums().SUB_DOMAIN_PREFIX,
@@ -217,10 +206,9 @@ class Login extends React.Component {
 				localStorage.removeItem('token');
 			});
 		if (isOffline && !JSON.parse(isOffline)) {
+			this.props.resetSlices();
 			let timeEntriesOffline = await localStorage.getItem('timeEntriesOffline');
-			timeEntriesOffline = timeEntriesOffline
-				? JSON.parse(timeEntriesOffline)
-				: [];
+			timeEntriesOffline = timeEntriesOffline ? JSON.parse(timeEntriesOffline) : [];
 			this.clearPermissions();
 			getBrowser().runtime.sendMessage('closeOptionsPage');
 
@@ -229,13 +217,12 @@ class Login extends React.Component {
 					getLocalStorageEnums().PERMANENT_PREFIX,
 					getLocalStorageEnums().SELF_HOSTED_PREFIX,
 					getLocalStorageEnums().SUB_DOMAIN_PREFIX,
+					getLocalStorageEnums().APP_STORE,
 				],
 				true
 			);
-			localStorage.setItem(
-				'timeEntriesOffline',
-				JSON.stringify(timeEntriesOffline)
-			);
+
+			localStorage.setItem('timeEntriesOffline', JSON.stringify(timeEntriesOffline));
 		}
 		getBrowser().runtime.sendMessage({
 			eventName: 'removeBadge',
@@ -245,18 +232,18 @@ class Login extends React.Component {
 	}
 
 	clearPermissions() {
-		getBrowser().storage.local.get(['permissions'], (result) => {
+		getBrowser().storage.local.get(['permissions'], result => {
 			const { permissions } = result;
 			if (permissions) {
 				const newPermissions = [];
-				permissions.forEach((permissionsForUser) => {
+				permissions.forEach(permissionsForUser => {
 					const { userId, permissions } = permissionsForUser;
-					if (permissions.filter((p) => p.isCustom || p.isEnabled).length > 0) {
+					if (permissions.filter(p => p.isCustom || p.isEnabled).length > 0) {
 						const newPermissionsForUser = {
 							userId,
 							permissions: [],
 						};
-						permissions.forEach((p) => {
+						permissions.forEach(p => {
 							if (p.isCustom || p.isEnabled)
 								newPermissionsForUser.permissions.push(Object.assign(p, {}));
 						});
@@ -280,7 +267,12 @@ class Login extends React.Component {
 						{locales.LOG_IN}
 					</button>
 					<hr className="login__divider" />
-					<div className={this.state.isSubDomain || this.state.selfHosted? 'disabled' : 'new-account'}>
+					<div
+						className={
+							this.state.isSubDomain || this.state.selfHosted
+								? 'disabled'
+								: 'new-account'
+						}>
 						<p>{locales.NEW_HERE}?</p>
 						<a onClick={this.openSignupPage}>{locales.CREATE_AN_ACCOUNT}</a>
 					</div>
@@ -289,21 +281,17 @@ class Login extends React.Component {
 							!this.state.selfHosted && !this.state.isSubDomain
 								? 'self-hosting-url'
 								: 'disabled'
-						}
-					>
+						}>
 						<a onClick={this.enterBaseUrl}>{locales.LOGIN_TO_CUSTOM_DOMAIN}</a>
 						<hr className="login__divider" />
-						<a onClick={this.enterSubDomainName}>
-							{locales.LOGIN_TO_SUB_DOMAIN}
-						</a>
+						<a onClick={this.enterSubDomainName}>{locales.LOGIN_TO_SUB_DOMAIN}</a>
 					</div>
 					<div
 						className={
 							this.state.selfHosted || this.state.isSubDomain
 								? 'cloud-version-url'
 								: 'disabled'
-						}
-					>
+						}>
 						<a onClick={this.backToCloudVersion.bind(this)}>
 							{locales.RETURN_TO_CLOCKIFY_CLOUD}
 						</a>
@@ -320,4 +308,8 @@ class Login extends React.Component {
 	}
 }
 
-export default Login;
+const selectedState = state => ({
+	resetSlices: state.resetSlices,
+});
+
+export default mapStateToProps(selectedState)(Login);

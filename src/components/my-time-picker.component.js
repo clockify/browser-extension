@@ -30,9 +30,7 @@ class MyTimePicker extends React.Component {
 		const value = this.props.isDisabled ? moment() : this.props.value;
 		if (value) {
 			let momentTimeDate = value.clone();
-			let totalTime = moment(momentTimeDate)
-				.format(this.props.format)
-				.toString(); //'h:mmA').toString();
+			let totalTime = moment(momentTimeDate).format(this.props.format).toString(); //'h:mmA').toString();
 			if (this.state.formatIs24Hour) {
 				totalTime = this.formatTo24Hour(totalTime);
 			}
@@ -56,7 +54,7 @@ class MyTimePicker extends React.Component {
 		if (
 			!this.props.isDisabled &&
 			this.props.value &&
-			!prevProps.value.isSame(this.props.value)
+			!prevProps?.value?.isSame(this.props.value)
 		) {
 			this.doTheJob();
 		}
@@ -90,21 +88,21 @@ class MyTimePicker extends React.Component {
 		}
 
 		if (newInput.indexOf(':') < 0) {
-			newInput = newInput
-				.substring(0, 2)
-				.concat(':')
-				.concat(newInput.substring(2, 4));
+			newInput = newInput.substring(0, 2).concat(':').concat(newInput.substring(2, 4));
 		}
 
 		const newDate = this.state.momentTimeDate.clone();
 		if (newDate.isValid()) {
+			let momentTimeDate = this.state.momentTimeDate;
 			// date is valid
 			const newHours = Number(newInput.split(':')[0]);
 			const newMinutes = Number(newInput.split(':')[1]);
+			const date = momentTimeDate.date();
+
 			newDate.hours(newHours);
 			newDate.minutes(newMinutes);
+			newDate.date(date);
 
-			let momentTimeDate = this.state.momentTimeDate;
 			const oldMinutes = momentTimeDate.minutes();
 			const oldHours = momentTimeDate.hours();
 
@@ -142,6 +140,7 @@ class MyTimePicker extends React.Component {
 				id={this.props.id}
 				ref={this.inputRef}
 				className={className}
+				style={this.props.style}
 				autoComplete="off"
 				type="text"
 				placeholder={locales.SELECT}

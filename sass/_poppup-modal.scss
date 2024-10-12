@@ -63,11 +63,6 @@
 		&::placeholder {
 			color: variables.$lighter_text;
 		}
-		&:focus {
-			outline: none;
-			border: 2px solid #0f3beb;
-			border-radius: 5px;
-		}
 	}
 	&--confirmation_button {
 		margin-bottom: 20px;

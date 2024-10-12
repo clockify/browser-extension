@@ -1,12 +1,10 @@
-clockifyButton.observeDarkMode(() => {
-	return document.body?.dataset?.theme === 'dark';
-});
-
 clockifyButton.render(
 	'.sideBySideHeader:not(.clockify)',
 	{ observe: true },
 	(itemHeader) => {
-		const titleSelector = '.sideBySideHeader__title';
+		if ($('.clockify-widget-container')) return;
+
+		const titleSelector = '.sideBySideHeader__titleBox';
 		const tagsSelector = '.badgeList__item';
 
 		const itemTitle = () => text(titleSelector, itemHeader);
@@ -21,7 +19,7 @@ clockifyButton.render(
 					return match[0];
 				}
 			}
-		}
+		};
 
 		const description = () => createDescription({ itemId, itemTitle });
 		const projectName = () => {
@@ -35,7 +33,7 @@ clockifyButton.render(
 			}
 
 			return null;
-		}
+		};
 
 		const taskName = () => itemTitle();
 		const tagNames = () => textList(tagsSelector, itemHeader);
@@ -43,14 +41,22 @@ clockifyButton.render(
 		const entry = { description, projectName, taskName, tagNames };
 
 		const link = clockifyButton.createButton(entry);
+		const input = clockifyButton.createInput(entry);
 
 		const container = createTag('div', 'clockify-widget-container');
 
 		container.append(link);
+		container.append(input);
 
-		$('.sideBySideHeader__bottom', itemHeader).append(container);
+		const itemHeaderBottomPart = $('.sideBySideHeader__bottom', itemHeader);
+
+		itemHeaderBottomPart.append(container);
 	}
 );
+
+clockifyButton.observeDarkMode(() => {
+	return document.body?.dataset?.theme === 'dark';
+});
 
 function createDescription({ itemId, itemTitle }) {
 	if (!itemId()) return itemTitle();
@@ -65,5 +71,10 @@ applyStyles(`
 		justify-content: space-between;
 		gap: 15px;
 		padding: 5px 0;
+	}
+
+	#clockify-manual-input-form input {
+		border: none !important;
+		box-shadow: none;
 	}
 `);

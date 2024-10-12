@@ -1,18 +1,19 @@
 import React, { Component } from 'react';
-import { getBrowser } from '../helpers/browser-helper';
-import Header from './header.component';
-import { debounce } from '../helpers/utils';
-import { getLocalStorageEnums } from '../enums/local-storage.enum';
+import { getBrowser } from '~/helpers/browser-helper';
+import Header from './header.component.jsx';
+import { debounce } from '~/helpers/utils';
+import { getLocalStorageEnums } from '~/enums/local-storage.enum';
 import { TimePicker } from 'antd';
 import moment from 'moment';
-import { HtmlStyleHelper } from '../helpers/html-style-helper';
-import { getKeyCodes } from '../enums/key-codes.enum';
+import { HtmlStyleHelper } from '~/helpers/html-style-helper';
+import { getKeyCodes } from '~/enums/key-codes.enum';
 import Pomodoro from './pomodoro.component';
-import DarkModeComponent from './dark-mode.component';
 import DefaultProject from './default-project.component';
 import Toaster from './toaster-component';
 import HomePage from './home-page.component';
 import locales from '../helpers/locales';
+import { mapStateToProps } from '~/zustand/mapStateToProps';
+import { DarkMode } from '~/components/DarkMode.tsx';
 
 const htmlStyleHelpers = new HtmlStyleHelper();
 
@@ -22,7 +23,7 @@ class Settings extends Component {
 
 		this.state = {
 			...this.props.userSettingsData,
-			changeSaved: false,
+			changeSaved: false
 		};
 
 		this.pomodoroEnd = React.createRef();
@@ -64,7 +65,7 @@ class Settings extends Component {
 		const stopTimerOnSelectedTime = await localStorage.getItem(
 			'stopTimerOnSelectedTime'
 		);
-		let defaultStopTime = this.getDefaultStopTime(
+		let defaultStopTime = this.props.getDefaultStopTime(
 			userData.settings.myStartOfDay
 		);
 		//if there is no stopTimerOnSelectedTime in local storage, set it to default
@@ -75,22 +76,22 @@ class Settings extends Component {
 					{
 						userId: userData.id,
 						enabled: false,
-						time: defaultStopTime,
-					},
+						time: defaultStopTime
+					}
 				]),
 				getLocalStorageEnums().PERMANENT_PREFIX
 			);
 
 			this.setState({
-				timeToStopTimer: defaultStopTime,
+				timeToStopTimer: defaultStopTime
 			});
 			return;
 		}
 		const stopTimerOnSelectedTimeForUser = stopTimerOnSelectedTime
 			? JSON.parse(stopTimerOnSelectedTime).find(
-					(stopTimerOnSelectedTime) =>
-						stopTimerOnSelectedTime.userId === userData.id
-			  )
+				(stopTimerOnSelectedTime) =>
+					stopTimerOnSelectedTime.userId === userData.id
+			)
 			: null;
 		// if there is no stopTimerOnSelectedTime for the user, set it to default
 		if (!stopTimerOnSelectedTimeForUser) {
@@ -102,21 +103,21 @@ class Settings extends Component {
 						{
 							userId: userId,
 							enabled: false,
-							time: defaultStopTime,
-						},
-					],
+							time: defaultStopTime
+						}
+					]
 				]),
 				getLocalStorageEnums().PERMANENT_PREFIX
 			);
 			this.setState({
-				timeToStopTimer: defaultStopTime,
+				timeToStopTimer: defaultStopTime
 			});
 			return;
 		}
 		this.setState(
 			{
 				stopTimerOnSelectedTime: stopTimerOnSelectedTimeForUser.enabled,
-				timeToStopTimer: stopTimerOnSelectedTimeForUser.time,
+				timeToStopTimer: stopTimerOnSelectedTimeForUser.time
 			},
 			() => {
 				getBrowser().runtime.sendMessage({ eventName: 'createStopTimerEvent' });
@@ -140,19 +141,13 @@ class Settings extends Component {
 			),
 			daysOfWeek: state.daysOfWeek.map((day) => ({
 				...day,
-				active: reminderDatesAndTimesFromStorageForUser.dates.includes(day.id),
-			})),
+				active: reminderDatesAndTimesFromStorageForUser.dates.includes(day.id)
+			}))
 		}));
 	}
 
 	toggleShowPostStartPopup() {
-		const showPostStartPopup = !this.state.showPostStartPopup;
-		this.setState({ showPostStartPopup });
-		localStorage.setItem(
-			'showPostStartPopup',
-			showPostStartPopup.toString(),
-			getLocalStorageEnums().PERMANENT_PREFIX
-		);
+		this.props.toggleShowPostStartPopup();
 		this.showSuccessMessage();
 	}
 
@@ -164,7 +159,7 @@ class Settings extends Component {
 				getLocalStorageEnums().PERMANENT_PREFIX
 			);
 			this.setState({
-				createObjects: false,
+				createObjects: false
 			});
 		} else {
 			localStorage.setItem(
@@ -173,7 +168,7 @@ class Settings extends Component {
 				getLocalStorageEnums().PERMANENT_PREFIX
 			);
 			this.setState({
-				createObjects: true,
+				createObjects: true
 			});
 		}
 		this.showSuccessMessage();
@@ -187,7 +182,7 @@ class Settings extends Component {
 				getLocalStorageEnums().PERMANENT_PREFIX
 			);
 			this.setState({
-				appendWebsiteURL: false,
+				appendWebsiteURL: false
 			});
 		} else {
 			localStorage.setItem(
@@ -196,7 +191,7 @@ class Settings extends Component {
 				getLocalStorageEnums().PERMANENT_PREFIX
 			);
 			this.setState({
-				appendWebsiteURL: true,
+				appendWebsiteURL: true
 			});
 		}
 		this.showSuccessMessage();
@@ -216,7 +211,7 @@ class Settings extends Component {
 			).filter((idleDetection) => idleDetection.userId !== userId);
 
 			this.setState({
-				idleDetection: false,
+				idleDetection: false
 			});
 			idleCounter = 0;
 			this.sendIdleDetectionRequest(idleCounter);
@@ -224,7 +219,7 @@ class Settings extends Component {
 			idleCounter = 15;
 			const idleDetectionForCurrentUser = {
 				userId: userId,
-				counter: idleCounter,
+				counter: idleCounter
 			};
 			idleDetectionToSaveInStorage = idleDetectionFromStorage
 				? [...JSON.parse(idleDetectionFromStorage), idleDetectionForCurrentUser]
@@ -232,7 +227,7 @@ class Settings extends Component {
 
 			this.setState({
 				idleDetection: true,
-				idleDetectionCounter: idleCounter,
+				idleDetectionCounter: idleCounter
 			});
 
 			this.sendIdleDetectionRequest(idleCounter);
@@ -268,20 +263,20 @@ class Settings extends Component {
 
 		const idleDetectionForCurrentUserChanged = {
 			userId: userId,
-			counter: value ? value : idleDetectionForCurrentUserFromStorage.counter,
+			counter: value ? value : idleDetectionForCurrentUserFromStorage.counter
 		};
 
 		this.setState({
 			idleDetectionCounter: value
 				? value
-				: idleDetectionForCurrentUserFromStorage.counter,
+				: idleDetectionForCurrentUserFromStorage.counter
 		});
 
 		this.sendIdleDetectionRequest(idleDetectionForCurrentUserChanged.counter);
 
 		idleDetectionToSaveInStorage = [
 			...idleDetectionToSaveInStorage,
-			idleDetectionForCurrentUserChanged,
+			idleDetectionForCurrentUserChanged
 		];
 
 		localStorage.setItem(
@@ -295,20 +290,20 @@ class Settings extends Component {
 
 	changeIdleDetectionCounterState(event) {
 		this.setState({
-			idleDetectionCounter: event.target.value,
+			idleDetectionCounter: event.target.value
 		});
 	}
 
 	sendIdleDetectionRequest(counter) {
 		getBrowser().runtime.sendMessage({
 			eventName: 'idleDetection',
-			counter: counter,
+			counter: counter
 		});
 	}
 
 	sendReminderRequest() {
 		getBrowser().runtime.sendMessage({
-			eventName: 'reminder',
+			eventName: 'reminder'
 		});
 	}
 
@@ -322,7 +317,7 @@ class Settings extends Component {
 		if (this.state.timerShortcut) {
 			timerShortcutToSaveInStorage = JSON.parse(timerShortcutFromStorage).map(
 				(timerShortcut) => {
-					if (timerShortcut.userId === userId) {
+					if (timerShortcut?.userId === userId) {
 						timerShortcut.enabled = false;
 						return timerShortcut;
 					}
@@ -330,12 +325,12 @@ class Settings extends Component {
 			);
 
 			this.setState({
-				timerShortcut: false,
+				timerShortcut: false
 			});
 		} else {
 			timerShortcutToSaveInStorage = JSON.parse(timerShortcutFromStorage).map(
 				(timerShortcut) => {
-					if (timerShortcut.userId === userId) {
+					if (timerShortcut?.userId === userId) {
 						timerShortcut.enabled = true;
 						return timerShortcut;
 					}
@@ -343,7 +338,7 @@ class Settings extends Component {
 			);
 
 			this.setState({
-				timerShortcut: true,
+				timerShortcut: true
 			});
 		}
 
@@ -366,8 +361,8 @@ class Settings extends Component {
 			reminderFromStorage.filter((reminder) => reminder.userId === userId)
 				.length > 0
 				? reminderFromStorage.filter(
-						(reminder) => reminder.userId === userId
-				  )[0]
+					(reminder) => reminder.userId === userId
+				)[0]
 				: null;
 		const reminderDatesAndTimes = await localStorage.getItem(
 			'reminderDatesAndTimes'
@@ -381,7 +376,7 @@ class Settings extends Component {
 		if (!reminderForCurrentUser) {
 			reminderToSaveInStorage = [
 				...reminderFromStorage,
-				{ userId: userId, enabled: true },
+				{ userId: userId, enabled: true }
 			];
 			reminderDatesAndTimesToSaveInStorage = [
 				...reminderDatesAndTimesFromStorage,
@@ -390,8 +385,8 @@ class Settings extends Component {
 					dates: [1, 2, 3, 4, 5],
 					timeFrom: '09:00',
 					timeTo: '17:00',
-					minutesSinceLastEntry: 10,
-				},
+					minutesSinceLastEntry: 10
+				}
 			];
 
 			localStorage.setItem(
@@ -405,7 +400,7 @@ class Settings extends Component {
 					reminder: true,
 					reminderFromTime: '09:00',
 					reminderToTime: '17:00',
-					reminderMinutesSinceLastEntry: 10,
+					reminderMinutesSinceLastEntry: 10
 				},
 				() => {
 					this.checkForRemindersDatesAndTimes();
@@ -420,11 +415,11 @@ class Settings extends Component {
 
 						this.setState(
 							{
-								reminder: false,
+								reminder: false
 							},
 							() => {
 								getBrowser().runtime.sendMessage({
-									eventName: 'removeReminderTimer',
+									eventName: 'removeReminderTimer'
 								});
 							}
 						);
@@ -458,7 +453,7 @@ class Settings extends Component {
 						reminder.enabled = true;
 						this.setState(
 							{
-								reminder: true,
+								reminder: true
 							},
 							() => {
 								this.checkForRemindersDatesAndTimes();
@@ -496,9 +491,9 @@ class Settings extends Component {
 				(stopTimerOnSelectedTime) => stopTimerOnSelectedTime.userId === userId
 			).length > 0
 				? stopTimerOnSelectedTimeFromStorage.find(
-						(stopTimerOnSelectedTime) =>
-							stopTimerOnSelectedTime.userId === userId
-				  )
+					(stopTimerOnSelectedTime) =>
+						stopTimerOnSelectedTime.userId === userId
+				)
 				: null;
 		let stopTimerOnSelectedTimeToSaveInStorage;
 
@@ -529,11 +524,11 @@ class Settings extends Component {
 
 							this.setState(
 								{
-									stopTimerOnSelectedTime: false,
+									stopTimerOnSelectedTime: false
 								},
 								() => {
 									getBrowser().runtime.sendMessage({
-										eventName: 'removeStopTimerEvent',
+										eventName: 'removeStopTimerEvent'
 									});
 								}
 							);
@@ -548,11 +543,11 @@ class Settings extends Component {
 
 							this.setState(
 								{
-									stopTimerOnSelectedTime: true,
+									stopTimerOnSelectedTime: true
 								},
 								() => {
 									getBrowser().runtime.sendMessage({
-										eventName: 'createStopTimerEvent',
+										eventName: 'createStopTimerEvent'
 									});
 								}
 							);
@@ -617,7 +612,7 @@ class Settings extends Component {
 				this.setState({
 					reminderMinutesSinceLastEntry: value
 						? value
-						: reminder.minutesSinceLastEntry,
+						: reminder.minutesSinceLastEntry
 				});
 			}
 
@@ -631,10 +626,10 @@ class Settings extends Component {
 		);
 
 		getBrowser().runtime.sendMessage({
-			eventName: 'removeReminderTimer',
+			eventName: 'removeReminderTimer'
 		});
 		getBrowser().runtime.sendMessage({
-			eventName: 'reminder',
+			eventName: 'reminder'
 		});
 
 		this.showSuccessMessage();
@@ -642,26 +637,20 @@ class Settings extends Component {
 
 	changeReminderMinutesState(event) {
 		this.setState({
-			reminderMinutesSinceLastEntry: event.target.value,
+			reminderMinutesSinceLastEntry: event.target.value
 		});
 	}
 
 	toggleContextMenu() {
-		const contextMenuEnabled = !this.state.contextMenuEnabled;
-		this.setState({ contextMenuEnabled });
-		localStorage.setItem(
-			'contextMenuEnabled',
-			JSON.stringify(contextMenuEnabled),
-			getLocalStorageEnums().PERMANENT_PREFIX
-		);
-		this.sendToggleContextMenuRequest(contextMenuEnabled);
+		this.props.toggleContextMenu();
+		this.sendToggleContextMenuRequest();
 		this.showSuccessMessage();
 	}
 
-	sendToggleContextMenuRequest(iscontextMenuEnabled) {
+	sendToggleContextMenuRequest() {
 		getBrowser().runtime.sendMessage({
 			eventName: 'contextMenuEnabledToggle',
-			enabled: iscontextMenuEnabled,
+			enabled: this.props.contextMenuEnabled,
 		});
 	}
 
@@ -680,16 +669,16 @@ class Settings extends Component {
 					this.setState((state) => ({
 						daysOfWeek: state.daysOfWeek.map((day) => ({
 							...day,
-							active: day.name === dayName ? false : day.active,
-						})),
+							active: day.name === dayName ? false : day.active
+						}))
 					}));
 				} else {
 					reminder.dates.push(day.id);
 					this.setState((state) => ({
 						daysOfWeek: state.daysOfWeek.map((day) => ({
 							...day,
-							active: day.name === dayName ? true : day.active,
-						})),
+							active: day.name === dayName ? true : day.active
+						}))
 					}));
 				}
 			}
@@ -704,10 +693,10 @@ class Settings extends Component {
 		);
 
 		getBrowser().runtime.sendMessage({
-			eventName: 'removeReminderTimer',
+			eventName: 'removeReminderTimer'
 		});
 		getBrowser().runtime.sendMessage({
-			eventName: 'reminder',
+			eventName: 'reminder'
 		});
 
 		this.showSuccessMessage();
@@ -716,7 +705,7 @@ class Settings extends Component {
 	selectTimeToStopTimer(time, timeString) {
 		if (timeString) {
 			this.setState({
-				timeToStopTimer: timeString,
+				timeToStopTimer: timeString
 			});
 		}
 	}
@@ -733,7 +722,7 @@ class Settings extends Component {
 	selectReminderFromTime(time, timeString) {
 		if (timeString) {
 			this.setState({
-				reminderFromTime: timeString,
+				reminderFromTime: timeString
 			});
 		}
 	}
@@ -741,7 +730,7 @@ class Settings extends Component {
 	selectReminderToTime(time, timeString) {
 		if (timeString) {
 			this.setState({
-				reminderToTime: timeString,
+				reminderToTime: timeString
 			});
 		}
 	}
@@ -785,7 +774,7 @@ class Settings extends Component {
 			getLocalStorageEnums().PERMANENT_PREFIX
 		);
 		getBrowser().runtime.sendMessage({
-			eventName: 'createStopTimerEvent',
+			eventName: 'createStopTimerEvent'
 		});
 
 		this.showSuccessMessage();
@@ -814,10 +803,10 @@ class Settings extends Component {
 		);
 
 		getBrowser().runtime.sendMessage({
-			eventName: 'removeReminderTimer',
+			eventName: 'removeReminderTimer'
 		});
 		getBrowser().runtime.sendMessage({
-			eventName: 'reminder',
+			eventName: 'reminder'
 		});
 
 		this.showSuccessMessage();
@@ -866,18 +855,18 @@ class Settings extends Component {
 			autoStartFromStorage.filter((autoStart) => autoStart.userId === userId)
 				.length > 0
 				? autoStartFromStorage.filter(
-						(autoStart) => autoStart.userId === userId
-				  )[0]
+					(autoStart) => autoStart.userId === userId
+				)[0]
 				: null;
 
 		if (!autoStartForCurrentUser) {
 			autoStartFromStorage = [
 				...autoStartFromStorage,
-				{ userId: userId, enabled: true },
+				{ userId: userId, enabled: true }
 			];
 
 			this.setState({
-				autoStartOnBrowserStart: true,
+				autoStartOnBrowserStart: true
 			});
 		} else {
 			if (this.state.autoStartOnBrowserStart) {
@@ -889,7 +878,7 @@ class Settings extends Component {
 					return autoStart;
 				});
 				this.setState({
-					autoStartOnBrowserStart: false,
+					autoStartOnBrowserStart: false
 				});
 			} else {
 				autoStartFromStorage = autoStartFromStorage.map((autoStart) => {
@@ -901,7 +890,7 @@ class Settings extends Component {
 				});
 
 				this.setState({
-					autoStartOnBrowserStart: true,
+					autoStartOnBrowserStart: true
 				});
 			}
 		}
@@ -928,18 +917,18 @@ class Settings extends Component {
 			autoStopFromStorage.filter((autoStop) => autoStop.userId === userId)
 				.length > 0
 				? autoStopFromStorage.filter(
-						(autoStop) => autoStop.userId === userId
-				  )[0]
+					(autoStop) => autoStop.userId === userId
+				)[0]
 				: null;
 
 		if (!autoStopForCurrentUser) {
 			autoStopFromStorage = [
 				...autoStopFromStorage,
-				{ userId: userId, enabled: true },
+				{ userId: userId, enabled: true }
 			];
 
 			this.setState({
-				autoStopOnBrowserClose: true,
+				autoStopOnBrowserClose: true
 			});
 		} else {
 			if (this.state.autoStopOnBrowserClose) {
@@ -951,7 +940,7 @@ class Settings extends Component {
 					return autoStop;
 				});
 				this.setState({
-					autoStopOnBrowserClose: false,
+					autoStopOnBrowserClose: false
 				});
 			} else {
 				autoStopFromStorage = autoStopFromStorage.map((autoStop) => {
@@ -963,7 +952,7 @@ class Settings extends Component {
 				});
 
 				this.setState({
-					autoStopOnBrowserClose: true,
+					autoStopOnBrowserClose: true
 				});
 			}
 		}
@@ -988,7 +977,7 @@ class Settings extends Component {
 	showErrorMessage = debounce({
 		func: this.showErrorMessage,
 		delay: 2000,
-		isImmediate: true,
+		isImmediate: true
 	});
 
 	async goBackToHomePage() {
@@ -1048,7 +1037,12 @@ class Settings extends Component {
 				</div>
 				<div
 					className="settings__send-errors"
-					onClick={this.toggleAppendWebsiteURL.bind(this)}
+					onClick={() => {
+						this.toggleAppendWebsiteURL();
+						getBrowser().runtime.sendMessage({
+							eventName: 'rerenderIntegrations',
+						});
+					}}
 				>
 					<span
 						className={
@@ -1070,7 +1064,7 @@ class Settings extends Component {
 						{locales.APPEND_THE_WEBSITE_URL}
 					</span>
 				</div>
-				<DarkModeComponent changeSaved={this.showSuccessMessage.bind(this)} />
+				<DarkMode changeSaved={this.showSuccessMessage.bind(this)} />
 
 				<div
 					className="settings__send-errors"
@@ -1078,7 +1072,7 @@ class Settings extends Component {
 				>
 					<span
 						className={
-							this.state.showPostStartPopup
+							this.props.showPostStartPopup
 								? 'settings__send-errors__checkbox checked'
 								: 'settings__send-errors__checkbox'
 						}
@@ -1086,7 +1080,7 @@ class Settings extends Component {
 						<img
 							src="./assets/images/checked.png"
 							className={
-								this.state.showPostStartPopup
+								this.props.showPostStartPopup
 									? 'settings__send-errors__checkbox--img'
 									: 'settings__send-errors__checkbox--img_hidden'
 							}
@@ -1097,35 +1091,36 @@ class Settings extends Component {
 					</span>
 				</div>
 
-				<div
-					className={
-						!this.state.isSelfHosted ? 'settings__send-errors' : 'disabled'
-					}
-					onClick={this.toggleTimerShortcut.bind(this)}
-				>
-					<span
-						className={
-							this.state.timerShortcut
-								? 'settings__send-errors__checkbox checked'
-								: 'settings__send-errors__checkbox'
-						}
-					>
-						<img
-							src="./assets/images/checked.png"
-							className={
-								this.state.timerShortcut
-									? 'settings__send-errors__checkbox--img'
-									: 'settings__send-errors__checkbox--img_hidden'
-							}
-						/>
-					</span>
-					<span className="settings__send-errors__title">
-						{locales.START}/{locales.STOP} {locales.TIMER} {locales.SHORTCUT}
-					</span>
-					<span className="settings__send-errors__title--shortcut">
-						(Ctrl+Shift+U)
-					</span>
-				</div>
+				{/* NOTE: hide for now */}
+				{/*<div*/}
+				{/*	className={*/}
+				{/*		!this.state.isSelfHosted ? 'settings__send-errors' : 'disabled'*/}
+				{/*	}*/}
+				{/*	onClick={this.toggleTimerShortcut.bind(this)}*/}
+				{/*>*/}
+				{/*	<span*/}
+				{/*		className={*/}
+				{/*			this.state.timerShortcut*/}
+				{/*				? 'settings__send-errors__checkbox checked'*/}
+				{/*				: 'settings__send-errors__checkbox'*/}
+				{/*		}*/}
+				{/*	>*/}
+				{/*		<img*/}
+				{/*			src="./assets/images/checked.png"*/}
+				{/*			className={*/}
+				{/*				this.state.timerShortcut*/}
+				{/*					? 'settings__send-errors__checkbox--img'*/}
+				{/*					: 'settings__send-errors__checkbox--img_hidden'*/}
+				{/*			}*/}
+				{/*		/>*/}
+				{/*	</span>*/}
+				{/*	<span className="settings__send-errors__title">*/}
+				{/*		{locales.START}/{locales.STOP} {locales.TIMER} {locales.SHORTCUT}*/}
+				{/*	</span>*/}
+				{/*	<span className="settings__send-errors__title--shortcut">*/}
+				{/*		(Ctrl+Shift+U)*/}
+				{/*	</span>*/}
+				{/*</div>*/}
 				<div
 					className="settings__auto_start_on_browser_start"
 					onClick={this.toggleAutoStartOnBrowserStart.bind(this)}
@@ -1203,7 +1198,7 @@ class Settings extends Component {
 					className="settings__stop_timer expandContainer"
 					style={{
 						maxHeight: this.state.stopTimerOnSelectedTime ? '300px' : '0',
-						paddingBottom: this.state.stopTimerOnSelectedTime ? '15px' : '0',
+						paddingBottom: this.state.stopTimerOnSelectedTime ? '15px' : '0'
 					}}
 				>
 					<div className="settings__stop_timer__times">
@@ -1256,7 +1251,7 @@ class Settings extends Component {
 					id="reminder"
 					className="settings__reminder expandContainer"
 					style={{
-						maxHeight: this.state.reminder ? '300px' : '0',
+						maxHeight: this.state.reminder ? '300px' : '0'
 					}}
 				>
 					<div className="settings__reminder__week">
@@ -1324,7 +1319,7 @@ class Settings extends Component {
 				>
 					<span
 						className={
-							this.state.contextMenuEnabled
+							this.props.contextMenuEnabled
 								? 'settings__context_menu__section__checkbox checked'
 								: 'settings__context_menu__section__checkbox'
 						}
@@ -1332,7 +1327,7 @@ class Settings extends Component {
 						<img
 							src="./assets/images/checked.png"
 							className={
-								this.state.contextMenuEnabled
+								this.props.contextMenuEnabled
 									? 'settings__context_menu__section__checkbox--img'
 									: 'settings__context_menu__section__checkbox--img_hidden'
 							}
@@ -1391,10 +1386,21 @@ class Settings extends Component {
 					scrollIntoView={this.scrollIntoView}
 				/>
 				<div ref={this.pomodoroEnd} />
-				{version}
+				<div className="app-version">
+					Version: {this.state.appVersion}
+				</div>
 			</div>
 		);
 	}
 }
 
-export default Settings;
+const selectedState = (state) => ({
+	isCurrentUserTimerShortcutEnabled: state.isCurrentUserTimerShortcutEnabled,
+	showPostStartPopup: state.showPostStartPopup,
+	toggleTimerShortcut: state.toggleTimerShortcut,
+	toggleShowPostStartPopup: state.toggleShowPostStartPopup,
+	contextMenuEnabled: state.contextMenuEnabled,
+	toggleContextMenu: state.toggleContextMenu,
+});
+
+export default mapStateToProps(selectedState)(Settings);

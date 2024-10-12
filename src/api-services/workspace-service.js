@@ -124,7 +124,8 @@ class UserWorkspaceStorage extends ClockifyService {
 		const activeWorkspaceId = await this.workspaceId;
 		const userId = await this.userId;
 		const baseUrl = await this.apiEndpoint;
-		const workspacePermissionsUrl = `${baseUrl}/workspaces/${activeWorkspaceId}/users/${userId}/permissions`;
+		const workspacePermissionsUrl = `${baseUrl}/workspaces/${activeWorkspaceId}/users/${userId}/roles`;
+		//const workspacePermissionsUrl = `${baseUrl}/workspaces/${activeWorkspaceId}/users/${userId}/permissions`;
 
 		return this.apiCall(workspacePermissionsUrl);
 	}

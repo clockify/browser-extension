@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Header from './header.component';
+import Header from './header.component.jsx';
 import Duration from './duration.component';
 import moment, { duration } from 'moment';
 import ProjectList from './project-list.component';
@@ -8,21 +8,25 @@ import HomePage from './home-page.component';
 import { isOffline } from './check-connection';
 import { TimeEntryHelper } from '../helpers/timeEntry-helper';
 import { getBrowser } from '../helpers/browser-helper';
-import DeleteEntryConfirmationComponent from './delete-entry-confirmation.component';
 import Toaster from './toaster-component';
 import EditDescription from './edit-description.component';
 import { CustomFieldsContainer } from './customFields/customFields-Container';
-import { offlineStorage, getWSCustomFields } from '../helpers/offlineStorage';
+import { getWSCustomFields, offlineStorage } from '../helpers/offlineStorage';
 import locales from '../helpers/locales';
 import CustomFieldsContext from './customFields/CustomFieldsContext';
+import { DeleteEntryConfirmation } from '~/components/DeleteEntryConfirmation.tsx';
 
 const timeEntryHelper = new TimeEntryHelper();
+
 
 class EditForm extends React.Component {
 	constructor(props) {
 		super(props);
 
-		if (this.props.forwardedRef && typeof this.props.forwardedRef === 'object') {
+		if (
+			this.props.forwardedRef &&
+			typeof this.props.forwardedRef === 'object'
+		) {
 			this.props.forwardedRef.current = this;
 		}
 
@@ -42,7 +46,10 @@ class EditForm extends React.Component {
 			tags: this.props.timeEntry.tags ? this.props.timeEntry.tags : [],
 			workspaceSettings: null,
 			customFieldsToSendToBackend: [],
-			selectedProjectId: this.props.timeEntry.projectId || this.props.timeEntry.project?.id || '',
+			selectedProjectId:
+				this.props.timeEntry.projectId ||
+				this.props.timeEntry.project?.id ||
+				''
 		};
 
 		this.setDescription = this.setDescription.bind(this);
@@ -54,12 +61,15 @@ class EditForm extends React.Component {
 		this.editTask = this.editTask.bind(this);
 		this.updateCustomFields = this.updateCustomFields.bind(this);
 		this.setAsyncStateItems = this.setAsyncStateItems.bind(this);
+		this.checkProjectError = this.checkProjectError.bind(this);
 		this.areCustomFieldsValid = this.areCustomFieldsValid.bind(this);
 		this.cfContainsWrongChars = this.cfContainsWrongChars.bind(this);
-		this.addCustomFieldValuesToState = this.addCustomFieldValuesToState.bind(this);
+		this.addCustomFieldValuesToState =
+			this.addCustomFieldValuesToState.bind(this);
 		this.saveDescriptionOffline = this.saveDescriptionOffline.bind(this);
 		this.onTagListClose = this.onTagListClose.bind(this);
-		this.sendAllFieldValuesToBackend = this.sendAllFieldValuesToBackend.bind(this);
+		this.sendAllFieldValuesToBackend =
+			this.sendAllFieldValuesToBackend.bind(this);
 		this.getAllFieldData = this.getAllFieldData.bind(this);
 	}
 
@@ -89,6 +99,15 @@ class EditForm extends React.Component {
 		}
 	}
 
+	async checkProjectError() {
+		const createProjectError = await localStorage.getItem('createProjectError');
+		const createProjectErrorParsed = JSON.parse(createProjectError);
+		if (createProjectErrorParsed) {
+			this.notifyAboutError(locales.CAN_NOT_CREATE_PROJECT_MISSING_PERMISSIONS, 'error', 5);
+			await localStorage.removeItem('createProjectError');
+		}
+	}
+
 	componentDidUpdate() {
 		this.setAsyncStateItems();
 	}
@@ -96,8 +115,8 @@ class EditForm extends React.Component {
 	async setUserWorkspaceSettings() {
 		getBrowser()
 			.runtime.sendMessage({
-				eventName: 'getWorkspaceSettings',
-			})
+			eventName: 'getWorkspaceSettings'
+		})
 			.then(async (response) => {
 				if (!response.data) {
 					throw new Error(response);
@@ -111,11 +130,11 @@ class EditForm extends React.Component {
 				localStorage.setItem('mode', this.state.mode); // for usage in edit-forms
 				localStorage.setItem(
 					'manualModeDisabled',
-					JSON.stringify(this.state.manualModeDisabled)
+					JSON.stringify(this.state.manualModeDisabled),
 				); // for usage in header
 				localStorage.setItem(
 					'workspaceSettings',
-					JSON.stringify(workspaceSettings)
+					JSON.stringify(workspaceSettings),
 				);
 				offlineStorage.userHasCustomFieldsFeature =
 					workspaceSettings.features.customFields;
@@ -148,8 +167,8 @@ class EditForm extends React.Component {
 			this.setState((state) => ({
 				timeEntry: {
 					...state.timeEntry,
-					customFieldValues: offlineStorage.customFieldValues,
-				},
+					customFieldValues: offlineStorage.customFieldValues
+				}
 			}));
 		} else {
 			if (offlineStorage.wsCustomFields?.length) {
@@ -158,14 +177,14 @@ class EditForm extends React.Component {
 						(field) =>
 							field.status === 'VISIBLE' &&
 							(!field.projectDefaultValues.find(
-								(el) => el.projectId === projectId
+								(el) => el.projectId === projectId,
 							) ||
 								field.projectDefaultValues.find(
-									(el) => el.projectId === projectId
+									(el) => el.projectId === projectId,
 								)?.status === 'VISIBLE') &&
 							!timeEntry?.customFieldValues?.find(
-								(cf) => cf.customFieldId === field.id
-							)
+								(cf) => cf.customFieldId === field.id,
+							),
 					)
 					.map((el) => ({ ...el, customFieldId: el.id }));
 				this.setState((state) => ({
@@ -173,9 +192,9 @@ class EditForm extends React.Component {
 						...state.timeEntry,
 						customFieldValues: [
 							...state.timeEntry.customFieldValues,
-							...additinalFields,
-						],
-					},
+							...additinalFields
+						]
+					}
 				}));
 			}
 			await this.setUserWorkspaceSettings();
@@ -189,15 +208,15 @@ class EditForm extends React.Component {
 				const entry = await timeEntryHelper.updateProjectTask(
 					timeEntry,
 					projectDB,
-					taskDB
+					taskDB,
 				);
 				this.setState(
 					{
-						timeEntry: entry,
+						timeEntry: entry
 					},
 					() => {
 						this.checkRequiredFields();
-					}
+					},
 				);
 			} else {
 				this.checkRequiredFields();
@@ -214,7 +233,7 @@ class EditForm extends React.Component {
 				if (timeEntry.customFieldValues) {
 					customFields.forEach(({ value, customFieldId }) => {
 						const cf = timeEntry.customFieldValues.find(
-							(item) => item.customFieldId === customFieldId
+							(item) => item.customFieldId === customFieldId,
 						);
 						if (cf) cf.value = value;
 					});
@@ -224,9 +243,9 @@ class EditForm extends React.Component {
 				offlineStorage.timeEntryInOffline = timeEntry;
 				this.setState(
 					{
-						timeEntry,
+						timeEntry
 					},
-					() => this.checkRequiredFields()
+					() => this.checkRequiredFields(),
 				);
 			} else {
 				let timeEntries = offlineStorage.timeEntriesOffline;
@@ -235,16 +254,16 @@ class EditForm extends React.Component {
 						if (timeEntry.customFieldValues) {
 							customFields.forEach(({ value, customFieldId }) => {
 								const cf = timeEntry.customFieldValues.find(
-									(item) => item.customFieldId === customFieldId
+									(item) => item.customFieldId === customFieldId,
 								);
 								if (cf) cf.value = value;
 							});
 						}
 						this.setState(
 							{
-								timeEntry,
+								timeEntry
 							},
-							() => this.checkRequiredFields()
+							() => this.checkRequiredFields(),
 						);
 					}
 					return timeEntry;
@@ -262,9 +281,9 @@ class EditForm extends React.Component {
 				offlineStorage.timeEntryInOffline = timeEntry;
 				this.setState(
 					{
-						timeEntry,
+						timeEntry
 					},
-					() => {}
+					() => {},
 				);
 			} else {
 				let timeEntries = offlineStorage.timeEntriesOffline;
@@ -273,9 +292,9 @@ class EditForm extends React.Component {
 						entry.timeInterval = timeInterval;
 						this.setState(
 							{
-								timeEntry: entry,
+								timeEntry: entry
 							},
-							() => {}
+							() => {},
 						);
 					}
 					return entry;
@@ -284,43 +303,43 @@ class EditForm extends React.Component {
 			}
 		} else {
 			if (timeInterval.start && timeInterval.end) {
-				const newInterval = {}
+				const newInterval = {};
 				newInterval.start = moment(timeInterval.start).toISOString();
 				newInterval.end = moment(timeInterval.end).toISOString();
-				newInterval.duration = moment.duration((moment(timeInterval.end)).diff(moment(timeInterval.start))).toISOString();
-				this.setState(
-					(state) => ({
-						timeEntry: {
-							...state.timeEntry,
-							timeInterval: newInterval,
-							start: newInterval.start,
-						},
-					})
-				);
+				newInterval.duration = moment
+					.duration(moment(timeInterval.end).diff(moment(timeInterval.start)))
+					.toISOString();
+				this.setState((state) => ({
+					timeEntry: {
+						...state.timeEntry,
+						timeInterval: newInterval,
+						start: newInterval.start
+					}
+				}));
 			} else if (timeInterval.start && !timeInterval.end) {
 				const newInterval = {
 					...this.state.timeEntry.timeInterval,
 					start: timeInterval.start.toISOString()
-				}
+				};
 				this.setState(
 					(state) => ({
 						timeEntry: {
 							...state.timeEntry,
 							timeInterval: newInterval,
-							start: newInterval.start,
-						},
-					}), () => {
+							start: newInterval.start
+						}
+					}),
+					() => {
 						getBrowser().runtime.sendMessage({ eventName: 'pomodoroTimer' });
-					}
+					},
 				);
 			}
 		}
 	}
 
 	async changeDuration(newDuration) {
-		if (!newDuration || !this.state.timeEntry.timeInterval.end) {
-			return;
-		}
+		if (!newDuration || !this.state.timeEntry.timeInterval.end) return;
+
 		let timeEntry;
 
 		if (await isOffline()) {
@@ -330,80 +349,59 @@ class EditForm extends React.Component {
 				.add(parseInt(newDuration.split(':')[1]), 'minutes')
 				.add(
 					newDuration.split(':')[2] ? parseInt(newDuration.split(':')[2]) : 0,
-					'seconds'
+					'seconds',
 				);
 
 			if (timeEntry && timeEntry.id === this.state.timeEntry.id) {
 				timeEntry.timeInterval.end = end;
 				timeEntry.timeInterval.duration = duration(
-					moment(timeEntry.timeInterval.end).diff(timeEntry.timeInterval.start)
+					moment(timeEntry.timeInterval.end).diff(timeEntry.timeInterval.start),
 				);
 				offlineStorage.timeEntryInOffline = timeEntry;
-				this.setState(
-					{
-						timeEntry,
-					},
-					() => {}
-				);
+				this.setState({ timeEntry });
 			} else {
 				let timeEntries = offlineStorage.timeEntriesOffline;
 				timeEntries.map((entry) => {
 					if (entry.id === this.state.timeEntry.id) {
 						entry.timeInterval.end = end;
 						entry.timeInterval.duration = duration(
-							moment(entry.timeInterval.end).diff(entry.timeInterval.start)
+							moment(entry.timeInterval.end).diff(entry.timeInterval.start),
 						);
-						this.setState(
-							{
-								timeEntry: entry,
-							},
-							() => {}
-						);
+						this.setState({ timeEntry: entry });
 					}
+
 					return entry;
 				});
+
 				offlineStorage.timeEntriesOffline = timeEntries;
 			}
 		} else {
 			timeEntry = this.state.timeEntry;
+
 			let end = moment(this.state.timeEntry.timeInterval.start)
 				.add(parseInt(newDuration.split(':')[0]), 'hours')
 				.add(parseInt(newDuration.split(':')[1]), 'minutes')
 				.add(
 					newDuration.split(':')[2] ? parseInt(newDuration.split(':')[2]) : 0,
-					'seconds'
+					'seconds',
 				)
 				.toDate();
+
 			timeEntry.timeInterval.start = moment(
-				timeEntry.timeInterval.start
+				timeEntry.timeInterval.start,
 			).toDate();
 			timeEntry.timeInterval.end = end;
-			//TODO remove this api call
-			// getBrowser()
-			// 	.runtime.sendMessage({
-			// 		eventName: 'editTimeInterval',
-			// 		options: {
-			// 			entryId: this.props.timeEntry.id,
-			// 			timeInterval: timeEntry.timeInterval,
-			// 		},
-			// 	})
-			// 	.then((response) => {
-			// 		let data = response.data;
-			// 		this.setState(
-			// 			{
-			// 				timeEntry: data,
-			// 			},
-			// 			() => {}
-			// 		);
-			// 	})
-			// 	.catch((error) => {
-			// 		this.notifyError(error);
-			// 	});
+			timeEntry.timeInterval.duration = duration(
+				moment(timeEntry.timeInterval.end).diff(timeEntry.timeInterval.start)
+			);
+			timeEntry.duration = newDuration;
+
+			this.setState({ timeEntry });
 		}
 	}
 
 	onSetDescription(description) {
-		this.setState({ description }, () => this.setDescription());
+		this.setState({ description: description.trim() }, () => this.setDescription());
 	}
 
 	async setDescription() {
@@ -417,11 +415,11 @@ class EditForm extends React.Component {
 					(state) => ({
 						timeEntry: {
 							...state.timeEntry,
-							description: timeEntry.description,
+							description: timeEntry.description
 						},
-						description: timeEntry.description,
+						description: timeEntry.description
 					}),
-					() => this.checkRequiredFields()
+					() => this.checkRequiredFields(),
 				);
 			} else {
 				let timeEntries = offlineStorage.timeEntriesOffline;
@@ -432,10 +430,10 @@ class EditForm extends React.Component {
 							(state) => ({
 								timeEntry: {
 									...state.timeEntry,
-									description: entry.description,
-								},
+									description: entry.description
+								}
 							}),
-							() => this.checkRequiredFields()
+							() => this.checkRequiredFields(),
 						);
 					}
 					return entry;
@@ -447,11 +445,11 @@ class EditForm extends React.Component {
 				(state) => ({
 					timeEntry: {
 						...state.timeEntry,
-						description: description,
+						description: description
 					},
-					description: description,
+					description: description
 				}),
-				() => this.checkRequiredFields()
+				() => this.checkRequiredFields(),
 			);
 		}
 	}
@@ -459,6 +457,7 @@ class EditForm extends React.Component {
 	notifyError(error) {
 		if (error.request?.status === 403) {
 			const response = JSON.parse(error.request.response);
+
 			if (response.code === 4030) {
 				this.notifyAboutError(response.message, 'info', 10);
 			}
@@ -469,37 +468,27 @@ class EditForm extends React.Component {
 		if (!project.id || project.id === 'no-project') {
 			if (await isOffline()) {
 				let timeEntry = offlineStorage.timeEntryInOffline;
+
 				if (timeEntry && timeEntry.id === this.state.timeEntry.id) {
 					timeEntry.projectId = 'no-project';
 					timeEntry.project = project;
 					offlineStorage.timeEntryInOffline = timeEntry;
-					this.setState(
-						{
-							timeEntry,
-						},
-						() => {
-							// this.projectList.mapSelectedProject()
-							this.checkRequiredFields();
-						}
-					);
+
+					this.setState({ timeEntry }, () => this.checkRequiredFields());
 				} else {
 					let timeEntries = offlineStorage.timeEntriesOffline;
+
 					timeEntries.map((timeEntry) => {
 						if (timeEntry.id === this.state.timeEntry.id) {
 							timeEntry.projectId = 'no-project';
 							timeEntry.project = project;
-							this.setState(
-								{
-									timeEntry,
-								},
-								() => {
-									// this.projectList.mapSelectedProject()
-									this.checkRequiredFields();
-								}
-							);
+
+							this.setState({ timeEntry }, () => this.checkRequiredFields());
 						}
+
 						return timeEntry;
 					});
+
 					offlineStorage.timeEntriesOffline = timeEntries;
 				}
 			} else {
@@ -508,49 +497,34 @@ class EditForm extends React.Component {
 						timeEntry: {
 							...state.timeEntry,
 							project: project,
-							billable: project.billable,
 							projectId: null,
 							task: null,
-							taskId: null,
-						},
+							taskId: null
+						}
 					}),
-					() => this.checkRequiredFields()
+					() => this.checkRequiredFields(),
 				);
 			}
 		} else {
 			if (await isOffline()) {
 				let timeEntry = offlineStorage.timeEntryInOffline;
+
 				if (timeEntry && timeEntry.id === this.state.timeEntry.id) {
 					timeEntry.project = project;
 					timeEntry.projectId = project.id;
 					offlineStorage.timeEntryInOffline = timeEntry;
-					this.setState(
-						{
-							timeEntry,
-						},
-						() => {
-							// this.projectList.mapSelectedProject();
-							this.checkRequiredFields();
-						}
-					);
+					this.setState({ timeEntry }, () => this.checkRequiredFields());
 				} else {
 					let timeEntries = offlineStorage.timeEntriesOffline;
 					timeEntries.map((timeEntry) => {
 						if (timeEntry.id === this.state.timeEntry.id) {
 							timeEntry.project = project;
 							timeEntry.projectId = project.id;
-							this.setState(
-								{
-									timeEntry,
-								},
-								() => {
-									// this.projectList.mapSelectedProject();
-									this.checkRequiredFields();
-								}
-							);
+							this.setState({ timeEntry }, () => this.checkRequiredFields());
 						}
 						return timeEntry;
 					});
+
 					offlineStorage.timeEntriesOffline = timeEntries;
 				}
 			} else {
@@ -562,15 +536,14 @@ class EditForm extends React.Component {
 							projectId: project.id,
 							billable: project.billable,
 							task: null,
-							taskId: null,
-						},
+							taskId: null
+						}
 					}),
-					() => this.checkRequiredFields()
+					() => this.checkRequiredFields(),
 				);
 			}
 		}
 	}
-
 
 	editTask(task, project) {
 		if (!task) {
@@ -579,10 +552,10 @@ class EditForm extends React.Component {
 					timeEntry: {
 						...state.timeEntry,
 						task: null,
-						taskId: null,
-					},
+						taskId: null
+					}
 				}),
-				() => this.checkRequiredFields()
+				() => this.checkRequiredFields(),
 			);
 		} else {
 			this.setState(
@@ -593,13 +566,13 @@ class EditForm extends React.Component {
 						taskId: task.id,
 						project: project,
 						projectId: task.projectId,
-					},
+						billable: this.props.workspaceSettings?.taskBillableEnabled ? task.billable : project.billable
+					}
 				}),
-				() => this.checkRequiredFields()
+				() => this.checkRequiredFields(),
 			);
 		}
 	}
-
 
 	async editTags(tag, saveAfterEdit) {
 		let tagIds = this.state.tags ? this.state.tags.map((it) => it.id) : [];
@@ -620,11 +593,11 @@ class EditForm extends React.Component {
 				offlineStorage.timeEntryInOffline = timeEntry;
 				this.setState(
 					{
-						timeEntry,
+						timeEntry
 					},
 					() => {
 						this.checkRequiredFields();
-					}
+					},
 				);
 			} else {
 				let timeEntries = offlineStorage.timeEntriesOffline;
@@ -633,11 +606,11 @@ class EditForm extends React.Component {
 						timeEntry.tags = tagList;
 						this.setState(
 							{
-								timeEntry,
+								timeEntry
 							},
 							() => {
 								this.checkRequiredFields();
-							}
+							},
 						);
 					}
 					return timeEntry;
@@ -650,8 +623,8 @@ class EditForm extends React.Component {
 					tags: tagList,
 					timeEntry: {
 						...state.timeEntry,
-						tags: tagList,
-					},
+						tags: tagList
+					}
 				}),
 				() => {
 					this.checkRequiredFields();
@@ -660,7 +633,7 @@ class EditForm extends React.Component {
 					} else {
 						this.checkRequiredFields();
 					}
-				}
+				},
 			);
 		}
 	}
@@ -671,10 +644,10 @@ class EditForm extends React.Component {
 			(state) => ({
 				timeEntry: {
 					...state.timeEntry,
-					tagIds,
-				},
+					tagIds
+				}
 			}),
-			() => this.checkRequiredFields()
+			() => this.checkRequiredFields(),
 		);
 	}
 
@@ -685,7 +658,7 @@ class EditForm extends React.Component {
 				timeEntry.billable = !this.state.timeEntry.billable;
 				offlineStorage.timeEntryInOffline = timeEntry;
 				this.setState({
-					timeEntry,
+					timeEntry
 				});
 			} else {
 				let timeEntries = offlineStorage.timeEntriesOffline;
@@ -693,7 +666,7 @@ class EditForm extends React.Component {
 					if (entry.id === this.state.timeEntry.id) {
 						entry.billable = !this.state.timeEntry.billable;
 						this.setState({
-							timeEntry: entry,
+							timeEntry: entry
 						});
 					}
 					return entry;
@@ -702,10 +675,10 @@ class EditForm extends React.Component {
 			}
 		} else {
 			this.setState({
-				billableShouldBeSaved: true,
-			})
+				billableShouldBeSaved: true
+			});
 			this.setState((state) => ({
-				timeEntry: { ...state.timeEntry, billable: !state.timeEntry.billable },
+				timeEntry: { ...state.timeEntry, billable: !state.timeEntry.billable }
 			}));
 		}
 	}
@@ -720,14 +693,14 @@ class EditForm extends React.Component {
 				let timeEntries = offlineStorage.timeEntriesOffline;
 				if (
 					timeEntries.findIndex(
-						(entry) => entry.id === this.state.timeEntry.id
+						(entry) => entry.id === this.state.timeEntry.id,
 					) > -1
 				) {
 					timeEntries.splice(
 						timeEntries.findIndex(
-							(entry) => entry.id === this.state.timeEntry.id
+							(entry) => entry.id === this.state.timeEntry.id,
 						),
-						1
+						1,
 					);
 				}
 				offlineStorage.timeEntriesOffline = timeEntries;
@@ -736,20 +709,21 @@ class EditForm extends React.Component {
 		} else {
 			getBrowser()
 				.runtime.sendMessage({
-					eventName: 'deleteTimeEntry',
-					options: {
-						entryId: this.state.timeEntry.id,
-					},
-				})
+				eventName: 'deleteTimeEntry',
+				options: {
+					entryId: this.state.timeEntry.id
+				}
+			})
 				.then((response) => {
 					getBrowser().runtime.sendMessage({
-						eventName: 'restartPomodoro',
+						eventName: 'restartPomodoro'
 					});
 					localStorage.setItem('timeEntryInProgress', null);
 
 					this.goBack();
 				})
-				.catch(() => {});
+				.catch(() => {
+				});
 		}
 	}
 
@@ -762,21 +736,28 @@ class EditForm extends React.Component {
 		this.setState({
 			customFieldsContainWrongChars: {
 				...customFieldsContainWrongChars,
-				[id]: isCustomFieldContainsWrongChars,
-			},
+				[id]: isCustomFieldContainsWrongChars
+			}
 		});
 	}
 
 	addCustomFieldValuesToState(customField) {
-		this.setState(prevState => {
-			const existingIndex = prevState.customFieldsToSendToBackend.findIndex(item => item.customFieldId === customField.customFieldId);
+		this.setState((prevState) => {
+			const existingIndex = prevState.customFieldsToSendToBackend.findIndex(
+				(item) => item.customFieldId === customField.customFieldId,
+			);
 			if (existingIndex !== -1) {
 				const updatedFields = [...prevState.customFieldsToSendToBackend];
 				updatedFields[existingIndex] = customField;
 				return { customFieldsToSendToBackend: updatedFields };
 			}
-			return { customFieldsToSendToBackend: [...prevState.customFieldsToSendToBackend, customField]}
-		})
+			return {
+				customFieldsToSendToBackend: [
+					...prevState.customFieldsToSendToBackend,
+					customField
+				]
+			};
+		});
 	}
 
 	saveDescriptionOffline(description) {
@@ -788,11 +769,11 @@ class EditForm extends React.Component {
 				(state) => ({
 					timeEntry: {
 						...state.timeEntry,
-						description: timeEntry.description,
+						description: timeEntry.description
 					},
-					description: timeEntry.description,
+					description: timeEntry.description
 				}),
-				() => this.checkRequiredFields()
+				() => this.checkRequiredFields(),
 			);
 		} else {
 			let timeEntries = offlineStorage.timeEntriesOffline;
@@ -803,10 +784,10 @@ class EditForm extends React.Component {
 						(state) => ({
 							timeEntry: {
 								...state.timeEntry,
-								description: entry.description,
-							},
+								description: entry.description
+							}
 						}),
-						() => this.checkRequiredFields()
+						() => this.checkRequiredFields(),
 					);
 				}
 				return entry;
@@ -816,9 +797,17 @@ class EditForm extends React.Component {
 	}
 
 	getAllFieldData() {
-		const { description,  projectId, taskId, billable, customFieldValues, timeInterval } = this.state.timeEntry;
+		const {
+			description,
+			projectId,
+			taskId,
+			billable,
+			customFieldValues,
+			timeInterval
+		} = this.state.timeEntry;
 		let { tagIds } = this.state.timeEntry;
-		if (!tagIds) tagIds = this.state.tags ? this.state.tags.map((it) => it.id) : [];
+		if (!tagIds)
+			tagIds = this.state.tags ? this.state.tags.map((it) => it.id) : [];
 		const { start, end } = timeInterval;
 
 		const updatedFields = {
@@ -829,19 +818,27 @@ class EditForm extends React.Component {
 			billable,
 			start,
 			end
-		}
+		};
 
 		if (this.state.customFieldsToSendToBackend.length) {
 			const customFieldsToBeUpdated = [];
-			this.state.customFieldsToSendToBackend.forEach(customField => {
-				customFieldsToBeUpdated.push({"customFieldId": customField.customFieldId,"value": customField.value,"sourceType":"TIMEENTRY"})
-			})
+			this.state.customFieldsToSendToBackend.forEach((customField) => {
+				customFieldsToBeUpdated.push({
+					customFieldId: customField.customFieldId,
+					value: customField.value,
+					sourceType: 'TIMEENTRY'
+				});
+			});
 			updatedFields.customFields = customFieldsToBeUpdated;
 		} else if (customFieldValues.length) {
 			const customFieldsToBeUpdated = [];
-			customFieldValues.forEach(customField => {
-				customFieldsToBeUpdated.push({"customFieldId": customField.customFieldId,"value": customField.value,"sourceType":"TIMEENTRY"})
-			})
+			customFieldValues.forEach((customField) => {
+				customFieldsToBeUpdated.push({
+					customFieldId: customField.customFieldId,
+					value: customField.value,
+					sourceType: 'TIMEENTRY'
+				});
+			});
 			updatedFields.customFields = customFieldsToBeUpdated;
 		}
 
@@ -850,10 +847,11 @@ class EditForm extends React.Component {
 		const dataForIntegrations = {
 			entryId,
 			updatedFields
-		}
+		};
 
 		return dataForIntegrations;
 	}
+
 	async sendAllFieldValuesToBackend() {
 		const { entryId, updatedFields } = this.getAllFieldData();
 		getBrowser()
@@ -861,14 +859,13 @@ class EditForm extends React.Component {
 			eventName: 'updateTimeEntryValues',
 			options: {
 				entryId,
-				body: updatedFields,
-			},
+				body: updatedFields
+			}
 		})
 			.then((response) => {
 				if (response && response.status === 200) {
 					this.closeEditForm();
 				} else {
-					console.log(response)
 					if (response.includes('Manual time tracking disabled')) {
 						this.toaster.toast('error', locales.DISABLED_MANUAL_MODE, 2);
 						return;
@@ -877,7 +874,6 @@ class EditForm extends React.Component {
 				}
 			})
 			.catch((error) => {
-				console.log(error)
 				this.toaster.toast('error', locales.GLOBAL__FAILED_MESSAGE, 2);
 			});
 	}
@@ -896,7 +892,7 @@ class EditForm extends React.Component {
 		const descriptionContainsWrongChars = pattern.test(description);
 		const customFieldContainsWrongChars =
 			Object.values(this.state.customFieldsContainWrongChars ?? {}).filter(
-				Boolean
+				Boolean,
 			).length > 0;
 
 		if (descriptionContainsWrongChars || customFieldContainsWrongChars) {
@@ -912,11 +908,9 @@ class EditForm extends React.Component {
 		) {
 			return;
 		}
-		this.sendAllFieldValuesToBackend()
-			.catch(error => {
-				console.log(error)
-				this.toaster.toast('error', locales.GLOBAL__FAILED_MESSAGE, 2);
-			})
+		this.sendAllFieldValuesToBackend().catch((error) => {
+			this.toaster.toast('error', locales.GLOBAL__FAILED_MESSAGE, 2);
+		});
 	}
 
 	async changeDate(date) {
@@ -928,16 +922,16 @@ class EditForm extends React.Component {
 				.minutes(timeEntryStart.minutes())
 				.seconds(timeEntryStart.seconds());
 			let timeEntries = offlineStorage.timeEntriesOffline;
+
 			timeEntries.map((entry) => {
 				if (entry.id === this.state.timeEntry.id) {
 					entry.timeInterval.start = start;
 					entry.timeInterval.end = moment(start).add(
-						duration(this.state.timeEntry.timeInterval.duration)
+						duration(this.state.timeEntry.timeInterval.duration),
 					);
-					this.setState({
-						timeEntry: entry,
-					});
+					this.setState({ timeEntry: entry });
 				}
+
 				return entry;
 			});
 
@@ -951,22 +945,21 @@ class EditForm extends React.Component {
 				.seconds(timeEntryStart.seconds());
 			const newStart = start.toISOString();
 			const newEnd = moment(start)
-					.add(duration(this.state.timeEntry.timeInterval.duration))
-					.toISOString();
+				.add(duration(this.state.timeEntry.timeInterval.duration))
+				.toISOString();
 			const newInterval = {
 				...this.state.timeEntry.timeInterval,
 				start: newStart,
-				end: newEnd,
-			}
-			this.setState(
-				(state) => ({
-					timeEntry: {
-						...state.timeEntry,
-						timeInterval: newInterval,
-						start: newInterval.start,
-					},
-				})
-			);
+				end: newEnd
+			};
+
+			this.setState((state) => ({
+				timeEntry: {
+					...state.timeEntry,
+					timeInterval: newInterval,
+					start: newInterval.start
+				}
+			}));
 		}
 	}
 
@@ -981,7 +974,7 @@ class EditForm extends React.Component {
 				.seconds(timeEntryStart.seconds());
 			offlineStorage.timeEntryInOffline = timeEntry;
 			this.setState({
-				timeEntry,
+				timeEntry
 			});
 		} else {
 			const getDate = new Date(date);
@@ -992,14 +985,12 @@ class EditForm extends React.Component {
 				.minutes(timeEntryStart.minutes())
 				.seconds(timeEntryStart.seconds());
 
-			this.setState(
-				(state) => ({
-					timeEntry: {
-						...state.timeEntry,
-						start
-					},
-				})
-			);
+			this.setState((state) => ({
+				timeEntry: {
+					...state.timeEntry,
+					start
+				}
+			}));
 		}
 	}
 
@@ -1070,19 +1061,19 @@ class EditForm extends React.Component {
 			taskRequired,
 			tagsRequired,
 			forceTasks,
-			ready: true,
+			ready: true
 		});
 	}
 
 	askToDeleteEntry() {
 		this.setState({
-			askToDeleteEntry: true,
+			askToDeleteEntry: true
 		});
 	}
 
 	cancelDeletingEntry() {
 		this.setState({
-			askToDeleteEntry: false,
+			askToDeleteEntry: false
 		});
 	}
 
@@ -1095,12 +1086,17 @@ class EditForm extends React.Component {
 	}
 
 	render() {
-		if (!this.state.ready) {
-			return null;
-		} else {
-			const { timeEntry } = this.state;
-			return (
-				<CustomFieldsContext.Provider value={{ addCustomFieldValuesToState: this.addCustomFieldValuesToState }}>
+		if (!this.state.ready) return null;
+
+		const { timeEntry } = this.state;
+
+		this.checkProjectError();
+		return (
+				<CustomFieldsContext.Provider
+					value={{
+						addCustomFieldValuesToState: this.addCustomFieldValuesToState,
+					}}
+				>
 					<div>
 						{!this.props.integrationMode && (
 							<>
@@ -1113,65 +1109,54 @@ class EditForm extends React.Component {
 								/>
 								{timeEntry.type === 'BREAK' && (
 									<div className="edit-form__break-label">
-									<span
-										className="break-icon"
-										style={{
-											background: `url(${getBrowser().runtime.getURL(
-												'/assets/images/break.png'
-											)})`,
-										}}
-									/>
+										<span
+											className="break-icon"
+											style={{
+												background: `url(${getBrowser().runtime.getURL(
+													'/assets/images/break.png',
+												)})`,
+											}}
+										/>
 										<span>{locales.BREAK}</span>
 									</div>
 								)}
 								<Duration
-									ref={(instance) => {
-										this.duration = instance;
-									}}
-									timeEntry={timeEntry}
-									timeFormat={this.props.timeFormat}
-									changeInterval={this.changeInterval.bind(this)}
-									changeDuration={this.changeDuration.bind(this)}
-									changeDate={
-										timeEntry.timeInterval.end
-											? this.changeDate.bind(this)
-											: this.changeStartDate.bind(this)
-									}
-									workspaceSettings={this.props.workspaceSettings}
-									isUserOwnerOrAdmin={this.state.isUserOwnerOrAdmin}
-									userSettings={this.props.userSettings}
-								/>
-							</>
-						)}
-						<Toaster
-							ref={(instance) => {
-								this.toaster = instance;
-							}}
-						/>
-						<div className="edit-form">
-							<div
-								className={
-									this.state.descRequired
-										? 'description-textarea-required'
-										: 'description-textarea'
+								ref={(instance) => (this.duration = instance)}
+								timeEntry={this.state.timeEntry}
+								timeFormat={this.props.timeFormat}
+								changeInterval={this.changeInterval.bind(this)}
+								changeDuration={this.changeDuration.bind(this)}
+								changeDate={
+									this.state.timeEntry.timeInterval.end
+										? this.changeDate.bind(this)
+										: this.changeStartDate.bind(this)
 								}
-							>
-								<EditDescription
-									description={this.state.description}
-									descRequired={this.descRequired}
-									onSetDescription={this.onSetDescription}
-									toaster={this.toaster}
-								/>
-							</div>
-							<div className="edit-form__project_list">
-								<ProjectList
-									// ref={instance => {
-									//     this.projectList = instance;
-									// }}
-									setShouldAddNewTask={this.setShouldAddNewTask}
-									timeEntry={this.state.timeEntry}
-									// selectedProject={timeEntry.project}
-									// selectedTask={timeEntry.task}
+								workspaceSettings={this.props.workspaceSettings}
+								isUserOwnerOrAdmin={this.state.isUserOwnerOrAdmin}
+								userSettings={this.props.userSettings}
+							/>
+						</>
+					)}
+					<Toaster ref={(instance) => (this.toaster = instance)} />
+					<div className="edit-form">
+						<div
+							className={
+								this.state.descRequired
+									? 'description-textarea-required'
+									: 'description-textarea'
+							}
+						>
+							<EditDescription
+								description={this.state.description}
+								descRequired={this.descRequired}
+								onSetDescription={this.onSetDescription}
+								toaster={this.toaster}
+							/>
+						</div>
+						<div className="edit-form__project_list">
+							<ProjectList
+								setShouldAddNewTask={this.setShouldAddNewTask}
+								timeEntry={this.state.timeEntry}
 									selectProject={this.editProject}
 									selectTask={this.editTask}
 									noTask={false}
@@ -1209,29 +1194,29 @@ class EditForm extends React.Component {
 										this.state.hideBillable ? 'disabled' : ''
 									}`}
 								>
-								<span
-									className={
-										timeEntry.billable
-											? 'edit-form-checkbox checked'
-											: 'edit-form-checkbox'
-									}
-									onClick={this.editBillable}
-									tabIndex={'0'}
-									onKeyDown={(e) => {
-										if (e.key === 'Enter') this.editBillable();
-									}}
-								>
-									<img
-										src={getBrowser().runtime.getURL(
-											'assets/images/checked.png'
-										)}
+									<span
 										className={
-											timeEntry.billable
-												? 'edit-form-billable-img'
-												: 'edit-form-billable-img-hidden'
+										this.state.timeEntry.billable
+												? 'edit-form-checkbox checked'
+												: 'edit-form-checkbox'
 										}
-									/>
-								</span>
+										onClick={this.editBillable}
+										tabIndex={'0'}
+										onKeyDown={(e) => {
+											if (e.key === 'Enter') this.editBillable();
+										}}
+									>
+										<img
+											src={getBrowser().runtime.getURL(
+												'assets/images/checked.png',
+											)}
+											className={
+											this.state.timeEntry.billable
+													? 'edit-form-billable-img'
+													: 'edit-form-billable-img-hidden'
+											}
+										/>
+									</span>
 									<label
 										onClick={this.editBillable}
 										className="edit-form-billable"
@@ -1274,29 +1259,28 @@ class EditForm extends React.Component {
 									</button>
 									{!this.props.integrationMode && (
 										<div className="edit-form-right-buttons__back_and_delete">
-										<span
-											onClick={this.askToDeleteEntry.bind(this)}
-											className="edit-form-delete"
-										>
-											{locales.DELETE}
-										</span>
+											<span
+												onClick={this.askToDeleteEntry.bind(this)}
+												className="edit-form-delete"
+											>
+												{locales.DELETE}
+											</span>
 										</div>
 									)}
-									<DeleteEntryConfirmationComponent
-										askToDeleteEntry={this.state.askToDeleteEntry}
-										canceled={this.cancelDeletingEntry.bind(this)}
-										confirmed={this.deleteEntry.bind(this)}
-									/>
-								</div>
+									<DeleteEntryConfirmation
+									askToDeleteEntry={this.state.askToDeleteEntry}
+									canceled={this.cancelDeletingEntry.bind(this)}
+									confirmed={this.deleteEntry.bind(this)}
+								/>
 							</div>
 						</div>
 					</div>
-				</CustomFieldsContext.Provider>
-			);
-		}
+				</div>
+			</CustomFieldsContext.Provider>
+		);
 	}
 }
 
 export default React.forwardRef((props, ref) => {
-	return <EditForm {...props} forwardedRef={ref} />
+	return <EditForm {...props} forwardedRef={ref} />;
 });

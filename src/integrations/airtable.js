@@ -1,29 +1,24 @@
 // Item modal view
 clockifyButton.render(
-	'div[role=dialog] .z2 .flex.border-darken2:not(.clockify)',
+	'[aria-label="Detail view dialog"] .z2:not(.clockify)',
 	{ observe: true },
-	(elem) => {
-		const cellContainerEl = $('div.detailView .labelCellPair .cellContainer');
-		const description = () => {
-			const desc =
-				$('div[role="textbox"]', cellContainerEl) ||
-				$('textarea', cellContainerEl) ||
-				$('input', cellContainerEl);
+	modal => {
+		const modalHeaderSelector = '[data-tutorial-selector-id="detailViewCloseButton"]';
+		const modalHeader = $(modalHeaderSelector, modal).parentElement;
 
-			if (desc) return desc.value || desc.innerText;
-		};
+		const description = () => text('.cellContainer textarea');
 
 		const container = createTag('div', 'clockify-widget-container');
 
 		const link = clockifyButton.createButton({ description });
 		const input = clockifyButton.createInput({ description });
 
-		container.style.right = '200px';
+		container.style.left = '200px';
 
 		container.append(link);
 		container.append(input);
 
-		elem.append(container);
+		modalHeader.append(container);
 	}
 );
 
@@ -32,7 +27,7 @@ clockifyButton.render(
 	`[aria-label="Page canvas (creator mode)"] [role="dialog"]:not(.clockify),
 	 [aria-label="Page canvas (creator mode)"] nav + div > div:not(.clockify)`,
 	{ observe: true },
-	(elem) => {
+	elem => {
 		const itemTitleSelector = '[data-testid="cell-editor"]';
 
 		const item = elem.closest('[aria-label="Page canvas (creator mode)"]');

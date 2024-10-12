@@ -92,6 +92,29 @@ body {
 	outline: none;
 }
 
+.settings__permissions__button-save-changes {
+	min-height: 2em;
+	min-width: 4em;
+	user-select: none;
+	background-image: linear-gradient(
+		rgb(237, 237, 237),
+		rgb(237, 237, 237) 38%,
+		rgb(222, 222, 222)
+	);
+	box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 0px,
+		rgba(255, 255, 255, 0.75) 0px 1px 2px inset;
+	color: rgb(68, 68, 68);
+	text-shadow: rgb(240, 240, 240) 0px 1px 0px;
+	border-width: 1px;
+	border-style: solid;
+	border-color: rgba(0, 0, 0, 0.25);
+	border-image: initial;
+	border-radius: 2px;
+	font: inherit;
+	margin: 10px 1px 0px 0px;
+	outline: none;
+}
+
 .settings__custom-domains__button-container {
 	display: flex;
 	margin-top: 15px;

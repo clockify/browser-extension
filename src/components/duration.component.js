@@ -1,13 +1,16 @@
 import * as React from 'react';
 import moment, { duration } from 'moment';
 import * as momentTimezone from 'moment-timezone';
+import { getBrowser } from '../helpers/browser-helper';
 
 import DatePicker from 'react-datepicker';
 import MyTimePicker from './my-time-picker.component';
-import MyDurationPicker from './my-duration-picker.component';
+import { MyDurationPicker } from '~/components/MyDurationPicker.tsx';
 import { HtmlStyleHelper } from '../helpers/html-style-helper';
 import locales from '../helpers/locales';
 import dateFnsLocale from './date-fns-locale';
+
+import 'react-datepicker/dist/react-datepicker.css';
 
 const htmlStyleHelpers = new HtmlStyleHelper();
 const daysOfWeek = [
@@ -17,7 +20,7 @@ const daysOfWeek = [
 	'WEDNESDAY',
 	'THURSDAY',
 	'FRIDAY',
-	'SATURDAY',
+	'SATURDAY'
 ];
 
 let _currentPeriod;
@@ -27,11 +30,7 @@ class Duration extends React.Component {
 	constructor(props) {
 		super(props);
 
-		const {
-			start,
-			end,
-			duration: intervalDuration,
-		} = this.props.timeEntry.timeInterval;
+		const { start, end } = this.props.timeEntry.timeInterval;
 		let startTime = moment(start);
 		let endTime = null;
 		if (end) {
@@ -52,9 +51,9 @@ class Duration extends React.Component {
 			dayAfterLockedEntries: 'January 1, 1970, 00:00:00 UTC',
 			manualModeDisabled: null,
 			time: duration(
-				intervalDuration ? intervalDuration : moment().diff(moment(start))
+				end ? moment(end).diff(start) : moment().diff(moment(start))
 			),
-			lang: 'en',
+			lang: 'en'
 		};
 
 		this.selectStartTime = this.selectStartTime.bind(this);
@@ -80,7 +79,7 @@ class Duration extends React.Component {
 		this.setState({
 			manualModeDisabled: JSON.parse(manualModeDisabled),
 			lang,
-			timeZone: timeZone,
+			timeZone: timeZone
 		});
 	}
 
@@ -106,7 +105,7 @@ class Duration extends React.Component {
 					end,
 					endTime,
 					time: duration(moment(end).diff(start)),
-					datePickerOpen: false,
+					datePickerOpen: false
 				});
 			} else {
 				this.setState({
@@ -115,7 +114,7 @@ class Duration extends React.Component {
 					time: duration(
 						end ? moment(end).diff(start) : moment().diff(moment(start))
 					),
-					datePickerOpen: false,
+					datePickerOpen: false
 				});
 			}
 			_currentPeriod = moment().diff(moment(start));
@@ -123,7 +122,7 @@ class Duration extends React.Component {
 			this.setState({
 				end,
 				endTime,
-				time: duration(moment(end).diff(start)),
+				time: duration(moment(end).diff(start))
 			});
 		}
 	}
@@ -136,8 +135,8 @@ class Duration extends React.Component {
 		moment.updateLocale('en', {
 			week: {
 				dow: daysOfWeek.indexOf(weekStart),
-				doy: 7 + daysOfWeek.indexOf(weekStart) - 1,
-			},
+				doy: 7 + daysOfWeek.indexOf(weekStart) - 1
+			}
 		});
 	}
 
@@ -147,7 +146,7 @@ class Duration extends React.Component {
 			!!this.props.workspaceSettings.lockTimeEntries
 		) {
 			this.setState({
-				dayAfterLockedEntries: this.props.workspaceSettings.lockTimeEntries,
+				dayAfterLockedEntries: this.props.workspaceSettings.lockTimeEntries
 			});
 		}
 	}
@@ -160,20 +159,20 @@ class Duration extends React.Component {
 			_interval = setInterval(() => {
 				_currentPeriod += 1000;
 				this.setState({
-					time: duration(_currentPeriod), //.format('HH:mm:ss', {trim: false})
+					time: duration(_currentPeriod) //.format('HH:mm:ss', {trim: false})
 				});
 			}, 1000);
 		}
 	}
 
 	selectStartTime(startTime) {
-		if (startTime && !startTime.isSame(this.state.startTime)) {
+		if (startTime && !startTime?.isSame(this.state.startTime)) {
 			this.changeStart(startTime);
 		}
 	}
 
 	selectEndTime(endTime) {
-		if (endTime && !endTime.isSame(this.state.endTime)) {
+		if (endTime && !endTime?.isSame(this.state.endTime)) {
 			this.changeEnd(endTime);
 		}
 	}
@@ -234,13 +233,13 @@ class Duration extends React.Component {
 
 	cancelDate() {
 		this.setState({
-			datePickerOpen: false,
+			datePickerOpen: false
 		});
 	}
 
 	openDatePicker() {
 		this.setState({
-			datePickerOpen: true,
+			datePickerOpen: true
 		});
 	}
 
@@ -252,6 +251,44 @@ class Duration extends React.Component {
 				htmlStyleHelpers.unfadeBackground();
 			}, 100);
 		}
+	}
+
+	get durationFormat() {
+		const { trackTimeDownToSecond, decimalFormat } =
+			this.props.workspaceSettings;
+
+		if (decimalFormat) {
+			return 'h.hh'; /* decimal */
+		} else if (trackTimeDownToSecond) {
+			return 'HH:mm:ss'; /* full */
+		} else {
+			return 'H:mm'; /* compact */
+		}
+	}
+
+	get calendarIcon() {
+		const iconPath = 'assets/images/calendar.png';
+		const iconUrl = getBrowser().runtime.getURL(iconPath);
+
+		return <img src={iconUrl} />;
+	}
+
+	get selectedDate() {
+		const { start, dayAfterLockedEntries } = this.state;
+
+		const startInMilliseconds = start.valueOf();
+		const dayAfterInMilliseconds = new Date(dayAfterLockedEntries).getTime();
+
+		return dayAfterInMilliseconds > startInMilliseconds
+			? new Date(dayAfterLockedEntries)
+			: new Date(start);
+	}
+
+	get firstUnlockedDate() {
+		const { isUserOwnerOrAdmin } = this.props;
+		const { dayAfterLockedEntries } = this.state;
+
+		return isUserOwnerOrAdmin ? null : new Date(dayAfterLockedEntries);
 	}
 
 	render() {
@@ -270,7 +307,69 @@ class Duration extends React.Component {
 			);
 		};
 
-		return (
+		return this.props.copyAsEntry ? (
+			<div className="duration copy-as-entry">
+				<MyDurationPicker
+					id="durationTimePicker"
+					time={this.state.time}
+					workspaceSettings={this.props.workspaceSettings}
+					timeInterval={this.props.timeEntry.timeInterval}
+					durationFormat={this.durationFormat}
+					className={'ant-time-picker-input'}
+					isDisabled={!this.state.end}
+					defaultOpenValue={this.state.time}
+					placeholder={`Duration (${this.durationFormat})`}
+					size="small"
+					format={this.durationFormat}
+					onChange={this.selectDuration}
+					editDisabled={this.state.manualModeDisabled}
+					title={
+						this.state.manualModeDisabled ? locales.DISABLED_MANUAL_MODE : ''
+					}
+				/>
+				<MyTimePicker
+					id="startTimePicker"
+					value={momentTimezone(this.state.startTime).tz(this.state.timeZone)}
+					className="ant-time-picker-input"
+					format={this.state.timeFormat}
+					size="small"
+					use12Hours={this.props.timeFormat === 'HOUR12'}
+					onChange={this.selectStartTime}
+					editDisabled={this.state.manualModeDisabled}
+					title={
+						this.state.manualModeDisabled ? locales.DISABLED_MANUAL_MODE : ''
+					}
+				/>
+				<label>-</label>
+				<MyTimePicker
+					id="endTimePicker"
+					value={momentTimezone(this.state.endTime).tz(this.state.timeZone)}
+					className={this.state.end ? 'ant-time-picker-input' : 'disabled'}
+					isDisabled={!this.state.end}
+					format={this.state.timeFormat}
+					size="small"
+					use12Hours={this.props.timeFormat === 'HOUR12'}
+					onChange={this.selectEndTime}
+					editDisabled={this.state.manualModeDisabled}
+					title={
+						this.state.manualModeDisabled ? locales.DISABLED_MANUAL_MODE : ''
+					}
+				/>
+				<DatePicker
+					selected={this.selectedDate}
+					onChange={this.selectDate.bind(this)}
+					customInput={this.calendarIcon}
+					withPortal
+					minDate={this.firstUnlockedDate}
+					title={
+						this.state.manualModeDisabled ? locales.DISABLED_MANUAL_MODE : ''
+					}
+					className={this.state.manualModeDisabled ? 'disable-manual' : ''}
+					locale={this.state.lang}
+					renderDayContents={renderDayContents}
+				/>
+			</div>
+		) : (
 			<div className="duration">
 				<div className="duration-time">
 					<label className={!this.state.end ? 'duration-label' : 'disabled'}>
@@ -327,7 +426,7 @@ class Duration extends React.Component {
 					<span
 						style={{
 							paddingRight: this.state.end ? '' : '3px',
-							position: 'relative',
+							position: 'relative'
 						}}
 					>
 						{!this.state.end ? (
@@ -336,7 +435,7 @@ class Duration extends React.Component {
 									position: 'absolute',
 									right: '5px',
 									bottom: '-12px',
-									wordBreak: 'keep-all',
+									wordBreak: 'keep-all'
 								}}
 							>
 								{locales.TODAY_LABEL}
@@ -366,20 +465,16 @@ class Duration extends React.Component {
 					<span className="ant-time-picker duration-end ant-time-picker-small">
 						<MyDurationPicker
 							id="durationTimePicker"
+							time={this.state.time}
+							workspaceSettings={this.props.workspaceSettings}
+							timeInterval={this.props.timeEntry.timeInterval}
+							durationFormat={this.durationFormat}
 							className={'ant-time-picker-input'}
 							isDisabled={!this.state.end}
 							defaultOpenValue={this.state.time}
-							placeholder={
-								this.props.workspaceSettings.trackTimeDownToSecond
-									? 'Duration (HH:mm:ss)'
-									: 'Duration (h:mm)'
-							}
+							placeholder={`Duration (${this.durationFormat})`}
 							size="small"
-							format={
-								this.props.workspaceSettings.trackTimeDownToSecond
-									? 'HH:mm:ss'
-									: 'H:mm'
-							}
+							format={this.durationFormat}
 							onChange={this.selectDuration}
 							editDisabled={this.state.manualModeDisabled}
 							title={

@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Modal from 'react-modal';
 import { getBrowser } from '../../helpers/browser-helper';
 import EditForm from '../edit-form.component';
 import EditFormManual from '../edit-form-manual.component';
 import { offlineStorage } from '../../helpers/offlineStorage';
-import locales from '../../helpers/locales';
 
 Modal.defaultStyles = {
 	zIndex: 2147483647,
@@ -22,8 +21,7 @@ function getActiveIcon() {
 			height="16"
 			viewBox="0 0 15 16"
 			fill="none"
-			xmlns="http://www.w3.org/2000/svg"
-		>
+			xmlns="http://www.w3.org/2000/svg">
 			<path
 				d="M11.0065 2.04616C11.4838 1.56806 11.3811 0.764579 10.7508 0.522636C9.8712 0.185007 8.91622 0 7.91809 0C3.54505 0 0 3.5511 0 7.93162C0 12.3121 3.54505 15.8632 7.91809 15.8632C8.91006 15.8632 9.85941 15.6805 10.7345 15.3468C11.3664 15.1059 11.4702 14.3009 10.992 13.8219C10.6822 13.5115 10.2133 13.4391 9.79745 13.5775C9.20813 13.7738 8.57779 13.88 7.92268 13.88C4.6429 13.88 1.9841 11.2167 1.9841 7.93131C1.9841 4.64592 4.6429 1.98259 7.92268 1.98259C8.58253 1.98259 9.21724 2.09041 9.81022 2.28937C10.2263 2.42902 10.6962 2.35702 11.0065 2.04616Z"
 				fill="#03A9F4"
@@ -46,12 +44,7 @@ function getActiveIcon() {
 
 function getInactiveIcon() {
 	return (
-		<svg
-			width="16"
-			height="16"
-			viewBox="0 0 16 16"
-			xmlns="http://www.w3.org/2000/svg"
-		>
+		<svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
 			{' '}
 			<path
 				d="M11.0065 2.04616C11.4838 1.56806 11.3811 0.764579 10.7508 0.522636C9.8712 0.185007 8.91622 0 7.91809 0C3.54505 0 0 3.5511 0 7.93162C0 12.3121 3.54505 15.8632 7.91809 15.8632C8.91006 15.8632 9.85941 15.6805 10.7345 15.3468C11.3664 15.1059 11.4702 14.3009 10.992 13.8219C10.6822 13.5115 10.2133 13.4391 9.79745 13.5775C9.20813 13.7738 8.57779 13.88 7.92268 13.88C4.6429 13.88 1.9841 11.2167 1.9841 7.93131C1.9841 4.64592 4.6429 1.98259 7.92268 1.98259C8.58253 1.98259 9.21724 2.09041 9.81022 2.28937C10.2263 2.42902 10.6962 2.35702 11.0065 2.04616Z"
@@ -88,7 +81,7 @@ function invokeIfFunction(trial) {
 	return trial;
 }
 
-const Button = (props) => {
+const Button = props => {
 	const styles = { marginLeft: '5px', float: 'none', position: 'relative' };
 	if (props.active) {
 		styles.color = '#03A9F4';
@@ -104,8 +97,7 @@ const Button = (props) => {
 				alignItems: 'center',
 				cursor: 'pointer',
 				...props.style,
-			}}
-		>
+			}}>
 			{props.active ? getActiveIcon() : getInactiveIcon()}
 			{!props.small && (
 				<span
@@ -114,11 +106,8 @@ const Button = (props) => {
 						props.active
 							? 'clockify-button-active clockify-button-active-span'
 							: 'clockify-button-inactive clockify-button-inactive-span'
-					}
-				>
-					{!props.active
-						? clockifyLocales.START_TIMER
-						: clockifyLocales.STOP_TIMER}
+					}>
+					{!props.active ? clockifyLocales.START_TIMER : clockifyLocales.STOP_TIMER}
 				</span>
 			)}
 		</div>
@@ -133,12 +122,12 @@ function ClockifyButton(props) {
 		userSettings: null,
 		isPopupOpen: false,
 		timeEntry: null,
-		isDarkMode: false,
+		isDarkTheme: false,
 		showPostStartPopup: true,
 	});
 
-	const setIsPopupOpen = (isOpen) => {
-		setState((state) => ({
+	const setIsPopupOpen = isOpen => {
+		setState(state => ({
 			...state,
 			isPopupOpen: isOpen,
 		}));
@@ -150,8 +139,8 @@ function ClockifyButton(props) {
 		if (editFormRef.current) {
 			return editFormRef.current.getAllFieldData();
 		}
-	}
-	const handleClick = (e) => {
+	};
+	const handleClick = e => {
 		if (e) {
 			e.preventDefault();
 			e.stopPropagation();
@@ -160,33 +149,32 @@ function ClockifyButton(props) {
 	};
 
 	const syncDarkMode = async () => {
-		const userId = await localStorage.getItem('userId');
-		const darkMode = await localStorage.getItem('darkMode');
-		const darkModeFromStorageForUser =
-			darkMode &&
-			JSON.parse(darkMode).filter((darkMode) => darkMode.userId === userId)
-				.length > 0
-				? JSON.parse(darkMode).filter(
-						(darkMode) => darkMode.userId === userId
-				  )[0]
-				: null;
-		if (darkModeFromStorageForUser) {
-			setState((state) => ({
-				...state,
-				isDarkMode: darkModeFromStorageForUser.enabled,
-			}));
-		}
+		const appStore = await localStorage.getItem('appStore');
+		const appStoreParsed = JSON.parse(appStore).state;
+
+		const userId = appStoreParsed.userData.id;
+		const usersDarkThemePreference = appStoreParsed.usersDarkThemePreference;
+
+		const userPreference = usersDarkThemePreference.find(
+			(pref) => pref.userId === userId
+		);
+		const isDarkTheme = userPreference ? userPreference.enabled : false;
+
+		setState((prevState) => ({
+			...prevState,
+			isDarkTheme,
+		}));
 	};
 
-	const onChangedListener = (changes) => {
+	const onChangedListener = changes => {
 		const changedItems = Object.keys(changes);
-		if (changedItems.includes('permanent_darkMode')) {
+		if (changedItems.includes('appStore')) {
 			syncDarkMode();
 		}
 		if (changedItems.includes('workspaceSettings')) {
-			setState((state) => ({
+			setState(state => ({
 				...state,
-				workspaceSettings: JSON.parse(changes.workspaceSettings.newValue),
+				workspaceSettings: JSON.parse(changes.workspaceSettings.newValue || '{}'),
 			}));
 		}
 	};
@@ -197,10 +185,9 @@ function ClockifyButton(props) {
 			aBrowser.storage.local.get(
 				['workspaceSettings', 'userSettings', 'showPostStartPopup'],
 				({ workspaceSettings, userSettings, showPostStartPopup }) => {
-					workspaceSettings =
-						workspaceSettings && JSON.parse(workspaceSettings);
+					workspaceSettings = workspaceSettings && JSON.parse(workspaceSettings);
 					userSettings = userSettings && JSON.parse(userSettings);
-					setState((state) => ({
+					setState(state => ({
 						...state,
 						workspaceSettings,
 						userSettings,
@@ -224,10 +211,11 @@ function ClockifyButton(props) {
 	useEffect(() => {
 		//when manual input calls re-render
 		if (props.timeEntry) {
-			setState((state) => ({
+			setState(state => ({
 				...state,
 				timeEntry: props.timeEntry,
 				manualMode: props.manualMode,
+				copyAsEntry: props.copyAsEntry,
 				isPopupOpen: props.isPopupOpen,
 			}));
 		}
@@ -246,7 +234,7 @@ function ClockifyButton(props) {
 		if (_clockifyShowPostStartPopup) {
 			// OpenPostStartPopupDlg(entry);
 			if (entry?.message) alert(entry.message);
-			setState((state) => ({
+			setState(state => ({
 				...state,
 				isPopupOpen: true,
 				timeEntry: entry,
@@ -265,12 +253,8 @@ function ClockifyButton(props) {
 			workspaceSettings.features.featureSubscriptionType !== 'SELF_HOSTED' &&
 			!workspaceSettings.features.timeTracking
 		) {
-			const isUserOwnerOrAdmin = await localStorage.getItem(
-				'isUserOwnerOrAdmin'
-			);
-			const wasRegionalEverAllowed = await localStorage.getItem(
-				'wasRegionalEverAllowed'
-			);
+			const isUserOwnerOrAdmin = await localStorage.getItem('isUserOwnerOrAdmin');
+			const wasRegionalEverAllowed = await localStorage.getItem('wasRegionalEverAllowed');
 			alert(
 				!wasRegionalEverAllowed
 					? isUserOwnerOrAdmin
@@ -290,9 +274,7 @@ function ClockifyButton(props) {
 			// 	timeEntryOptionsInvoked.description;
 			title = timeEntryOptionsInvoked.description;
 		}
-		const appendWebsiteURL = await localStorage.getItem(
-			'permanent_appendWebsiteURL'
-		);
+		const appendWebsiteURL = await localStorage.getItem('permanent_appendWebsiteURL');
 		let pipeSeparator = ' | ';
 		if (appendWebsiteURL) {
 			if (title.includes(' | ')) pipeSeparator = ' || ';
@@ -306,8 +288,7 @@ function ClockifyButton(props) {
 		try {
 			if (
 				title &&
-				title?.split(pipeSeparator)[0] ===
-					inProgressDescription?.split(pipeSeparator)[0]
+				title?.split(pipeSeparator)[0] === inProgressDescription?.split(pipeSeparator)[0]
 			) {
 				let timeEntryId, updatedFieldValues;
 				try {
@@ -315,14 +296,18 @@ function ClockifyButton(props) {
 					timeEntryId = entryId;
 					updatedFieldValues = updatedFields;
 				} catch (error) {
-					console.log(error)
+					console.log(error);
 				}
 				if (!timeEntryId) {
 					aBrowser.runtime.sendMessage(
 						{
 							eventName: 'endInProgress',
+							options: {
+								endedFromIntegration: true,
+								integrationName: props.integrationName,
+							},
 						},
-						(response) => {
+						response => {
 							if (!response) {
 								_waitingForResponse = false;
 								alert(clockifyLocales.YOU_MUST_BE_LOGGED_IN_TO_START);
@@ -339,7 +324,7 @@ function ClockifyButton(props) {
 										{
 											eventName: 'fetchEntryInProgress',
 										},
-										(response) => {
+										response => {
 											if (!response) {
 												alert(clockifyLocales.TAG__GET__ERROR);
 												_waitingForResponse = false;
@@ -378,7 +363,7 @@ function ClockifyButton(props) {
 									timeEntryInProgress: null,
 								});
 								_waitingForResponse = false;
-								setState((state) => ({
+								setState(state => ({
 									...state,
 									isPopupOpen: false,
 								}));
@@ -386,20 +371,25 @@ function ClockifyButton(props) {
 						}
 					);
 				} else {
-					aBrowser.runtime.sendMessage({
-						eventName: 'updateTimeEntryValues',
-						options: {
-							entryId: timeEntryId,
-							body: updatedFieldValues,
-						},
-					})
-						.then((response) => {
+					aBrowser.runtime
+						.sendMessage({
+							eventName: 'updateTimeEntryValues',
+							options: {
+								entryId: timeEntryId,
+								body: updatedFieldValues,
+							},
+						})
+						.then(response => {
 							if (response && response.status === 200) {
 								aBrowser.runtime.sendMessage(
 									{
 										eventName: 'endInProgress',
+										options: {
+											endedFromIntegration: true,
+											integrationName: props.integrationName,
+										},
 									},
-									(response) => {
+									response => {
 										if (!response) {
 											_waitingForResponse = false;
 											alert(clockifyLocales.YOU_MUST_BE_LOGGED_IN_TO_START);
@@ -412,18 +402,18 @@ function ClockifyButton(props) {
 											return;
 										}
 										if (response.status === 401) {
-							alert(clockifyLocales.WORKSPACE_LOCKED)
-							_waitingForResponse = false;
-							return;
-						}
-						if (response.status === 400) {
+											alert(clockifyLocales.WORKSPACE_LOCKED);
+											_waitingForResponse = false;
+											return;
+										}
+										if (response.status === 400) {
 											const msg = clockifyLocales.CANNOT_END_ENTRY;
 											if (_clockifyShowPostStartPopup) {
 												aBrowser.runtime.sendMessage(
 													{
 														eventName: 'fetchEntryInProgress',
 													},
-													(response) => {
+													response => {
 														if (!response) {
 															alert(clockifyLocales.TAG__GET__ERROR);
 															_waitingForResponse = false;
@@ -434,15 +424,20 @@ function ClockifyButton(props) {
 															_waitingForResponse = false;
 															return;
 														}
-														const { status, entry: hydratedEntry } = response;
+														const { status, entry: hydratedEntry } =
+															response;
 														aBrowser.storage.local.set({
 															timeEntryInProgress: hydratedEntry,
 														});
 														if (hydratedEntry) {
-															props.updateButtonProps({ active: true });
+															props.updateButtonProps({
+																active: true,
+															});
 															if (!_clockifyPopupDlg) {
 																// OpenPostStartPopupDlg(hydratedEntry, msg);
-																saveEntryAndOpenPopup(hydratedEntry);
+																saveEntryAndOpenPopup(
+																	hydratedEntry
+																);
 															} else {
 																alert(msg);
 															}
@@ -462,7 +457,7 @@ function ClockifyButton(props) {
 												timeEntryInProgress: null,
 											});
 											_waitingForResponse = false;
-											setState((state) => ({
+											setState(state => ({
 												...state,
 												isPopupOpen: false,
 											}));
@@ -476,7 +471,7 @@ function ClockifyButton(props) {
 										{
 											eventName: 'fetchEntryInProgress',
 										},
-										(response) => {
+										response => {
 											if (!response) {
 												alert(clockifyLocales.TAG__GET__ERROR);
 												_waitingForResponse = false;
@@ -509,15 +504,15 @@ function ClockifyButton(props) {
 								}
 							}
 						})
-						.catch((error) => {
-							console.log(error)
+						.catch(error => {
+							console.log(error);
 							const msg = clockifyLocales.CANNOT_END_ENTRY;
 							if (_clockifyShowPostStartPopup) {
 								aBrowser.runtime.sendMessage(
 									{
 										eventName: 'fetchEntryInProgress',
 									},
-									(response) => {
+									response => {
 										if (!response) {
 											alert(clockifyLocales.TAG__GET__ERROR);
 											_waitingForResponse = false;
@@ -559,9 +554,13 @@ function ClockifyButton(props) {
 				aBrowser.runtime.sendMessage(
 					{
 						eventName: 'startWithDescription',
-						options: timeEntryOptionsInvoked,
+						options: {
+							...timeEntryOptionsInvoked,
+							isStartedFromIntegration: true,
+							integrationName: props.integrationName,
+						},
 					},
-					(response) => {
+					response => {
 						if (!response) {
 							_waitingForResponse = false;
 							alert(clockifyLocales.YOU_MUST_BE_LOGGED_IN_TO_START);
@@ -579,21 +578,18 @@ function ClockifyButton(props) {
 						if (response.status === 400) {
 							if (_clockifyShowPostStartPopup) {
 								const msg = `${clockifyLocales.COMPLETE_CURRENT_ENTRY}!<br/>${clockifyLocales.ENTER_REQUIRED_FIEEDS_OR_EDIT_WORKSPACE_SETTINGS}`;
-								aBrowser.storage.local.get(
-									['timeEntryInProgress'],
-									(result) => {
-										const { timeEntryInProgress } = result;
-										if (timeEntryInProgress) {
-											if (!_clockifyPopupDlg) {
-												// OpenPostStartPopupDlg(timeEntryInProgress, msg);
-												saveEntryAndOpenPopup(timeEntryInProgress);
-											}
-										} else {
-											alert(msg.replaceAll('<br/>', '\n'));
+								aBrowser.storage.local.get(['timeEntryInProgress'], result => {
+									const { timeEntryInProgress } = result;
+									if (timeEntryInProgress) {
+										if (!_clockifyPopupDlg) {
+											// OpenPostStartPopupDlg(timeEntryInProgress, msg);
+											saveEntryAndOpenPopup(timeEntryInProgress);
 										}
-										_waitingForResponse = false;
+									} else {
+										alert(msg.replaceAll('<br/>', '\n'));
 									}
-								);
+									_waitingForResponse = false;
+								});
 							} else {
 								_waitingForResponse = false;
 							}
@@ -615,7 +611,7 @@ function ClockifyButton(props) {
 									{
 										eventName: 'fetchEntryInProgress',
 									},
-									(response) => {
+									response => {
 										if (!response) {
 											alert(clockifyLocales.TAG__GET__ERROR);
 											_waitingForResponse = false;
@@ -643,12 +639,8 @@ function ClockifyButton(props) {
 				);
 			}
 		} catch (error) {
-			if (
-				error.toString().toLowerCase().includes('extension context invalidated')
-			) {
-				alert(
-					`${clockifyLocales.EXT_RELOADED}.\n${clockifyLocales.REFRESH_THE_PAGE}!`
-				);
+			if (error.toString().toLowerCase().includes('extension context invalidated')) {
+				alert(`${clockifyLocales.EXT_RELOADED}.\n${clockifyLocales.REFRESH_THE_PAGE}!`);
 			} else {
 				alert(
 					`${clockifyLocales.EXT_CONTEXT_INVALIDATED}.\n${clockifyLocales.REFRESH_THE_PAGE}!`
@@ -680,11 +672,10 @@ function ClockifyButton(props) {
 					},
 				}}
 				isOpen={state.isPopupOpen}
-				ariaHideApp={false}
-			>
+				ariaHideApp={false}>
 				<div
 					className={`clockify-integration-popup${
-						state.isDarkMode ? ' clockify-dark-mode' : ''
+						state.isDarkTheme ? ' clockify-dark-mode' : ''
 					}`}
 				>
 					<div className="clockify-integration-popup-header">
@@ -694,12 +685,12 @@ function ClockifyButton(props) {
 									Time: {props.timeEntry.originalInput}
 								</p>
 							</div>
+						) : props.copyAsEntry ? (
+							<div className="clockify-manual-entry-header-container">
+								<p className="clockify-manual-entry-header-text">Time and date</p>
+							</div>
 						) : (
-							<Button
-								handleClick={handleClick}
-								active={props.active}
-								style={{ marginTop: '10px', marginLeft: '20px' }}
-							/>
+							<></>
 						)}
 						<img
 							src={aBrowser.runtime.getURL('assets/images/closeX.svg')}
@@ -708,24 +699,37 @@ function ClockifyButton(props) {
 							onClick={() => {
 								setIsPopupOpen(false);
 								if (props.manualMode) {
-									props.updateButtonProps(null, { manualMode: false });
+									props.updateButtonProps(null, {
+										manualMode: false,
+									});
+								}
+
+								if (props.copyAsEntry) {
+									props.updateButtonProps(null, {
+										copyAsEntry: false,
+									});
 								}
 							}}
 						/>
 					</div>
 					{state.timeEntry && state.workspaceSettings && state.userSettings ? (
-						props.manualMode ? (
+						props.manualMode || props.copyAsEntry ? (
 							<EditFormManual
 								timeEntry={state.timeEntry}
 								workspaceSettings={state.workspaceSettings}
 								timeFormat={state.userSettings.timeFormat}
 								userSettings={state.userSettings}
 								integrationMode
+								integrationName={props.integrationName}
 								inProgress={true}
 								closeIntegrationPopup={() => {
 									setIsPopupOpen(false);
-									props.updateButtonProps(null, { manualMode: false });
+									props.updateButtonProps(null, {
+										manualMode: false,
+										copyAsEntry: false,
+									});
 								}}
+								copyAsEntry={props.copyAsEntry}
 							/>
 						) : (
 							<EditForm
@@ -740,6 +744,7 @@ function ClockifyButton(props) {
 									setIsPopupOpen(false);
 									props.updateButtonProps(null, {
 										manualMode: false,
+										copyAsEntry: false,
 									});
 								}}
 							/>
@@ -750,6 +755,5 @@ function ClockifyButton(props) {
 		</>
 	);
 }
-
 
 export default ClockifyButton;

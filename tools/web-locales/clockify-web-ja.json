@@ -113,13 +113,15 @@
         "MANAGE_CATEGORIES": "カテゴリを管理する",
         "APPROVAL_MODAL": {
             "TITLE": "承認のために提出してください",
-            "MESSAGE": "承認のために{ from }-{ to }を提出する準備はできましたか？"
+            "MESSAGE": "承認のために{ from }-{ to }を提出する準備はできましたか？",
+            "MESSAGE_BOLD": "<strong>{ from } - { to } </strong> を承認のために提出する準備はできましたか?"
         },
         "MONTHLY_APPROVAL_MODAL": {
             "MESSAGE": "承認のために { period } を送信する準備はできましたか?"
         },
         "PERIOD_APPROVAL_MODAL": {
-            "MESSAGE": "承認のために { period } を送信する準備はできましたか?"
+            "MESSAGE": "承認のために { period } を送信する準備はできましたか?",
+            "MESSAGE_BOLD": "<strong>{ period }</strong> を承認のために提出する準備はできましたか?"
         },
         "EXPORT": {
             "EXPENSE_TOTAL_LABEL": "経費合計",
@@ -129,7 +131,9 @@
         "NOTE_PLACEHOLDER": "メモを追加",
         "UNDO_DELETE": {
             "EXPENSE_RESTORED_SUCCESS": "経費が回復しました",
-            "EXPENSES_RESTORED_SUCCESS": "経費が回復しました"
+            "EXPENSES_RESTORED_SUCCESS": "経費が回復しました",
+            "EXPENSE_RESTORED_ERROR": "費用は復元できませんでした",
+            "EXPENSES_RESTORED_ERROR": "経費は取り戻せなかった"
         },
         "TITLE_WITH_INTERPOLATION": "経費:"
     },
@@ -143,7 +147,8 @@
             "EXPLANATION": "休暇のポリシーと休日を定義し、休暇を要求し、人々がいつ不在であるかを確認し、見越額と残りの残高を追跡します。",
             "REGULAR_USER_FLAG": "通常のユーザーは他の人の休暇を見ることができます",
             "ACTIVATE_LABEL": " 休暇を有効にする",
-            "REGULAR_USER_INFO": "一般ユーザーはチーム外の休暇を確認できる"
+            "REGULAR_USER_INFO": "一般ユーザーはチーム外の休暇を確認できる",
+            "POSSIBLE_OVERLAPPING_REQUESTS": "休暇申請が重複している可能性があります。"
         },
         "ADD_NEW_LABEL": "新しい{ label }を追加",
         "ADD_NEW_CATEGORY": "新しいカテゴリを追加",
@@ -372,7 +377,8 @@
             },
             "ROLES": {
                 "ADMINS_AND_MANAGERS": "管理者とチームマネージャー",
-                "ADMINS_AND_PROJECT_MANAGERS": "管理者とプロジェクトマネージャー"
+                "ADMINS_AND_PROJECT_MANAGERS": "管理者とプロジェクトマネージャー",
+                "ADMINS_AND_PM_CUSTOM_MANAGERS": "管理者と{ projectLabel }マネージャー"
             },
             "EDIT_TIME_AND_EXPENSES": {
                 "RULE_TITLE": "他の人の時間と費用を編集できるのは誰ですか",
@@ -406,7 +412,8 @@
                 "TITLE": "割り当てを作成できるのは誰ですか",
                 "DESCRIPTION": "プロジェクトマネージャーがプロジェクトの割り当てを作成できるようにします。",
                 "INFO_MESSAGE": "プロジェクト マネージャーがプロジェクトの割り当てとマイルストーンを作成できるようにします。",
-                "INFO_DESCRIPTION": "ユーザーが自分の { projectLabelPlural } の割り当てを作成および編集できるようにします。"
+                "INFO_DESCRIPTION": "ユーザーが自分の { projectLabelPlural } の割り当てを作成および編集できるようにします。",
+                "INFO_MESSAGE_WITH_PARAM": "{ project } マネージャーがプロジェクトの割り当てとマイルストーンを作成できるようにします。"
             },
             "COST_RATES": {
                 "VIEW": {
@@ -439,7 +446,8 @@
                 "DESCRIPTION_1": "マネージャーがタイムシートを承認できるようにする",
                 "EXPENSES_SECTION": "そして経費",
                 "TITLE": "提出されたタイムシートを承認できる人",
-                "DESCRIPTION_2": "チームまたはプロジェクトのメンバーによって提出されました。"
+                "DESCRIPTION_2": "チームまたはプロジェクトのメンバーによって提出されました。",
+                "DESCRIPTION_2_INFO": "チームまたは{ projectLabel }メンバーによって提出されました。"
             }
         },
         "TIME_ROUNDING_MODAL": {
@@ -548,7 +556,8 @@
                             "ANDROID": "AndroidリダイレクトURL",
                             "APPLE": "AppleリダイレクトURL",
                             "CHROME_EXTENSION": "Chrome拡張機能のリダイレクトURL",
-                            "FIREFOX_EXTENSION": "Firefox拡張リダイレクトURL"
+                            "FIREFOX_EXTENSION": "Firefox拡張リダイレクトURL",
+                            "KIOSK": "キオスクのリダイレクト URL"
                         }
                     },
                     "TOKEN_FIELD": {
@@ -719,10 +728,21 @@
                 "REGION": "データ領域",
                 "CHANGE_REGION": {
                     "CHANGE_WARNING_MESSAGE_2": "リージョンサーバーからグローバルサーバーへのデータ転送は提供しません。",
-                    "CHANGE_WARNING_MESSAGE_1": "リージョンサーバーには無料のベーシックプランやスタンダードプランはありません。サブスクリプションが期限切れになると、すべての機能がロックされます。"
+                    "CHANGE_WARNING_MESSAGE_1": "リージョンサーバーには無料のベーシックプランやスタンダードプランはありません。サブスクリプションが期限切れになると、すべての機能がロックされます。",
+                    "ADDONS_WARNING_MESSAGE": "インストールされているアドオンは転送されません。",
+                    "CHANGE_WARNING_MESSAGE_INFO": "これは一方通行のアクションです。リージョンサーバーからグローバルサーバーへのデータ転送は提供していません。"
                 },
                 "DATA_TRANSFER": {
-                    "CANNOT_TRANSFER_REGION": "データを {region} に転送できません。ワークスペース内の一部のユーザーは、そのリージョンにすでにアカウントを持っています。",
+                    "CANNOT_TRANSFER_REGION": {
+                        "WORKSPACE_LOCKED": "ワークスペースはロックされています。ロックされたワークスペースは転送できません。",
+                        "NO_ACTIVE_SUBSCRIPTION": "ワークスペースにアクティブなサブスクリプションがないか、サブスクリプションでワークスペースの転送が許可されていません。",
+                        "CUSTOM_PRICE": "お客様のサブスクリプションは弊社のサポートスタッフによって管理されます。",
+                        "UNPAID_INVOICES": "未払いの請求書があるか、支払い期限が過ぎています。",
+                        "DEFAULT": "データを {region} に転送できません。ワークスペースの一部のユーザーは、すでにそのリージョンにアカウントを持っています。",
+                        "BUNDLE_SUBSCRIPTION": "バンドルサブスクリプションのため、データを {region} に転送できません。",
+                        "CAKE_MIGRATION": "現在、データ転送はできません。数分後にもう一度お試しください。",
+                        "ACCOUNT_ON_DESTINATION": "データを {region} に転送できません。ワークスペースの一部のユーザーは、すでにそのリージョンにアカウントを持っています。"
+                    },
                     "CONTACT_SUPPORT": "さらにサポートが必要な場合は、{ contactUs } してください。",
                     "DATA_TRANSFER_TITLE": "データ転送",
                     "DATA_TRANSFER_INFO": "あなたとこのワークスペースのユーザーはログアウトされ、データ転送の開始後最大 12 時間は時間を追跡できなくなります。",
@@ -732,7 +752,10 @@
                     "DATA_TRANSFER_LOGOUT_INFO": "パスワードを入力するとデータ転送が開始され、ログアウトされます。",
                     "CONFIRM_DATA_TRANSFER_TITLE": "データ転送の確認",
                     "DATA_TRANSFER_CODE_LOGOUT_INFO": "コードを入力するとデータ転送が開始され、ログアウトされます。",
-                    "ENTER_ONE_TIME_CODE": "ワンタイムコードを入力してください:"
+                    "ENTER_ONE_TIME_CODE": "ワンタイムコードを入力してください:",
+                    "DATA_TRANSFER_START_INFO": "あなたとこのワークスペースのユーザーはログアウトされ、データ転送の開始後最大 12 時間は時間を追跡できなくなります。その後、{ regionUrl } のワークスペースにアクセスできるようになります。",
+                    "START_DATA_TRANSFER_INFO": "あなたとこのワークスペースのユーザーはログアウトされ、データ転送の開始後最大 12 時間は時間を追跡できなくなります。その後、{ regionUrl } 上のワークスペースにアクセスできるようになります。",
+                    "CANNOT_TRANSFER_REGION_TO_REGION": "データを { region } に転送できません。ワークスペースの一部のユーザーがすでにそのリージョンにアカウントを持っています。"
                 },
                 "CHANGE_REGION_TITLE": "地域を変更する",
                 "CANNOT_CHANGE_REGION": "リージョンサーバーからグローバルサーバーへのデータ転送は提供していません。"
@@ -747,7 +770,11 @@
             "INFO_MESSAGE": " { value }で追跡されたすべての時間とプロジェクトは完全に削除されます。これを元に戻すことはできません。",
             "SUBSCRIPTION": "有料サブスクリプションは自動的にキャンセルされます。",
             "TO_CONFIRM": "確認するために",
-            "CONFIRM_WITH_INTERPOLATION": "{value} を削除してもよろしいですか?"
+            "CONFIRM_WITH_INTERPOLATION": "{value} を削除してもよろしいですか?",
+            "ADDON_SUBSCRIPTION": "有料のアドオンサブスクリプションは自動的にキャンセルされます。",
+            "INFO_MESSAGE_ADDON": " { value } で追跡された時間とプロジェクトはすべて永久に削除されます。アドオンはアンインストールされます。元に戻すことはできません。",
+            "SUBSCRIPTION_ADDON": "有料アドオンとClockifyサブスクリプションは自動的にキャンセルされます。",
+            "WORKSPACE_ADDON_SUBSCRIPTION": "有料アドオンとClockifyサブスクリプションは自動的にキャンセルされます。"
         },
         "LEAVE": {
             "INFO_MESSAGE": "あなたが去った場合、誰かがあなたを再び招待しない限り、あなたは戻ることができません。本当に去りますか？"
@@ -845,7 +872,8 @@
             "OWNER_LEAVE_WORKSPACE_ERROR_MSG": "所有者は、所有権を他の誰かに譲渡するか、ワークスペースに残された唯一のメンバーになるまで、ワークスペースを離れることはできません。",
             "DELETE_WORKSPACE_ERROR_MSG": "所有権を他の誰かに譲渡するか、ワークスペースに残っている唯一のメンバーになるまで、ワークスペースを削除することはできません。",
             "LEAVE_WORKSPACE_ERROR_MSG": "所有権を他の誰かに譲渡するか、ワークスペースに残っている唯一のメンバーになるまで、ワークスペースを離れることはできません。",
-            "WILL_BE_REMOVED_LABEL": "ワークスペースは削除されます"
+            "WILL_BE_REMOVED_LABEL": "ワークスペースは削除されます",
+            "DELETE_BUNDLE_WORKSPACE_ERROR_MSG": "ワークスペースはアクティブなバンドル サブスクリプションにあります。ワークスペースを削除するには、サポートにお問い合わせください。"
         },
         "ACCOUNTS_USER_SERVICE": {
             "GET_USERS_ERROR_MSG": "ユーザーの取得に失敗しました。",
@@ -868,7 +896,8 @@
             "WORKSPACE_NAME": {
                 "TITLE": "ワークスペース名",
                 "LENGTH_ERROR_MESSAGE": "ワークスペース名は2〜250文字の長さである必要があります",
-                "ERROR_MESSAGE_LENGTH": "ワークスペース名の長さは 2 ～ 50 文字にする必要があります"
+                "ERROR_MESSAGE_LENGTH": "ワークスペース名の長さは 2 ～ 50 文字にする必要があります",
+                "VALIDATION_ERROR_MESSAGE": "ワークスペース名の長さは 1 ～ 50 文字にする必要があります"
             },
             "TIMESHEET_SETTING": {
                 "INFO_MESSAGE": "毎週のタイムシートビューを使用して、タスクとプロジェクトの時間を入力します。アクティブ化されている間、プロジェクトはワークスペース全体の必須フィールドです。",
@@ -909,7 +938,8 @@
             "CURRENCY": {
                 "INFO_MESSAGE": "請求可能額と費用額がレポートに表示される通貨。",
                 "CHANGED_SUCCESSFULY": "通貨が更新されました。",
-                "INFO_MESSAGE_DEFAULT": "時給と経費の通貨を追加して、クライアントに割り当てます。"
+                "INFO_MESSAGE_DEFAULT": "時給と経費の通貨を追加して、クライアントに割り当てます。",
+                "INFO_MESSAGE_DEFAULT_WITH_PARAM": "時間単価と経費の通貨を追加し、{ clients } に割り当てます。"
             },
             "SAVING_TIME": {
                 "TITLE": "なしで時間を節約することを許可しないでください",
@@ -940,7 +970,8 @@
                 "COMPANY_ADDRESS": {
                     "TITLE": "会社の住所",
                     "INFO_MESSAGE": "「請求元」セクションの下のすべての請求書に表示される会社の住所。"
-                }
+                },
+                "INFO_MESSAGE_WITH_PARAM": "追跡された時間に基づいて { clients } の請求書を作成してダウンロードします。"
             },
             "COST_PROFIT": {
                 "TITLE": "コストと利益の分析",
@@ -949,13 +980,15 @@
                 "WORKSPACE_RATE": {
                     "TITLE": "ワークスペースのコスト率",
                     "INFO_MESSAGE": "追跡された各時間のデフォルトのコストレート（より具体的なレートが定義されていない場合）。"
-                }
+                },
+                "INFO_MESSAGE_WITH_PARAM": "人件費率を設定し、請求額 { clients } とチームへの支払額をレポートで確認します。"
             },
             "WORKING_DAYS_INFO_MESSAGE": "休業日を休業日から除外し、週ごとの概要で週末を視覚的に区別します。",
             "TRACK_LOCATION": {
                 "TITLE": "場所を追跡する",
                 "INFO_MESSAGE": "モバイルアプリ（iOS & Android）を介して出勤するリモートフィールドワーカーが訪問したすべてのクライアントジョブサイトを表示します。",
-                "TOGGLE": "GPS追跡を有効にする"
+                "TOGGLE": "GPS追跡を有効にする",
+                "INFO_MESSAGE_WITH_PARAM": "モバイル アプリ (iOS および Android) 経由で出勤したリモート フィールド ワーカーが訪問したすべての { client } ジョブ サイトを表示します。"
             },
             "CAPTURE_SCREENSHOT": {
                 "TITLE": "スクリーンショットをキャプチャする",
@@ -1022,7 +1055,17 @@
                 "INFO_MESSAGE": "時間エントリをお気に入りとしてマークし、事前設定されたエントリを使用して時間を追跡します。",
                 "EANBLE_FAVORITE_ENTRIES_LABEL": "お気に入りのエントリを有効にする",
                 "TITLE": "お気に入りのエントリ"
-            }
+            },
+            "WEEK_START_INFO_MESSAGE": "すべての新規メンバーのデフォルトの週の開始 (メンバー プロファイルで週の開始を上書きできます)。",
+            "SEE_BILLABLE_AND_COST_AMOUNT": "請求可能額と費用額を確認する",
+            "SEE_BILLABLE_AMOUNT_ONLY": "請求可能額を見る",
+            "WEEK_START": {
+                "TITLE": "週の始まり",
+                "INFO_MESSAGE": "すべての新規メンバーのデフォルトの週の開始 (メンバー プロファイルで週の開始を上書きできます)。",
+                "INFO": "すべての新規メンバーのデフォルトの週の開始日 (メンバーのプロフィールで週の開始日を上書きできます)。"
+            },
+            "DEFAULT_BREAKS_PROJECT_LABEL_WITH_PARAM": "デフォルトのブレーク { project }",
+            "ENABLE_PROJECT_SWITCH_WITH_PARAM": "キオスク内で{ projects }と{ tasks }の切り替えを許可する"
         },
         "SHARED": {
             "AUTH_LABEL": "認証"
@@ -1181,7 +1224,8 @@
                 },
                 "TOTAL": "合計金額",
                 "VAT_LABEL": "バット"
-            }
+            },
+            "UPGRADE_WORKSPACE": "{ workspaceName } ワークスペースのアップグレード"
         },
         "FEATURES": {
             "PLAN": {
@@ -1280,7 +1324,8 @@
                 "SUCCESS_MESSAGE_PLURAL": "割り当てが正常に作成されました",
                 "FAILED_MESSAGE_PLURAL": "課題を保存できませんでした",
                 "WORKING_DAYS_WITH_INTERPOLATION": "営業日：",
-                "TOTAL_HOURS_WITH_INTERPOLATION": "合計時間："
+                "TOTAL_HOURS_WITH_INTERPOLATION": "合計時間：",
+                "WORKING_DAYS_WITH_NUMBER": "{ numOfWorkingDays }営業日"
             },
             "DELETE": {
                 "SUCCESS": "割り当てが正常に削除されました",
@@ -1363,7 +1408,10 @@
             "REMIND_TO_PUBLISH": "公開をリマインドする",
             "REMIND_TO_PUBLISH_BODY_MESSAGE": "{ from } ～ { to } のドラフト課題を公開するための電子メール リマインダーをマネージャーに送信する準備はできていますか?",
             "NO_DRAFT_ASSIGNMENTS_LABEL": "ドラフトの割り当てはありません",
-            "REMIND_TO_PUBLISH_SUCCESS_MESSAGE": "リマインダーを送信しました"
+            "REMIND_TO_PUBLISH_SUCCESS_MESSAGE": "リマインダーを送信しました",
+            "REMIND_TO_PUBLISH_BODY_TEXT": "{ from } - { to } のドラフト課題を公開するようにマネージャーに電子メールリマインダーを送信する準備はできていますか?",
+            "PLUS_X_MORE": "+ {value} 以上",
+            "GENERIC_GET_ERROR_MESSAGE": "データを取得できませんでした。もう一度お試しください"
         },
         "ADD_MEMBERS_TO_PROJECT": {
             "TITLE": "プロジェクトにメンバーを追加する",
@@ -1488,7 +1536,9 @@
             "TITLE": "プロジェクトとタスクにメンバーを追加する",
             "DESCRIPTION": "{ userName } がアクセスできないプロジェクトとタスクは {numberOfProjectsAndTasks} 個あります。それらをプロジェクトとタスクに追加しますか?",
             "DESCRIPTION_BOTH": "{ userName } がアクセスできない { numberOfProjects } プロジェクトと { numberOfTasks } タスクがあります。それらをプロジェクトとタスクに追加しますか?"
-        }
+        },
+        "AMOUNT_AND_COST_LABEL": "金額 / 費用",
+        "ASSIGNED_WITH_INTERPOLATION": "割り当て:"
     },
     "SERVICES": {
         "ALERT": {
@@ -1516,7 +1566,8 @@
                     "ERROR_MESSAGE": "パスワードの確認に失敗しました。もう一度やり直してください"
                 },
                 "RESET": {
-                    "SUCCESS_MESSAGE": "パスワードをリセットする手順を記載したメールを送信しました"
+                    "SUCCESS_MESSAGE": "パスワードをリセットする手順を記載したメールを送信しました",
+                    "LINK_EXPIRED": "このリンクの有効期限は切れています。"
                 },
                 "CHANGE": {
                     "SUCCESS_MESSAGE": "あなたのパスワードは変更されました",
@@ -1735,11 +1786,13 @@
             },
             "UPDATE_ACCESS": {
                 "SUCCESS_MESSAGE": "プロジェクトアクセスが更新されました",
-                "ERROR_MESSAGE": "プロジェクトアクセスは更新されません"
+                "ERROR_MESSAGE": "プロジェクトアクセスは更新されません",
+                "SUCCESS_MESSAGE_V2": "{ projectLabel } アクセスが更新されました"
             },
             "DELETE": {
                 "SUCCESS_MESSAGE": "プロジェクトは正常に削除されました",
-                "ERROR_MESSAGE": "プロジェクトは削除されません"
+                "ERROR_MESSAGE": "プロジェクトは削除されません",
+                "BULK_SUCCESS_MESSAGE": "{ count } プロジェクトが正常に削除されました。"
             },
             "GET": {
                 "ALL": {
@@ -1923,7 +1976,8 @@
                 },
                 "SAVE": {
                     "SUCCESS_MESSAGE": "設定が正常に保存されました",
-                    "ERROR_MESSAGE": "設定の保存に失敗しました"
+                    "ERROR_MESSAGE": "設定の保存に失敗しました",
+                    "ERROR_ACCOUNT_NOT_VERIFIED": "アカウントのメールアドレスが認証されていません。プロファイル設定を変更する前にメールアドレスを確認してください。"
                 },
                 "ADD_EMAIL": {
                     "UPDATE": {
@@ -2412,7 +2466,8 @@
                 "QUESTION5": "Clockifyで何を探していましたか？"
             },
             "UNPAID_INVOICE_WARNING": "未払いの請求書があります。問題を解決するには、{ email } までご連絡ください。",
-            "UNPAID_INVOICE_WARNING_V2": "未払いの請求書があります。問題を解決するには、請求書をお支払いいただくか、{ email } までご連絡ください。"
+            "UNPAID_INVOICE_WARNING_V2": "未払いの請求書があります。問題を解決するには、請求書をお支払いいただくか、{ email } までご連絡ください。",
+            "REQUIRES_SALES_ACTION": "サブスクリプション アクションは一時的に利用できません。しばらくしてからもう一度お試しいただくか、サポートにお問い合わせください。"
         },
         "LOCATION_LABEL": "位置",
         "JOB_LABEL": "仕事",
@@ -2657,7 +2712,40 @@
         "LOG_IN_LABEL_V2": "ログイン",
         "HIDE_ALL_LABEL": "すべて隠す",
         "SET_NEW_PASSWORD": "新しいパスワードを設定する",
-        "CREATE_PASSWORD_LABEL": "パスワードの作成"
+        "CREATE_PASSWORD_LABEL": "パスワードの作成",
+        "WARNING": "警告",
+        "BILLABLE": "請求可能",
+        "NON_BILLABLE": "請求不可",
+        "MY_PROFILE": "私のプロフィール",
+        "MANAGE_WORKSPACES": "ワークスペースの管理",
+        "PREFERENCES": {
+            "THEMES": "テーマ",
+            "CHOOSE_THEME": "気分に合わせてテーマを選択してください。",
+            "LABEL": "環境設定"
+        },
+        "DARK_LABEL": "闇",
+        "LIGHT_LABEL": "光",
+        "BILLING_SAVE_PART_2": "年払いで",
+        "PROJECT_TASK_CLIENT_LABEL": "プロジェクト: タスク - クライアント",
+        "BUNDLE_LABEL_PART": "CAKE.COM バンドル",
+        "ALL_ADMINS": "すべての管理者",
+        "MANAGERS": "マネージャー",
+        "EVERY": "毎",
+        "SEE_FEATURES": "機能を見る",
+        "BUNDLE_SEATS_TITLE": "バンドルシート",
+        "PER_BUNDLE_SEAT": "バンドルシートあたり",
+        "PAYMENT_INFO_NOT_FOUND": "支払い情報が見つかりません",
+        "BACK_LABEL": "戻る",
+        "WITHDRAW_PENDING": "引き出し保留中",
+        "NO_BUNDLE_SEATS_LEFT": "バンドルシートは残っていません。",
+        "STEP_LABEL": "ステップ",
+        "DAILY_LABEL": "毎日",
+        "EXPENSES_LOCKED_ERROR_MESSAGE": "承認された経費を編集できません。",
+        "UPDATE_PAYMENT": "支払いの更新",
+        "REINSTALL": "再インストール",
+        "REMOVE": "取り除く",
+        "PROJECT_AND_TEAM_MANAGERS_WITH_PARAM": "{ project }とチームマネージャー",
+        "WELCOME_TO_CLOCKIFY": "Clockifyへようこそ"
     },
     "AUDIT_LOG": {
         "FILTERS": {
@@ -3147,7 +3235,10 @@
             "SUBMIT_FOR_APPROVAL": "{ userName }の承認のために{ startDate }-{ endDate }を提出する準備はできましたか？",
             "REMIND_SUBMIT_LOG_SELECTED_BODY": "Clockify は、{ users } に時間を記録し、タイムシートを提出するようリマインダー メールを送信します。",
             "APPROVE_ALL_BODY_WITH_INTERPOLATION": "すべてが承認されると、時間がロックされ、誰も編集できなくなります。",
-            "REMIND_ALL_BODY_PM": "プロジェクト メンバーの保留中のタイムシートをまだ承認していないプロジェクト マネージャーに電子メールでリマインダーを送信する準備はできていますか?"
+            "REMIND_ALL_BODY_PM": "プロジェクト メンバーの保留中のタイムシートをまだ承認していないプロジェクト マネージャーに電子メールでリマインダーを送信する準備はできていますか?",
+            "REMIND_SUBMIT_TIME_EXPENSES_TITLE": "時間と経費の提出をリマインドする",
+            "REMIND_APPROVE_TIME_EXPENSES_TITLE": "時間と経費の承認を通知する",
+            "REMIND_ALL_BODY_PM_CUSTOM": "{ projectLabel } メンバーの保留中のタイムシートをまだ承認していない { projectLabel } マネージャーに電子メールリマインダーを送信する準備はできていますか?"
         },
         "MESSAGES": {
             "PENDING_FAIL": "保留中のリクエストの取得に失敗しました",
@@ -3169,7 +3260,8 @@
             "WITHDRAW_SUCCESS": "正常に撤回",
             "WITHDRAW_FAIL": "引き出しに失敗しました",
             "WEEK_STATUS_FAIL": "承認週のステータスの取得に失敗しました",
-            "APPROVAL_COUNT_FAIL": "承認件数の取得に失敗しました"
+            "APPROVAL_COUNT_FAIL": "承認件数の取得に失敗しました",
+            "SUCCESSFULLY_WITHDRAWN": "撤退に成功しました"
         },
         "SHOW_APPROVED_LABEL": "承認されたショー",
         "SHOW_WITHDRAWN_LABEL": "撤回されたショー",
@@ -3217,7 +3309,8 @@
         "NO_TIMESHEETS_AND_EXPENSES_ON_UNSUBMITTED_LABEL": "{ value } のタイムシートと { label } の経費はありません",
         "REMINDERS_TAB": {
             "SECOND_PART": "未提出のタイムシートと経費がある場合は、毎回リマインダーを送信します",
-            "THIRD_PART": "今月の"
+            "THIRD_PART": "今月の",
+            "FIRST_PART": "承認待ちのタイムシートがある場合は、リマインダーを送信します。"
         }
     },
     "PUMBLE_COUPON": {
@@ -3325,7 +3418,8 @@
         "DELETE_FROM_ALL_INFO_WITH_INTERPOLATION": "アカウントは次のすべてのワークスペースから削除されます。",
         "WORKSPACE_NOT_EMPTY_WARNING_WITH_INTERPOLATION": "あなたのワークスペースを利用している人がいます。",
         "WORKSPACE_NOT_EMPTY_STEP_INFO_WITH_INTERPOLATION": "アカウントを削除する前に、次のいずれかを行う必要があります。",
-        "DELETE_ADDONS_INFO": "Clockify アカウントを削除すると、マーケットプレイス アカウントも失われる可能性があります"
+        "DELETE_ADDONS_INFO": "Clockify アカウントを削除すると、マーケットプレイス アカウントも失われる可能性があります",
+        "HAS_BUNDLE_WARNING": "1 つ以上のワークスペースがアクティブなバンドル サブスクリプションにあります。{ contactSupport } バンドル ワークスペースを持つアカウントを削除します。"
     },
     "INVOICES": {
         "IMPORT": {
@@ -3474,7 +3568,8 @@
             "REMOVE_PAYMENT_LABEL": "支払いを削除",
             "REMOVE_PAYMENTS_NOTE": "すべての支払いが削除されます。",
             "PAYMENT_NOTE_ERROR": "メモの長さは { length } 文字を超えてはなりません",
-            "ISSUE_DATE_WITH_INTERPOLATION": "発行日： "
+            "ISSUE_DATE_WITH_INTERPOLATION": "発行日： ",
+            "APPLY_TAX": "税金を適用する"
         },
         "ITEM_TYPE": {
             "CREATE": {
@@ -3677,7 +3772,8 @@
                     "PART_1": "のさまざまなタイムゾーン ",
                     "PART_3": "また、ブラウザが誤ったレポートを表示する可能性があります。",
                     "PART_2": "あなたのプロフィール",
-                    "ENABLE_LOCATION_ACCESS": "位置情報アクセスを有効にする"
+                    "ENABLE_LOCATION_ACCESS": "位置情報アクセスを有効にする",
+                    "PART_2_PREFERENCES": "あなたの好み"
                 },
                 "CHANGE_TIMEZONE_NOTIFICATION": "{ suggestedTimeZone }に変更します",
                 "BODY_TEXT": "{ profileLink } とブラウザのタイムゾーンが一致しない場合、不正確なレポートが生成され、一部の機能が期待どおりに動作しない可能性があります。"
@@ -3729,7 +3825,10 @@
                 "PTO_LABEL": "休暇"
             },
             "SWITCH_WORKSPACE_TOOLTIP": "ここでワークスペースを切り替えることができます！",
-            "TRIAL_LEFT": "裁判に残された。"
+            "TRIAL_LEFT": "裁判に残された。",
+            "SIDEBAR_TOGGLE": {
+                "TOGGLE_LABEL": "サイドバーの折りたたみ"
+            }
         },
         "DOCUMENTATION": "ドキュメンテーション",
         "TUTORIALS": "チュートリアル",
@@ -3878,7 +3977,8 @@
             "MARK_AS_DONE_LIST_KIOSKS": "{ taskName }をアーカイブするには、まず各キオスクからアーカイブを削除します。",
             "MARK_AS_DONE_WARNING": "キオスクでデフォルト{ taskLabel }として使用されているため、この{ taskLabel }をアーカイブできません",
             "TASK_ACCESS_UPDATED": "タスクのアクセス権が更新されました。",
-            "PROJECT_TASK_ACCESS_UPDATED": "プロジェクトとタスクのアクセス権が更新されました。"
+            "PROJECT_TASK_ACCESS_UPDATED": "プロジェクトとタスクのアクセス権が更新されました。",
+            "TASK_ACCESS_UPDATED_V2": "{ taskLabel } アクセスが更新されました。"
         },
         "FILTER_DROPDOWN": {
             "NO_ENTITY_LABEL": "いいえ{ entity }",
@@ -4120,7 +4220,8 @@
             "ACCEPT_TOS_PART1": "私は同意します",
             "NAME_INPUT_LENGTH_ERROR_LABEL": "名前には少なくとも 2 文字が必要です",
             "INVITATION_LINK_EXPIRED_TITLE_NEW_LABEL": "この招待状の有効期限は切れています。",
-            "CONTACT_ADMIN_OR_LOG_IN_MESSAGE": "管理者に連絡するか、 "
+            "CONTACT_ADMIN_OR_LOG_IN_MESSAGE": "管理者に連絡するか、 ",
+            "INVITATION_EXPIRED_ERROR": "招待の有効期限が切れました。詳細については、管理者にお問い合わせください。"
         },
         "SIGNUP": {
             "TITLE": "Clockifyから始めましょう",
@@ -4148,7 +4249,9 @@
             "EMAIL_FORMAT_INVALID": "電子メールの形式が無効です",
             "PASSWORD_FORMAT_INVALID": "パスワードが無効です",
             "ACCOUNT_TEMPORARILY_LOCKED_MSG": "あなたのアカウントは一時的にロックされています。続行するにはメールを確認してください。",
-            "SIGNUP_DISABLED_MESSAGE": "サインアップが無効になっています。このサブドメインの時間を追跡する必要がある場合は、ワークスペースの所有者に連絡してください。"
+            "SIGNUP_DISABLED_MESSAGE": "サインアップが無効になっています。このサブドメインの時間を追跡する必要がある場合は、ワークスペースの所有者に連絡してください。",
+            "ACCOUNT_TEMPORARILY_BLOCKED_FOR_WORKSPACE_TRANSFER": "データ転送のため、アカウントがロックされています。あとでもう一度試してみてください。",
+            "ACCOUNT_LOCKED_FOR_WORKSPACE_TRANSFER": "データ転送のためワークスペースがロックされました。"
         },
         "VERIFY_EMAIL": {
             "TITLE": "Eメール確認"
@@ -4172,7 +4275,9 @@
             "PASSWORD_REQUIRED_ERROR_LABEL": "パスワードが必要",
             "EMAIL_REQUIRED_ERROR_LABEL": "メールアドレスは必須です",
             "NO_ACCOUNT_SIGNUP_INSTEAD_LABEL": "アカウントをお持ちではないようですが、\n代わりにサインアップしてください。",
-            "LOGIN_ATTEMPT_MESSAGE": "ログインをお試しいただきありがとうございます。メールアドレスが登録されている場合は、間もなく安全なログイン リンクが送信されます。"
+            "LOGIN_ATTEMPT_MESSAGE": "ログインをお試しいただきありがとうございます。メールアドレスが登録されている場合は、間もなく安全なログイン リンクが送信されます。",
+            "PASSWORD_SPACE_ON_START_OR_END_ERROR_MSG": "パスワードの先頭または末尾にスペースを使用することはできません。",
+            "WORKSPACE_ACCESS_DENIED": "このワークスペースにアクセスする権限がありません。"
         },
         "ENTER_VERIFICATION_CODE": {
             "CHECK_EMAIL_TITLE": "メールでコードを確認してください",
@@ -4181,7 +4286,11 @@
             "RESEND_EMAIL_LINK": "メールを再送",
             "ATTEMPTS_MAXED_OUT_MSG": "試行回数が上限に達しました。続行するにはメールを確認してください。",
             "CODE_NOT_VALID_MSG": "そのコードは無効です。もう一度試してください。",
-            "CODE_EXPIRED_MSG": "そのコードの有効期限が切れています。"
+            "CODE_EXPIRED_MSG": "そのコードの有効期限が切れています。",
+            "WORKSPACE_LOCKED_FOR_TRANSFER": "データ転送のためワークスペースがロックされました",
+            "ACCOUNT_BLOCKED_FOR_WORKSPACE_TRANSFER": "データ転送のため、アカウントがロックされています。あとでもう一度試してみてください。",
+            "RESEND_EMAIL_AFTER_LABEL": "メールが見つからない場合は、スパムを確認するか、{ second } 秒以内にメールを再送信してください。",
+            "RESEND_EMAIL_AFTER_PLURAL_LABEL": "メールが見つからない場合は、スパムを確認するか、{ 秒} 秒以内にメールを再送信してください。"
         }
     },
     "REPORTS": {
@@ -4378,7 +4487,8 @@
             "PIE_CHART_2": "円グラフ2",
             "PIE_CHART_3": "円グラフ3",
             "BILLABILITY": "請求可能性",
-            "PROJECT": "プロジェクト"
+            "PROJECT": "プロジェクト",
+            "SHOW_USERS_WITHOUT_TIME_AND_EXPENSES_BTN": "時間と費用をかけずにユーザーに見せる"
         },
         "TABLE_INFO": {
             "HOUR_LABEL": "時間",
@@ -4407,7 +4517,8 @@
             "DOWNLOADING_RECEIPTS": "領収書のダウンロード",
             "12_HOUR_LABEL": "12時間",
             "24_HOUR_LABEL": "24時間",
-            "DOWNLOAD_EXPENSES": "経費のダウンロード"
+            "DOWNLOAD_EXPENSES": "経費のダウンロード",
+            "MAX_ROWS_PER_PDF_MESSAGE": "PDF あたり最大 3,000 行"
         },
         "WEEKLY": {
             "WITHOUT_LABELS": {
@@ -4517,11 +4628,20 @@
             "PERFORMANCE_LABEL": "パフォーマンス",
             "ENABLE_SCHEDULING_TO_SEE_ASSIGNMENTS": "割り当てレポートを実行するには、まずスケジュール設定を有効にしてください",
             "SCHEDULED_VS_TRACKED_LABEL": "追跡とスケジュール",
-            "STATUS_LABEL": "状態"
+            "STATUS_LABEL": "状態",
+            "SORT_BY_SCHEDULED_ASC_LABEL": "予定（アップ）",
+            "SORT_BY_SCHEDULED_DESC_LABEL": "予定（ダウン）",
+            "SORT_BY_TRACKED_DESC_LABEL": "追跡済み (ダウン)",
+            "SORT_BY_DIFFERENCE_ASC_LABEL": "差（上）",
+            "SORT_BY_DIFFERENCE_DESC_LABEL": "差（下）",
+            "SORT_BY_STATUS_ASC_LABEL": "ステータス（アップ）",
+            "SORT_BY_STATUS_DESC_LABEL": "ステータス（ダウン）",
+            "SORT_BY_TRACKED_ASC_LABEL": "追跡済み (上向き)"
         },
         "ATTENDANCE": {
             "OVERTIME_COLUMN_INFO_ICON_TOOLTIP": "ユーザーが能力を超えて作業した時間 (休憩は除く)。",
-            "START_COLUMN_LABEL": "始める"
+            "START_COLUMN_LABEL": "始める",
+            "CAPACITY_NOT_REACHED": "ユーザーは容量より少ない{ hours }を追跡しました"
         }
     },
     "SHARED_MODULES": {
@@ -4664,7 +4784,8 @@
                 "TITLE": "マネージャーの役割",
                 "DESCRIPTION": "誰かを管理者にする代わりに、誰かを<b>チームマネージャー</ b>にして、チームメンバーが追跡したすべての時間と費用を確認し、タイムシートを承認できるようにします。 <br> <br>または、複数のプロジェクトで<b>プロジェクトマネージャー</ b>の役割を誰かに与えて、管理しているプロジェクトで追跡されているすべての時間と費用を確認し、そのプロジェクトを編集できるようにします（たとえば、タスクの作成、プロジェクトにメンバーを追加したり、見積もりを設定したりします）。",
                 "DESCRIPTION_WITH_APPROVE": "誰かを管理者にする代わりに、 誰かを<b>チーム マネージャー</b>にすると、チーム メンバーが追跡したすべての時間と経費を確認し、タイムシートを承認できるようになります。 <br><br> または、誰かに複数のプロジェクトに対する<b>プロジェクト マネージャー</b> の役割を与えて、管理しているプロジェクトで追跡されたすべての時間と経費を確認して承認し、当該プロジェクトを編集できるようにします（例: 作成）。タスク、プロジェクトへのメンバーの追加、見積もりの設定など)。",
-                "DESCRIPTION_PARAMETERS_DESCRIPTION": "誰かを管理者にする代わりに、誰かを{ openingBoldTag }チームマネージャー{ closingBoldTag }にすると、チームメンバーが追跡したすべての時間と経費を確認し、タイムシートを承認できるようになります。 { doubleBreaks } または、誰かに複数のプロジェクトに対する { openingBoldTag } プロジェクト マネージャー { closingBoldTag } の役割を与えて、管理しているプロジェクトで追跡されたすべての時間と経費を確認し、当該プロジェクトを編集できるようにします (タスクの作成、プロジェクトへのメンバーの追加など)。 、見積もりの設定など）。"
+                "DESCRIPTION_PARAMETERS_DESCRIPTION": "誰かを管理者にする代わりに、誰かを{ openingBoldTag }チームマネージャー{ closingBoldTag }にすると、チームメンバーが追跡したすべての時間と経費を確認し、タイムシートを承認できるようになります。 { doubleBreaks } または、誰かに複数のプロジェクトに対する { openingBoldTag } プロジェクト マネージャー { closingBoldTag } の役割を与えて、管理しているプロジェクトで追跡されたすべての時間と経費を確認し、当該プロジェクトを編集できるようにします (タスクの作成、プロジェクトへのメンバーの追加など)。 、見積もりの設定など）。",
+                "DESCRIPTION_PARAMETERS_DESCRIPTION_APPROVAL": "誰かを管理者にする代わりに、誰かを{ openingBoldTag }チームマネージャー{ closingBoldTag }にすると、チームメンバーが追跡したすべての時間と経費を確認し、タイムシートを承認できるようになります。 { doubleBreaks } または、誰かに複数のプロジェクトに対する { openingBoldTag } プロジェクト マネージャー { closingBoldTag } の役割を与えて、管理しているプロジェクトで追跡されたすべての時間と経費を確認して承認し、当該プロジェクトを編集 (例: タスクの作成、メンバーの追加) できるようにします。予測、見積もりの設定など)。"
             },
             "TIMESHEET_REMINDERS": {
                 "TITLE": "ターゲット&リマインダー",
@@ -4826,6 +4947,19 @@
             "DATA_REGIONS": {
                 "DESCRIPTION": "法的コンプライアンスを確保するために、EU (ドイツ)、英国、米国、またはオーストラリアでデータをホストします。",
                 "TITLE": "データ領域"
+            },
+            "FAVORITE_TIME_ENTRIES": {
+                "DESCRIPTION": "最もよく使用する時間エントリをお気に入りとしてマークして、時間を節約します。 [時間追跡] ページで 1 回のクリックまたはショートカット キーでお気に入りのエントリを再利用し、より速く簡単な方法で時間を追跡します。"
+            },
+            "SPLIT_TIME": {
+                "DESCRIPTION": "長時間実行される時間エントリを小さなチャンクにすばやく分割して、時間をより適切に分類できるようにします。エントリは、期間別または 1 日の時間帯別 (午後 5 時や深夜など) に分割できます。",
+                "TITLE": "スプリットタイム"
+            },
+            "BUNDLE_SEATS": {
+                "TAGS_PARAMETERS_DESCRIPTION": "すべての製品で固有のメール アドレスを持つアクティブ ユーザーと招待されたユーザーごとに、有料バンドル シートが必要です。{ doubleBreak } バンドル シート 1 つで、1 人のユーザー (固有のメール アドレス 1 つ) を Clockify、Pumble、Placy に招待できます。招待者が 1 つのアプリ、2 つのアプリ、または 3 つのアプリすべてを使用するかどうかは関係ありません。{ doubleBreak } 3 つの製品すべてでユーザーを非アクティブ化すると、バンドル シートが解放され、別のユーザーが使用できるようになります。"
+            },
+            "LIMITED_BUNDLE_SEATS": {
+                "TAGS_PARAMETERS_DESCRIPTION": "ワークスペース内のアクティブな制限付きユーザーごとに、制限付きシートが 1 つ使用されます (バンドル シートよりも安価です)。{ doubleBreak } 制限付きユーザーにはメールがなく、キオスク経由でのみ時間を追跡できます (メールを追加することで、制限付きユーザーをバンドル ユーザーに変換できます)。{ doubleBreak } 非アクティブ化されたユーザーはシートを占有しないため、誰かを非アクティブ化し、代わりに別のユーザーでシートを埋めることができます。{ doubleBreak } シートは、サブスクリプション ページでいつでも購入または削除できます。"
             }
         },
         "PROJECT_PICKER": {
@@ -4882,7 +5016,9 @@
             "UPGRADE_EXPLANATION_CH": "残りの請求サイクルでは、プランのアップグレードに対して VAT を含む日割り価格がすぐに請求されます。新しい請求サイクルが来ると、全額が請求されます。",
             "UPGRADE_EXPLANATION_V2": "プランのアップグレードについては、残りの請求サイクルの日割り価格がすぐに請求されます。新しい請求サイクルが来ると、全額が請求されます。",
             "ESTIMATED_PRICE": "適用される推定日割り価格: { price }",
-            "BILLING_PRICE_V2": "推定日割り価格 { price } が請求されます。"
+            "BILLING_PRICE_V2": "推定日割り価格 { price } が請求されます。",
+            "UPGRADE_EXPLANATION_SINGLE_VARIABLE_TAX": "残りの請求サイクルのプランアップグレードには、{ taxDisplayName } の比例配分された価格が直ちに請求されます。新しい請求サイクルが来ると、その完全な価格に従って請求されます。",
+            "UPGRADE_EXPLANATION_TWO_VARIABLE_TAXES": "残りの請求サイクルのプランアップグレードには、{ taxDisplayName1 } と { taxDisplayName2 } の比例配分された価格が直ちに請求されます。新しい請求サイクルが来ると、その完全な価格に従って請求されます。"
         },
         "TIME_ENTRY_BULK_EDIT": {
             "TITLE_PARAMS": "一括編集{ count } { count, plural, =0{} =1{エントリ} other{エントリ}}",
@@ -4925,6 +5061,17 @@
                 "UPGRADE_PAY_MONTHLY": "アップグレード&毎月支払う",
                 "PAY_MONTHLY": "月払い",
                 "DOWNGRADE_PAY_MONTHLY": "ダウングレード&毎月支払う"
+            },
+            "BEST_VALUE_BADGE": "お買い得",
+            "BUNDLE_SHORT_DESCRIPTION": "生産性スイート",
+            "BILLED_MONTHLY": "毎月請求",
+            "BILLED_YEARLY": "年払い",
+            "ENTERPRISE_FEATURE_TITLE": "すべてのエンタープライズ機能",
+            "BUNDLE_ACTIVATED_MODAL": {
+                "TITLE": "CAKE.com バンドルが有効化されました!",
+                "CONTENT_PART_1": "Clockify ワークスペースの Bundle の ENTERPRISE プランがアクティブになりました。",
+                "CONTENT_PART_2": "弊社のサポートが 24 時間以内にメールでご連絡し、Placy と Pumble でもバンドル プランを有効にできるようにします。",
+                "CONTENT_PART_3": "まだアカウントをお持ちでない場合は、{ plakyLink }と{ pumbleLink }の無料アカウントを作成できます。"
             }
         },
         "INPUT_NUMBER": {
@@ -5037,7 +5184,8 @@
             "PLACEHOLDER_CARDHOLDER": "カード所有者名を入力してください",
             "ADDRESS_PLACEHOLDER": "住所を入力してください",
             "ZIP_PLACEHOLDER": "郵便番号を入力",
-            "TAX_TYPE_PLACEHOLDER": "税の種類を選択してください"
+            "TAX_TYPE_PLACEHOLDER": "税の種類を選択してください",
+            "OPTIONAL_TAX_ID_EXPLANATION": "(追加税金を回避するには、有効な { taxDisplayName } ID を入力してください。)"
         },
         "STRIPE_INVOICE": {
             "MISSING_TAX_ID_ERROR_MESSAGE": "納税者番号情報がありません",
@@ -5147,7 +5295,8 @@
             "SCHEDULED_CURRENCY_CHANGE_WARNING": "顧客情報の国が { newCountry } に変更されたため、{ nextBillingDateStart } 以降、すべての料金は { newCurrency } で請求されます。",
             "SCHEDULED_CURRENCY_AND_ADDRESS_CHANGE_WARNING_CH": "顧客情報の国が { newCountry } に変更され、住所が { newAddress } に変更されるため、{ nextBillingDateStart } 以降、すべての料金は VAT を加えた { newCurrency } で請求されます。",
             "SCHEDULED_CURRENCY_AND_ADDRESS_CHANGE_WARNING": "顧客情報の国が { newCountry } に変更され、住所が { newAddress } に変更されるため、{ nextBillingDateStart } 以降、すべての料金は { newCurrency } で請求されます。",
-            "WIRE_TRANSFER_CUSTOMER_TEXT": "顧客情報を編集する場合は{ contactUs }または{ addPaymentMethod }。"
+            "WIRE_TRANSFER_CUSTOMER_TEXT": "顧客情報を編集する場合は{ contactUs }または{ addPaymentMethod }。",
+            "CANNOT_MANAGE_SEATS_INFO": "座席を管理するには、{ addPaymentMethodLink } または { contactSupportLink } を使用します。"
         },
         "INVOICES": {
             "PAST_BILLING_HEADER": "過去の請求明細",
@@ -5181,7 +5330,12 @@
             "TOTAL_PRICE_PER_MONTH": "月額料金",
             "TOTAL_PRICE_PER_YEAR": "年間価格",
             "PRICE_CHANGE_WARNING_CH": "残りの請求サイクルの追加シートについては、VAT を含む日割り価格がすぐに請求されます。新しい請求サイクルが来ると、全額が請求されます。",
-            "PREVIEW_PRICE_ERROR": "価格計算中にエラーが発生しました"
+            "PREVIEW_PRICE_ERROR": "価格計算中にエラーが発生しました",
+            "BUNDLE": {
+                "NUMBER_OF_ADDITIONAL_SEATS_LABEL_PART_2": "{ count } バンドルシート"
+            },
+            "PRICE_CHANGE_WARNING_SINGLE_VARIABLE_TAX": "残りの請求サイクル中、追加シートに対しては、{ taxDisplayName } の比例配分された価格が直ちに請求されます。新しい請求サイクルが来たら、全額が請求されます。払い戻しはありません。",
+            "PRICE_CHANGE_WARNING_TWO_VARIABLE_TAXES": "残りの請求サイクルの間、追加シートに対して、{ taxDisplayName1 } および { taxDisplayName2 } の比例配分された価格が直ちに請求されます。新しい請求サイクルが来ると、全額が請求されます。払い戻しはありません。"
         },
         "PAYMENT_LABEL": "支払い",
         "PLANS_LABEL": "予定",
@@ -5200,7 +5354,10 @@
             "REMOVE_SEATS_TITLE": "未使用のフルシートを削除します",
             "BUY_SEATS_TITLE": "フルシートを購入する"
         },
-        "WIRE_TRANSFER_INFO": "（現在、電信送金を使用しています）"
+        "WIRE_TRANSFER_INFO": "（現在、電信送金を使用しています）",
+        "BUNDLE_SEATS": {
+            "BUY_SEATS_TITLE": "バンドルシートを購入する"
+        }
     },
     "TEAMS": {
         "CURRENT_USER_LABEL": "（君）",
@@ -5224,7 +5381,8 @@
                     "PLACEHOLDER": "新しいユーザーグループを追加する"
                 },
                 "FIND": "ユーザーまたはグループを検索",
-                "ADD_GROUP_PLACEHOLDER": "新しいグループを追加"
+                "ADD_GROUP_PLACEHOLDER": "新しいグループを追加",
+                "SEARCH_GROUP": "ユーザー名またはグループ名で検索"
             },
             "SEARCH": "名前またはメールで検索",
             "ADD": {
@@ -5386,7 +5544,10 @@
                         "SELECT": "（日を選択）"
                     },
                     "EIGHTH_PART": "、 送信",
-                    "NINTH_PART": "リマインダー"
+                    "NINTH_PART": "リマインダー",
+                    "TRACKS": "トラック",
+                    "ON_A": "に",
+                    "BASIS": "基礎"
                 }
             },
             "DELETE": {
@@ -5396,6 +5557,12 @@
             "MORE_LABEL": "もっと",
             "TOOLTIP": {
                 "INACTIVE_USERS_INFO": "非アクティブなユーザーはリマインダーを受け取りません。"
+            },
+            "DROPDOWNS": {
+                "THEIR_WORK_CAPACITY_LABEL": "彼らの仕事能力",
+                "THEIR_WORK_CAPACITY_DESC": "ターゲットは自動的に計算されます。",
+                "CUSTOM_TIME_LABEL": "カスタム時間",
+                "CUSTOM_TIME_DESC": "ターゲットを自由に定義します。"
             }
         },
         "SEATS": {
@@ -5490,7 +5657,8 @@
             "EMPTY_TEMPLATE_WARNING": "このテンプレートは空なので削除する必要があります",
             "ACTIVATE": {
                 "SUCCESS": "テンプレートがアクティブ化されました"
-            }
+            },
+            "WITH_TIME_LABEL": "{ templateName } - 時間の経過とともに"
         },
         "ACTIONS": {
             "COPY": {
@@ -5668,12 +5836,18 @@
             "ENTRIES_DELETED_SUCCESS": "削除されたエントリ",
             "ENTRY_RESTORED_SUCCESS": "エントリが復元されました",
             "ENTRIES_RESTORED_SUCCESS": "エントリが復元されました",
-            "RESTORE_ENTRY_FAIL": "進行中の既存の時間エントリがある間は、削除したエントリを元に戻すことはできません",
             "BREAK_DUPLICATE_SUCCESS": "ブレークエントリが重複しています",
             "CREATE_MULTIPLE_SUCCESS": "時間エントリが作成されました",
             "RUNNING_ENTRY_EXISTS": "別のエントリの実行中は時間エントリを作成できません",
             "BREAKS_DISABLED": "休憩機能が有効になっていないため、休憩時間エントリを作成する権限がありません。",
-            "CREATE_FAIL_SPLITTING": "時間エントリを分割できませんでした。もう一度お試しください。"
+            "CREATE_FAIL_SPLITTING": "時間エントリを分割できませんでした。もう一度お試しください。",
+            "ERROR_MISSING_REQ_FIELDS": "必須フィールドが欠落しています",
+            "ENTRY_RESTORED_ERROR": "時間エントリを復元できませんでした",
+            "ENTRIES_RESTORED_ERROR": "時間エントリを復元できませんでした",
+            "UPDATE_PROJECTS_SUCCESS_WITH_PARAM": "{ projectLabel }が更新されました",
+            "UPDATE_PROJECTS_DETAILS_SUCCESS_WITH_PARAM": "{ projectLabel }の詳細が更新されました",
+            "UPDATE_END_TIME_SUCCESS": "終了時間が更新されました",
+            "UPDATE_END_TIME_FAIL": "終了時間の更新に失敗しました。もう一度お試しください。"
         },
         "CURSOR": {
             "POINTER": "ポインタ"
@@ -5692,7 +5866,10 @@
             },
             "PERSONAL": {
                 "TITLE": "個人情報",
-                "INFO_MESSAGE": "ログイン資格情報とレポートに表示される名前。"
+                "INFO_MESSAGE": "ログイン資格情報とレポートに表示される名前。",
+                "USERNAME": {
+                    "LENGTH_ERROR_MESSAGE": "ユーザー名の長さは { minimumLength } ～ { maximumLength } 文字にする必要があります。"
+                }
             },
             "EMAIL": {
                 "CHANGE": {
@@ -5731,7 +5908,9 @@
             "GENERATE_API": {
                 "TITLE": "APIキーを生成",
                 "INFO_MESSAGE": "新しいキーを生成すると、古いキーは機能しなくなります。",
-                "BUTTON": "新しいキーを生成する"
+                "BUTTON": "新しいキーを生成する",
+                "COPY_MESSAGE": "必ず API キーをコピーし、安全な場所に保管してください。このキーを再度表示することはできなくなります。",
+                "COPY_LABEL": "APIキーをコピー"
             },
             "GROUP_ENTRIES": {
                 "TITLE": "グループ時間エントリ",
@@ -5753,7 +5932,8 @@
                     "TITLE": "タイムゾーン",
                     "PLACEHOLDER": "タイムゾーンの検索...",
                     "INFO_MESSAGE": "タイムゾーンを変更する前に、まず、承認を待っている送信済みの時間をすべて送信解除する必要があります。",
-                    "INFO_MESSAGE_WITH_EXPENSES": "タイムゾーンを変更する前に、まず、承認を待っている提出済みの時間と費用をすべて送信解除する必要があります。"
+                    "INFO_MESSAGE_WITH_EXPENSES": "タイムゾーンを変更する前に、まず、承認を待っている提出済みの時間と費用をすべて送信解除する必要があります。",
+                    "PLACEHOLDER_SEARCH": "タイムゾーンの検索"
                 },
                 "CHANGE": {
                     "ZONE": "タイムゾーンの変更",
@@ -5768,7 +5948,8 @@
                 "WEEK": {
                     "START": "週の始まり",
                     "INFO_MESSAGE": "週の開始時に変更する前に、まず、承認を待っている送信済みの時間をすべて送信解除する必要があります。",
-                    "INFO_MESSAGE_WITH_EXPENSES": "週の開始時に変更する前に、まず、承認を待っている提出済みの時間と費用をすべて送信解除する必要があります。"
+                    "INFO_MESSAGE_WITH_EXPENSES": "週の開始時に変更する前に、まず、承認を待っている提出済みの時間と費用をすべて送信解除する必要があります。",
+                    "INFO_BUTTON_TOOLTIP": "週の開始は、ワークスペースの所有者または管理者によって定義されます。"
                 },
                 "DAY": {
                     "START": "一日の始まり"
@@ -5968,7 +6149,8 @@
             "ASSIGNMENT_UPDATED_LABEL": "課題が更新されました",
             "ASSIGNMENT_DELETED_LABEL": "課題を削除しました",
             "ASSIGNMENT_PUBLISHED_LABEL": "課題を公開しました",
-            "ENTRY_RESTORED": "時刻入力が復元されました"
+            "ENTRY_RESTORED": "時刻入力が復元されました",
+            "EXPENSE_RESTORED": "経費の回復"
         },
         "WEBHOOK_CREATED": "Webhookが作成されました。",
         "OUT_OF": "から",
@@ -6184,7 +6366,9 @@
         "FORBIDDEN_CHARACTERS": "間違った値を入力しました。 \"<\" および \">\" 文字は使用しないでください",
         "NO_NEW_NOTIFICATIONSL_MESSAGE": "現在、新しい通知はありません",
         "WORKSPACE_LOCKED": "ワークスペースがロックされました",
-        " SWITCH_WORKSPACE": "ワークスペースを切り替える"
+        " SWITCH_WORKSPACE": "ワークスペースを切り替える",
+        "CAN_NOT_CREATE_PROJECT_MISSING_PERMISSIONS": "プロジェクトを作成する権限がありません",
+        "ENTRY_IN_PROGRESS_EXISTS": "時間入力が進行中です。"
     },
     "KIOSK": {
         "EMPTY_COMPONENT": {
@@ -6295,7 +6479,8 @@
         "DEFAULT_ENTITY": "デフォルト{ label }",
         "DEFAULT_BREAK_ENTITY": "デフォルトのブレーク{ label }",
         "NAME_CONTAINS_SPECIAL_CHAR": "名前に { symbols } 文字を含めることはできません。",
-        "NAME_CONTAINS_SPECIAL_CHARS": "名前に { symbols } 文字を含めることはできません。"
+        "NAME_CONTAINS_SPECIAL_CHARS": "名前に { symbols } 文字を含めることはできません。",
+        "SESSIONS_WILL_CLOSE": "このオプションをオンにすると、すべてのキオスク セッションが終了します。続行してもよろしいですか?"
     },
     "KIOSK_MEMBER_PIN_NOT_UNIQUE_1": "メンバーのPINは一意ではありません。",
     "KIOSK_MEMBER_PIN_NOT_UNIQUE_4": "キオスクPINを編集する",
@@ -6357,7 +6542,8 @@
                 "FIRST": "承認のためにタイムシートを提出する",
                 "SECOND": "タイムシートを提出するように人々に思い出させる",
                 "THIRD": "管理者がタイムシートを承認（または拒否）できるようにする",
-                "FOURTH": "承認されたタイムシートへの変更を防ぐ"
+                "FOURTH": "承認されたタイムシートへの変更を防ぐ",
+                "SECOND_NEW": "タイムシートの提出と承認をリマインドする"
             },
             "LINK_TITLE": "承認の仕組み"
         },
@@ -6433,7 +6619,10 @@
             "NO_FORECAST_THIS_YEAR_FROM_TODAY_ONWARDS_PART": "、今日から今年の予報はありません",
             "PROJECT_WILL_COME_UNDER_ESTIMATE_PART_WITH_INTERVAL": "、このプロジェクトは { interval } で { X } 時間までに見積もりを下回ります",
             "PROJECT_WILL_GO_OVER_ESTIMATE_PART_WITH_INTERVAL": "、このプロジェクトは { interval } で { X } 時間見積もりを超えます",
-            "NO_FORECAST_THIS_INTERVAL_PART": "、予測 {interval} はありません"
+            "NO_FORECAST_THIS_INTERVAL_PART": "、予測 {interval} はありません",
+            "UNDER_BUDGET_PART": "予算内で",
+            "OVER_BUDGET_PART": "予算を超過して",
+            "PROJECT_IS_RIGHT_ON_BUDGET_PART": "このプロジェクトは予算通りです"
         },
         "FORECASTED_LINE": "予測された",
         "COMPLETED_LINE": "完了",
@@ -6457,7 +6646,9 @@
             "TRACKED_TIME": "追跡時間",
             "BASED_ON": "に基づく",
             "THIS_YEAR_LABEL": "ことし",
-            "THIS_WEEK_LABEL": "今週"
+            "THIS_WEEK_LABEL": "今週",
+            "AND_EXPENSES": "そして経費",
+            "BUDGET": "プロジェクト設定の予算に基づく"
         },
         "ESTIMATE_MONTHLY": "月額見積もり",
         "FORECASTED_SPEND": "予測費用",
@@ -6475,6 +6666,12 @@
             "WEEKLY": "週間見積もり",
             "MONTHLY": "月額見積もり",
             "YEARLY": "年間見積もり"
+        },
+        "BUDGET_LINE": "予算",
+        "BUDGET_LINES": {
+            "WEEKLY": "週間予算",
+            "MONTHLY": "月々の予算",
+            "YEARLY": "年度予算"
         }
     },
     "ACTIVITY-TABS": {
@@ -6494,12 +6691,15 @@
         "PERIOD_APPROVAL_MODAL": {
             "MESSAGE": "{ period } の場合、保留中のエントリと経費はすべて取り消され、再送信されない限り承認できなくなります。",
             "MESSAGE1": "{ period } の場合、保留中のエントリと経費はすべて取り消され、再送信されない限り承認できなくなります。",
-            "INFO_MESSAGE": "{ period } の場合、保留中のエントリと経費はすべて取り消され、再送信されない限り承認できなくなります。"
+            "INFO_MESSAGE": "{ period } の場合、保留中のエントリと経費はすべて取り消され、再送信されない限り承認できなくなります。",
+            "INFO_MESSAGE_BOLD": "<strong>{ period }</strong> の場合、保留中のエントリと経費はすべて取り消され、再送信しない限り承認できなくなります。"
         },
         "APPROVAL_MODAL": {
             "MESSAGE": "{ from } ～ { to } の場合、保留中のエントリと経費はすべて取り消され、再送信されない限り承認できなくなります。",
             "MESSAGE1": "{ from } ～ { to } の場合、保留中のエントリと経費はすべて取り消され、再送信されない限り承認できなくなります。",
-            "INFO_MESSAGE": "{ from } ～ { to } の場合、保留中のエントリと経費はすべて取り消され、再送信されない限り承認できなくなります。"
+            "INFO_MESSAGE": "{ from } ～ { to } の場合、保留中のエントリと経費はすべて取り消され、再送信されない限り承認できなくなります。",
+            "INFO_MESSAGE_BOLD": "<strong>{ from } - { to } </strong> については、保留中のエントリと経費はすべて取り消され、再送信されない限り承認できなくなります。",
+            "EXPENSES_OFF_INFO_MESSAGE": "{ from } - { to } の場合、保留中のエントリはすべて取り消され、再送信されない限り承認されません。"
         }
     },
     "AUDITLOG": {
@@ -6566,7 +6766,8 @@
             "GLOBAL": "グローバル",
             "EU": "欧州連合",
             "USA": "合州国",
-            "UK": "英国 (ロンドン)"
+            "UK": "英国 (ロンドン)",
+            "AU": "オーストラリア"
         }
     },
     "ADDON": {
@@ -6611,7 +6812,21 @@
             "NAVIGATION": {
                 "ERROR": "ルートが存在しません"
             }
-        }
+        },
+        "UNINSTALL_INFO_PART_ONE_PAID": "アドオンはワークスペースから削除され、サブスクリプションはキャンセルされます。",
+        "OVERDUE_LABEL": "期限切れ",
+        "PAYMENT_FAILED_LABEL": "支払いに失敗しました",
+        "UNINSTALLED_LABEL": "アンインストール済み",
+        "OVERDUE_ERROR": {
+            "TITLE": "追加支払いが遅れています"
+        },
+        "SUBSCRIPTION_OVERDUE_ERROR": {
+            "DESCRIPTION_FIRST_PART": "このアドオンサブスクリプションの支払いは失敗しました。 ",
+            "DESCRIPTION_SECOND_PART": " もう一度お試しください。このアドオンは { subscriptionEndDate } まで引き続き使用できますが、その後アンインストールされます。"
+        },
+        "UPDATE_PAYMENT_INFORMATION": "お支払い情報を更新する",
+        "SHOW_ADDON_BUTTON": "アドオンを表示",
+        "DOES_NOT_EXIST_LABEL": "アドオンはマーケットプレイスに存在しません"
     },
     "MESSAGES": {
         "ERROR_MISSING_FIELDS_IS_REQUIRED": "{ fields }が必要です。"
@@ -6664,9 +6879,12 @@
             "ADDON_INSTALLED_SUCCESS_LABEL": "アドオンが正常にインストールされました",
             "ADDON_UNINSTALLED_SUCCESS_LABEL": "アドオンが正常にアンインストールされました",
             "ADDON_INSTALLED_FAIL_LABEL": "アドオンのインストールに失敗しました",
-            "ADDON_STATUS_TOGGLE_FAILED_LABEL": "ステータスを更新できませんでした"
+            "ADDON_STATUS_TOGGLE_FAILED_LABEL": "ステータスを更新できませんでした",
+            "ADDON_REMOVED_SUCCESS_LABEL": "アドオンが正常に削除されました",
+            "ADDON_REMOVED_FAIL_LABEL": "アドオンの削除に失敗しました"
         },
-        "NOT_AVAILABLE_ON_TEST_ACCOUNTS": "テストアカウントでは利用できません"
+        "NOT_AVAILABLE_ON_TEST_ACCOUNTS": "テストアカウントでは利用できません",
+        "UNPAID_INVOICE_WARNING": "マーケットプレイスに未払いの請求書があります。請求書を支払うか、{ email } までご連絡いただき、問題を解決してください。"
     },
     "SHARED": {
         "CURRENCIES": {
@@ -6714,7 +6932,8 @@
         },
         "EMAIL_LINK_EXPIRED_TEXT": "このメール認証リンクの有効期限が切れています。",
         "RESEND_EMAIL_BTN": "メールを再送",
-        "EMAIL_SUCCESSFULLY_VERIFIED_MSG_2": "メールアドレスが正常に認証されました。"
+        "EMAIL_SUCCESSFULLY_VERIFIED_MSG_2": "メールアドレスが正常に認証されました。",
+        "PASSWORD_RESET_TOKEN_EXPIRED": "このリンクの有効期限は切れています。"
     },
     "EXTENSION_FORBIDDEN_CHARACTERS": "間違った値を入力しました。 「<」および「>」文字を使用しないでください",
     "GOBAL": {
@@ -6774,7 +6993,10 @@
         "CHANGE_MIGHT_AFFECT_INVOICE_WARNING": "ここでの情報の変更は、請求書情報のフィールドに影響を与える可能性があります。",
         "CANNOT_SWITCH_TO_INDIVIDUAL": "個人に切り替えられない",
         "CANNOT_CHANGE_COUNTRY": "国の変更はできません",
-        "CANCELED_CANNOT_MODIFY_CUSTOMER_WARNING": "あなたのサブスクリプションはキャンセルされる予定です。顧客情報を変更するには、サブスクリプションを再アクティブ化してください。"
+        "CANCELED_CANNOT_MODIFY_CUSTOMER_WARNING": "あなたのサブスクリプションはキャンセルされる予定です。顧客情報を変更するには、サブスクリプションを再アクティブ化してください。",
+        "CANNOT_CHANGE_COUNTRY_CONTACT_SUPPORT": "国の変更はできません。{ contactSupportLink }",
+        "COUNTRY_CHANGE_INSTRUCTION": "国の変更については、{ contactSupport }",
+        "FORM_FIELD_CHANGE_INSTRUCTION": "{ formFieldLabel }の変更については、{ contactSupport }"
     },
     "CLIENTS": {
         "MODALS": {
@@ -6844,5 +7066,56 @@
             }
         }
     },
-    "SET_PASSWORD_MODAL_BODY": "「パスワードを設定」をクリックすると、{ email }にパスワード設定用のメールが送信されます。"
+    "SET_PASSWORD_MODAL_BODY": "「パスワードを設定」をクリックすると、{ email }にパスワード設定用のメールが送信されます。",
+    "APP_SWITCHER": {
+        "CLOCKIFY_DESCRIPTION": "時間とコストのトラッカー",
+        "ORGANIZATIONS": "組織",
+        "PLAKY_DESCRIPTION": "プロジェクト管理",
+        "PUMBLE_DESCRIPTION": "チームのコラボレーション",
+        "CAKE_COM_DESCRIPTION": "生産性スイート",
+        "MANAGE_ACCOUNT": "アカウントの管理",
+        "TRY_NOW": "今すぐやってみて下さい",
+        "SIGN_UP_TO_ANOTHER_WORKSPACE": "別のワークスペースにサインアップする"
+    },
+    "WALKTHROUGH": {
+        "STEP_ONE_TITLE": "ここでワークスペースを切り替えます",
+        "STEP_ONE_TEXT": "ワークスペースや製品にアクセスします。",
+        "STEP_TWO_HEADER": "ここで設定を管理します",
+        "STEP_TWO_TEXT": "すべてのワークスペース関連の設定を調整します。",
+        "STEP_THREE_HEADER": "サイドバーを折りたたむ",
+        "STEPS_COUNT": "{ currentStep }/{ stepCount }",
+        "STEP_THREE_TEXT": "サイドバーを最小化してスペースを増やします。"
+    },
+    "LINK": {
+        "PASSWORD": {
+            "RESET": {
+                "HAS": {
+                    "EXPIRED": "このリンクの有効期限は切れています。"
+                }
+            }
+        }
+    },
+    "BUNDLE": {
+        "CONTACT_SALES_BUTTON_LABEL": "セールスへのお問い合わせ",
+        "ABOUT_SUITE": "スイートについて",
+        "CLOCKIFY_DESCRIPTION": "時間追跡",
+        "PLAKY_DESCRIPTION": "プロジェクト管理",
+        "REMOVE_SEATS_INFO": "座席を取り外すには{ contactSupportLink }。",
+        "APP_PRICE_PER_USER": "{ price } ユーザーあたり",
+        "PUMBLE_DESCRIPTION": "チームコミュニケーション",
+        "PRICE_BEFORE_DISCOUNT_PART_1": "バンドルなしの価格",
+        "SAVING_LABEL": "バンドルで53%割引",
+        "PRICE_BEFORE_DISCOUNT_PART_2": "{ price } 1席あたり月額"
+    },
+    "SURVEY": {
+        "WELCOME_TITLE_NEW_USER": "最高の時間追跡ツールへようこそ!",
+        "WELCOME_TITLE_EXISTING_USER": "最高の時間追跡ツールに\nようこそ！",
+        "WELCOME_SUBTITLE": "あなたの体験をカスタマイズするお手伝いをします。",
+        "CHECKBOX_ERROR_MESSAGE": "少なくとも 1 つの回答を選択してください。"
+    },
+    "GLOBAL_BUNDLE_SEAT_LEFT": "バンドルシートは左にあります。",
+    "GLOBAL_BUNDLE_SEATS_LEFT": "バンドル席が残りました。",
+    "balance": {
+        "updated": "休暇残高が更新されました"
+    }
 }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import CustomField from './customField';
 import CustomFieldText from './customField-Text';
@@ -10,16 +10,16 @@ import CustomFieldDropSingle from './customField-DropSingle';
 import { getAllCustomFieldsForProject } from '../../helpers/utils';
 
 export function CustomFieldsContainer({
-	timeEntry,
-	isUserOwnerOrAdmin,
-	manualMode,
-	updateCustomFields,
-	isInProgress,
-	areCustomFieldsValid,
-	workspaceSettings,
-	cfContainsWrongChars,
-  selectedProjectId,
-}) {
+																				timeEntry,
+																				isUserOwnerOrAdmin,
+																				manualMode,
+																				updateCustomFields,
+																				isInProgress,
+																				areCustomFieldsValid,
+																				workspaceSettings,
+																				cfContainsWrongChars,
+																				selectedProjectId
+																			}) {
 	const [customFields, setCustomFields] = useState([]);
 	const [projectId, setProjectId] = useState(timeEntry.projectId);
 	const [validatedCustomFields, setValidatedCustomFields] = useState({});
@@ -29,17 +29,20 @@ export function CustomFieldsContainer({
 		async function createCustomFieldsInitially() {
 			await createCustomFields(true);
 		}
+
 		createCustomFieldsInitially();
 	}, [isUserOwnerOrAdmin, timeEntry.id]);
 
 	useEffect(() => {
 		if (!haveFieldsRenderedInitially.current) return;
-		const newProjectId = timeEntry.projectId || timeEntry.project?.id || selectedProjectId
+		const newProjectId = timeEntry.projectId || timeEntry.project?.id || selectedProjectId;
 		if (projectId !== newProjectId) {
 			setProjectId(newProjectId);
+
 			async function onChangeProjectRedrawCustomFields() {
 				await createCustomFields();
 			}
+
 			onChangeProjectRedrawCustomFields();
 		}
 	}, [selectedProjectId, timeEntry.projectId, timeEntry.project?.id]);
@@ -50,7 +53,7 @@ export function CustomFieldsContainer({
 		const arr = customFields.map(({ customFieldId, value }) => ({
 			customFieldId,
 			sourceType: 'TIMEENTRY',
-			value,
+			value
 		}));
 		if (manualMode) {
 			updateCustomFields(arr);
@@ -95,7 +98,7 @@ export function CustomFieldsContainer({
 				}
 			}
 			if (!value?.length && customField.workspaceDefaultValue) {
-				value = customField.workspaceDefaultValue
+				value = customField.workspaceDefaultValue;
 			}
 			customFieldsToPutIntoState.push({
 				customFieldId: customField.id,
@@ -109,14 +112,14 @@ export function CustomFieldsContainer({
 				required: customField.required,
 				randomizedId: Math.floor(Math.random() * 9000000) + 10000000
 			});
-		})
+		});
 		if (manualMode) {
 			const manualCustomFields =
 				customFieldsToPutIntoState && customFieldsToPutIntoState.length > 0
 					? customFieldsToPutIntoState.map(({ type, customFieldId, value }) => ({
 						customFieldId,
 						sourceType: 'TIMEENTRY',
-						value: type === 'NUMBER' ? parseFloat(value) : value,
+						value: type === 'NUMBER' ? parseFloat(value) : value
 					}))
 					: [];
 			updateCustomFields(manualCustomFields);
@@ -127,7 +130,7 @@ export function CustomFieldsContainer({
 				if (matchingField && matchingField.value !== null && matchingField.value !== undefined) {
 					fieldToPut.value = matchingField.value;
 				}
-			})
+			});
 
 		}
 		setCustomFields(customFieldsToPutIntoState);
@@ -139,7 +142,7 @@ export function CustomFieldsContainer({
 				.filter((cf) => cf.isVisible)
 				.map((cf) => {
 					const {
-						wsCustomField: { id, type },
+						wsCustomField: { id, type }
 					} = cf;
 					const { randomizedId } = cf;
 					switch (type) {

@@ -1223,6 +1223,12 @@
   "GLOBAL__DUPLICATE_SUCCESS_MSG": {
     "message": "Zeiteintrag wurde dupliziert"
   },
+  "CAN_NOT_CREATE_PROJECT_MISSING_PERMISSIONS": {
+    "message": "Du hast keine Berechtigung zum Erstellen eines Projektes"
+  },
+  "ENTRY_IN_PROGRESS_EXISTS": {
+    "message": "Sie haben eine laufende Zeiteingabe!"
+  },
   "appName": {
     "message": "Clockify-Zeiterfassung",
     "description": "Der Titel der Anwendung, der im Webshop angezeigt wird."

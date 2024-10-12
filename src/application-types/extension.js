@@ -1,18 +1,17 @@
 import React from 'react';
-import { getBrowser } from '../helpers/browser-helper';
-import { getIconStatus } from '../enums/browser-icon-status-enum';
+import { getBrowser } from '~/helpers/browser-helper';
+import { getIconStatus } from '~/enums/browser-icon-status-enum';
 import Login from '../components/login.component';
 import HomePage from '../components/home-page.component';
-import { getLocalStorageEnums } from '../enums/local-storage.enum';
+import { getLocalStorageEnums } from '~/enums/local-storage.enum';
 import locales from '../helpers/locales';
-import { HtmlStyleHelper } from '../helpers/html-style-helper';
-import { logout } from '../helpers/utils';
-import useWorkspaceStore from '../zustand/stores/workspaceStore';
-import useUserStore from '../zustand/stores/userStore';
-import useBootStore from '../zustand/stores/bootStore';
-import useUIStore from '../zustand/stores/UIStore';
+import { logout } from '~/helpers/utils';
+import { useAppStore } from '~/zustand/store';
+import {
+	addDarkModeClassOnBodyElement,
+	removeDarkModeClassFromBodyElement,
+} from '~/zustand/slices/darkThemeSlice';
 
-const htmlStyleHelper = new HtmlStyleHelper();
 let messageListener = null;
 export class Extension {
 	setIcon(iconStatus) {
@@ -28,6 +27,9 @@ export class Extension {
 	}
 
 	beforeLoad() {
+		useAppStore.getState().isCurrentUserDarkTheme()
+			? addDarkModeClassOnBodyElement()
+			: removeDarkModeClassFromBodyElement();
 		window.reactRoot.render(<div className={'loading-gif-before-load'}></div>);
 	}
 	async afterLoad() {
@@ -42,7 +44,6 @@ export class Extension {
 
 		await locales.onProfileLangChange(null);
 		if (token) {
-			await htmlStyleHelper.addOrRemoveDarkModeClassOnBodyElement();
 			if (!JSON.parse(isOffline)) {
 				getBrowser()
 					.runtime.sendMessage({
@@ -51,8 +52,10 @@ export class Extension {
 					.then(async (response) => {
 						if (response.data) {
 							let data = response.data;
-							useUserStore.getState().setUserData(data);
-
+							useAppStore.getState().setUserData(data);
+							useAppStore.getState().isCurrentUserDarkTheme()
+								? addDarkModeClassOnBodyElement()
+								: removeDarkModeClassFromBodyElement();
 							localStorage.setItem('userEmail', data.email);
 							localStorage.setItem('userId', data.id);
 							localStorage.setItem('activeWorkspaceId', data.activeWorkspace);
@@ -74,10 +77,10 @@ export class Extension {
 								})
 								.then((response) => {
 									const { data } = response;
-									useBootStore.getState().setBootData(data);
-									const { selfHosted } = data;
-									if (data.synchronization && data.synchronization.websockets) {
-										const { websockets } = data.synchronization;
+									useAppStore.getState().setBootData(data);
+									const { synchronization, frontendUrl } = data;
+									if (synchronization && synchronization.websockets) {
+										const { websockets } = synchronization;
 										let endPoint;
 										if (websockets.apps && websockets.apps.extension) {
 											endPoint = websockets.apps.extension.endpoint;
@@ -85,7 +88,7 @@ export class Extension {
 											endPoint = websockets.endpoint;
 										}
 										if (endPoint.startsWith('/')) {
-											endPoint = `wss://${data.frontendUrl}${websockets.apps.extension.endpoint}`;
+											endPoint = `wss://${frontendUrl}${websockets.apps.extension.endpoint}`;
 										}
 										localStorage.setItem(
 											'webSocketEndpoint',
@@ -157,13 +160,13 @@ export class Extension {
 					logout(request.eventName, request.options);
 					break;
 				case 'WORKSPACE_LOCKED':
-					useWorkspaceStore.getState().setWorkspaceLocked(true);
-					useWorkspaceStore
+					useAppStore.getState().setWorkspaceLocked(true);
+					useAppStore
 						.getState()
 						.setWorkspaceLockedMessage(request?.options?.message);
 					break;
 				case 'VERIFY_EMAIL_ENFORCED':
-					useUIStore.getState().setEmailEnforcedModalVisible(true);
+					useAppStore.getState().setEmailEnforcedModalVisible(true);
 					break;
 				case 'USER_EMAIL_VERIFIED':
 					getBrowser()
@@ -173,7 +176,7 @@ export class Extension {
 						.then(async (response) => {
 							if (response.data) {
 								let data = response.data;
-								useUserStore.getState().setUserData(data);
+								useAppStore.getState().setUserData(data);
 							}
 						});
 					break;

@@ -8,30 +8,36 @@ class ClockifyIntegrationBase {
 		if (!entry || error) {
 			setTimeEntryInProgress(null);
 			aBrowser.action.setIcon({
-				path: iconPathEnded,
+				path: iconPathEnded
 			});
 		} else {
 			setTimeEntryInProgress(entry);
 			aBrowser.action.setIcon({
-				path: iconPathStarted,
+				path: iconPathStarted
 			});
 		}
 		sendResponse({ status: clockifyLocales.OK_BTN });
 	}
 
-	static async endInProgress(sendResponse) {
+	static async endInProgress(
+		{ endedFromIntegration, integrationName },
+		sendResponse
+	) {
 		if (await isNavigatorOffline()) {
 			sendResponse('Connection is offline');
 			return;
 		}
-		const { error } = await TimeEntry.endInProgress();
+		const { error } = await TimeEntry.endInProgress({
+			endedFromIntegration,
+			integrationName
+		});
 		if (error) {
-			sendResponse({ status: error.status });
+			sendResponse({ status: error.status, message: error.message });
 		} else {
 			aBrowser.notifications.clear('idleDetection');
 			aBrowser.runtime.sendMessage({ eventName: 'entryEnded' });
 			aBrowser.action.setIcon({
-				path: iconPathEnded,
+				path: iconPathEnded
 			});
 			sendResponse({ status: clockifyLocales.OK_BTN });
 		}
@@ -48,7 +54,10 @@ class ClockifyIntegrationBase {
 			return;
 		}
 		if (entry) {
-			const { error } = await TimeEntry.endInProgress();
+			const { error } = await TimeEntry.endInProgress({
+				endedFromIntegration: true,
+				integrationName: timeEntryOptions.integrationName ?? null
+			});
 			if (error) {
 				sendResponse({ status: error.status });
 				return;
@@ -57,7 +66,7 @@ class ClockifyIntegrationBase {
 		const {
 			data: ent,
 			error: err,
-			status,
+			status
 		} = await TimeEntry.integrationStartTimerWithDescription(
 			timeEntryOptions.description,
 			timeEntryOptions
@@ -66,13 +75,62 @@ class ClockifyIntegrationBase {
 			sendResponse({ status: err.status });
 		} else {
 			if (status === 201) {
+				// Analytics
+				// entry_mode, integrations, integrations, entry_mode_integration
+				if (timeEntryOptions && !timeEntryOptions.isStartedFromIntegration) {
+					if (timeEntryOptions?.manualMode) {
+						// Popup - manual
+						const analyticsEventName = 'entry_mode';
+						const eventParameters = {
+							start_time: ent.timeInterval.start,
+							end_time: ent.timeInterval.end,
+							duration: ent.timeInterval.duration,
+							browser: 'chrome'
+						};
+						const options = { analyticsEventName, eventParameters };
+						await this.sendAnalyticsEvent(options);
+					} else {
+						// Popup - timer
+						const analyticsEventName = 'entry_mode';
+						const eventParameters = {
+							timer_start: true,
+							browser: 'chrome'
+						};
+						const options = { analyticsEventName, eventParameters };
+						await this.sendAnalyticsEvent(options);
+					}
+				} else {
+					if (timeEntryOptions?.manualMode) {
+						// Integration - manual
+						const analyticsEventName = 'entry_mode_integration';
+						const eventParameters = {
+							integrationName: timeEntryOptions.integrationName,
+							start_time: ent.timeInterval.start,
+							end_time: ent.timeInterval.end,
+							duration: ent.timeInterval.duration,
+							browser: 'chrome'
+						};
+						const options = { analyticsEventName, eventParameters };
+						await this.sendAnalyticsEvent(options);
+					} else {
+						// Integration - timer
+						const analyticsEventName = 'entry_mode_integration';
+						const eventParameters = {
+							integrationName: timeEntryOptions.integrationName,
+							timer_start: true,
+							browser: 'chrome'
+						};
+						const options = { analyticsEventName, eventParameters };
+						await this.sendAnalyticsEvent(options);
+					}
+				}
 				if (!timeEntryOptions.manualMode) {
 					aBrowser.action.setIcon({
-						path: iconPathStarted,
+						path: iconPathStarted
 					});
 					aBrowser.runtime.sendMessage({
 						eventName: 'entryStarted',
-						options: { entry: ent },
+						options: { entry: ent }
 					});
 					aBrowser.storage.local.set({ timeEntryInProgress: ent });
 				}
@@ -133,7 +191,7 @@ class ClockifyIntegrationBase {
 		const {
 			projectDB,
 			error: projectError,
-			status,
+			status
 		} = await ProjectTaskService.getProjectsByIds(projectIds, taskIds);
 		if (projectError) {
 			sendResponse(
@@ -144,12 +202,12 @@ class ClockifyIntegrationBase {
 		if (projectDB) {
 			sendResponse({
 				status,
-				data: [projectDB],
+				data: [projectDB]
 			});
 		} else {
 			sendResponse({
 				status,
-				data: [],
+				data: []
 			});
 		}
 	}
@@ -205,7 +263,7 @@ class ClockifyIntegrationBase {
 		}
 		sendResponse({
 			status: 201,
-			data,
+			data
 		});
 	}
 
@@ -224,7 +282,7 @@ class ClockifyIntegrationBase {
 		}
 		sendResponse({
 			status: 201,
-			data,
+			data
 		});
 	}
 
@@ -235,7 +293,7 @@ class ClockifyIntegrationBase {
 		}
 
 		const { data, error: projectsError } =
-			await ProjectTaskService.getTaskOfProject(projectId, taskName);
+			await ProjectTaskService.getTaskOfProject({ projectId, taskName });
 		if (projectsError) {
 			sendResponse(
 				projectsError.message ? projectsError.message : projectsError.status
@@ -243,7 +301,7 @@ class ClockifyIntegrationBase {
 		}
 		sendResponse({
 			status: 201,
-			data,
+			data
 		});
 	}
 
@@ -270,7 +328,7 @@ class ClockifyIntegrationBase {
 		);
 		sendResponse({
 			status,
-			data,
+			data
 		});
 	}
 
@@ -290,7 +348,7 @@ class ClockifyIntegrationBase {
 		const {
 			data: timeEntry,
 			error,
-			status,
+			status
 		} = await TimeEntry.setDescription(id, description.trim());
 		if (error) {
 			sendResponse(error.message ? error.message : error.status);
@@ -416,7 +474,7 @@ class ClockifyIntegrationBase {
 		const {
 			data,
 			error: tagsError,
-			status,
+			status
 		} = await TagService.getAllTagsWithFilter(page, pageSize, filter);
 		if (tagsError) {
 			sendResponse(tagsError.message ? tagsError.message : tagsError.status);
@@ -437,9 +495,12 @@ class ClockifyIntegrationBase {
 		// 	return;
 		// }
 
-		const { data, error: tagsError, status } = await TagService.createTag(tag);
-		if (tagsError) {
-			sendResponse(tagsError.message ? tagsError.message : tagsError.status);
+		const { data, error, status } = await TagService.createTag(tag);
+		console.log({
+			data, error, status
+		});
+		if (error) {
+			sendResponse(error);
 			return;
 		}
 		sendResponse({ status, data });
@@ -451,22 +512,14 @@ class ClockifyIntegrationBase {
 			return;
 		}
 
-		// const { entry, error } = await TimeEntry.getEntryInProgress();
-		// if (error) {
-		// 	sendResponse(error.message ? error.message : error.status);
-		// 	return;
-		// }
-
-		// if (entry) {
 		const { data, error, status } = await TimeEntry.updateTags(tagIds, id);
+
 		if (error) {
-			sendResponse(error.message ? error.message : error.status);
+			sendResponse({ error });
 			return;
 		}
+
 		sendResponse({ status, data });
-		// } else {
-		// 	sendResponse('There is no TimeEntry in progress');
-		// }
 	}
 
 	static async fetchEntryInProgress(sendResponse) {
@@ -544,7 +597,10 @@ class ClockifyIntegrationBase {
 		// }
 	}
 
-	static async submitTime({ totalMins, timeEntryOptions }, sendResponse) {
+	static async submitTime(
+		{ totalMins, timeEntryOptions, integrationName },
+		sendResponse
+	) {
 		if (await isNavigatorOffline()) {
 			sendResponse('Connection is offline');
 			return;
@@ -564,15 +620,22 @@ class ClockifyIntegrationBase {
 			}
 		}
 
-		const start = new Date();
-		timeEntryOptions.start = start;
-		timeEntryOptions.end = new Date(start.getTime() + totalMins * 60000);
-		timeEntryOptions.isSubmitTime = true;
+		const { timeInterval } = timeEntryOptions;
+
+		if (timeInterval?.start && timeInterval?.end) {
+			timeEntryOptions.start = timeInterval.start;
+			timeEntryOptions.end = timeInterval.end;
+		} else {
+			const start = new Date();
+			timeEntryOptions.start = start;
+			timeEntryOptions.end = new Date(start.getTime() + totalMins * 60000);
+			timeEntryOptions.isSubmitTime = true;
+		}
 
 		const {
 			entry: ent,
 			error: err,
-			status,
+			status
 		} = await TimeEntry.integrationStartTimerWithDescription(
 			timeEntryOptions.description,
 			timeEntryOptions
@@ -584,6 +647,25 @@ class ClockifyIntegrationBase {
 				sendResponse(err.message ? err.message : err.status);
 			}
 			return;
+		} else {
+			// Analytics
+			// Integration - manual
+
+			const analyticsEventName = 'entry_mode_integration';
+			const duration = moment(
+				moment.duration(
+					moment(timeEntryOptions.end).diff(moment(timeEntryOptions.start))
+				)
+			).format('HH:mm:ss');
+			const eventParameters = {
+				integrationName: integrationName,
+				start_time: timeEntryOptions.start,
+				end_time: timeEntryOptions.end,
+				duration: duration,
+				browser: 'chrome'
+			};
+			const options = { analyticsEventName, eventParameters };
+			await this.sendAnalyticsEvent(options);
 		}
 		sendResponse({ entry: ent, status });
 	}
@@ -924,6 +1006,7 @@ class ClockifyIntegrationBase {
 		}
 		sendResponse({ data: entry, status });
 	}
+
 	static async setDescription({ entryId, description }, sendResponse) {
 		if (await isNavigatorOffline()) {
 			sendResponse('Connection is offline', 0);
@@ -940,6 +1023,7 @@ class ClockifyIntegrationBase {
 		}
 		sendResponse({ data, status });
 	}
+
 	static async removeProject({ entryId }, sendResponse) {
 		if (await isNavigatorOffline()) {
 			sendResponse('Connection is offline', 0);
@@ -953,6 +1037,7 @@ class ClockifyIntegrationBase {
 		}
 		sendResponse({ data, status });
 	}
+
 	static async removeTask({ entryId }, sendResponse) {
 		if (await isNavigatorOffline()) {
 			sendResponse('Connection is offline', 0);
@@ -966,6 +1051,7 @@ class ClockifyIntegrationBase {
 		}
 		sendResponse({ data, status });
 	}
+
 	static async continueEntry({ timeEntryId }, sendResponse) {
 		if (await isNavigatorOffline()) {
 			sendResponse('Connection is offline', 0);
@@ -979,6 +1065,7 @@ class ClockifyIntegrationBase {
 		}
 		sendResponse({ data, status });
 	}
+
 	static async deleteTimeEntry({ entryId }, sendResponse) {
 		if (await isNavigatorOffline()) {
 			sendResponse('Connection is offline', 0);
@@ -992,6 +1079,7 @@ class ClockifyIntegrationBase {
 		}
 		sendResponse({ data, status });
 	}
+
 	static async deleteTimeEntries({ entryIds }, sendResponse) {
 		if (await isNavigatorOffline()) {
 			sendResponse('Connection is offline', 0);
@@ -1005,6 +1093,7 @@ class ClockifyIntegrationBase {
 		}
 		sendResponse({ data, status });
 	}
+
 	static async updateTimeEntryValues({ entryId, body }, sendResponse) {
 		if (await isNavigatorOffline()) {
 			sendResponse('Connection is offline', 0);
@@ -1035,6 +1124,7 @@ class ClockifyIntegrationBase {
 		}
 		sendResponse({ data, status });
 	}
+
 	static async searchEntries({ searchValue }, sendResponse) {
 		if (await isNavigatorOffline()) {
 			sendResponse('Connection is offline', 0);
@@ -1148,7 +1238,7 @@ class ClockifyIntegrationBase {
 
 		const { data, error, status } =
 			await NotificationService.readSingleNotificationForUser({
-				notificationId,
+				notificationId
 			});
 
 		if (error) {
@@ -1188,7 +1278,7 @@ class ClockifyIntegrationBase {
 
 		const { data, error, status } =
 			await NotificationService.readSingleOrMultipleNewsForUser({
-				newsIds,
+				newsIds
 			});
 
 		if (error) {
@@ -1206,7 +1296,7 @@ class ClockifyIntegrationBase {
 
 		const { data, error, status } =
 			await NotificationService.readManyNotificationsForUser({
-				notificationIds,
+				notificationIds
 			});
 
 		if (error) {

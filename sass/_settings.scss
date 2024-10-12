@@ -62,11 +62,11 @@
 }
 
 .app-version {
-	position: absolute;
-	margin: 20px;
+	position: relative;
+	padding: 20px;
 	bottom: 0;
-	right: 0;
-	color: variables.$dark_text;
+	left: 240px;
+	color: #333333;
 	font-size: 12px;
 }
 

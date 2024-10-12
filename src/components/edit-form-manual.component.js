@@ -1,5 +1,5 @@
 import React from 'react';
-import Header from './header.component';
+import Header from './header.component.jsx';
 import Duration from './duration.component';
 import moment from 'moment';
 import { duration } from 'moment/moment';
@@ -8,14 +8,14 @@ import ProjectList from './project-list.component';
 import TagsList from './tags-list.component';
 import HomePage from './home-page.component';
 import { isOffline } from './check-connection';
-import DeleteEntryConfirmationComponent from './delete-entry-confirmation.component';
 import Toaster from './toaster-component';
 import { DefaultProject } from '../helpers/storageUserWorkspace';
 import { CustomFieldsContainer } from './customFields/customFields-Container';
-import { offlineStorage, getWSCustomFields } from '../helpers/offlineStorage';
+import { getWSCustomFields, offlineStorage } from '../helpers/offlineStorage';
 import locales from '../helpers/locales';
-import Autocomplete from './autocomplete.component';
+import { Autocomplete } from '~/components/Autocomplete.tsx';
 import { getBrowser } from '../helpers/browser-helper';
+import { DeleteEntryConfirmation } from '~/components/DeleteEntryConfirmation.tsx';
 
 class EditFormManual extends React.Component {
 	constructor(props) {
@@ -23,6 +23,7 @@ class EditFormManual extends React.Component {
 
 		this.state = {
 			timeEntry: this.props.timeEntry,
+			description: this.props.timeEntry.description || '',
 			ready: false,
 			descRequired: false,
 			projectRequired: false,
@@ -35,6 +36,7 @@ class EditFormManual extends React.Component {
 			inProgress: null,
 			workspaceSettings: null,
 			autocompleteItems: [],
+			copyAsEntry: this.props.copyAsEntry,
 		};
 
 		this.notify = this.notify.bind(this);
@@ -47,6 +49,7 @@ class EditFormManual extends React.Component {
 		this.areCustomFieldsValid = this.areCustomFieldsValid.bind(this);
 		this.cfContainsWrongChars = this.cfContainsWrongChars.bind(this);
 		this.checkRequiredFields = this.checkRequiredFields.bind(this);
+		this.checkProjectError = this.checkProjectError.bind(this);
 	}
 
 	async setAsyncStateItems() {
@@ -54,7 +57,6 @@ class EditFormManual extends React.Component {
 		const isUserOwnerOrAdmin = await offlineStorage.getIsUserOwnerOrAdmin();
 		const inProgress = await localStorage.getItem('inProgress');
 		const workspaceSettings = await localStorage.getItem('workspaceSettings');
-
 		if (
 			this.state.isUserOwnerOrAdmin !== isUserOwnerOrAdmin ||
 			this.state.hideBillable !== hideBillable ||
@@ -74,16 +76,25 @@ class EditFormManual extends React.Component {
 		this.setAsyncStateItems();
 	}
 
+	async checkProjectError() {
+		const createProjectError = await localStorage.getItem('createProjectError');
+		const createProjectErrorParsed = JSON.parse(createProjectError);
+		if (createProjectErrorParsed) {
+			this.notify(locales.CAN_NOT_CREATE_PROJECT_MISSING_PERMISSIONS, 'error', 5);
+			await localStorage.removeItem('createProjectError');
+		}
+	}
+
 	async componentDidMount() {
 		this.setAsyncStateItems();
 		getBrowser()
 			.runtime.sendMessage({
 				eventName: 'getRecentTimeEntries',
 			})
-			.then((res) => {
+			.then(res => {
 				this.setState({
 					autocompleteItemsRecent: res.data?.map(
-						(entry) =>
+						entry =>
 							({
 								project: {
 									clientName: entry.clientName,
@@ -101,14 +112,12 @@ class EditFormManual extends React.Component {
 					),
 				});
 			})
-			.catch((err) => console.log(err));
+			.catch(err => console.log(err));
 		const { timeEntry } = this.state;
 
 		if (!this.props.integrationMode) {
 			timeEntry.timeInterval.duration = moment.duration(
-				moment(timeEntry.timeInterval.end).diff(
-					moment(timeEntry.timeInterval.start)
-				)
+				moment(timeEntry.timeInterval.end).diff(moment(timeEntry.timeInterval.start))
 			);
 		}
 		if (this.props.workspaceSettings.features?.customFields) {
@@ -123,7 +132,6 @@ class EditFormManual extends React.Component {
 			offlineStorage.wsCustomFields = [];
 		}
 
-
 		// if (await isOffline()) {
 		//     if (offlineStorage.timeEntryInOffline) {
 		//
@@ -136,16 +144,22 @@ class EditFormManual extends React.Component {
 		const taskId = task ? task.id : null;
 		// if (forceProjects && (!projectId || forceTasks && !taskId)) {
 		if (!projectId || (forceTasks && !taskId)) {
-			const { projectDB, taskDB } = await this.checkDefaultProjectTask(
-				forceTasks
-			);
+			const { projectDB, taskDB } = await this.checkDefaultProjectTask(forceTasks);
+			const getBillableStatus = () => {
+				if (taskDB) {
+					return this.props.workspaceSettings.taskBillableEnabled
+						? taskDB.billable
+						: projectDB.billable;
+				}
+				return projectDB?.billable;
+			};
 			if (projectDB) {
 				const entry = Object.assign(timeEntry, {
 					projectId: projectDB.id,
 					project: projectDB,
 					task: taskDB,
 					taskId: taskDB ? taskDB.id : null,
-					billable: projectDB.billable,
+					billable: getBillableStatus(),
 				});
 				// if (isOffline()) {
 				//     offlineStorage.timeEntryInOffline = entry;
@@ -182,9 +196,9 @@ class EditFormManual extends React.Component {
 					searchValue: inputValue,
 				},
 			})
-			.then((res) => {
+			.then(res => {
 				this.setState({
-					autocompleteItems: res.data.map((entry) => ({
+					autocompleteItems: res.data.map(entry => ({
 						project: {
 							clientName: entry.clientName,
 							color: entry.projectColor,
@@ -200,7 +214,7 @@ class EditFormManual extends React.Component {
 					})),
 				});
 			})
-			.catch((err) => console.log(err));
+			.catch(err => console.log(err));
 	}
 
 	async updateCustomFields(customFields) {
@@ -243,8 +257,9 @@ class EditFormManual extends React.Component {
 
 			if (!isLastUsedProject) {
 				if (!isLastUsedProject) {
-					const { projectDB, taskDB, msg } =
-						await defaultProject.getProjectTaskFromDB(forceTasks);
+					const { projectDB, taskDB, msg } = await defaultProject.getProjectTaskFromDB(
+						forceTasks
+					);
 					if (msg) {
 						setTimeout(() => {
 							this.toaster.toast('info', msg, 5);
@@ -281,9 +296,7 @@ class EditFormManual extends React.Component {
 				if (!response.data) throw new Error(response);
 				if (!response.data) throw new Error(response);
 				lastEntry = {
-					project: !isLastUsedProjectWithoutTask
-						? response.data.project
-						: response.data,
+					project: !isLastUsedProjectWithoutTask ? response.data.project : response.data,
 					task: !isLastUsedProjectWithoutTask ? response.data.task : null,
 				};
 				let { project, task } = lastEntry;
@@ -338,9 +351,7 @@ class EditFormManual extends React.Component {
 
 		timeEntry.timeInterval.end = end;
 		timeEntry.timeInterval.duration = duration(
-			moment(this.state.timeEntry.timeInterval.end).diff(
-				timeEntry.timeInterval.start
-			)
+			moment(this.state.timeEntry.timeInterval.end).diff(timeEntry.timeInterval.start)
 		);
 
 		this.setState(
@@ -353,12 +364,12 @@ class EditFormManual extends React.Component {
 
 	setDescription(description) {
 		if (description.length > 3000) {
-			description = description.slice(0, 3000);
+			this.setState({ description: description.slice(0, 3000) });
 			this.toaster.toast('error', locales.DESCRIPTION_LIMIT_ERROR_MSG(3000), 2);
 		}
 
 		this.setState(
-			(state) => ({
+			state => ({
 				timeEntry: {
 					...state.timeEntry,
 					description,
@@ -369,16 +380,14 @@ class EditFormManual extends React.Component {
 	}
 
 	async editProject(project) {
-		const projectId =
-			project && project.id && project.id !== 'no-project' ? project.id : null;
+		const projectId = project && project.id && project.id !== 'no-project' ? project.id : null;
 
 		if (await isOffline()) {
 			let timeEntry = offlineStorage.timeEntryInOffline;
 			if (timeEntry && timeEntry.id === this.state.timeEntry.id) {
 				timeEntry.projectId = projectId;
 				timeEntry.project = project;
-				timeEntry.billable =
-					project && project.billable ? project.billable : null;
+				timeEntry.billable = project && project.billable ? project.billable : null;
 				offlineStorage.timeEntryInOffline = timeEntry;
 				this.setState(
 					{
@@ -391,12 +400,11 @@ class EditFormManual extends React.Component {
 				);
 			} else {
 				let timeEntries = offlineStorage.timeEntriesOffline;
-				timeEntries.map((timeEntry) => {
+				timeEntries.map(timeEntry => {
 					if (timeEntry.id === this.state.timeEntry.id) {
 						timeEntry.projectId = projectId;
 						timeEntry.project = project;
-						timeEntry.billable =
-							project && project.billable ? project.billable : null;
+						timeEntry.billable = project && project.billable ? project.billable : null;
 						this.setState(
 							{
 								timeEntry,
@@ -413,7 +421,7 @@ class EditFormManual extends React.Component {
 			}
 		} else {
 			this.setState(
-				(state) => ({
+				state => ({
 					timeEntry: {
 						...state.timeEntry,
 						projectId,
@@ -431,31 +439,32 @@ class EditFormManual extends React.Component {
 
 	editTask(task, project) {
 		this.setState(
-			(state) => ({
+			state => ({
 				timeEntry: {
 					...state.timeEntry,
 					projectId: project.id,
-					billable: project.billable,
+					billable: this.props.workspaceSettings?.taskBillableEnabled
+						? task.billable
+						: project.billable,
 					project,
 					taskId: task.id,
 					task,
 				},
 			}),
 			() => {
-				this.checkIfTaskBillable();
 				this.checkRequiredFields();
 			}
 		);
 	}
 
 	editTags(tag) {
-		let tagIds = this.state.tags ? this.state.tags.map((it) => it.id) : [];
+		let tagIds = this.state.tags ? this.state.tags.map(it => it.id) : [];
 		let tagList = this.state.tags;
 		let timeEntry = { ...this.state.timeEntry };
 
 		if (tagIds.includes(tag.id)) {
 			tagIds.splice(tagIds.indexOf(tag.id), 1);
-			tagList = tagList.filter((t) => t.id !== tag.id);
+			tagList = tagList.filter(t => t.id !== tag.id);
 		} else {
 			tagIds.push(tag.id);
 			tagList.push(tag);
@@ -484,12 +493,10 @@ class EditFormManual extends React.Component {
 		this.goBack();
 		let timeEntries = offlineStorage.timeEntriesOffline;
 		if (
-			timeEntries.findIndex(
-				(entryOffline) => entryOffline.id === this.state.timeEntry.id
-			) > -1
+			timeEntries.findIndex(entryOffline => entryOffline.id === this.state.timeEntry.id) > -1
 		) {
 			timeEntries.splice(
-				timeEntries.findIndex((entry) => entry.id === this.state.timeEntry.id),
+				timeEntries.findIndex(entry => entry.id === this.state.timeEntry.id),
 				1
 			);
 		}
@@ -516,17 +523,12 @@ class EditFormManual extends React.Component {
 		if (workspaceSettings) {
 			if (
 				workspaceSettings.forceDescription &&
-				(!this.state.timeEntry.description ||
-					this.state.timeEntry.description === '')
+				(!this.state.timeEntry.description || this.state.timeEntry.description === '')
 			) {
 				descRequired = true;
 			}
 
-			if (
-				workspaceSettings.forceProjects &&
-				!this.state.timeEntry.projectId &&
-				isOnline
-			) {
+			if (workspaceSettings.forceProjects && !this.state.timeEntry.projectId && isOnline) {
 				projectRequired = true;
 			}
 
@@ -541,8 +543,7 @@ class EditFormManual extends React.Component {
 			}
 			if (
 				workspaceSettings.forceTags &&
-				(!this.state.timeEntry.tagIds ||
-					!this.state.timeEntry.tagIds.length > 0) &&
+				(!this.state.timeEntry.tagIds || !this.state.timeEntry.tagIds.length > 0) &&
 				isOnline
 			) {
 				tagsRequired = true;
@@ -559,28 +560,43 @@ class EditFormManual extends React.Component {
 		});
 	}
 
-	async checkIfTaskBillable() {
+	async checkIfTaskBillable(selected) {
 		if (this.state.timeEntry.taskId) {
-			const wsSettings = await localStorage.getItem('workspaceSettings');
-			const tasksBillable = wsSettings
-				? JSON.parse(wsSettings).taskBillableEnabled
-				: false;
+			const tasksBillable = this.props.workspaceSettings.taskBillableEnabled || false;
 			if (tasksBillable) {
-				let projectTask = getBrowser().runtime.sendMessage({
+				let projectTask = await getBrowser().runtime.sendMessage({
 					eventName: 'getTaskOfProject',
 					options: {
 						projectId: this.state.timeEntry.project.id,
 						taskName: this.state.timeEntry.task.name,
 					},
 				});
+				const { data } = projectTask;
+				const selectedTask = data.find(
+					task => task.name === this.state.timeEntry.task.name
+				);
 				projectTask.data &&
 					this.setState({
 						timeEntry: {
 							...this.state.timeEntry,
-							billable: projectTask.data[0].billable,
+							billable: selectedTask.billable,
 						},
 					});
+				return;
 			}
+			this.setState({
+				timeEntry: {
+					...this.state.timeEntry,
+					billable: selected.billable,
+				},
+			});
+		} else {
+			this.setState({
+				timeEntry: {
+					...this.state.timeEntry,
+					billable: selected.projectBillable,
+				},
+			});
 		}
 	}
 
@@ -599,7 +615,7 @@ class EditFormManual extends React.Component {
 	}
 
 	async done() {
-		const { description } = this.state.timeEntry;
+		const { description } = this.state.description;
 		const pattern = /<[^>]+>/;
 		const descriptionContainsWrongChars = pattern.test(description);
 
@@ -637,9 +653,7 @@ class EditFormManual extends React.Component {
 				timeInterval: {
 					start: timeInterval.start,
 					end: timeInterval.end,
-					duration: duration(
-						moment(timeInterval.end).diff(moment(timeInterval.start))
-					),
+					duration: duration(moment(timeInterval.end).diff(moment(timeInterval.start))),
 				},
 				customFieldValues: customFieldValues ? customFieldValues : null,
 			};
@@ -677,19 +691,29 @@ class EditFormManual extends React.Component {
 								}))
 						: [];
 
-				if (this.props.integrationMode) {
-					const start = new Date();
-					timeInterval = {
-						start,
-						end:  new Date(
-							start.getTime() + this.props.timeEntry.totalMins * 60000
-						),
-					};
-				} else if (timeInterval.start.toDate) {
-					timeInterval = {
-						start: timeInterval.start.toDate(),
-						end: timeInterval.end.toDate(),
-					};
+				// if component is executed via "copy as time entry" feature
+				// timeEntry.timeInterval already has start and end properties
+				if (!this.state.copyAsEntry) {
+					if (this.props.integrationMode) {
+						const start = new Date();
+						timeInterval = {
+							start,
+							end: new Date(start.getTime() + this.props.timeEntry.totalMins * 60000),
+						};
+					} else if (timeInterval.start.toDate) {
+						timeInterval = {
+							start: timeInterval.start.toDate(),
+							end: timeInterval.end.toDate(),
+						};
+					}
+				} else {
+					if ('toDate' in timeInterval.start) {
+						timeInterval.start = timeInterval.start.toDate();
+					}
+
+					if ('toDate' in timeInterval.end) {
+						timeInterval.end = timeInterval.end.toDate();
+					}
 				}
 				getBrowser()
 					.runtime.sendMessage({
@@ -704,18 +728,20 @@ class EditFormManual extends React.Component {
 							tagIds: tagIds ? tagIds : [],
 							customFields: cfs,
 							manualMode: true,
+							integrationName: this.props.integrationName,
+							isStartedFromIntegration: Boolean(this.props.integrationName),
 						},
 					})
-					.then((response) => {
+					.then(response => {
 						let timeEntries = offlineStorage.timeEntriesOffline;
 						if (
 							timeEntries.findIndex(
-								(entryOffline) => entryOffline.id === this.state.timeEntry.id
+								entryOffline => entryOffline.id === this.state.timeEntry.id
 							) > -1
 						) {
 							timeEntries.splice(
 								timeEntries.findIndex(
-									(entry) => entry.id === this.state.timeEntry.id
+									entry => entry.id === this.state.timeEntry.id
 								),
 								1
 							);
@@ -723,7 +749,10 @@ class EditFormManual extends React.Component {
 
 						offlineStorage.timeEntriesOffline = timeEntries;
 						if (this.props.integrationMode) {
-							this.notify('Time submitted!', 'success', 10);
+							const message = this.state.copyAsEntry
+								? 'Successfully updated'
+								: 'Time submitted!';
+							this.notify(message, 'success', 10);
 							setTimeout(() => {
 								this.goBack();
 							}, 1000);
@@ -731,7 +760,7 @@ class EditFormManual extends React.Component {
 							this.goBack();
 						}
 					})
-					.catch((error) => {
+					.catch(error => {
 						if (error.request.status === 403) {
 							const response = JSON.parse(error.request.response);
 							if (response.code === 4030) {
@@ -750,25 +779,27 @@ class EditFormManual extends React.Component {
 	}
 
 	changeDate(date) {
-		let getDate = new Date(date);
-		let timeEntryStart = moment(this.state.timeEntry.timeInterval.start);
-		let start = moment(getDate)
-			.hour(timeEntryStart.hour())
-			.minutes(timeEntryStart.minutes())
-			.seconds(timeEntryStart.seconds());
+		const choosenDate = new Date(date);
 
-		let timeEntry = this.state.timeEntry;
-		timeEntry.timeInterval = {
-			start: start,
-			end: moment(start).add(timeEntry.timeInterval.duration),
-			duration: timeEntry.timeInterval.duration,
-		};
-		this.setState(
-			{
-				timeEntry: timeEntry,
-			},
-			() => {}
-		);
+		const choosenYear = choosenDate.getFullYear();
+		const choosenMonth = choosenDate.getMonth();
+		const choosenDay = choosenDate.getDate();
+
+		const start = moment(this.state.timeEntry.timeInterval.start)
+			.year(choosenYear)
+			.month(choosenMonth)
+			.date(choosenDay);
+		const end = moment(this.state.timeEntry.timeInterval.end)
+			.year(choosenYear)
+			.month(choosenMonth)
+			.date(choosenDay);
+		const duration = end.diff(start);
+
+		const timeEntry = this.state.timeEntry;
+
+		timeEntry.timeInterval = { start, end, duration };
+
+		this.setState({ timeEntry });
 	}
 
 	changeMode(mode) {
@@ -799,10 +830,32 @@ class EditFormManual extends React.Component {
 		this.toaster.toast(type, message, n);
 	}
 
+	isBillableShowable() {
+		const { activeBillableHours, onlyAdminsCanChangeBillableStatus } =
+			this.props.workspaceSettings;
+		const { isUserOwnerOrAdmin } = this.state;
+
+		const canUserSeeBillable =
+			!onlyAdminsCanChangeBillableStatus ||
+			(onlyAdminsCanChangeBillableStatus && isUserOwnerOrAdmin);
+
+		return activeBillableHours && canUserSeeBillable;
+	}
+
+	onSetDescription(description) {
+		this.setState(
+			{
+				description: description.target.value,
+			},
+			() => this.setDescription(this.state.description.trim())
+		);
+	}
+
 	render() {
 		if (!this.state.ready) {
 			return null;
 		} else {
+			this.checkProjectError();
 			const { timeEntry } = this.state;
 			//const hideBillable = offlineStorage.onlyAdminsCanChangeBillableStatus && !offlineStorage.isUserOwnerOrAdmin;
 
@@ -819,7 +872,7 @@ class EditFormManual extends React.Component {
 								goBackTo={this.goBack.bind(this)}
 							/>
 							<Duration
-								ref={(instance) => {
+								ref={instance => {
 									this.duration = instance;
 								}}
 								timeEntry={timeEntry}
@@ -831,32 +884,49 @@ class EditFormManual extends React.Component {
 								workspaceSettings={this.props.workspaceSettings}
 								userSettings={this.props.userSettings}
 								isFormManual={true}
+								copyAsEntry={this.state.copyAsEntry}
 							/>
 						</>
 					)}
 					<Toaster
-						ref={(instance) => {
+						ref={instance => {
 							this.toaster = instance;
 						}}
 					/>
 					<div className="edit-form">
+						{this.state.copyAsEntry && (
+							<Duration
+								ref={instance => {
+									this.duration = instance;
+								}}
+								timeEntry={timeEntry}
+								changeInterval={this.changeInterval.bind(this)}
+								changeDuration={this.changeDuration.bind(this)}
+								changeDate={this.changeDate.bind(this)}
+								timeFormat={this.props.timeFormat}
+								isUserOwnerOrAdmin={this.state.isUserOwnerOrAdmin}
+								workspaceSettings={this.props.workspaceSettings}
+								userSettings={this.props.userSettings}
+								isFormManual={true}
+								copyAsEntry={this.state.copyAsEntry}
+							/>
+						)}
+
 						<div
 							className={
 								this.state.descRequired
 									? 'description-textarea-required'
 									: 'description-textarea'
-							}
-						>
+							}>
 							<Autocomplete
 								items={
 									this.state.timeEntry.description?.length >= 2
 										? this.state.autocompleteItems
 										: this.state.autocompleteItemsRecent
 								}
-								value={this.state.timeEntry.description}
-								onChange={(e) => {
+								value={this.state.description}
+								onChange={e => {
 									const { value } = e.target;
-
 									this.setDescription(value);
 									if (value.length >= 2) {
 										this.handleInputChange(value);
@@ -864,35 +934,39 @@ class EditFormManual extends React.Component {
 										this.handleInputChange(null);
 									}
 								}}
-								onSelect={(item) => {
+								onSelect={item => {
 									const selected =
-										this.state.timeEntry.description?.length >= 2
+										this.state.description?.length >= 2
 											? this.state.autocompleteItems.find(
-													(entry) => entry.id === item.id
+													entry => entry.id === item.id
 											  )
 											: this.state.autocompleteItemsRecent.find(
-													(entry) => entry.id === item.id
+													entry => entry.id === item.id
 											  );
 
 									if (selected) {
 										this.setState(
-											(state) => ({
+											state => ({
+												description: selected.description,
 												timeEntry: {
 													...state.timeEntry,
 													...selected,
-													timeInterval: { ...state.timeEntry.timeInterval },
-													tagIds: selected.tags.map((el) => el.id),
+													billable: this.state.timeEntry.billable,
+													timeInterval: {
+														...state.timeEntry.timeInterval,
+													},
+													tagIds: selected.tags.map(el => el.id),
 												},
 												tags: selected.tags,
 											}),
 											() => {
-												this.checkIfTaskBillable();
+												this.checkIfTaskBillable(selected);
 												this.checkRequiredFields();
 											}
 										);
 									}
 								}}
-								renderInput={(props) => (
+								renderInput={props => (
 									<textarea
 										placeholder={
 											this.state.descRequired
@@ -901,8 +975,9 @@ class EditFormManual extends React.Component {
 										}
 										className={'edit-form-description'}
 										type="text"
+										onInput={this.onSetDescription.bind(this)}
 										{...props}
-										onBlur={(event) => {
+										onBlur={event => {
 											const description = event.target.value;
 											const pattern = /<[^>]+>/;
 											const descriptionContainsWrongChars =
@@ -922,11 +997,6 @@ class EditFormManual extends React.Component {
 						</div>
 						<div className="edit-form__project_list">
 							<ProjectList
-								// ref={instance => {
-								//     this.projectList = instance;
-								// }}
-								// selectedProject={timeEntry.project}
-								// selectedTask={timeEntry.task}
 								selectProject={this.editProject}
 								selectTask={this.editTask}
 								noTasks={false}
@@ -943,13 +1013,11 @@ class EditFormManual extends React.Component {
 							/>
 						</div>
 						<TagsList
-							ref={(instance) => {
+							ref={instance => {
 								this.tagList = instance;
 							}}
 							tags={this.state.tags ? this.state.tags : []}
-							tagIds={
-								timeEntry.tagIds ? this.state.tags.map((it) => it.id) : []
-							}
+							tagIds={timeEntry.tagIds ? this.state.tags.map(it => it.id) : []}
 							editTag={this.editTags.bind(this)}
 							tagsRequired={this.state.tagsRequired}
 							isUserOwnerOrAdmin={this.state.isUserOwnerOrAdmin}
@@ -959,41 +1027,37 @@ class EditFormManual extends React.Component {
 							integrationMode={this.props.integrationMode}
 						/>
 						<div className="edit-form-buttons">
-							<div
-								className={`edit-form-buttons__billable ${
-									this.state.hideBillable ? 'disabled' : ''
-								}`}
-							>
-								<span
-									className={
-										timeEntry.billable
-											? 'edit-form-checkbox checked'
-											: 'edit-form-checkbox'
-									}
-									onClick={this.editBillable.bind(this)}
-									tabIndex={'0'}
-									onKeyDown={(e) => {
-										if (e.key === 'Enter') this.editBillable();
-									}}
-								>
-									<img
-										src={getBrowser().runtime.getURL(
-											'assets/images/checked.png'
-										)}
+							{this.isBillableShowable() && (
+								<div>
+									<span
 										className={
 											timeEntry.billable
-												? 'edit-form-billable-img'
-												: 'edit-form-billable-img-hidden'
+												? 'edit-form-checkbox checked'
+												: 'edit-form-checkbox'
 										}
-									/>
-								</span>
-								<label
-									onClick={this.editBillable.bind(this)}
-									className="edit-form-billable"
-								>
-									{locales.BILLABLE_LABEL}
-								</label>
-							</div>
+										onClick={this.editBillable.bind(this)}
+										tabIndex={'0'}
+										onKeyDown={e => {
+											if (e.key === 'Enter') this.editBillable();
+										}}>
+										<img
+											src={getBrowser().runtime.getURL(
+												'assets/images/checked.png'
+											)}
+											className={
+												timeEntry.billable
+													? 'edit-form-billable-img'
+													: 'edit-form-billable-img-hidden'
+											}
+										/>
+									</span>
+									<label
+										onClick={this.editBillable.bind(this)}
+										className="edit-form-billable">
+										{locales.BILLABLE_LABEL}
+									</label>
+								</div>
+							)}
 							{this.props.workspaceSettings.features.customFields && (
 								<CustomFieldsContainer
 									cfContainsWrongChars={this.cfContainsWrongChars}
@@ -1018,8 +1082,7 @@ class EditFormManual extends React.Component {
 										this.state.cfRequired
 											? 'edit-form-done-disabled'
 											: 'edit-form-done'
-									}
-								>
+									}>
 									{locales.ADD}
 								</button>
 								{!this.props.integrationMode && (
@@ -1027,12 +1090,11 @@ class EditFormManual extends React.Component {
 										<div className="edit-form-right-buttons__back_and_delete">
 											<span
 												onClick={this.askToDeleteEntry.bind(this)}
-												className="edit-form-delete"
-											>
+												className="edit-form-delete">
 												{locales.DELETE}
 											</span>
 										</div>
-										<DeleteEntryConfirmationComponent
+										<DeleteEntryConfirmation
 											askToDeleteEntry={this.state.askToDeleteEntry}
 											canceled={this.cancelDeletingEntry.bind(this)}
 											confirmed={this.deleteEntry.bind(this)}

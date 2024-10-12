@@ -11,7 +11,7 @@ class ClientListComponent extends Component {
 
 		this.state = {
 			selectedClient: {
-				name: locales.SELECT_CLIENT,
+				name: locales.SELECT_CLIENT
 			},
 			isOpen: false,
 			page: 1,
@@ -21,7 +21,7 @@ class ClientListComponent extends Component {
 			loadMore: false,
 			createFormOpened: false,
 			clientName: '',
-			isOffline: null,
+			isOffline: null
 		};
 		this.setAsyncStateItems = this.setAsyncStateItems.bind(this);
 		this.clientFilterRef = null;
@@ -34,7 +34,7 @@ class ClientListComponent extends Component {
 	async setAsyncStateItems() {
 		const isOffline = await localStorage.getItem('offline');
 		this.setState({
-			isOffline,
+			isOffline
 		});
 	}
 
@@ -47,7 +47,7 @@ class ClientListComponent extends Component {
 		if (!JSON.parse(await localStorage.getItem('offline'))) {
 			this.setState(
 				{
-					isOpen: true,
+					isOpen: true
 				},
 				() => {
 					this.clientFilterRef.focus();
@@ -63,7 +63,7 @@ class ClientListComponent extends Component {
 				isOpen: false,
 				clientList: [],
 				page: 1,
-				filter: '',
+				filter: ''
 			},
 			() => {
 				this.getClients(this.state.page);
@@ -76,7 +76,7 @@ class ClientListComponent extends Component {
 			{
 				clientList: [],
 				filter: '',
-				page: 1,
+				page: 1
 			},
 			() => {
 				this.getClients(this.state.page);
@@ -89,7 +89,7 @@ class ClientListComponent extends Component {
 			{
 				clientList: [],
 				filter: e.target.value.toLowerCase(),
-				page: 1,
+				page: 1
 			},
 			() => {
 				this.getClients(1);
@@ -100,20 +100,20 @@ class ClientListComponent extends Component {
 	getClients(page) {
 		getBrowser()
 			.runtime.sendMessage({
-				eventName: 'getClientsWithFilter',
-				options: {
-					page,
-					pageSize,
-					filter: this.state.filter,
-					archived: false,
-				},
-			})
+			eventName: 'getClientsWithFilter',
+			options: {
+				page,
+				pageSize,
+				filter: this.state.filter,
+				archived: false
+			}
+		})
 			.then((response) => {
 				this.setState((state) => ({
 					clientList: state.clientList.concat(response.data),
 					loadMore: response.data.length >= pageSize,
 					ready: true,
-					page: state.page + 1,
+					page: state.page + 1
 				}));
 			})
 			.catch();
@@ -129,14 +129,14 @@ class ClientListComponent extends Component {
 
 		this.setState({
 			selectedClient: client,
-			isOpen: false,
+			isOpen: false
 		});
 	}
 
 	openCreateClient() {
 		this.setState(
 			{
-				createFormOpened: true,
+				createFormOpened: true
 			},
 			() => {
 				this.closeClientList();
@@ -147,13 +147,13 @@ class ClientListComponent extends Component {
 
 	handleChange(event) {
 		this.setState({
-			clientName: event.target.value,
+			clientName: event.target.value
 		});
 	}
 
 	addClient() {
 		let client = {};
-		if (!this.state.clientName) {
+		if (!this.state.clientName.trim()) {
 			this.props.errorMessage(locales.NAME_IS_REQUIRED);
 			return;
 		}
@@ -169,11 +169,11 @@ class ClientListComponent extends Component {
 
 		getBrowser()
 			.runtime.sendMessage({
-				eventName: 'createClient',
-				options: {
-					client,
-				},
-			})
+			eventName: 'createClient',
+			options: {
+				client
+			}
+		})
 			.then((response) => {
 				if (response.error)
 					return this.props.errorMessage(response.error?.message);
@@ -185,11 +185,11 @@ class ClientListComponent extends Component {
 						clientName: '',
 						selectedClient: response.data,
 						createFormOpened: false,
-						clientList: this.state.clientList.concat(response.data),
+						clientList: this.state.clientList.concat(response.data)
 					},
 					() => {
 						this.setState({
-							loadMore: this.state.clientList.length >= pageSize,
+							loadMore: this.state.clientList.length >= pageSize
 						});
 					}
 				);
@@ -202,7 +202,7 @@ class ClientListComponent extends Component {
 	cancel() {
 		this.setState({
 			clientName: '',
-			createFormOpened: false,
+			createFormOpened: false
 		});
 	}
 

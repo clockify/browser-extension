@@ -24,11 +24,11 @@ async function isBrowserTimezoneDifferentComparedToUserSettingsTimezone() {
 
 async function getUnreadNotifications() {
 	const { data: verificationNotifications = [] } = await sendMessage({
-		eventName: 'getVerificationNotificationsForUser',
+		eventName: 'getVerificationNotificationsForUser'
 	});
 
 	const { data: otherNotifications = [] } = await sendMessage({
-		eventName: 'getNotificationsForUser',
+		eventName: 'getNotificationsForUser'
 	});
 
 	const unreadNotifications = otherNotifications
@@ -47,11 +47,11 @@ async function getNews() {
 }
 
 function Notifications({
-	isDropdownOpen,
-	onClick,
-	toaster,
-	changeWorkspaceTo,
-}) {
+												 isDropdownOpen,
+												 onClick,
+												 toaster,
+												 changeWorkspaceTo
+											 }) {
 	const [allNotifications, setAllNotifications] = useState([]);
 	const [notificationCount, setNotificationCount] = useState(0);
 	const [invitationNotifications, setInvitationNotifications] = useState([]);
@@ -61,7 +61,7 @@ function Notifications({
 		useState([]);
 	const [
 		notificationsThatCanBeMarkedAsRead,
-		setNotificationsThatCanBeMarkedAsRead,
+		setNotificationsThatCanBeMarkedAsRead
 	] = useState([]);
 
 	async function updateNotifications() {
@@ -83,7 +83,9 @@ function Notifications({
 				({ type }) =>
 					type !== 'WORKSPACE_INVITATION' &&
 					type !== 'TIME_ZONE' &&
-					type !== 'PUMBLE_COUPON'
+					type !== 'PUMBLE_COUPON' &&
+					type !==
+					'FILE_IMPORT_COMPLETED' /* This line is a quick fix for blank notification */
 			)
 		);
 
@@ -105,6 +107,7 @@ function Notifications({
 			allNotifications
 				.filter(({ type }) => type !== 'ACCOUNT_VERIFICATION')
 				.filter(({ type }) => type !== 'PAYMENT_FAILED')
+				.filter(({ type }) => type !== 'WORKSPACE_INVITATION')
 		);
 	}, [isDropdownOpen]);
 
@@ -145,7 +148,7 @@ function Notifications({
 			if (idsThatBelongToVerificationNotifications.length > 0) {
 				const eventName = 'readSingleOrMultipleVerificationNotificationForUser';
 				const options = {
-					idOrIds: idsThatBelongToVerificationNotifications,
+					idOrIds: idsThatBelongToVerificationNotifications
 				};
 
 				await sendMessage({ eventName, options });
@@ -154,7 +157,7 @@ function Notifications({
 			const notifications = [
 				...invitationNotifications,
 				...fileImportNotifications,
-				...notificationsWithoutInvitation,
+				...notificationsWithoutInvitation
 			];
 
 			const isNotificationTypeRegularNotification = notifications.find(
@@ -191,7 +194,7 @@ function Notifications({
 	const { NOTIFICATIONS_TITLE, CLEAR_ALL } = locales;
 
 	return (
-		<div className="notifications" onClick={onClick}>
+		<div title={'Notifications'} className="notifications" onClick={onClick}>
 			<div className="notifications-count">
 				{notificationCount > 0 && (
 					<div className={'notifications-count-display'}>
@@ -201,7 +204,7 @@ function Notifications({
 			</div>
 			{isDropdownOpen && (
 				<>
-					<div className="rectangle"> </div>
+					<div className="rectangle"></div>
 					<div className="dropdown-menu">
 						<div className="dropdown-menu-header">
 							<div className="dropdown-menu-header-left">

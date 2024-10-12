@@ -43,10 +43,9 @@ function toggleBrowserContextMenu(isContextMenuEnabled) {
 }
 
 async function setContextMenuOnBrowserStart() {
-	const iscmEnabled = await localStorage.getItem(
-		'permanent_contextMenuEnabled'
-	);
-	let isContextMenuEnabled = JSON.parse(iscmEnabled);
+	const appStore = await localStorage.getItem('appStore');
+	let isContextMenuEnabled = JSON.parse(appStore).state.contextMenuEnabled;
+
 	if (typeof isContextMenuEnabled !== 'boolean') {
 		isContextMenuEnabled = true;
 	}

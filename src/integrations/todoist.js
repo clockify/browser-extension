@@ -18,7 +18,7 @@ clockifyButton.render(
 
 		const description = todoistTaskDescription ?? todoistTaskName;
 		const projectName = withoutSection(todoistProjectWithSectionName);
-		const taskName = todoistTaskDescription ? todoistTaskName : '';
+		const taskName = todoistTaskName;
 		const tagNames = () =>
 			textList('.task_list_item__info_tags__label', todoistTaskContainer);
 
@@ -46,7 +46,7 @@ clockifyButton.render(
 
 		const description = todoistTaskDescription ?? todoistTaskName;
 		const projectName = withoutSection(todoistProjectWithSectionName);
-		const taskName = todoistTaskDescription ? todoistTaskName : '';
+		const taskName = todoistTaskName;
 
 		const entry = { description, projectName, taskName, small: true };
 
@@ -76,7 +76,7 @@ clockifyButton.render(
 
 		const description = () => todoistTaskDescription() ?? todoistTaskName();
 		const projectName = () => withoutSection(todoistProjectWithSectionName());
-		const taskName = () => (todoistTaskDescription() ? todoistTaskName() : '');
+		const taskName = () => todoistTaskName();
 		const tagNames = () => textList('[data-item-label-name]', todoistTaskModal);
 
 		const entry = { description, projectName, taskName, tagNames, small: true };
@@ -178,9 +178,7 @@ function withoutSection(projectName) {
 	const hasProjectNameSection = projectName.includes('/');
 
 	if (hasProjectNameSection) {
-		const projectNameWithoutSection = projectName.split('/')[0];
-
-		return projectNameWithoutSection;
+		return projectName.split('/')[0];
 	}
 
 	return projectName;

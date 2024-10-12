@@ -1,32 +1,33 @@
 import React, { Component } from 'react';
-import Header from './header.component';
+import Header from './header.component.jsx';
 import StartTimer from './start-timer.component';
 import moment, { duration } from 'moment';
 import TimeEntryList from './time-entry-list.component';
 import TimeEntryListNotSynced from './time-entry-list-notsynced.component';
 import 'moment-duration-format';
 import EditForm from './edit-form.component';
-import RequiredFields from './required-fields.component';
+import { RequiredFields } from '~/components/RequiredFields.tsx';
 import { isOffline } from './check-connection';
 import packageJson from '../../package';
-import { getIconStatus } from '../enums/browser-icon-status-enum';
-import { Application } from '../application';
-import { getBrowser } from '../helpers/browser-helper';
-import { getWebSocketEventsEnums } from '../enums/web-socket-events.enum';
-import CountdownTimer from './countdown-timer.component';
-import ModalsContainer from './notification-modals/modals-container';
-import withZustandStore from '../zustand/withZustandStore';
-import { getWorkspacePermissionsEnums } from '../enums/workspace-permissions.enum';
-import { getLocalStorageEnums } from '../enums/local-storage.enum';
-import { HtmlStyleHelper } from '../helpers/html-style-helper';
+import { getIconStatus } from '~/enums/browser-icon-status-enum';
+import { Application } from '~/application';
+import { getBrowser } from '~/helpers/browser-helper';
+import { getWebSocketEventsEnums } from '~/enums/web-socket-events.enum';
+import { CountdownTimer } from '~/components/CountdownTimer.tsx';
+import { ModalsContainer } from './NotificationModals/ModalContainer.tsx';
+import { mapStateToProps } from '~/zustand/mapStateToProps';
+import { getWorkspacePermissionsEnums } from '~/enums/workspace-permissions.enum';
+import { getLocalStorageEnums } from '~/enums/local-storage.enum';
+import { HtmlStyleHelper } from '~/helpers/html-style-helper';
 import Toaster from './toaster-component';
-import { getManualTrackingModeEnums } from '../enums/manual-tracking-mode.enum';
+import { getManualTrackingModeEnums } from '~/enums/manual-tracking-mode.enum';
 import { debounce } from 'lodash';
-import Logger from './logger-component';
-import { offlineStorage } from '../helpers/offlineStorage';
+import { Logger } from '~/components/Logger.tsx';
+import { offlineStorage } from '~/helpers/offlineStorage';
 import locales from '../helpers/locales';
-import { toDecimalFormat } from '../helpers/time.helper';
-import BannerContainer from './notification-banners/banner-container';
+import { numberFormatTransform } from '~/helpers/duration-formater';
+import { parseTime } from './time-input-parser';
+import { BannerContainer } from '~/components/NotificationBanners/BannerContainer.tsx';
 
 const messages = [
 	'TIME_ENTRY_STARTED',
@@ -37,7 +38,6 @@ const messages = [
 	'WORKSPACE_SETTINGS_UPDATED',
 	'CHANGED_ADMIN_PERMISSION',
 	'ACTIVE_WORKSPACE_CHANGED',
-	'WORKSPACE_LOCKED_FOR_TRANSFER',
 ];
 const htmlStyleHelper = new HtmlStyleHelper();
 let websocketHandlerListener = null;
@@ -100,8 +100,7 @@ class HomePage extends Component {
 		this.initialJob = this.initialJob.bind(this);
 		this.handleScroll = this.handleScroll.bind(this);
 		this.loadMoreEntries = this.loadMoreEntries.bind(this);
-		this.getEntryFromPomodoroAndIdleEvents =
-			this.getEntryFromPomodoroAndIdleEvents.bind(this);
+		this.getEntryFromPomodoroAndIdleEvents = this.getEntryFromPomodoroAndIdleEvents.bind(this);
 		this.saveAllOfflineEntries = this.saveAllOfflineEntries.bind(this);
 
 		this.connectionHandler = this.connectionHandler.bind(this);
@@ -134,8 +133,7 @@ class HomePage extends Component {
 		moment.locale(lang);
 
 		mode = mode ? mode : 'timer';
-		const userSettings =
-			JSON.parse(await localStorage.getItem('userSettings')) || {};
+		const userSettings = JSON.parse(await localStorage.getItem('userSettings')) || {};
 		this.setState({
 			mode,
 			userSettings,
@@ -153,7 +151,7 @@ class HomePage extends Component {
 					preData.approvalPeriod
 				);
 			}
-			this.setState((state) => ({
+			this.setState(state => ({
 				timeEntries: timeEntries || state.timeEntries,
 				dates: preData?.dates || state.dates,
 				durationMap: preData?.durationMap || state.durationMap,
@@ -222,40 +220,32 @@ class HomePage extends Component {
 		}
 		getBrowser().runtime.onMessage.addListener(this.backgroundMessageListener);
 
-		window.ononline = (event) => {
+		window.ononline = event => {
 			this.connectionHandler({ type: 'online' });
 		};
 
-		window.onoffline = (event) => {
+		window.onoffline = event => {
 			this.connectionHandler({ type: 'offline' });
 		};
 		this.setAsyncStateItems();
 	}
 
 	componentDidUpdate(prevProps) {
-		if (
-			prevProps.workspaceLockData.workspaceLocked !==
-			this.props.workspaceLockData.workspaceLocked
-		) {
-			this.workspaceChanged();
-		}
 		localStorage
 			.getItem('activeWorkspaceId')
-			.then((activeWorkspaceId) => {
+			.then(activeWorkspaceId => {
 				if (activeWorkspaceId !== this.state.activeWorkspaceId) {
 					this.setState({ activeWorkspaceId });
 				}
 			})
-			.catch((error) => console.log(error));
+			.catch(error => console.log(error));
 
-		this.getPomodoroForUser().then((pomodoroForUser) => {
+		this.getPomodoroForUser().then(pomodoroForUser => {
 			if (!pomodoroForUser) return;
 			if (pomodoroForUser.enabled !== this.state.pomodoroEnabled) {
 				this.setState({ pomodoroEnabled: pomodoroForUser.enabled });
 			}
-			if (
-				pomodoroForUser.isFocusModeEnabled !== this.state.isFocusModeEnabled
-			) {
+			if (pomodoroForUser.isFocusModeEnabled !== this.state.isFocusModeEnabled) {
 				this.setState({
 					isFocusModeEnabled: pomodoroForUser.isFocusModeEnabled,
 				});
@@ -303,7 +293,7 @@ class HomePage extends Component {
 					.runtime.sendMessage({
 						eventName: 'webSocketConnect',
 					})
-					.catch((error) => {
+					.catch(error => {
 						console.log('home-page.component.js | line 306 | error:', error);
 					});
 				_webSocketConnectExtensionDone = true;
@@ -321,15 +311,17 @@ class HomePage extends Component {
 	}
 
 	workspaceChanged() {
+		const { sendMessage } = getBrowser().runtime;
+
 		this.getWorkspaceSettings()
-			.then((response) => {
+			.then(response => {
 				this.handleRefresh();
 				if (this.header) this.header.checkScreenshotNotifications();
-				getBrowser().runtime.sendMessage({
-					eventName: 'restartPomodoro',
-				});
+				sendMessage({ eventName: 'restartPomodoro' });
 			})
-			.catch((error) => {});
+			.catch(error => {});
+
+		sendMessage({ eventName: 'workspaceChanged' });
 	}
 
 	componentWillUnmount() {
@@ -345,9 +337,7 @@ class HomePage extends Component {
 		getBrowser().runtime.onMessage.removeListener(websocketHandlerListener);
 		websocketHandlerListener = null;
 
-		getBrowser().runtime.onMessage.removeListener(
-			this.backgroundMessageListener
-		);
+		getBrowser().runtime.onMessage.removeListener(this.backgroundMessageListener);
 
 		document.removeEventListener('scroll', this.handleScroll, false);
 
@@ -359,18 +349,18 @@ class HomePage extends Component {
 
 	reloadOnlineByEvent() {
 		this.getWorkspaceSettings()
-			.then((response) => {
+			.then(response => {
 				this.initialJob();
 			})
-			.catch((error) => {});
+			.catch(error => {});
 	}
 
 	reloadOnlineByChecking() {
 		this.getWorkspaceSettings()
-			.then((response) => {
+			.then(response => {
 				this.initialJob();
 			})
-			.catch((error) => {});
+			.catch(error => {});
 	}
 
 	reloadOffline() {
@@ -404,23 +394,18 @@ class HomePage extends Component {
 	}
 
 	getEntryFromPomodoroAndIdleEvents() {
-		getBrowser().runtime.onMessage.addListener(
-			(request, sender, sendResponse) => {
-				if (
-					request.eventName === 'pomodoroEvent' ||
-					request.eventName === 'idleEvent'
-				) {
-					if (request.timeEntry !== null) {
-						if (this.start) this.start.getTimeEntryInProgress();
-					} else {
-						if (request.eventName === 'idleEvent') {
-							if (this.start) this.start.setTimeEntryInProgress(null);
-						}
-						this.getTimeEntries();
+		getBrowser().runtime.onMessage.addListener((request, sender, sendResponse) => {
+			if (request.eventName === 'pomodoroEvent' || request.eventName === 'idleEvent') {
+				if (request.timeEntry !== null) {
+					if (this.start) this.start.getTimeEntryInProgress();
+				} else {
+					if (request.eventName === 'idleEvent') {
+						if (this.start) this.start.setTimeEntryInProgress(null);
 					}
+					this.getTimeEntries();
 				}
 			}
-		);
+		});
 	}
 
 	async setIsUserOwnerOrAdmin() {
@@ -429,15 +414,13 @@ class HomePage extends Component {
 				.runtime.sendMessage({
 					eventName: 'getPermissionsForUser',
 				})
-				.then((response) => {
-					if (!response?.data) return;
+				.then(response => {
+					if (!response?.data?.userRoles) return;
 					const isUserOwnerOrAdmin =
-						response?.data.filter(
-							(permission) =>
-								permission.name ===
-									getWorkspacePermissionsEnums().WORKSPACE_OWN ||
-								permission.name ===
-									getWorkspacePermissionsEnums().WORKSPACE_ADMIN
+						response.data.userRoles.filter(
+							permission =>
+								permission.role === getWorkspacePermissionsEnums().WORKSPACE_OWN ||
+								permission.role === getWorkspacePermissionsEnums().WORKSPACE_ADMIN
 						).length > 0;
 					this.setState(
 						{
@@ -452,27 +435,14 @@ class HomePage extends Component {
 		}
 	}
 
-	async enableTimerShortcutForFirstTime() {
-		const userId = await localStorage.getItem('userId');
-		let timerShortcutFromStorage = await localStorage.getItem('timerShortcut');
-		timerShortcutFromStorage = timerShortcutFromStorage
-			? JSON.parse(timerShortcutFromStorage)
-			: [];
+	enableTimerShortcutForFirstTime() {
+		const { usersTimerShortcutPreferences, userData, toggleTimerShortcut } = this.props;
+		const hasUserTimerShortcut = usersTimerShortcutPreferences.some(
+			timerShortcut => timerShortcut && timerShortcut.userId === userData.id
+		);
 
-		if (
-			timerShortcutFromStorage.length === 0 ||
-			(timerShortcutFromStorage.length > 0 &&
-				timerShortcutFromStorage.filter(
-					(timerShortcut) => timerShortcut && timerShortcut.userId === userId
-				).length === 0)
-		) {
-			timerShortcutFromStorage.push({ userId: userId, enabled: true });
-
-			localStorage.setItem(
-				'timerShortcut',
-				JSON.stringify(timerShortcutFromStorage),
-				getLocalStorageEnums().PERMANENT_PREFIX
-			);
+		if (!hasUserTimerShortcut) {
+			toggleTimerShortcut();
 		}
 	}
 
@@ -492,11 +462,11 @@ class HomePage extends Component {
 									.runtime.sendMessage({
 										eventName: 'getEntryInProgress',
 									})
-									.then((response) => {
+									.then(response => {
 										if (this.start)
 											this.start.setTimeEntryInProgress(response.data);
 									})
-									.catch((error) => {
+									.catch(error => {
 										console.log(
 											'home-page.component.js | line 500 | error:',
 											error
@@ -515,10 +485,10 @@ class HomePage extends Component {
 									.runtime.sendMessage({
 										eventName: 'getEntryInProgress',
 									})
-									.then((response) => {
+									.then(response => {
 										this.start.setTimeEntryInProgress(response.data);
 									})
-									.catch((error) => {
+									.catch(error => {
 										console.log(
 											'home-page.component.js | line 522 | error:',
 											error
@@ -531,10 +501,10 @@ class HomePage extends Component {
 									.runtime.sendMessage({
 										eventName: 'getEntryInProgress',
 									})
-									.then((response) => {
+									.then(response => {
 										this.start.setTimeEntryInProgress(response.data);
 									})
-									.catch((error) => {
+									.catch(error => {
 										console.log(
 											'home-page.component.js | line 538 | error:',
 											error
@@ -546,9 +516,6 @@ class HomePage extends Component {
 								this.workspaceChanged();
 								break;
 							case getWebSocketEventsEnums().ACTIVE_WORKSPACE_CHANGED:
-								this.workspaceChanged();
-								break;
-							case getWebSocketEventsEnums().WORKSPACE_LOCKED_FOR_TRANSFER:
 								this.workspaceChanged();
 								break;
 							case getWebSocketEventsEnums().CHANGED_ADMIN_PERMISSION:
@@ -585,11 +552,11 @@ class HomePage extends Component {
 	async saveAllOfflineEntries() {
 		if (!(await isOffline())) {
 			let timeEntries = offlineStorage.timeEntriesOffline;
-			timeEntries.map((entry) => {
+			timeEntries.map(entry => {
 				const cfs =
 					entry.customFieldValues && entry.customFieldValues.length > 0
 						? entry.customFieldValues
-								.filter((cf) => cf.customFieldDto.status === 'VISIBLE')
+								.filter(cf => cf.customFieldDto.status === 'VISIBLE')
 								.map(({ type, customFieldId, value }) => ({
 									customFieldId,
 									sourceType: 'TIMEENTRY',
@@ -610,17 +577,17 @@ class HomePage extends Component {
 							customFields: cfs,
 						},
 					})
-					.then((response) => {
+					.then(response => {
 						if (response && response.data) {
 							let timeEntries = offlineStorage.timeEntriesOffline;
 							if (
 								timeEntries.findIndex(
-									(entryOffline) => entryOffline.id === entry.id
+									entryOffline => entryOffline.id === entry.id
 								) > -1
 							) {
 								timeEntries.splice(
 									timeEntries.findIndex(
-										(entryOffline) => entryOffline.id === entry.id
+										entryOffline => entryOffline.id === entry.id
 									),
 									1
 								);
@@ -634,7 +601,7 @@ class HomePage extends Component {
 							);
 						}
 					})
-					.catch((error) => {
+					.catch(error => {
 						if (error.request.status === 403) {
 							const response = JSON.parse(error.request.response);
 							if (response.code === 4030) {
@@ -653,7 +620,7 @@ class HomePage extends Component {
 				.runtime.sendMessage({
 					eventName: 'getUserRoles',
 				})
-				.then((response) => {
+				.then(response => {
 					if (response && response.data && response.data.userRoles) {
 						const { userRoles } = response.data;
 						getBrowser().storage.local.set({
@@ -662,7 +629,7 @@ class HomePage extends Component {
 					} else {
 					}
 				})
-				.catch((error) => {
+				.catch(error => {
 					console.log(error);
 				});
 		}
@@ -671,20 +638,17 @@ class HomePage extends Component {
 			.runtime.sendMessage({
 				eventName: 'getWorkspaceSettings',
 			})
-			.then(async (response) => {
+			.then(async response => {
 				if (!response.data) {
 					throw new Error(response);
 				}
-				let { workspaceSettings, features, featureSubscriptionType } =
-					response.data;
-				const userHasCustomFieldsFeature =
-					workspaceSettings?.features?.customFields;
+				let { workspaceSettings, features, featureSubscriptionType } = response.data;
+				const userHasCustomFieldsFeature = workspaceSettings?.features?.customFields;
 				if (!userHasCustomFieldsFeature) offlineStorage.wsCustomFields = [];
 				workspaceSettings.projectPickerSpecialFilter =
 					this.state.userSettings.projectPickerTaskFilter;
 				if (!workspaceSettings.hasOwnProperty('timeTrackingMode')) {
-					workspaceSettings.timeTrackingMode =
-						getManualTrackingModeEnums().DEFAULT;
+					workspaceSettings.timeTrackingMode = getManualTrackingModeEnums().DEFAULT;
 				}
 				const manualModeDisabled =
 					workspaceSettings.timeTrackingMode ===
@@ -724,15 +688,14 @@ class HomePage extends Component {
 						);
 						offlineStorage.userHasCustomFieldsFeature =
 							workspaceSettings.features.customFields;
-						offlineStorage.activeBillableHours =
-							workspaceSettings.activeBillableHours;
+						offlineStorage.activeBillableHours = workspaceSettings.activeBillableHours;
 						offlineStorage.onlyAdminsCanChangeBillableStatus =
 							workspaceSettings.onlyAdminsCanChangeBillableStatus;
 						return Promise.resolve(true);
 					}
 				);
 			})
-			.catch((error) => {
+			.catch(error => {
 				this.log('getWorkspaceSettings() failure');
 				console.log(error);
 				return Promise.reject(true);
@@ -751,16 +714,12 @@ class HomePage extends Component {
 						page: reload ? 0 : this.state.pageCount,
 					},
 				})
-				.then(async (response) => {
+				.then(async response => {
 					const timeEntries = response.data.timeEntriesList.filter(
-						(entry) => entry.timeInterval.end
+						entry => entry.timeInterval.end
 					);
-					const {
-						durationMap,
-						weekStatusMap,
-						periodStatusMap,
-						approvalPeriod,
-					} = response.data;
+					const { durationMap, weekStatusMap, periodStatusMap, approvalPeriod } =
+						response.data;
 					const groupEntries = await this.groupEntries(
 						timeEntries,
 						durationMap,
@@ -790,7 +749,7 @@ class HomePage extends Component {
 						}
 					);
 				})
-				.catch((error) => {
+				.catch(error => {
 					this.setState({
 						isOffline: isOff,
 					});
@@ -810,6 +769,19 @@ class HomePage extends Component {
 		}
 	}
 
+	async durationFormat() {
+		const workspaceSettings = JSON.parse(await localStorage.getItem('workspaceSettings'));
+		const { trackTimeDownToSecond, decimalFormat } = workspaceSettings;
+
+		if (decimalFormat) {
+			return 'h.hh'; /* decimal */
+		} else if (trackTimeDownToSecond) {
+			return 'HH:mm:ss'; /* full */
+		} else {
+			return 'H:mm'; /* compact */
+		}
+	}
+
 	async groupEntries(
 		timeEntries,
 		durationMap,
@@ -817,11 +789,8 @@ class HomePage extends Component {
 		periodStatusMap = {},
 		approvalPeriod
 	) {
-		const wsSettings = JSON.parse(
-			await localStorage.getItem('workspaceSettings')
-		);
-		const { timeZone } =
-			JSON.parse(await localStorage.getItem('userSettings')) || {};
+		const wsSettings = JSON.parse(await localStorage.getItem('workspaceSettings'));
+		const { timeZone } = JSON.parse(await localStorage.getItem('userSettings')) || {};
 		const decimalFormat = wsSettings?.decimalFormat;
 		const trackTimeDownToSeconds =
 			typeof this.state.workspaceSettings.trackTimeDownToSecond !== 'undefined'
@@ -837,22 +806,26 @@ class HomePage extends Component {
 		} else {
 			isWeekly = true;
 		}
+		const durationFormat = await this.durationFormat();
 		let groups = Object.values(statusMap)
 			.sort((a, b) => {
 				return moment(b.dateRange.start, 'YYYY-MM-DD')
 					.tz(timeZone)
 					.diff(moment(a.dateRange.start, 'YYYY-MM-DD').tz(timeZone));
 			})
-			.map((group) => {
-				const total = decimalFormat
+			.map(group => {
+				/* 				const total = decimalFormat
 					? toDecimalFormat(duration(group.total))
 					: duration(group.total).format(
-							trackTimeDownToSeconds ? 'HH:mm:ss' : 'h:mm',
-							{ trim: false }
-					  );
-				let title = `${moment
-					.utc(group.dateRange.start)
-					.format('MMM D')} - ${moment
+						trackTimeDownToSeconds ? 'HH:mm:ss' : 'h:mm',
+						{ trim: false }
+					  ); */
+				const total = numberFormatTransform(
+					parseTime(group.total, durationFormat),
+					wsSettings.numberFormat,
+					durationFormat
+				);
+				let title = `${moment.utc(group.dateRange.start).format('MMM D')} - ${moment
 					.utc(group.dateRange.end)
 					.format('MMM D')}`;
 
@@ -900,7 +873,7 @@ class HomePage extends Component {
 			});
 
 		if (timeEntries.length > 0) {
-			this.groupTimeEntriesByDays(
+			await this.groupTimeEntriesByDays(
 				timeEntries,
 				decimalFormat,
 				trackTimeDownToSeconds,
@@ -911,23 +884,24 @@ class HomePage extends Component {
 		}
 		const formatedDurationMap = this.formatDurationMap(durationMap, timeZone);
 
-		dates = dates.map((day) => {
+		dates = dates.map(day => {
 			let dayDuration = duration(0);
 			if (durationMap) {
 				dayDuration = formatedDurationMap[day];
 			} else {
-				timeEntries.forEach((entry) => {
-					if ((entry) => entry.start === day) {
+				timeEntries.forEach(entry => {
+					if (entry => entry.start === day) {
 						dayDuration = dayDuration + duration(entry.timeInterval.duration);
 					}
 				});
 			}
-			const format = decimalFormat
-				? toDecimalFormat(duration(dayDuration))
-				: duration(dayDuration).format(
-						trackTimeDownToSeconds ? 'HH:mm:ss' : 'h:mm',
-						{ trim: false }
-				  );
+
+			const format = numberFormatTransform(
+				parseTime(dayDuration, durationFormat),
+				wsSettings.numberFormat,
+				durationFormat
+			);
+
 			return day + '-' + format;
 		});
 
@@ -939,7 +913,7 @@ class HomePage extends Component {
 		return timeEntries;
 	}
 
-	groupTimeEntriesByDays(
+	async groupTimeEntriesByDays(
 		timeEntries,
 		decimalFormat,
 		trackTimeDownToSeconds,
@@ -947,7 +921,10 @@ class HomePage extends Component {
 		groups,
 		timeZone
 	) {
-		timeEntries.forEach((timeEntry) => {
+		const wsSettings = JSON.parse(await localStorage.getItem('workspaceSettings'));
+		const durationFormat = await this.durationFormat();
+
+		timeEntries.forEach(timeEntry => {
 			if (
 				moment(timeEntry.timeInterval.start)
 					.tz(timeZone)
@@ -977,23 +954,21 @@ class HomePage extends Component {
 						.add(60 - (diffInSeconds % 60), 'seconds');
 				}
 			}
-			timeEntry.duration = decimalFormat
-				? toDecimalFormat(duration(timeEntry.timeInterval.duration))
-				: duration(timeEntry.timeInterval.duration).format(
-						trackTimeDownToSeconds ? 'HH:mm:ss' : 'h:mm',
-						{
-							trim: false,
-						}
-				  );
+			const durationDiff = duration(
+				moment(timeEntry.timeInterval.end).tz(timeZone).diff(timeEntry.timeInterval.start)
+			);
+			timeEntry.duration = numberFormatTransform(
+				parseTime(durationDiff, durationFormat),
+				wsSettings.numberFormat,
+				durationFormat
+			);
 			if (dates.indexOf(timeEntry.start) === -1) {
 				dates.push(timeEntry.start);
-				const index = groups.findIndex((group) => {
+				const index = groups.findIndex(group => {
 					const dateA = moment.utc(group.dateRange.start);
 					const dateB = moment.utc(group.dateRange.end);
 					const dateC = moment.utc(
-						moment(timeEntry.timeInterval.start)
-							.tz(timeZone)
-							.format('YYYY-MM-DD')
+						moment(timeEntry.timeInterval.start).tz(timeZone).format('YYYY-MM-DD')
 					);
 					return dateC.isBetween(dateA, dateB, 'days', '[]');
 				});
@@ -1010,9 +985,7 @@ class HomePage extends Component {
 		for (let key in durationMap) {
 			formatedKey = moment(key).tz(timeZone).isSame(moment(), 'day')
 				? locales.TODAY_LABEL
-				: moment(key)
-						.tz(timeZone)
-						.isSame(moment().subtract(1, 'day').tz(timeZone), 'day')
+				: moment(key).tz(timeZone).isSame(moment().subtract(1, 'day').tz(timeZone), 'day')
 				? locales.YESTERDAY_LABEL
 				: moment(key).tz(timeZone).format('ddd, Do MMM');
 			formatedDurationMap[formatedKey] = durationMap[key];
@@ -1049,17 +1022,13 @@ class HomePage extends Component {
 							page: this.state.pageCount,
 						},
 					})
-					.then(async (response) => {
+					.then(async response => {
 						const data = response.data;
 						const entries = data.timeEntriesList.filter(
-							(entry) => entry.timeInterval.end
+							entry => entry.timeInterval.end
 						);
-						const {
-							durationMap,
-							weekStatusMap,
-							approvalPeriod,
-							periodStatusMap,
-						} = data;
+						const { durationMap, weekStatusMap, approvalPeriod, periodStatusMap } =
+							data;
 						const newDurationMap = this.concatDurationMap(
 							this.state.durationMap,
 							durationMap
@@ -1095,7 +1064,7 @@ class HomePage extends Component {
 							}
 						);
 					})
-					.catch((error) => {
+					.catch(error => {
 						console.log('home-page.component.js | line 1097 | error:', error);
 					});
 			}
@@ -1170,7 +1139,7 @@ class HomePage extends Component {
 				timeInterval: { start: moment() },
 				projectId: timeEntry.projectId,
 				taskId: timeEntry.task ? timeEntry.task.id : null,
-				tagIds: timeEntry.tags ? timeEntry.tags.map((tag) => tag.id) : [],
+				tagIds: timeEntry.tags ? timeEntry.tags.map(tag => tag.id) : [],
 				billable: timeEntry.billable,
 				customFieldValues: offlineStorage.customFieldValues, // generated from wsCustomFields
 			};
@@ -1179,20 +1148,16 @@ class HomePage extends Component {
 			this.start.setTimeEntryInProgress(timeEntryNew);
 			this.handleRefresh();
 		} else {
-			const {
-				projectId,
-				billable,
-				task,
-				description,
-				customFieldValues,
-				tags,
-			} = timeEntry;
+			const { projectId, billable, task, description, customFieldValues, tags } = timeEntry;
 			const taskId = task ? task.id : null;
-			const tagIds = tags ? tags.map((tag) => tag.id) : [];
+			const tagIds = tags ? tags.map(tag => tag.id) : [];
 
 			getBrowser()
 				.runtime.sendMessage({
 					eventName: 'endInProgress',
+					options: {
+						endedFromIntegration: false,
+					},
 				})
 				.then(() => {
 					// getBrowser().extension.getBackgroundPage().removeIdleListenerIfIdleIsEnabled();
@@ -1230,7 +1195,7 @@ class HomePage extends Component {
 								customFields: cfs,
 							},
 						})
-						.then((response) => {
+						.then(response => {
 							let data = response.data;
 							this.start.getTimeEntryInProgress();
 
@@ -1253,10 +1218,7 @@ class HomePage extends Component {
 		const { mode, inProgress } = this.state;
 		if (await isOffline()) {
 			this.endStartedAndStart(timeEntry);
-		} else if (
-			forceDescription &&
-			(inProgress.description === '' || !inProgress.description)
-		) {
+		} else if (forceDescription && (inProgress.description === '' || !inProgress.description)) {
 			window.reactRoot.render(
 				<RequiredFields
 					field={'description'}
@@ -1266,30 +1228,18 @@ class HomePage extends Component {
 			);
 		} else if (forceProjects && !inProgress.projectId) {
 			window.reactRoot.render(
-				<RequiredFields
-					field={'project'}
-					mode={mode}
-					goToEdit={this.goToEdit.bind(this)}
-				/>
+				<RequiredFields field={'project'} mode={mode} goToEdit={this.goToEdit.bind(this)} />
 			);
 		} else if (forceTasks && !inProgress.task) {
 			window.reactRoot.render(
-				<RequiredFields
-					field={'task'}
-					mode={mode}
-					goToEdit={this.goToEdit.bind(this)}
-				/>
+				<RequiredFields field={'task'} mode={mode} goToEdit={this.goToEdit.bind(this)} />
 			);
 		} else if (
 			forceTags &&
 			(!this.state.timeEntry.tags || !this.state.timeEntry.tags.length > 0)
 		) {
 			window.reactRoot.render(
-				<RequiredFields
-					field={'tags'}
-					mode={mode}
-					goToEdit={this.goToEdit.bind(this)}
-				/>
+				<RequiredFields field={'tags'} mode={mode} goToEdit={this.goToEdit.bind(this)} />
 			);
 		} else {
 			this.endStartedAndStart(timeEntry);
@@ -1334,7 +1284,7 @@ class HomePage extends Component {
 							timeEntryId: timeEntry.id,
 						},
 					})
-					.then((response) => {
+					.then(response => {
 						let data = response.data;
 						this.start.getTimeEntryInProgress();
 						getBrowser().runtime.sendMessage({
@@ -1354,7 +1304,7 @@ class HomePage extends Component {
 				.runtime.sendMessage({
 					eventName: 'getEntryInProgress',
 				})
-				.then((response) => {
+				.then(response => {
 					// if there is no time entry in progress, then we can safely sync offline entries
 					!response.data && this.triggerOfflineEntrySync();
 				})
@@ -1372,15 +1322,10 @@ class HomePage extends Component {
 				.runtime.sendMessage({
 					eventName: 'getEntryInProgress',
 				})
-				.then((response) => {
+				.then(response => {
 					// if there is no time entry in progress, then we can safely sync offline entries
 					if (!response.data) this.saveAllOfflineEntries();
-					else
-						this.toaster.toast(
-							'error',
-							"Can't sync while entry in progress",
-							2
-						);
+					else this.toaster.toast('error', "Can't sync while entry in progress", 2);
 				});
 		}
 	}
@@ -1405,17 +1350,17 @@ class HomePage extends Component {
 	}
 
 	enableAllIntegrationsButtonIfNoneIsEnabled() {
-		getBrowser().storage.local.get('permissions', async (result) => {
+		getBrowser().storage.local.get('permissions', async result => {
 			const { permissions } = result;
 			const userId = await localStorage.getItem('userId');
 
 			if (permissions && permissions.length > 0) {
 				const permissionForUser = permissions.filter(
-					(permission) => permission.userId === userId
+					permission => permission.userId === userId
 				);
 				if (
 					permissionForUser.length > 0 &&
-					permissionForUser[0].permissions.filter((p) => !p.isCustom).length > 0
+					permissionForUser[0].permissions.filter(p => !p.isCustom).length > 0
 				) {
 					return;
 				}
@@ -1426,14 +1371,12 @@ class HomePage extends Component {
 
 	setClockifyOriginsToStorage(userId) {
 		fetch('integrations/integrations.json')
-			.then((response) => response.json())
-			.then((clockifyOrigins) => {
-				getBrowser().storage.local.get('permissions', (result) => {
-					const permissionsForStorage = result.permissions
-						? result.permissions
-						: [];
+			.then(response => response.json())
+			.then(clockifyOrigins => {
+				getBrowser().storage.local.get('permissions', result => {
+					const permissionsForStorage = result.permissions ? result.permissions : [];
 					let arr = permissionsForStorage.filter(
-						(permission) => permission.userId === userId
+						permission => permission.userId === userId
 					);
 					let permissionForUser;
 					if (arr.length === 0) {
@@ -1478,13 +1421,14 @@ class HomePage extends Component {
 		const userId = await localStorage.getItem('userId');
 		const permanent_pomodoro = await localStorage.getItem('permanent_pomodoro');
 		return permanent_pomodoro
-			? JSON.parse(permanent_pomodoro).find((item) => item.userId === userId)
+			? JSON.parse(permanent_pomodoro).find(item => item.userId === userId)
 			: null;
 	}
 
 	preventDragHandler(e) {
 		e.preventDefault();
 	}
+
 	render() {
 		const {
 			inProgress,
@@ -1511,13 +1455,8 @@ class HomePage extends Component {
 		} = this.state;
 
 		const timeEntriesOffline = offlineStorage.timeEntriesOffline.filter(
-			(timeEntry) =>
-				!timeEntry.workspaceId || timeEntry.workspaceId === activeWorkspaceId
+			timeEntry => !timeEntry.workspaceId || timeEntry.workspaceId === activeWorkspaceId
 		);
-
-		const { workspaceLockData } = this.props;
-		// const { workspaceLocked } = workspaceLockData;
-		const workspaceLocked = false;
 
 		const isTrackingDisabled =
 			!selfHosted &&
@@ -1531,24 +1470,21 @@ class HomePage extends Component {
 				onDrop={this.preventDragHandler}
 				className="home_page"
 				style={{
-					paddingTop:
-						isTrackingDisabled || this.props.bannerVisible ? '220px' : '134px',
-				}}
-			>
+					paddingTop: isTrackingDisabled || this.props.bannerVisible ? '220px' : '134px',
+				}}>
 				{_withLogger && <Logger ref={this.loggerRef} />}
-
 				{isTrackingDisabled && (
 					<div className="clockify-subscription-expired-overlay"></div>
 				)}
 				<ModalsContainer />
-				{!workspaceLocked && (
+				{
 					<>
 						<div className="header_and_timer">
 							{isTrackingDisabled && (
 								<div className="clockify-subscription-expired-overlay"></div>
 							)}
 							<Header
-								ref={(instance) => {
+								ref={instance => {
 									this.header = instance;
 								}}
 								showActions={true}
@@ -1583,12 +1519,12 @@ class HomePage extends Component {
 							)}
 							<BannerContainer />
 							<Toaster
-								ref={(instance) => {
+								ref={instance => {
 									this.toaster = instance;
 								}}
 							/>
 							<StartTimer
-								ref={(instance) => {
+								ref={instance => {
 									this.start = instance;
 								}}
 								message={this.showMessage.bind(this)}
@@ -1609,13 +1545,10 @@ class HomePage extends Component {
 						</div>
 						<div
 							className={
-								!isOffline &&
-								timeEntriesOffline &&
-								timeEntriesOffline.length > 0
+								!isOffline && timeEntriesOffline && timeEntriesOffline.length > 0
 									? ''
 									: 'disabled'
-							}
-						>
+							}>
 							{!isOffline && timeEntriesOffline.length > 0 && (
 								<TimeEntryListNotSynced
 									inProgress={inProgress}
@@ -1659,8 +1592,7 @@ class HomePage extends Component {
 									timeEntries.length === 0
 										? 'time-entry-list__offline'
 										: 'time-entry-list'
-								}
-							>
+								}>
 								<TimeEntryList
 									timeEntries={timeEntries}
 									isLoading={!this.state.ready}
@@ -1682,10 +1614,18 @@ class HomePage extends Component {
 							</div>
 						)}
 					</>
-				)}
+				}
 			</div>
 		);
 	}
 }
 
-export default withZustandStore(HomePage);
+const selectedState = state => ({
+	bannerVisible: state.bannerVisible,
+	workspaceLockData: state.workspaceLockData,
+	toggleTimerShortcut: state.toggleTimerShortcut,
+	userData: state.userData,
+	usersTimerShortcutPreferences: state.usersTimerShortcutPreferences,
+});
+
+export default mapStateToProps(selectedState)(HomePage);

@@ -162,7 +162,6 @@ class TimeEntry extends ClockifyService {
 	static async updateTimeEntryValues(entryId, body) {
 		const apiEndpoint = await this.apiEndpoint;
 		const workspaceId = await this.workspaceId;
-
 		const endPoint = `${apiEndpoint}/workspaces/${workspaceId}/timeEntries/${entryId}`;
 
 		return await this.apiCall(endPoint, 'PUT', body);
@@ -202,7 +201,12 @@ class TimeEntry extends ClockifyService {
 		return { data, error };
 	}
 
-	static async endInProgress(timeEntry = null, end = moment()) {
+	static async endInProgress({
+		timeEntry = null,
+		end = moment(),
+		endedFromIntegration = null,
+		integrationName,
+	} = {}) {
 		const inProgress = await this.getEntryInProgress();
 		let timeEntryInProgress = inProgress.entry;
 
@@ -263,12 +267,33 @@ class TimeEntry extends ClockifyService {
 			aBrowser.action.setIcon({ path: iconPathEnded });
 			setTimeEntryInProgress(null);
 			aBrowser.runtime.sendMessage({ eventName: 'TIME_ENTRY_STOPPED' });
+
+			// Analytics
+			let analyticsEventName, eventParameters;
+
+			if (endedFromIntegration || integrationName) {
+				analyticsEventName = 'entry_mode_integration';
+				eventParameters = {
+					integrationName: integrationName,
+					timer_end: true,
+					browser: 'chrome',
+				};
+			} else {
+				analyticsEventName = 'entry_mode';
+				eventParameters = {
+					timer_end: true,
+					browser: 'chrome',
+				};
+			}
+
+			const options = { analyticsEventName, eventParameters };
+			await AnalyticsService.sendAnalyticsEvent(options);
 		}
 		return data;
 	}
 
 	static async endInProgressAndStartNew(entry, description) {
-		const { error } = await this.endInProgress(entry);
+		const { error } = await this.endInProgress({ timeEntry: entry });
 		if (error) {
 		} else {
 			this.startTimer(description);
@@ -279,7 +304,7 @@ class TimeEntry extends ClockifyService {
 		const decription = info && info.selectionText ? info.selectionText : '';
 		const { entry, error } = await this.getEntryInProgress();
 		if (entry) {
-			const { error } = await this.endInProgress(entry);
+			const { error } = await this.endInProgress({ timeEntry: entry });
 			if (error) {
 				if (error.status === 400)
 					localStorage.setItem(
@@ -323,11 +348,13 @@ class TimeEntry extends ClockifyService {
 		} = options;
 		if (!isPomodoro) {
 			if (!projectId || (forceTasks && !task)) {
+				const workspaceSettingsInStorage = await localStorage.getItem('workspaceSettings');
+				const workspaceSettings = JSON.parse(workspaceSettingsInStorage)
 				const { projectDB, taskDB, msg, msgId } =
 					await DefaultProject.getProjectTaskFromDB();
 				if (projectDB) {
 					projectId = projectDB.id;
-					if (billable === null) billable = projectDB.billable;
+					if (billable === null) billable = workspaceSettings?.taskBillableEnabled? taskDB?.billable : projectDB.billable;
 					if (taskDB) {
 						task = taskDB;
 					}
@@ -403,7 +430,7 @@ class TimeEntry extends ClockifyService {
 	}
 
 	static async endTimeEntryInProgress(timeEntry) {
-		const { error } = await this.endInProgress(timeEntry);
+		const { error } = await this.endInProgress({ timeEntry });
 		if (error && error.status === 400) {
 			const endTime = new Date();
 			this.saveEntryOfflineAndStopItByDeletingIt(timeEntry, endTime);

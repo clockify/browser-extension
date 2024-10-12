@@ -1,239 +1,157 @@
-import * as moment from 'moment';
+import { duration } from 'moment';
 import 'moment-duration-format';
 
+//type TimeFormat = 'HH:mm:ss' | 'HH:mm' | 'h.hh';
+export const TIME_DURATION_MAX_SECONDS = 3596400;
+
 export function parseTimeEntryDuration(input, format) {
-	if (!format) {
-		format = 'HH:mm:ss';
+	return parseTime(getSecondsFromInput(input, format), format, 'second');
+}
+
+export function parseTime(input, outputFormat, unit) {
+	if (!outputFormat) outputFormat = 'HH:mm:ss';
+	if (input == undefined) return;
+
+	if (outputFormat === 'h.hh') {
+		const timeInHours = duration(input, unit).asHours();
+		const roundedTime = Math.round(timeInHours * 100) / 100;
+		return roundedTime.toFixed(2);
 	}
 
-	if (input) {
-		input = input.replace(',', '.');
+	return duration(input, unit).format(outputFormat, { trim: false });
+}
 
-		if (input.includes('.0')) {
-			input =
-				input.split('.0')[1].length == 0 ? input.replace('.0', 'h') : input;
-		}
+export function numberFormatParse(value, format) {
+	const defaultNumberFormat = 'COMMA_PERIOD';
 
-		const timeDurationData = input.split(/[:/;-]/);
-		if (timeDurationData.length === 1) {
-			return calculateHoursOrMinutes(timeDurationData[0], format);
-		} else if (timeDurationData.length === 2) {
-			return calculateHoursAndMinutes(timeDurationData, format);
-		} else if (timeDurationData.length === 3) {
-			return calculateHoursMinutesAndSeconds(timeDurationData, format);
-		}
+	if (typeof value === 'number') return value.toString();
+
+	const decimalSeparators = {
+		COMMA: ',',
+		PERIOD: '.',
+	};
+	const numberFormat = format || defaultNumberFormat;
+	const decimalSeparator =
+		decimalSeparators[
+			numberFormat.substring(numberFormat.lastIndexOf('_') + 1)
+		];
+
+	if (decimalSeparator === '.') {
+		return value.replace(/[,' ]/g, '');
+	} else if (decimalSeparator === ',') {
+		return value.replace(/[.' ]/g, '').replace(',', '.');
 	}
 }
 
-function calculateHoursOrMinutes(timeDuration, format) {
-	if (timeDuration.charAt(timeDuration.length - 1).toLowerCase() === 'h') {
-		return calculateHours(
-			timeDuration.substring(0, timeDuration.length - 1),
-			format
-		);
-	} else if (
-		timeDuration.charAt(timeDuration.length - 1).toLowerCase() === 'm'
-	) {
-		return calculateMinutes(
-			timeDuration.substring(0, timeDuration.length - 1),
-			format
-		);
-	} else if (
-		timeDuration.charAt(timeDuration.length - 1).toLowerCase() === 's'
-	) {
-		return calculateSeconds(
-			timeDuration.substring(0, timeDuration.length - 1),
-			format
-		);
-	} else {
-		return calculateMinutesNumberOnly(timeDuration, format);
-	}
+export function getSecondsFromInput(input, format = 'HH:mm:ss') {
+	if (!input) return 0;
+
+	input = input
+		.replace(',', '.')
+		.replace('H', 'h')
+		.replace('M', 'm')
+		.replace('S', 's');
+
+	const seconds = getSeconds(input, format);
+
+	return seconds > TIME_DURATION_MAX_SECONDS
+		? TIME_DURATION_MAX_SECONDS
+		: seconds;
 }
 
-function calculateHours(timeDuration, format) {
-	timeDuration = timeDuration.replace(',', '.');
+export function getUnmutatedSecondsFromInput(input, format = 'HH:mm:ss') {
+	if (!input) return 0;
 
-	const hoursFromData = Number(timeDuration);
+	input = input
+		.replace(',', '.')
+		.replace('H', 'h')
+		.replace('M', 'm')
+		.replace('S', 's');
 
-	if (!isNaN(hoursFromData)) {
-		if (hoursFromData >= 999) {
-			return '999:00:00';
-		} else {
-			const hoursResult = Math.floor(hoursFromData);
-			const minutesResult = Math.round(
-				(((hoursFromData * 100) % 100) / 100) * 60
-			);
+	const seconds = getSeconds(input, format);
 
-			return setTimeEntryDurationDisplay(hoursResult, minutesResult, 0, format);
-		}
-	}
+	return seconds;
 }
 
-function calculateMinutes(timeDuration, format) {
-	timeDuration = timeDuration.replace(',', '.');
-	const minutesFromData = Number(timeDuration);
-	if (!isNaN(minutesFromData)) {
-		let hoursResult = Math.floor(minutesFromData / 60);
-		let minutesResult;
-		let secondsResult;
-		if (hoursResult >= 999) {
-			hoursResult = 999;
-			minutesResult = 0;
-			secondsResult = 0;
-		} else {
-			minutesResult = Math.floor(minutesFromData - hoursResult * 60);
-			secondsResult = Math.round((((minutesFromData * 100) % 100) / 100) * 60);
-		}
+export function getSeconds(input, format = 'HH:mm:ss') {
+	if (input.includes('h') || input.includes('m') || input.includes('s')) {
+		input = input.replace('PT', '');
+		input = input.split(/(.*?[h\\/m\\s])/);
 
-		return setTimeEntryDurationDisplay(
-			hoursResult,
-			minutesResult,
-			secondsResult,
-			format
-		);
+		return getSecondsFromTime([
+			inputInclude(input, 'h'),
+			inputInclude(input, 'm'),
+			inputInclude(input, 's'),
+		]);
 	}
+
+	if (input.includes(':') || input.includes(';') || input.includes('-')) {
+		const time = input.split(/[:\\/;\\-]/);
+
+		return getSecondsFromTime(time);
+	}
+
+	return getSecondsFromNumber(input, format);
 }
 
-function calculateMinutesNumberOnly(timeDuration, format) {
-	timeDuration = timeDuration.replace(',', '.');
-	const minutesFromData = Number(timeDuration);
-	if (!isNaN(minutesFromData)) {
-		if (minutesFromData < 100) {
-			if (minutesFromData.toString().includes('.')) {
-				return calculateHours(minutesFromData.toString(), format);
-			}
-
-			return setMinutes(minutesFromData, format);
-		} else {
-			let convertedTimeDuration;
-			if (!Number.isInteger(minutesFromData)) {
-				const roundMinutes = minutesFromData.toFixed(2);
-				const minutes = String(roundMinutes);
-				convertedTimeDuration = `${minutes.substring(0, minutes.length - 5)}:
-          ${minutes.substring(minutes.length - 5, minutes.length)}`;
-			} else {
-				convertedTimeDuration = `${timeDuration.substring(
-					0,
-					timeDuration.length - 2
-				)}:
-          ${timeDuration.substring(
-						timeDuration.length - 2,
-						timeDuration.length
-					)}`;
-			}
-
-			return calculateHoursAndMinutes(convertedTimeDuration.split(':'), format);
-		}
-	}
+function inputInclude(input, unit) {
+	return input.filter((e) => e.includes(unit))[0]
+		? input.filter((e) => e.includes(unit))[0].split(unit)[0]
+		: '0';
 }
 
-function setMinutes(minutes, format) {
-	const hoursResult = Math.floor(minutes / 60);
-	const minutesResult = Math.floor(minutes - hoursResult * 60);
-	const secondsResult = Math.round((((minutes * 100) % 100) / 100) * 60);
+function getSecondsFromNumber(input, format) {
+	if (isNaN(Number(input))) return;
 
-	return setTimeEntryDurationDisplay(
-		hoursResult,
-		minutesResult,
-		secondsResult,
-		format
+	if (Number(input) < 100 && format !== 'h.hh' && !input.includes('.')) {
+		return Number(input) * 60;
+	}
+
+	if (input < 100 && format === 'h.hh') {
+		return Number(input) * 3600;
+	}
+
+	input = input.toString();
+	input = input.split('.');
+
+	if (input[0] < 100) {
+		return Number(input[0] + '.' + input[1]) * 3600;
+	}
+
+	const hours = input[0].substring(0, input[0].length - 2);
+	const minutes = input[0].substring(input[0].length - 2, input[0].length);
+
+	return (
+		Number(hours) * 3600 +
+		Number(minutes) * 60 +
+		(input[1] ? Number('0.' + input[1]) * 60 : 0)
 	);
 }
 
-function calculateSeconds(timeDuration, format) {
-	timeDuration = timeDuration.replace(',', '.');
-	const secondsFromData = Number(timeDuration);
-	if (!isNaN(secondsFromData)) {
-		let hoursResult = Math.floor(secondsFromData / 3600);
-		let minutesResult = Math.floor(secondsFromData / 60) - hoursResult * 60;
-		let secondsResult = Math.round(
-			secondsFromData - hoursResult * 3600 - minutesResult * 60
-		);
-
-		if (hoursResult >= 999) {
-			hoursResult = 999;
-			minutesResult = 0;
-			secondsResult = 0;
-		}
-
-		return setTimeEntryDurationDisplay(
-			hoursResult,
-			minutesResult,
-			secondsResult,
-			format
-		);
+function getSecondsFromTime(time) {
+	const multiplier = [3600, 60, 1];
+	let seconds = 0;
+	for (let i = time.length - 1; i >= 0; i--) {
+		if (isNaN(Number(time[i]))) return;
+		seconds += Number(time[i]) * multiplier[i];
 	}
+
+	return seconds;
 }
 
-function calculateHoursAndMinutes(timeDurationData, format) {
-	let hours = Number(timeDurationData[0].replace(',', '.'));
-	if (!isNaN(hours)) {
-		let minutes = Number(timeDurationData[1].replace(',', '.'));
-		if (!isNaN(minutes)) {
-			minutes =
-				Math.floor((((hours * 100) % 100) / 100) * 60) + Number(minutes);
-			const seconds = Math.floor((((minutes * 100) % 100) / 100) * 60);
-			if (minutes > 59) {
-				hours = hours + Math.floor(minutes / 60);
-				minutes = Math.floor(minutes - Math.floor(minutes / 60) * 60);
-			}
-			if (hours > 999) {
-				return '999:00:00';
-			} else {
-				if (!Number.isInteger(hours)) {
-					hours = Math.floor(hours);
-				}
-				if (!Number.isInteger(minutes)) {
-					minutes = Math.floor(minutes);
-				}
-
-				return setTimeEntryDurationDisplay(hours, minutes, seconds, format);
-			}
-		}
-	}
+export function calculateSecondsFromTimeEntryDuration(timeEntryDuration) {
+	return duration(timeEntryDuration, 'hour').asSeconds();
 }
 
-function calculateHoursMinutesAndSeconds(timeDurationData, format) {
-	let hours = Number(timeDurationData[0].replace(',', '.'));
-	if (!isNaN(hours)) {
-		let minutes = Number(timeDurationData[1].replace(',', '.'));
-		if (!isNaN(minutes)) {
-			let seconds = Number(timeDurationData[2].replace(',', '.'));
-			if (!isNaN(seconds)) {
-				seconds = Math.floor(seconds);
-				if (seconds > 59) {
-					minutes = minutes + Math.floor(seconds / 60);
-					seconds = seconds - Math.floor(seconds / 60) * 60;
-				}
-				if (minutes > 59) {
-					hours = hours + Math.floor(minutes / 60);
-					minutes =
-						Math.floor((((hours * 100) % 100) / 100) * 60) +
-						(minutes - Math.floor(minutes / 60) * 60);
-				}
-				if (hours > 999) {
-					return '999:00:00';
-				} else {
-					if (!Number.isInteger(hours)) {
-						hours = Math.floor(hours);
-					}
-					if (!Number.isInteger(minutes)) {
-						minutes = Math.floor(minutes);
-					}
-
-					return setTimeEntryDurationDisplay(hours, minutes, seconds, format);
-				}
-			}
-		}
-	}
+export function isTimeIntervalValid(timeEntryDuration) {
+	return (
+		duration(timeEntryDuration, 'hour').asSeconds() <= TIME_DURATION_MAX_SECONDS
+	);
 }
 
-function setTimeEntryDurationDisplay(hours, minutes, seconds, format) {
-	const timeEntryDuration = moment.duration({
-		hour: hours,
-		minute: minutes,
-		second: seconds,
-	});
-
-	return timeEntryDuration.format(format, { trim: false });
+export function isTimeIntervalMaxSeconds(timeEntryDuration) {
+	return (
+		duration(timeEntryDuration, 'hour').asSeconds() ===
+		TIME_DURATION_MAX_SECONDS
+	);
 }

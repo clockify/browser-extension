@@ -1,11 +1,11 @@
-import moment from 'moment';
+import moment, { duration } from 'moment';
 import React from 'react';
 import TimeEntry from './time-entry.component';
 import locales from '../helpers/locales';
 import { isEqual } from 'lodash';
-import { duration } from 'moment/moment';
 import { Application } from '../application';
 import { toDecimalFormat } from '../helpers/time.helper';
+import { areArraysSimilar } from '../helpers/utils';
 
 class TimeEntryList extends React.Component {
 	constructor(props) {
@@ -24,9 +24,7 @@ class TimeEntryList extends React.Component {
 	}
 
 	async getTimeFormat() {
-		const wsSettings = JSON.parse(
-			await localStorage.getItem('workspaceSettings')
-		);
+		const wsSettings = JSON.parse(await localStorage.getItem('workspaceSettings'));
 		this.setState({
 			wsSettings,
 		});
@@ -35,19 +33,17 @@ class TimeEntryList extends React.Component {
 	getTotalWeekTimeFormatted(total) {
 		if (this.state.wsSettings?.decimalFormat) {
 			if (!isNaN(Number(total))) {
-				const result =
-					Number(total) + Number(toDecimalFormat(duration(this.state.time)));
+				const result = Number(total) + Number(toDecimalFormat(duration(this.state.time)));
 				return result.toFixed(2);
 			}
 			return total;
 		}
 
-		return duration(total)
+		return duration(total.replace(',', ''))
 			.add(this.state.time)
-			.format(
-				this.state.wsSettings?.trackTimeDownToSecond ? 'HH:mm:ss' : 'h:mm',
-				{ trim: false }
-			);
+			.format(this.state.wsSettings?.trackTimeDownToSecond ? 'HH:mm:ss' : 'h:mm', {
+				trim: false,
+			});
 	}
 
 	componentDidUpdate(prevProps, prevState, snapshot) {
@@ -107,19 +103,17 @@ class TimeEntryList extends React.Component {
 			type: type2,
 		} = entry2;
 
-		const isEmptyOrFalsey = (value) => {
+		const isEmptyOrFalsey = value => {
 			return !value || (Array.isArray(value) && value.length === 0);
 		};
 
 		const checkCustomFields = (cfs1, cfs2) => {
-			if (cfs1.length === 0 && cfs2.every((cv) => isEmptyOrFalsey(cv.value)))
-				return true;
-			if (cfs2.length === 0 && cfs1.every((cv) => isEmptyOrFalsey(cv.value)))
-				return true;
+			if (cfs1.length === 0 && cfs2.every(cv => isEmptyOrFalsey(cv.value))) return true;
+			if (cfs2.length === 0 && cfs1.every(cv => isEmptyOrFalsey(cv.value))) return true;
 			if (cfs1.length !== cfs2.length) return false;
 
-			return cfs1.every((cf1) => {
-				const cf2 = cfs2.find((cf2) => cf1.customFieldId === cf2.customFieldId);
+			return cfs1.every(cf1 => {
+				const cf2 = cfs2.find(cf2 => cf1.customFieldId === cf2.customFieldId);
 				return cf2 && isEqual(cf1.value, cf2.value);
 			});
 		};
@@ -131,9 +125,8 @@ class TimeEntryList extends React.Component {
 			description === description2 &&
 			projectId === projectId2 &&
 			taskId === taskId2 &&
-			tags.length === tags2.length &&
 			type1 === type2 &&
-			isEqual(tags, tags2) &&
+			areArraysSimilar(tags, tags2) &&
 			checkCustomFields(customFieldValues, customFieldValues2)
 		);
 	}
@@ -143,9 +136,7 @@ class TimeEntryList extends React.Component {
 		if (this.props.isLoading && !this.props.timeEntries.length) {
 			return (
 				<div>
-					<p className="loading-entries">
-						{locales.TRACKER__ENTRY_MESSAGES__LOADING}
-					</p>
+					<p className="loading-entries">{locales.TRACKER__ENTRY_MESSAGES__LOADING}</p>
 				</div>
 			);
 		} else if (this.props.timeEntries.length === 0 && !isOffline) {
@@ -184,7 +175,7 @@ class TimeEntryList extends React.Component {
 									</span>
 								</div>
 								{this.props.dates
-									.filter((date) => group.dates.some((d) => date.includes(d)))
+									.filter(date => group.dates.some(d => date.includes(d)))
 									.map((day, index) => {
 										const groupedIndexes = [];
 										const parts = day.split('-');
@@ -194,8 +185,7 @@ class TimeEntryList extends React.Component {
 											<div
 												className="time-entries-list"
 												key={day}
-												data-pw={`time-entries-list-${index}`}
-											>
+												data-pw={`time-entries-list-${index}`}>
 												<div className="time-entries-list-time">
 													<span className="time-entries-list-day">
 														{firstPart}
@@ -210,7 +200,9 @@ class TimeEntryList extends React.Component {
 													</div>
 												</div>
 												{this.props.timeEntries
-													.filter((timeEntry) => timeEntry.start === firstPart)
+													.filter(
+														timeEntry => timeEntry.start === firstPart
+													)
 													.sort((a, b) => {
 														const aSeconds = moment(
 															a.timeInterval.start
@@ -235,16 +227,24 @@ class TimeEntryList extends React.Component {
 																return null;
 															}
 															groupedIndexes.push(index);
-															group = array.reduce((prev, curr, currIndex) => {
-																if (
-																	currIndex !== index &&
-																	this.isSimilarEntry(timeEntry, curr)
-																) {
-																	groupedIndexes.push(currIndex);
-																	prev.push(curr);
-																}
-																return prev;
-															}, []);
+															group = array.reduce(
+																(prev, curr, currIndex) => {
+																	if (
+																		currIndex !== index &&
+																		this.isSimilarEntry(
+																			timeEntry,
+																			curr
+																		)
+																	) {
+																		groupedIndexes.push(
+																			currIndex
+																		);
+																		prev.push(curr);
+																	}
+																	return prev;
+																},
+																[]
+															);
 															if (group.length) {
 																group.unshift(timeEntry);
 															}
@@ -255,18 +255,32 @@ class TimeEntryList extends React.Component {
 																key={timeEntry.id}
 																timeEntry={timeEntry}
 																project={
-																	timeEntry.project ? timeEntry.project : null
+																	timeEntry.project
+																		? timeEntry.project
+																		: null
 																}
-																task={timeEntry.task ? timeEntry.task : null}
-																playTimeEntry={this.playTimeEntry.bind(this)}
-																changeMode={this.changeMode.bind(this)}
+																task={
+																	timeEntry.task
+																		? timeEntry.task
+																		: null
+																}
+																playTimeEntry={this.playTimeEntry.bind(
+																	this
+																)}
+																changeMode={this.changeMode.bind(
+																	this
+																)}
 																timeFormat={this.props.timeFormat}
-																workspaceSettings={this.props.workspaceSettings}
+																workspaceSettings={
+																	this.props.workspaceSettings
+																}
 																features={this.props.features}
 																isUserOwnerOrAdmin={
 																	this.props.isUserOwnerOrAdmin
 																}
-																userSettings={this.props.userSettings}
+																userSettings={
+																	this.props.userSettings
+																}
 																groupedEntries={group}
 																handleRefresh={this.handleRefresh}
 																manualModeDisabled={

@@ -1,5 +1,17 @@
 @use 'variables';
 
+
+.create-task-wrapper,
+.create-project-wrapper {
+	background-color: rgba(0, 0, 0, 0.8);
+	position: fixed;
+	width: 100vw;
+	height: 100vh;
+	left: 0;
+	top: 0;
+	z-index: 999;
+}
+
 .create-project,
 .create-task {
 	position: relative;

@@ -117,6 +117,10 @@ class ProjectTaskService extends ClockifyService {
 			if (status === 201) {
 				return { projectDB: project, created: true };
 			}
+			const { errorData } = error;
+			if (errorData && errorData.code === 501) {
+				await localStorage.setItem('createProjectError', 'true');
+			}
 			if (error && error.status === 403) {
 				onlyAdminsCanCreateProjects = true;
 			}
@@ -282,11 +286,18 @@ class ProjectTaskService extends ClockifyService {
 		return null;
 	}
 
-	static async getTaskOfProject({ projectId, taskName }) {
+	/* 	static async getTaskOfProject({ projectId, taskName }) {
 		const urlProjects = await this.getUrlProjects();
 		const endPoint = `${urlProjects}/${projectId}/tasks?name=${taskName}&strict-name-search=true`;
 		const { data, error, status } = await this.apiCall(endPoint, 'GET');
 		return { data, error, status };
+	} */
+
+	static async getTaskOfProject({ projectId, taskName }) {
+		const apiEndpoint = await this.apiEndpoint;
+		const workspaceId = await this.workspaceId;
+		const endPoint = `${apiEndpoint}/v1/workspaces/${workspaceId}/projects/${projectId}/tasks?name=${taskName}&strict-name-search=true`;
+		return await this.apiCall(endPoint);
 	}
 
 	static async getAllTasks(taskIds) {

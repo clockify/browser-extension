@@ -1,86 +1,81 @@
 // List - New UI (September 2023.)
-clockifyButton.render(
-	'.cu-task-row__main:not(.clockify)',
-	{ observe: true },
-	async (taskRow) => {
-		if (clickupVersion() !== 3) return;
+clockifyButton.render('.cu-task-row__main:not(.clockify)', { observe: true }, async taskRow => {
+	if (clickupVersion() !== 3) return;
 
-		await timeout({ milliseconds: 500 });
+	await timeout({ milliseconds: 500 });
 
-		const taskNameSelector = `.cu-task-row-main__link-text-inner`;
-		const tagNamesSelector = `.cu-tags-select__name-container > span`;
-		const pageBreadcrumbsSelector = `cu-location-header-breadcrumbs cu-breadcrumb-item`;
-		const groupBreadcrumbsSelector = `.cu-list-group__header-breadcrumbs`;
+	const taskNameSelector = `.cu-task-row-main__link-text-inner`;
+	const tagNamesSelector = `.cu-tags-select__name-container > span`;
+	const pageBreadcrumbsSelector = `cu-location-header-breadcrumbs cu-breadcrumb-item`;
+	const groupBreadcrumbsSelector = `.cu-list-group__header-breadcrumbs`;
 
-		const extract = (taskRow) => {
-			const isGroupedByStatus = (
-				text('[data-test="selected_groupBy"]') ??
-				text('[data-test="cu2-views-dropdown__groupBy"]')
-			).includes('Status');
+	const extract = taskRow => {
+		const isGroupedByStatus = (
+			text('[data-test="selected_groupBy"]') ??
+			text('[data-test="cu2-views-dropdown__groupBy"]')
+		).includes('Status');
 
-			if (!isGroupedByStatus) return { folderName: null, listName: null };
+		if (!isGroupedByStatus) return { folderName: null, listName: null };
 
-			let folderName, listName;
+		let folderName, listName;
 
-			const listGroup = taskRow.closest('.cu-list-group');
+		const listGroup = taskRow.closest('.cu-list-group');
 
-			const pageBreadcrumbs = textList(pageBreadcrumbsSelector);
-			const groupBreadcrumbs = text(groupBreadcrumbsSelector, listGroup)?.split(
-				'/'
-			);
+		const pageBreadcrumbs = textList(pageBreadcrumbsSelector);
+		const groupBreadcrumbs = text(groupBreadcrumbsSelector, listGroup)?.split('/');
 
-			if (pageBreadcrumbs.length === 3) {
-				folderName = pageBreadcrumbs[1];
-				listName = pageBreadcrumbs[2];
-			} else if (pageBreadcrumbs.length === 2) {
-				const isListWithoutFolder = groupBreadcrumbs?.length ? false : true;
-				folderName = pageBreadcrumbs[1];
-				listName = isListWithoutFolder ? null : groupBreadcrumbs[0];
-			} else if (pageBreadcrumbs.length === 1) {
-				if (groupBreadcrumbs.length === 3) {
-					folderName = groupBreadcrumbs[1];
-					listName = groupBreadcrumbs[2];
-				} else if (groupBreadcrumbs.length === 2) {
-					folderName = groupBreadcrumbs[0];
-					listName = groupBreadcrumbs[1];
-				} else if (groupBreadcrumbs.length === 1) {
-					folderName = groupBreadcrumbs[0];
-					listName = null;
-				}
+		if (pageBreadcrumbs.length === 3) {
+			folderName = pageBreadcrumbs[1];
+			listName = pageBreadcrumbs[2];
+		} else if (pageBreadcrumbs.length === 2) {
+			const isListWithoutFolder = groupBreadcrumbs?.length ? false : true;
+			folderName = pageBreadcrumbs[1];
+			listName = isListWithoutFolder ? null : groupBreadcrumbs[0];
+		} else if (pageBreadcrumbs.length === 1) {
+			if (groupBreadcrumbs.length === 3) {
+				folderName = groupBreadcrumbs[1];
+				listName = groupBreadcrumbs[2];
+			} else if (groupBreadcrumbs.length === 2) {
+				folderName = groupBreadcrumbs[0];
+				listName = groupBreadcrumbs[1];
+			} else if (groupBreadcrumbs.length === 1) {
+				folderName = groupBreadcrumbs[0];
+				listName = null;
 			}
+		}
 
-			return { folderName, listName };
-		};
+		return { folderName, listName };
+	};
 
-		const folderName = extract(taskRow).folderName;
-		const listName = extract(taskRow).listName;
+	const folderName = extract(taskRow).folderName;
+	const listName = extract(taskRow).listName;
 
-		const clickUpTaskName = () => text(taskNameSelector, taskRow);
-		const clickUpTaskId = () =>
-			taskRow.closest('cu-task-row').getAttribute('data-id');
+	const clickUpTaskName = () => text(taskNameSelector, taskRow);
+	const taskLink = $('.cu-task-row-main__link', taskRow).href;
 
-		const description = () => `${clickUpTaskName()} | #${clickUpTaskId()}`;
-		const projectName = () => folderName || listName;
-		const taskName = () => listName || null;
-		const tagNames = () => textList(tagNamesSelector, taskRow);
+	const taskId = taskLink.split('/').pop();
 
-		const entry = { description, projectName, taskName, tagNames, small: true };
+	const description = () => `${clickUpTaskName()} | ${taskId}`;
+	const projectName = () => folderName || listName;
+	const taskName = () => listName || null;
+	const tagNames = () => textList(tagNamesSelector, taskRow);
 
-		const link = clockifyButton.createButton(entry);
+	const entry = { description, projectName, taskName, tagNames, small: true };
 
-		link.style.position = 'absolute';
-		link.style.left = '15px';
-		link.style.zIndex = '9999';
+	const link = clockifyButton.createButton(entry);
 
-		taskRow.prepend(link);
-	}
-);
+	link.style.position = 'absolute';
+	link.style.left = '15px';
+	link.style.zIndex = '9999';
+
+	taskRow.prepend(link);
+});
 
 // Card - New UI (March 2023.)
 clockifyButton.render(
 	'.cu-task-view__container [data-test="task-view-header__breadcrumbs"]:not(.clockify)',
 	{ observe: true },
-	async (cardHeader) => {
+	async cardHeader => {
 		await timeout({ milliseconds: 500 });
 
 		$('#clockifyButton', cardHeader)?.remove();
@@ -105,13 +100,19 @@ clockifyButton.render(
 		const link = clockifyButton.createButton(entry);
 		const input = clockifyButton.createInput(entry);
 
+		const container = createTag('div', 'clockify-widget-container');
+
+		container.style.display = 'flex';
+
 		link.style.display = 'inline-flex';
 		link.style.paddingLeft = '10px';
 		link.style.marginRight = '15px';
 		link.style.cursor = 'pointer';
 
-		cardHeader.append(link);
-		cardHeader.append(input);
+		container.append(link);
+		container.append(input);
+
+		cardHeader.append(container);
 	}
 );
 
@@ -119,7 +120,7 @@ clockifyButton.render(
 clockifyButton.render(
 	'[data-test="task-container"]:not(.clockify)',
 	{ observe: true },
-	async (card) => {
+	async card => {
 		await timeout({ milliseconds: 500 });
 
 		if ($('#clockifyButton', card)) return;
@@ -158,36 +159,31 @@ clockifyButton.render(
 );
 
 // List - old UI
-clockifyButton.render(
-	'.cu-task-row__container:not(.clockify)',
-	{ observe: true },
-	async (task) => {
-		if (clickupVersion() !== 2) return;
+clockifyButton.render('.cu-task-row__container:not(.clockify)', { observe: true }, async task => {
+	if (clickupVersion() !== 2) return;
 
-		await timeout({ milliseconds: 500 });
+	await timeout({ milliseconds: 500 });
 
-		const clickUpTaskName = () =>
-			text('.cu-task-row-main__link-text-inner', task);
-		const clickUpTaskId = () => task.getAttribute('data-task');
+	const clickUpTaskName = () => text('.cu-task-row-main__link-text-inner', task);
+	const clickUpTaskId = () => task.getAttribute('data-task');
 
-		const description = () => `${clickUpTaskName()} | #${clickUpTaskId()}`;
-		const { projectName, taskName } = getProjectAndTask(task);
-		const tagNames = () => textList('.cu-tags-select__name', task);
+	const description = () => `${clickUpTaskName()} | ${clickUpTaskId()}`;
+	const { projectName, taskName } = getProjectAndTask(task);
+	const tagNames = () => textList('.cu-tags-select__name', task);
 
-		const entry = { description, projectName, tagNames, taskName, small: true };
+	const entry = { description, projectName, tagNames, taskName, small: true };
 
-		const link = clockifyButton.createButton(entry);
+	const link = clockifyButton.createButton(entry);
 
-		link.style.position = 'absolute';
-		link.style.right = '-15px';
-		link.style.top = '8px';
-		link.style.zIndex = '99999';
+	link.style.position = 'absolute';
+	link.style.right = '-15px';
+	link.style.top = '8px';
+	link.style.zIndex = '99999';
 
-		const taskRow = $('cu-task-row-main', task);
+	const taskRow = $('cu-task-row-main', task);
 
-		taskRow.append(link);
-	}
-);
+	taskRow.append(link);
+});
 
 applyStyles(
 	`

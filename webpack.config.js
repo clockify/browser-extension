@@ -35,12 +35,22 @@ module.exports = {
 	module: {
 		rules: [
 			{
-				test: /\.js$/,
+				test: /\.(js|jsx)$/,
 				exclude: /node_modules/,
 				use: {
 					loader: 'babel-loader',
 					options: {
 						presets: ['@babel/preset-env', '@babel/preset-react'],
+					},
+				},
+			},
+			{
+				test: /\.(ts|tsx)$/,
+				exclude: /node_modules/,
+				use: {
+					loader: 'babel-loader',
+					options: {
+						presets: ['@babel/preset-env', '@babel/preset-react', '@babel/preset-typescript'],
 					},
 				},
 			},
@@ -89,6 +99,9 @@ module.exports = {
 	},
 	resolve: {
 		modules: [path.join(__dirname, 'node_modules')],
+		alias: {
+			'~': path.resolve(__dirname, 'src')
+		}
 	},
 	plugins: [
 		new webpack.ProvidePlugin({

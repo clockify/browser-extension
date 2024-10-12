@@ -126,7 +126,7 @@
     "message": "Selecionar tudo"
   },
   "GLOBAL__ADD_PROJECT_LABEL": {
-    "message": "Selecione o projeto"
+    "message": "Selecionar projeto"
   },
   "MINUTES": {
     "message": "Minutos"
@@ -315,7 +315,7 @@
     "message": "Encontre tarefas..."
   },
   "FIND_TAGS": {
-    "message": "Encontre etiquetas..."
+    "message": "Encontrar etiquetas..."
   },
   "ENTER_DESCRIPTION": {
     "message": "Digite a descrição..."
@@ -573,7 +573,7 @@
     "message": "Adicionar tarefa"
   },
   "ADD_TIME_MANUAL": {
-    "message": "Adicionar tempo (por exemplo, 15m)"
+    "message": "Adicionar tempo (p. ex., 15m)"
   },
   "SHORTCUT": {
     "message": "Atalho"
@@ -738,7 +738,7 @@
     "message": "Se você usa uma ferramenta hospedada em um domínio personalizado, pode habilitá-la aqui"
   },
   "ENTER_TIME": {
-    "message": "Insira a hora (por exemplo, 1,5)"
+    "message": "Insira o tempo (por exemplo, 1,5)"
   },
   "ENTRY_MODE": {
     "message": "Modo de entrada"
@@ -1071,7 +1071,7 @@
     "message": "Insira os campos obrigatórios ou, opcionalmente, edite as configurações do seu espaço de trabalho."
   },
   "FORBIDDEN_CHARACTERS": {
-    "message": "Você digitou o valor errado. Não use os caracteres \"<\" e \">\""
+    "message": "Você digitou um valor errado. Não use os caracteres \"&lt;\" e \"&gt;\""
   },
   "WORKSPACE_LOCKED": {
     "message": "Espaço de trabalho bloqueado"
@@ -1092,7 +1092,7 @@
     "message": "Verifique seu e-mail!"
   },
   "LONG_VERIFY_EMAIL_MESSAGE": {
-    "message": "{ userName }, para continuar usando sua conta clockify, você deve verificar seu endereço de e-mail: { userEmail }"
+    "message": "{ userName }, para continuar usando sua conta Clockify, você deve verificar seu endereço de e-mail: { userEmail }"
   },
   "CHANGE_EMAIL_FOOTER": {
     "message": "Está tendo problemas para acessar seu e-mail?"
@@ -1222,6 +1222,12 @@
   },
   "GLOBAL__DUPLICATE_SUCCESS_MSG": {
     "message": "A entrada da hora foi duplicada"
+  },
+  "CAN_NOT_CREATE_PROJECT_MISSING_PERMISSIONS": {
+    "message": "Você não tem permissão para criar um projeto"
+  },
+  "ENTRY_IN_PROGRESS_EXISTS": {
+    "message": "Você tem entrada de tempo em andamento!"
   },
   "appName": {
     "message": "Rastreador de Tempo Clockify",

@@ -1,17 +1,31 @@
 export function parseInput(totalTime) {
+	if (totalTime.indexOf('.') > -1) {
+		totalTime = formatDecimals(totalTime.toLowerCase());
+	}
+
 	let totalTimeNumber = Number(totalTime);
+
 	if (isNaN(totalTimeNumber)) {
 		if (isTimeValid(totalTime)) {
-			return parseTimeWithSeparator(totalTime);
+			return parseTimeWithSeparator(totalTime.toLowerCase());
 		} else {
 			return null;
 		}
 	} else if (totalTimeNumber % 1 === 0) {
 		if (totalTime.length < 3) {
-			return `${totalTime}:00`;
+			let hours = Number(totalTime);
+			if (hours > 24) {
+				const minutes = hours % 10;
+				hours = Math.floor(hours / 10);
+
+				return `${hours}:${minutes}`;
+			} else {
+				return `${totalTime}:00`;
+			}
 		} else if (totalTime.length === 3) {
 			let hours = totalTime.substring(0, 1);
 			let minutes = totalTime.substring(1, 3);
+
 			return `0${hours}${minutes}`;
 		} else if (totalTime.length > 3) {
 			if (totalTimeNumber < 2400) {
@@ -25,6 +39,27 @@ export function parseInput(totalTime) {
 	} else {
 		return null;
 	}
+}
+
+function formatDecimals(totalTime) {
+	let hours;
+	let minutes;
+	let rest = '';
+	const totalTimeParts = totalTime.split('.');
+	// eslint-disable-next-line prefer-const
+	hours = totalTimeParts[0];
+
+	if (/[0-9]{1,2}.[0-9]{1,2}(a|am|p|pm)/.test(totalTime)) {
+		totalTimeParts[1] = totalTimeParts[1].replace('a', ' a');
+		totalTimeParts[1] = totalTimeParts[1].replace('p', ' p');
+		const minutesParts = totalTimeParts[1].split(' ');
+		minutes = minutesParts[0].length == 1 ? '0'.concat(minutesParts[0]) : minutesParts[0];
+		rest = minutesParts[1];
+	} else {
+		minutes = totalTimeParts[1].length == 1 ? '0'.concat(totalTimeParts[1]) : totalTimeParts[1];
+	}
+
+	return hours.concat(':').concat(minutes).concat(rest);
 }
 
 function isTimeValid(time) {
@@ -52,9 +87,7 @@ function parseTimeWithSeparator(totalTime) {
 			if (isPM(totalTime) && numberOfHours !== 12) {
 				hours = (numberOfHours + 12).toString();
 			} else {
-				hours = (
-					isAM(totalTime) && numberOfHours === 12 ? 0 : numberOfHours
-				).toString();
+				hours = (isAM(totalTime) && numberOfHours === 12 ? 0 : numberOfHours).toString();
 			}
 			return parseTimeWithSeparatorWithoutString(`${hours}:${minutes}`);
 		}
@@ -106,10 +139,7 @@ function parseTimeWithSeparator(totalTime) {
 							isAM(totalTime) && numberOfHours === 12 ? 0 : numberOfHours
 						).toString();
 					}
-					minutes = totalTimeWithoutLetters.substring(
-						1,
-						totalTimeWithoutLetters.length
-					);
+					minutes = totalTimeWithoutLetters.substring(1, totalTimeWithoutLetters.length);
 				}
 				break;
 			}
@@ -132,10 +162,7 @@ function parseTimeWithSeparator(totalTime) {
 							isAM(totalTime) && numberOfHours === 12 ? 0 : numberOfHours
 						).toString();
 					}
-					minutes = totalTimeWithoutLetters.substring(
-						2,
-						totalTimeWithoutLetters.length
-					);
+					minutes = totalTimeWithoutLetters.substring(2, totalTimeWithoutLetters.length);
 				}
 				break;
 			}
@@ -165,23 +192,15 @@ function parseTimeWithSeparatorWithoutString(totalTime) {
 }
 
 function isAM(totalTime) {
-	return (
-		totalTime.toLowerCase().endsWith('a') ||
-		totalTime.toLowerCase().endsWith('am')
-	);
+	return totalTime.toLowerCase().endsWith('a') || totalTime.toLowerCase().endsWith('am');
 }
 
 function isPM(totalTime) {
-	return (
-		totalTime.toLowerCase().endsWith('p') ||
-		totalTime.toLowerCase().endsWith('pm')
-	);
+	return totalTime.toLowerCase().endsWith('p') || totalTime.toLowerCase().endsWith('pm');
 }
 
 function convertTotalTimeTo24HourDisplay(totalTime) {
-	let totalTimeWithoutAmOrPm = totalTime
-		.toLowerCase()
-		.replace(/((am|a)|(pm|p))/, '');
+	let totalTimeWithoutAmOrPm = totalTime.toLowerCase().replace(/((am|a)|(pm|p))/, '');
 	let result = totalTimeWithoutAmOrPm;
 	if (isPM(totalTime)) {
 		if (result.indexOf(':') === -1) {

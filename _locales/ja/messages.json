@@ -1223,6 +1223,12 @@
   "GLOBAL__DUPLICATE_SUCCESS_MSG": {
     "message": "時間入力が重複しています"
   },
+  "CAN_NOT_CREATE_PROJECT_MISSING_PERMISSIONS": {
+    "message": "プロジェクトを作成する権限がありません"
+  },
+  "ENTRY_IN_PROGRESS_EXISTS": {
+    "message": "時間入力が進行中です。"
+  },
   "appName": {
     "message": "Clockifyタイムトラッカー",
     "description": "Webストアに表示されるアプリケーションのタイトル。"

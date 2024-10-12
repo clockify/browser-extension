@@ -519,43 +519,43 @@
     "message": "Lunes"
   },
   "MONDAY_SHORT": {
-    "message": "Lu."
+    "message": "Lu"
   },
   "TUESDAY": {
     "message": "Martes"
   },
   "TUESDAY_SHORT": {
-    "message": "Ma."
+    "message": "Ma"
   },
   "WEDNESDAY": {
     "message": "Miércoles"
   },
   "WEDNESDAY_SHORT": {
-    "message": "Mi."
+    "message": "Mi"
   },
   "THURSDAY": {
     "message": "Jueves"
   },
   "THURSDAY_SHORT": {
-    "message": "Ju."
+    "message": "Ju"
   },
   "FRIDAY": {
     "message": "Viernes"
   },
   "FRIDAY_SHORT": {
-    "message": "Vi."
+    "message": "Vi"
   },
   "SATURDAY": {
     "message": "Sábado"
   },
   "SATURDAY_SHORT": {
-    "message": "Sá."
+    "message": "Sa"
   },
   "SUNDAY": {
     "message": "Domingo"
   },
   "SUNDAY_SHORT": {
-    "message": "Do."
+    "message": "Do"
   },
   "NO_MATCHING": {
     "message": "Sin { entityInPlural } coincidentes"
@@ -750,7 +750,7 @@
     "message": "Inicia sesión en el dominio personalizado"
   },
   "LOGIN_TO_SUB_DOMAIN": {
-    "message": "Inicie sesión en el subdominio"
+    "message": "Inicia sesión en el subdominio"
   },
   "RETURN_TO_CLOCKIFY_CLOUD": {
     "message": "Volver a la nube de Clockify"
@@ -1032,7 +1032,7 @@
     "message": "Se ha cerrado la sesión desde que se inhabilitó tu cuenta."
   },
   "BANNED__INFO_MODAL__MESSAGE_PART_TWO": {
-    "message": "Por favor contactar"
+    "message": "Por favor contacta"
   },
   "BANNED__INFO_MODAL__MESSAGE_PART_THREE": {
     "message": "para más información."
@@ -1071,13 +1071,13 @@
     "message": "Introduce los campos requeridos o edita la configuración de tu espacio de trabajo."
   },
   "FORBIDDEN_CHARACTERS": {
-    "message": "Has introducido un valor incorrecto. No uses los caracteres \" < \" y \" > \""
+    "message": "Has introducido un valor incorrecto. No uses los caracteres \"&lt;\" y \"&gt;\""
   },
   "WORKSPACE_LOCKED": {
     "message": "Espacio de trabajo bloqueado"
   },
   "SWITCH_WORKSPACE": {
-    "message": "Cambiar de espacio de trabajo"
+    "message": "Cambiar espacio de trabajo"
   },
   "VERIFY_EMAIL_MESSAGE": {
     "message": "Verifica tu correo electrónico: { userEmail }"
@@ -1092,7 +1092,7 @@
     "message": "¡Verifica tu correo electrónico!"
   },
   "LONG_VERIFY_EMAIL_MESSAGE": {
-    "message": "{ userName }, para continuar usando tu cuenta de clockify debes verificar tu correo electrónico: { userEmail }"
+    "message": "{ userName }, para continuar usando tu cuenta de Clockify debes verificar tu correo electrónico: { userEmail }"
   },
   "CHANGE_EMAIL_FOOTER": {
     "message": "¿Tienes problemas para acceder a tu correo electrónico?"
@@ -1222,6 +1222,12 @@
   },
   "GLOBAL__DUPLICATE_SUCCESS_MSG": {
     "message": "La entrada de tiempo se ha duplicado"
+  },
+  "CAN_NOT_CREATE_PROJECT_MISSING_PERMISSIONS": {
+    "message": "No tienes permisos para crear proyecto"
+  },
+  "ENTRY_IN_PROGRESS_EXISTS": {
+    "message": "¡Tienes una entrada de tiempo en progreso!"
   },
   "appName": {
     "message": "Clockify Rastreador de tiempo",

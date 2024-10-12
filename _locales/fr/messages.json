@@ -1092,7 +1092,7 @@
     "message": "Vérifiez votre e-mail!"
   },
   "LONG_VERIFY_EMAIL_MESSAGE": {
-    "message": "{ userName }, pour continuer à utiliser votre compte Clockify, vous devez vérifier votre adresse e-mail&nbsp;: { userEmail }"
+    "message": "{ userName }, pour continuer à utiliser votre compte Clockify, vous devez vérifier votre adresse email: { userEmail }"
   },
   "CHANGE_EMAIL_FOOTER": {
     "message": "Vous rencontrez des difficultés pour accéder à votre messagerie ?"
@@ -1222,6 +1222,12 @@
   },
   "GLOBAL__DUPLICATE_SUCCESS_MSG": {
     "message": "Le créneau a été dupliqué"
+  },
+  "CAN_NOT_CREATE_PROJECT_MISSING_PERMISSIONS": {
+    "message": "Vous n'avez pas l'autorisation de créer un projet"
+  },
+  "ENTRY_IN_PROGRESS_EXISTS": {
+    "message": "Vous avez une saisie horaire en cours !"
   },
   "appName": {
     "message": "Clockify Suivi du temps",

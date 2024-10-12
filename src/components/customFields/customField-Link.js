@@ -1,16 +1,16 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import useCustomField from './useCustomField';
 import { useOnClickOutside } from './useOnClickOutside';
 import { getBrowser } from '../../helpers/browser-helper';
 import locales from '../../helpers/locales';
 
 const CustomFieldLink = ({
-	cf,
-	updateValue,
-	setIsValid,
-	cfContainsWrongChars,
-	projectId
-}) => {
+													 cf,
+													 updateValue,
+													 setIsValid,
+													 cfContainsWrongChars,
+													 projectId
+												 }) => {
 	const [value, setValue] = useState(cf.value);
 
 	const [
@@ -23,9 +23,9 @@ const CustomFieldLink = ({
 			title,
 			manualMode,
 			required,
-			description,
+			description
 		},
-		storeValue,
+		storeValue
 	] = useCustomField(cf, updateValue, value);
 
 
@@ -38,7 +38,7 @@ const CustomFieldLink = ({
 	const [valueStay, setValueStay] = useState(value);
 	const handleChangeStay = (e) => {
 		const val = e.target.value;
-		setIsValid({ id: id, isValid: !(required && !val) });
+		setIsValid({ id: id, isValid: !(required && !val.trim()) });
 		setValueStay(val);
 		const pattern = /<[^>]+>/;
 		const isCustomFieldContainsWrongChars = pattern.test(val);
@@ -48,9 +48,24 @@ const CustomFieldLink = ({
 
 	const storeStay = (e) => {
 		e.stopPropagation();
-		setValue(valueStay);
-		manualMode && updateValue(id, valueStay);
-		// handleChangeDelayed.current(valueStay);
+
+		if (!e.target.value.trim()) {
+			setValueStay('');
+			setValue('');
+			setValueTemp('');
+
+			return;
+		}
+
+		let valueToSave;
+		if (valueStay.startsWith('http://') || valueStay.startsWith('https://')) {
+			valueToSave = valueStay;
+		} else {
+			valueToSave = `https://${valueStay}`;
+		}
+		setValue(valueToSave);
+		manualMode && updateValue(id, valueToSave);
+		setValueStay(valueToSave);
 	};
 
 	const [isModalOpen, setModalOpen] = useState(false);
@@ -72,10 +87,16 @@ const CustomFieldLink = ({
 		if (!valueTemp || value === valueTemp) {
 			return;
 		}
-		setValue(valueTemp);
-		setValueStay(valueTemp);
-		updateValue(id, valueTemp);
-		storeValue(valueTemp);
+		let valueToSave;
+		if (valueTemp.startsWith('http://') || valueTemp.startsWith('https://')) {
+			valueToSave = valueTemp;
+		} else {
+			valueToSave = `https://${valueTemp}`;
+		}
+		setValue(valueToSave);
+		setValueStay(valueToSave);
+		updateValue(id, valueToSave);
+		storeValue(valueToSave);
 		setModalOpen(false);
 
 		const pattern = /<[^>]+>/;
@@ -83,30 +104,34 @@ const CustomFieldLink = ({
 		cfContainsWrongChars({ id, isCustomFieldContainsWrongChars });
 	};
 
-	const isNotValid = required && !value;
+	const isNotValid = required && !value?.trim();
 
 	useEffect(() => {
 		storeValue();
-	}, [value])
+	}, [value]);
 
 	useEffect(() => {
 		setValue(cf.value);
 	}, [cf.value]);
 
 	useEffect(() => {
-		setIsValid({ id: id, isValid: !(required && !value) });
+		setIsInputValid();
 	}, [value]);
 
 	useEffect(() => {
-		if (value === undefined) setValueStay('')
+		if (value === undefined) setValueStay('');
 	}, [value]);
 
 	useEffect(() => {
 		setValue(cf.value);
 		setValueTemp(cf.value);
 		setValueStay(cf.value);
-
+		setIsInputValid();
 	}, [projectId]);
+
+	const setIsInputValid = () => {
+		setIsValid({ id: id, isValid: !(required && !value?.trim()) });
+	};
 
 
 	return (
@@ -127,7 +152,7 @@ const CustomFieldLink = ({
 								target="_blank"
 								title={description}
 							>
-								{placeHolderOrName}
+								{!!valueStay ? valueStay : description}
 							</a>
 							{!isDisabled && (
 								<img
@@ -140,7 +165,7 @@ const CustomFieldLink = ({
 										marginLeft: '8px',
 										width: '14px',
 										height: '14px',
-										cursor: 'pointer',
+										cursor: 'pointer'
 									}}
 									className={isDisabled ? '' : 'clockify-close-dlg-icon'}
 									onClick={() => openModal()}

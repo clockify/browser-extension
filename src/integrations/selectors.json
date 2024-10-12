@@ -24,11 +24,12 @@
 	},
 	"nozbe": {
 		"sideTaskView": {
-			"hanger": ".gy6Kr:not(.clockify)",
-			"description": ".cZ3TU",
-			"leftColumn": "._5zFL5",
-			"rightColumn": ".Eh9Kd",
-			"containerClassList": "clockify-widget-container sIw2A xAPTA"
+			"hanger": ".PSnpO:not(.clockify)",
+			"description": "[class=\"_4Q-+e\"]",
+			"leftColumn": ".X9Cyv",
+			"rightColumn": "[class=\"n5+5r\"]",
+			"containerClassList": "clockify-widget-container sIw2A xnenn",
+			"line": ".xkSgE > div"
 		}
 	},
 	"wrike": {
@@ -48,8 +49,8 @@
 	"gitlab": {
 		"MergeRequestAndIssueView": {
 			"hanger": ".issue-details .detail-page-description:not(.clockify), .merge-request-details.issuable-details > .detail-page-description:not(.clockify)",
-			"breadcrumbs": ".breadcrumbs",
-			"breadcrumbsList": ".breadcrumbs-list li",
+			"breadcrumbs": "[aria-label*=\"Breadcrumb\"]",
+			"breadcrumbsList": ".gl-breadcrumb-list",
 			"anchor": "a",
 			"groupName": ".group-path",
 			"id": "[data-testid=\"breadcrumb-current-link\"] a",
@@ -115,6 +116,14 @@
 				"myWork": ".overview-section-content-container",
 				"mainTable": ".slide-panel.open:not(.popup)"
 			}
+		}
+	},
+	"zendesk": {
+		"singleTicketView": {
+			"hanger": "nav[aria-label=\"Secondary\"]:not(.clockify)",
+			"ticketNumber": "/tickets\\/(\\d+)/",
+			"ticketSubject": ".ticket-panes-grid-layout.active input[data-test-id=\"omni-header-subject\"]",
+			"ticketTags": ".ticket-panes-grid-layout.active [data-test-id=\"ticket-system-field-tags-item-selected\"]"
 		}
 	}
 }

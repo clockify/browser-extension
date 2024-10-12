@@ -12,40 +12,32 @@ clockifyButton.render(
 		);
 
 		description = titleElem.textContent;
-		description =
-			numElem.firstChild.textContent.trim() + ' ' + description.trim();
+		description = numElem.firstChild.textContent.trim() + ' ' + description.trim();
 
-		const link = clockifyButton.createButton(
-			description,
-			projectElem.textContent
-		);
+		const link = clockifyButton.createButton(description, projectElem.textContent);
 		elem.insertBefore(link, titleElem);
 	}
 );
 
 /* new view for single issues — obligatory since YouTrack 2018.3 */
-clockifyButton.render(
-	'.yt-issue-view:not(.clockify)',
-	{ observe: true },
-	function (elem) {
-		const issueId = elem.querySelector('.js-issue-id').textContent;
-		const link = clockifyButton.createButton(
-			issueId + ' ' + $('h1').textContent.trim(),
-			issueId.split('-')[0]
-		);
-		const toolbar = $('.yt-issue-toolbar');
-		link.style.paddingLeft = '20px';
-		elem.style.display = 'flex';
-		toolbar.appendChild(link);
-	}
-);
+clockifyButton.render('.yt-issue-view:not(.clockify)', { observe: true }, function (elem) {
+	const issueId = elem.querySelector('.js-issue-id').textContent;
+	const link = clockifyButton.createButton(
+		issueId + ' ' + $('h1').textContent.trim(),
+		issueId.split('-')[0]
+	);
+	const toolbar = $('.yt-issue-toolbar');
+	link.style.paddingLeft = '20px';
+	elem.style.display = 'flex';
+	toolbar.appendChild(link);
+});
 
 // lite view for single issues
 // $('h1[data-test="ticket-summary"]')
 clockifyButton.render(
 	'[data-test="issue-container"]:not(.clockify)',
-	{ observe: true },
-	async (elem) => {
+	{ observe: true, onNavigationRerender: true },
+	async elem => {
 		if ($('.clockify-container', elem)) return;
 
 		await timeout({ milliseconds: 1000 });
@@ -53,9 +45,7 @@ clockifyButton.render(
 		const ticketTitle = () => text('[data-test="ticket-summary"]', elem);
 
 		const description = () => `${ticketId()} ${ticketTitle()}`;
-		// const projectName = () => ticketId();
-		const projectName = () =>
-			text('[aria-label="Project"] span[class^="fieldValue"]');
+		const projectName = () => text('[aria-label="Project"] span[class^="fieldValue"]');
 		const tagNames = () => textList('[class*="tags"] a', elem);
 
 		const entry = { description, projectName, tagNames, small: true };
@@ -71,45 +61,36 @@ clockifyButton.render(
 		clockifyContainer.append(link);
 		clockifyContainer.append(input);
 
-		const modalHeader = $('.summaryToolbar__c23', elem);
+		const modalHeader = $('.summaryToolbar__c231', elem);
 		const firstChild = $('div', modalHeader);
 		modalHeader.insertBefore(clockifyContainer, firstChild.nextSibling);
 	}
 );
 
 // Cards view
-clockifyButton.render(
-	'.yt-agile-card:not(.clockify)',
-	{ observe: true },
-	(youtrackCard) => {
-		const cardId = () =>
-			text('.yt-agile-card__summary span:nth-child(1) a', youtrackCard);
-		const cardTitle = () =>
-			text('.yt-agile-card__summary span:nth-child(2)', youtrackCard);
+clockifyButton.render('.yt-agile-card:not(.clockify)', { observe: true }, youtrackCard => {
+	const cardId = () => text('.yt-agile-card__summary span:nth-child(1) a', youtrackCard);
+	const cardTitle = () => text('.yt-agile-card__summary span:nth-child(2)', youtrackCard);
 
-		const description = () => `${cardId()} ${cardTitle()}`;
-		// const projectName = () => cardId();
-		const projectName = () =>
-			document.title.split(' – ')[0].split(' ').slice(0, -1).join(' ');
-		const tagNames = () => textList('.yt-issue-tags__tag', youtrackCard);
+	const description = () => `${cardId()} ${cardTitle()}`;
+	const tagNames = () => textList('.yt-issue-tags__tag', youtrackCard);
 
-		const entry = { description, projectName, tagNames, small: true };
+	const entry = { description, tagNames, small: true };
 
-		const link = clockifyButton.createButton(entry);
+	const link = clockifyButton.createButton(entry);
 
-		link.style.position = 'absolute';
-		link.style.top = '10px';
-		link.style.right = '10px';
+	link.style.position = 'absolute';
+	link.style.top = '10px';
+	link.style.right = '10px';
 
-		youtrackCard.append(link);
-	}
-);
+	youtrackCard.append(link);
+});
 
 // Modal view
 clockifyButton.render(
 	'[data-test*="ticket-view-dialog"]:not(.clockify)',
 	{ observe: true },
-	async (taskModal) => {
+	async taskModal => {
 		await timeout({ milliseconds: 1000 });
 		await waitForElement('[data-test="fields-sidebar"]', taskModal);
 
@@ -117,9 +98,7 @@ clockifyButton.render(
 		const ticketTitle = () => text('[data-test="ticket-summary"]', taskModal);
 
 		const description = () => `${ticketId()} ${ticketTitle()}`;
-		// const projectName = () => ticketId();
-		const projectName = () =>
-			text('[aria-label="Project"] span[class^="fieldValue"]');
+		const projectName = () => text('[aria-label="Project"] span[class^="fieldValue"]');
 		const tagNames = () => textList('[class*="tags"] a', taskModal);
 
 		const entry = { description, projectName, tagNames };
@@ -135,7 +114,7 @@ clockifyButton.render(
 		clockifyContainer.append(link);
 		clockifyContainer.append(input);
 
-		const modalHeader = $('.summaryToolbar__c23', taskModal);
+		const modalHeader = $('.summaryToolbar__c231', taskModal);
 		modalHeader.append(clockifyContainer);
 	}
 );
@@ -160,9 +139,7 @@ function initializeBodyObserver() {
 }
 
 function applyManualInputStyles() {
-	const isDarkThemeEnabled = Array.from(document.body.classList)
-		.join(' ')
-		.includes('dark');
+	const isDarkThemeEnabled = Array.from(document.body.classList).join(' ').includes('dark');
 
 	const darkStyles = `
 		#clockify-manual-input-form input { background: #28343d !important; color: #f5f4f3 !important; border: 0.5px solid #28343d !important; }

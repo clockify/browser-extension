@@ -3,10 +3,11 @@ import onClickOutside from 'react-onclickoutside';
 import ProjectItem from './project-item.component';
 import { debounce } from 'lodash';
 
-import { getDefaultProjectEnums } from '../enums/default-project.enum';
-import { DefaultProject } from '../helpers/storageUserWorkspace';
+import { getDefaultProjectEnums } from '~/enums/default-project.enum';
+import { DefaultProject } from '~/helpers/storageUserWorkspace';
 import locales from '../helpers/locales';
-import { getBrowser } from '../helpers/browser-helper';
+import { getBrowser } from '~/helpers/browser-helper';
+import { mapStateToProps } from '~/zustand/mapStateToProps';
 
 const pageSize = 50;
 
@@ -18,8 +19,8 @@ const _lastUsedProject = {
 	color: '#999999',
 	tasks: [],
 	client: {
-		name: 'ON-TOP',
-	},
+		name: 'ON-TOP'
+	}
 };
 
 const _lastUsedProjectAndTask = {
@@ -30,16 +31,15 @@ const _lastUsedProjectAndTask = {
 	color: '#999999',
 	tasks: [],
 	client: {
-		name: 'ON-TOP',
-	},
+		name: 'ON-TOP'
+	}
 };
 
 class DefaultProjectList extends React.PureComponent {
 	constructor(props) {
 		super(props);
 
-		const { forceProjects, forceTasks } =
-			this.props.workspaceSettings;
+		const { forceProjects, forceTasks } = this.props.workspaceSettings;
 		this.initProjectList = [_lastUsedProject, _lastUsedProjectAndTask];
 		if (forceTasks) this.initProjectList = [_lastUsedProjectAndTask];
 
@@ -84,7 +84,7 @@ class DefaultProjectList extends React.PureComponent {
 			taskRequired: false,
 			taskDone: false,
 			msg: null,
-			offline: null,
+			offline: null
 		};
 
 		this.getProjectsDebounced = debounce(this.getProjects, 500);
@@ -103,7 +103,7 @@ class DefaultProjectList extends React.PureComponent {
 			? JSON.parse(userSettings).projectPickerSpecialFilter
 			: false;
 
-		const darkMode = await this.getDarkMode();
+		const darkMode = this.props.isCurrentUserDarkTheme();
 		_lastUsedProject.color = this.getColorForProject(darkMode);
 		_lastUsedProjectAndTask.color = this.getColorForProject(darkMode);
 		const preProjectList = {};
@@ -124,7 +124,7 @@ class DefaultProjectList extends React.PureComponent {
 
 	componentDidMount() {
 		this.setState({
-			title: this.createTitle(),
+			title: this.createTitle()
 		});
 		this.setAsyncStateItems();
 	}
@@ -138,7 +138,7 @@ class DefaultProjectList extends React.PureComponent {
 			(this.props.selectedProject.name !== prevProps.selectedProject.name ||
 				(this.props.selectedProject.selectedTask &&
 					this.props.selectedProject.selectedTask.name !==
-						prevProps.selectedProject.selectedTask.name));
+					prevProps.selectedProject.selectedTask.name));
 		if (
 			projectsAreDifferent ||
 			(!projectsAreObjects &&
@@ -162,7 +162,7 @@ class DefaultProjectList extends React.PureComponent {
 						this.props.selectedProject &&
 						this.props.selectedProject.selectedTask
 							? this.props.selectedProject.selectedTask.name || null
-							: null,
+							: null
 				},
 				() => {
 					if (this.props.selectedProject.id !== _lastUsedProject.id) {
@@ -207,11 +207,11 @@ class DefaultProjectList extends React.PureComponent {
 				taskRequired,
 				projectPickerSpecialFilter,
 				msg,
-				selectedTaskName: taskDB ? taskDB.name : '',
+				selectedTaskName: taskDB ? taskDB.name : ''
 			},
 			() => {
 				this.setState({
-					title: this.createTitle(),
+					title: this.createTitle()
 				});
 			}
 		);
@@ -235,15 +235,15 @@ class DefaultProjectList extends React.PureComponent {
 			const alreadyIds = page === 1 ? [] : projectList.map((p) => p.id);
 			getBrowser()
 				.runtime.sendMessage({
-					eventName: 'getProjects',
-					options: {
-						filter,
-						page,
-						pageSize,
-						forceTasks,
-						alreadyIds,
-					},
-				})
+				eventName: 'getProjects',
+				options: {
+					filter,
+					page,
+					pageSize,
+					forceTasks,
+					alreadyIds
+				}
+			})
 				.then((response) => {
 					const projects = response.data;
 					this.setState(
@@ -252,7 +252,7 @@ class DefaultProjectList extends React.PureComponent {
 								page === 1
 									? [...this.initProjectList, ...projects]
 									: [...projectList, ...projects],
-							page: response.page ? response.page + 1 : page + 1,
+							page: response.page ? response.page + 1 : page + 1
 						},
 						() => {
 							const { filter, projectList } = this.state;
@@ -264,12 +264,13 @@ class DefaultProjectList extends React.PureComponent {
 										projects,
 										isSpecialFilter,
 										filter
-									),
+									)
 							});
 						}
 					);
 				})
-				.catch(() => {});
+				.catch(() => {
+				});
 		}
 	}
 
@@ -293,8 +294,8 @@ class DefaultProjectList extends React.PureComponent {
 			options: {
 				projectId,
 				filter,
-				page,
-			},
+				page
+			}
 		});
 	}
 
@@ -302,8 +303,8 @@ class DefaultProjectList extends React.PureComponent {
 		return getBrowser().runtime.sendMessage({
 			eventName: 'makeProjectFavorite',
 			options: {
-				projectId,
-			},
+				projectId
+			}
 		});
 	}
 
@@ -311,8 +312,8 @@ class DefaultProjectList extends React.PureComponent {
 		return getBrowser().runtime.sendMessage({
 			eventName: 'removeProjectAsFavorite',
 			options: {
-				projectId,
-			},
+				projectId
+			}
 		});
 	}
 
@@ -340,8 +341,7 @@ class DefaultProjectList extends React.PureComponent {
 			}
 			return clientProjects;
 		} else {
-			const clientProjects = this.groupByClientName(projects);
-			return clientProjects;
+			return this.groupByClientName(projects);
 		}
 	}
 
@@ -362,7 +362,7 @@ class DefaultProjectList extends React.PureComponent {
 				{
 					isOpen: true,
 					filter: '',
-					page: 1,
+					page: 1
 				},
 				() => {
 					this.projectFilterRef.focus();
@@ -378,17 +378,18 @@ class DefaultProjectList extends React.PureComponent {
 		this.setState(
 			{
 				isOpen: false,
-				filter: '',
+				filter: ''
 			},
-			() => {}
+			() => {
+			}
 		);
 	}
 
 	filterProjects(e) {
 		this.setState(
 			{
-				filter: e.target.value.toLowerCase(),
-				page: 1,
+				filter: e.target.value,
+				page: 1
 			},
 			() => {
 				this.getProjectsDebounced(pageSize);
@@ -403,11 +404,12 @@ class DefaultProjectList extends React.PureComponent {
 	createTitle() {
 		const { selectedProject, selectedTaskName } = this.state;
 		let title = `${locales.SELECT} ${locales.DEFAULT_PROJECT}`;
+
 		if (selectedProject && selectedProject.id) {
 			title =
 				`${locales.PROJECT}: ` +
-					(selectedProject.getLocale && selectedProject.getLocale()) ||
-				selectedProject.name;
+				(selectedProject.getLocale?.() ||
+					selectedProject.name);
 
 			if (selectedTaskName) {
 				title = title + `\n${locales.TASK}: ` + selectedTaskName;
@@ -429,7 +431,7 @@ class DefaultProjectList extends React.PureComponent {
 		this.setState(
 			{
 				filter: '',
-				page: 1,
+				page: 1
 			},
 			() => {
 				this.getProjects(pageSize);
@@ -439,15 +441,6 @@ class DefaultProjectList extends React.PureComponent {
 
 	getColorForProject(darkMode) {
 		return darkMode ? '#90A4AE' : '#999999';
-	}
-
-	async getDarkMode() {
-		const userId = await localStorage.getItem('userId');
-		const str = await localStorage.getItem('darkMode');
-		const darkModeFromStorage = str ? JSON.parse(str) : [];
-		return darkModeFromStorage.find(
-			(darkMode) => darkMode.userId === userId && darkMode.enabled
-		);
 	}
 
 	handleClickOutside() {
@@ -465,20 +458,20 @@ class DefaultProjectList extends React.PureComponent {
 			this.loadMoreProjects();
 		}
 	}
+
 	render() {
 		const {
 			selectedProject,
 			selectedTaskName,
 			isOpen,
 			specFilterNoTasksOrProject,
-			loadMore,
 			title,
 			projectRequired,
 			projectDoesNotExist,
 			projectArchived,
 			taskRequired,
 			taskDoesNotExist,
-			taskDone,
+			taskDone
 		} = this.state;
 
 		const isLastUsed =
@@ -506,8 +499,8 @@ class DefaultProjectList extends React.PureComponent {
 		const className = JSON.parse(this.state.offline)
 			? 'project-list-button-offline'
 			: projectRequired || taskRequired
-			? 'project-list-button-required'
-			: 'project-list-button';
+				? 'project-list-button-required'
+				: 'project-list-button';
 
 		return (
 			<div className="projects-list" title={title}>
@@ -521,18 +514,18 @@ class DefaultProjectList extends React.PureComponent {
 				>
 					<span
 						style={{
-							color: selectedProject ? selectedProject.color : '#999999',
+							color: selectedProject ? selectedProject.color : '#999999'
 						}}
 						className="project-list-name"
 					>
 						{selectedProject
 							? (selectedProject.getLocale && selectedProject.getLocale()) ||
-							  selectedProject.name
+							selectedProject.name
 							: locales.ADD_PROJECT}
 						{selectedTaskName && (
 							<span
 								style={{
-									color: selectedProject ? selectedProject.color : '#999999',
+									color: selectedProject ? selectedProject.color : '#999999'
 								}}
 								className={
 									isLastUsed || selectedTaskName === '' ? 'disabled' : ''
@@ -644,8 +637,8 @@ class DefaultProjectList extends React.PureComponent {
                             } */}
 								<div>
 									{(clientProjects['ON-TOP']
-										? clientProjects['ON-TOP']
-										: []
+											? clientProjects['ON-TOP']
+											: []
 									).map((project, index) => (
 										<ProjectItem
 											defaultProjectList={true}
@@ -676,8 +669,8 @@ class DefaultProjectList extends React.PureComponent {
 														{client === 'withoutClient'
 															? locales.WITHOUT_CLIENT
 															: client === 'FAVORITES'
-															? locales.FAVORITES
-															: client}
+																? locales.FAVORITES
+																: client}
 													</i>
 												</div>
 												{clientProjects[client].map((project) => (
@@ -727,4 +720,10 @@ class DefaultProjectList extends React.PureComponent {
 	}
 }
 
-export default onClickOutside(DefaultProjectList);
+const selectedState = (state) => ({
+	isCurrentUserDarkTheme: state.isCurrentUserDarkTheme,
+});
+
+export default onClickOutside(
+	mapStateToProps(selectedState)(DefaultProjectList)
+);

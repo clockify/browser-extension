@@ -1,5 +1,5 @@
 import React from 'react';
-import Header from './header.component';
+import Header from './header.component.jsx';
 import Login from './login.component';
 import locales from '../helpers/locales';
 import SelfHostedBootSettings from './self-hosted-login-settings.component';

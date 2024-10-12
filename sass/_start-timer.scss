@@ -1,185 +1,193 @@
 @use 'variables';
 
 .start-timer {
-	position: relative;
-	display: flex;
-	justify-content: space-between;
-	height: 50px;
-	margin: 10px 20px;
-	background: white;
-	border: 1px solid variables.$border;
-	border-radius: 2px;
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  height: 50px;
+  margin: 10px 20px;
+  background: white;
+  border: 1px solid variables.$border;
+  border-radius: 2px;
 }
 
 .start-timer_button-red {
-	width: 110px;
-	height: 40px;
-	margin: 5px;
-	border: none;
-	border-radius: 2px;
-	background: variables.$red;
-	color: variables.$background;
-	cursor: pointer;
+  width: 110px;
+  height: 40px;
+  margin: 5px;
+  border: none;
+  border-radius: 2px;
+  background: variables.$red;
+  color: variables.$background;
+  cursor: pointer;
 }
 
 .start-timer_button-red:hover .button_timer {
-	display: none;
+  display: none;
 }
 
 .start-timer_button-red:hover .button_stop {
-	display: block;
+  display: block;
 }
 
 .button_stop {
-	display: none;
+  display: none;
 }
 
 .start-timer_button-start {
-	width: 110px;
-	height: 40px;
-	margin: 5px;
-	border: none;
-	border-radius: 2px;
-	background: variables.$blue;
-	color: variables.$background;
-	cursor: pointer;
+  width: 110px;
+  height: 40px;
+  margin: 5px;
+  border: none;
+  border-radius: 2px;
+  background: variables.$blue;
+  color: variables.$background;
+  cursor: pointer;
 }
 
 .start-timer_button-start:hover {
-	background: variables.$blue_hover;
+  background: variables.$blue_hover;
 }
 
 .start-timer_description-input {
-	height: 95%;
-	width: 100%;
-	padding-left: 10px;
-	border: 0;
-	outline: none;
+  height: 95%;
+  width: 100%;
+  padding-left: 10px;
+  border: 0;
+  outline: none;
 }
 
 .start-timer_description-input::-ms-clear {
-	display: none;
+  display: none;
 }
 
 .start-timer_placeholder {
-	position: absolute;
-	pointer-events: none;
-	top: 0;
-	bottom: 0;
-	height: fit-content;
-	font-size: 14px;
-	left: 10px;
-	margin: auto;
-	color: #777;
+  position: absolute;
+  pointer-events: none;
+  top: 0;
+  bottom: 0;
+  height: fit-content;
+  font-size: 14px;
+  left: 10px;
+  margin: auto;
+  color: #777;
 }
 
 .start-timer_description {
-	position: absolute;
-	top: 50%;
-	transform: translateY(-50%);
-	left: 10px;
-	font-size: 14px;
-	cursor: pointer;
-	overflow: hidden;
-	white-space: nowrap;
-	width: 57%;
-	text-overflow: ellipsis;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 10px;
+  font-size: 14px;
+  cursor: pointer;
+  overflow: hidden;
+  white-space: nowrap;
+  width: 57%;
+  text-overflow: ellipsis;
 }
 
 .start-timer_description_grey {
-	position: absolute;
-	width: 47%;
-	margin-top: 17px;
-	margin-bottom: 17px;
-	margin-left: 17px;
-	font-size: 14px;
-	color: variables.$lighter_text;
-	cursor: pointer;
+  position: absolute;
+  width: 47%;
+  margin-top: 17px;
+  margin-bottom: 17px;
+  margin-left: 17px;
+  font-size: 14px;
+  color: variables.$lighter_text;
+  cursor: pointer;
 }
 
 .start-timer-description {
-	flex: 1;
+  flex: 1;
 }
 
 .start-timer-description .react-autocomplete {
-	height: 100%;
-	width: 100%;
+  height: 100%;
+  width: 100%;
 }
 
 .react-autocomplete {
-	display: inline-block;
-	position: relative;
-	width: 100%;
+  display: inline-block;
+  position: relative;
+  width: 100%;
 }
 
 .react-autocomplete-menu {
-	box-sizing: border-box;
-	position: absolute;
-	max-height: 250px;
-	overflow-y: auto;
-	overflow-x: hidden;
-	background: white;
-	box-shadow: 0 5px 10px #0000001a;
-	z-index: 25;
-	max-width: 314px;
+  box-sizing: border-box;
+  position: absolute;
+  max-height: 250px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: white;
+  box-shadow: 0 5px 10px #0000001a;
+  z-index: 25;
 }
 
 .autocomplete-dropdown-item {
-	box-sizing: border-box;
-	display: flex;
-	flex-wrap: nowrap;
-	align-items: center;
-	row-gap: 5px;
-	width: 314px;
-	font-size: 14px;
-	padding: 10px;
-	cursor: pointer;
-	background-color: white;
-	&:hover {
-		background-color: #eeeeee;
-	}
-	.dot {
-		margin-right: 5px;
-		margin-left: 5px;
-		align-self: center;
-	}
-	&__tag {
-		color: #02567e;
-		background: #e1f5fe;
-		padding: 2px 8px;
-		margin-left: 5px;
-		max-width: 136px;
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		&:hover {
-			background: #b3e5fc;
-		}
-		&-dots {
-			align-self: flex-end;
-		}
-	}
-	&__description,
-	&__project-task > span,
-	&__client-name {
-		display: inline-block;
-		overflow: hidden;
-		white-space: nowrap;
-		text-overflow: ellipsis;
-		min-width: 30px;
-	}
-	&__project-task {
-		display: flex;
-		overflow: hidden;
-		white-space: nowrap;
-		text-overflow: ellipsis;
-		min-width: 80px;
-		> span:last-child {
-			min-width: 50px;
-		}
-	}
-	&__client-name {
-		color: #999;
-		margin-left: 5px;
-	}
+  box-sizing: border-box;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  row-gap: 5px;
+  width: 314px;
+  font-size: 14px;
+  padding: 10px;
+  cursor: pointer;
+  background-color: white;
+
+  &:hover {
+    background-color: #eeeeee;
+  }
+
+  .dot {
+    margin-right: 5px;
+    margin-left: 5px;
+    align-self: center;
+  }
+
+  &__tag {
+    color: #02567e;
+    background: #e1f5fe;
+    padding: 2px 8px;
+    margin-left: 5px;
+    max-width: 136px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    &:hover {
+      background: #b3e5fc;
+    }
+
+    &-dots {
+      align-self: flex-end;
+    }
+  }
+
+  &__description,
+  &__project-task > span,
+  &__client-name {
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    min-width: 30px;
+  }
+
+  &__project-task {
+    display: flex;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    min-width: 80px;
+
+    > span:last-child {
+      min-width: 50px;
+    }
+  }
+
+  &__client-name {
+    color: #999;
+    margin-left: 5px;
+  }
 }

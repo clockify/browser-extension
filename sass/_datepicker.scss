@@ -484,8 +484,9 @@
 }
 
 .react-datepicker__day--disabled {
-	cursor: default;
 	color: #ccc;
+	text-decoration: line-through !important;
+	cursor: not-allowed !important;
 }
 
 .react-datepicker__day--disabled:hover {

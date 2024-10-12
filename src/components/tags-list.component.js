@@ -4,6 +4,7 @@ import { debounce } from 'lodash';
 import locales from '../helpers/locales';
 import onClickOutside from 'react-onclickoutside';
 import { getBrowser } from '../helpers/browser-helper';
+import Toaster from './toaster-component';
 
 const sortHelpers = new SortHepler();
 const pageSize = 50;
@@ -22,7 +23,7 @@ class TagsList extends React.Component {
 			createFormOpened: false,
 			tagName: '',
 			tagIds: this.props.tagIds ? this.props.tagIds : [],
-			isOffline: null,
+			isOffline: null
 		};
 
 		this.tagFilterRef = React.createRef();
@@ -48,8 +49,8 @@ class TagsList extends React.Component {
 			isOffline: JSON.parse(isOffline),
 			isEnabledCreateTag:
 				!this.props.integrationMode &&
-				(this.props.workspaceSettings.entityCreationPermissions
-					?.whoCanCreateTags === 'EVERYONE' ||
+				(this.props.workspaceSettings.entityCreationPermissions?.whoCanCreateTags ===
+					'EVERYONE' ||
 					userRoles.includes('WORKSPACE_ADMIN')),
 		});
 	}
@@ -70,7 +71,7 @@ class TagsList extends React.Component {
 
 	closeOpened() {
 		this.setState({
-			isOpen: false,
+			isOpen: false
 		});
 	}
 
@@ -82,7 +83,7 @@ class TagsList extends React.Component {
 					eventName: 'getTags',
 					options: { page, pageSize, filter: this.state.filter },
 				})
-				.then((response) => {
+				.then(response => {
 					const { data } = response;
 					if (response && !data) {
 						console.log('getTags error: ', response);
@@ -90,15 +91,14 @@ class TagsList extends React.Component {
 					}
 					const tagsList =
 						this.state.page === 1 ? data : this.state.tagsList.concat(data);
-					this.setState(
-						{
-							tagsList: sortHelpers.sortArrayByStringProperty(tagsList, 'name'),
-							page: this.state.page + 1,
-							loadMore: data.length === pageSize ? true : false,
-						}
-					);
+					this.setState({
+						tagsList: sortHelpers.sortArrayByStringProperty(tagsList, 'name'),
+						page: this.state.page + 1,
+						loadMore: data.length === pageSize ? true : false
+					});
 				})
-				.catch(() => {});
+				.catch(() => {
+				});
 		}
 	}
 
@@ -107,25 +107,25 @@ class TagsList extends React.Component {
 		if (!JSON.parse(offline)) {
 			getBrowser()
 				.runtime.sendMessage({
-				eventName: 'getTags',
-				options: { page, pageSize, filter: this.state.filter },
-			})
-				.then((response) => {
+					eventName: 'getTags',
+					options: { page, pageSize, filter: this.state.filter },
+				})
+				.then(response => {
 					const { data } = response;
 					if (response && !data) {
 						console.log('getTags error: ', response);
 						return;
 					}
 					const tagsList = data;
-					this.setState(
-						{
-							tagsList: sortHelpers.sortArrayByStringProperty(tagsList, 'name'),
-						}
-					);
+					this.setState({
+						tagsList: sortHelpers.sortArrayByStringProperty(tagsList, 'name')
+					});
 				})
-				.catch(() => {});
+				.catch(() => {
+				});
 		}
 	}
+
 	closeTagsList() {
 		this.tagListDropdownRef.current.scroll(0, 0);
 		this.setState(
@@ -133,7 +133,7 @@ class TagsList extends React.Component {
 				isOpen: false,
 				tagsList: [],
 				page: 1,
-				filter: '',
+				filter: ''
 			},
 			() => {
 				this.getTags(this.state.page, pageSize);
@@ -152,7 +152,7 @@ class TagsList extends React.Component {
 			}
 			this.setState(
 				{
-					isOpen: !this.state.isOpen,
+					isOpen: !this.state.isOpen
 				},
 				() => {
 					if (this.state.isOpen) {
@@ -170,8 +170,8 @@ class TagsList extends React.Component {
 			{
 				tagsList: [],
 				tagsListBackUp: [],
-				filter: e.target.value.toLowerCase(),
-				page: 1,
+				filter: e.target.value,
+				page: 1
 			},
 			() => {
 				this.getTags(this.state.page, pageSize);
@@ -185,7 +185,7 @@ class TagsList extends React.Component {
 				tagsList: [],
 				tagsListBackUp: [],
 				filter: '',
-				page: 1,
+				page: 1
 			},
 			() => {
 				this.getTags(this.state.page, pageSize);
@@ -212,7 +212,7 @@ class TagsList extends React.Component {
 	openCreateTag() {
 		this.setState(
 			{
-				createFormOpened: true,
+				createFormOpened: true
 			},
 			() => {
 				this.closeTagsList();
@@ -224,13 +224,13 @@ class TagsList extends React.Component {
 	addTag() {
 		let tag = {};
 
-		if (!this.state.tagName) {
+		if (!this.state.tagName.trim()) {
 			this.props.errorMessage(locales.NAME_IS_REQUIRED);
 			return;
 		}
 
 		const pattern = /<[^>]+>/;
-		const hasWrongChars = (tagName) => (pattern.test(tagName) ? true : false);
+		const hasWrongChars = tagName => (pattern.test(tagName) ? true : false);
 
 		if (hasWrongChars(this.state.tagName)) {
 			return this.props.errorMessage(locales.FORBIDDEN_CHARACTERS);
@@ -240,28 +240,32 @@ class TagsList extends React.Component {
 
 		getBrowser()
 			.runtime.sendMessage({
-				eventName: 'createTag',
-				options: {
-					tag,
-				},
-			})
+			eventName: 'createTag',
+			options: {
+				tag
+			}
+		})
 			.then((response) => {
+				if (response.status === 400 && response.message) {
+					return this.toaster.toast('error', response.message, 2);
+				}
+
 				this.props.editTag(response.data, true);
 
 				this.setState(
 					{
 						tagsList: this.state.tagsList.concat(response.data),
 						createFormOpened: false,
-						tagName: '',
+						tagName: ''
 					},
 					() => {
 						this.setState({
-							loadMore: this.state.tagsList.length >= pageSize,
+							loadMore: this.state.tagsList.length >= pageSize
 						});
 					}
 				);
 			})
-			.catch((error) => {
+			.catch(error => {
 				this.props.errorMessage(error.response.data.message);
 			});
 	}
@@ -269,25 +273,22 @@ class TagsList extends React.Component {
 	cancel() {
 		this.setState({
 			tagName: '',
-			createFormOpened: false,
+			createFormOpened: false
 		});
 	}
 
 	handleChange(event) {
 		this.setState({
-			tagName: event.target.value,
+			tagName: event.target.value
 		});
 	}
 
 	handleScroll(event) {
-		if (
-			event.target.scrollHeight - event.target.scrollTop < 221 &&
-			this.state.loadMore
-		) {
+		if (event.target.scrollHeight - event.target.scrollTop < 221 && this.state.loadMore) {
 			if (this.state.page === 1) {
 				this.setState(
 					{
-						page: 2,
+						page: 2
 					},
 					() => {
 						this.loadMoreTags();
@@ -300,51 +301,55 @@ class TagsList extends React.Component {
 	}
 
 	render() {
-		this.getTags(this.state.page, pageSize);
 		const noMatcingTags = locales.NO_MATCHING('tags');
 		const { tags } = this.props;
 
 		let title = '';
 		if (tags && tags.length > 0) {
-			title = tags.map((tag) => tag.name).join('\n');
+			title = tags
+				.map(tag => tag.name)
+				.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
+				.join('\n');
 		}
 
 		return (
 			<div className="tag-list">
+				<Toaster ref={(instance) => this.toaster = instance} />
 				<div
 					title={title}
 					className={
 						this.state.isOffline
 							? 'tag-list-button-offline'
 							: this.props.tagsRequired
-							? 'tag-list-button-required'
-							: 'tag-list-button'
+								? 'tag-list-button-required'
+								: 'tag-list-button'
 					}
 					onClick={this.toggleTagsList}
 					tabIndex={'0'}
-					onKeyDown={(e) => {
+					onKeyDown={e => {
 						if (e.key === 'Enter') this.toggleTagsList(e);
-					}}
-				>
+					}}>
 					<span className={tags.length === 0 ? 'tag-list-add' : 'disabled'}>
 						{this.props.tagsRequired
 							? `${locales.ADD_TAGS} ${locales.REQUIRED_LABEL}`
 							: locales.ADD_TAGS}
 					</span>
 					<span className={tags.length > 0 ? 'tag-list-selected' : 'disabled'}>
-						{tags.map((tag, index, list) => {
-							return (
-								<span key={tag.id} className="tag-list-selected-item">
-									{tag.name}
-									{index < list.length - 1 ? ',' : ''}
-								</span>
-							);
-						})}
+						{tags
+							.sort((a, b) =>
+								a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+							)
+							.map((tag, index, list) => {
+								return (
+									<span key={tag.id} className="tag-list-selected-item">
+										{tag.name}
+										{index < list.length - 1 ? ',' : ''}
+									</span>
+								);
+							})}
 					</span>
 					<span
-						className={
-							this.state.isOpen ? 'tag-list-arrow-up' : 'tag-list-arrow'
-						}
+						className={this.state.isOpen ? 'tag-list-arrow-up' : 'tag-list-arrow'}
 						style={{
 							content: `url(${getBrowser().runtime.getURL(
 								'assets/images/' +
@@ -352,18 +357,13 @@ class TagsList extends React.Component {
 										? 'arrow-light-mode-up.png'
 										: 'arrow-light-mode.png')
 							)})`,
-						}}
-					></span>
+						}}></span>
 				</div>
 				<div
 					id="tagListDropdown"
 					ref={this.tagListDropdownRef}
-					className={this.state.isOpen ? 'tag-list-dropdown' : 'disabled'}
-				>
-					<div
-						onScroll={this.handleScroll}
-						className="tag-list-dropdown--content"
-					>
+					className={this.state.isOpen ? 'tag-list-dropdown' : 'disabled'}>
+					<div onScroll={this.handleScroll} className="tag-list-dropdown--content">
 						<div className="tag-list-input">
 							<div className="tag-list-input--border">
 								<input
@@ -378,8 +378,7 @@ class TagsList extends React.Component {
 									className={
 										!!this.state.filter ? 'tag-list-filter__clear' : 'disabled'
 									}
-									onClick={this.clearTagFilter.bind(this)}
-								></span>
+									onClick={this.clearTagFilter.bind(this)}></span>
 							</div>
 						</div>
 						<div className="tag-list-items">
@@ -387,44 +386,43 @@ class TagsList extends React.Component {
 								this.state.tagsList.map((tag, index) => {
 									return (
 										<div key={index}>
-											{tag && <div
-												data-pw={`tag-list-item-${index}`}
-												onClick={this.selectTag}
-												key={tag?.id}
-												tabIndex={'0'}
-												onKeyDown={(e) => {
-													if (e.key === 'Enter') this.selectTag(e);
-												}}
-												value={JSON.stringify(tag)}
-												className="tag-list-item-row"
-											>
-											<span
-												value={JSON.stringify(tag)}
-												className={
-													this.props.tagIds.includes(tag.id)
-														? 'tag-list-checkbox checked'
-														: 'tag-list-checkbox'
-												}
-											>
-												<img
-													src={getBrowser().runtime.getURL(
-														'assets/images/checked.png'
-													)}
+											{tag && (
+												<div
+													data-pw={`tag-list-item-${index}`}
+													onClick={this.selectTag}
+													key={tag?.id}
+													tabIndex={'0'}
+													onKeyDown={e => {
+														if (e.key === 'Enter') this.selectTag(e);
+													}}
 													value={JSON.stringify(tag)}
-													className={
-														this.props.tagIds.includes(tag.id)
-															? 'tag-list-checked'
-															: 'tag-list-checked-hidden'
-													}
-												/>
-											</span>
-												<span
-													value={JSON.stringify(tag)}
-													className="tag-list-item"
-												>
-												{tag.name}
-											</span>
-											</div>}
+													className="tag-list-item-row">
+													<span
+														value={JSON.stringify(tag)}
+														className={
+															this.props.tagIds.includes(tag.id)
+																? 'tag-list-checkbox checked'
+																: 'tag-list-checkbox'
+														}>
+														<img
+															src={getBrowser().runtime.getURL(
+																'assets/images/checked.png'
+															)}
+															value={JSON.stringify(tag)}
+															className={
+																this.props.tagIds.includes(tag.id)
+																	? 'tag-list-checked'
+																	: 'tag-list-checked-hidden'
+															}
+														/>
+													</span>
+													<span
+														value={JSON.stringify(tag)}
+														className="tag-list-item">
+														{tag.name}
+													</span>
+												</div>
+											)}
 										</div>
 									);
 								})
@@ -437,27 +435,21 @@ class TagsList extends React.Component {
 								this.state.isEnabledCreateTag
 									? 'tag-list__bottom-padding'
 									: 'disabled'
-							}
-						></div>
+							}></div>
 						<div
 							className={
-								this.state.isEnabledCreateTag
-									? 'tag-list__create-tag'
-									: 'disabled'
-							}
-						>
+								this.state.isEnabledCreateTag ? 'tag-list__create-tag' : 'disabled'
+							}>
 							<span
 								className="tag-list__create-tag--icon"
 								style={{
 									content: `url(${getBrowser().runtime.getURL(
 										'assets/images/create.png'
 									)})`,
-								}}
-							></span>
+								}}></span>
 							<span
 								onClick={this.openCreateTag.bind(this)}
-								className="tag-list__create-tag--text"
-							>
+								className="tag-list__create-tag--text">
 								{locales.CREATE_NEW_TAG}
 							</span>
 						</div>
@@ -465,11 +457,8 @@ class TagsList extends React.Component {
 				</div>
 				<div
 					className={
-						this.state.createFormOpened
-							? 'tag-list__create-form--open'
-							: 'disabled'
-					}
-				>
+						this.state.createFormOpened ? 'tag-list__create-form--open' : 'disabled'
+					}>
 					<div className="tag-list__create-form">
 						<div className="tag-list__create-form__title-and-close">
 							<div className="tag-list__create-form--title">
@@ -477,29 +466,25 @@ class TagsList extends React.Component {
 							</div>
 							<span
 								onClick={this.cancel.bind(this)}
-								className="tag-list__create-form__close"
-							></span>
+								className="tag-list__create-form__close"></span>
 						</div>
 						<div className="tag-list__create-form--divider"></div>
 						<input
-							ref={(input) => {
+							ref={input => {
 								this.createTagName = input;
 							}}
 							className="tag-list__create-form--tag-name"
 							placeholder={locales.TAG_NAME}
 							value={this.state.tagName}
-							onChange={this.handleChange.bind(this)}
-						></input>
+							onChange={this.handleChange.bind(this)}></input>
 						<div
 							onClick={this.addTag.bind(this)}
-							className="tag-list__create-form--confirmation_button"
-						>
+							className="tag-list__create-form--confirmation_button">
 							{locales.ADD}
 						</div>
 						<span
 							onClick={this.cancel.bind(this)}
-							className="tag-list__create-form--cancel"
-						>
+							className="tag-list__create-form--cancel">
 							{locales.CANCEL}
 						</span>
 					</div>

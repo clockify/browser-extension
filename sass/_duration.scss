@@ -33,6 +33,44 @@
 			font-size: 11px;
 		}
 	}
+
+	&.copy-as-entry {
+		background: none;
+		border: none;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		height: fit-content;
+		margin: 0 0 10px 0;
+
+		& input:focus {
+			border: 1px solid darkgrey !important;
+			outline: none;
+		}
+
+		& #durationTimePicker {
+			font-weight: 500;
+		}
+
+		& #durationTimePicker,
+		& #startTimePicker,
+		& #endTimePicker {
+			width: 70px;
+			height: 40px;
+			border: 1px solid variables.$border;
+			margin: 0;
+		}
+
+		& .react-datepicker__input-container {
+			cursor: pointer;
+		}
+
+		.react-datepicker__day--disabled {
+			color: #ccc;
+			text-decoration: line-through !important;
+			cursor: not-allowed !important;
+		}
+	}
 }
 
 .duration-time {

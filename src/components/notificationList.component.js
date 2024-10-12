@@ -177,6 +177,7 @@ function NotificationList({
 				message={message}
 				links={[acceptLink, declineLink]}
 				markAsRead={markAsRead}
+				hideX={true}
 			/>
 		);
 	}

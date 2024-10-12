@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import moment, { duration } from 'moment';
 import { parseTimeEntryDuration } from './duration-input-converter';
 import EditForm from './edit-form.component';
-import Autocomplete from './autocomplete.component';
+import { Autocomplete } from '~/components/Autocomplete.tsx';
 import EditFormManual from './edit-form-manual.component';
 import { isOffline } from './check-connection';
 import { getIconStatus } from '../enums/browser-icon-status-enum';
@@ -14,6 +14,7 @@ import { getRequiredMissingCustomFields } from '../helpers/utils';
 import { offlineStorage } from '../helpers/offlineStorage';
 import locales from '../helpers/locales';
 import debounce from 'lodash.debounce';
+import Toaster from './toaster-component';
 
 const timeEntryHelper = new TimeEntryHelper();
 let interval;
@@ -33,14 +34,12 @@ class StartTimer extends Component {
 		};
 		this.application = new Application();
 		this.startNewEntry = this.startNewEntry.bind(this);
-		this.startNewEntryWithoutGoingToEdit =
-			this.startNewEntryWithoutGoingToEdit.bind(this);
+		this.startNewEntryWithoutGoingToEdit = this.startNewEntryWithoutGoingToEdit.bind(this);
 		this.setAsyncStateItems = this.setAsyncStateItems.bind(this);
 		this.setDescription = this.setDescription.bind(this);
 		this.handleInputChange = debounce(this.handleInputChange.bind(this), 200);
 		this.getRecentEntries = this.getRecentEntries.bind(this);
-		this.showManualInputPlaceholder =
-			this.showManualInputPlaceholder.bind(this);
+		this.showManualInputPlaceholder = this.showManualInputPlaceholder.bind(this);
 		this.showTimerPlaceHolder = this.showTimerPlaceHolder.bind(this);
 		this.goToEdit = this.goToEdit.bind(this);
 	}
@@ -89,10 +88,10 @@ class StartTimer extends Component {
 			.runtime.sendMessage({
 				eventName: 'getRecentTimeEntries',
 			})
-			.then((res) => {
+			.then(res => {
 				this.setState({
 					autocompleteItemsRecent: res.data?.map(
-						(entry) =>
+						entry =>
 							({
 								project: {
 									clientName: entry.clientName,
@@ -109,7 +108,7 @@ class StartTimer extends Component {
 					),
 				});
 			})
-			.catch((err) => console.log(err));
+			.catch(err => console.log(err));
 	}
 
 	handleInputChange(inputValue) {
@@ -121,9 +120,9 @@ class StartTimer extends Component {
 					searchValue: inputValue,
 				},
 			})
-			.then((res) => {
+			.then(res => {
 				this.setState({
-					autocompleteItems: res.data.map((entry) => ({
+					autocompleteItems: res.data.map(entry => ({
 						project: {
 							clientName: entry.clientName,
 							color: entry.projectColor,
@@ -138,7 +137,7 @@ class StartTimer extends Component {
 					})),
 				});
 			})
-			.catch((err) => console.log(err));
+			.catch(err => console.log(err));
 	}
 
 	async getTimeEntryInProgress() {
@@ -173,11 +172,11 @@ class StartTimer extends Component {
 				.runtime.sendMessage({
 					eventName: 'getEntryInProgress',
 				})
-				.then((response) => {
+				.then(response => {
 					let timeEntry = response.data;
 					this.setTimeEntryInProgress(timeEntry);
 				})
-				.catch((error) => {
+				.catch(error => {
 					this.application.setIcon(getIconStatus().timeEntryEnded);
 				});
 		}
@@ -194,9 +193,7 @@ class StartTimer extends Component {
 					timeEntry,
 				},
 				() => {
-					let currentPeriod = moment().diff(
-						moment(timeEntry.timeInterval.start)
-					);
+					let currentPeriod = moment().diff(moment(timeEntry.timeInterval.start));
 					this.setState({
 						time: duration(currentPeriod).format('HH:mm:ss', { trim: false }),
 					});
@@ -212,18 +209,14 @@ class StartTimer extends Component {
 			);
 			inProgress = true;
 			this.application.setIcon(
-				inProgress
-					? getIconStatus().timeEntryStarted
-					: getIconStatus().timeEntryEnded
+				inProgress ? getIconStatus().timeEntryStarted : getIconStatus().timeEntryEnded
 			);
 			const { forceProjects, forceTasks } = this.props.workspaceSettings;
 			const taskId = timeEntry.task ? timeEntry.task.id : timeEntry.taskId;
 
 			// if (forceProjects && (!timeEntry.projectId || forceTasks && !taskId)) {
 			if (!timeEntry.projectId || (forceTasks && !taskId)) {
-				const { projectDB, taskDB } = await this.checkDefaultProjectTask(
-					forceTasks
-				);
+				const { projectDB, taskDB } = await this.checkDefaultProjectTask(forceTasks);
 				if (projectDB) {
 					const entry = await timeEntryHelper.updateProjectTask(
 						timeEntry,
@@ -242,9 +235,7 @@ class StartTimer extends Component {
 			});
 			this.props.setTimeEntryInProgress(timeEntry);
 			this.application.setIcon(
-				inProgress
-					? getIconStatus().timeEntryStarted
-					: getIconStatus().timeEntryEnded
+				inProgress ? getIconStatus().timeEntryStarted : getIconStatus().timeEntryEnded
 			);
 			getBrowser().runtime.sendMessage({
 				eventName: 'restartPomodoro',
@@ -285,14 +276,10 @@ class StartTimer extends Component {
 	setDescription(description) {
 		if (description.length > 3000) {
 			description = description.slice(0, 3000);
-			this.props.toaster.toast(
-				'error',
-				locales.DESCRIPTION_LIMIT_ERROR_MSG(3000),
-				2
-			);
+			this.props.toaster.toast('error', locales.DESCRIPTION_LIMIT_ERROR_MSG(3000), 2);
 		}
 
-		this.setState((state) => ({
+		this.setState(state => ({
 			timeEntry: {
 				...state.timeEntry,
 				description,
@@ -314,8 +301,8 @@ class StartTimer extends Component {
 		let timeEntry = {
 			timeInterval: {
 				start: moment(),
-				end: end
-			}
+				end: end,
+			},
 		};
 
 		this.setState({
@@ -353,21 +340,15 @@ class StartTimer extends Component {
 				this.state.timeEntry;
 
 			if (/<[^>]+>/.test(description)) {
-				return this.props.toaster.toast(
-					'error',
-					locales.FORBIDDEN_CHARACTERS,
-					2
-				);
+				return this.props.toaster.toast('error', locales.FORBIDDEN_CHARACTERS, 2);
 			}
 			let taskId = task ? task.id : null;
-			const tagIds = tags ? tags.map((tag) => tag.id) : [];
+			const tagIds = tags ? tags.map(tag => tag.id) : [];
 
 			const { forceProjects, forceTasks } = this.props.workspaceSettings;
 			//if (forceProjects && (!projectId || forceTasks && !taskId)) {
 			if (!projectId || (forceTasks && !taskId)) {
-				const { projectDB, taskDB } = await this.checkDefaultProjectTask(
-					forceTasks
-				);
+				const { projectDB, taskDB } = await this.checkDefaultProjectTask(forceTasks);
 				if (projectDB) {
 					projectId = projectDB.id;
 					if (taskDB) {
@@ -378,13 +359,11 @@ class StartTimer extends Component {
 			}
 			const cfs =
 				customFieldValues && customFieldValues.length > 0
-					? customFieldValues
-							.filter((cf) => cf.customFieldDto.status === 'VISIBLE')
-							.map(({ type, customFieldId, value }) => ({
-								customFieldId,
-								sourceType: 'TIMEENTRY',
-								value: type === 'NUMBER' ? parseFloat(value) : value,
-							}))
+					? customFieldValues.map(({ type, customFieldId, value }) => ({
+							customFieldId,
+							sourceType: 'TIMEENTRY',
+							value: type === 'NUMBER' ? parseFloat(value) : value,
+					  }))
 					: [];
 			getBrowser()
 				.runtime.sendMessage({
@@ -400,7 +379,7 @@ class StartTimer extends Component {
 						customFields: cfs,
 					},
 				})
-				.then((response) => {
+				.then(response => {
 					let data = response.data;
 					this.setState(
 						{
@@ -458,21 +437,15 @@ class StartTimer extends Component {
 				this.state.timeEntry;
 
 			if (/<[^>]+>/.test(description)) {
-				return this.props.toaster.toast(
-					'error',
-					locales.FORBIDDEN_CHARACTERS,
-					2
-				);
+				return this.props.toaster.toast('error', locales.FORBIDDEN_CHARACTERS, 2);
 			}
 			let taskId = task ? task.id : null;
-			const tagIds = tags ? tags.map((tag) => tag.id) : [];
+			const tagIds = tags ? tags.map(tag => tag.id) : [];
 
 			const { forceProjects, forceTasks } = this.props.workspaceSettings;
 			//if (forceProjects && (!projectId || forceTasks && !taskId)) {
 			if (!projectId || (forceTasks && !taskId)) {
-				const { projectDB, taskDB } = await this.checkDefaultProjectTask(
-					forceTasks
-				);
+				const { projectDB, taskDB } = await this.checkDefaultProjectTask(forceTasks);
 				if (projectDB) {
 					projectId = projectDB.id;
 					if (taskDB) {
@@ -483,20 +456,18 @@ class StartTimer extends Component {
 			}
 			const cfs =
 				customFieldValues && customFieldValues.length > 0
-					? customFieldValues
-							.filter((cf) => cf.customFieldDto.status === 'VISIBLE')
-							.map(({ type, customFieldId, value }) => ({
-								customFieldId,
-								sourceType: 'TIMEENTRY',
-								value: type === 'NUMBER' ? parseFloat(value) : value,
-							}))
+					? customFieldValues.map(({ type, customFieldId, value }) => ({
+							customFieldId,
+							sourceType: 'TIMEENTRY',
+							value: type === 'NUMBER' ? parseFloat(value) : value,
+					  }))
 					: [];
 			getBrowser()
 				.runtime.sendMessage({
 					eventName: 'startWithDescription',
 					options: {
 						projectId,
-						description,
+						description: description?.trim(),
 						billable: null,
 						start: null,
 						end: null,
@@ -505,7 +476,7 @@ class StartTimer extends Component {
 						customFields: cfs,
 					},
 				})
-				.then((response) => {
+				.then(response => {
 					let data = response.data;
 					this.setState(
 						{
@@ -560,8 +531,6 @@ class StartTimer extends Component {
 			this.state.timeEntry
 		);
 
-		console.log(requiredAndMissingCustomFields);
-
 		if (isOff) {
 			this.stopEntryInProgress();
 		} else if (forceDescription && (description === '' || !description)) {
@@ -608,8 +577,16 @@ class StartTimer extends Component {
 			getBrowser()
 				.runtime.sendMessage({
 					eventName: 'endInProgress',
+					options: {
+						endedFromIntegration: false,
+					},
 				})
-				.then((data) => {
+				.then(data => {
+					if (data.status === 403) {
+						this.setState({ stopDisabled: false });
+						return this.toaster.toast('error', data.message, 2);
+					}
+
 					if (data.status === 400) {
 						this.goToEdit({ inProgress: true });
 						return;
@@ -638,7 +615,7 @@ class StartTimer extends Component {
 
 					this.application.setIcon(getIconStatus().timeEntryEnded);
 				})
-				.catch(() => {
+				.catch(error => {
 					this.props.log('timeEntryService.stopEntryInProgress error');
 					// if error message says that some fields are required, open the edit page
 					if (res.response?.data?.message?.includes('required')) {
@@ -737,8 +714,7 @@ class StartTimer extends Component {
 	showManualInputPlaceholder() {
 		return (
 			this.props.mode === 'manual' &&
-			(!this.state.manualInputValue ||
-				this.state.manualInputValue?.length === 0)
+			(!this.state.manualInputValue || this.state.manualInputValue?.length === 0)
 		);
 	}
 
@@ -750,32 +726,27 @@ class StartTimer extends Component {
 
 		return (
 			<div id="start-timer">
+				<Toaster ref={instance => (this.toaster = instance)} />
 				<div className="start-timer">
 					{/* <span>Offline <input type='checkbox' checked={this.isChecked} onChange={this.handleChangeOffline} />  </span> */}
 					<span
 						className={
-							this.props.mode === 'timer'
-								? 'start-timer-description'
-								: 'disabled'
-						}
-					>
+							this.props.mode === 'timer' ? 'start-timer-description' : 'disabled'
+						}>
 						<div
 							onClick={() => this.goToEdit({ inProgress: true })}
-							className={id ? 'start-timer_description' : 'disabled'}
-						>
+							className={id ? 'start-timer_description' : 'disabled'}>
 							<span>{description || locales.NO_DESCRIPTION}</span>
 							<div
 								style={project ? { color: project.color } : {}}
-								className={project ? 'time-entry-project' : 'disabled'}
-							>
+								className={project ? 'time-entry-project' : 'disabled'}>
 								<div className="time-entry__project-wrapper">
 									<div
 										style={project ? { background: project.color } : {}}
-										className="dot"
-									></div>
+										className="dot"></div>
 									<span className="time-entry__project-name">
-										{project ? project.name : ''}
-										{task ? ': ' + task.name : ''}
+										{project?.name || ''}
+										{task?.name ? ': ' + task.name : ''}
 									</span>
 								</div>
 								<span className="time-entry__client-name">
@@ -793,7 +764,7 @@ class StartTimer extends Component {
 										: this.state.autocompleteItemsRecent
 								}
 								value={this.state.timeEntry.description}
-								onChange={(e) => {
+								onChange={e => {
 									this.setDescription(e.target.value);
 									if (e.target.value.length >= 2) {
 										this.handleInputChange(e.target.value);
@@ -801,14 +772,14 @@ class StartTimer extends Component {
 										this.handleInputChange(null);
 									}
 								}}
-								onSelect={(item) => {
+								onSelect={item => {
 									const selected =
 										this.state.timeEntry.description?.length >= 2
 											? this.state.autocompleteItems.find(
-													(entry) => entry.id === item.id
+													entry => entry.id === item.id
 											  )
 											: this.state.autocompleteItemsRecent.find(
-													(entry) => entry.id === item.id
+													entry => entry.id === item.id
 											  );
 									if (selected) {
 										this.setState(
@@ -821,7 +792,7 @@ class StartTimer extends Component {
 										);
 									}
 								}}
-								renderInput={(props) => (
+								renderInput={props => (
 									<>
 										<input
 											className={
@@ -830,8 +801,7 @@ class StartTimer extends Component {
 											id="description"
 											type="text"
 											{...props}
-											onKeyDown={this.onKey.bind(this)}
-										></input>
+											onKeyDown={this.onKey.bind(this)}></input>
 										{this.showTimerPlaceHolder() && (
 											<span className="start-timer_placeholder">
 												{locales.WHAT_ARE_YOU_WORKING_ON}
@@ -844,11 +814,8 @@ class StartTimer extends Component {
 					</span>
 					<span
 						className={
-							this.props.mode === 'manual'
-								? 'start-timer-description'
-								: 'disabled'
-						}
-					>
+							this.props.mode === 'manual' ? 'start-timer-description' : 'disabled'
+						}>
 						<input
 							className={'start-timer_description-input'}
 							id="duration"
@@ -857,9 +824,7 @@ class StartTimer extends Component {
 							onKeyDown={this.onKey.bind(this)}
 						/>
 						{this.showManualInputPlaceholder() && (
-							<span className="start-timer_placeholder">
-								{locales.ENTER_TIME}
-							</span>
+							<span className="start-timer_placeholder">{locales.ENTER_TIME}</span>
 						)}
 					</span>
 					<button
@@ -868,8 +833,7 @@ class StartTimer extends Component {
 								? 'start-timer_button-start'
 								: 'disabled'
 						}
-						onClick={this.startNewEntryWithoutGoingToEdit}
-					>
+						onClick={this.startNewEntryWithoutGoingToEdit}>
 						<span>{locales.START}</span>
 					</button>
 					<button
@@ -878,19 +842,15 @@ class StartTimer extends Component {
 								? 'start-timer_button-red'
 								: 'disabled'
 						}
-						onClick={this.checkRequiredFields.bind(this)}
-					>
+						onClick={this.checkRequiredFields.bind(this)}>
 						<span className="button_timer">{this.state.time}</span>
 						<span className="button_stop">{locales.STOP}</span>
 					</button>
 					<button
 						className={
-							this.props.mode === 'manual'
-								? 'start-timer_button-start'
-								: 'disabled'
+							this.props.mode === 'manual' ? 'start-timer_button-start' : 'disabled'
 						}
-						onClick={this.goToEditManual.bind(this)}
-					>
+						onClick={this.goToEditManual.bind(this)}>
 						<span>{locales.ADD_TIME}</span>
 					</button>
 				</div>

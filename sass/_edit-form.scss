@@ -1,53 +1,58 @@
 @use 'variables';
 
 .edit-form {
-	padding: 20px;
+  padding: 20px;
 
-	&__project_list {
-		margin-bottom: 10px;
-	}
+  &__project_list {
+    margin-bottom: 10px;
+  }
 
-	&__break-label {
-		background: #c6d2d9;
-		color: #333333;
-		padding: 14px 21px;
-		font-size: 14px;
-		.break-icon {
-			display: inline-block;
-			position: relative;
-			top: 2px;
-			// background: url("../assets/images/break.png");
-			margin-right: 10px;
-			width: 14px;
-			height: 14px;
-			background-repeat: no-repeat;
-			background-size: 14px 14px;
-		}
-	}
+  &__break-label {
+    background: #c6d2d9;
+    color: #333333;
+    padding: 14px 21px;
+    font-size: 14px;
+
+    .break-icon {
+      display: inline-block;
+      position: relative;
+      top: 2px;
+      // background: url("../assets/images/break.png");
+      margin-right: 10px;
+      width: 14px;
+      height: 14px;
+      background-repeat: no-repeat;
+      background-size: 14px 14px;
+    }
+  }
 }
 
 .edit-form-description {
-	position: relative;
-	width: 100%;
-	height: 65px;
-	border: none;
-	resize: none;
-	box-shadow: none;
-	background: none !important;
-	font-size: 14px;
-	outline: none;
-	color: variables.$dark_text;
-	& + div {
-		z-index: 20;
-		margin-left: -10px;
-	}
+  position: relative;
+  width: 100%;
+  height: 65px;
+  border: none;
+  resize: none;
+  box-shadow: none;
+  background: none !important;
+  font-size: 14px;
+  outline: none;
+  color: variables.$dark_text;
+
+  & + div {
+    z-index: 20;
+  }
 }
 
 .description-textarea {
-	margin-bottom: 10px;
-	border: 1px solid variables.$border;
-	background: white;
-	border-radius: 2px;
+  margin-bottom: 10px;
+  border: 1px solid variables.$border;
+  background: white;
+  border-radius: 2px;
+
+	&:has(.react-autocomplete textarea:focus) {
+		border: 1px solid darkgrey !important;
+	}
 
 	&-required {
 		margin-bottom: 10px;
@@ -63,26 +68,26 @@
 }
 
 .description-textarea > textarea {
-	padding: 6px 6px;
-	box-sizing: border-box;
+  padding: 6px 6px;
+  box-sizing: border-box;
 }
 
 .edit-form-checkbox {
-	display: inline-block;
-	width: 16px;
-	height: 16px;
-	top: 13px;
-	background: white;
-	border: 1px solid variables.$border;
-	border-radius: 2px;
-	cursor: pointer;
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  top: 13px;
+  background: white;
+  border: 1px solid variables.$border;
+  border-radius: 2px;
+  cursor: pointer;
 }
 
 .edit-form-buttons {
-	margin-top: 20px;
+	margin-top: 0;
 
 	&__billable {
-		margin-bottom: 20px;
+		margin: 15px 0;
 		line-height: 1;
 		display: flex;
 		align-items: center;
@@ -90,59 +95,66 @@
 }
 
 .edit-form-billable-img {
-	// content: url("../assets/images/checked.png");
-	margin-top: 2px;
-	margin-left: 1px;
+  // content: url("../assets/images/checked.png");
+  margin-top: 2px;
+  margin-left: 1px;
 }
 
 .edit-form-billable-img-hidden {
-	// content: url("../assets/images/checked.png");
-	margin-top: 2px;
-	margin-left: 1px;
-	visibility: hidden;
+  // content: url("../assets/images/checked.png");
+  margin-top: 2px;
+  margin-left: 1px;
+  visibility: hidden;
 }
 
 .edit-form-billable {
-	top: 13px;
-	margin-left: 10px;
-	color: variables.$middle_light_text;
-	font-size: 14px;
-	cursor: pointer;
+  top: 13px;
+  margin-left: 10px;
+  color: variables.$middle_light_text;
+  font-size: 14px;
+  cursor: pointer;
 }
 
 .edit-form-right-buttons {
-	margin-top: 20px;
+  margin-top: 20px;
 
-	&__back_and_delete {
-		margin-top: 20px;
-		justify-content: space-between;
-		text-align: center;
-	}
+  &__back_and_delete {
+    margin-top: 20px;
+    justify-content: space-between;
+    text-align: center;
+  }
 
-	&__back {
-		color: variables.$blue;
-		cursor: pointer;
-	}
+  &__back {
+    color: variables.$blue;
+    cursor: pointer;
+  }
 }
 
 .edit-form-delete {
-	color: red;
-	cursor: pointer;
+  color: red;
+  cursor: pointer;
 }
 
 .edit-form-done-disabled {
-	text-align: center;
+  text-align: center;
 }
 
 .edit-form-done {
-	width: 100%;
-	height: 50px;
-	border: none;
-	border-radius: 3px;
-	color: white;
-	background: variables.$blue;
-	cursor: pointer;
-	text-align: center;
+  width: 100%;
+  height: 50px;
+  border: none;
+  border-radius: 3px;
+  color: white;
+  background: variables.$blue;
+  cursor: pointer;
+  text-align: center;
+
+	&:hover {
+		background-color: variables.$blue_hover;
+		border-color: variables.$blue_hover;
+		transition: background-color 0.15s ease-in-out,
+			border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+	}
 
 	&-disabled {
 		width: 100%;
@@ -155,99 +167,100 @@
 }
 
 .shake-heartache {
-	animation: kf_shake 0.5s 1 linear;
-	-webkit-animation: kf_shake 0.5s 1 linear;
-	-moz-animation: kf_shake 0.5s 1 linear;
-	-o-animation: kf_shake 0.5s 1 linear;
+  animation: kf_shake 0.5s 1 linear;
+  -webkit-animation: kf_shake 0.5s 1 linear;
+  -moz-animation: kf_shake 0.5s 1 linear;
+  -o-animation: kf_shake 0.5s 1 linear;
 }
 
 .field-required-message {
-	color: variables.$red;
-	font-size: 10px;
-	text-align: end;
-	padding: 0;
-	margin: 0;
+  color: variables.$red;
+  font-size: 10px;
+  text-align: end;
+  padding: 0;
+  margin: 0;
 }
 
 @keyframes kf_shake {
-	0% {
-		-webkit-transform: translate(20px);
-	}
-	20% {
-		-webkit-transform: translate(-20px);
-	}
-	40% {
-		-webkit-transform: translate(10px);
-	}
-	60% {
-		-webkit-transform: translate(-10px);
-	}
-	80% {
-		-webkit-transform: translate(8px);
-	}
-	100% {
-		-webkit-transform: translate(0px);
-	}
+  0% {
+    -webkit-transform: translate(20px);
+  }
+  20% {
+    -webkit-transform: translate(-20px);
+  }
+  40% {
+    -webkit-transform: translate(10px);
+  }
+  60% {
+    -webkit-transform: translate(-10px);
+  }
+  80% {
+    -webkit-transform: translate(8px);
+  }
+  100% {
+    -webkit-transform: translate(0px);
+  }
 }
 
 @-webkit-keyframes kf_shake {
-	0% {
-		-webkit-transform: translate(00px);
-	}
-	20% {
-		-webkit-transform: translate(-00px);
-	}
-	40% {
-		-webkit-transform: translate(10px);
-	}
-	60% {
-		-webkit-transform: translate(-10px);
-	}
-	80% {
-		-webkit-transform: translate(8px);
-	}
-	100% {
-		-webkit-transform: translate(0px);
-	}
+  0% {
+    -webkit-transform: translate(00px);
+  }
+  20% {
+    -webkit-transform: translate(-00px);
+  }
+  40% {
+    -webkit-transform: translate(10px);
+  }
+  60% {
+    -webkit-transform: translate(-10px);
+  }
+  80% {
+    -webkit-transform: translate(8px);
+  }
+  100% {
+    -webkit-transform: translate(0px);
+  }
 }
 
 @-moz-keyframes kf_shake {
-	0% {
-		-moz-transform: translate(20px);
-	}
-	20% {
-		-moz-transform: translate(-20px);
-	}
-	40% {
-		-moz-transform: translate(10px);
-	}
-	60% {
-		-moz-transform: translate(-10px);
-	}
-	80% {
-		-moz-transform: translate(8px);
-	}
-	100% {
-		-moz-transform: translate(0px);
-	}
+  0% {
+    -moz-transform: translate(20px);
+  }
+  20% {
+    -moz-transform: translate(-20px);
+  }
+  40% {
+    -moz-transform: translate(10px);
+  }
+  60% {
+    -moz-transform: translate(-10px);
+  }
+  80% {
+    -moz-transform: translate(8px);
+  }
+  100% {
+    -moz-transform: translate(0px);
+  }
 }
+
 @-o-keyframes kf_shake {
-	0% {
-		-o-transform: translate(20px);
-	}
-	20% {
-		-o-transform: translate(-20px);
-	}
-	40% {
-		-o-transform: translate(10px);
-	}
-	60% {
-		-o-transform: translate(-10px);
-	}
-	80% {
-		-o-transform: translate(8px);
-	}
-	100% {
-		-o-origin-transform: translate(0px);
-	}
+  0% {
+    -o-transform: translate(20px);
+  }
+  20% {
+    -o-transform: translate(-20px);
+  }
+  40% {
+    -o-transform: translate(10px);
+  }
+  60% {
+    -o-transform: translate(-10px);
+  }
+  80% {
+    -o-transform: translate(8px);
+  }
+  100% {
+    -o-origin-transform: translate(0px);
+  }
 }

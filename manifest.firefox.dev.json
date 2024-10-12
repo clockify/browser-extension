@@ -38,10 +38,10 @@
 	"browser_specific_settings": {
 		"gecko": {
 			"id": "{1262fc44-5ec9-4088-a7a7-4cd42f3f548d}",
-			"strict_min_version": "57.0a1"
+			"strict_min_version": "58.0"
 		}
 	},
-	"version": "2.10.18",
+	"version": "2.11.7",
 	"browser_action": {
 		"default_popup": "index.html",
 		"default_title": "Clockify"

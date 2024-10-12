@@ -5,7 +5,7 @@ import { getKeyCodes } from '../enums/key-codes.enum';
 import Switch from 'antd/lib/switch';
 import { getBrowser } from '../helpers/browser-helper';
 import { HtmlStyleHelper } from '../helpers/html-style-helper';
-import DefaultPomodoroBreakProject from './default-pomodoro-break-project.component';
+import { DefaultPomodoroBreakProject } from '~/components/DefaultPomodoroBreakProject.tsx';
 import locales from '../helpers/locales';
 
 const htmlStyleHelper = new HtmlStyleHelper();
@@ -25,7 +25,7 @@ class Pomodoro extends Component {
 			isLongBreakEnabled: false,
 			isDefaultProjectEnabled: false,
 			isFocusModeEnabled: false,
-			defaultProjectForUserOnWorkspace: '',
+			defaultProjectForUserOnWorkspace: ''
 		};
 	}
 
@@ -41,7 +41,7 @@ class Pomodoro extends Component {
 			pomodoroForUser: pomodoroStorage.find(
 				(pomodoro) => pomodoro.userId === userId
 			),
-			pomodoroStorage,
+			pomodoroStorage
 		};
 	}
 
@@ -67,7 +67,7 @@ class Pomodoro extends Component {
 			isSoundNotification,
 			isAutomaticStartStop,
 			isDefaultProjectEnabled,
-			isFocusModeEnabled,
+			isFocusModeEnabled
 		} = pomodoroForUser;
 
 		this.setState(
@@ -81,7 +81,7 @@ class Pomodoro extends Component {
 				isSoundNotification,
 				isAutomaticStartStop,
 				isDefaultProjectEnabled,
-				isFocusModeEnabled,
+				isFocusModeEnabled
 			},
 			() => {
 				const elementsIds = ['longBreak', 'breakCounter'];
@@ -112,7 +112,7 @@ class Pomodoro extends Component {
 				isSoundNotification: false,
 				isAutomaticStartStop: false,
 				isDefaultProjectEnabled: false,
-				isFocusModeEnabled: false,
+				isFocusModeEnabled: false
 			};
 
 			pomodoroStorage = [obj];
@@ -127,7 +127,7 @@ class Pomodoro extends Component {
 				isSoundNotification,
 				isAutomaticStartStop,
 				isDefaultProjectEnabled,
-				isFocusModeEnabled,
+				isFocusModeEnabled
 			} = obj;
 
 			this.setState(
@@ -141,7 +141,7 @@ class Pomodoro extends Component {
 					isSoundNotification,
 					isAutomaticStartStop,
 					isDefaultProjectEnabled,
-					isFocusModeEnabled,
+					isFocusModeEnabled
 				},
 				() => {
 					htmlStyleHelper.enableDisableElements(false, elementsIds);
@@ -153,13 +153,13 @@ class Pomodoro extends Component {
 			if (this.state.enabled) {
 				pomodoroForUser.enabled = false;
 				this.setState({
-					enabled: false,
+					enabled: false
 				});
 				isEnabled = false;
 			} else {
 				pomodoroForUser.enabled = true;
 				this.setState({
-					enabled: true,
+					enabled: true
 				});
 				isEnabled = true;
 			}
@@ -169,7 +169,7 @@ class Pomodoro extends Component {
 
 		if (!isEnabled) {
 			getBrowser().runtime.sendMessage({
-				eventName: 'restartPomodoro',
+				eventName: 'restartPomodoro'
 			});
 		}
 	}
@@ -196,7 +196,7 @@ class Pomodoro extends Component {
 			hasValueChanged = pomodoroForUser[id] !== value;
 			pomodoroForUser[id] = value ? value : pomodoroForUser[id];
 			const obj = {
-				[id]: pomodoroForUser[id],
+				[id]: pomodoroForUser[id]
 			};
 			this.setState(obj);
 		}
@@ -218,7 +218,7 @@ class Pomodoro extends Component {
 		let { id, value } = event.target;
 		value = parseInt(value);
 		this.setState({
-			[id]: value || '',
+			[id]: value || ''
 		});
 	}
 
@@ -229,7 +229,7 @@ class Pomodoro extends Component {
 		this.store(pomodoroStorage);
 		this.props.changeSaved();
 		this.setState({
-			isSoundNotification: event,
+			isSoundNotification: event
 		});
 	}
 
@@ -240,7 +240,7 @@ class Pomodoro extends Component {
 		this.store(pomodoroStorage);
 		this.props.changeSaved();
 		this.setState({
-			isAutomaticStartStop: event,
+			isAutomaticStartStop: event
 		});
 	}
 
@@ -251,7 +251,7 @@ class Pomodoro extends Component {
 		this.store(pomodoroStorage);
 		this.props.changeSaved();
 		this.setState({
-			isDefaultProjectEnabled: event,
+			isDefaultProjectEnabled: event
 		});
 	}
 
@@ -262,7 +262,7 @@ class Pomodoro extends Component {
 		this.store(pomodoroStorage);
 		this.props.changeSaved();
 		this.setState({
-			isFocusModeEnabled: event,
+			isFocusModeEnabled: event
 		});
 	}
 
@@ -274,7 +274,7 @@ class Pomodoro extends Component {
 		this.props.changeSaved();
 		this.setState(
 			{
-				isLongBreakEnabled: event,
+				isLongBreakEnabled: event
 			},
 			() => {
 				const elementsIds = ['longBreak', 'breakCounter'];

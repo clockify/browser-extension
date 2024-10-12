@@ -220,7 +220,7 @@ function createIdleMessage(description, idleDuration) {
 	// }
 
 	if (description) {
-		description = '\'' + description + '\'';
+		description = "'" + description + "'";
 	} else {
 		description = clockifyLocales.NO_DESCRIPTION;
 	}
@@ -239,10 +239,10 @@ async function discardIdleTimeAndStopEntry() {
 	if (error) {
 	} else if (entry) {
 		const idleDetectedIn = await localStorage.getItem('idleDetectedIn');
-		const { error } = await TimeEntry.endInProgress(
-			entry,
-			new Date(idleDetectedIn)
-		);
+		const { error } = await TimeEntry.endInProgress({
+			timeEntry: entry,
+			end: new Date(idleDetectedIn),
+		});
 		this.clearNotification('idleDetection');
 
 		if (error && error.status == 400) {
@@ -265,10 +265,10 @@ async function discardIdleTimeAndContinueEntry() {
 	if (error) {
 	} else if (entry) {
 		const idleDetectedIn = await localStorage.getItem('idleDetectedIn');
-		const { error } = await TimeEntry.endInProgress(
-			entry,
-			new Date(idleDetectedIn)
-		);
+		const { error } = await TimeEntry.endInProgress({
+			timeEntry: entry,
+			end: new Date(idleDetectedIn),
+		});
 		this.clearNotification('idleDetection');
 
 		if (error && error.status == 400) {

@@ -1223,6 +1223,12 @@
   "GLOBAL__DUPLICATE_SUCCESS_MSG": {
     "message": "시간 입력이 중복되었습니다."
   },
+  "CAN_NOT_CREATE_PROJECT_MISSING_PERMISSIONS": {
+    "message": "프로젝트를 만들 수 있는 권한이 없습니다."
+  },
+  "ENTRY_IN_PROGRESS_EXISTS": {
+    "message": "시간 입력이 진행 중입니다!"
+  },
   "appName": {
     "message": "Clockify 시간 추적기",
     "description": "웹 스토어에 표시되는 애플리케이션의 제목입니다."

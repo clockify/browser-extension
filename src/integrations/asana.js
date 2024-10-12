@@ -2,7 +2,7 @@
 clockifyButton.render(
 	'.TaskPaneToolbarAnimation-row:not(.clockify)',
 	{ observe: true },
-	(sidepanelHeader) => {
+	sidepanelHeader => {
 		$('.clockify-widget-container', sidepanelHeader)?.remove();
 
 		const sidepanel = $('.TaskPaneBody-main');
@@ -13,13 +13,13 @@ clockifyButton.render(
 			/* text('[aria-label="Task Name"]') || */
 			text('.TaskPane-titleRow textarea') ||
 			text('.TaskPane-titleRow :first-child');
-		const asanaTaskTags = () => textList('.TaskTags .TokenizerPillBase-name');
+		const asanaTaskTags = () => textList('ul [class*="TaskTag"] span');
 
 		const description = asanaTaskname;
 		const projectName = () =>
 			isSubtaskOpened
 				? text('.TaskAncestry-ancestorProject')
-				: text('.TaskProjects .TokenizerPillBase-name');
+				: text('.TaskProjectTokenPill-name');
 		const taskName = asanaTaskname;
 		const tagNames = asanaTaskTags;
 
@@ -41,12 +41,12 @@ clockifyButton.render(
 clockifyButton.render(
 	'.SubtaskGrid .TaskList [data-task-id]:not(.clockify)',
 	{ observe: true },
-	(subtask) => {
-		const actions = $('.ItemRowTwoColumnStructure-right', subtask);
+	subtask => {
+		const actions = $('.SubtaskTaskRow-rightChildren', subtask);
 
 		const description = () => text('[id*="Task"]', subtask);
 		const projectName = () =>
-			text('.TaskProjects .TokenizerPillBase-name') ||
+			text('.TaskProjects .TaskProjectTokenPill-name') ||
 			text('.TaskAncestry-ancestorProject');
 		const taskName = () => text('[id*="Task"]', subtask);
 
