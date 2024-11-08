@@ -155,12 +155,10 @@ function ClockifyButton(props) {
 		const userId = appStoreParsed.userData.id;
 		const usersDarkThemePreference = appStoreParsed.usersDarkThemePreference;
 
-		const userPreference = usersDarkThemePreference.find(
-			(pref) => pref.userId === userId
-		);
+		const userPreference = usersDarkThemePreference.find(pref => pref.userId === userId);
 		const isDarkTheme = userPreference ? userPreference.enabled : false;
 
-		setState((prevState) => ({
+		setState(prevState => ({
 			...prevState,
 			isDarkTheme,
 		}));
@@ -292,7 +290,9 @@ function ClockifyButton(props) {
 			) {
 				let timeEntryId, updatedFieldValues;
 				try {
-					const { entryId, updatedFields } = getTimeEntryDetails();
+					const timeEntryDetails = getTimeEntryDetails() || {};
+					const { entryId, updatedFields } = timeEntryDetails;
+
 					timeEntryId = entryId;
 					updatedFieldValues = updatedFields;
 				} catch (error) {
@@ -676,8 +676,7 @@ function ClockifyButton(props) {
 				<div
 					className={`clockify-integration-popup${
 						state.isDarkTheme ? ' clockify-dark-mode' : ''
-					}`}
-				>
+					}`}>
 					<div className="clockify-integration-popup-header">
 						{props.manualMode ? (
 							<div className="clockify-manual-entry-header-container">

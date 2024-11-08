@@ -28,6 +28,7 @@ class IntegrationSelectors {
 			//console.log('Trying to fetch selectors remotely...');
 			const externalSelectors = await this.fetch(this.externalResource, {
 				cache: 'no-store',
+				'cache-control': 'no-cache',
 			});
 			await this.store(externalSelectors);
 			//console.log('%cFetching selectors remotely succeed.', 'color: green;');

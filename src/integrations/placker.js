@@ -1,117 +1,122 @@
-setTimeout(() => {
-	/* Card overview */
-	clockifyButton.render('.dialogOverviewCardContent__right .cardDetails__hiddenAttributes:not(.clockify)', { observe: true }, (elem) => {
-		const cardOverview = $('card-overview-component');
-		const cardTitle = $('.dialogCardHeaderOverviewComponent__titleInput', cardOverview).textContent.trim();
-		const boardTitle = $('.breadcrumbComponent__item a', cardOverview)?.textContent?.trim();
+// Card modal view - right side
+clockifyButton.render(
+	'.dialogOverviewCardContent__right .cardDetails__hiddenAttributes:not(.clockify)',
+	{ observe: true },
+	taskModalRightSide => {
+		const description = () => text('.dialogCardHeaderOverviewComponent__titleInput');
+		const projectName = () => text('.breadcrumbComponent__item a');
 
-		const link = clockifyButton.createButton({ description: cardTitle, projectName: boardTitle });
-		const inputForm = clockifyButton.createInput({ description: cardTitle, projectName: boardTitle });
-		const input = inputForm.firstElementChild;
-		const plackerInputContainer = document.createElement('placker-input-container');
-		const label = document.createElement('label');
+		const entry = { description, projectName };
 
-		addToRightPanel({ input, label, inputForm, link, plackerInputContainer, elem });
-	});
+		const timer = clockifyButton.createTimer(entry);
+		const input = clockifyButton.createInput(entry);
+		const label = createLabel();
+		const container = createContainer(label, timer, input);
 
-	/* Checklist items in card overview */
-	clockifyButton.render('card-checklist-item-component:not(.clockify)', { observe: true }, (elem) => {
-		const checklist = elem.parentNode.parentNode;
-		const checklistTitle = checklist.dataset?.checklistTitle;
-		const boardTitle = checklist.dataset?.boardTitle;
-		const cardTitle = checklist.dataset?.cardTitle;
-		const itemTitle = $('.cardChecklistItemComponent__titleText', elem)?.textContent?.trim();
-		const taskTitle = cardTitle + '-' + checklistTitle + ' - ' + itemTitle;
-		const linkContainer = $('.cardChecklistItemComponent__contentBottom', elem);
+		handleStyles({ timer, input, container });
 
-		const link = clockifyButton.createButton({
-			description: taskTitle,
-			projectName: boardTitle,
-			small: true,
-		});
+		taskModalRightSide.append(container);
+	}
+);
 
-		link.classList.add('plackerButton');
-		link.classList.add('palckerButton--justTransparent');
-		link.classList.add('m-l-4');
-		linkContainer.append(link);
-	});
+// Card modal view - checklist items
+clockifyButton.render(
+	'card-checklist-item-component:not(.clockify)',
+	{ observe: true },
+	itemList => {
+		const checklist = itemList.parentNode.parentNode;
+		const checklistTitle = () => checklist.dataset?.checklistTitle;
+		const cardTitle = () => checklist.dataset?.cardTitle;
+		const itemTitle = () => text('.cardChecklistItemComponent__titleText', itemList);
 
-	/* Cards on lists */
-	clockifyButton.render('card-front-component:not(.clockify)', { observe: true }, (elem) => {
-		const cardTitle = $('.cardTitle', elem)?.textContent?.trim();
-		const linkContainer = $('.cardContainer__iconsAndDates', elem);
+		const description = () => `${cardTitle()} - ${checklistTitle()} - ${itemTitle()}`;
+		const projectName = () => checklist.dataset?.boardTitle;
 
-		const link = clockifyButton.createButton({
-			description: cardTitle,
-			projectName: '',
-			small: true,
-		});
+		const entry = { description, projectName, small: true };
 
-		link.classList.add('m-t-8');
+		const timer = clockifyButton.createTimer(entry);
 
-		linkContainer.append(link);
-	});
+		timer.classList.add('plackerButton', 'palckerButton--justTransparent', 'm-l-4');
 
-	/* Right panel cards in gantt chart */
-	clockifyButton.render('.cardDetails .cardDetails__hiddenAttributes:not(.clockify)', { observe: true }, (elem) => {
-		const cardTitle = elem.dataset?.cardTitle?.trim();
-		const boardTitle = elem.dataset?.boardTitle?.trim();
+		const itemActions = $('.cardChecklistItemComponent__contentBottom', itemList);
 
-		const link = clockifyButton.createButton({ description: cardTitle, projectName: boardTitle });
-		const inputForm = clockifyButton.createInput({ description: cardTitle, projectName: boardTitle });
-		const input = inputForm.firstElementChild;
-		const plackerInputContainer = document.createElement('placker-input-container');
-		const label = document.createElement('label');
+		itemActions.append(timer);
+	}
+);
 
-		addToRightPanel({ input, label, inputForm, link, plackerInputContainer, elem });
-	});
+// Board view - cards
+clockifyButton.render('card-front-component:not(.clockify)', { observe: true }, boardCard => {
+	const description = () => text('.cardTitle', boardCard);
 
-	/* Right panel items in gantt chart */
-	clockifyButton.render('.checklistItemDetails .cardDetails__hiddenAttributes:not(.clockify)', { observe: true }, (elem) => {
-		const cardTitle = elem.dataset?.cardTitle?.trim();
-		const boardTitle = elem.dataset?.boardTitle?.trim();
-		const checklistTitle = elem.dataset?.checklistTitle?.trim();
-		const checklistItemTitle = elem.dataset?.checklistItemTitle?.trim();
-		const taskTitle = cardTitle + ' - ' + checklistTitle + ' - ' + checklistItemTitle;
+	const entry = { description, small: true };
 
-		const link = clockifyButton.createButton({ description: taskTitle, projectName: boardTitle });
-		const inputForm = clockifyButton.createInput({ description: taskTitle, projectName: boardTitle });
-		const input = inputForm.firstElementChild;
-		const plackerInputContainer = document.createElement('placker-input-container');
-		const label = document.createElement('label');
+	const timer = clockifyButton.createTimer(entry);
 
-		addToRightPanel({ input, label, inputForm, link, plackerInputContainer, elem });
-	});
-}, 1000);
+	timer.classList.add('m-t-8');
 
+	const cardIconsContainer = $('.cardContainer__iconsAndDates', boardCard);
 
-function addToRightPanel({ input, label, inputForm, link, plackerInputContainer, elem}) {
-	label.classList.add('plackerInput__label');
-	label.innerText = 'Clockify';
+	cardIconsContainer.append(timer);
+});
 
-	inputForm.classList.add('m-b-0');
+// Gantt view - List - right sidebar
+clockifyButton.render(
+	'.cardDetails .cardDetails__hiddenAttributes:not(.clockify)',
+	{ observe: true },
+	listSidebarTopSection => {
+		const description = () => listSidebarTopSection.dataset?.cardTitle?.trim();
+		const projectName = () => listSidebarTopSection.dataset?.boardTitle?.trim();
 
-	input.classList.add('plackerInput');
-	input.classList.add('plackerInput--fullWidth');
-	input.classList.add('plackerInput--transparent');
-	input.classList.add('plackerInput--condensed');
-	input.classList.remove('clockify-input');
-	input.classList.remove('clockify-input-default');
+		const entry = { description, projectName };
 
-	link.classList.add('plackerButton');
-	link.classList.add('plackerButton--secondary');
-	link.classList.add('plackerButton--fullWidth');
-	link.classList.add('plackerButton--centered');
-	link.classList.add('m-b-8');
-	link.style.height = '32px';
+		const timer = clockifyButton.createTimer(entry);
+		const input = clockifyButton.createInput(entry);
+		const label = createLabel();
+		const container = createContainer(label, timer, input);
 
-	plackerInputContainer.append(label);
-	plackerInputContainer.append(link);
-	plackerInputContainer.append(inputForm);
+		handleStyles({ timer, input, container });
 
-	plackerInputContainer.style.display = 'flex';
-	plackerInputContainer.style.width = '100%';
-	plackerInputContainer.style.flexDirection = 'column';
+		listSidebarTopSection.append(container);
+	}
+);
 
-	elem.prepend(plackerInputContainer);
+// Gantt view - Item - right sidebar
+clockifyButton.render(
+	'.checklistItemDetails .cardDetails__hiddenAttributes:not(.clockify)',
+	{ observe: true },
+	itemSidebarTopSection => {
+		const cardTitle = () => itemSidebarTopSection.dataset?.cardTitle?.trim();
+		const checklistTitle = () => itemSidebarTopSection.dataset?.checklistTitle?.trim();
+		const checklistItemTitle = () => itemSidebarTopSection.dataset?.checklistItemTitle?.trim();
+
+		const description = () => `${cardTitle()} - ${checklistTitle()} - ${checklistItemTitle()}`;
+		const projectName = () => itemSidebarTopSection.dataset?.boardTitle?.trim();
+
+		const entry = { description, projectName };
+
+		const timer = clockifyButton.createTimer(entry);
+		const input = clockifyButton.createInput(entry);
+		const label = createLabel();
+		const container = createContainer(label, timer, input);
+
+		handleStyles({ timer, input, container });
+
+		itemSidebarTopSection.append(container);
+	}
+);
+
+function createLabel() {
+	return createTag('label', 'plackerInput__label', 'Clockify');
+}
+
+function handleStyles({ timer, input, container }) {
+	const inputChild = input.firstElementChild;
+
+	input.classList += 'm-b-0';
+	inputChild.classList = `plackerInput plackerInput--fullWidth plackerInput--transparent plackerInput--condensed clockify-input-default`;
+	timer.classList += `plackerButton plackerButton--secondary plackerButton--fullWidth plackerButton--centered m-b-8`;
+	timer.style.height = '32px';
+	container.style.display = 'flex';
+	container.style.width = '100%';
+	container.style.flexDirection = 'column';
 }

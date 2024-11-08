@@ -1,23 +1,14 @@
-clockifyButton.render('.taskCard:not(.clockify)', { observe: true }, (elem) => {
-	var link,
-		description = $('.title', elem).textContent;
+// Microsot Planner, task card view
+clockifyButton.render('.taskCard:not(.clockify)', { observe: true }, taskCard => {
+	const description = () => text('.title', taskCard);
+	const projectName = () => text('.primaryTextSectionTitle');
+	const tagNames = () => textList('.labelTag > span', taskCard);
 
-	function getProject() {
-		var plannerTaskboardName = $('.planTaskboardPage .primaryTextSection h1'),
-			planName = $('.planName', elem),
-			plannerTaskboardName3 = $('.tasksBoardPage .primaryTextSectionTitle');
+	const entry = { description, projectName, tagNames, small: true };
 
-		if (plannerTaskboardName) {
-			return plannerTaskboardName.textContent;
-		}
-		if (planName) {
-			return planName.textContent;
-		}
-		if (plannerTaskboardName3) {
-			return plannerTaskboardName3.textContent;
-		}
-		return;
-	}
-	link = clockifyButton.createButton(description, getProject());
-	$('.leftSection', elem).appendChild(link);
+	const timer = clockifyButton.createButton(entry);
+
+	const bottomSection = $('.leftSection', taskCard);
+
+	bottomSection.after(timer);
 });

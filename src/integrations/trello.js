@@ -3,6 +3,7 @@ clockifyButton.observeDarkMode(() => {
 });
 
 setTimeout(() => {
+	/* Unknown what this view is */
 	clockifyButton.render(
 		'.window-sidebar:not(.clockify)',
 		{ observe: true },
@@ -72,6 +73,7 @@ setTimeout(() => {
 	);
 
 	/* Checklist buttons */
+	/* This can probably be deleted, it's most likely not working but being kept here for legacy users */
 	clockifyButton.render(
 		'.checklist-item-details:not(.clockify)',
 		{ observe: true },
@@ -93,6 +95,36 @@ setTimeout(() => {
 
 			link.classList.add('checklist-item-button');
 			$('.checklist-item-controls', elem).prepend(link);
+		}
+	);
+
+	/* Modal view */
+	clockifyButton.render(
+		'[data-testid="card-back-copy-card-button"]:not(.clockify)',
+		{ observe: true },
+		(elem) => {
+			const root = $('div[id="trello-root"]');
+
+			const desc = $('[data-testid="card-back-title-input"]', root)?.textContent;
+			const proj = $('[data-testid="board-name-display"]', root)?.textContent;
+			console.log('NEW DESC')
+			console.log(desc)
+
+			const link = clockifyButton.createButton({
+				description: desc || '',
+				projectName: proj || '',
+				small: false,
+			});
+
+			const inputForm = clockifyButton.createInput({
+				description: desc || '',
+				projectName: proj || '',
+			})
+
+			link.style.marginTop = '8px';
+			link.style.marginBottom = '8px';
+			elem.parentElement.parentElement.prepend(inputForm);
+			elem.parentElement.parentElement.prepend(link);
 		}
 	);
 }, 1000);

@@ -1,7 +1,7 @@
 clockifyButton.render(
-	'.offcanvas-sticky-header .offcanvas-header:not(.clockify)',
-	{ observe: true },
-	async (elem) => {
+	'.offcanvas__sticky-header .offcanvas-header:not(.clockify)',
+	{ observe: true, onNavigationRerender: true },
+	async elem => {
 		await timeout({ milliseconds: 500 });
 
 		$('.clockify-widget-container')?.remove();
@@ -70,9 +70,7 @@ function addCustomCSS() {
 		}
 
 		.clockify-button-inactive,  .clockify-input{
-			color: ${
-				isThemeLight ? '#444 !important;' : 'rgba(242,242,248,.87) !important;'
-			}
+			color: ${isThemeLight ? '#444 !important;' : 'rgba(242,242,248,.87) !important;'}
 		}
 
 		#clockifyButton {

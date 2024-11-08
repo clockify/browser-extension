@@ -46,7 +46,7 @@ clockifyButton.render(
 		const wrappedContact = contact ? `(${contact})` : '';
 
 		const description = `[#${id}] ${name} ${wrappedContact}`;
-		const projectName =
+		const projectName = () =>
 			text('[data-selenium-test="company-chicklet-title-link"]') ||
 			text(
 				'[data-selenium-test="company-highlight-details"] [data-selenium-test="highlightTitle"] span'

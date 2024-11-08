@@ -37,7 +37,10 @@ class ProjectItem extends React.Component {
 				this.setState({
 					tasks: [...this.state.tasks, ...response.data],
 				}, () => {
-					if (this.state.tasks.some(task => task.id === this.props.selectedTask?.id)) {
+					this.setState({
+						loadMore: this.state.taskCount > this.state.tasks.length,
+					})
+					if (this.props.selectedTask?.projectId && this.props.project?.id && this.props.project?.id === this.props.selectedTask?.projectId) {
 						this.setState({
 							taskCount: this.state.taskCount - 1,
 						})
@@ -50,20 +53,15 @@ class ProjectItem extends React.Component {
 	getMyTasks() {
 		const { page } = this.state;
 		this.props
-			.getProjectTasks(this.props.project.id, '', page)
+			.getProjectTasks(this.props.project.id, '', (page + 1))
 			.then((response) => {
 				this.setState({
 					tasks: [...this.state.tasks, ...response.data],
-					isTaskOpen:
-						page === 1 ? !this.state.isTaskOpen : this.state.isTaskOpen,
-					loadMore: response.data.length >= pageSize ? true : false,
 					page: page + 1,
 				}, () => {
-					if (this.state.tasks.some(task => task.id === this.props.selectedTask?.id)) {
-						this.setState({
-							taskCount: this.state.taskCount - 1,
-						})
-					}
+					this.setState({
+						loadMore: this.state.taskCount > this.state.tasks.length,
+					})
 				});
 			})
 			.catch(() => {});
@@ -79,16 +77,12 @@ class ProjectItem extends React.Component {
 					tasks: [...this.state.taskList],
 					isTaskOpen: !this.state.isTaskOpen,
 				}, () => {
-					if (this.state.tasks.some(task => task.id === this.props.selectedTask?.id)) {
+					if (this.props.selectedProject?.id === this.props.selectedTask?.projectId) {
 						this.setState({
 							taskCount: this.state.taskCount - 1,
 						})
 					}
 				});
-			} else {
-				if (!JSON.parse(await localStorage.getItem('offline'))) {
-					this.getMyTasks();
-				}
 			}
 		} else {
 			this.setState({

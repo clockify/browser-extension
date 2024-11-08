@@ -55,7 +55,7 @@ clockifyButton.render('.cu-task-row__main:not(.clockify)', { observe: true }, as
 
 	const taskId = taskLink.split('/').pop();
 
-	const description = () => `${clickUpTaskName()} | ${taskId}`;
+	const description = () => `${clickUpTaskName()} | #${taskId}`;
 	const projectName = () => folderName || listName;
 	const taskName = () => listName || null;
 	const tagNames = () => textList(tagNamesSelector, taskRow);

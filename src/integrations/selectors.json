@@ -124,6 +124,12 @@
 			"ticketNumber": "/tickets\\/(\\d+)/",
 			"ticketSubject": ".ticket-panes-grid-layout.active input[data-test-id=\"omni-header-subject\"]",
 			"ticketTags": ".ticket-panes-grid-layout.active [data-test-id=\"ticket-system-field-tags-item-selected\"]"
+		},
+		"singleTicketViewNewUi": {
+			"hanger": "[aria-label=\"Ticket page location\"]:not(.clockify)",
+			"ticketNumber": "/tickets\\/(\\d+)/",
+			"ticketSubject": "[data-is-active=\"true\"] [data-test-id=\"omni-header-subject\"]",
+			"ticketTags": "[data-is-active=\"true\"] [data-test-id*=\"tags\"] span"
 		}
 	}
 }

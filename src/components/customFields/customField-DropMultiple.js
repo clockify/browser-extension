@@ -114,7 +114,7 @@ const CustomFieldDropMultiple = ({ cf, updateValue, setIsValid }) => {
 				index={index}
 				className={`custom-field${isDisabled ? '-disabled' : ''}`}
 			>
-				<div
+				<div data-testid={'multiple-select-option'}
 					className={`tag-list ${isNotValid ? 'custom-field-required' : ''}`}
 					title={description}
 					ref={menuRef}
@@ -201,7 +201,8 @@ const CustomFieldDropMultiple = ({ cf, updateValue, setIsValid }) => {
 														}
 													/>
 												</span>
-												<span value={tag.name} className="tag-list-item">
+												<span data-testid={'multiple-select-option-item'}
+													value={tag.name} className="tag-list-item">
 													{tag.name}
 												</span>
 											</div>

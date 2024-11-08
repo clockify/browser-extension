@@ -1,23 +1,41 @@
 (async () => {
-	const selectors = await getSelectors('zendesk', 'singleTicketView');
+	const { singleTicketView, singleTicketViewNewUi } = await getSelectors('zendesk');
 
+	// Single ticket view (old UI, we can propbably delete this render)
 	clockifyButton.render(
-		selectors.hanger,
+		singleTicketView.hanger,
 		{ observe: true, onNavigationRerender: true },
-		async navBar => {
+		navBar => {
 			const ticketNumber = () => location.href.match(/tickets\/(\d+)/)[1];
-			const ticketSubject = () => value(selectors.ticketSubject);
+			const ticketSubject = () => value(singleTicketView.ticketSubject);
 
 			const description = () => `#${ticketNumber()} ${ticketSubject()}`;
-			const tagNames = () => textList(selectors.ticketTags);
+			const tagNames = () => textList(singleTicketView.ticketTags);
 
-			const link = clockifyButton.createButton({ description, tagNames });
+			const timer = clockifyButton.createTimer({ description, tagNames });
 			const input = clockifyButton.createInput({ description, tagNames });
 
-			const container = createTag('div', 'clockify-widget-container');
+			const container = createContainer(timer, input);
 
-			container.append(link);
-			container.append(input);
+			navBar.append(container);
+		}
+	);
+
+	// Single ticket view (new UI)
+	clockifyButton.render(
+		'[aria-label="Ticket page location"]:not(.clockify)',
+		{ observe: true, onNavigationRerender: true },
+		navBar => {
+			const ticketNumber = () => location.href.match(/tickets\/(\d+)/)[1];
+			const ticketSubject = () => value(singleTicketViewNewUi.ticketSubject);
+
+			const description = () => `#${ticketNumber()} ${ticketSubject()}`;
+			const tagNames = () => textList(singleTicketViewNewUi.ticketTags);
+
+			const timer = clockifyButton.createTimer({ description, tagNames });
+			const input = clockifyButton.createInput({ description, tagNames });
+
+			const container = createContainer(timer, input);
 
 			navBar.append(container);
 		}

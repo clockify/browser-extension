@@ -96,8 +96,8 @@ const CustomFieldDropSingle = ({ cf, updateValue, setIsValid }) => {
 				index={index}
 				className={`custom-field${isDisabled ? '-disabled' : ''}`}
 			>
-				<div
-					className={`tag-list ${isNotValid ? 'custom-field-required' : ''}`}
+				<div data-testid={'single-select-option'}
+					 className={`tag-list ${isNotValid ? 'custom-field-required' : ''}`}
 					title={description}
 					ref={menuRef}
 				>

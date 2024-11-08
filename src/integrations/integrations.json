@@ -211,7 +211,7 @@
 	},
 	"tasks.office.com": {
 		"name": "Microsoft Planner",
-		"link": "*://tasks.office.com/*",
+		"link": "*://tasks.office.com/*,*://planner.cloud.microsoft/*",
 		"script": "microsoft-planner.js"
 	},
 	"miro.com": {

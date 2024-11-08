@@ -31,9 +31,9 @@ function getClockifyButtonHTML(props) {
 	const text = document.createElement('span');
 
 	const containerStyles = {
-		/* 		display: 'flex',
+		display: 'flex',
 		alignItems: 'center',
-		cursor: 'pointer', */
+		cursor: 'pointer',
 	};
 	Object.assign(container.style, containerStyles);
 
@@ -47,7 +47,7 @@ function getClockifyButtonHTML(props) {
 	const textStyles = {
 		marginLeft: '5px',
 		float: 'none',
-		position: 'relative'
+		position: 'relative',
 	};
 
 	if (active) {
@@ -75,7 +75,7 @@ function Mac() {
 		window.screenLeft > window.screen.width ||
 		window.screenTop > window.screen.height
 	) {
-		chrome.runtime.getPlatformInfo(function(info) {
+		chrome.runtime.getPlatformInfo(function (info) {
 			if (info.os === 'mac') {
 				const fontFaceSheet = new CSSStyleSheet();
 				fontFaceSheet.insertRule(`
@@ -222,9 +222,9 @@ if (
 								{...(props.popupProps?.manualMode || props.popupProps?.copyAsEntry
 									? props.popupProps
 									: {
-										inProgressDescription:
-										props.popupProps.inProgressDescription
-									})}
+											inProgressDescription:
+												props.popupProps.inProgressDescription,
+									  })}
 								updateButtonProps={(btnProps, popupProps) =>
 									window.updateButtonProperties(
 										btnProps
@@ -242,7 +242,7 @@ if (
 				function createReactRoot() {
 					removeReactRoot();
 					integrationRoots[buttonId] = createRoot(entryPoint, {
-						identifierPrefix: buttonId
+						identifierPrefix: buttonId,
 					});
 				}
 
@@ -276,7 +276,7 @@ if (
 
 					entryPoint.addEventListener('click', clickHandler, false);
 
-					aBrowser.runtime.onMessage.addListener((request) => {
+					aBrowser.runtime.onMessage.addListener(request => {
 						if (request.eventName === 'stopTimerWithShortcut') {
 							clickHandler();
 						}
@@ -351,7 +351,7 @@ if (
 	window.updateButtonProperties = ((
 		props = {
 			popupProps: {},
-			btnProps: []
+			btnProps: [],
 		}
 	) => {
 		return (newBtnProps, newPopupProps) => {
@@ -372,7 +372,7 @@ if (
 				}
 				props.btnProps[newBtnProps.buttonId] = {
 					...props.btnProps[newBtnProps.buttonId],
-					...newBtnProps
+					...newBtnProps,
 				};
 			}
 

@@ -41,7 +41,7 @@
 			"strict_min_version": "58.0"
 		}
 	},
-	"version": "2.11.7",
+	"version": "2.11.9",
 	"browser_action": {
 		"default_popup": "index.html",
 		"default_title": "Clockify"

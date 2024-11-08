@@ -200,6 +200,10 @@ var clockifyButton = {
 		return button;
 	},
 
+	createTimer: (...args) => {
+		return clockifyButton.createButton(...args);
+	},
+
 	createSmallButton: (description, project) => {
 		const options = objectFromParams(description, project);
 		options.small = true;
@@ -685,6 +689,14 @@ function removeStyles(classNames = 'clockify-custom-styles') {
 	$(selector)?.remove();
 }
 
+function createContainer() {
+	const container = createTag('div', 'clockify-widget-container');
+
+	container.append(...arguments);
+
+	return container;
+}
+
 async function setManualElementsVisibility() {
 	const invisibleElementsStyles = `#clockify-manual-input-form, .clockify-copy-as-entry-container, .input-button-link { display: none !important; }`;
 	const invisibleElementsClassName = `clockify-hide-manual-elements`;
@@ -1068,7 +1080,7 @@ function onChangedListener(changes) {
 		});
 	}
 
-	if (changedItems.find((item) => item === 'appStore')) {
+	if (changedItems.find(item => item === 'appStore')) {
 		setPostStartPopup();
 	}
 
