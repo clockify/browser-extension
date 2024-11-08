@@ -284,6 +284,11 @@
 		"link": "*://*.pipedrive.com/*",
 		"script": "pipedrive.js"
 	},
+	"placker.com": {
+		"name": "Placker",
+		"link": "*://*.placker.com/*,*://placker.com/*",
+		"script": "placker.js"
+	},
 	"plaky.com": {
 		"name": "Plaky",
 		"link": "*://*.plaky.com/*",
