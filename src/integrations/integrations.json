@@ -79,6 +79,11 @@
 		"link": "*://*.evernote.com/*",
 		"script": "evernote.js"
 	},
+	"fibery.io": {
+		"name": "Fibery",
+		"link": "*://*.fibery.io/*",
+		"script": "fibery.js"
+	},
 	"freedcamp.com": {
 		"name": "FreedCamp",
 		"link": "*://freedcamp.com/*",
