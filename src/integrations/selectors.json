@@ -20,7 +20,9 @@
 			"hanger": ".story-details:not(.clockify)",
 			"description": "h2.story-name",
 			"stateAttribute": ".story-attributes div:nth-child(6)"
-		}
+		},
+		"storyTitle": "[data-test='story-name']",
+        "toolbar": "[data-test='story-detail-actions']"
 	},
 	"nozbe": {
 		"sideTaskView": {
