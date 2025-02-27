@@ -1,20 +1,46 @@
-(async () => {
-	clockifyButton.render(
-		await getSelectors('shortcut', 'storyModal', 'hanger'),
-		{ observe: true },
-		async (elem) => {
-			const selectors = await getSelectors('shortcut', 'storyModal');
+import { createClockifyButton } from "../helpers/button";
 
-			const stateAttribute = $(selectors.stateAttribute, elem);
-			const container = createTag('div', 'attribute editable-attribute');
+function getShortcutStoryDetails() {
+    const storyTitleElement = document.querySelector("[data-test='story-name']");
+    const storyTitle = storyTitleElement ? storyTitleElement.innerText.trim() : "Unknown Story";
 
-			const description = () => $(selectors.description, elem).textContent;
+    // Extract story ID from the URL
+    const urlMatch = window.location.href.match(/stories\/(\d+)/);
+    const storyId = urlMatch ? urlMatch[1] : null;
 
-			const link = clockifyButton.createButton({ description });
+    if (!storyId) return null;
 
-			container.appendChild(link);
+    return {
+        id: storyId,
+        title: storyTitle
+    };
+}
 
-			stateAttribute.after(container);
-		}
-	);
-})();
+function addClockifyButton() {
+    const toolbar = document.querySelector("[data-test='story-detail-actions']");
+    if (!toolbar) return;
+
+    const storyData = getShortcutStoryDetails();
+    if (!storyData) return;
+
+    console.log("Clockify Shortcut integration detected story:", storyData);
+
+    const description = `#${storyData.id} - ${storyData.title}`;
+
+    // Create the Clockify button
+    const clockifyButton = createClockifyButton({
+        description,
+        projectName: "Shortcut", // Can be changed based on user's preference
+    });
+
+    // Prevent duplicate button insertion
+    if (toolbar.querySelector(".clockify-button")) return;
+
+    // Insert the Clockify button into the Shortcut UI
+    toolbar.appendChild(clockifyButton);
+}
+
+// Run the integration when the page loads
+setTimeout(() => {
+    addClockifyButton();
+}, 1000);
