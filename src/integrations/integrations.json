@@ -324,6 +324,11 @@
 		"link": "*://*.scoro.com/*",
 		"script": "scoro.js"
 	},
+	{
+    	"name": "Shortcut",
+    	"link": "*://app.shortcut.com/*",
+    	"script": "shortcut.js"
+	},
 	"sprint.ly": {
 		"name": "Sprint",
 		"link": "*://sprint.ly/*",
