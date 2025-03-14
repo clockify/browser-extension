@@ -1,5 +1,5 @@
 clockifyButton.render(
-	'[aria-label="Set issue status…"]:not(.clockify)',
+	'[aria-label="Change status"]:not(.clockify)',
 	{ observe: true },
 	(elem) => {
 		// We'll extract the data via the path since Linear app uses an excessive minification strategy.
@@ -18,6 +18,8 @@ clockifyButton.render(
 			taskName: description,
 		});
 
+		const style = document.createElement('style')
+		style.innerHTML = `.clockifyButton .clockify-button-inactive { color: var(--color-text-primary) !important; }`;
 		const getThirdParent = (e) => {
 			let parent = e;
 
@@ -29,6 +31,7 @@ clockifyButton.render(
 		};
 
 		const thirdParent = getThirdParent(elem);
+		thirdParent.append(style);
 
 		if (getComputedStyle(thirdParent).display !== 'flex')
 			thirdParent.append(link);
