@@ -379,6 +379,11 @@
 		"link": "*://*.visualstudio.com/*",
 		"script": "azure.js"
 	},
+	"waywedo.com": {
+		"name": "Way We Do",
+		"link": "*://*.waywedo.com/*",
+		"script": "waywedo.js"
+	},
 	"wekan.github.io": {
 		"name": "Wekan",
 		"link": "*://*.wekan.*/*",
