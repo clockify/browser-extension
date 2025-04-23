@@ -6,23 +6,27 @@ clockifyButton.render('span[jsslot].kma42e', { observe: true }, eventCard => {
 
 	const eventTimeInterval = text('#xDetDlgWhen .AzuXid.O2VjS.CyPPBf');
 
-	if (!eventTimeInterval) return console.error("Interval can't be extracted.");
-
-	const eventTimeIntervalEndpoints = extractStartAndEnd(eventTimeInterval);
+	if (!eventTimeInterval) return console.error('Interval can\'t be extracted.');
 
 	const description = text('[role="heading"]', eventCard);
-	const start = eventTimeIntervalEndpoints.start;
-	const end = eventTimeIntervalEndpoints.end;
 
 	const link = clockifyButton.createButton({ description });
 	const input = clockifyButton.createInput({ description });
-	const event = clockifyButton.createEvent({ description, start, end });
 
 	const container = createTag('div', 'clockify-widget-container');
 
 	container.append(link);
 	container.append(input);
-	container.append(event);
+
+	// NOTE: we are showing this event "Copy as time entry" only for English language
+	if ([text('.E9bth-nBWOSb'), ariaLabel('.Fxj6he-BIzmGd')].includes('Create')) {
+		const eventTimeIntervalEndpoints = extractStartAndEnd(eventTimeInterval);
+		const start = eventTimeIntervalEndpoints.start;
+		const end = eventTimeIntervalEndpoints.end;
+		const event = clockifyButton.createEvent({ description, start, end });
+
+		container.append(event);
+	}
 
 	eventCard.append(container);
 });
@@ -110,8 +114,6 @@ applyStyles(`
 		width: 125px;
 		margin-left: 7px;
 		box-shadow: none;
-		border: 1px solid #eaecf0;
-		background-color: #eaecf0;
 	}
 	.clockify-copy-as-entry-container {
 		grid-column: span 2;
@@ -155,13 +157,13 @@ async function containerPaddingLeft() {
 	return pixels(containerPaddingLeft);
 }
 
-/* 
-	The following functions are parsers/rearrangers/converters that 
-	Google Calendar's event time interval should pass through in 
+/*
+	The following functions are parsers/rearrangers/converters that
+	Google Calendar's event time interval should pass through in
 	order to get, step by step, interval endpoints as a valid JavaScript
 	dates that will reprensent Clockify time entry start and end points.
 
-	Google Calendar's event time interval can have any of the following formats: 
+	Google Calendar's event time interval can have any of the following formats:
 
 	(1) Sunday, December 10
 	(2) Sunday, January 21, 2024
@@ -177,10 +179,18 @@ function extractStartAndEnd(interval) {
 	const intermediate1 = removeSpecialCharacters(interval);
 	const intermediate2 = removeDayOfWeek(intermediate1);
 	const intermediate3 = replaceMonthNameToIndex(intermediate2);
-	const intermediate4 = convertTo24HourFormat(intermediate3);
-	const parsedInterval = makeStartAndEnd(intermediate4);
+	const intermediate3Arr = intermediate3.split(' ');
 
-	return parsedInterval;
+	const is12HourFormat = (interval.includes('am') || interval.includes('pm'));
+	const isStartOrEndTimeAt12Am = intermediate3Arr[2] === '12' || (intermediate3Arr[12] === 'am' && intermediate3Arr[10] === '12');
+	const isEndTimeBiggerThanStart = intermediate3Arr[1] !== intermediate3Arr[7];
+
+	if (is12HourFormat && (isStartOrEndTimeAt12Am || isEndTimeBiggerThanStart)) {
+		const intermediate4 = convertTo24HourFormat(intermediate3);
+		return makeStartAndEnd(intermediate4);
+	}
+
+	return makeStartAndEnd(intermediate3);
 }
 
 function removeSpecialCharacters(interval) {
@@ -204,10 +214,32 @@ function removeDayOfWeek(interval) {
 function replaceMonthNameToIndex(interval) {
 	const months = `January February March April May June July August September October November December`;
 	const monthList = months.split(' ');
+	let newInterval = interval;
+
+	// English (UK) language are returns 20 January instead of January 20
+	// We need to reverse those 2
+	if (!monthList.includes(interval.split(' ')[0])) {
+		newInterval = interval.split(' ');
+		[newInterval[0], newInterval[1]] = [newInterval[1], newInterval[0]];
+
+		const monthCount = interval.split(' ').filter(str => monthList.includes(str)).length;
+		
+		const swapIfNeeded = (index1, index2) => {
+			if (!monthList.includes(interval.split(' ')[index1]) && monthCount === 2) {
+				[newInterval[index1], newInterval[index2]] = [newInterval[index2], newInterval[index1]];
+			}
+		};
+
+		(interval.includes('am') || interval.includes('pm'))
+			? swapIfNeeded(7, 8)
+			: swapIfNeeded(6, 7);
+
+		newInterval = newInterval.join(' ');
+	}
 
 	const monthReplacer = word => (monthList.includes(word) ? monthList.indexOf(word) : word);
 
-	return interval.split(' ').map(monthReplacer).join(' ');
+	return newInterval.split(' ').map(monthReplacer).join(' ');
 }
 
 function convertTo24HourFormat(interval) {
@@ -287,6 +319,7 @@ function makeStartAndEnd(interval) {
 			(startHours = 0), (endHours = 23);
 			(startMinutes = 0), (endMinutes = 59);
 			break;
+		case 6:
 		case 7:
 			[startMonth, startDay, startHours, startMinutes] = start;
 			[endHours, endMinutes] = end;
@@ -301,7 +334,9 @@ function makeStartAndEnd(interval) {
 			endMonth = startMonth;
 			endDay = startDay;
 			break;
+		case 10:
 		case 11:
+		case 12:
 			[startMonth, startDay, startYear, startHours, startMinutes] = start;
 			[endMonth, endDay, endYear, endHours, endMinutes] = end;
 			break;
@@ -311,8 +346,38 @@ function makeStartAndEnd(interval) {
 
 	const intervalWithEndpoints = {
 		start: new Date(startYear, startMonth, startDay, startHours, startMinutes),
-		end: new Date(endYear, endMonth, endDay, endHours, endMinutes),
+		end: new Date(endYear, endMonth, endDay, endHours, endMinutes)
 	};
 
 	return intervalWithEndpoints;
+}
+
+initializeBodyObserver();
+
+function initializeBodyObserver() {
+	const bodyObserver = new MutationObserver(applyManualInputStyles);
+
+	const observationTarget = document.body;
+	const observationConfig = { childList: true };
+
+	bodyObserver.observe(observationTarget, observationConfig);
+}
+
+function applyManualInputStyles() {
+	const isDarkThemeEnabled = getComputedStyle(document.body).backgroundColor !== 'rgb(255, 255, 255)';
+
+	const darkStyles = `
+		.clockify-copy-as-entry-container > svg path, .clockify-button-inactive, .clockify-copy-as-entry-container { color: #FFFFFF8A !important; fill: #FFFFFF8A; }
+		#clockify-manual-input-form input, .clockify-input.clockify-input-default { background-color: #1D272C; border-color: #1D272C; color: #FFFFFF8A; }
+		.ant-time-picker-input { background: white; color: #333333; }
+	`;
+	const lightStyles = `
+		.clockify-copy-as-entry-container > svg path { fill: #0000008A; }
+		#clockify-manual-input-form input, .clockify-input.clockify-input-default { background-color: #E4EAEE; border-color: #E4EAEE; color: #0000008A !important; }
+		.clockify-button-inactive, .clockify-copy-as-entry-container { color: #0000008A !important; }
+	`;
+
+	const stylesToApply = isDarkThemeEnabled ? darkStyles : lightStyles;
+
+	applyStyles(stylesToApply, 'clockify-theme-dependent-styles');
 }

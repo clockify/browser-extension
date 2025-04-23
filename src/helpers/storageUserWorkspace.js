@@ -40,18 +40,18 @@ export class DefaultProject {
 	getProjectTaskIds() {
 		return {
 			projectId: this.project.id,
-			taskId: this.project.selectedTask ? this.project.selectedTask.id : null,
+			taskId: this.project.selectedTask ? this.project.selectedTask.id : null
 		};
 	}
 
 	async _getProjectTask(forceTasks = false) {
 		const { id, selectedTask } = this.project;
-		 
+
 		if (id === getDefaultProjectEnums().LAST_USED_PROJECT) {
 			const { data, error, status } = await this.getLastUsedProjectFromTimeEntries(forceTasks);
-			 
-			if(error) return { projectDB: null, taskDB: null };
-			return { projectDB : data.project ?? data, taskDB: data.task ?? null };
+
+			if (error) return { projectDB: null, taskDB: null };
+			return { projectDB: data.project ?? data, taskDB: data.task ?? null };
 		} else {
 			const projectDB = await this.getProjectsByIds(
 				[id],
@@ -61,7 +61,7 @@ export class DefaultProject {
 			if (taskDB) {
 				taskDB.isDone = taskDB.status === 'DONE';
 			}
-			 
+
 			return { projectDB, taskDB };
 		}
 	}
@@ -75,35 +75,29 @@ export class DefaultProject {
 			let { projectDB, taskDB } = await this._getProjectTask(
 				forceTasks
 			);
-			 
+
 			if (projectDB) {
-				 
 				if (projectDB.archived) {
 					// storage.removeDefaultProject();
 					msg = `${locales.DEFAULT_PROJECT_ARCHIVED}. ${locales.YOU_CAN_SET_A_NEW_ONE_IN_SETTINGS}.`;
 					msgId = 'projectArchived';
 					projectDB = null;
 				} else {
-					 
-					const isLastUsedProjectWithTask =
-						this.project.id === 'lastUsedProject' &&
-						this.project.name.includes('task');
-					if (forceTasks && isLastUsedProjectWithTask) {
-						if (taskDB) {
-							if (taskDB.isDone) {
-								taskDB = null;
-								msg = `${locales.DEFAULT_TASK_DONE}. ${locales.YOU_CAN_SET_A_NEW_ONE_IN_SETTINGS}.`;
-								msgId = 'taskDone';
-							}
-						} else {
-							msg = `${locales.DEFAULT_TASK_DOES_NOT_EXIST}. ${locales.YOU_CAN_SET_A_NEW_ONE_IN_SETTINGS}.`;
-							msgId = 'taskDoesNotExist';
+					if (taskDB) {
+						if (taskDB.isDone) {
+							taskDB = null;
+							msg = `${locales.DEFAULT_TASK_DONE}. ${locales.YOU_CAN_SET_A_NEW_ONE_IN_SETTINGS}.`;
+							msgId = 'taskDone';
 						}
+					} else {
+						msg = `${locales.DEFAULT_TASK_DOES_NOT_EXIST}. ${locales.YOU_CAN_SET_A_NEW_ONE_IN_SETTINGS}.`;
+						msgId = 'taskDoesNotExist';
 					}
 				}
+
 				return { projectDB, taskDB, msg, msgId };
 			} else {
-				 
+
 				// storage.removeDefaultProject();
 				msg = `${locales.DEFAULT_PROJECT_NOT_AVAILABLE} ${locales.YOU_CAN_SET_A_NEW_ONE_IN_SETTINGS}`;
 				msgId = 'projectDoesNotExist';
@@ -116,8 +110,8 @@ export class DefaultProject {
 		return await getBrowser().runtime.sendMessage({
 			eventName: 'getLastUsedProjectFromTimeEntries',
 			options: {
-				forceTasks,
-			},
+				forceTasks
+			}
 		});
 	}
 
@@ -127,8 +121,8 @@ export class DefaultProject {
 				eventName: 'getProjectsByIds',
 				options: {
 					projectIds,
-					taskIds,
-				},
+					taskIds
+				}
 			})
 			.then((response) => {
 				if (!response.data?.length) {
@@ -137,7 +131,8 @@ export class DefaultProject {
 					return response.data[0];
 				}
 			})
-			.catch(() => {});
+			.catch(() => {
+			});
 	}
 }
 
@@ -177,12 +172,12 @@ class StorageUserWorkspace {
 						name: project.name,
 						selectedTask: project.selectedTask
 							? {
-									id: project.selectedTask.id,
-									name: project.selectedTask.name,
-							  }
-							: null,
+								id: project.selectedTask.id,
+								name: project.selectedTask.name
+							}
+							: null
 					},
-					enabled,
+					enabled
 				};
 			});
 			this.storage = obj;
@@ -221,9 +216,9 @@ class StorageUserWorkspace {
 		workspace.defaultProject = {
 			project: {
 				id: getDefaultProjectEnums().LAST_USED_PROJECT,
-				name: locales.LAST_USED_PROJECT,
+				name: locales.LAST_USED_PROJECT
 			},
-			enabled: true,
+			enabled: true
 		};
 		this.store();
 		return workspace.defaultProject;
@@ -234,15 +229,17 @@ class StorageUserWorkspace {
 		workspace.defaultProject = {
 			project: {
 				id: project.id,
+				color: project.color,
+				client: project.client,
 				name: project.name,
 				selectedTask: project.selectedTask
 					? {
-							id: project.selectedTask.id,
-							name: project.selectedTask.name,
-					  }
-					: null,
+						id: project.selectedTask.id,
+						name: project.selectedTask.name
+					}
+					: null
 			},
-			enabled: true,
+			enabled: true
 		};
 		this.store();
 	}

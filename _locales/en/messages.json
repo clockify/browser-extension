@@ -1229,6 +1229,9 @@
   "ENTRY_IN_PROGRESS_EXISTS": {
     "message": "You have time entry in progress!"
   },
+  "WEBSITE_FORMAT_ERROR": {
+    "message": "Website format is not valid"
+  },
   "appName": {
     "message": "Clockify Time Tracker",
     "description": "The title of the application, displayed in the web store."

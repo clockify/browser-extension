@@ -296,7 +296,7 @@
 	},
 	"plaky.com": {
 		"name": "Plaky",
-		"link": "*://*.plaky.com/*",
+		"link": "*://*.plaky.com/*,*://*.*.*.plaky.com/*",
 		"script": "plaky.js"
 	},
 	"plutio.com": {

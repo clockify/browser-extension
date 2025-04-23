@@ -13,16 +13,14 @@ import {
 } from '~/zustand/slices/darkThemeSlice';
 
 let messageListener = null;
+
 export class Extension {
 	setIcon(iconStatus) {
 		const iconPathStarted = '../assets/images/logo-16.png';
 		const iconPathEnded = '../assets/images/logo-16-gray.png';
 
 		getBrowser().action.setIcon({
-			path:
-				getIconStatus().timeEntryStarted === iconStatus
-					? iconPathStarted
-					: iconPathEnded,
+			path: getIconStatus().timeEntryStarted === iconStatus ? iconPathStarted : iconPathEnded,
 		});
 	}
 
@@ -32,6 +30,7 @@ export class Extension {
 			: removeDarkModeClassFromBodyElement();
 		window.reactRoot.render(<div className={'loading-gif-before-load'}></div>);
 	}
+
 	async afterLoad() {
 		const token = await localStorage.getItem('token');
 		const isOffline = await localStorage.getItem('offline');
@@ -43,13 +42,15 @@ export class Extension {
 		// }
 
 		await locales.onProfileLangChange(null);
+		console.log('[Clockify] [Debugger] 1.0');
 		if (token) {
+			console.log('[Clockify] [Debugger] 1.1');
 			if (!JSON.parse(isOffline)) {
 				getBrowser()
 					.runtime.sendMessage({
 						eventName: 'getUser',
 					})
-					.then(async (response) => {
+					.then(async response => {
 						if (response.data) {
 							let data = response.data;
 							useAppStore.getState().setUserData(data);
@@ -59,9 +60,22 @@ export class Extension {
 							localStorage.setItem('userEmail', data.email);
 							localStorage.setItem('userId', data.id);
 							localStorage.setItem('activeWorkspaceId', data.activeWorkspace);
-							localStorage.setItem(
-								'userSettings',
-								JSON.stringify(data.settings)
+							localStorage.setItem('userSettings', JSON.stringify(data.settings));
+							console.log(
+								'[Clockify] [Debugger] 1.2 typeof data.email:',
+								typeof data.email
+							);
+							console.log(
+								'[Clockify] [Debugger] 1.2 typeof data.id:',
+								typeof data.id
+							);
+							console.log(
+								'[Clockify] [Debugger] 1.2 typeof data.activeWorkspace:',
+								typeof data.activeWorkspace
+							);
+							console.log(
+								'[Clockify] [Debugger] 1.2 typeof data.settings:',
+								typeof data.settings
 							);
 							const lang = data.settings.lang
 								? data.settings.lang.toLowerCase()
@@ -75,7 +89,7 @@ export class Extension {
 								.runtime.sendMessage({
 									eventName: 'getBoot',
 								})
-								.then((response) => {
+								.then(response => {
 									const { data } = response;
 									useAppStore.getState().setBootData(data);
 									const { synchronization, frontendUrl } = data;
@@ -100,16 +114,28 @@ export class Extension {
 									// window.reactRoot.render(<HomePage/>, mountHtmlElem);
 									// }
 								})
-								.catch((err) => {
+								.catch(err => {
 									// if (mountHtmlElem) {
 									// window.reactRoot.render(<HomePage/>, mountHtmlElem);
 									// }
+									console.error(err);
 								});
 						} else if (response.includes('account has been disabled')) {
 							logout('USER_BANNED');
+						} else {
+							console.log('[Clockify] [Debugger] Unhandled response 1.3');
+							console.log(
+								'[Clockify] [Debugger] Unhandled response 1.3 typeof data:',
+								typeof data
+							);
+							console.log(
+								'[Clockify] [Debugger] Unhandled response 1.3 typeof data.response:',
+								typeof data.response
+							);
 						}
 					})
-					.catch(async (error) => {
+					.catch(async error => {
+						console.error(error);
 						if (window.mountHtmlElement) {
 							const isOffline = await localStorage.getItem('offline');
 							if (isOffline === 'true') {
@@ -120,6 +146,7 @@ export class Extension {
 						}
 					});
 			} else {
+				console.log('[Clockify] [Debugger] 1.4');
 				if (window.mountHtmlElement) {
 					window.reactRoot.render(<HomePage />);
 				}
@@ -142,9 +169,9 @@ export class Extension {
 				case 'WORKSPACE_BANNED':
 					localStorage
 						.getItem('userWorkspaces')
-						.then(async (workspaces) => {
+						.then(async workspaces => {
 							let bannedWorkspace = workspaces.find(
-								(workspace) => workspace.id === request.options.workspaceId
+								workspace => workspace.id === request.options.workspaceId
 							)?.name;
 							logout(request.eventName, {
 								...request.options,
@@ -161,9 +188,7 @@ export class Extension {
 					break;
 				case 'WORKSPACE_LOCKED':
 					useAppStore.getState().setWorkspaceLocked(true);
-					useAppStore
-						.getState()
-						.setWorkspaceLockedMessage(request?.options?.message);
+					useAppStore.getState().setWorkspaceLockedMessage(request?.options?.message);
 					break;
 				case 'VERIFY_EMAIL_ENFORCED':
 					useAppStore.getState().setEmailEnforcedModalVisible(true);
@@ -173,7 +198,7 @@ export class Extension {
 						.runtime.sendMessage({
 							eventName: 'getUser',
 						})
-						.then(async (response) => {
+						.then(async response => {
 							if (response.data) {
 								let data = response.data;
 								useAppStore.getState().setUserData(data);
@@ -187,8 +212,7 @@ export class Extension {
 	}
 
 	removeListeners() {
-		messageListener &&
-			getBrowser().runtime.onMessage.removeListener(messageListener);
+		messageListener && getBrowser().runtime.onMessage.removeListener(messageListener);
 	}
 
 	saveOneToLocalStorage(key, value) {

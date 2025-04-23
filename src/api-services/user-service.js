@@ -13,7 +13,7 @@ class UserService extends ClockifyService {
 		const jsonPayload = decodeURIComponent(
 			atob(base64)
 				.split('')
-				.map(function (c) {
+				.map(function(c) {
 					return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
 				})
 				.join('')
@@ -71,7 +71,7 @@ class UserService extends ClockifyService {
 		if (data) {
 			const { userRoles } = data;
 			aBrowser.storage.local.set({
-				userRoles,
+				userRoles
 			});
 		} else {
 		}
@@ -84,20 +84,20 @@ class UserService extends ClockifyService {
 
 	static async setDefaultWorkspace(workspaceId) {
 		const userId = await this.userId;
-		const apiEndpoint = await this.apiEndpoint;
+		const apiEndpoint = await this.apiWriteEndpoint();
 		const saveWorkspaceUrl = `${apiEndpoint}/users/${userId}/defaultWorkspace/${workspaceId}`;
 
 		return await this.apiCall(saveWorkspaceUrl, 'POST', '');
 	}
 
 	static async resendVerificationEmail() {
-		const apiEndpoint = await this.apiEndpoint;
+		const apiEndpoint = await this.apiWriteEndpoint();
 		const userEmail = await this.userEmail;
 		const user = await this.user;
 		// workaround because firefox
 		const email = userEmail || user.email;
 		const resendVerificationEmailUrl = `${apiEndpoint}/auth/email-verification/resend/${email}`;
-		return await this.apiCall(resendVerificationEmailUrl, 'PUT', {})
+		return await this.apiCall(resendVerificationEmailUrl, 'PUT', {});
 	}
 
 	// we only use this because navigator.onLine is not reliable
@@ -110,7 +110,7 @@ class UserService extends ClockifyService {
 	}
 
 	static async sendEmailVerification() {
-		const baseUrl = await this.apiEndpoint;
+		const baseUrl = await this.apiWriteEndpoint();
 		const userId = await this.userId;
 		const method = 'PUT';
 
@@ -118,7 +118,7 @@ class UserService extends ClockifyService {
 	}
 
 	static async subscribeToNewsletter() {
-		const baseUrl = await this.apiEndpoint;
+		const baseUrl = await this.apiWriteEndpoint();
 		const userId = await this.userId;
 		const method = 'PUT';
 
@@ -144,7 +144,7 @@ class UserService extends ClockifyService {
 	}
 
 	static async removeDeclinedUserFromWorkspace(options) {
-		const baseUrl = await this.apiEndpoint;
+		const baseUrl = await this.apiWriteEndpoint();
 		const workspaceId = await this.workspaceId;
 		const userId = await this.userId;
 
@@ -156,7 +156,7 @@ class UserService extends ClockifyService {
 	}
 
 	static async changeWorkspaceStatus(options) {
-		const baseUrl = await this.apiEndpoint;
+		const baseUrl = await this.apiWriteEndpoint();
 		const user = await localStorage.getItem('user');
 		const defaultWorkspaceId = user.defaultWorkspace;
 		const userId = await this.userId;
@@ -169,7 +169,7 @@ class UserService extends ClockifyService {
 	}
 
 	static async setDefaultUserWorkspace({ targetWorkspaceId }) {
-		const baseUrl = await this.apiEndpoint;
+		const baseUrl = await this.apiWriteEndpoint();
 		const userId = await this.userId;
 
 		const url = `${baseUrl}/users/${userId}/defaultWorkspace/${targetWorkspaceId}`;
@@ -179,7 +179,7 @@ class UserService extends ClockifyService {
 	}
 
 	static async changeTimezone({ newTimezone }) {
-		const baseUrl = await this.apiEndpoint;
+		const baseUrl = await this.apiWriteEndpoint();
 		const userId = await this.userId;
 		const method = 'PUT';
 

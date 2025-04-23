@@ -27,6 +27,15 @@ let aBrowser = this.isChrome()
 const iconPathEnded = '../assets/images/logo-16-gray.png';
 const iconPathStarted = '../assets/images/logo-16.png';
 const clockifyProd = 'https://app.clockify.me/tracker';
+
+aBrowser.alarms.create('sendAnalyticsEvents', { periodInMinutes: 20 });
+
+aBrowser.alarms.onAlarm.addListener(alarm => {
+	if (alarm.name === 'sendAnalyticsEvents') {
+		AnalyticsService.sendAnalyticsEvents();
+	}
+});
+
 let windowIds = [];
 
 // const tabStatus = {
@@ -72,10 +81,11 @@ aBrowser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 			const urlToUpdate = homeUrl || 'https://app.clockify.me/tracker';
 			if (JSON.parse(signupExpected)) {
 				aBrowser.tabs.update(tabId, {
-					url: urlToUpdate,
+					url: urlToUpdate
 				});
 			} else {
-				aBrowser.tabs.remove(tabId, () => {});
+				aBrowser.tabs.remove(tabId, () => {
+				});
 			}
 			await localStorage.setItem('signupExpected', 'false');
 		}
@@ -101,37 +111,37 @@ aBrowser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 					if (isIntegrationAlreadyInjected) return;
 
 					aBrowser.tabs.sendMessage(tabId, {
-						eventName: 'cleanup',
+						eventName: 'cleanup'
 					});
 					aBrowser.scripting.executeScript({
 						target: { tabId },
-						files: ['popupDlg/clockifyDebounce.js'],
+						files: ['popupDlg/clockifyDebounce.js']
 					});
 					aBrowser.scripting.executeScript(
 						{
 							target: { tabId },
-							files: ['contentScripts/clockifyLocales.js'],
+							files: ['contentScripts/clockifyLocales.js']
 						},
 						() => {
 							aBrowser.scripting.executeScript(
 								{ target: { tabId }, files: ['popupDlg/clockifyButton.js'] },
 								async () => {
 									IntegrationSelectors.fetchAndStore({
-										onlyIfPassedFollowingMinutesSinceLastFetch: 60 * 12,
+										onlyIfPassedFollowingMinutesSinceLastFetch: 60 * 12
 									});
 									await aBrowser.tabs.sendMessage(tabId, {
 										eventName: 'passArgumentsToClockifyButton',
 										options: {
-											integrationName: domainInfo.integrationName,
-										},
+											integrationName: domainInfo.integrationName
+										}
 									});
 									loadScripts(tabId, domainInfo);
 									setTimeout(() => {
 										backgroundWebSocketConnect();
 									}, 1000);
-								},
+								}
 							);
-						},
+						}
 					);
 				}
 			}
@@ -144,7 +154,7 @@ function setTimeEntryInProgress(entry) {
 		return;
 	} else {
 		aBrowser.storage.local.set({
-			timeEntryInProgress: entry,
+			timeEntryInProgress: entry
 		});
 	}
 }
@@ -153,7 +163,7 @@ aBrowser.runtime.onInstalled.addListener(async details => {
 	if (details.reason === 'install') {
 		aBrowser.tabs.create({ url: clockifyProd });
 		aBrowser.action.setIcon({
-			path: iconPathEnded,
+			path: iconPathEnded
 		});
 	}
 	const localMessages = await localStorage.getItem('locale_messages');
@@ -161,7 +171,7 @@ aBrowser.runtime.onInstalled.addListener(async details => {
 		clockifyLocales.onProfileLangChange(null);
 	}
 	IntegrationSelectors.fetchAndStore({
-		onlyIfPassedFollowingMinutesSinceLastFetch: 1,
+		onlyIfPassedFollowingMinutesSinceLastFetch: 1
 	});
 });
 
@@ -221,7 +231,7 @@ aBrowser.windows.getAll({ populate: true, windowTypes: ['normal'] }, windowInfoA
 
 aBrowser.runtime.onStartup.addListener(async () => {
 	IntegrationSelectors.fetchAndStore({
-		onlyIfPassedFollowingMinutesSinceLastFetch: 1,
+		onlyIfPassedFollowingMinutesSinceLastFetch: 1
 	});
 	const isLoggedIn = await TokenService.isLoggedIn();
 	if (isLoggedIn) {
@@ -232,12 +242,12 @@ aBrowser.runtime.onStartup.addListener(async () => {
 			TimeEntry.startTimerOnStartingBrowser();
 			setTimeEntryInProgress(null);
 			aBrowser.action.setIcon({
-				path: iconPathEnded,
+				path: iconPathEnded
 			});
 		} else {
 			setTimeEntryInProgress(entry);
 			aBrowser.action.setIcon({
-				path: iconPathStarted,
+				path: iconPathStarted
 			});
 		}
 		this.connectWebSocket();
@@ -255,12 +265,12 @@ aBrowser.windows.onCreated.addListener(async window => {
 			TimeEntry.startTimerOnStartingBrowser();
 			setTimeEntryInProgress(null);
 			aBrowser.action.setIcon({
-				path: iconPathEnded,
+				path: iconPathEnded
 			});
 		} else {
 			setTimeEntryInProgress(entry);
 			aBrowser.action.setIcon({
-				path: iconPathStarted,
+				path: iconPathStarted
 			});
 		}
 		this.connectWebSocket();
@@ -296,7 +306,7 @@ function setClockifyOriginsToStorage() {
 					if (arr.length === 0) {
 						permissionForUser = {
 							userId,
-							permissions: [],
+							permissions: []
 						};
 						permissionsForStorage.push(permissionForUser);
 						for (let key in clockifyOrigins) {
@@ -306,7 +316,7 @@ function setClockifyOriginsToStorage() {
 								isEnabled: true,
 								script: clockifyOrigins[key].script,
 								name: clockifyOrigins[key].name,
-								isCustom: false,
+								isCustom: false
 							});
 						}
 						aBrowser.storage.local.set({ permissions: permissionsForStorage });
@@ -341,48 +351,6 @@ setTimeout(() => {
 	backgroundWebSocketConnect();
 }, 1000);
 
-aBrowser.commands.onCommand.addListener(async (command) => {
-	// NOTE: hide for now
-	// const timerShortcut = await localStorage.getItem('permanent_timerShortcut');
-	// const userId = await localStorage.getItem('userId');
-	// const isTimerShortcutOn =
-	// 	timerShortcut &&
-	// 	JSON.parse(timerShortcut).find(
-	// 		(item) => item?.userId === userId && JSON.parse(item.enabled)
-	// 	);
-	// const isLoggedIn = await TokenService.isLoggedIn();
-	//
-	// if (!isTimerShortcutOn || command !== commands.startStop) return;
-	//
-	// if (!isLoggedIn) {
-	// 	// alert('You must log in to use keyboard shortcut (backgorund)');
-	// 	localStorage.setItem(
-	// 		'integrationAlert',
-	// 		'You must log in to use keyboard shortcut (backgorund)'
-	// 	);
-	// 	return;
-	// }
-	//
-	// const { entry, error } = await TimeEntry.getEntryInProgress();
-	//
-	// if (entry) {
-	// 	const { error } = await TimeEntry.endInProgress(entry);
-	//
-	// 	if (error) {
-	// 		aBrowser.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-	// 			aBrowser.tabs.sendMessage(tabs[0].id, {
-	// 				eventName: 'stopTimerWithShortcut',
-	// 				data: entry
-	// 			});
-	// 		});
-	// 	}
-	//
-	// 	return;
-	// }
-	//
-	// await TimeEntry.startTimer('');
-});
-
 function loadScripts(tabId, integrationInfo) {
 	try {
 		aBrowser.scripting
@@ -410,7 +378,7 @@ async function extractDomainInfo(url, permissions) {
 		hostname,
 		integrationName,
 		file: file,
-		origins: ['*://' + hostname + '/*'],
+		origins: ['*://' + hostname + '/*']
 	};
 }
 
@@ -521,7 +489,6 @@ function workspaceChanged() {
 	updateRolesForUser();
 }
 
-
 async function rerenderIntegrations() {
 	const tabs = await aBrowser.tabs.query({});
 	const tabIds = tabs.map(({ id }) => id);
@@ -560,7 +527,9 @@ aBrowser.runtime.onMessage.addListener((request, sender, sendResponse) => {
 		case 'resendVerificationEmail':
 		case 'sendEmailVerification':
 		case 'updateNewsSubscription':
+		case 'clearAnalyticsEvents':
 			return ClockifyIntegration.callFunction(request.eventName, null, sendResponse);
+		case 'sendAnalyticsEvents':
 		case 'endInProgress':
 		case 'getMemberProfile':
 		case 'getProjectsByIds':
@@ -622,26 +591,26 @@ function afterStartTimer() {
 	// addPomodoroTimer();
 }
 
-(async () => {
-	const isLoggedIn = await TokenService.isLoggedIn();
-	if (isLoggedIn) {
-		const { entry, error } = await TimeEntry.getEntryInProgress();
-		if (entry === null || error) {
-			// this.addReminderTimerOnStartingBrowser();
-			TimeEntry.startTimerOnStartingBrowser();
-			setTimeEntryInProgress(null);
-			aBrowser.action.setIcon({
-				path: iconPathEnded
-			});
-		} else {
-			setTimeEntryInProgress(entry);
-			aBrowser.action.setIcon({
-				path: iconPathStarted
-			});
-		}
-	} else {
-		aBrowser.action.setIcon({
-			path: iconPathEnded
-		});
-	}
-})();
+// (async () => {
+// 	const isLoggedIn = await TokenService.isLoggedIn();
+// 	if (isLoggedIn) {
+// 		const { entry, error } = await TimeEntry.getEntryInProgress();
+// 		if (entry === null || error) {
+// 			// this.addReminderTimerOnStartingBrowser();
+// 			TimeEntry.startTimerOnStartingBrowser();
+// 			setTimeEntryInProgress(null);
+// 			aBrowser.action.setIcon({
+// 				path: iconPathEnded,
+// 			});
+// 		} else {
+// 			setTimeEntryInProgress(entry);
+// 			aBrowser.action.setIcon({
+// 				path: iconPathStarted,
+// 			});
+// 		}
+// 	} else {
+// 		aBrowser.action.setIcon({
+// 			path: iconPathEnded,
+// 		});
+// 	}
+// })();

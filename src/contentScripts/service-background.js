@@ -18,7 +18,7 @@ function isChrome() {
 async function createHttpHeaders(token) {
 	let headers = {
 		Accept: 'application/json',
-		'Content-Type': 'application/json'
+		'Content-Type': 'application/json',
 	};
 
 	if (token) {
@@ -31,6 +31,9 @@ async function createHttpHeaders(token) {
 
 	headers['App-Name'] = 'extension-' + (isChrome() ? 'chrome' : 'firefox');
 	headers['App-Version'] = aBrowser.runtime.getManifest().version;
+	headers['User-Agent'] = `${navigator.userAgent} extension/${
+		aBrowser.runtime.getManifest().version
+	}`;
 
 	const subDomainName = await localStorage.getItem('sub-domain_subDomainName');
 	if (subDomainName) {
@@ -51,14 +54,13 @@ function errorObj(status, message, errorData) {
 		error: {
 			status,
 			message,
-			errorData
-		}
+			errorData,
+		},
 	};
 }
 
 class ClockifyService {
-	constructor() {
-	}
+	constructor() {}
 
 	static get userId() {
 		return localStorage.getItem('userId');
@@ -92,10 +94,16 @@ class ClockifyService {
 	// Here we store the cached data
 	static cache = {};
 
+	static async apiWriteEndpoint() {
+		return (await localStorage.getItem('permanent_baseWriteUrl')).startsWith('https://')
+			? localStorage.getItem('permanent_baseWriteUrl')
+			: localStorage.getItem('permanent_baseUrl');
+	}
+
 	static addToCache(endpoint, data) {
 		this.cache[endpoint] = {
 			...data,
-			timestamp: new Date().getTime()
+			timestamp: new Date().getTime(),
 		};
 	}
 
@@ -119,56 +127,50 @@ class ClockifyService {
 		const wsSettings = ws
 			? JSON.parse(ws)
 			: {
-				forceDescription: false,
-				forceProjects: false,
-				forceTasks: false,
-				projectPickerSpecialFilter: false,
-				forceTags: false
-			};
+					forceDescription: false,
+					forceProjects: false,
+					forceTasks: false,
+					projectPickerSpecialFilter: false,
+					forceTags: false,
+			  };
 		const userSettings = us
 			? JSON.parse(us)
 			: {
-				projectPickerSpecialFilter: false
+					projectPickerSpecialFilter: false,
 			  };
-		const {
-			forceDescription,
-			forceProjects,
-			forceTasks,
-			forceTags
-		} = wsSettings;
-		const {
-			projectPickerSpecialFilter
-		} = userSettings;
+		const { forceDescription, forceProjects, forceTasks, forceTags } = wsSettings;
+		const { projectPickerSpecialFilter } = userSettings;
 		return {
 			forceDescription,
 			forceProjects,
 			forceTasks,
 			projectPickerSpecialFilter,
-			forceTags
+			forceTags,
 		};
 	}
 
 	static async getCreateObjects() {
-		const str = await localStorage.getItem('permanent_createObjects');
-		if (!str) return false;
-		return JSON.parse(str);
+		const appStore = await localStorage.getItem('appStore');
+		let integrationCreatePTT = false;
+		if (appStore) {
+			integrationCreatePTT = JSON.parse(appStore).state.integrationCreatePTT;
+		}
+		return integrationCreatePTT;
 	}
 
 	static async getCanCreateProjects() {
 		let workspaceSettings = await localStorage.getItem('workspaceSettings');
 		workspaceSettings = JSON.parse(workspaceSettings);
 		let userRoles = await localStorage.getItem('userRoles');
-		userRoles = userRoles.map((userRole) => userRole.role);
-		const { whoCanCreateProjectsAndClients } =
-		workspaceSettings?.entityCreationPermissions || {
-			whoCanCreateProjectsAndClients: 'ADMINS'
+		userRoles = userRoles.map(userRole => userRole.role);
+		const { whoCanCreateProjectsAndClients } = workspaceSettings?.entityCreationPermissions || {
+			whoCanCreateProjectsAndClients: 'ADMINS',
 		};
 		const isEnabledCreateProject =
 			whoCanCreateProjectsAndClients === 'EVERYONE' ||
 			userRoles.includes('WORKSPACE_ADMIN') ||
 			(whoCanCreateProjectsAndClients === 'ADMINS_AND_PROJECT_MANAGERS' &&
 				userRoles.includes('PROJECT_MANAGER'));
-
 		return isEnabledCreateProject;
 	}
 
@@ -176,10 +178,9 @@ class ClockifyService {
 		let workspaceSettings = await localStorage.getItem('workspaceSettings');
 		workspaceSettings = JSON.parse(workspaceSettings);
 		let userRoles = await localStorage.getItem('userRoles');
-		userRoles = userRoles.map((userRole) => userRole.role);
-		const { whoCanCreateTasks } =
-		workspaceSettings?.entityCreationPermissions || {
-			whoCanCreateTasks: 'ADMINS'
+		userRoles = userRoles.map(userRole => userRole.role);
+		const { whoCanCreateTasks } = workspaceSettings?.entityCreationPermissions || {
+			whoCanCreateTasks: 'ADMINS',
 		};
 		const isEnabledCreateTask =
 			whoCanCreateTasks === 'EVERYONE' ||
@@ -233,7 +234,7 @@ class ClockifyService {
 			const workspaceId = regexMatch[1]; // Extract the workspace ID from the first capture group
 			aBrowser.runtime.sendMessage({
 				eventName: 'WORKSPACE_BANNED',
-				options: { ...errorData, workspaceId }
+				options: { ...errorData, workspaceId },
 			});
 		} else if (
 			errorData.message?.includes('Access to workspace is denied') ||
@@ -241,7 +242,7 @@ class ClockifyService {
 		) {
 			aBrowser.runtime.sendMessage({
 				eventName: 'USER_BANNED',
-				options: errorData
+				options: errorData,
 			});
 		}
 	}
@@ -299,7 +300,7 @@ class ClockifyService {
 		const request = new Request(endpoint, {
 			method,
 			headers,
-			body: body ? JSON.stringify(body) : null
+			body: body ? JSON.stringify(body) : null,
 		});
 
 		const fetchRequest = fetch(request)
@@ -318,7 +319,8 @@ class ClockifyService {
 					/.* project for client .* already exists./,
 					/Tag with name .* already exists/,
 					/Manual time tracking disabled on .*/,
-					/Task with name '.*' already exists/
+					/Task with name '.*' already exists/,
+					/You entered wrong value. Don't use \"<\" and \">\" characters/
 				];
 				switch (response.status) {
 					case 400:
@@ -329,7 +331,7 @@ class ClockifyService {
 							errorMessagesThatShouldBeReturnedToComponent.find(pattern =>
 								pattern.test(message)
 							);
-
+						
 						if (returnMessageToComponent) return errorObj(400, message);
 
 						return errorObj(
@@ -345,7 +347,7 @@ class ClockifyService {
 							} else if (errorData.code === 4017) {
 								aBrowser.runtime.sendMessage({
 									eventName: 'TOKEN_INVALID',
-									options: errorData
+									options: errorData,
 								});
 								return errorObj(response.status, 'Token invalid', errorData);
 							} else if (errorData.code === 4030) {
@@ -357,7 +359,11 @@ class ClockifyService {
 							} else if (errorData.code === 501) {
 								return errorObj(response.status, 'Access Denied', errorData);
 							} else if (errorData.code === 1003) {
-								return errorObj(response.status, 'Can\'t edit locked time entry.', errorData);
+								return errorObj(
+									response.status,
+									"Can't edit locked time entry.",
+									errorData
+								);
 							}
 						}
 						return errorObj(response.status, 'Unauthenticated');
@@ -389,14 +395,14 @@ class ClockifyService {
 							} else if (errorData.code === 4017 || errorData.code === 4023) {
 								aBrowser.runtime.sendMessage({
 									eventName: 'TOKEN_INVALID',
-									options: errorData
+									options: errorData,
 								});
 								return errorObj(response.status, 'Token invalid', errorData);
 							}
 							if (errorData.code === 1000) {
 								aBrowser.runtime.sendMessage({
 									eventName: 'TOKEN_INVALID',
-									options: errorData
+									options: errorData,
 								});
 								return errorObj(response.status, errorData);
 							}
@@ -417,7 +423,7 @@ class ClockifyService {
 						this.addToCache(endpoint, {
 							data,
 							error: null,
-							status: response.status
+							status: response.status,
 						});
 
 						// Schedule cache busting after the expiresInMilliseconds duration

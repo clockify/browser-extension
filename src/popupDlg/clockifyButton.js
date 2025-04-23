@@ -5,6 +5,7 @@ var _selectors = null;
 var _clockifyShowPostStartPopup = true;
 var _timeEntryInProgressDescription = null;
 var documents = window.getAllDocuments();
+var timerIds = {};
 
 removeAllButtons();
 setPostStartPopup();
@@ -107,10 +108,18 @@ var clockifyButton = {
 		}, 500);
 	},
 
-	render: (selector, opts, renderer, mutationSelector, descriptionSelector) => {
-		if (opts.onNavigationRerender) clockifyButton.onNavigationRerender = true;
+	render: (selector, options = {}, renderer, mutationSelector, descriptionSelector) => {
+		const { onNavigationRerender, showTimerOnhover, timerName } = options;
 
-		clockifyButton.mutationObserver.start(selector, opts, renderer, mutationSelector);
+		if (onNavigationRerender) clockifyButton.onNavigationRerender = true;
+
+		if (showTimerOnhover && !timerIds[selector]) {
+			const currentId = Object.keys(timerIds).length + 1;
+			timerIds = { ...timerIds, selector: currentId };
+			addHoverEffect(showTimerOnhover);
+		}
+
+		clockifyButton.mutationObserver.start(selector, options, renderer, mutationSelector);
 		clockifyButton.observeDescription(descriptionSelector);
 		clockifyButton.renderTo(selector, renderer);
 	},
@@ -162,13 +171,17 @@ var clockifyButton = {
 		if (isSmall) button.classList.add('small');
 
 		aBrowser.storage.local.get(
-			['timeEntryInProgress', 'permanent_appendWebsiteURL', 'userId'],
-			({ timeEntryInProgress, permanent_appendWebsiteURL, userId }) => {
+			['timeEntryInProgress', 'appStore', 'userId'],
+			({ timeEntryInProgress, appStore, userId }) => {
 				const entry = timeEntryInProgress;
 
-				if (permanent_appendWebsiteURL) {
-					title = withAppendedUrl(title);
+				if (appStore) {
+					const parsedAppStore = JSON.parse(appStore);
+					if (parsedAppStore.state.appendWebsiteURL) {
+						title = withAppendedUrl(title);
+					}
 				}
+
 				if (userId) {
 					clockifyButton.userId = userId;
 				}
@@ -334,12 +347,16 @@ var clockifyButton = {
 											? null
 											: response.project?.id,
 									taskId: response.task?.id,
-									billable: response.project?.billable,
+									billable:
+										workspaceSettings.taskBillableEnabled && response.task
+											? response.task?.billable
+											: response.project?.billable,
 									tags: response.tags,
 									tagIds: response.tags?.map(tag => tag.id) ?? [],
 									project: response.project,
 									task: response.task,
 								};
+
 								window.updateButtonProperties(null, {
 									timeEntry,
 									manualMode: true,
@@ -570,7 +587,10 @@ function getClockifyButtonHTML({ isActive, isSmall, options }) {
 	const container = document.createElement('div');
 	const text = document.createElement('span');
 
-	const { START_TIMER, STOP_TIMER } = clockifyLocales;
+	const { START_TIMER, STOP_TIMER } = clockifyLocales || {
+		START_TIMER: 'Start timer',
+		STOP_TIMER: 'Stop timer',
+	};
 
 	const activeButtonClasses = `clockify-button-active clockify-button-active-span`;
 	const inactiveButtonClasses = `clockify-button-inactive clockify-button-inactive-span`;
@@ -590,6 +610,19 @@ function getClockifyButtonHTML({ isActive, isSmall, options }) {
 	if (!isSmall) container.append(text);
 
 	return container;
+}
+
+function addHoverEffect(selector) {
+	const attribute = 'data-clockify-onhover-for-timer';
+
+	const hideInactiveTime = `${selector} .clockifyButton:not(.active) { display: none !important; }`;
+	const showActiveTime = `${selector}:hover .clockifyButton { display: flex !important; }`;
+
+	const css = `${hideInactiveTime}\n${showActiveTime}`;
+
+	const style = createTag('style', 'clockify-integration', css);
+	style.setAttribute(attribute, selector);
+	document.head.append(style);
 }
 
 function objectFromParams(first, second, third) {
@@ -621,6 +654,10 @@ function $$$(selector, contexts = documents) {
 
 function text(selector, context = document) {
 	return $(selector, context)?.textContent?.trim();
+}
+
+function ariaLabel(selector, context = document) {
+	return $(selector, context)?.ariaLabel?.trim();
 }
 
 function value(selector, context = document) {
@@ -662,6 +699,28 @@ function waitForElement(selector, context = document) {
 			}
 		}
 	});
+}
+
+async function waitForText(selector, context = document) {
+	const element = await waitForElement(selector, context);
+
+	if (element.textContent) return element.textContent;
+
+	const observer = new MutationObserver(observeTextContentChanges);
+
+	const observationTarget = element;
+	const observationConfig = { characterData: true };
+
+	observer.observe(observationTarget, observationConfig);
+
+	function observeTextContentChanges() {
+		const element = $(selector, context);
+
+		if (element.textContent) {
+			observer.disconnect();
+			resolve(element.textContent);
+		}
+	}
 }
 
 function getCssValue(element, cssProperty) {
@@ -754,8 +813,15 @@ function createTag(name, className = '', textContent = '') {
 	return tag;
 }
 
-function isAppendUrlEnabled() {
-	return localStorage.getItem('permanent_appendWebsiteURL');
+async function isAppendUrlEnabled() {
+	const appStore = await localStorage.getItem('appStore');
+
+	if (appStore) {
+		const parsedAppStore = JSON.parse(appStore);
+		return parsedAppStore.state.appendWebsiteURL;
+	}
+
+	return false;
 }
 
 function withAppendedUrl(text) {
@@ -1011,7 +1077,11 @@ function removeAllButtons(wrapperClass) {
 
 async function setPostStartPopup() {
 	const appStore = await localStorage.getItem('appStore');
-	const showPostStartPopup = JSON.parse(appStore).state.showPostStartPopup;
+	let showPostStartPopup = true;
+
+	if (appStore) {
+		showPostStartPopup = JSON.parse(appStore).state.showPostStartPopup;
+	}
 
 	_clockifyShowPostStartPopup = showPostStartPopup;
 }

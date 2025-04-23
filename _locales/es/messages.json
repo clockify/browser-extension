@@ -1229,6 +1229,9 @@
   "ENTRY_IN_PROGRESS_EXISTS": {
     "message": "¡Tienes una entrada de tiempo en progreso!"
   },
+  "WEBSITE_FORMAT_ERROR": {
+    "message": "El formato del sitio web no es válido"
+  },
   "appName": {
     "message": "Clockify Rastreador de tiempo",
     "description": "El título de la aplicación, que se muestra en la tienda web."

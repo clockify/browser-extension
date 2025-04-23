@@ -20,7 +20,7 @@ class ClockifyIntegrationBase {
 	}
 
 	static async endInProgress(
-		{ endedFromIntegration, integrationName },
+		{ endedFromIntegration, integrationName, endEntryInProgressToContinueOtherEntry },
 		sendResponse
 	) {
 		if (await isNavigatorOffline()) {
@@ -29,7 +29,8 @@ class ClockifyIntegrationBase {
 		}
 		const { error } = await TimeEntry.endInProgress({
 			endedFromIntegration,
-			integrationName
+			integrationName,
+			endEntryInProgressToContinueOtherEntry
 		});
 		if (error) {
 			sendResponse({ status: error.status, message: error.message });
@@ -72,8 +73,10 @@ class ClockifyIntegrationBase {
 			timeEntryOptions
 		);
 		if (err) {
-			sendResponse({ status: err.status });
+			sendResponse({ status: err.status, message: err.message });
 		} else {
+			const { trackerStarted, entryAdded, entryContinued } = AnalyticsService.events;
+
 			if (status === 201) {
 				// Analytics
 				// entry_mode, integrations, integrations, entry_mode_integration
@@ -89,6 +92,7 @@ class ClockifyIntegrationBase {
 						};
 						const options = { analyticsEventName, eventParameters };
 						await this.sendAnalyticsEvent(options);
+						await AnalyticsService.storeAnalyticsEvents([entryAdded]);
 					} else {
 						// Popup - timer
 						const analyticsEventName = 'entry_mode';
@@ -98,6 +102,12 @@ class ClockifyIntegrationBase {
 						};
 						const options = { analyticsEventName, eventParameters };
 						await this.sendAnalyticsEvent(options);
+
+						await AnalyticsService.storeAnalyticsEvents([
+							timeEntryOptions.continueEntryByStartingEntryAgain
+								? entryContinued
+								: trackerStarted
+						]);
 					}
 				} else {
 					if (timeEntryOptions?.manualMode) {
@@ -112,6 +122,7 @@ class ClockifyIntegrationBase {
 						};
 						const options = { analyticsEventName, eventParameters };
 						await this.sendAnalyticsEvent(options);
+						await AnalyticsService.storeAnalyticsEvents([entryAdded]);
 					} else {
 						// Integration - timer
 						const analyticsEventName = 'entry_mode_integration';
@@ -122,6 +133,7 @@ class ClockifyIntegrationBase {
 						};
 						const options = { analyticsEventName, eventParameters };
 						await this.sendAnalyticsEvent(options);
+						await AnalyticsService.storeAnalyticsEvents([trackerStarted]);
 					}
 				}
 				if (!timeEntryOptions.manualMode) {
@@ -139,33 +151,27 @@ class ClockifyIntegrationBase {
 		}
 	}
 
-	static async generateManualEntryData(
-		{ projectName, taskName, tagNames },
-		sendResponse
-	) {
+	static async generateManualEntryData({ projectName, taskName, tagNames }, sendResponse) {
 		if (await isNavigatorOffline()) {
 			sendResponse('Connection is offline');
 			return;
 		}
 		let project, task, tags;
 		if (projectName) {
-			let { projectDB } = await ProjectTaskService.getOrCreateProject(
-				projectName
-			);
+			let { projectDB } = await ProjectTaskService.getOrCreateProject(projectName);
 			project = projectDB;
 
 			if (project && taskName) {
-				let { taskDB } = await ProjectTaskService.getOrCreateProjectAndTask(
-					project.name,
-					{ name: taskName }
-				);
+				let { taskDB } = await ProjectTaskService.getOrCreateProjectAndTask(project.name, {
+					name: taskName
+				});
 				task = taskDB;
 			}
 		}
 
 		if (tagNames) {
 			const { tagovi } = await TagService.getOrCreateTags(
-				tagNames.map((tagName) => tagName.trim())
+				tagNames.map(tagName => tagName.trim())
 			);
 			tags = tagovi;
 		}
@@ -194,9 +200,7 @@ class ClockifyIntegrationBase {
 			status
 		} = await ProjectTaskService.getProjectsByIds(projectIds, taskIds);
 		if (projectError) {
-			sendResponse(
-				projectError.message ? projectError.message : projectError.status
-			);
+			sendResponse(projectError.message ? projectError.message : projectError.status);
 			return;
 		}
 		if (projectDB) {
@@ -228,15 +232,11 @@ class ClockifyIntegrationBase {
 		// 	return;
 		// }
 
-		const { projectDB, taskDB, msg, msgId } =
-			await DefaultProject.getProjectTaskFromDB();
+		const { projectDB, taskDB, msg, msgId } = await DefaultProject.getProjectTaskFromDB();
 		sendResponse({ projectDB, taskDB, msg, msgId });
 	}
 
-	static async getProjects(
-		{ filter, page, pageSize, forceTasks, alreadyIds },
-		sendResponse
-	) {
+	static async getProjects({ filter, page, pageSize, forceTasks, alreadyIds }, sendResponse) {
 		if (await isNavigatorOffline()) {
 			sendResponse('Connection is offline');
 			return;
@@ -248,18 +248,15 @@ class ClockifyIntegrationBase {
 		// 	return;
 		// }
 
-		const { data, error: projectsError } =
-			await ProjectTaskService.getProjectsWithFilter(
-				filter,
-				page,
-				pageSize,
-				forceTasks,
-				alreadyIds
-			);
+		const { data, error: projectsError } = await ProjectTaskService.getProjectsWithFilter(
+			filter,
+			page,
+			pageSize,
+			forceTasks,
+			alreadyIds
+		);
 		if (projectsError) {
-			sendResponse(
-				projectsError.message ? projectsError.message : projectsError.status
-			);
+			sendResponse(projectsError.message ? projectsError.message : projectsError.status);
 		}
 		sendResponse({
 			status: 201,
@@ -276,9 +273,7 @@ class ClockifyIntegrationBase {
 		const { data, error: projectsError } =
 			await ProjectTaskService.getLastUsedProjectFromTimeEntries(forceTasks);
 		if (projectsError) {
-			sendResponse(
-				projectsError.message ? projectsError.message : projectsError.status
-			);
+			sendResponse(projectsError.message ? projectsError.message : projectsError.status);
 		}
 		sendResponse({
 			status: 201,
@@ -292,12 +287,12 @@ class ClockifyIntegrationBase {
 			return;
 		}
 
-		const { data, error: projectsError } =
-			await ProjectTaskService.getTaskOfProject({ projectId, taskName });
+		const { data, error: projectsError } = await ProjectTaskService.getTaskOfProject({
+			projectId,
+			taskName
+		});
 		if (projectsError) {
-			sendResponse(
-				projectsError.message ? projectsError.message : projectsError.status
-			);
+			sendResponse(projectsError.message ? projectsError.message : projectsError.status);
 		}
 		sendResponse({
 			status: 201,
@@ -360,18 +355,18 @@ class ClockifyIntegrationBase {
 		// }
 	}
 
-	static async createProject({ project }, sendResponse) {
+	static async createProject({ project, createdFromPopup }, sendResponse) {
 		if (await isNavigatorOffline()) {
 			sendResponse('Connection is offline');
 			return;
 		}
 
-		const { data, error, status } = await ProjectTaskService.createProject(
-			project
-		);
+		const { data, error, status } = await ProjectTaskService.createProject(project);
 		if (error) {
 			sendResponse({ error });
 			return;
+		} else if (createdFromPopup) {
+			AnalyticsService.storeAnalyticsEvents([AnalyticsService.events.projectAdded]);
 		}
 		sendResponse({ status, data });
 	}
@@ -396,10 +391,7 @@ class ClockifyIntegrationBase {
 			}
 			sendResponse({ status, data });
 		} else {
-			const { data, error, status } = await TimeEntry.updateProject(
-				id,
-				project
-			);
+			const { data, error, status } = await TimeEntry.updateProject(id, project);
 			if (error) {
 				sendResponse(error.message ? error.message : error.status);
 				return;
@@ -443,11 +435,7 @@ class ClockifyIntegrationBase {
 			}
 			sendResponse({ status, data });
 		} else {
-			const { data, error, status } = await TimeEntry.updateTask(
-				task,
-				project,
-				id
-			);
+			const { data, error, status } = await TimeEntry.updateTask(task, project, id);
 			if (error) {
 				sendResponse(error.message ? error.message : error.status);
 				return;
@@ -497,7 +485,9 @@ class ClockifyIntegrationBase {
 
 		const { data, error, status } = await TagService.createTag(tag);
 		console.log({
-			data, error, status
+			data,
+			error,
+			status
 		});
 		if (error) {
 			sendResponse(error);
@@ -544,9 +534,7 @@ class ClockifyIntegrationBase {
 			return;
 		}
 
-		const { error, status } = await ProjectTaskService.removeProjectAsFavorite(
-			projectId
-		);
+		const { error, status } = await ProjectTaskService.removeProjectAsFavorite(projectId);
 		if (error) {
 			sendResponse(error.message ? error.message : error.status);
 			return;
@@ -560,9 +548,7 @@ class ClockifyIntegrationBase {
 			return;
 		}
 
-		const { error, status } = await ProjectTaskService.makeProjectFavorite(
-			projectId
-		);
+		const { error, status } = await ProjectTaskService.makeProjectFavorite(projectId);
 		if (error) {
 			sendResponse(error.message ? error.message : error.status);
 			return;
@@ -583,10 +569,7 @@ class ClockifyIntegrationBase {
 		// }
 
 		// if (entry) {
-		const { entry, error, status } = await TimeEntry.updateBillable(
-			id,
-			billable
-		);
+		const { entry, error, status } = await TimeEntry.updateBillable(id, billable);
 		if (error) {
 			sendResponse(error.message ? error.message : error.status);
 			return;
@@ -597,10 +580,7 @@ class ClockifyIntegrationBase {
 		// }
 	}
 
-	static async submitTime(
-		{ totalMins, timeEntryOptions, integrationName },
-		sendResponse
-	) {
+	static async submitTime({ totalMins, timeEntryOptions, integrationName }, sendResponse) {
 		if (await isNavigatorOffline()) {
 			sendResponse('Connection is offline');
 			return;
@@ -650,12 +630,11 @@ class ClockifyIntegrationBase {
 		} else {
 			// Analytics
 			// Integration - manual
+			const { entryAdded } = AnalyticsService.events;
 
 			const analyticsEventName = 'entry_mode_integration';
 			const duration = moment(
-				moment.duration(
-					moment(timeEntryOptions.end).diff(moment(timeEntryOptions.start))
-				)
+				moment.duration(moment(timeEntryOptions.end).diff(moment(timeEntryOptions.start)))
 			).format('HH:mm:ss');
 			const eventParameters = {
 				integrationName: integrationName,
@@ -666,6 +645,7 @@ class ClockifyIntegrationBase {
 			};
 			const options = { analyticsEventName, eventParameters };
 			await this.sendAnalyticsEvent(options);
+			await AnalyticsService.storeAnalyticsEvents([entryAdded]);
 		}
 		sendResponse({ entry: ent, status });
 	}
@@ -749,10 +729,7 @@ class ClockifyIntegrationBase {
 			sendResponse('Connection is offline', 0);
 			return;
 		}
-		const { data, error, status } = await UserService.getMemberProfile(
-			workspaceId,
-			userId
-		);
+		const { data, error, status } = await UserService.getMemberProfile(workspaceId, userId);
 		if (error) {
 			sendResponse(error.message, error.status);
 			return;
@@ -781,9 +758,7 @@ class ClockifyIntegrationBase {
 			return;
 		}
 
-		const { data, error, status } = await UserService.setDefaultWorkspace(
-			workspaceId
-		);
+		const { data, error, status } = await UserService.setDefaultWorkspace(workspaceId);
 
 		if (error) {
 			sendResponse(error.message, error.status);
@@ -811,8 +786,7 @@ class ClockifyIntegrationBase {
 			return;
 		}
 
-		const { data, error, status } =
-			await UserWorkspaceStorage.getPermissionsForUser();
+		const { data, error, status } = await UserWorkspaceStorage.getPermissionsForUser();
 
 		if (error) {
 			sendResponse(error.message, error.status);
@@ -827,8 +801,7 @@ class ClockifyIntegrationBase {
 			return;
 		}
 
-		const { data, error, status } =
-			await UserWorkspaceStorage.getSetWorkspaceSettings();
+		const { data, error, status } = await UserWorkspaceStorage.getSetWorkspaceSettings();
 
 		if (error) {
 			sendResponse(error.message, error.status);
@@ -843,8 +816,7 @@ class ClockifyIntegrationBase {
 			return;
 		}
 
-		const { data, error, status } =
-			await UserWorkspaceStorage.getWorkspacesOfUser();
+		const { data, error, status } = await UserWorkspaceStorage.getWorkspacesOfUser();
 
 		if (error) {
 			sendResponse(error.message, error.status);
@@ -861,8 +833,7 @@ class ClockifyIntegrationBase {
 			return;
 		}
 
-		const { data, error, status } =
-			await UserWorkspaceStorage.getWasRegionalEverAllowed();
+		const { data, error, status } = await UserWorkspaceStorage.getWasRegionalEverAllowed();
 
 		if (error) {
 			sendResponse(error.message, error.status);
@@ -877,11 +848,7 @@ class ClockifyIntegrationBase {
 			return;
 		}
 
-		const { data, error, status } = await AuthService.signup(
-			email,
-			password,
-			timeZone
-		);
+		const { data, error, status } = await AuthService.signup(email, password, timeZone);
 
 		if (error) {
 			sendResponse(error.message, error.status);
@@ -924,10 +891,7 @@ class ClockifyIntegrationBase {
 		sendResponse({ data, status });
 	}
 
-	static async submitCustomField(
-		{ timeEntryId, customFieldId, value },
-		sendResponse
-	) {
+	static async submitCustomField({ timeEntryId, customFieldId, value }, sendResponse) {
 		if (await isNavigatorOffline()) {
 			sendResponse('Connection is offline', 0);
 			return;
@@ -965,10 +929,7 @@ class ClockifyIntegrationBase {
 			return;
 		}
 
-		const { data, error, status } = await TimeEntry.changeStart(
-			start,
-			timeEntryId
-		);
+		const { data, error, status } = await TimeEntry.changeStart(start, timeEntryId);
 		if (error) {
 			sendResponse(error.message, error.status);
 			return;
@@ -982,10 +943,7 @@ class ClockifyIntegrationBase {
 			return;
 		}
 
-		const { data, error, status } = await TimeEntry.editTimeInterval(
-			entryId,
-			timeInterval
-		);
+		const { data, error, status } = await TimeEntry.editTimeInterval(entryId, timeInterval);
 		if (error) {
 			sendResponse(error.message, error.status);
 			return;
@@ -1013,10 +971,7 @@ class ClockifyIntegrationBase {
 			return;
 		}
 
-		const { data, error, status } = await TimeEntry.setDescription(
-			entryId,
-			description
-		);
+		const { data, error, status } = await TimeEntry.setDescription(entryId, description);
 		if (error) {
 			sendResponse(error.message, error.status);
 			return;
@@ -1100,10 +1055,7 @@ class ClockifyIntegrationBase {
 			return;
 		}
 
-		const { data, error, status } = await TimeEntry.updateTimeEntryValues(
-			entryId,
-			body
-		);
+		const { data, error, status } = await TimeEntry.updateTimeEntryValues(entryId, body);
 		if (error) {
 			sendResponse(error.message, error.status);
 			return;
@@ -1182,14 +1134,36 @@ class ClockifyIntegrationBase {
 		}
 	}
 
+	static async sendAnalyticsEvents({ forceClearEvents }, sendResponse) {
+		if (await isNavigatorOffline()) {
+			return;
+		}
+		try {
+			await AnalyticsService.sendAnalyticsEvents({ forceClearEvents });
+			sendResponse({ error: null });
+		} catch (error) {
+			console.error('API call failed:', error);
+			sendResponse({ error });
+		}
+	}
+
+	static async clearAnalyticsEvents(sendResponse) {
+		try {
+			await AnalyticsService.clearAnalyticsEvents();
+			sendResponse({ error: null });
+		} catch (error) {
+			console.error(error);
+			sendResponse({ error });
+		}
+	}
+
 	static async getNotificationsForUser(sendResponse) {
 		if (await isNavigatorOffline()) {
 			sendResponse('Connection is offline', 0);
 			return;
 		}
 
-		const { data, error, status } =
-			await NotificationService.getNotificationsForUser();
+		const { data, error, status } = await NotificationService.getNotificationsForUser();
 
 		if (error) {
 			sendResponse({ error });
@@ -1236,10 +1210,9 @@ class ClockifyIntegrationBase {
 			return;
 		}
 
-		const { data, error, status } =
-			await NotificationService.readSingleNotificationForUser({
-				notificationId
-			});
+		const { data, error, status } = await NotificationService.readSingleNotificationForUser({
+			notificationId
+		});
 
 		if (error) {
 			sendResponse({ error });
@@ -1248,19 +1221,14 @@ class ClockifyIntegrationBase {
 		sendResponse({ data, status });
 	}
 
-	static async readSingleOrMultipleVerificationNotificationForUser(
-		options,
-		sendResponse
-	) {
+	static async readSingleOrMultipleVerificationNotificationForUser(options, sendResponse) {
 		if (await isNavigatorOffline()) {
 			sendResponse('Connection is offline', 0);
 			return;
 		}
 
 		const { data, error, status } =
-			await NotificationService.readSingleOrMultipleVerificationNotificationForUser(
-				options
-			);
+			await NotificationService.readSingleOrMultipleVerificationNotificationForUser(options);
 
 		if (error) {
 			sendResponse({ error });
@@ -1276,10 +1244,9 @@ class ClockifyIntegrationBase {
 			return;
 		}
 
-		const { data, error, status } =
-			await NotificationService.readSingleOrMultipleNewsForUser({
-				newsIds
-			});
+		const { data, error, status } = await NotificationService.readSingleOrMultipleNewsForUser({
+			newsIds
+		});
 
 		if (error) {
 			sendResponse({ error });
@@ -1294,10 +1261,9 @@ class ClockifyIntegrationBase {
 			return;
 		}
 
-		const { data, error, status } =
-			await NotificationService.readManyNotificationsForUser({
-				notificationIds
-			});
+		const { data, error, status } = await NotificationService.readManyNotificationsForUser({
+			notificationIds
+		});
 
 		if (error) {
 			sendResponse({ error });
@@ -1342,8 +1308,7 @@ class ClockifyIntegrationBase {
 			return;
 		}
 
-		const { data, error, status } =
-			await UserService.removeDeclinedUserFromWorkspace(options);
+		const { data, error, status } = await UserService.removeDeclinedUserFromWorkspace(options);
 
 		if (error) {
 			sendResponse({ error });
@@ -1358,9 +1323,7 @@ class ClockifyIntegrationBase {
 			return;
 		}
 
-		const { data, error, status } = await UserService.changeWorkspaceStatus(
-			options
-		);
+		const { data, error, status } = await UserService.changeWorkspaceStatus(options);
 
 		console.log('changeworkspace data:', data);
 
@@ -1377,9 +1340,7 @@ class ClockifyIntegrationBase {
 			return;
 		}
 
-		const { data, error, status } = await UserService.setDefaultUserWorkspace(
-			options
-		);
+		const { data, error, status } = await UserService.setDefaultUserWorkspace(options);
 
 		if (error) {
 			sendResponse({ error });
@@ -1415,7 +1376,7 @@ class ClockifyIntegration extends ClockifyIntegrationBase {
 
 			return true;
 		} else {
-			return new Promise((resolve) => {
+			return new Promise(resolve => {
 				if (request && request.options) {
 					super[functionName](request.options, resolve);
 				} else {

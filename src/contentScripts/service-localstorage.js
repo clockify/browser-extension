@@ -20,25 +20,34 @@ class LocalStorage {
 	async get(key) {
 		const promise = new Promise((resolve, reject) => {
 			try {
-				this.aBrowser.storage.local.get(key, (response) => {
-					if (key === null) {
+				this.aBrowser.storage.local.get(key, response => {
+					if (key === undefined) {
+						console.log(
+							'[Clockify] [Debugger] 1.3 key is undefined, response:',
+							typeof response
+						);
+
+						throw new Error('[Clockify] [Debugger] 1.3 key is undefined');
+					} else if (key === null) {
 						resolve(response || null);
 					} else if (typeof key === 'object' && key.length) {
-						const value = Object.values(response)[0];
+						const value = response ? Object.values(response)[0] : null;
 						resolve(value || null);
 					} else {
 						resolve(response?.[key] ?? null);
 					}
 				});
-			} catch (error) {}
+			} catch (error) {
+				console.error(error);
+			}
 		});
 		return promise;
 	}
 
 	async getItem(key, optionalReturnValue) {
 		const keys = Object.values(localStorageEnums)
-			.filter((el) => typeof el === 'string')
-			.map((el) => {
+			.filter(el => typeof el === 'string')
+			.map(el => {
 				return el + key;
 			});
 		keys.push(key);
@@ -49,10 +58,10 @@ class LocalStorage {
 	async set(key, value) {
 		const promise = new Promise((resolve, reject) => {
 			try {
-				this.aBrowser.storage.local.set({ [key]: value }, (res) =>
-					resolve(res)
-				);
-			} catch (error) {}
+				this.aBrowser.storage.local.set({ [key]: value }, res => resolve(res));
+			} catch (error) {
+				console.error(error);
+			}
 		});
 		return promise;
 	}
@@ -67,7 +76,7 @@ class LocalStorage {
 	async remove(key) {
 		const promise = new Promise((resolve, reject) => {
 			try {
-				this.aBrowser.storage.local.remove(key, (res) => resolve(res));
+				this.aBrowser.storage.local.remove(key, res => resolve(res));
 			} catch (error) {}
 		});
 		return promise;
@@ -75,8 +84,8 @@ class LocalStorage {
 
 	removeItem(itemKey) {
 		const keysToDelete = Object.values(localStorageEnums)
-			.filter((el) => typeof el === 'string')
-			.map((el) => {
+			.filter(el => typeof el === 'string')
+			.map(el => {
 				return el + itemKey;
 			});
 		keysToDelete.push(itemKey);
@@ -89,7 +98,7 @@ class LocalStorage {
 	async clear() {
 		const promise = new Promise((resolve, reject) => {
 			try {
-				this.aBrowser.storage.local.clear((res) => resolve(res));
+				this.aBrowser.storage.local.clear(res => resolve(res));
 			} catch (error) {}
 		});
 		return promise;
@@ -98,11 +107,9 @@ class LocalStorage {
 	async clearByPrefixes(prefixesToDelete, inverse = false) {
 		const allKeys = Object.keys(await this.get(null));
 
-		const keysToDelete = allKeys.filter((key) => {
+		const keysToDelete = allKeys.filter(key => {
 			const res =
-				prefixesToDelete.filter((prefixToDelete) =>
-					key.includes(prefixToDelete)
-				).length > 0;
+				prefixesToDelete.filter(prefixToDelete => key.includes(prefixToDelete)).length > 0;
 			return inverse ? !res : res;
 		});
 

@@ -1,4 +1,4 @@
-// Item modal view
+// Data item modal view
 clockifyButton.render(
 	'[aria-label="Detail view dialog"] .z2:not(.clockify)',
 	{ observe: true },
@@ -10,6 +10,28 @@ clockifyButton.render(
 
 		const container = createTag('div', 'clockify-widget-container');
 
+		const link = clockifyButton.createButton({ description });
+		const input = clockifyButton.createInput({ description });
+
+		container.style.left = '200px';
+
+		container.append(link);
+		container.append(input);
+
+		modalHeader.append(container);
+	}
+);
+
+// Interface Item modal view
+clockifyButton.render(
+	'.topSidesheet:not(.clockify)',
+	{ observe: true, onNavigationRerender: true },
+	modal => {
+		const modalHeader = $('.css-1jsohtw', modal);
+
+		const description = () =>
+			text('[data-tutorial-selector-id="pageCellLabelPair"] textarea', modal);
+		const container = createTag('div', 'clockify-widget-container');
 		const link = clockifyButton.createButton({ description });
 		const input = clockifyButton.createInput({ description });
 

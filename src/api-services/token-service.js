@@ -1,6 +1,6 @@
 class TokenService extends ClockifyService {
 	static async urlTokenRefresh() {
-		const apiEndpoint = await this.apiEndpoint;
+		const apiEndpoint = await this.apiWriteEndpoint();
 		return `${apiEndpoint}/auth/token/refresh`;
 	}
 
@@ -20,7 +20,7 @@ class TokenService extends ClockifyService {
 				token: data.token,
 				userId: data.userId,
 				refreshToken: data.refreshToken,
-				userEmail: data.userEmail,
+				userEmail: data.userEmail
 			});
 
 			await localStorage.setItem('token', data.token);
@@ -37,7 +37,7 @@ class TokenService extends ClockifyService {
 	static async refreshToken(token) {
 		const endPoint = await this.urlTokenRefresh();
 		const body = {
-			refreshToken: token,
+			refreshToken: token
 		};
 		return await this.apiCall(endPoint, 'POST', body, /*withNoToken*/ true);
 	}

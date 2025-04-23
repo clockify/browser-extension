@@ -83,56 +83,63 @@ export function CustomFieldsContainer({
 		const timeEntryId = timeEntry.id;
 
 		const allCustomFieldsForProject = await getAllCustomFieldsForProject(project);
-		if (!allCustomFieldsForProject || allCustomFieldsForProject.length === 0) return;
-
 		const customFieldsToPutIntoState = [];
-		allCustomFieldsForProject.forEach(customField => {
-			let { value } = customField;
-			const { projectDefaultValues } = customField;
-			if (projectDefaultValues && projectDefaultValues.length > 0) {
-				const defaultValueForTheProject = projectDefaultValues.find(
-					(projectDefaultValue) => projectDefaultValue.projectId === projectId
-				);
-				if (defaultValueForTheProject) {
-					value = defaultValueForTheProject.value;
+
+		if (allCustomFieldsForProject.length > 0) {
+			allCustomFieldsForProject.forEach(customField => {
+				let { value } = customField;
+				const { projectDefaultValues } = customField;
+
+				if (projectDefaultValues && projectDefaultValues.length > 0) {
+					const defaultValueForTheProject = projectDefaultValues.find(
+						(projectDefaultValue) => projectDefaultValue.projectId === projectId
+					);
+
+					if (defaultValueForTheProject) {
+						value = defaultValueForTheProject.value;
+					}
 				}
-			}
-			if (!value?.length && customField.workspaceDefaultValue) {
-				value = customField.workspaceDefaultValue;
-			}
-			customFieldsToPutIntoState.push({
-				customFieldId: customField.id,
-				wsCustomField: customField,
-				timeEntryId,
-				value,
-				index: customFieldsToPutIntoState.length,
-				isUserOwnerOrAdmin,
-				manualMode,
-				isVisible: true,
-				required: customField.required,
-				randomizedId: Math.floor(Math.random() * 9000000) + 10000000
-			});
-		});
-		if (manualMode) {
-			const manualCustomFields =
-				customFieldsToPutIntoState && customFieldsToPutIntoState.length > 0
-					? customFieldsToPutIntoState.map(({ type, customFieldId, value }) => ({
-						customFieldId,
-						sourceType: 'TIMEENTRY',
-						value: type === 'NUMBER' ? parseFloat(value) : value
-					}))
-					: [];
-			updateCustomFields(manualCustomFields);
-		}
-		if (initialRender) {
-			customFieldsToPutIntoState.forEach(fieldToPut => {
-				const matchingField = customFieldValues.find(field => field.customFieldId === fieldToPut.customFieldId);
-				if (matchingField && matchingField.value !== null && matchingField.value !== undefined) {
-					fieldToPut.value = matchingField.value;
+
+				if (!value?.length && customField.workspaceDefaultValue) {
+					value = customField.workspaceDefaultValue;
 				}
+
+				customFieldsToPutIntoState.push({
+					customFieldId: customField.id,
+					wsCustomField: customField,
+					timeEntryId,
+					value,
+					index: customFieldsToPutIntoState.length,
+					isUserOwnerOrAdmin,
+					manualMode,
+					isVisible: true,
+					required: customField.required,
+					randomizedId: Math.floor(Math.random() * 9000000) + 10000000
+				});
 			});
 
+			if (manualMode) {
+				const manualCustomFields =
+					customFieldsToPutIntoState && customFieldsToPutIntoState.length > 0
+						? customFieldsToPutIntoState.map(({ type, customFieldId, value }) => ({
+							customFieldId,
+							sourceType: 'TIMEENTRY',
+							value: type === 'NUMBER' ? parseFloat(value) : value
+						}))
+						: [];
+				updateCustomFields(manualCustomFields);
+			}
+
+			if (initialRender) {
+				customFieldsToPutIntoState.forEach(fieldToPut => {
+					const matchingField = customFieldValues.find(field => field.customFieldId === fieldToPut.customFieldId);
+					if (matchingField && matchingField.value !== null && matchingField.value !== undefined) {
+						fieldToPut.value = matchingField.value;
+					}
+				});
+			}
 		}
+
 		setCustomFields(customFieldsToPutIntoState);
 		haveFieldsRenderedInitially.current = true;
 	};

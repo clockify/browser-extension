@@ -2,32 +2,26 @@
 clockifyButton.render(
 	'[data-action-hint="task-root"]:not(.clockify)',
 	{ observe: true },
-	(todoistTaskContainer) => {
-		const todoistTaskName = text('.task_content', todoistTaskContainer);
-		const todoistTaskDescription = text(
-			'.task_description',
-			todoistTaskContainer
-		);
-		const todoistProjectWithSectionName =
-			text(
-				'[data-testid="task-details-modal"] button[aria-label="Select a project"] span'
-			) ||
+	async todoistTaskContainer => {
+		const todoistTaskName = () => text('.task_content', todoistTaskContainer);
+		const todoistTaskDescription = () => text('.task_description', todoistTaskContainer);
+		const todoistProjectWithSectionName = () =>
+			text('.vYXIACn', todoistTaskContainer) ||
+			text('[data-testid="task-details-modal"] button[aria-label="Select a project"] span') ||
 			text('.task_list_item__project', todoistTaskContainer) ||
 			text('header h1 .simple_content') ||
+			text('header h1 .simple_content') ||
 			text('header h1');
-
-		const description = todoistTaskDescription ?? todoistTaskName;
-		const projectName = withoutSection(todoistProjectWithSectionName);
+		const description = () => todoistTaskDescription() || todoistTaskName();
+		const projectName = withoutSection(todoistProjectWithSectionName());
 		const taskName = todoistTaskName;
-		const tagNames = () =>
-			textList('.task_list_item__info_tags__label', todoistTaskContainer);
+		const tagNames = () => textList('.BwOc7_n', todoistTaskContainer);
 
 		const entry = { description, projectName, taskName, tagNames, small: true };
 
 		const link = clockifyButton.createButton(entry);
 
-		link.style.paddingRight = '10px';
-		link.style.marginTop = '12px';
+		link.style.padding = '12px 10px 10px 10px';
 		link.style.height = 'fit-content';
 
 		todoistTaskContainer.prepend(link);
@@ -38,11 +32,13 @@ clockifyButton.render(
 clockifyButton.render(
 	'[data-testid="task-card"]:not(.clockify)',
 	{ observe: true },
-	(todoistTaskCard) => {
+	todoistTaskCard => {
 		const todoistTaskName = text('.task_content', todoistTaskCard);
 		const todoistTaskDescription = text('.task_description', todoistTaskCard);
 		const todoistProjectWithSectionName =
-			text('.task_list_item__project', todoistTaskCard) || text('header h1');
+			text('.E7WJVdp', todoistTaskCard) ||
+			text('.task_list_item__project', todoistTaskCard) ||
+			text('header h1');
 
 		const description = todoistTaskDescription ?? todoistTaskName;
 		const projectName = withoutSection(todoistProjectWithSectionName);
@@ -66,18 +62,20 @@ clockifyButton.render(
 clockifyButton.render(
 	'[data-testid="task-details-modal"]:not(.clockify)',
 	{ observe: true },
-	(todoistTaskModal) => {
+	todoistTaskModal => {
 		const todoistTaskName = () =>
 			text('.task-overview-content .task_content', todoistTaskModal);
 		const todoistTaskDescription = () =>
 			text('.task-overview-description .task_content', todoistTaskModal);
 		const todoistProjectWithSectionName = () =>
-			text('button[aria-label="Select a project"] span', todoistTaskModal);
+			text('div[data-testid="task-detail-default-header"] span', todoistTaskModal);
 
 		const description = () => todoistTaskDescription() ?? todoistTaskName();
 		const projectName = () => withoutSection(todoistProjectWithSectionName());
 		const taskName = () => todoistTaskName();
 		const tagNames = () => textList('[data-item-label-name]', todoistTaskModal);
+
+		console.log('desc', description());
 
 		const entry = { description, projectName, taskName, tagNames, small: true };
 
@@ -97,10 +95,7 @@ clockifyButton.render(
 		container.append(link);
 		container.append(input);
 
-		const todoistTaskModalSidebar = $(
-			'[data-testid="task-details-sidebar"]',
-			todoistTaskModal
-		);
+		const todoistTaskModalSidebar = $('[data-testid="task-details-sidebar"]', todoistTaskModal);
 
 		todoistTaskModalSidebar.style.justifyContent = 'start';
 
@@ -136,7 +131,7 @@ function getThemeName() {
 	const htmlElementClassList = Array.from(document.documentElement.classList);
 
 	const themeName = htmlElementClassList
-		.find((classListItem) => classListItem.startsWith('theme_'))
+		.find(classListItem => classListItem.startsWith('theme_'))
 		.replace('theme_', '');
 
 	return themeName;
@@ -153,11 +148,7 @@ function addDarkManualInputStyles() {
 		}
 	`;
 
-	const style = createTag(
-		'style',
-		'clockify-custom-style-dark',
-		darkThemeStyle
-	);
+	const style = createTag('style', 'clockify-custom-style-dark', darkThemeStyle);
 
 	document.head.append(style);
 }
@@ -217,22 +208,22 @@ async function bodyChanges() {
 	const taskContent = $('.task-overview-content', todoistModal);
 	const manualInput = $('.clockify-input', todoistModal);
 	const editablePopupFields = editableElements
-		.map((editableElement) => $$(editableElement, clockifyPopup))
-		.map((nodeList) => Array.from(nodeList))
+		.map(editableElement => $$(editableElement, clockifyPopup))
+		.map(nodeList => Array.from(nodeList))
 		.flat();
 
 	blockPropagation({
 		elements: [taskContent, manualInput],
-		eventName: 'focusout',
+		eventName: 'focusout'
 	});
 	blockPropagation({
 		elements: editablePopupFields,
-		eventName: 'focusin',
+		eventName: 'focusin'
 	});
 }
 
 function blockPropagation({ elements = [], eventName }) {
-	elements.forEach((element) =>
-		element.addEventListener(eventName, (event) => event.stopPropagation())
+	elements.forEach(element =>
+		element.addEventListener(eventName, event => event.stopPropagation())
 	);
 }

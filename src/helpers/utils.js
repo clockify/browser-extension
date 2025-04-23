@@ -6,9 +6,7 @@ const lodash = require('lodash');
 
 export const logout = (reason, data) => {
 	if (!document.getElementById('mount')) return;
-	window.reactRoot.render(
-		<Login logout={{ isTrue: true, reason: reason, data: data }} />
-	);
+	window.reactRoot.render(<Login logout={{ isTrue: true, reason: reason, data: data }} />);
 };
 
 export const isLoggedIn = async () => {
@@ -35,27 +33,25 @@ export const debounce = ({ func, delay, isImmediate }) => {
 	};
 };
 
-export const getAllCustomFieldsForProject = async (project) => {
+export const getAllCustomFieldsForProject = async project => {
 	const { data } = await getWSCustomFields();
 
 	let allCustomFieldsForProject;
 
-	const wsCustomFieldsFromStorage = await localStorage.getItem(
-		'wsCustomFields'
-	);
+	const wsCustomFieldsFromStorage = await localStorage.getItem('wsCustomFields');
 	const wsCustomFields = data
 		? data
 		: wsCustomFieldsFromStorage
 		? JSON.parse(wsCustomFieldsFromStorage)
 		: [];
 	const visibleCustomFieldsForAllProjects = wsCustomFields.filter(
-		(customField) => customField.status === 'VISIBLE'
+		customField => customField.status === 'VISIBLE'
 	);
 
 	if (project) {
 		const visibleCustomFieldsForThisProject = [];
-		wsCustomFields.forEach((customField) => {
-			customField.projectDefaultValues.forEach((projectDefaultValue) => {
+		wsCustomFields.forEach(customField => {
+			customField.projectDefaultValues.forEach(projectDefaultValue => {
 				if (
 					projectDefaultValue.projectId === project.id &&
 					projectDefaultValue.status === 'VISIBLE'
@@ -79,8 +75,8 @@ export const getAllCustomFieldsForProject = async (project) => {
 		}
 		const invisibleCustomFieldsForThisProject = [];
 		if (project) {
-			wsCustomFields.forEach((customField) => {
-				customField.projectDefaultValues.forEach((projectDefaultValue) => {
+			wsCustomFields.forEach(customField => {
+				customField.projectDefaultValues.forEach(projectDefaultValue => {
 					if (
 						projectDefaultValue.projectId === project.id &&
 						projectDefaultValue.status === 'INVISIBLE'
@@ -91,9 +87,9 @@ export const getAllCustomFieldsForProject = async (project) => {
 			});
 		}
 		allCustomFieldsForProject = visibleCustomFields.filter(
-			(fieldVisible) =>
+			fieldVisible =>
 				!invisibleCustomFieldsForThisProject.some(
-					(fieldInvisible) => fieldInvisible.id === fieldVisible.id
+					fieldInvisible => fieldInvisible.id === fieldVisible.id
 				)
 		);
 	} else {
@@ -107,12 +103,12 @@ export const getRequiredMissingCustomFields = async (project, timeEntry) => {
 	const allCustomFieldsForProject = await getAllCustomFieldsForProject(project);
 
 	const requiredCustomFieldsForTimeEntry = allCustomFieldsForProject.filter(
-		(customField) => customField.required === true
+		customField => customField.required === true
 	);
 	if (requiredCustomFieldsForTimeEntry) {
 		for (let requiredField of requiredCustomFieldsForTimeEntry) {
 			let matchingField = timeEntry.customFieldValues.find(
-				(field) => field.customFieldId === requiredField.id
+				field => field.customFieldId === requiredField.id
 			);
 			if (
 				matchingField &&
@@ -133,48 +129,29 @@ export const getRequiredMissingCustomFields = async (project, timeEntry) => {
 	return requiredAndMissingCustomFields;
 };
 
-export const getRequiredAndMissingCustomFieldNames = async (
-	project,
-	timeEntry
-) => {
-	const requiredAndMissingCustomFields = await getRequiredMissingCustomFields(
-		project,
-		timeEntry
-	);
+export const getRequiredAndMissingCustomFieldNames = async (project, timeEntry) => {
+	const requiredAndMissingCustomFields = await getRequiredMissingCustomFields(project, timeEntry);
 	const requiredAndMissingCustomFieldNames = [];
-	requiredAndMissingCustomFields.forEach((customField) => {
+	requiredAndMissingCustomFields.forEach(customField => {
 		requiredAndMissingCustomFieldNames.push(customField.name);
 	});
 	return requiredAndMissingCustomFieldNames;
 };
 
-export const getRequiredAndMissingFieldNames = (
-	timeEntry,
-	workspaceSettings
-) => {
+export const getRequiredAndMissingFieldNames = (timeEntry, workspaceSettings) => {
 	const requiredAndMissingFieldNames = [];
 
-	const {
-		forceDescription,
-		forceProjects,
-		forceTags,
-		forceTasks,
-		projectLabel,
-		taskLabel,
-	} = workspaceSettings;
+	const { forceDescription, forceProjects, forceTags, forceTasks, projectLabel, taskLabel } =
+		workspaceSettings;
 
 	if (forceProjects && !timeEntry.project) {
 		requiredAndMissingFieldNames.push(
-			projectLabel === 'project'
-				? locales.PROJECT.toLowerCase()
-				: projectLabel.toLowerCase()
+			projectLabel === 'project' ? locales.PROJECT.toLowerCase() : projectLabel.toLowerCase()
 		);
 	}
 	if (forceTasks && !timeEntry.task) {
 		requiredAndMissingFieldNames.push(
-			taskLabel === 'task'
-				? locales.TASK.toLowerCase()
-				: taskLabel.toLowerCase()
+			taskLabel === 'task' ? locales.TASK.toLowerCase() : taskLabel.toLowerCase()
 		);
 	}
 	if (forceTags && !timeEntry.tags.length) {
@@ -197,3 +174,5 @@ export const areArraysSimilar = (array1, array2) => {
 
 	return lodash.isEqual(sortedArray1, sortedArray2);
 };
+
+export const LINK_REGEX = new RegExp(/^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/[^\s]*)?$/);

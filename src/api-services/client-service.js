@@ -1,5 +1,5 @@
 class ClientService extends ClockifyService {
-	static async getClientsWithFilter(page, pageSize, filter, archived=false) {
+	static async getClientsWithFilter(page, pageSize, filter, archived = false) {
 		const baseUrl = await this.apiEndpoint;
 		const activeWorkspaceId = await this.workspaceId;
 		const clientsUrl = `${baseUrl}/v1/workspaces/${activeWorkspaceId}/clients?page=${page}&pageSize=${pageSize}&name=${filter}&archived=${archived}`;
@@ -8,7 +8,7 @@ class ClientService extends ClockifyService {
 	}
 
 	static async createClient(client) {
-		const baseUrl = await this.apiEndpoint;
+		const baseUrl = await this.apiWriteEndpoint();
 		const activeWorkspaceId = await this.workspaceId;
 		const clientsUrl = `${baseUrl}/v1/workspaces/${activeWorkspaceId}/clients`;
 

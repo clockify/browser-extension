@@ -10,7 +10,7 @@ class DefaultProjectComponent extends React.Component {
 
 		this.state = {
 			defaultProjectEnabled: false,
-			selectedProject: null,
+			selectedProject: null
 		};
 		this.setAsyncStateItems = this.setAsyncStateItems.bind(this);
 		this.setDefaultProject = this.setDefaultProject.bind(this);
@@ -21,7 +21,7 @@ class DefaultProjectComponent extends React.Component {
 		const { defaultProject } = await DefaultProject.getStorage();
 		this.setState({
 			defaultProjectEnabled: defaultProject ? defaultProject.enabled : false,
-			selectedProject: defaultProject ? defaultProject.project : null,
+			selectedProject: defaultProject ? defaultProject.project : null
 		});
 	}
 
@@ -41,15 +41,17 @@ class DefaultProjectComponent extends React.Component {
 
 	async toggleDefaultProjectEnabled() {
 		let { storage, defaultProject } = await DefaultProject.getStorage();
+
 		if (!defaultProject) {
 			defaultProject = storage.setInitialDefaultProject();
 		} else {
 			storage.toggleEnabledOfDefaultProject();
 		}
+
 		this.setState(
 			{
 				defaultProjectEnabled: !this.state.defaultProjectEnabled,
-				selectedProject: defaultProject ? defaultProject.project : null,
+				selectedProject: defaultProject ? defaultProject.project : null
 			},
 			() => {
 				// this.projectList.closeOpened();
@@ -62,8 +64,8 @@ class DefaultProjectComponent extends React.Component {
 		const { storage } = await DefaultProject.getStorage();
 		storage.setDefaultProject(project);
 
-		this.setState({
-			selectedProject: project,
+		this.setState({ selectedProject: {} }, () => {
+			this.setState({ selectedProject: project });
 		});
 
 		this.props.changeSaved();
@@ -71,7 +73,7 @@ class DefaultProjectComponent extends React.Component {
 
 	projectListOpened() {
 		this.setState({
-			defaultProjectEnabled: true,
+			defaultProjectEnabled: true
 		});
 	}
 
@@ -112,13 +114,13 @@ class DefaultProjectComponent extends React.Component {
 					style={
 						this.state.defaultProjectEnabled
 							? {
-									margin: '10px 20px',
-									maxHeight: '360px',
-							  }
+								margin: '10px 20px',
+								maxHeight: '360px'
+							}
 							: {
-									margin: '10px 20px',
-									maxHeight: '0',
-							  }
+								margin: '10px 20px',
+								maxHeight: '0'
+							}
 					}
 				>
 					<DefaultProjectList
@@ -126,6 +128,7 @@ class DefaultProjectComponent extends React.Component {
 							this.projectList = instance;
 						}}
 						selectedProject={selectedProject}
+						isEnabled={defaultProjectEnabled}
 						selectProject={this.setDefaultProject}
 						workspaceSettings={this.props.workspaceSettings}
 						projectListOpened={this.projectListOpened}
