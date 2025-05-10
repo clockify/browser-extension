@@ -109,6 +109,7 @@ clockifyButton.render(
     }
 );
 
+// Custom styles
 applyStyles(`
 	.clockify-widget-container {
         display: flex;
