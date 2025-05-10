@@ -27,7 +27,7 @@ class NotificationService extends ClockifyService {
 	}
 
 	static async readSingleNotificationForUser({ notificationId }) {
-		const urlBase = await this.apiEndpoint;
+		const urlBase = await this.apiWriteEndpoint();
 		const userId = await this.userId;
 
 		const url = `${urlBase}/users/${userId}/markAsRead`;
@@ -38,9 +38,9 @@ class NotificationService extends ClockifyService {
 	}
 
 	static async readSingleOrMultipleVerificationNotificationForUser({
-		idOrIds,
-	}) {
-		const urlBase = await this.apiEndpoint;
+																																		 idOrIds
+																																	 }) {
+		const urlBase = await this.apiWriteEndpoint();
 		const userId = await this.userId;
 
 		const url = `${urlBase}/users/${userId}/verification-notifications/read`;
@@ -51,7 +51,7 @@ class NotificationService extends ClockifyService {
 	}
 
 	static async readSingleOrMultipleNewsForUser({ newsIds }) {
-		const urlBase = await this.apiEndpoint;
+		const urlBase = await this.apiWriteEndpoint();
 		const userId = await this.userId;
 
 		const url = `${urlBase}/users/${userId}/news`;
@@ -62,7 +62,7 @@ class NotificationService extends ClockifyService {
 	}
 
 	static async readManyNotificationsForUser({ notificationIds }) {
-		const urlBase = await this.apiEndpoint;
+		const urlBase = await this.apiWriteEndpoint();
 		const userId = await this.userId;
 
 		const url = `${urlBase}/users/${userId}/markAsRead`;

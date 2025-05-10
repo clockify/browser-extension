@@ -7,7 +7,7 @@
 	"background": {
 		"service_worker": "sw.js"
 	},
-	"version": "2.11.9",
+	"version": "2.11.16",
 	"action": {
 		"default_popup": "index.html",
 		"default_title": "Clockify"
@@ -21,7 +21,7 @@
 				"vendors.bundle.js",
 				"main.bundle.js"
 			],
-			"css": ["styles/main-integration.css"]
+			"css": ["styles/main-integration.css", "styles/react-datepicker.css"]
 		}
 	],
 	"options_page": "settings.html",

@@ -1,5 +1,5 @@
 clockifyButton.render(
-	'.offcanvas__sticky-header .offcanvas-header:not(.clockify)',
+	'.offcanvas__header.offcanvas-header:not(.clockify)',
 	{ observe: true, onNavigationRerender: true },
 	async elem => {
 		await timeout({ milliseconds: 500 });
@@ -22,7 +22,7 @@ clockifyButton.render(
 		elem.after(container);
 
 		addCustomCSS();
-	}
+	},
 );
 
 function getProjectTask() {

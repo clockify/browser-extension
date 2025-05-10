@@ -1,169 +1,183 @@
 @use 'variables';
 
 .time-entry {
-	height: 60px;
-	background: white;
-	border-bottom: 1px solid variables.$border;
-	display: flex;
-	align-items: center;
-	cursor: pointer;
-	font-size: 14px;
-	color: variables.$dark_text;
-	position: relative;
-	z-index: 1;
-	transition: all 0.2s ease;
-	&--collapsed {
-		background: #f6fcff;
-	}
-	&-group-number {
-		position: relative;
-		padding: 2px 6px;
-		margin-left: 8px;
-		color: #02587f;
-		background: #e1f5fe;
-		&:hover {
-			background: #b3e5fc;
-		}
-		& + .time-entry-description {
-			max-width: 29%;
-		}
-	}
+  height: 60px;
+  background: white;
+  border-bottom: 1px solid variables.$border;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-size: 14px;
+  color: variables.$dark_text;
+  position: relative;
+  z-index: 1;
+  transition: all 0.2s ease;
 
-	&-description {
-		display: inline-block;
-		position: relative;
-		max-width: 35%;
-		margin-left: 8px;
-	}
-	&__project-wrapper {
-		display: flex;
-		align-items: center;
-		max-width: 100%;
-	}
-	&__project-name {
-		margin-left: 3px;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-	}
-	&__task-name,
-	&__client-name {
-		width: 90%;
-		margin-left: 5px;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-		color: variables.$lighter_text;
-	}
-	&__right-side {
-		display: flex;
-		align-items: center;
-		position: relative;
-		margin-left: auto;
-		&__icons {
-			display: flex;
-			margin-right: 5px;
-			max-width: 100px;
-			align-items: center;
-			gap: 5px;
+  &--collapsed {
+    background: #f6fcff;
+  }
 
-			& img {
-				height: 14px;
-			}
-		}
+  &-group-number {
+    position: relative;
+    padding: 2px 6px;
+    margin-left: 8px;
+    color: #02587f;
+    background: #e1f5fe;
 
-		&__lock_and_play {
-			display: flex;
-			align-items: center;
-		}
+    &:hover {
+      background: #b3e5fc;
+    }
 
-		&__duration_and_play {
-			display: flex;
-			margin-left: 5px;
-			align-items: center;
-		}
-	}
-	&:hover,
-	&--focused {
-		box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-		z-index: 2;
-	}
+    & + .time-entry-description {
+      max-width: 45%;
+    }
+  }
+
+  &-description {
+    display: inline-block;
+    position: relative;
+    max-width: 55%;
+    margin-left: 8px;
+  }
+
+  &__project-wrapper {
+    display: flex;
+    align-items: center;
+    max-width: 100%;
+  }
+
+  &__project-name {
+    margin-left: 3px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__task-name,
+  &__client-name {
+    width: 90%;
+    margin-left: 5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: variables.$lighter_text;
+  }
+
+  &__right-side {
+    display: flex;
+    align-items: center;
+    position: relative;
+    margin-left: auto;
+
+    &__icons {
+      display: flex;
+      margin-right: 5px;
+      max-width: 100px;
+      align-items: center;
+      gap: 5px;
+
+      & img {
+        height: 14px;
+      }
+    }
+
+    &__lock_and_play {
+      display: flex;
+      align-items: center;
+    }
+
+    &__duration_and_play {
+      display: flex;
+      margin-left: 5px;
+      align-items: center;
+    }
+  }
+
+  &:hover,
+  &--focused {
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    z-index: 2;
+  }
 }
 
 .time-entry-locked {
-	height: 60px;
-	background: variables.$background;
-	border-bottom: 1px solid variables.$border;
-	cursor: not-allowed;
-	font-size: 14px;
-	color: variables.$dark_text;
+  height: 60px;
+  background: variables.$background;
+  border-bottom: 1px solid variables.$border;
+  cursor: not-allowed;
+  font-size: 14px;
+  color: variables.$dark_text;
 
-	.time-entry-menu {
-		cursor: not-allowed;
-		&__icon {
-			cursor: not-allowed;
-		}
-	}
+  .time-entry-menu {
+    cursor: not-allowed;
+
+    &__icon {
+      cursor: not-allowed;
+    }
+  }
 }
 
 .time-entry-arrow {
-	cursor: pointer;
-	height: 16px;
-	margin-left: 5px;
-	content: url('../assets/images/play-normal.png');
-	&:hover {
-		content: url('../assets/images/play-hover.png');
-	}
+  cursor: pointer;
+  height: 16px;
+  margin-left: 5px;
+  content: url('../assets/images/play-normal.png');
+
+  &:hover {
+    content: url('../assets/images/play-hover.png');
+  }
 }
 
 .time-entry-menu {
-	&__icon {
-		cursor: pointer;
-		position: relative;
-		padding: 10px;
-	}
+  &__icon {
+    cursor: pointer;
+    position: relative;
+    padding: 10px;
+  }
 
-	&__dropdown {
-		position: absolute;
-		width: 140px;
-		bottom: 0;
-		height: auto;
-		min-height: 100px;
-		top: 5px;
-		right: 12px;
+  &__dropdown {
+    position: absolute;
+    width: 140px;
+    bottom: 0;
+    height: auto;
+    min-height: 100px;
+    top: 5px;
+    right: 12px;
 
-		.dropdown-menu {
-			width: 100%;
-			top: 0;
-			right: 0;
-		}
-	}
+    .dropdown-menu {
+      width: 100%;
+      top: 0;
+      right: 0;
+    }
+  }
 }
 
 .time-entry-duration {
-	position: relative;
-	top: 22px;
-	margin-left: 5px;
+  position: relative;
+  top: 22px;
+  margin-left: 5px;
 }
 
 .time-entry-project {
-	display: flex;
-	margin-top: 2px;
-	align-items: center;
-	font-size: 13px;
-	width: 100%;
-	line-height: 16px;
+  display: flex;
+  margin-top: 2px;
+  align-items: center;
+  font-size: 13px;
+  width: 100%;
+  line-height: 16px;
 }
 
 .description,
 .no-description {
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
+
 .description {
-	color: #000;
+  color: #000;
 }
+
 .no-description {
-	color: variables.$lighter_text;
+  color: variables.$lighter_text;
 }

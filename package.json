@@ -1,6 +1,6 @@
 {
 	"name": "Clockify",
-	"version": "2.11.9",
+	"version": "2.11.16",
 	"description": "Clockify App 100% Free Time Tracker",
 	"main": "./main.js",
 	"productName": "Clockify",
@@ -57,6 +57,7 @@
 		"react-onclickoutside": "^6.12.1",
 		"react-popper": "^2.2.5",
 		"react-shadow": "^19.0.3",
+		"ua-parser-js": "^2.0.0",
 		"url-parse": "^1.4.3",
 		"zustand": "^4.4.7"
 	},

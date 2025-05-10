@@ -1229,6 +1229,9 @@
   "ENTRY_IN_PROGRESS_EXISTS": {
     "message": "Você tem entrada de tempo em andamento!"
   },
+  "WEBSITE_FORMAT_ERROR": {
+    "message": "O formato do site não é válido"
+  },
   "appName": {
     "message": "Rastreador de Tempo Clockify",
     "description": "O nome do aplicativo, exibido na loja da web."

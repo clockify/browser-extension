@@ -2,11 +2,11 @@ import { getLocalStorageEnums } from '../enums/local-storage.enum';
 
 export class ExtParameters {
 	setBaseUrl(url) {
-		localStorage.setItem(
-			'baseUrl',
-			url,
-			getLocalStorageEnums().PERMANENT_PREFIX
-		);
+		localStorage.setItem('baseUrl', url, getLocalStorageEnums().PERMANENT_PREFIX);
+	}
+
+	setBaseWriteUrl(url) {
+		localStorage.setItem('baseWriteUrl', url, getLocalStorageEnums().PERMANENT_PREFIX);
 	}
 
 	getBaseUrl() {
@@ -22,19 +22,11 @@ export class ExtParameters {
 	}
 
 	setSelfHosted(value) {
-		localStorage.setItem(
-			'selfHosted',
-			value,
-			getLocalStorageEnums().SELF_HOSTED_PREFIX
-		);
+		localStorage.setItem('selfHosted', value, getLocalStorageEnums().SELF_HOSTED_PREFIX);
 	}
 
 	setHomeUrl(value) {
-		localStorage.setItem(
-			'homeUrl',
-			value,
-			getLocalStorageEnums().PERMANENT_PREFIX
-		);
+		localStorage.setItem('homeUrl', value, getLocalStorageEnums().PERMANENT_PREFIX);
 	}
 
 	getHomeUrl() {
@@ -42,10 +34,6 @@ export class ExtParameters {
 	}
 
 	setSubDomainName(value) {
-		localStorage.setItem(
-			'subDomainName',
-			value,
-			getLocalStorageEnums().SUB_DOMAIN_PREFIX
-		);
+		localStorage.setItem('subDomainName', value, getLocalStorageEnums().SUB_DOMAIN_PREFIX);
 	}
 }

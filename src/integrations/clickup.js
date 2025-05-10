@@ -6,49 +6,11 @@ clockifyButton.render('.cu-task-row__main:not(.clockify)', { observe: true }, as
 
 	const taskNameSelector = `.cu-task-row-main__link-text-inner`;
 	const tagNamesSelector = `.cu-tags-select__name-container > span`;
-	const pageBreadcrumbsSelector = `cu-location-header-breadcrumbs cu-breadcrumb-item`;
-	const groupBreadcrumbsSelector = `.cu-list-group__header-breadcrumbs`;
+	const pageBreadcrumbsSelector = `cu-location-header-breadcrumbs cu-breadcrumb-item .item__text`;
 
-	const extract = taskRow => {
-		const isGroupedByStatus = (
-			text('[data-test="selected_groupBy"]') ??
-			text('[data-test="cu2-views-dropdown__groupBy"]')
-		).includes('Status');
-
-		if (!isGroupedByStatus) return { folderName: null, listName: null };
-
-		let folderName, listName;
-
-		const listGroup = taskRow.closest('.cu-list-group');
-
-		const pageBreadcrumbs = textList(pageBreadcrumbsSelector);
-		const groupBreadcrumbs = text(groupBreadcrumbsSelector, listGroup)?.split('/');
-
-		if (pageBreadcrumbs.length === 3) {
-			folderName = pageBreadcrumbs[1];
-			listName = pageBreadcrumbs[2];
-		} else if (pageBreadcrumbs.length === 2) {
-			const isListWithoutFolder = groupBreadcrumbs?.length ? false : true;
-			folderName = pageBreadcrumbs[1];
-			listName = isListWithoutFolder ? null : groupBreadcrumbs[0];
-		} else if (pageBreadcrumbs.length === 1) {
-			if (groupBreadcrumbs.length === 3) {
-				folderName = groupBreadcrumbs[1];
-				listName = groupBreadcrumbs[2];
-			} else if (groupBreadcrumbs.length === 2) {
-				folderName = groupBreadcrumbs[0];
-				listName = groupBreadcrumbs[1];
-			} else if (groupBreadcrumbs.length === 1) {
-				folderName = groupBreadcrumbs[0];
-				listName = null;
-			}
-		}
-
-		return { folderName, listName };
-	};
-
-	const folderName = extract(taskRow).folderName;
-	const listName = extract(taskRow).listName;
+	const pageBreadcrumbs = textList(pageBreadcrumbsSelector);
+	let projectName = pageBreadcrumbs.length === 3 ? pageBreadcrumbs[1] : pageBreadcrumbs[0];
+	const listName = pageBreadcrumbs[pageBreadcrumbs.length - 1];
 
 	const clickUpTaskName = () => text(taskNameSelector, taskRow);
 	const taskLink = $('.cu-task-row-main__link', taskRow).href;
@@ -56,11 +18,9 @@ clockifyButton.render('.cu-task-row__main:not(.clockify)', { observe: true }, as
 	const taskId = taskLink.split('/').pop();
 
 	const description = () => `${clickUpTaskName()} | #${taskId}`;
-	const projectName = () => folderName || listName;
-	const taskName = () => listName || null;
-	const tagNames = () => textList(tagNamesSelector, taskRow);
 
-	const entry = { description, projectName, taskName, tagNames, small: true };
+	const tagNames = () => textList(tagNamesSelector, taskRow);
+	const entry = { description, projectName, taskName: listName, tagNames, small: true };
 
 	const link = clockifyButton.createButton(entry);
 
@@ -83,19 +43,17 @@ clockifyButton.render(
 		const card = cardHeader.closest('.cu-task-view__container');
 
 		const headerElements = $$('.cu-task-view-breadcrumbs__text');
-		const headerChildren = headerElements.length;
-		const hasThreeChildren = headerChildren === 3;
-		const folderName = hasThreeChildren ? headerElements[1].textContent : null;
-		const listName = hasThreeChildren
-			? headerElements[2].textContent
-			: headerElements[1].textContent;
+		const projectName =
+			headerElements.length === 3
+				? headerElements[1].textContent
+				: headerElements[0].textContent;
+
+		const listName = headerElements[headerElements.length - 1].textContent;
 
 		const description = () => document.title;
-		const projectName = () => folderName ?? listName;
-		const taskName = () => (folderName ? listName : '');
 		const tagNames = () => textList('.cu-tags-badge__inner span', card);
 
-		const entry = { description, projectName, taskName, tagNames };
+		const entry = { description, projectName, taskName: listName, tagNames };
 
 		const link = clockifyButton.createButton(entry);
 		const input = clockifyButton.createInput(entry);
@@ -254,13 +212,13 @@ function getDashboardFolderAndListName(task) {
 		'.cu-list-group__category-name.ng-star-inserted',
 		listGroup
 	);
-	const hasDashboardFolderName = dashboardFolderName.length > 1 ? true : false;
+	const hasDashboardFolderName = dashboardFolderName.length > 1;
 
 	const listName = text('.cu-list-group__name', listGroup);
 
 	return {
 		dashboardFolderName: hasDashboardFolderName ? dashboardFolderName[0] : null,
-		listName,
+		listName
 	};
 }
 
@@ -280,14 +238,14 @@ function getProjectAndTask(task) {
 	if (asideBardOpenedFolderName)
 		return {
 			projectName: asideBardOpenedFolderName,
-			taskName: listName,
+			taskName: listName
 		};
 
 	// Case 3: Folder name is shown up in Dashboard table by list groups
 	if (dashboardFolderName)
 		return {
 			projectName: dashboardFolderName,
-			taskName: listName,
+			taskName: listName
 		};
 
 	// Case 4: List does not exist inside folder (integration should pick up only list name as a project)

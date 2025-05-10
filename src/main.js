@@ -9,7 +9,9 @@ import ErrorBoundary from './components/error-boundary';
 import ClockifyButton from './components/integrationPopup/ClockifyButton';
 import { offlineStorage } from './helpers/offlineStorage';
 import { isChrome } from './helpers/browser-helper';
+import { UAParser } from 'ua-parser-js';
 
+parseUseragent();
 offlineStorage.load();
 
 let HTMLButtonsWithClickListener = [];
@@ -33,7 +35,7 @@ function getClockifyButtonHTML(props) {
 	const containerStyles = {
 		display: 'flex',
 		alignItems: 'center',
-		cursor: 'pointer',
+		cursor: 'pointer'
 	};
 	Object.assign(container.style, containerStyles);
 
@@ -47,7 +49,7 @@ function getClockifyButtonHTML(props) {
 	const textStyles = {
 		marginLeft: '5px',
 		float: 'none',
-		position: 'relative',
+		position: 'relative'
 	};
 
 	if (active) {
@@ -75,7 +77,7 @@ function Mac() {
 		window.screenLeft > window.screen.width ||
 		window.screenTop > window.screen.height
 	) {
-		chrome.runtime.getPlatformInfo(function (info) {
+		chrome.runtime.getPlatformInfo(function(info) {
 			if (info.os === 'mac') {
 				const fontFaceSheet = new CSSStyleSheet();
 				fontFaceSheet.insertRule(`
@@ -222,9 +224,9 @@ if (
 								{...(props.popupProps?.manualMode || props.popupProps?.copyAsEntry
 									? props.popupProps
 									: {
-											inProgressDescription:
-												props.popupProps.inProgressDescription,
-									  })}
+										inProgressDescription:
+										props.popupProps.inProgressDescription
+									})}
 								updateButtonProps={(btnProps, popupProps) =>
 									window.updateButtonProperties(
 										btnProps
@@ -242,7 +244,7 @@ if (
 				function createReactRoot() {
 					removeReactRoot();
 					integrationRoots[buttonId] = createRoot(entryPoint, {
-						identifierPrefix: buttonId,
+						identifierPrefix: buttonId
 					});
 				}
 
@@ -275,12 +277,6 @@ if (
 					}
 
 					entryPoint.addEventListener('click', clickHandler, false);
-
-					aBrowser.runtime.onMessage.addListener(request => {
-						if (request.eventName === 'stopTimerWithShortcut') {
-							clickHandler();
-						}
-					});
 					HTMLButtonsWithClickListener.push(entryPoint);
 					removeStaleElements(HTMLButtonsWithClickListener);
 				}
@@ -351,7 +347,7 @@ if (
 	window.updateButtonProperties = ((
 		props = {
 			popupProps: {},
-			btnProps: [],
+			btnProps: []
 		}
 	) => {
 		return (newBtnProps, newPopupProps) => {
@@ -372,7 +368,7 @@ if (
 				}
 				props.btnProps[newBtnProps.buttonId] = {
 					...props.btnProps[newBtnProps.buttonId],
-					...newBtnProps,
+					...newBtnProps
 				};
 			}
 
@@ -388,4 +384,19 @@ if (
 			renderClockifyButton(props, newBtnProps?.buttonId);
 		};
 	})();
+}
+
+async function parseUseragent() {
+	const isUseragentAlredyParsed = await localStorage.getItem('useragentParsed');
+
+	if (isUseragentAlredyParsed) return;
+
+	const { os, browser } = UAParser(navigator.useragent);
+
+	localStorage.setItem('useragentParsed', 'true');
+
+	localStorage.setItem('osName', os.name);
+	localStorage.setItem('osVersion', os.version);
+	localStorage.setItem('browserName', browser.name);
+	localStorage.setItem('browserVersion', browser.version);
 }

@@ -1,20 +1,21 @@
 class TaskService extends ClockifyService {
-	constructor() {}
+	constructor() {
+	}
 
-	static async getUrlProjects() {
-		const apiEndpoint = await this.apiEndpoint;
+	static async getUrlProjects(useWriteEndpoint = false) {
+		const apiEndpoint = await (useWriteEndpoint ? this.apiWriteEndpoint() : this.apiEndpoint);
 		const workspaceId = await this.workspaceId;
 		return `${apiEndpoint}/workspaces/${workspaceId}/projects`;
 	}
 
 	static async getTask(taskId) {
-		const urlProjects = await this.getUrlProjects();
+		const urlProjects = await this.getUrlProjects(true);
 		const endPoint = `${urlProjects}/taskIds`;
 		const body = { ids: [taskId] };
 		const {
 			data: tasks,
 			error,
-			status,
+			status
 		} = await this.apiCall(endPoint, 'POST', body);
 		if (status === 200 && tasks.length > 0) {
 			return tasks[0];
@@ -32,7 +33,7 @@ class TaskService extends ClockifyService {
 		if (!task) {
 			const { data, error: err } = await this.getTaskOfProject({
 				projectId: project.id,
-				taskName: encodeURIComponent(taskName),
+				taskName: encodeURIComponent(taskName)
 			});
 
 			task = data && data.length > 0 ? data[0] : null;
@@ -44,7 +45,7 @@ class TaskService extends ClockifyService {
 			const {
 				data,
 				error: err,
-				status,
+				status
 			} = await this.createTask(project.id, taskName);
 			task = data;
 			if (status === 201) {
@@ -68,11 +69,11 @@ class TaskService extends ClockifyService {
 	}
 
 	static async createTask(projectId, taskName) {
-		const urlProjects = await this.getUrlProjects();
+		const urlProjects = await this.getUrlProjects(true);
 		const endPoint = `${urlProjects}/${projectId}/tasks/`;
 		const body = {
 			name: taskName,
-			projectId,
+			projectId
 		};
 		return await this.apiCall(endPoint, 'POST', body);
 	}

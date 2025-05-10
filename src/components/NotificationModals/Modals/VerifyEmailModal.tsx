@@ -4,10 +4,10 @@ import locales from '~/helpers/locales';
 import { logout } from '~/helpers/utils.js';
 import { useAppStore } from '../../../zustand/store';
 import Toaster from '~/components/toaster-component.js';
-import { NotificationModalDivider } from '~/components/NotificationModals/NotificationModal/NotificationModalDivider.tsx';
-import { NotificationPrimaryButton } from '~/components/NotificationModals/NotificationModal/NotificationPrimaryButton.tsx';
-import { NotificationSecondaryButton } from '~/components/NotificationModals/NotificationModal/NotificationSecondaryButton.tsx';
-import { NotificationSecondaryText } from '~/components/NotificationModals/NotificationModal/NotificationSecondaryText.tsx';
+import { NotificationModalDivider } from '~/components/NotificationModals/NotificationModal/NotificationModalDivider';
+import { NotificationPrimaryButton } from '~/components/NotificationModals/NotificationModal/NotificationPrimaryButton';
+import { NotificationSecondaryButton } from '~/components/NotificationModals/NotificationModal/NotificationSecondaryButton';
+import { NotificationSecondaryText } from '~/components/NotificationModals/NotificationModal/NotificationSecondaryText';
 
 export const VerifyEmailModal = () => {
 	const { emailEnforcedModalVisible, userData, bootData } = useAppStore();
@@ -19,7 +19,7 @@ export const VerifyEmailModal = () => {
 			.runtime.sendMessage({
 				eventName: 'resendVerificationEmail',
 			})
-			.then((response) => {
+			.then((response: any) => {
 				if (response.status === 200) {
 					toaster.toast('success', locales.EMAIL_SENT_SUCCESS_MESSAGE, 5);
 					return;
@@ -33,7 +33,7 @@ export const VerifyEmailModal = () => {
 		window.open(
 			`https://${bootData.frontendUrl}/user/settings`,
 			'_blank',
-			'noopener,noreferrer',
+			'noopener,noreferrer'
 		);
 	};
 
@@ -45,16 +45,12 @@ export const VerifyEmailModal = () => {
 					<div className="notification-modal--open">
 						<div className="notification-modal">
 							<div className="ws-shield"></div>
-							<div
-								style={{ left: '0px' }}
-								className="notification-modal--title"
-							>
+							<div style={{ left: '0px' }} className="notification-modal--title">
 								{locales.VERIFY_EMAIL_TITLE}
 							</div>
 							<p
 								style={{ textAlign: 'center', maxWidth: '220px' }}
-								className="notification-modal--text"
-							>
+								className="notification-modal--text">
 								{locales.LONG_VERIFY_EMAIL_MESSAGE(name, email)}
 							</p>
 							<NotificationPrimaryButton
@@ -73,7 +69,7 @@ export const VerifyEmailModal = () => {
 								handleClick={() => logout()}
 							/>
 							<Toaster
-								ref={(instance) => {
+								ref={instance => {
 									toaster = instance;
 								}}
 							/>

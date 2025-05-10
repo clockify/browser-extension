@@ -2,7 +2,7 @@ import React from 'react';
 import { getEnv } from '~/environment';
 import Header from './header.component.jsx';
 import SignUp from './sign-up.component';
-import packageJson from '../../package';
+import packageJson from '../../package.json';
 import SelfHostedUrl from './self-hosted-url.component';
 
 import { getLocalStorageEnums } from '~/enums/local-storage.enum';
@@ -12,10 +12,12 @@ import locales from '../helpers/locales';
 import { checkConnection } from './check-connection';
 import { removeDarkModeClassFromBodyElement } from '~/zustand/slices/darkThemeSlice';
 import { mapStateToProps } from '~/zustand/mapStateToProps';
+import { ExtParameters } from '../wrappers/ext-parameters';
 
 const environment = getEnv();
 const mozzilaRedirectNumb = 4;
 const chromeRedirectNumb = 3;
+const extParameters = new ExtParameters();
 
 const ErrorMessageComponent = props => {
 	const { type, data } = props;
@@ -88,12 +90,35 @@ class Login extends React.Component {
 		// this.setAppType();
 		this.setAsyncStateItems();
 
+		this.getBootData();
+
 		if (this.props.logout?.isTrue) {
 			this.logout();
 		}
 	}
 
+	async getBootData() {
+		const homeUrl = await localStorage.getItem('homeUrl');
+
+		const response = await fetch(`${homeUrl}/web/boot`, {
+			method: 'GET',
+			headers: {
+				Accept: 'application/json',
+				'Content-Type': 'application/json',
+			},
+		});
+
+		if (!response.ok) {
+			console.error('Get boot data response was not ok:', response.statusText);
+			return;
+		}
+
+		const data = await response.json();
+		extParameters.setBaseWriteUrl(data.writeEndpoint);
+	}
+
 	async setAsyncStateItems() {
+		await getBrowser().runtime.sendMessage({ eventName: 'clearAnalyticsEvents' });
 		const selfHosted = JSON.parse(await localStorage.getItem('selfHosted', false));
 		const isSubDomain = !!(await localStorage.getItem('subDomainName'));
 		this.setState({
@@ -127,13 +152,12 @@ class Login extends React.Component {
 		});
 	}
 
-	forgotPassword() {
-		window.open(`${environment.resetPassword}`, '_blank');
-	}
+	forgotPassword() {}
 
 	async openLoginPage() {
 		await localStorage.setItem('signupExpected', 'false');
 		const homeUrl = await localStorage.getItem('homeUrl');
+
 		let redirectNumb = mozzilaRedirectNumb;
 		if (isChrome()) {
 			redirectNumb = chromeRedirectNumb;
@@ -188,6 +212,8 @@ class Login extends React.Component {
 			getLocalStorageEnums().SELF_HOSTED_PREFIX,
 			getLocalStorageEnums().SUB_DOMAIN_PREFIX,
 		]);
+
+		this.getBootData();
 
 		this.setState({
 			selfHosted: false,

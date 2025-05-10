@@ -21,10 +21,9 @@ function toggleBrowserContextMenu(isContextMenuEnabled) {
 	const startTimerTranslation = clockifyLocales.START_TIMER
 		? clockifyLocales.START_TIMER
 		: 'Start timer';
-	const startTimerWithDescriptionTranslation =
-		clockifyLocales.START_TIMER_WITH_DESCRIPTION
-			? clockifyLocales.START_TIMER_WITH_DESCRIPTION + " '%s'"
-			: 'Start timer with description';
+	const startTimerWithDescriptionTranslation = clockifyLocales.START_TIMER_WITH_DESCRIPTION
+		? clockifyLocales.START_TIMER_WITH_DESCRIPTION + " '%s'"
+		: 'Start timer with description';
 	aBrowser.contextMenus.removeAll();
 	if (isContextMenuEnabled) {
 		aBrowser.contextMenus.create({
@@ -44,11 +43,17 @@ function toggleBrowserContextMenu(isContextMenuEnabled) {
 
 async function setContextMenuOnBrowserStart() {
 	const appStore = await localStorage.getItem('appStore');
-	let isContextMenuEnabled = JSON.parse(appStore).state.contextMenuEnabled;
 
-	if (typeof isContextMenuEnabled !== 'boolean') {
-		isContextMenuEnabled = true;
+	let isContextMenuEnabled = true;
+
+	if (appStore) {
+		isContextMenuEnabled = JSON.parse(appStore).state.contextMenuEnabled;
+
+		if (typeof isContextMenuEnabled !== 'boolean') {
+			isContextMenuEnabled = true;
+		}
 	}
+
 	toggleBrowserContextMenu(isContextMenuEnabled);
 }
 

@@ -2,6 +2,7 @@ class TimeEntry extends ClockifyService {
 	static get doAlert() {
 		return this._doAlert;
 	}
+
 	static set doAlert(b) {
 		this._doAlert = b;
 	}
@@ -13,8 +14,8 @@ class TimeEntry extends ClockifyService {
 		);
 	}
 
-	static async getUrlTimeEntries() {
-		const apiEndpoint = await this.apiEndpoint;
+	static async getUrlTimeEntries(useWriteEndpoint = false) {
+		const apiEndpoint = await (useWriteEndpoint ? this.apiWriteEndpoint() : this.apiEndpoint);
 		const workspaceId = await this.workspaceId;
 		return `${apiEndpoint}/workspaces/${workspaceId}/timeEntries`;
 	}
@@ -48,12 +49,12 @@ class TimeEntry extends ClockifyService {
 			if (entry === null || error) {
 				setTimeEntryInProgress(null);
 				aBrowser.action.setIcon({
-					path: iconPathEnded,
+					path: iconPathEnded
 				});
 			} else {
 				setTimeEntryInProgress(entry);
 				aBrowser.action.setIcon({
-					path: iconPathStarted,
+					path: iconPathStarted
 				});
 			}
 		}
@@ -64,7 +65,7 @@ class TimeEntry extends ClockifyService {
 			const [apiEndpoint, userId, workspaceId] = await Promise.all([
 				this.apiEndpoint,
 				this.userId,
-				this.workspaceId,
+				this.workspaceId
 			]);
 			const endPoint = `${apiEndpoint}/v1/workspaces/${workspaceId}/user/${userId}/time-entries?page-size=10`;
 			const { data: timeEntries, error } = await this.apiCall(endPoint);
@@ -77,9 +78,9 @@ class TimeEntry extends ClockifyService {
 			const timeEntriesOffline =
 				JSON.parse(await localStorage.getItem('timeEntriesOffline')) || [];
 
-			const findFirstNonBreakEntry = (entries) =>
+			const findFirstNonBreakEntry = entries =>
 				entries.find(
-					(entry) =>
+					entry =>
 						entry.description !== 'Pomodoro break' &&
 						entry.description !== 'Pomodoro long break'
 				);
@@ -93,8 +94,7 @@ class TimeEntry extends ClockifyService {
 				const onlineStartTime = new Date(onlineEntry.timeInterval?.start);
 				const offlineStartTime = new Date(offlineEntry.timeInterval?.start);
 
-				latestEntry =
-					offlineStartTime > onlineStartTime ? offlineEntry : onlineEntry;
+				latestEntry = offlineStartTime > onlineStartTime ? offlineEntry : onlineEntry;
 			} else {
 				latestEntry = onlineEntry || offlineEntry;
 			}
@@ -120,7 +120,7 @@ class TimeEntry extends ClockifyService {
 	}
 
 	static async deleteTimeEntry(entryId) {
-		const baseUrl = await this.getUrlTimeEntries();
+		const baseUrl = await this.getUrlTimeEntries(true);
 
 		const endPoint = `${baseUrl}/${entryId}`;
 
@@ -132,7 +132,7 @@ class TimeEntry extends ClockifyService {
 	}
 
 	static async deleteTimeEntries(timeEntries) {
-		const apiEndpoint = await this.apiEndpoint;
+		const apiEndpoint = await this.apiWriteEndpoint();
 		const workspaceId = await this.workspaceId;
 		const userId = await this.userId;
 
@@ -148,19 +148,21 @@ class TimeEntry extends ClockifyService {
 	}
 
 	static async continueEntry(timeEntryId) {
-		const apiEndpoint = await this.apiEndpoint;
+		const apiEndpoint = await this.apiWriteEndpoint();
 		const wsId = await this.workspaceId;
 		const endPoint = `${apiEndpoint}/workspaces/${wsId}/time-entries/${timeEntryId}/continue`;
 
 		const { data, error } = await this.apiCall(endPoint, 'POST', {});
 		if (error) {
 			console.error('oh no, failed', error);
+		} else {
+			await AnalyticsService.storeAnalyticsEvents([AnalyticsService.events.entryContinued]);
 		}
 		return { data, error };
 	}
 
 	static async updateTimeEntryValues(entryId, body) {
-		const apiEndpoint = await this.apiEndpoint;
+		const apiEndpoint = await this.apiWriteEndpoint();
 		const workspaceId = await this.workspaceId;
 		const endPoint = `${apiEndpoint}/workspaces/${workspaceId}/timeEntries/${entryId}`;
 
@@ -168,7 +170,7 @@ class TimeEntry extends ClockifyService {
 	}
 
 	static async duplicateTimeEntry(entryId) {
-		const apiEndpoint = await this.apiEndpoint;
+		const apiEndpoint = await this.apiWriteEndpoint();
 		const workspaceId = await this.workspaceId;
 		const userId = await this.userId;
 
@@ -206,13 +208,14 @@ class TimeEntry extends ClockifyService {
 		end = moment(),
 		endedFromIntegration = null,
 		integrationName,
+		endEntryInProgressToContinueOtherEntry,
 	} = {}) {
 		const inProgress = await this.getEntryInProgress();
 		let timeEntryInProgress = inProgress.entry;
 
 		if (inProgress.error) {
 			return {
-				error: { status: 404, message: 'no entry in progress' },
+				error: { status: 404, message: 'no entry in progress' }
 			};
 		}
 		if (timeEntry) {
@@ -241,7 +244,7 @@ class TimeEntry extends ClockifyService {
 			description,
 			timeInterval,
 			customFieldValues,
-			tags,
+			tags
 		} = timeEntryInProgress;
 		const { start } = timeInterval;
 
@@ -253,10 +256,10 @@ class TimeEntry extends ClockifyService {
 			start,
 			end,
 			billable,
-			customFields: customFieldValues,
+			customFields: customFieldValues
 		};
 
-		const endPoint = `${await this.getUrlTimeEntries()}/${id}/full`;
+		const endPoint = `${await this.getUrlTimeEntries(true)}/${id}/full`;
 
 		const data = await this.apiCall(endPoint, 'PUT', body);
 		if (data.error) {
@@ -276,18 +279,22 @@ class TimeEntry extends ClockifyService {
 				eventParameters = {
 					integrationName: integrationName,
 					timer_end: true,
-					browser: 'chrome',
+					browser: 'chrome'
 				};
 			} else {
 				analyticsEventName = 'entry_mode';
 				eventParameters = {
 					timer_end: true,
-					browser: 'chrome',
+					browser: 'chrome'
 				};
 			}
 
 			const options = { analyticsEventName, eventParameters };
 			await AnalyticsService.sendAnalyticsEvent(options);
+			if (!endEntryInProgressToContinueOtherEntry)
+				await AnalyticsService.storeAnalyticsEvents([
+					AnalyticsService.events.trackerStopped,
+				]);
 		}
 		return data;
 	}
@@ -331,30 +338,24 @@ class TimeEntry extends ClockifyService {
 			start: null,
 			end: null,
 			isSubmitTime: false,
-			customFields: [],
+			customFields: []
 		},
 		isPomodoro = false
 	) {
 		const { forceTasks } = await this.getForces();
-		let {
-			projectId,
-			task,
-			billable,
-			tags,
-			start,
-			end,
-			isSubmitTime,
-			customFields,
-		} = options;
+		let { projectId, task, billable, tags, start, end, isSubmitTime, customFields } = options;
 		if (!isPomodoro) {
 			if (!projectId || (forceTasks && !task)) {
 				const workspaceSettingsInStorage = await localStorage.getItem('workspaceSettings');
-				const workspaceSettings = JSON.parse(workspaceSettingsInStorage)
+				const workspaceSettings = JSON.parse(workspaceSettingsInStorage);
 				const { projectDB, taskDB, msg, msgId } =
 					await DefaultProject.getProjectTaskFromDB();
 				if (projectDB) {
 					projectId = projectDB.id;
-					if (billable === null) billable = workspaceSettings?.taskBillableEnabled? taskDB?.billable : projectDB.billable;
+					if (billable === null)
+						billable = workspaceSettings?.taskBillableEnabled
+							? taskDB?.billable
+							: projectDB.billable;
 					if (taskDB) {
 						task = taskDB;
 					}
@@ -364,16 +365,16 @@ class TimeEntry extends ClockifyService {
 				}
 			}
 		}
-		const endPoint = `${await this.getUrlTimeEntries()}/full`;
+		const endPoint = `${await this.getUrlTimeEntries(true)}/full`;
 		const body = {
 			start: start ?? new Date(),
 			end: end ?? null,
 			description,
 			billable,
 			projectId,
-			tagIds: tags ? tags.map((tag) => tag.id) : [],
+			tagIds: tags ? tags.map(tag => tag.id) : [],
 			taskId: task ? task.id : null,
-			customFields,
+			customFields
 		};
 		const { data, error, status } = await this.apiCall(endPoint, 'POST', body);
 		if (error) {
@@ -382,7 +383,7 @@ class TimeEntry extends ClockifyService {
 			// window.inProgress = true;
 			if (!end) {
 				aBrowser.action.setIcon({
-					path: iconPathStarted,
+					path: iconPathStarted
 				});
 				setTimeEntryInProgress(data);
 
@@ -396,15 +397,21 @@ class TimeEntry extends ClockifyService {
 	}
 
 	static async startTimerOnStartingBrowser() {
-		const userId = await this.userId;
-		const str = await localStorage.getItem('permanent_autoStartOnBrowserStart');
-		const autoStartForCurrentUserEnabled = str
-			? JSON.parse(str).find(
-					(autoStart) => autoStart.userId === userId && autoStart.enabled
-			  )
+		const appStore = await localStorage.getItem('appStore');
+		const appStoreParsed = JSON.parse(appStore).state;
+
+		const userId = appStoreParsed.userData.id;
+		const usersAutoStartOnBrowserStartPreferences =
+			appStoreParsed.usersAutoStartOnBrowserStartPreferences;
+
+		const userPreference = usersAutoStartOnBrowserStartPreferences.find(
+			(pref) => pref.userId === userId
+		);
+		const autoStartOnBrowserStart = userPreference
+			? userPreference.enabled
 			: false;
 
-		if (autoStartForCurrentUserEnabled) {
+		if (autoStartOnBrowserStart) {
 			const { entry, error } = await this.getEntryInProgress();
 			if (!entry && !error) {
 				this.startTimer('');
@@ -413,14 +420,21 @@ class TimeEntry extends ClockifyService {
 	}
 
 	static async endInProgressOnClosingBrowser() {
-		const userId = await this.userId;
-		const str = await localStorage.getItem('permanent_autoStopOnBrowserClose');
-		const list = str ? JSON.parse(str) : [];
-		const autoStopForCurrentUserEnabled = list.find(
-			(autoStop) => autoStop.userId === userId && autoStop.enabled
-		);
+		const appStore = await localStorage.getItem('appStore');
+		const appStoreParsed = JSON.parse(appStore).state;
 
-		if (autoStopForCurrentUserEnabled) {
+		const userId = appStoreParsed.userData.id;
+		const usersAutoStopOnBrowserClosePreferences =
+			appStoreParsed.usersAutoStopOnBrowserClosePreferences;
+
+		const userPreference = usersAutoStopOnBrowserClosePreferences.find(
+			(pref) => pref.userId === userId
+		);
+		const autoStopOnBrowserClose = userPreference
+			? userPreference.enabled
+			: false;
+
+		if (autoStopOnBrowserClose) {
 			const { entry, error, status } = await this.getEntryInProgress();
 			if (error) {
 			} else if (entry) {
@@ -441,12 +455,10 @@ class TimeEntry extends ClockifyService {
 		if (await isNavigatorOffline()) return null;
 
 		if (taskDB) {
-			const endPoint = `${await this.getUrlTimeEntries()}/${
-				timeEntry.id
-			}/projectAndTask`;
+			const endPoint = `${await this.getUrlTimeEntries(true)}/${timeEntry.id}/projectAndTask`;
 			const body = {
 				projectId: projectDB.id,
-				taskId: taskDB.id,
+				taskId: taskDB.id
 			};
 			const { data: entry, error } = await this.apiCall(endPoint, 'PUT', body);
 			if (error) {
@@ -457,14 +469,12 @@ class TimeEntry extends ClockifyService {
 			return Object.assign(entry, {
 				billable: projectDB.billable,
 				project: entry.project ? entry.project : projectDB,
-				task: entry.task ? entry.task : taskDB,
+				task: entry.task ? entry.task : taskDB
 			});
 		} else {
-			const endPoint = `${await this.getUrlTimeEntries()}/${
-				timeEntry.id
-			}/project`;
+			const endPoint = `${await this.getUrlTimeEntries(true)}/${timeEntry.id}/project`;
 			const body = {
-				projectId: projectDB.id,
+				projectId: projectDB.id
 			};
 			const { data: entry, error } = await this.apiCall(endPoint, 'PUT', body);
 			if (error) {
@@ -474,21 +484,17 @@ class TimeEntry extends ClockifyService {
 			this.updateBillable(entry.id, projectDB.billable); // no need for await
 			return Object.assign(entry, {
 				project: entry.project ? entry.project : projectDB,
-				billable: projectDB.billable,
+				billable: projectDB.billable
 			});
 		}
 	}
 
 	static async updateBillable(id, billable) {
-		const endPoint = `${await this.getUrlTimeEntries()}/${id}/billable`;
+		const endPoint = `${await this.getUrlTimeEntries(true)}/${id}/billable`;
 		const body = {
-			billable,
+			billable
 		};
-		const {
-			data: entry,
-			error,
-			status,
-		} = await this.apiCall(endPoint, 'PUT', body);
+		const { data: entry, error, status } = await this.apiCall(endPoint, 'PUT', body);
 		if (error) {
 			console.error('oh no, failed', error);
 		}
@@ -496,17 +502,13 @@ class TimeEntry extends ClockifyService {
 	}
 
 	static async deleteEntry(entryId, isWebSocketHeader) {
-		const endPoint = `${await this.getUrlTimeEntries()}/${entryId}`;
+		const endPoint = `${await this.getUrlTimeEntries(true)}/${entryId}`;
 		const { data: entry, error } = await this.apiCall(endPoint, 'DELETE');
 		if (!error) setTimeEntryInProgress(null);
 		return { entry, error };
 	}
 
-	static async saveEntryOfflineAndStopItByDeletingIt(
-		entry,
-		end,
-		isWebSocketHeader
-	) {
+	static async saveEntryOfflineAndStopItByDeletingIt(entry, end, isWebSocketHeader) {
 		const timeEntry = {
 			workspaceId: entry.workspaceId,
 			id: this.timeEntryIdTemp,
@@ -516,22 +518,17 @@ class TimeEntry extends ClockifyService {
 			billabe: entry.billable,
 			timeInterval: {
 				start: entry.timeInterval.start,
-				end: new Date(end),
-			},
+				end: new Date(end)
+			}
 		};
 
-		const timeEntriesOffline = (await localStorage.getItem(
-			'timeEntriesOffline'
-		))
+		const timeEntriesOffline = (await localStorage.getItem('timeEntriesOffline'))
 			? JSON.parse(await localStorage.getItem('timeEntriesOffline'))
 			: [];
 		timeEntriesOffline.push(timeEntry);
-		localStorage.setItem(
-			'timeEntriesOffline',
-			JSON.stringify(timeEntriesOffline)
-		);
+		localStorage.setItem('timeEntriesOffline', JSON.stringify(timeEntriesOffline));
 		aBrowser.runtime.sendMessage({
-			eventName: 'offlineEntryAdded',
+			eventName: 'offlineEntryAdded'
 		});
 		const { error } = await this.deleteEntry(entry.id, isWebSocketHeader);
 		return { timeEntry };
@@ -539,65 +536,62 @@ class TimeEntry extends ClockifyService {
 
 	static async(request) {
 		getEntryInProgress()
-			.then((response) => {
+			.then(response => {
 				if (response && response.id) {
 					return this.stopTimerAndStartNewEntry(request, sendResponse);
 				} else {
 					return this.startTimer(request, sendResponse);
 				}
 			})
-			.catch((error) => {
+			.catch(error => {
 				sendResponse(error);
 			});
 	}
 
 	static async setDescription(entryId, description) {
-		const endPoint = `${await this.getUrlTimeEntries()}/${entryId}/description`;
+		const endPoint = `${await this.getUrlTimeEntries(true)}/${entryId}/description`;
 		const body = {
-			description,
+			description
 		};
 		return await this.apiCall(endPoint, 'PUT', body);
 	}
 
 	static async updateProject(entryId, projectId) {
-		const endPoint = `${await this.getUrlTimeEntries()}/${entryId}/project`;
+		const endPoint = `${await this.getUrlTimeEntries(true)}/${entryId}/project`;
 		const body = {
-			projectId,
+			projectId
 		};
 		return await this.apiCall(endPoint, 'PUT', body);
 	}
 
 	static async removeProject(entryId) {
-		const endPoint = `${await this.getUrlTimeEntries()}/${entryId}/project/remove`;
+		const endPoint = `${await this.getUrlTimeEntries(true)}/${entryId}/project/remove`;
 		return await this.apiCall(endPoint, 'DELETE');
 	}
 
 	static async updateTask(taskId, projectId, entryId) {
-		const endPoint = `${await this.getUrlTimeEntries()}/${entryId}/projectAndTask`;
+		const endPoint = `${await this.getUrlTimeEntries(true)}/${entryId}/projectAndTask`;
 		const body = {
 			projectId,
-			taskId,
+			taskId
 		};
 		return await this.apiCall(endPoint, 'PUT', body);
 	}
 
 	static async removeTask(entryId) {
-		const endPoint = `${await this.getUrlTimeEntries()}/${entryId}/task/remove`;
+		const endPoint = `${await this.getUrlTimeEntries(true)}/${entryId}/task/remove`;
 		return await this.apiCall(endPoint, 'DELETE');
 	}
 
 	static async updateTags(tagList, entryId) {
-		const endPoint = `${await this.getUrlTimeEntries()}/${entryId}/tags`;
+		const endPoint = `${await this.getUrlTimeEntries(true)}/${entryId}/tags`;
 		const body = {
-			tagIds: tagList,
+			tagIds: tagList
 		};
 		return await this.apiCall(endPoint, 'PUT', body);
 	}
 
-	static async integrationStartTimerWithDescription(
-		description,
-		timeEntryOptions
-	) {
+	static async integrationStartTimerWithDescription(description, timeEntryOptions) {
 		let {
 			projectName,
 			projectId = null,
@@ -609,22 +603,23 @@ class TimeEntry extends ClockifyService {
 			start = null,
 			end = null,
 			isSubmitTime = false,
-			customFields = [],
+			customFields = []
 		} = timeEntryOptions;
 		let project = { id: projectId, name: projectName };
 		let task = { id: taskId ?? null, name: taskName ?? null };
-		const { forceDescription, forceProjects, forceTasks, forceTags } =
-			await this.getForces();
+		const { forceDescription, forceProjects, forceTasks, forceTags } = await this.getForces();
 
 		if (!!project.name) {
 			const createObjects = await this.getCreateObjects();
-			let { projectDB, taskDB, message } =
-				await ProjectTaskService.getOrCreateProjectAndTask(project.name, task);
+			let { projectDB, taskDB, message } = await ProjectTaskService.getOrCreateProjectAndTask(
+				project.name,
+				task
+			);
 			if (projectDB) {
 				project = projectDB;
 			} else {
 				if ((forceProjects || (forceTasks && !taskDB)) && !createObjects) {
-					message += "\n Integrations can't create projects/tasks. ";
+					message += '\n Integrations can\'t create projects/tasks. ';
 				}
 			}
 			task = taskDB;
@@ -634,13 +629,13 @@ class TimeEntry extends ClockifyService {
 			}
 
 			if (task) {
-				billable = task.billable;
+				billable = null;
 			}
 		}
 		let tags = null;
 		if (tagNames && tagNames.length > 0) {
 			const { tagovi, message: msg } = await TagService.getOrCreateTags(
-				tagNames.map((tagName) => tagName.trim())
+				tagNames.map(tagName => tagName.trim())
 			);
 			if (tagovi) tags = tagovi;
 		} else if (forceTags) {
@@ -649,20 +644,20 @@ class TimeEntry extends ClockifyService {
 			projectId: project.id,
 			task,
 			billable,
-			tags: tagIds ? tagIds.map((id) => ({ id })) : tags,
+			tags: tagIds ? tagIds.map(id => ({ id })) : tags,
 			start,
 			end,
 			isSubmitTime,
-			customFields,
+			customFields
 		});
 	}
 
 	static async changeStart(start, timeEntryId) {
-		const baseUrl = await this.getUrlTimeEntries();
+		const baseUrl = await this.getUrlTimeEntries(true);
 		const endPoint = `${baseUrl}/${timeEntryId}/start`;
 
 		const body = {
-			start,
+			start
 		};
 
 		return super.apiCall(endPoint, 'PUT', body);
@@ -672,7 +667,7 @@ class TimeEntry extends ClockifyService {
 		if (!entryId) {
 			return;
 		}
-		const baseUrl = await this.getUrlTimeEntries();
+		const baseUrl = await this.getUrlTimeEntries(true);
 		const endPoint = `${baseUrl}/${entryId}/timeInterval`;
 
 		let { start, end } = timeInterval;
@@ -683,7 +678,7 @@ class TimeEntry extends ClockifyService {
 
 		const body = {
 			start,
-			end,
+			end
 		};
 
 		return super.apiCall(endPoint, 'PUT', body);

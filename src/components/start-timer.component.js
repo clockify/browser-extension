@@ -30,7 +30,7 @@ class StartTimer extends Component {
 			mode: this.props.mode,
 			stopDisabled: false,
 			autocompleteItems: [],
-			autocompleteItemsRecent: [],
+			autocompleteItemsRecent: []
 		};
 		this.application = new Application();
 		this.startNewEntry = this.startNewEntry.bind(this);
@@ -52,7 +52,7 @@ class StartTimer extends Component {
 			timeEntry,
 			time: timeEntry?.timeInterval?.start
 				? duration(currentPeriod).format('HH:mm:ss', { trim: false })
-				: moment().hour(0).minute(0).second(0).format('HH:mm:ss'),
+				: moment().hour(0).minute(0).second(0).format('HH:mm:ss')
 		});
 		if (workspaceSettings) {
 			this.getTimeEntryInProgress();
@@ -86,8 +86,8 @@ class StartTimer extends Component {
 	getRecentEntries() {
 		getBrowser()
 			.runtime.sendMessage({
-				eventName: 'getRecentTimeEntries',
-			})
+			eventName: 'getRecentTimeEntries'
+		})
 			.then(res => {
 				this.setState({
 					autocompleteItemsRecent: res.data?.map(
@@ -96,16 +96,16 @@ class StartTimer extends Component {
 								project: {
 									clientName: entry.clientName,
 									color: entry.projectColor,
-									name: entry.projectName,
+									name: entry.projectName
 								},
 								task: {
 									name: entry.taskName,
-									id: entry.taskId,
+									id: entry.taskId
 								},
 								billable: entry.projectBillable,
-								...entry,
+								...entry
 							} || [])
-					),
+					)
 				});
 			})
 			.catch(err => console.log(err));
@@ -115,26 +115,26 @@ class StartTimer extends Component {
 		if (!inputValue) return;
 		getBrowser()
 			.runtime.sendMessage({
-				eventName: 'searchEntries',
-				options: {
-					searchValue: inputValue,
-				},
-			})
+			eventName: 'searchEntries',
+			options: {
+				searchValue: inputValue
+			}
+		})
 			.then(res => {
 				this.setState({
 					autocompleteItems: res.data.map(entry => ({
 						project: {
 							clientName: entry.clientName,
 							color: entry.projectColor,
-							name: entry.projectName,
+							name: entry.projectName
 						},
 						task: {
 							name: entry.taskName,
-							id: entry.taskId,
+							id: entry.taskId
 						},
 						billable: entry.projectBillable,
-						...entry,
-					})),
+						...entry
+					}))
 				});
 			})
 			.catch(err => console.log(err));
@@ -146,7 +146,7 @@ class StartTimer extends Component {
 				{
 					timeEntry: offlineStorage.timeEntryInOffline
 						? offlineStorage.timeEntryInOffline
-						: {},
+						: {}
 				},
 				() => {
 					if (this.state.timeEntry.timeInterval) {
@@ -157,8 +157,8 @@ class StartTimer extends Component {
 							currentPeriod = currentPeriod + 1000;
 							this.setState({
 								time: duration(currentPeriod).format('HH:mm:ss', {
-									trim: false,
-								}),
+									trim: false
+								})
 							});
 						}, 1000);
 
@@ -170,8 +170,8 @@ class StartTimer extends Component {
 		} else {
 			getBrowser()
 				.runtime.sendMessage({
-					eventName: 'getEntryInProgress',
-				})
+				eventName: 'getEntryInProgress'
+			})
 				.then(response => {
 					let timeEntry = response.data;
 					this.setTimeEntryInProgress(timeEntry);
@@ -187,20 +187,21 @@ class StartTimer extends Component {
 		if (interval) {
 			clearInterval(interval);
 		}
+
 		if (timeEntry) {
 			this.setState(
 				{
-					timeEntry,
+					timeEntry
 				},
 				() => {
 					let currentPeriod = moment().diff(moment(timeEntry.timeInterval.start));
 					this.setState({
-						time: duration(currentPeriod).format('HH:mm:ss', { trim: false }),
+						time: duration(currentPeriod).format('HH:mm:ss', { trim: false })
 					});
 					interval = setInterval(() => {
 						currentPeriod = currentPeriod + 1000;
 						this.setState({
-							time: duration(currentPeriod).format('HH:mm:ss', { trim: false }),
+							time: duration(currentPeriod).format('HH:mm:ss', { trim: false })
 						});
 					}, 1000);
 					this.props.changeMode('timer');
@@ -224,21 +225,21 @@ class StartTimer extends Component {
 						taskDB
 					);
 					this.setState({
-						timeEntry: entry,
+						timeEntry: entry
 					});
 				}
 			}
 		} else {
 			this.setState({
 				timeEntry: {},
-				time: moment().hour(0).minute(0).second(0).format('HH:mm:ss'),
+				time: moment().hour(0).minute(0).second(0).format('HH:mm:ss')
 			});
 			this.props.setTimeEntryInProgress(timeEntry);
 			this.application.setIcon(
 				inProgress ? getIconStatus().timeEntryStarted : getIconStatus().timeEntryEnded
 			);
 			getBrowser().runtime.sendMessage({
-				eventName: 'restartPomodoro',
+				eventName: 'restartPomodoro'
 			});
 		}
 	}
@@ -282,8 +283,8 @@ class StartTimer extends Component {
 		this.setState(state => ({
 			timeEntry: {
 				...state.timeEntry,
-				description,
-			},
+				description
+			}
 		}));
 	}
 
@@ -301,12 +302,12 @@ class StartTimer extends Component {
 		let timeEntry = {
 			timeInterval: {
 				start: moment(),
-				end: end,
-			},
+				end: end
+			}
 		};
 
 		this.setState({
-			timeEntry: timeEntry,
+			timeEntry: timeEntry
 		});
 	}
 
@@ -323,10 +324,10 @@ class StartTimer extends Component {
 						description: this.state.timeEntry.description,
 						projectId: this.state.timeEntry.projectId,
 						timeInterval: {
-							start: moment(),
+							start: moment()
 						},
-						customFieldValues: offlineStorage.customFieldValues, // generated from wsCustomFields
-					},
+						customFieldValues: offlineStorage.customFieldValues // generated from wsCustomFields
+					}
 				},
 				() => {
 					offlineStorage.timeEntryInOffline = this.state.timeEntry;
@@ -360,30 +361,30 @@ class StartTimer extends Component {
 			const cfs =
 				customFieldValues && customFieldValues.length > 0
 					? customFieldValues.map(({ type, customFieldId, value }) => ({
-							customFieldId,
-							sourceType: 'TIMEENTRY',
-							value: type === 'NUMBER' ? parseFloat(value) : value,
-					  }))
+						customFieldId,
+						sourceType: 'TIMEENTRY',
+						value: type === 'NUMBER' ? parseFloat(value) : value
+					}))
 					: [];
 			getBrowser()
 				.runtime.sendMessage({
-					eventName: 'startWithDescription',
-					options: {
-						projectId,
-						description,
-						billable: null,
-						start: null,
-						end: null,
-						taskId,
-						tagIds,
-						customFields: cfs,
-					},
-				})
+				eventName: 'startWithDescription',
+				options: {
+					projectId,
+					description,
+					billable: null,
+					start: null,
+					end: null,
+					taskId,
+					tagIds,
+					customFields: cfs
+				}
+			})
 				.then(response => {
 					let data = response.data;
 					this.setState(
 						{
-							timeEntry: data,
+							timeEntry: data
 						},
 						() => {
 							this.props.changeMode('timer');
@@ -391,20 +392,21 @@ class StartTimer extends Component {
 							this.application.setIcon(getIconStatus().timeEntryStarted);
 
 							getBrowser().runtime.sendMessage({
-								eventName: 'addIdleListenerIfIdleIsEnabled',
+								eventName: 'addIdleListenerIfIdleIsEnabled'
 							});
 							getBrowser().runtime.sendMessage({
-								eventName: 'removeReminderTimer',
+								eventName: 'removeReminderTimer'
 							});
 							localStorage.setItem({
-								timeEntryInProgress: data,
+								timeEntryInProgress: data
 							});
 
 							this.goToEdit({ inProgress: true });
 						}
 					);
 				})
-				.catch(() => {});
+				.catch(() => {
+				});
 		}
 	}
 
@@ -421,10 +423,10 @@ class StartTimer extends Component {
 						description: this.state.timeEntry.description,
 						projectId: this.state.timeEntry.projectId,
 						timeInterval: {
-							start: moment(),
+							start: moment()
 						},
-						customFieldValues: offlineStorage.customFieldValues, // generated from wsCustomFields
-					},
+						customFieldValues: offlineStorage.customFieldValues // generated from wsCustomFields
+					}
 				},
 				() => {
 					offlineStorage.timeEntryInOffline = this.state.timeEntry;
@@ -457,30 +459,35 @@ class StartTimer extends Component {
 			const cfs =
 				customFieldValues && customFieldValues.length > 0
 					? customFieldValues.map(({ type, customFieldId, value }) => ({
-							customFieldId,
-							sourceType: 'TIMEENTRY',
-							value: type === 'NUMBER' ? parseFloat(value) : value,
-					  }))
+						customFieldId,
+						sourceType: 'TIMEENTRY',
+						value: type === 'NUMBER' ? parseFloat(value) : value
+					}))
 					: [];
 			getBrowser()
 				.runtime.sendMessage({
-					eventName: 'startWithDescription',
-					options: {
-						projectId,
-						description: description?.trim(),
-						billable: null,
-						start: null,
-						end: null,
-						taskId,
-						tagIds,
-						customFields: cfs,
-					},
-				})
+				eventName: 'startWithDescription',
+				options: {
+					projectId,
+					description: description?.trim(),
+					billable: null,
+					start: null,
+					end: null,
+					taskId,
+					tagIds,
+					customFields: cfs
+				}
+			})
 				.then(response => {
 					let data = response.data;
+
+					if (data.task?.status === 'DONE') {
+						data.task = data.taskId = null;
+					}
+
 					this.setState(
 						{
-							timeEntry: data,
+							timeEntry: data
 						},
 						() => {
 							this.props.changeMode('timer');
@@ -488,18 +495,19 @@ class StartTimer extends Component {
 							this.application.setIcon(getIconStatus().timeEntryStarted);
 
 							getBrowser().runtime.sendMessage({
-								eventName: 'addIdleListenerIfIdleIsEnabled',
+								eventName: 'addIdleListenerIfIdleIsEnabled'
 							});
 							getBrowser().runtime.sendMessage({
-								eventName: 'removeReminderTimer',
+								eventName: 'removeReminderTimer'
 							});
 							localStorage.setItem({
-								timeEntryInProgress: data,
+								timeEntryInProgress: data
 							});
 						}
 					);
 				})
-				.catch(() => {});
+				.catch(() => {
+				});
 		}
 	}
 
@@ -520,7 +528,7 @@ class StartTimer extends Component {
 			}
 		}
 		this.setState({
-			stopDisabled: true,
+			stopDisabled: true
 		});
 		const { forceDescription, forceProjects, forceTasks, forceTags } =
 			this.props.workspaceSettings;
@@ -550,7 +558,7 @@ class StartTimer extends Component {
 
 	async stopEntryInProgress() {
 		getBrowser().runtime.sendMessage({
-			eventName: 'resetBadge',
+			eventName: 'resetBadge'
 		});
 		if (await isOffline()) {
 			let timeEntryOffline = offlineStorage.timeEntryInOffline;
@@ -570,17 +578,17 @@ class StartTimer extends Component {
 				timeEntry: {},
 				time: moment().hour(0).minute(0).second(0).format('HH:mm:ss'),
 				interval: '',
-				stopDisabled: false,
+				stopDisabled: false
 			});
 			this.props.setTimeEntryInProgress(null);
 		} else {
 			getBrowser()
 				.runtime.sendMessage({
-					eventName: 'endInProgress',
-					options: {
-						endedFromIntegration: false,
-					},
-				})
+				eventName: 'endInProgress',
+				options: {
+					endedFromIntegration: false
+				}
+			})
 				.then(data => {
 					if (data.status === 403) {
 						this.setState({ stopDisabled: false });
@@ -593,7 +601,7 @@ class StartTimer extends Component {
 					}
 					localStorage.setItem('timeEntryInProgress', null);
 					getBrowser().runtime.sendMessage({
-						eventName: 'restartPomodoro',
+						eventName: 'restartPomodoro'
 					});
 					this.props.endStarted();
 					clearInterval(interval);
@@ -601,16 +609,16 @@ class StartTimer extends Component {
 					this.setState({
 						timeEntry: {},
 						time: moment().hour(0).minute(0).second(0).format('HH:mm:ss'),
-						stopDisabled: false,
+						stopDisabled: false
 					});
 					this.props.setTimeEntryInProgress(null);
 
 					getBrowser().runtime.sendMessage({
-						eventName: 'removeIdleListenerIfIdleIsEnabled',
+						eventName: 'removeIdleListenerIfIdleIsEnabled'
 					});
 
 					getBrowser().runtime.sendMessage({
-						eventName: 'reminder',
+						eventName: 'reminder'
 					});
 
 					this.application.setIcon(getIconStatus().timeEntryEnded);
@@ -655,9 +663,9 @@ class StartTimer extends Component {
 						workspaceId: activeWorkspaceId,
 						timeInterval: {
 							start: moment(),
-							end: moment(),
-						},
-					},
+							end: moment()
+						}
+					}
 				},
 				() => {
 					window.reactRoot.render(
@@ -776,15 +784,15 @@ class StartTimer extends Component {
 									const selected =
 										this.state.timeEntry.description?.length >= 2
 											? this.state.autocompleteItems.find(
-													entry => entry.id === item.id
-											  )
+												entry => entry.id === item.id
+											)
 											: this.state.autocompleteItemsRecent.find(
-													entry => entry.id === item.id
-											  );
+												entry => entry.id === item.id
+											);
 									if (selected) {
 										this.setState(
 											{
-												timeEntry: selected,
+												timeEntry: selected
 											},
 											() => {
 												this.startNewEntry();

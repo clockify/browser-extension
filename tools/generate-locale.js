@@ -12,7 +12,7 @@ if (!lang) {
 }
 
 if (lang === 'all') {
-	langs = ['en', 'ru', 'pt', 'es', 'ko', 'ja', 'fr', 'de'];
+	langs = ['en', 'pt', 'es', 'fr', 'de'];
 }
 
 function parseObjectProperties(pre, obj) {
