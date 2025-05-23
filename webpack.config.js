@@ -1,14 +1,12 @@
 const path = require('path');
+const postcss = require('postcss');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 const webpack = require('webpack');
 
 let DEV =
-	!process.env.NODE_ENV ||
-	process.env.NODE_ENV !== 'prod' ||
-	process.env.TARGET === 'www/chrome';
-let targetForManifest =
-	process.env.TARGET === 'www/chrome' ? 'chrome' : process.env.TARGET;
+	!process.env.NODE_ENV || process.env.NODE_ENV !== 'prod' || process.env.TARGET === 'www/chrome';
+let targetForManifest = process.env.TARGET === 'www/chrome' ? 'chrome' : process.env.TARGET;
 
 module.exports = {
 	mode: DEV ? 'development' : 'production',
@@ -50,7 +48,11 @@ module.exports = {
 				use: {
 					loader: 'babel-loader',
 					options: {
-						presets: ['@babel/preset-env', '@babel/preset-react', '@babel/preset-typescript'],
+						presets: [
+							'@babel/preset-env',
+							'@babel/preset-react',
+							'@babel/preset-typescript',
+						],
 					},
 				},
 			},
@@ -95,13 +97,18 @@ module.exports = {
 					},
 				],
 			},
+			{
+				test: /\.json$/,
+				type: 'json',
+			},
 		],
 	},
 	resolve: {
 		modules: [path.join(__dirname, 'node_modules')],
+		extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
 		alias: {
-			'~': path.resolve(__dirname, 'src')
-		}
+			'~': path.resolve(__dirname, 'src'),
+		},
 	},
 	plugins: [
 		new webpack.ProvidePlugin({
@@ -136,7 +143,36 @@ module.exports = {
 					},
 				},
 				{ from: './node_modules/moment/moment.js', to: './' },
+				{ from: './node_modules/ua-parser-js/src/main/ua-parser.js', to: './' },
 				{ from: './sw.js', to: './' },
+				{
+					from: './node_modules/react-datepicker/dist/react-datepicker.css',
+					to: './styles',
+					// Ensure styles target only our extension's React Datepicker,
+					// preventing overriding foreign web apps React Datepicker styles.
+					transform(content) {
+						const prependSelectorPlugin = postcss.plugin('prepend-selector', () => {
+							return root => {
+								root.walkRules(prependSelector);
+							};
+						});
+
+						const prependSelector = rule => {
+							rule.selector = rule.selector
+								.split(',')
+								.map(selector => `.clockify-integration-popup ${selector.trim()}`)
+								.join(', ');
+						};
+
+						const processCSS = css => {
+							return postcss([prependSelectorPlugin])
+								.process(css, { from: undefined })
+								.then(result => result.css);
+						};
+
+						return processCSS(content).then(css => css);
+					},
+				},
 			],
 		}),
 	],

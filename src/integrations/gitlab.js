@@ -72,6 +72,7 @@ applyStyles(`
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
+		flex-wrap: wrap;
 	}
 	
 	.top-bar-fixed {

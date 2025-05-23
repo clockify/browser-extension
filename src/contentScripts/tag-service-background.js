@@ -1,8 +1,9 @@
 class TagService extends ClockifyService {
-	constructor() {}
+	constructor() {
+	}
 
-	static async getUrlTags() {
-		const apiEndpoint = await this.apiEndpoint;
+	static async getUrlTags(useWriteEndpoint = false) {
+		const apiEndpoint = await (useWriteEndpoint ? this.apiWriteEndpoint() : this.apiEndpoint);
 		const workspaceId = await this.workspaceId;
 		return `${apiEndpoint}/v1/workspaces/${workspaceId}/tags`;
 	}
@@ -17,7 +18,7 @@ class TagService extends ClockifyService {
 			const {
 				data: pageTags,
 				error,
-				status,
+				status
 			} = await this.getAllTagsWithFilter(page, pageSize);
 			if (status !== 200) {
 				if (error) return { tagovi: [], message: error.message };
@@ -47,7 +48,7 @@ class TagService extends ClockifyService {
 				const {
 					data: tag,
 					error,
-					status,
+					status
 				} = await this.createTag({ name: tagName });
 				if (status === 201) {
 					tags.push(tag);
@@ -77,7 +78,7 @@ class TagService extends ClockifyService {
 	}
 
 	static async createTag(tag) {
-		const endPoint = await this.getUrlTags();
+		const endPoint = await this.getUrlTags(true);
 		const body = tag;
 		return await this.apiCall(endPoint, 'POST', body);
 	}

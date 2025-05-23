@@ -8,7 +8,7 @@ import 'moment-duration-format';
 import EditForm from './edit-form.component';
 import { RequiredFields } from '~/components/RequiredFields.tsx';
 import { isOffline } from './check-connection';
-import packageJson from '../../package';
+import packageJson from '../../package.json';
 import { getIconStatus } from '~/enums/browser-icon-status-enum';
 import { Application } from '~/application';
 import { getBrowser } from '~/helpers/browser-helper';
@@ -928,13 +928,13 @@ class HomePage extends Component {
 			if (
 				moment(timeEntry.timeInterval.start)
 					.tz(timeZone)
-					.isSame(moment().tz(timeZone), 'day')
+					.isSame(moment().tz(timeZone, true).startOf('day'), 'day')
 			) {
 				timeEntry.start = locales.TODAY_LABEL;
 			} else if (
 				moment(timeEntry.timeInterval.start)
 					.tz(timeZone)
-					.isSame(moment().subtract(1, 'day').tz(timeZone), 'day')
+					.isSame(moment().tz(timeZone, true).startOf('day').subtract(1, 'day'), 'day')
 			) {
 				timeEntry.start = locales.YESTERDAY_LABEL;
 			} else {
@@ -983,26 +983,37 @@ class HomePage extends Component {
 		let formatedDurationMap = {};
 		let formatedKey;
 		for (let key in durationMap) {
-			formatedKey = moment(key).tz(timeZone).isSame(moment(), 'day')
-				? locales.TODAY_LABEL
-				: moment(key).tz(timeZone).isSame(moment().subtract(1, 'day').tz(timeZone), 'day')
-				? locales.YESTERDAY_LABEL
-				: moment(key).tz(timeZone).format('ddd, Do MMM');
+			formatedKey = moment(key).format('ddd, Do MMM');
+
+			if (
+				moment(key)
+					.tz(timeZone, true)
+					.isSame(moment().tz(timeZone, true).startOf('day'), 'day')
+			) {
+				formatedKey = locales.TODAY_LABEL;
+			} else if (
+				moment(key)
+					.tz(timeZone, true)
+					.isSame(moment().tz(timeZone, true).startOf('day').subtract(1, 'day'), 'day')
+			) {
+				formatedKey = locales.YESTERDAY_LABEL;
+			}
+
 			formatedDurationMap[formatedKey] = durationMap[key];
 		}
 
 		return formatedDurationMap;
 	}
 
-	async handleScroll(event) {
-		const isOff = await isOffline();
+	async handleScroll() {
+		const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+		const viewportHeight = window.innerHeight;
+		const totalHeight = document.documentElement.scrollHeight;
 
 		if (
-			event.srcElement.body.scrollTop + window.innerHeight >
-				event.srcElement.body.scrollHeight - 100 &&
+			scrollTop + viewportHeight > totalHeight - 100 &&
 			this.state.loadMore &&
-			!this.state.loading &&
-			!isOff
+			!this.state.loading
 		) {
 			this.loadMoreEntries();
 		}
@@ -1157,6 +1168,7 @@ class HomePage extends Component {
 					eventName: 'endInProgress',
 					options: {
 						endedFromIntegration: false,
+						endEntryInProgressToContinueOtherEntry: true,
 					},
 				})
 				.then(() => {
@@ -1193,6 +1205,7 @@ class HomePage extends Component {
 								taskId,
 								tagIds,
 								customFields: cfs,
+								continueEntryByStartingEntryAgain: true,
 							},
 						})
 						.then(response => {

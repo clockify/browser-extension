@@ -1229,6 +1229,9 @@
   "ENTRY_IN_PROGRESS_EXISTS": {
     "message": "Vous avez une saisie horaire en cours !"
   },
+  "WEBSITE_FORMAT_ERROR": {
+    "message": "Le format du site Web n'est pas valide"
+  },
   "appName": {
     "message": "Clockify Suivi du temps",
     "description": "Le titre de l'application, affiché dans la boutique en ligne."

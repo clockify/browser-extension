@@ -9,8 +9,8 @@ class ProjectTaskService extends ClockifyService {
 		return wsSettings ? wsSettings.projectFavorites : true;
 	}
 
-	static async getUrlProjects(useV1 = false) {
-		const apiEndpoint = await this.apiEndpoint;
+	static async getUrlProjects(useWriteEndpoint, useV1 = false) {
+		const apiEndpoint = await (useWriteEndpoint ? this.apiWriteEndpoint() : this.apiEndpoint);
 		const workspaceId = await this.workspaceId;
 		return `${apiEndpoint}/${
 			useV1 ? 'v1/' : ''
@@ -26,7 +26,7 @@ class ProjectTaskService extends ClockifyService {
 			found,
 			created,
 			onlyAdminsCanCreateProjects,
-			projectArchived,
+			projectArchived
 		} = await this.getOrCreateProject(projectName);
 
 		let message = msg ? msg : '';
@@ -53,7 +53,7 @@ class ProjectTaskService extends ClockifyService {
 						projectDB: p,
 						taskDB: t,
 						msg,
-						msgId,
+						msgId
 					} = await DefaultProject.getProjectTaskFromDB();
 					if (msg) {
 						message += ' ' + msg;
@@ -112,7 +112,7 @@ class ProjectTaskService extends ClockifyService {
 			const {
 				data: project,
 				error,
-				status,
+				status
 			} = await this.createProject(requestBody);
 			if (status === 201) {
 				return { projectDB: project, created: true };
@@ -136,7 +136,7 @@ class ProjectTaskService extends ClockifyService {
 			msg,
 			msgId,
 			projectArchived,
-			onlyAdminsCanCreateProjects,
+			onlyAdminsCanCreateProjects
 		};
 	}
 
@@ -150,7 +150,7 @@ class ProjectTaskService extends ClockifyService {
 		if (!task) {
 			let { data, error: err } = await this.getTaskOfProject({
 				projectId: project.id,
-				taskName: encodeURIComponent(taskName),
+				taskName: encodeURIComponent(taskName)
 			});
 
 			// backend returns a list of tasks, but we only want the one with the exact name
@@ -165,7 +165,7 @@ class ProjectTaskService extends ClockifyService {
 			const {
 				data,
 				error: err,
-				status,
+				status
 			} = await this.createTask({ projectId: project.id, name: taskName });
 			task = data;
 			if (status === 201) {
@@ -186,29 +186,29 @@ class ProjectTaskService extends ClockifyService {
 		const filterTrimmedEncoded = encodeURIComponent(filter.trim());
 		const apiEndpoint = await this.apiEndpoint;
 		const workspaceId = await this.workspaceId;
-		const searchKeyWord = projectPickerSpecialFilter? 'search=@' : 'search=';
+		const searchKeyWord = projectPickerSpecialFilter ? 'search=@' : 'search=';
 		const endPoint = `${apiEndpoint}/workspaces/${workspaceId}/project-picker/projects?page=${page}&${searchKeyWord}${filterTrimmedEncoded}`; // &favorites
 		const { data: projects, error } = await this.apiCall(endPoint);
 		return { projects, error };
 	}
 
 	static async createProject(bodyProject) {
-		const endPoint = await this.getUrlProjects(true);
+		const endPoint = await this.getUrlProjects(true, true);
 		return await this.apiCall(endPoint, 'POST', bodyProject);
 	}
 
 	static async createTask({ projectId, name }) {
-		const urlProjects = await this.getUrlProjects(true);
+		const urlProjects = await this.getUrlProjects(true, true);
 		const endPoint = `${urlProjects}/${projectId}/tasks`;
 		const body = {
 			name,
-			projectId,
+			projectId
 		};
 		return await this.apiCall(endPoint, 'POST', body);
 	}
 
 	static async getLastUsedProjectFromTimeEntries(forceTasks) {
-		const urlProjects = await this.getUrlProjects();
+		const urlProjects = await this.getUrlProjects(false);
 		let data, error, status;
 
 		if (forceTasks) {
@@ -229,7 +229,7 @@ class ProjectTaskService extends ClockifyService {
 	}
 
 	static async getLastUsedProjectAndTaskFromTimeEntries() {
-		const urlProjects = await this.getUrlProjects();
+		const urlProjects = await this.getUrlProjects(false);
 		let endPoint = `${urlProjects}/lastUsed?type=PROJECT_AND_TASK`;
 		let { data, error, status } = await this.apiCall(endPoint);
 		return { data, error, status };
@@ -241,13 +241,13 @@ class ProjectTaskService extends ClockifyService {
 	}
 
 	static async getProjectsByIds(projectIds, taskIds) {
-		const urlProjects = await this.getUrlProjects();
+		const urlProjects = await this.getUrlProjects(true);
 		const endPoint = `${urlProjects}/ids`;
 		const body = { ids: projectIds };
 		const {
 			data: projects,
 			error,
-			status,
+			status
 		} = await this.apiCall(endPoint, 'POST', body);
 		if (error) {
 			return { error };
@@ -258,7 +258,7 @@ class ProjectTaskService extends ClockifyService {
 				const {
 					tasks,
 					error: err,
-					status: st,
+					status: st
 				} = await this.getAllTasks(taskIds);
 				if (err) {
 				} else {
@@ -272,13 +272,13 @@ class ProjectTaskService extends ClockifyService {
 	}
 
 	static async getTask(taskId) {
-		const urlProjects = await this.getUrlProjects();
+		const urlProjects = await this.getUrlProjects(true);
 		const endPoint = `${urlProjects}/taskIds`;
 		const body = { ids: [taskId] };
 		const {
 			data: tasks,
 			error,
-			status,
+			status
 		} = await this.apiCall(endPoint, 'POST', body);
 		if (status === 200 && tasks.length > 0) {
 			return tasks[0];
@@ -301,15 +301,15 @@ class ProjectTaskService extends ClockifyService {
 	}
 
 	static async getAllTasks(taskIds) {
-		const urlProjects = await this.getUrlProjects();
+		const urlProjects = await this.getUrlProjects(true);
 		const endPoint = `${urlProjects}/taskIds`;
 		const body = {
-			ids: taskIds,
+			ids: taskIds
 		};
 		const {
 			data: tasks,
 			error,
-			status,
+			status
 		} = await this.apiCall(endPoint, 'POST', body);
 		return { tasks, error, status };
 	}
@@ -460,7 +460,7 @@ class ProjectTaskService extends ClockifyService {
 	}
 
 	static async makeProjectFavorite(projectId) {
-		const apiEndpoint = await this.apiEndpoint;
+		const apiEndpoint = await this.apiWriteEndpoint();
 		const userId = await this.userId;
 		const workspaceId = await this.workspaceId;
 		const endPoint = `${apiEndpoint}/workspaces/${workspaceId}/users/${userId}/projects/favorites/${projectId}`;
@@ -469,7 +469,7 @@ class ProjectTaskService extends ClockifyService {
 	}
 
 	static async removeProjectAsFavorite(projectId) {
-		const apiEndpoint = await this.apiEndpoint;
+		const apiEndpoint = await this.apiWriteEndpoint();
 		const userId = await this.userId;
 		const workspaceId = await this.workspaceId;
 		const endPoint = `${apiEndpoint}/workspaces/${workspaceId}/users/${userId}/projects/favorites/projects/${projectId}`;

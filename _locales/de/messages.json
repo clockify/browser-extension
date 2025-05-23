@@ -1229,6 +1229,9 @@
   "ENTRY_IN_PROGRESS_EXISTS": {
     "message": "Sie haben eine laufende Zeiteingabe!"
   },
+  "WEBSITE_FORMAT_ERROR": {
+    "message": "Das Website-Format ist ungültig"
+  },
   "appName": {
     "message": "Clockify-Zeiterfassung",
     "description": "Der Titel der Anwendung, der im Webshop angezeigt wird."

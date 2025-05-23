@@ -1,135 +1,176 @@
 {
-	"ambra": {
-		"listAndKanbanView": {
-			"hanger": ".task-container:not(.clockify)",
-			"taskCode": ".task-code",
-			"taskDescription": ".task-description",
-			"projectName": ".project-name",
-			"ambraClockifyButton": "button.clockify-container"
-		},
-		"modalView": {
-			"hanger": ".task-modal:not(.clockify)",
-			"taskOptions": ".task-options",
-			"taskCode": ".task-code",
-			"taskDescription": ".task-description",
-			"projectName": ".project-name"
-		}
-	},
-	"shortcut": {
-		"storyModal": {
-			"hanger": ".story-details:not(.clockify)",
-			"description": "h2.story-name",
-			"stateAttribute": ".story-attributes div:nth-child(6)"
-		}
-	},
-	"nozbe": {
-		"sideTaskView": {
-			"hanger": ".PSnpO:not(.clockify)",
-			"description": "[class=\"_4Q-+e\"]",
-			"leftColumn": ".X9Cyv",
-			"rightColumn": "[class=\"n5+5r\"]",
-			"containerClassList": "clockify-widget-container sIw2A xnenn",
-			"line": ".xkSgE > div"
-		}
-	},
-	"wrike": {
-		"taskView": {
-			"hanger": "action-panel.header__action-panel:not(.clockify), .task-view-header__actions.action-bar:not(.clockify), .wrike-panel-header-toolbar:not(.clockify), action-panel.work-item-header__action-panel:not(.clockify)",
-			"description": ".title__ghost",
-			"projectFromTaskTag": ".folder-tag-label__item--name",
-			"projectFromPageHeader": "header .flex-text-input__ghost",
-			"projectFrom": "header .flex-text-input__ghost"
-		}
-	},
-	"coda": {
-		"documentView": {
-			"hanger": "header > div:first-child:not(.clockify)"
-		}
-	},
-	"gitlab": {
-		"MergeRequestAndIssueView": {
-			"hanger": ".issue-details .detail-page-description:not(.clockify), .merge-request-details.issuable-details > .detail-page-description:not(.clockify)",
-			"breadcrumbs": "[aria-label*=\"Breadcrumb\"]",
-			"breadcrumbsList": ".gl-breadcrumb-list",
-			"anchor": "a",
-			"groupName": ".group-path",
-			"id": "[data-testid=\"breadcrumb-current-link\"] a",
-			"issueTitle": "h1.title",
-			"projectName": ".breadcrumb-item-text",
-			"label": "div.labels .gl-label-link",
-			"firstSpan": "span:nth-child(1)",
-			"secondSpan": "span:nth-child(2)"
-		}
-	},
-	"pipedrive": {
-		"leadView": {
-			"hanger": "[data-testid=\"SidebarLeadTitle\"]:not(.clockify)",
-			"leadName": ".EditFieldstyles__ComponentReadWrapper-sc-lwe1gw-0"
-		},
-		"dealView": {
-			"hanger": "[data-testid=\"header-title\"]:not(.clockify)",
-			"dealName": ".cui5-editable-text__input"
-		},
-		"activityView": {
-			"hanger": ".activity-form__Container-sc-jw07kj-0 .cui5-compound-modal__footer:not(.clockify)",
-			"cardTitle": "[data-test=\"contextual-view\"] .cui5-tabs__tab span span"
-		},
-		"contactView": {
-			"hanger": ".detailView .content .spacer:not(.clockify)"
-		}
-	},
-	"scoro": {
-		"taskListView": {
-			"hanger": ".TaskRow:not(.clockify)",
-			"taskName": ".eventName .bold"
-		},
-		"singleTaskView": {
-			"hanger": ".buttonbar.compact-button-bar .d-inline-flex:not(.clockify)",
-			"taskTitle": "div.main-row-title"
-		}
-	},
-	"redbooth": {
-		"ModalWindowAndRightSidePanel": {
-			"hanger": ".tb-element-big .tb-element-title:not(.clockify)",
-			"description": ".js-element-title-inner a"
-		}
-	},
-	"pipefy": {
-		"cardModalView": {
-			"hanger": "[data-testid=\"open-card-title-wrapper\"]:not(.clockify)",
-			"description": "button"
-		}
-	},
-	"monday": {
-		"allViews": {
-			"hanger": ".flexible-header:not(.clockify), .pulse-card-dialog-component:not(.clockify), .modal-component-content .item-page-header-component__actions-bar:not(.clockify)",
-			"boardNameFromMainTable": ".board-name h1",
-			"boardName": ".open-pulse-in-board-link",
-			"descriptionFromKanbanAndMyWork": ".pulse-page-name-wrapper div span",
-			"descriptionFromMainTable": ".pulse_title [data-testid=\"editable-heading\"]",
-			"descriptionFromCard": ".ds-editable-component span",
-			"descriptionFromModal": "[data-testid=\"editable-heading\"] h2",
-			"selectorsForViewSpecificElements": {
-				"kanban": ".kanban-list-wrapper",
-				"card": ".pulse-card-dialog-component",
-				"modal": ".modal-component-content",
-				"myWork": ".overview-section-content-container",
-				"mainTable": ".slide-panel.open:not(.popup)"
-			}
-		}
-	},
-	"zendesk": {
-		"singleTicketView": {
-			"hanger": "nav[aria-label=\"Secondary\"]:not(.clockify)",
-			"ticketNumber": "/tickets\\/(\\d+)/",
-			"ticketSubject": ".ticket-panes-grid-layout.active input[data-test-id=\"omni-header-subject\"]",
-			"ticketTags": ".ticket-panes-grid-layout.active [data-test-id=\"ticket-system-field-tags-item-selected\"]"
-		},
-		"singleTicketViewNewUi": {
-			"hanger": "[aria-label=\"Ticket page location\"]:not(.clockify)",
-			"ticketNumber": "/tickets\\/(\\d+)/",
-			"ticketSubject": "[data-is-active=\"true\"] [data-test-id=\"omni-header-subject\"]",
-			"ticketTags": "[data-is-active=\"true\"] [data-test-id*=\"tags\"] span"
-		}
-	}
+  "ambra": {
+    "listAndKanbanView": {
+      "hanger": ".task-container:not(.clockify)",
+      "taskCode": ".task-code",
+      "taskDescription": ".task-description",
+      "projectName": ".project-name",
+      "ambraClockifyButton": "button.clockify-container"
+    },
+    "modalView": {
+      "hanger": ".task-modal:not(.clockify)",
+      "taskOptions": ".task-options",
+      "taskCode": ".task-code",
+      "taskDescription": ".task-description",
+      "projectName": ".project-name"
+    }
+  },
+  "shortcut": {
+    "storyModal": {
+      "hanger": ".story-details:not(.clockify)",
+      "description": "h2.story-name",
+      "stateAttribute": ".story-attributes div:nth-child(6)"
+    }
+  },
+  "nozbe": {
+    "sideTaskView": {
+      "hanger": ".PSnpO:not(.clockify)",
+      "description": "[class=\"_4Q-+e\"]",
+      "leftColumn": ".X9Cyv",
+      "rightColumn": "[class=\"n5+5r\"]",
+      "containerClassList": "clockify-widget-container sIw2A xnenn",
+      "line": ".xkSgE \u003E div"
+    }
+  },
+  "wrike": {
+    "taskView": {
+      "hanger": "action-panel.header__action-panel:not(.clockify), .task-view-header__actions.action-bar:not(.clockify), .wrike-panel-header-toolbar:not(.clockify), action-panel.work-item-header__action-panel:not(.clockify)",
+      "description": ".title__ghost",
+      "projectFromTaskTag": ".folder-tag-label__item--name",
+      "projectFromPageHeader": "header .flex-text-input__ghost",
+      "projectFrom": "header .flex-text-input__ghost"
+    }
+  },
+  "coda": {
+    "documentView": {
+      "hanger": "header \u003E div:first-child:not(.clockify)"
+    }
+  },
+  "gitlab": {
+    "MergeRequestAndIssueView": {
+      "hanger": ".issue-details .detail-page-description:not(.clockify), .merge-request-details.issuable-details \u003E .detail-page-description:not(.clockify)",
+      "breadcrumbs": "[aria-label*=\"Breadcrumb\"]",
+      "breadcrumbsList": ".gl-breadcrumb-list",
+      "anchor": "a",
+      "groupName": ".group-path",
+      "id": "[data-testid=\"breadcrumb-current-link\"] a",
+      "issueTitle": "h1.title",
+      "projectName": ".breadcrumb-item-text",
+      "label": "div.labels .gl-label-link",
+      "firstSpan": "span:nth-child(1)",
+      "secondSpan": "span:nth-child(2)"
+    }
+  },
+  "pipedrive": {
+    "leadView": {
+      "hanger": "[data-testid=\"SidebarLeadTitle\"]:not(.clockify)",
+      "leadName": ".EditFieldstyles__ComponentReadWrapper-sc-lwe1gw-0"
+    },
+    "dealView": {
+      "hanger": "[data-testid=\"header-title\"]:not(.clockify)",
+      "dealName": ".cui5-editable-text__input"
+    },
+    "activityView": {
+      "hanger": ".activity-form__Container-sc-jw07kj-0 .cui5-compound-modal__footer:not(.clockify)",
+      "cardTitle": "[data-test=\"contextual-view\"] .cui5-tabs__tab span span"
+    },
+    "contactView": {
+      "hanger": ".detailView .content .spacer:not(.clockify)"
+    }
+  },
+  "scoro": {
+    "taskListView": {
+      "hanger": ".TaskRow:not(.clockify)",
+      "taskName": ".eventName .bold"
+    },
+    "singleTaskView": {
+      "hanger": ".buttonbar.compact-button-bar .d-inline-flex:not(.clockify)",
+      "taskTitle": "div.main-row-title"
+    }
+  },
+  "redbooth": {
+    "ModalWindowAndRightSidePanel": {
+      "hanger": ".tb-element-big .tb-element-title:not(.clockify)",
+      "description": ".js-element-title-inner a"
+    }
+  },
+  "pipefy": {
+    "cardModalView": {
+      "hanger": "[data-testid=\"open-card-title-wrapper\"]:not(.clockify)",
+      "description": "button"
+    }
+  },
+  "monday": {
+    "allViews": {
+      "hanger": ".flexible-header:not(.clockify), .pulse-card-dialog-component:not(.clockify), .modal-component-content .item-page-header-component__actions-bar:not(.clockify)",
+      "boardNameFromMainTable": ".board-name h1",
+      "boardName": ".open-pulse-in-board-link",
+      "descriptionFromKanbanAndMyWork": ".pulse-page-name-wrapper div span",
+      "descriptionFromMainTable": ".pulse_title [data-testid=\"heading\"] h2",
+      "descriptionFromCard": ".ds-editable-component span",
+      "descriptionFromModal": "[data-testid=\"editable-heading\"] h2",
+      "selectorsForViewSpecificElements": {
+        "kanban": ".kanban-list-wrapper",
+        "card": ".pulse-card-dialog-component",
+        "modal": ".modal-component-content",
+        "myWork": ".overview-section-content-container",
+        "mainTable": ".slide-panel.open:not(.popup)"
+      }
+    }
+  },
+  "zendesk": {
+    "singleTicketView": {
+      "hanger": "nav[aria-label=\"Secondary\"]:not(.clockify)",
+      "ticketNumber": "/tickets\\/(\\d+)/",
+      "ticketSubject": ".ticket-panes-grid-layout.active input[data-test-id=\"omni-header-subject\"]",
+      "ticketTags": ".ticket-panes-grid-layout.active [data-test-id=\"ticket-system-field-tags-item-selected\"]"
+    },
+    "singleTicketViewNewUi": {
+      "hanger": "[aria-label=\"Ticket page location\"]:not(.clockify)",
+      "ticketNumber": "/tickets\\/(\\d+)/",
+      "ticketSubject": "[data-is-active=\"true\"] [data-test-id=\"omni-header-subject\"]",
+      "ticketTags": "[data-is-active=\"true\"] [data-test-id*=\"tags\"] span"
+    }
+  },
+  "trello": {
+    "rightSidebarModalView": {
+      "hanger": "[data-testid=\"card-back-copy-card-button\"]:not(.clockify)",
+      "modalTitle": "[data-testid=\"card-back-title-input\"]",
+      "boardTitle": "[data-testid=\"board-name-display\"]"
+    },
+    "cardBoardView": {
+      "hanger": "[data-testid=\"trello-card\"]:not(.clockify)",
+      "cardTitle": "[data-testid=\"card-name\"]",
+      "boardTitle": ".board-header h1"
+    },
+    "checklistModalView": {
+      "hanger": "[data-testid=\"check-item-name\"]:not(.clockify)",
+      "modalTitle": "[data-testid=\"card-back-title-input\"]",
+      "boardTitle": ".board-header h1"
+    }
+  },
+  "microsoftPlanner": {
+    "gridView": {
+      "anchor": ".taskGridContainer .grid-row:not(.clockify)",
+      "taskRowName": ".taskTitleCell",
+      "taskRowTags": ".taskGridContainer .labelPickerInner .editableLabel",
+      "projectName": ".planPickerItem",
+      "projectNameFromBreadcrumbs": ".ms-Breadcrumb-itemLink > div > div"
+    },
+    "boardView": {
+      "anchor": ".taskCard:not(.clockify)",
+      "cardTaskName": ".title",
+      "cardTaskTags": ".labelTag \u003E span",
+      "cardBottomSection": ".leftSection",
+      "projectName": ".planName",
+      "projectNameFromBreadcrumbs": ".ms-Breadcrumb-itemLink > div > div"
+    },
+    "modalView": {
+      "anchor": ".taskEditor-dialog-content:not(.clockify)",
+      "taskNameInput": "[aria-label=\"Task name\"]",
+      "cardHeaderTitle": ".planTitle",
+      "cardTaskTags": ".editableLabelWrapper .editableLabelInner",
+      "taskTitleContainer": "[aria-label=\"Task name\"]"
+    }
+  }
 }

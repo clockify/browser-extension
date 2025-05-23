@@ -6,7 +6,7 @@ import EditFormManual from '../edit-form-manual.component';
 import { offlineStorage } from '../../helpers/offlineStorage';
 
 Modal.defaultStyles = {
-	zIndex: 2147483647,
+	zIndex: 2147483647
 };
 
 offlineStorage.load();
@@ -37,7 +37,8 @@ function getActiveIcon() {
 			<path
 				d="M9.65974 10.7078C9.3005 10.3508 9.3005 9.7721 9.65974 9.41513C10.019 9.05816 10.6014 9.05816 10.9607 9.41513L13.9528 12.3883C14.312 12.7453 14.312 13.324 13.9528 13.681C13.5936 14.0379 13.0111 14.0379 12.6519 13.681L9.65974 10.7078Z"
 				fill="#03A9F4"
-			/>{' '}
+			/>
+			{' '}
 		</svg>
 	);
 }
@@ -49,19 +50,23 @@ function getInactiveIcon() {
 			<path
 				d="M11.0065 2.04616C11.4838 1.56806 11.3811 0.764579 10.7508 0.522636C9.8712 0.185007 8.91622 0 7.91809 0C3.54505 0 0 3.5511 0 7.93162C0 12.3121 3.54505 15.8632 7.91809 15.8632C8.91006 15.8632 9.85941 15.6805 10.7345 15.3468C11.3664 15.1059 11.4702 14.3009 10.992 13.8219C10.6822 13.5115 10.2133 13.4391 9.79745 13.5775C9.20813 13.7738 8.57779 13.88 7.92268 13.88C4.6429 13.88 1.9841 11.2167 1.9841 7.93131C1.9841 4.64592 4.6429 1.98259 7.92268 1.98259C8.58253 1.98259 9.21724 2.09041 9.81022 2.28937C10.2263 2.42902 10.6962 2.35702 11.0065 2.04616Z"
 				fill="#60747D"
-			/>{' '}
+			/>
+			{' '}
 			<path
 				d="M9.11681 8.02279C9.11681 8.57666 8.66782 9.02564 8.11396 9.02564C7.5601 9.02564 7.11111 8.57666 7.11111 8.02279C7.11111 7.46893 7.5601 7.01994 8.11396 7.01994C8.66782 7.01994 9.11681 7.46893 9.11681 8.02279Z"
 				fill="#60747D"
-			/>{' '}
+			/>
+			{' '}
 			<path
 				d="M9.65974 5.15543C9.3005 5.5124 9.3005 6.09115 9.65974 6.44812C10.019 6.80509 10.6014 6.80509 10.9607 6.44812L13.9528 3.47494C14.312 3.11797 14.312 2.53922 13.9528 2.18225C13.5936 1.8253 13.0111 1.8253 12.6519 2.18225L9.65974 5.15543Z"
 				fill="#60747D"
-			/>{' '}
+			/>
+			{' '}
 			<path
 				d="M9.65974 10.7078C9.3005 10.3508 9.3005 9.7721 9.65974 9.41513C10.019 9.05816 10.6014 9.05816 10.9607 9.41513L13.9528 12.3883C14.312 12.7453 14.312 13.324 13.9528 13.681C13.5936 14.0379 13.0111 14.0379 12.6519 13.681L9.65974 10.7078Z"
 				fill="#60747D"
-			/>{' '}
+			/>
+			{' '}
 		</svg>
 	);
 }
@@ -96,7 +101,7 @@ const Button = props => {
 				display: 'flex',
 				alignItems: 'center',
 				cursor: 'pointer',
-				...props.style,
+				...props.style
 			}}>
 			{props.active ? getActiveIcon() : getInactiveIcon()}
 			{!props.small && (
@@ -123,13 +128,13 @@ function ClockifyButton(props) {
 		isPopupOpen: false,
 		timeEntry: null,
 		isDarkTheme: false,
-		showPostStartPopup: true,
+		showPostStartPopup: true
 	});
 
 	const setIsPopupOpen = isOpen => {
 		setState(state => ({
 			...state,
-			isPopupOpen: isOpen,
+			isPopupOpen: isOpen
 		}));
 	};
 
@@ -150,17 +155,22 @@ function ClockifyButton(props) {
 
 	const syncDarkMode = async () => {
 		const appStore = await localStorage.getItem('appStore');
-		const appStoreParsed = JSON.parse(appStore).state;
 
-		const userId = appStoreParsed.userData.id;
-		const usersDarkThemePreference = appStoreParsed.usersDarkThemePreference;
+		let isDarkTheme = false;
 
-		const userPreference = usersDarkThemePreference.find(pref => pref.userId === userId);
-		const isDarkTheme = userPreference ? userPreference.enabled : false;
+		if (appStore) {
+			const appStoreParsed = JSON.parse(appStore).state;
+
+			const userId = appStoreParsed.userData.id;
+			const usersDarkThemePreference = appStoreParsed.usersDarkThemePreference;
+
+			const userPreference = usersDarkThemePreference.find(pref => pref.userId === userId);
+			isDarkTheme = userPreference && userPreference.enabled;
+		}
 
 		setState(prevState => ({
 			...prevState,
-			isDarkTheme,
+			isDarkTheme
 		}));
 	};
 
@@ -172,7 +182,7 @@ function ClockifyButton(props) {
 		if (changedItems.includes('workspaceSettings')) {
 			setState(state => ({
 				...state,
-				workspaceSettings: JSON.parse(changes.workspaceSettings.newValue || '{}'),
+				workspaceSettings: JSON.parse(changes.workspaceSettings.newValue || '{}')
 			}));
 		}
 	};
@@ -189,7 +199,7 @@ function ClockifyButton(props) {
 						...state,
 						workspaceSettings,
 						userSettings,
-						showPostStartPopup: showPostStartPopup ?? true,
+						showPostStartPopup: showPostStartPopup ?? true
 					}));
 				}
 			);
@@ -214,7 +224,7 @@ function ClockifyButton(props) {
 				timeEntry: props.timeEntry,
 				manualMode: props.manualMode,
 				copyAsEntry: props.copyAsEntry,
-				isPopupOpen: props.isPopupOpen,
+				isPopupOpen: props.isPopupOpen
 			}));
 		}
 	}, [props.timeEntry]);
@@ -227,7 +237,7 @@ function ClockifyButton(props) {
 
 	function saveEntryAndOpenPopup(entry) {
 		aBrowser.storage.local.set({
-			timeEntryInProgress: entry,
+			timeEntryInProgress: entry
 		});
 		if (_clockifyShowPostStartPopup) {
 			// OpenPostStartPopupDlg(entry);
@@ -235,7 +245,7 @@ function ClockifyButton(props) {
 			setState(state => ({
 				...state,
 				isPopupOpen: true,
-				timeEntry: entry,
+				timeEntry: entry
 			}));
 		}
 	}
@@ -259,8 +269,8 @@ function ClockifyButton(props) {
 						? clockifyLocales.UPGRADE_REGIONAL_ADMIN
 						: clockifyLocales.UPGRADE_REGIONAL
 					: isUserOwnerOrAdmin
-					? clockifyLocales.SUBSCRIPTION_EXPIRED
-					: clockifyLocales.FEATURE_DISABLED_CONTACT_ADMIN
+						? clockifyLocales.SUBSCRIPTION_EXPIRED
+						: clockifyLocales.FEATURE_DISABLED_CONTACT_ADMIN
 			);
 			return;
 		}
@@ -272,7 +282,14 @@ function ClockifyButton(props) {
 			// 	timeEntryOptionsInvoked.description;
 			title = timeEntryOptionsInvoked.description;
 		}
-		const appendWebsiteURL = await localStorage.getItem('permanent_appendWebsiteURL');
+
+		let appendWebsiteURL = false;
+
+		const appStore = await localStorage.getItem('appStore');
+		if (appStore) {
+			appendWebsiteURL = JSON.parse(appStore).state.appendWebsiteURL;
+		}
+
 		let pipeSeparator = ' | ';
 		if (appendWebsiteURL) {
 			if (title.includes(' | ')) pipeSeparator = ' || ';
@@ -304,8 +321,8 @@ function ClockifyButton(props) {
 							eventName: 'endInProgress',
 							options: {
 								endedFromIntegration: true,
-								integrationName: props.integrationName,
-							},
+								integrationName: props.integrationName
+							}
 						},
 						response => {
 							if (!response) {
@@ -322,7 +339,7 @@ function ClockifyButton(props) {
 								if (_clockifyShowPostStartPopup) {
 									aBrowser.runtime.sendMessage(
 										{
-											eventName: 'fetchEntryInProgress',
+											eventName: 'fetchEntryInProgress'
 										},
 										response => {
 											if (!response) {
@@ -337,7 +354,7 @@ function ClockifyButton(props) {
 											}
 											const { status, entry: hydratedEntry } = response;
 											aBrowser.storage.local.set({
-												timeEntryInProgress: hydratedEntry,
+												timeEntryInProgress: hydratedEntry
 											});
 											if (hydratedEntry) {
 												props.updateButtonProps({ active: true });
@@ -360,12 +377,12 @@ function ClockifyButton(props) {
 								const active = false;
 								props.updateButtonProps({ title, active });
 								aBrowser.storage.local.set({
-									timeEntryInProgress: null,
+									timeEntryInProgress: null
 								});
 								_waitingForResponse = false;
 								setState(state => ({
 									...state,
-									isPopupOpen: false,
+									isPopupOpen: false
 								}));
 							}
 						}
@@ -376,8 +393,8 @@ function ClockifyButton(props) {
 							eventName: 'updateTimeEntryValues',
 							options: {
 								entryId: timeEntryId,
-								body: updatedFieldValues,
-							},
+								body: updatedFieldValues
+							}
 						})
 						.then(response => {
 							if (response && response.status === 200) {
@@ -386,8 +403,8 @@ function ClockifyButton(props) {
 										eventName: 'endInProgress',
 										options: {
 											endedFromIntegration: true,
-											integrationName: props.integrationName,
-										},
+											integrationName: props.integrationName
+										}
 									},
 									response => {
 										if (!response) {
@@ -411,7 +428,7 @@ function ClockifyButton(props) {
 											if (_clockifyShowPostStartPopup) {
 												aBrowser.runtime.sendMessage(
 													{
-														eventName: 'fetchEntryInProgress',
+														eventName: 'fetchEntryInProgress'
 													},
 													response => {
 														if (!response) {
@@ -427,11 +444,11 @@ function ClockifyButton(props) {
 														const { status, entry: hydratedEntry } =
 															response;
 														aBrowser.storage.local.set({
-															timeEntryInProgress: hydratedEntry,
+															timeEntryInProgress: hydratedEntry
 														});
 														if (hydratedEntry) {
 															props.updateButtonProps({
-																active: true,
+																active: true
 															});
 															if (!_clockifyPopupDlg) {
 																// OpenPostStartPopupDlg(hydratedEntry, msg);
@@ -454,12 +471,12 @@ function ClockifyButton(props) {
 											const active = false;
 											props.updateButtonProps({ title, active });
 											aBrowser.storage.local.set({
-												timeEntryInProgress: null,
+												timeEntryInProgress: null
 											});
 											_waitingForResponse = false;
 											setState(state => ({
 												...state,
-												isPopupOpen: false,
+												isPopupOpen: false
 											}));
 										}
 									}
@@ -469,7 +486,7 @@ function ClockifyButton(props) {
 								if (_clockifyShowPostStartPopup) {
 									aBrowser.runtime.sendMessage(
 										{
-											eventName: 'fetchEntryInProgress',
+											eventName: 'fetchEntryInProgress'
 										},
 										response => {
 											if (!response) {
@@ -484,7 +501,7 @@ function ClockifyButton(props) {
 											}
 											const { status, entry: hydratedEntry } = response;
 											aBrowser.storage.local.set({
-												timeEntryInProgress: hydratedEntry,
+												timeEntryInProgress: hydratedEntry
 											});
 											if (hydratedEntry) {
 												props.updateButtonProps({ active: true });
@@ -510,7 +527,7 @@ function ClockifyButton(props) {
 							if (_clockifyShowPostStartPopup) {
 								aBrowser.runtime.sendMessage(
 									{
-										eventName: 'fetchEntryInProgress',
+										eventName: 'fetchEntryInProgress'
 									},
 									response => {
 										if (!response) {
@@ -525,7 +542,7 @@ function ClockifyButton(props) {
 										}
 										const { status, entry: hydratedEntry } = response;
 										aBrowser.storage.local.set({
-											timeEntryInProgress: hydratedEntry,
+											timeEntryInProgress: hydratedEntry
 										});
 										if (hydratedEntry) {
 											props.updateButtonProps({ active: true });
@@ -557,8 +574,8 @@ function ClockifyButton(props) {
 						options: {
 							...timeEntryOptionsInvoked,
 							isStartedFromIntegration: true,
-							integrationName: props.integrationName,
-						},
+							integrationName: props.integrationName
+						}
 					},
 					response => {
 						if (!response) {
@@ -586,7 +603,7 @@ function ClockifyButton(props) {
 											saveEntryAndOpenPopup(timeEntryInProgress);
 										}
 									} else {
-										alert(msg.replaceAll('<br/>', '\n'));
+										alert(response?.message || msg.replaceAll('<br/>', '\n'));
 									}
 									_waitingForResponse = false;
 								});
@@ -609,7 +626,7 @@ function ClockifyButton(props) {
 								noTags = false;
 								aBrowser.runtime.sendMessage(
 									{
-										eventName: 'fetchEntryInProgress',
+										eventName: 'fetchEntryInProgress'
 									},
 									response => {
 										if (!response) {
@@ -665,11 +682,11 @@ function ClockifyButton(props) {
 						position: 'fixed',
 						zIndex: '2147483647',
 						top: '3vh',
-						right: '3vw',
+						right: '3vw'
 					},
 					content: {
-						zIndex: '2147483646',
-					},
+						zIndex: '2147483646'
+					}
 				}}
 				isOpen={state.isPopupOpen}
 				ariaHideApp={false}>
@@ -699,13 +716,13 @@ function ClockifyButton(props) {
 								setIsPopupOpen(false);
 								if (props.manualMode) {
 									props.updateButtonProps(null, {
-										manualMode: false,
+										manualMode: false
 									});
 								}
 
 								if (props.copyAsEntry) {
 									props.updateButtonProps(null, {
-										copyAsEntry: false,
+										copyAsEntry: false
 									});
 								}
 							}}
@@ -725,7 +742,7 @@ function ClockifyButton(props) {
 									setIsPopupOpen(false);
 									props.updateButtonProps(null, {
 										manualMode: false,
-										copyAsEntry: false,
+										copyAsEntry: false
 									});
 								}}
 								copyAsEntry={props.copyAsEntry}
@@ -743,7 +760,7 @@ function ClockifyButton(props) {
 									setIsPopupOpen(false);
 									props.updateButtonProps(null, {
 										manualMode: false,
-										copyAsEntry: false,
+										copyAsEntry: false
 									});
 								}}
 							/>

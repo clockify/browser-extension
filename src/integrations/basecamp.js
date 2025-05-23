@@ -89,18 +89,41 @@
 		);
 
 		// Card in list
-		clockifyButton.render('.kabanlist .kanban-card:not(.clockify)', { observe: true }, elem => {
-			const description = () => $('.checkbox__content a', elem).textContent.trim();
+		clockifyButton.render(
+			'.assignments-list .kanban-card:not(.clockify)',
+			{ observe: true },
+			elem => {
+				const card = $('.checkbox__content', elem);
+				const description = () => $('a', card).textContent.trim();
 
-			const link = clockifyButton.createButton({
-				description,
-				small: true,
-			});
+				// My Assignments
+				const projectContainer = elem.closest('.assignments__bucket');
+				const projectNameMyAssignments = projectContainer
+					? text('h2 a', projectContainer)
+					: '';
 
-			link.style.margin = '0 15px';
+				// My Assignments with dates
+				const myAssignmentsWithDatesContainer = elem.closest('.schedule-day__events');
+				const projectNameMyAssignmentsWithDates = myAssignmentsWithDatesContainer
+					? $$('a', myAssignmentsWithDatesContainer)
+					: '';
 
-			$('.checkbox__content', elem).append(link);
-		});
+				const projectName = projectNameMyAssignmentsWithDates.length
+					? projectNameMyAssignmentsWithDates[1].textContent.trim()
+					: projectNameMyAssignments;
+
+				const link = clockifyButton.createButton({
+					description,
+					projectName,
+					small: true,
+				});
+
+				link.style.margin = '0 10px';
+				link.style.display = 'inline-block';
+
+				$('*:first-child', card).after(link);
+			}
+		);
 
 		// Card Table
 		clockifyButton.render(
@@ -150,6 +173,7 @@
 				cardHeader.prepend(link);
 			}
 		);
+
 		// To do in Activity
 		clockifyButton.render(
 			'.latest-activity__blob--todo_created:not(.clockify)',
@@ -170,6 +194,7 @@
 				$('.checkbox__content', elem).append(link);
 			}
 		);
+
 		//To do details
 		clockifyButton.render('.todos .todo:not(.clockify)', { observe: true }, elem => {
 			const breadCrumbs = $$('[data-breadcrumbs-target="link"]');
@@ -185,7 +210,53 @@
 			link.style.margin = '0 15px';
 			link.style.display = 'inline-block';
 
-			$('.todo__title', elem).append(link);
+			const title = $('.todo__title', elem);
+
+			if (title) {
+				title.append(link);
+			}
+		});
+
+		// MyAssignments Todos list
+		clockifyButton.render('.assignments-list .todo:not(.clockify)', { observe: true }, elem => {
+			const todo = $('.checkbox .checkbox__content', elem);
+			const description = () => $('a', todo).textContent.trim();
+
+			let projectName = '';
+
+			// My Assignments
+			const projectContainer = elem.closest('.assignments__bucket');
+			if (projectContainer) {
+				projectName = text('h2 a', projectContainer);
+			}
+
+			// My Assignments with dates
+			const myAssignmentsWithDatesContainer = elem.closest('.schedule-day__events');
+			if (myAssignmentsWithDatesContainer) {
+				projectName = $$('a', myAssignmentsWithDatesContainer)[1].textContent.trim();
+			}
+
+			//Up Next
+			if (!projectContainer && !myAssignmentsWithDatesContainer) {
+				const todoText = text('.todo__ancestry', elem);
+				const textArray = todoText.split(' in ');
+				if (textArray.length > 0) {
+					projectName = textArray[textArray.length - 1];
+				}
+			}
+
+			const link = clockifyButton.createButton({
+				description,
+				projectName,
+				small: true,
+			});
+
+			link.style.margin = '0 10px';
+			link.style.display = 'inline-block';
+
+			$('.checkbox__content', elem).append(link);
+
+			$('*:first-child', todo).after(link);
 		});
 	}
 })();

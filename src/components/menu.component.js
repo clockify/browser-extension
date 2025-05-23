@@ -95,8 +95,6 @@ class Menu extends React.Component {
 						this.getMemberProfile();
 						this.isIdleDetectionOn();
 						this.isReminderOn();
-						this.isAutoStartStopOn();
-						this.isAppendWebsiteURLOn();
 						this.getAppVersion();
 					}
 				);
@@ -108,7 +106,10 @@ class Menu extends React.Component {
 		getBrowser()
 			.runtime.sendMessage({
 				eventName: 'getMemberProfile',
-				options: { userId: this.state.userId, workspaceId: activeWorkspaceId },
+				options: {
+					userId: this.state.userSettingsData.userId,
+					workspaceId: activeWorkspaceId,
+				},
 			})
 			.then(response => {
 				this.setState(
@@ -173,42 +174,6 @@ class Menu extends React.Component {
 			},
 		}));
 		setTimeout(() => this.checkForRemindersDatesAndTimes(), 200);
-	}
-
-	async isAutoStartStopOn() {
-		const userId = await localStorage.getItem('userId');
-		const autoStartOnBrowserStart = await localStorage.getItem('autoStartOnBrowserStart');
-		const autoStartFromStorage = autoStartOnBrowserStart
-			? JSON.parse(autoStartOnBrowserStart)
-			: [];
-		const autoStopOnBrowserClose = await localStorage.getItem('autoStopOnBrowserClose');
-		const autoStopFromStorage = autoStopOnBrowserClose
-			? JSON.parse(autoStopOnBrowserClose)
-			: [];
-
-		this.setState(prevState => ({
-			userSettingsData: {
-				...prevState.userSettingsData,
-				autoStartOnBrowserStart:
-					autoStartFromStorage.filter(
-						autoStart => autoStart.userId === userId && autoStart.enabled
-					).length > 0,
-				autoStopOnBrowserClose:
-					autoStopFromStorage.filter(
-						autoStop => autoStop.userId === userId && autoStop.enabled
-					).length > 0,
-			},
-		}));
-	}
-
-	async isAppendWebsiteURLOn() {
-		const appendWebsiteURL = await localStorage.getItem('appendWebsiteURL');
-		this.setState(prevState => ({
-			userSettingsData: {
-				...prevState.userSettingsData,
-				appendWebsiteURL,
-			},
-		}));
 	}
 
 	async getAppVersion() {
@@ -315,10 +280,9 @@ class Menu extends React.Component {
 			}
 			// Extract the number of hours and minutes from the work capacity string
 			// The work capacity string is in the format "PT3H30M", where the number of hours is 3 and the number of minutes is 30
-			const capacityHours =
-				this.state.userSettingsData.memberProfile.workCapacity.match(/\d+H/)[0]; // extract the number of hours
-			const capacityMinutes =
-				this.state.memberProfile.userSettingsData.workCapacity.match(/\d+M/); // try to extract the number of minutes
+			const workCapacity = this.state.userSettingsData.memberProfile.workCapacity;
+			const capacityHours = workCapacity.match(/\d+H/)[0]; // extract the number of hours
+			const capacityMinutes = workCapacity.match(/\d+M/); // try to extract the number of minutes
 			const hoursAsNumber = parseInt(capacityHours.slice(0, -1), 10); // convert the hours string to a number
 			const minutesAsNumber = capacityMinutes
 				? parseInt(capacityMinutes[0].slice(0, -1), 10)
@@ -358,7 +322,6 @@ class Menu extends React.Component {
 		}));
 	}
 	async setAsyncUserItems() {
-		const createObjects = JSON.parse(await localStorage.getItem('createObjects', false));
 		const isSelfHosted = JSON.parse(await localStorage.getItem('selfHosted', false));
 		const daysOfWeekLocales = await dateFnsLocale.getDaysShort();
 		const userEmail = await localStorage.getItem('userEmail');
@@ -367,7 +330,6 @@ class Menu extends React.Component {
 		this.setState(prevState => ({
 			userSettingsData: {
 				...prevState.userSettingsData,
-				createObjects,
 				isSelfHosted,
 				daysOfWeekLocales,
 				userEmail,
@@ -435,8 +397,12 @@ class Menu extends React.Component {
 		getBrowser().runtime.openOptionsPage();
 	}
 
-	handleLogoutClick() {
+	async handleLogoutClick() {
 		if (this.state.isOffline) return;
+		await getBrowser().runtime.sendMessage({
+			eventName: 'sendAnalyticsEvents',
+			options: { forceClearEvents: true },
+		});
 		this.disconnectWebSocket();
 		removeDarkModeClassFromBodyElement();
 		logout();
@@ -539,9 +505,7 @@ class Menu extends React.Component {
 							href="#"
 							onClick={this.changeModeToTimer.bind(this)}>
 							<span className="menu-timer-img"></span>
-							<span>
-								{locales.TRACKER__TIME_TRACKER__ENTRY__TRACK__TIMER_N}
-							</span>
+							<span>{locales.TRACKER__TIME_TRACKER__ENTRY__TRACK__TIMER_N}</span>
 						</a>
 						<div className="dropdown-divider"></div>
 						<WorkspaceList

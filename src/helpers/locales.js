@@ -1,5 +1,5 @@
 export default (function () {
-	const _supportedLanguages = ['en', 'fr', 'es', 'pt', 'ru', 'de', 'ko', 'ja'];
+	const _supportedLanguages = ['en', 'fr', 'es', 'pt', 'de'];
 
 	self.aBrowser = chrome || browser;
 

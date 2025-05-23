@@ -29,9 +29,7 @@ export const CreateProject = (props: PropsInterface) => {
 
 	const setAsyncStateItems = async (): Promise<void> => {
 		const wsSettings = await localStorage.getItem('workspaceSettings');
-		const billable = wsSettings
-			? JSON.parse(wsSettings).defaultBillableProjects
-			: false;
+		const billable = wsSettings ? JSON.parse(wsSettings).defaultBillableProjects : false;
 		const isProjectPublicByDefault = wsSettings
 			? JSON.parse(wsSettings).isProjectPublicByDefault
 			: false;
@@ -42,9 +40,8 @@ export const CreateProject = (props: PropsInterface) => {
 		setIsPublic(isProjectPublicByDefault);
 	};
 
-	const addProjectSuccess = (response: { error: { message: string; }; data: any; }) => {
-		if (response.error)
-			return toasterRef.current.toast('error', response.error?.message, 2);
+	const addProjectSuccess = (response: { error: { message: string }; data: any }) => {
+		if (response.error) return toasterRef.current.toast('error', response.error?.message, 2);
 
 		if (!forceTasks) {
 			props.selectProject(response.data);
@@ -52,9 +49,9 @@ export const CreateProject = (props: PropsInterface) => {
 
 		getBrowser()
 			.runtime.sendMessage({
-			eventName: 'getUserRoles'
-		})
-			.then((response: { data: { userRoles: any; }; }) => {
+				eventName: 'getUserRoles',
+			})
+			.then((response: { data: { userRoles: any } }) => {
 				if (response && response.data && response.data.userRoles) {
 					const { userRoles } = response.data;
 					localStorage.setItem('userRoles', userRoles);
@@ -66,12 +63,8 @@ export const CreateProject = (props: PropsInterface) => {
 			.catch(() => props.closeModal());
 	};
 
-	const addProjectFailure = (error: { response: { data: { message: string; }; }; }) => {
-		toasterRef.current.toast(
-			'error',
-			locales.replaceLabels(error.response.data.message),
-			2
-		);
+	const addProjectFailure = (error: { response: { data: { message: string } } }) => {
+		toasterRef.current.toast('error', locales.replaceLabels(error.response.data.message), 2);
 	};
 
 	const addProject = (): void => {
@@ -97,16 +90,17 @@ export const CreateProject = (props: PropsInterface) => {
 			clientId: client ? client.id : '',
 			color: selectedColor,
 			billable,
-			isPublic: isPublic
+			isPublic: isPublic,
 		};
 
 		getBrowser()
 			.runtime.sendMessage({
-			eventName: 'createProject',
-			options: {
-				project
-			}
-		})
+				eventName: 'createProject',
+				options: {
+					project,
+					createdFromPopup: true,
+				},
+			})
 			.then(addProjectSuccess)
 			.catch(addProjectFailure);
 	};
@@ -117,18 +111,11 @@ export const CreateProject = (props: PropsInterface) => {
 
 	return (
 		<div className={'create-project-wrapper'}>
-			<Toaster
-				ref={(instance) => toasterRef.current = instance}
-			/>
+			<Toaster ref={instance => (toasterRef.current = instance)} />
 			<div className="create-project">
 				<div className="create-project__title-and-close">
-					<p className="create-project__title">
-						{locales.CREATE_NEW_PROJECT}
-					</p>
-					<span
-						onClick={props.closeModal}
-						className="create-project__close"
-					></span>
+					<p className="create-project__title">{locales.CREATE_NEW_PROJECT}</p>
+					<span onClick={props.closeModal} className="create-project__close"></span>
 				</div>
 				<div className="create-project__divider"></div>
 				<input
@@ -137,8 +124,7 @@ export const CreateProject = (props: PropsInterface) => {
 					placeholder={locales.PROJECT_NAME}
 					value={projectName}
 					onBlur={() => setProjectName(projectName.trim())}
-					onChange={(event) => setProjectName(event.target.value)}
-				></input>
+					onChange={event => setProjectName(event.target.value)}></input>
 				<div className="create-project__client-list">
 					<ClientList
 						selectedClient={(client: ClientDto) => setClient(client)}
@@ -155,48 +141,39 @@ export const CreateProject = (props: PropsInterface) => {
 						>
 							<img
 								src="./assets/images/checked.png"
-								className={`create-project__billable-img${!billable && '-hiden'}`}
+								className={`create-project__billable-img${!billable && '-hidden'}`}
 							/>
 						</span>
 					<label
 						onClick={() => setBillable(!billable)}
-						className="create-project__billable-title"
-					>
+						className="create-project__billable-title">
 						{locales.BILLABLE_LABEL}
 					</label>
 				</div>
 
 				<div className="create-project__public">
-						<span
-							className={`create-project__checkbox ${isPublic && 'checked'}`}
-							onClick={() => setIsPublic(!isPublic)}
-						>
-							<img
-								src="./assets/images/checked.png"
-								className={`create-project__public-img${!isPublic && '-hidden'}`}
-							/>
-						</span>
+					<span
+						className={`create-project__checkbox ${isPublic && 'checked'}`}
+						onClick={() => setIsPublic(!isPublic)}>
+						<img
+							src="./assets/images/checked.png"
+							className={`create-project__public-img${!isPublic && '-hidden'}`}
+						/>
+					</span>
 					<label
 						onClick={() => setIsPublic(!isPublic)}
-						className="create-project__public-title"
-					>
+						className="create-project__public-title">
 						{locales.PUBLIC}
 					</label>
 				</div>
 				<div className="create-project__divider"></div>
 				<div className="create-project__actions">
-						<span
-							onClick={addProject}
-							className="create-project__add-button"
-						>
-							{locales.CREATE_NEW_PROJECT}
-						</span>
-					<span
-						onClick={props.closeModal}
-						className="create-project__cancel"
-					>
-							{locales.CANCEL}
-						</span>
+					<span onClick={addProject} className="create-project__add-button">
+						{locales.CREATE_NEW_PROJECT}
+					</span>
+					<span onClick={props.closeModal} className="create-project__cancel">
+						{locales.CANCEL}
+					</span>
 				</div>
 			</div>
 		</div>

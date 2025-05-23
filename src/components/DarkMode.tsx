@@ -16,9 +16,7 @@ export const DarkMode = (props: DarkModeProps) => {
 
 	return (
 		<div className="dark-mode" onClick={onToggleTheme}>
-			<div
-				className={`dark-mode__checkbox ${isCurrentUserDarkTheme() ? 'checked' : ''}`}
-			>
+			<div className={`dark-mode__checkbox ${isCurrentUserDarkTheme() ? 'checked' : ''}`}>
 				<img
 					src="./assets/images/checked.png"
 					className={

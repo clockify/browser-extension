@@ -30,9 +30,7 @@ class SubDomainName extends React.Component {
 		// settingsService.setSubDomainName(domainName);
 		// settingsService.setHomeUrl(`https://${domainName}.clockify.me`)
 		window.reactRoot.render(
-			<SelfHostedBootSettings
-				url={`https://${this.state.domainName}.clockify.me`}
-			/>
+			<SelfHostedBootSettings url={`https://${this.state.domainName}.clockify.me`} />
 		);
 	}
 
@@ -46,9 +44,7 @@ class SubDomainName extends React.Component {
 				<Header showActions={false} />
 				<form className="sub-domain">
 					<div>
-						<label className="sub-domain__server_url">
-							{locales.SUBDOMAIN_NAME}
-						</label>
+						<label className="sub-domain__server_url">{locales.SUBDOMAIN_NAME}</label>
 						<div className="sub-domain__input">
 							<span className={'sub-domain__input--prepend'}>https://</span>
 							<input
@@ -64,14 +60,10 @@ class SubDomainName extends React.Component {
 				<div className="sub-domain__actions">
 					<button
 						className="sub-domain__actions--submit"
-						onClick={this.submitDomainName.bind(this)}
-					>
+						onClick={this.submitDomainName.bind(this)}>
 						{locales.SUBMIT}
 					</button>
-					<a
-						className="sub-domain__actions--cancel"
-						onClick={this.cancel.bind(this)}
-					>
+					<a className="sub-domain__actions--cancel" onClick={this.cancel.bind(this)}>
 						{locales.CANCEL}
 					</a>
 				</div>

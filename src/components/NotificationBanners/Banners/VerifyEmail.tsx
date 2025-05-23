@@ -6,7 +6,8 @@ import Toaster from '~/components/toaster-component.js';
 
 export const VerifyEmail = () => {
 	const { userData, bannerVisible, setBannerVisible } = useAppStore();
-	const { status, email } = userData;
+	const status = userData?.status;
+	const email = userData?.email;
 	const toaster = new Toaster();
 
 	useEffect(() => {
@@ -18,7 +19,7 @@ export const VerifyEmail = () => {
 			.runtime.sendMessage({
 				eventName: 'resendVerificationEmail',
 			})
-			.then((response) => {
+			.then((response: any) => {
 				if (response.status === 200) {
 					toaster.toast('success', locales.EMAIL_SENT_SUCCESS_MESSAGE, 5);
 					return;

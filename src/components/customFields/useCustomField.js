@@ -14,16 +14,8 @@ const useCustomField = (cf, updateValue, value) => {
 		required,
 	} = cf;
 
-	const {
-		id,
-		name,
-		allowedValues,
-		description,
-		placeholder,
-		status,
-		type,
-		onlyAdminCanEdit,
-	} = wsCustomField;
+	const { id, name, allowedValues, description, placeholder, status, type, onlyAdminCanEdit } =
+		wsCustomField;
 
 	const placeHolder = !!placeholder ? placeholder : name.toLowerCase();
 	const title = !!description ? description : name.toLowerCase();
@@ -34,12 +26,12 @@ const useCustomField = (cf, updateValue, value) => {
 	const { addCustomFieldValuesToState } = useContext(CustomFieldsContext);
 
 	const storeValue = useCallback(
-		(optionalValue) => {
+		optionalValue => {
 			const customFieldToBeSentToBackend = {
 				timeEntryId: timeEntryId,
 				customFieldId: id,
 				value: optionalValue === undefined ? value : optionalValue,
-			}
+			};
 			addCustomFieldValuesToState(customFieldToBeSentToBackend);
 		},
 		[value]

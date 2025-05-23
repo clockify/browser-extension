@@ -31,8 +31,7 @@ class SelfHostedBootSettings extends React.Component {
 					method="get"
 					accept="application/json"
 					type="application/json"
-					verbose={true}
-				>
+					verbose={true}>
 					{({ error, result, loading }) => {
 						if (error) {
 							return <Login logout={{ isTrue: true }} />;
@@ -52,11 +51,13 @@ class SelfHostedBootSettings extends React.Component {
 							);
 						} else {
 							let baseUrl;
+							let baseWriteUrl;
 							let selfHosted = true;
 							try {
 								const data = JSON.parse(result.text);
 								selfHosted = data.selfHosted;
 								extParameters.setSelfHosted(true);
+								baseWriteUrl = data.writeEndpoint;
 								if (data.endpoint.startsWith('/')) {
 									baseUrl = `${this.state.homeUrl}${data.endpoint}`;
 								} else {
@@ -93,6 +94,7 @@ class SelfHostedBootSettings extends React.Component {
 							}
 							extParameters.setBaseUrl(baseUrl);
 							extParameters.setHomeUrl(this.state.homeUrl);
+							extParameters.setBaseWriteUrl(baseWriteUrl);
 
 							const subDomain = [
 								...this.state.homeUrl.matchAll(/\/\/(.*)\.clockify\.me/g),
