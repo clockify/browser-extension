@@ -1,27 +1,3 @@
-// Entity Page
-clockifyButton.render(
-    '.c1rrm0ax.object_editor_header:not(.clockify)',
-    { observe: true },
-    elem => {
-
-        const container = createTag('div', 'clockify-widget-container');
-
-        const description = () => {
-            const titleElem = $('.title_input');
-            return titleElem ? titleElem.textContent : '';
-        };
-
-        const button = clockifyButton.createButton({ description });
-
-        const input = clockifyButton.createInput({ description });
-
-        container.append(button);
-        container.append(input);
-
-        elem.append(container);
-    }
-);
-
 // Common functions
 
 function preventEventPropagation(element) {
@@ -54,7 +30,31 @@ function insertAfterTitleWrapper(elem, container, titleWrapperSelector) {
     }
 }
 
-// List Page
+// Entity View
+clockifyButton.render(
+    '.c1rrm0ax.object_editor_header:not(.clockify)',
+    { observe: true },
+    elem => {
+
+        const container = createTag('div', 'clockify-widget-container');
+
+        const description = () => {
+            const titleElem = $('.title_input');
+            return titleElem ? titleElem.textContent : '';
+        };
+
+        const button = clockifyButton.createButton({ description });
+
+        const input = clockifyButton.createInput({ description });
+
+        container.append(button);
+        container.append(input);
+
+        elem.append(container);
+    }
+);
+
+// List View
 clockifyButton.render(
     '.lkr9c4x.card_container:not(.clockify)',
     { observe: true },
@@ -70,19 +70,16 @@ clockifyButton.render(
             small: true,
             description
         });
-        const input = clockifyButton.createInput({ description });
 
         container.append(button);
-        container.append(input);
 
         preventEventPropagation(container);
-        setupInputEvents(input);
 
         insertAfterTitleWrapper(elem, container, '.t9vmudw.title-wrapper');
     }
 );
 
-// Board Page
+// Board View
 clockifyButton.render(
     '.c1yifu0v.card_container:not(.clockify)',
     { observe: true },
@@ -97,13 +94,10 @@ clockifyButton.render(
         };
 
         const button = clockifyButton.createButton({ description });
-        const input = clockifyButton.createInput({ description });
 
         container.append(button);
-        container.append(input);
 
         preventEventPropagation(container);
-        setupInputEvents(input);
 
         insertAfterTitleWrapper(elem, container, '.t1mu84wd.title-wrapper');
     }
