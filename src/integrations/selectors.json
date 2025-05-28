@@ -54,9 +54,9 @@
       "anchor": "a",
       "groupName": ".group-path",
       "id": "[data-testid=\"breadcrumb-current-link\"] a",
-      "issueTitle": "h1.title",
+      "issueTitle": "h1[data-testid=\"work-item-title\"]",
       "projectName": ".breadcrumb-item-text",
-      "label": "div.labels .gl-label-link",
+      "label": "section[data-testid=\"work-item-labels\"] span.gl-label",
       "firstSpan": "span:nth-child(1)",
       "secondSpan": "span:nth-child(2)"
     }
