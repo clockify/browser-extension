@@ -5,7 +5,8 @@
 	clockifyButton.render(
 		`
 		[data-page="projects:issues:show"] [data-testid="breadcrumb-links"]:not(.clockify),
-		[data-page="projects:merge_requests:show"] [data-testid="breadcrumb-links"]:not(.clockify)
+		[data-page="projects:merge_requests:show"] [data-testid="breadcrumb-links"]:not(.clockify),
+		[data-page="projects:work_items:show"] [data-testid="breadcrumb-links"]:not(.clockify)
 		`,
 		{ observe: true },
 		() => {
