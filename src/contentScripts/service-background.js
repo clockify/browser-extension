@@ -95,7 +95,7 @@ class ClockifyService {
 	static cache = {};
 
 	static async apiWriteEndpoint() {
-		return (await localStorage.getItem('permanent_baseWriteUrl')).startsWith('https://')
+		return (await localStorage.getItem('permanent_baseWriteUrl'))?.startsWith('https://')
 			? localStorage.getItem('permanent_baseWriteUrl')
 			: localStorage.getItem('permanent_baseUrl');
 	}
@@ -252,7 +252,7 @@ class ClockifyService {
 		method = 'GET',
 		body = null,
 		withNoToken = false,
-		additionalHeaders
+		additionalHeaders,
 	) {
 		let token;
 		if (withNoToken) {
@@ -329,14 +329,14 @@ class ClockifyService {
 
 						const returnMessageToComponent =
 							errorMessagesThatShouldBeReturnedToComponent.find(pattern =>
-								pattern.test(message)
+								pattern.test(message),
 							);
-						
+
 						if (returnMessageToComponent) return errorObj(400, message);
 
 						return errorObj(
 							400,
-							`${clockifyLocales.YOU_ALREADY_HAVE_ENTRY_WITHOUT}. ${clockifyLocales.PLEASE_EDIT_YOUR_TIME_ENTRY}.`
+							`${clockifyLocales.YOU_ALREADY_HAVE_ENTRY_WITHOUT}. ${clockifyLocales.PLEASE_EDIT_YOUR_TIME_ENTRY}.`,
 						);
 					case 403:
 						errorData = await response.json();
@@ -354,7 +354,7 @@ class ClockifyService {
 								return errorObj(
 									response.status,
 									'Manual time tracking disabled',
-									errorData
+									errorData,
 								);
 							} else if (errorData.code === 501) {
 								return errorObj(response.status, 'Access Denied', errorData);

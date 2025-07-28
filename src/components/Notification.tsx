@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { MouseEvent, PropsWithChildren } from 'react';
 
-const boldParts = (text) => {
+const boldParts = (text: string) => {
 	return (
 		text?.split('[b]').map((part, index) => {
 			return index % 2 ? <strong>{part}</strong> : part;
@@ -8,7 +8,17 @@ const boldParts = (text) => {
 	);
 };
 
-function Notification(props) {
+interface PropsInterface extends PropsWithChildren {
+	id: string;
+	title: string;
+	message: string;
+	links: { linkText: string; linkUrl: string, classList: string[], linkCallback: VoidFunction }[];
+	hideX: boolean;
+	isImportant: boolean;
+	markAsRead: Function;
+}
+
+export const Notification = (props: Partial<PropsInterface>) => {
 	// data
 	const { id, title, message, links, children } = props;
 	// styles
@@ -23,7 +33,7 @@ function Notification(props) {
 				<div
 					id={id}
 					className={`notification-close ${hideX ? 'disabled' : ''}`}
-					onClick={(event) => {
+					onClick={(event: MouseEvent<HTMLDivElement>) => {
 						const notificationId = event.target.id;
 
 						markAsRead(notificationId);
@@ -54,6 +64,4 @@ function Notification(props) {
 			</div>
 		</div>
 	);
-}
-
-export default Notification;
+};

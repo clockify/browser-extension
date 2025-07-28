@@ -29,12 +29,12 @@ function toggleBrowserContextMenu(isContextMenuEnabled) {
 		aBrowser.contextMenus.create({
 			id: 'startTimerWithDescriptionCM',
 			title: startTimerWithDescriptionTranslation,
-			contexts: ['selection'],
+			contexts: ['selection']
 		});
 		aBrowser.contextMenus.create({
 			id: 'startTimerCM',
 			title: startTimerTranslation,
-			contexts: ['page'],
+			contexts: ['page']
 		});
 		aBrowser.contextMenus.onClicked.removeListener(listener);
 		aBrowser.contextMenus.onClicked.addListener(listener);
@@ -47,7 +47,7 @@ async function setContextMenuOnBrowserStart() {
 	let isContextMenuEnabled = true;
 
 	if (appStore) {
-		isContextMenuEnabled = JSON.parse(appStore).state.contextMenuEnabled;
+		isContextMenuEnabled = JSON.parse(appStore)?.state?.contextMenuEnabled;
 
 		if (typeof isContextMenuEnabled !== 'boolean') {
 			isContextMenuEnabled = true;

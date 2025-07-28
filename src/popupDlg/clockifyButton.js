@@ -325,11 +325,22 @@ var clockifyButton = {
 					aBrowser.storage.local.get(['wsSettings'], async result => {
 						const { wsSettings } = result;
 						const hasDescriptionValue = Boolean(title);
+						let defaultProjects = await localStorage.getItem(
+							'permanent_defaultProjects'
+						);
+						defaultProjects = JSON.parse(defaultProjects);
+						let wsId = await localStorage.getItem('activeWorkspaceId');
+						let userId = await localStorage.getItem('userId');
+						const defaultProject = defaultProjects?.[userId]?.[wsId].defaultProject;
+						let appStore = await localStorage.getItem('appStore');
+						appStore = JSON.parse(appStore);
 
 						if (await isPopupShowable({ hasDescriptionValue })) {
 							if (
-								timeEntryOptionsInvoked.projectName ||
-								timeEntryOptionsInvoked.tagNames
+								!defaultProject?.enabled ||
+								(defaultProject?.enabled &&
+									defaultProject?.project?.id !== 'lastUsedProject') ||
+								appStore?.state?.integrationCreatePTT
 							) {
 								const response = await aBrowser.runtime.sendMessage({
 									eventName: 'generateManualEntryData',
@@ -337,6 +348,12 @@ var clockifyButton = {
 								});
 
 								const inputWrapper = input.parentElement;
+
+								let task = response?.task || response?.project?.tasks?.[0];
+
+								if (task?.status === 'DONE') {
+									task = null;
+								}
 
 								const timeEntry = {
 									...timeEntryOptionsInvoked,
@@ -346,7 +363,7 @@ var clockifyButton = {
 										!response.task?.id && wsSettings.forceTasks
 											? null
 											: response.project?.id,
-									taskId: response.task?.id,
+									taskId: response.task?.id || response.project?.tasks?.[0]?.id,
 									billable:
 										workspaceSettings.taskBillableEnabled && response.task
 											? response.task?.billable
@@ -354,7 +371,7 @@ var clockifyButton = {
 									tags: response.tags,
 									tagIds: response.tags?.map(tag => tag.id) ?? [],
 									project: response.project,
-									task: response.task,
+									task,
 								};
 
 								window.updateButtonProperties(null, {
@@ -582,32 +599,41 @@ var clockifyButton = {
 
 function getClockifyButtonHTML({ isActive, isSmall, options }) {
 	const activeIcon = `<svg width="15"height="16"viewBox="0 0 15 16"fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11.0065 2.04616C11.4838 1.56806 11.3811 0.764579 10.7508 0.522636C9.8712 0.185007 8.91622 0 7.91809 0C3.54505 0 0 3.5511 0 7.93162C0 12.3121 3.54505 15.8632 7.91809 15.8632C8.91006 15.8632 9.85941 15.6805 10.7345 15.3468C11.3664 15.1059 11.4702 14.3009 10.992 13.8219C10.6822 13.5115 10.2133 13.4391 9.79745 13.5775C9.20813 13.7738 8.57779 13.88 7.92268 13.88C4.6429 13.88 1.9841 11.2167 1.9841 7.93131C1.9841 4.64592 4.6429 1.98259 7.92268 1.98259C8.58253 1.98259 9.21724 2.09041 9.81022 2.28937C10.2263 2.42902 10.6962 2.35702 11.0065 2.04616Z" fill="#03A9F4"/><path d="M9.11681 8.02279C9.11681 8.57666 8.66782 9.02564 8.11396 9.02564C7.5601 9.02564 7.11111 8.57666 7.11111 8.02279C7.11111 7.46893 7.5601 7.01994 8.11396 7.01994C8.66782 7.01994 9.11681 7.46893 9.11681 8.02279Z" fill="#03A9F4"/><path d="M9.65974 5.15543C9.3005 5.5124 9.3005 6.09115 9.65974 6.44812C10.019 6.80509 10.6014 6.80509 10.9607 6.44812L13.9528 3.47494C14.312 3.11797 14.312 2.53922 13.9528 2.18225C13.5936 1.8253 13.0111 1.8253 12.6519 2.18225L9.65974 5.15543Z" fill="#03A9F4"/><path d="M9.65974 10.7078C9.3005 10.3508 9.3005 9.7721 9.65974 9.41513C10.019 9.05816 10.6014 9.05816 10.9607 9.41513L13.9528 12.3883C14.312 12.7453 14.312 13.324 13.9528 13.681C13.5936 14.0379 13.0111 14.0379 12.6519 13.681L9.65974 10.7078Z" fill="#03A9F4"/> </svg>`;
-	const inactiveIcon = `<svg width="16" 	height="16" 	viewBox="0 0 16 16" 	xmlns="http://www.w3.org/2000/svg" > 	<path 		d="M11.0065 2.04616C11.4838 1.56806 11.3811 0.764579 10.7508 0.522636C9.8712 0.185007 8.91622 0 7.91809 0C3.54505 0 0 3.5511 0 7.93162C0 12.3121 3.54505 15.8632 7.91809 15.8632C8.91006 15.8632 9.85941 15.6805 10.7345 15.3468C11.3664 15.1059 11.4702 14.3009 10.992 13.8219C10.6822 13.5115 10.2133 13.4391 9.79745 13.5775C9.20813 13.7738 8.57779 13.88 7.92268 13.88C4.6429 13.88 1.9841 11.2167 1.9841 7.93131C1.9841 4.64592 4.6429 1.98259 7.92268 1.98259C8.58253 1.98259 9.21724 2.09041 9.81022 2.28937C10.2263 2.42902 10.6962 2.35702 11.0065 2.04616Z" 		fill="#60747D" 	/> 	<path 		d="M9.11681 8.02279C9.11681 8.57666 8.66782 9.02564 8.11396 9.02564C7.5601 9.02564 7.11111 8.57666 7.11111 8.02279C7.11111 7.46893 7.5601 7.01994 8.11396 7.01994C8.66782 7.01994 9.11681 7.46893 9.11681 8.02279Z" 		fill="#60747D" 	/> 	<path 		d="M9.65974 5.15543C9.3005 5.5124 9.3005 6.09115 9.65974 6.44812C10.019 6.80509 10.6014 6.80509 10.9607 6.44812L13.9528 3.47494C14.312 3.11797 14.312 2.53922 13.9528 2.18225C13.5936 1.8253 13.0111 1.8253 12.6519 2.18225L9.65974 5.15543Z" 		fill="#60747D" 	/> 	<path 		d="M9.65974 10.7078C9.3005 10.3508 9.3005 9.7721 9.65974 9.41513C10.019 9.05816 10.6014 9.05816 10.9607 9.41513L13.9528 12.3883C14.312 12.7453 14.312 13.324 13.9528 13.681C13.5936 14.0379 13.0111 14.0379 12.6519 13.681L9.65974 10.7078Z" 		fill="#60747D" 	/> </svg>`;
-
-	const container = document.createElement('div');
-	const text = document.createElement('span');
+	const inactiveIcon = `<svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M11.0065 2.04616C11.4838 1.56806 11.3811 0.764579 10.7508 0.522636C9.8712 0.185007 8.91622 0 7.91809 0C3.54505 0 0 3.5511 0 7.93162C0 12.3121 3.54505 15.8632 7.91809 15.8632C8.91006 15.8632 9.85941 15.6805 10.7345 15.3468C11.3664 15.1059 11.4702 14.3009 10.992 13.8219C10.6822 13.5115 10.2133 13.4391 9.79745 13.5775C9.20813 13.7738 8.57779 13.88 7.92268 13.88C4.6429 13.88 1.9841 11.2167 1.9841 7.93131C1.9841 4.64592 4.6429 1.98259 7.92268 1.98259C8.58253 1.98259 9.21724 2.09041 9.81022 2.28937C10.2263 2.42902 10.6962 2.35702 11.0065 2.04616Z" fill="#60747D"/><path d="M9.11681 8.02279C9.11681 8.57666 8.66782 9.02564 8.11396 9.02564C7.5601 9.02564 7.11111 8.57666 7.11111 8.02279C7.11111 7.46893 7.5601 7.01994 8.11396 7.01994C8.66782 7.01994 9.11681 7.46893 9.11681 8.02279Z" fill="#60747D"/><path d="M9.65974 5.15543C9.3005 5.5124 9.3005 6.09115 9.65974 6.44812C10.019 6.80509 10.6014 6.80509 10.9607 6.44812L13.9528 3.47494C14.312 3.11797 14.312 2.53922 13.9528 2.18225C13.5936 1.8253 13.0111 1.8253 12.6519 2.18225L9.65974 5.15543Z" fill="#60747D"/><path d="M9.65974 10.7078C9.3005 10.3508 9.3005 9.7721 9.65974 9.41513C10.019 9.05816 10.6014 9.05816 10.9607 9.41513L13.9528 12.3883C14.312 12.7453 14.312 13.324 13.9528 13.681C13.5936 14.0379 13.0111 14.0379 12.6519 13.681L9.65974 10.7078Z" fill="#60747D"/></svg>`;
 
 	const { START_TIMER, STOP_TIMER } = clockifyLocales || {
 		START_TIMER: 'Start timer',
 		STOP_TIMER: 'Stop timer',
 	};
 
-	const activeButtonClasses = `clockify-button-active clockify-button-active-span`;
-	const inactiveButtonClasses = `clockify-button-inactive clockify-button-inactive-span`;
+	const container = document.createElement('div');
 
-	const buttonClasses = isActive ? activeButtonClasses : inactiveButtonClasses;
-	const buttonText = isActive ? STOP_TIMER : START_TIMER;
-	const icon = isActive ? activeIcon : inactiveIcon;
+	const containerStyles = {
+		display: 'flex',
+		alignItems: 'center',
+		cursor: 'pointer',
+	};
+	Object.assign(container.style, containerStyles);
 
-	text.innerHTML = `<span class="${buttonClasses}">${buttonText}</span>`;
+	container.innerHTML = isActive ? activeIcon : inactiveIcon;
 
-	const { inactiveButtonColor } = options;
+	if (!isSmall) {
+		const text = document.createElement('span');
+		text.className = isActive
+			? 'clockify-button-active clockify-button-active-span'
+			: 'clockify-button-inactive clockify-button-inactive-span';
+		text.textContent = !isActive ? START_TIMER : STOP_TIMER;
 
-	text.style.color = isActive ? '#03A9F4' : inactiveButtonColor ?? '#444444';
+		const textStyles = {
+			marginLeft: '5px',
+			float: 'none',
+			position: 'relative',
+			color: isActive ? '#03A9F4' : options.inactiveButtonColor || '#444444',
+		};
+		Object.assign(text.style, textStyles);
 
-	container.innerHTML = icon;
-
-	if (!isSmall) container.append(text);
+		container.appendChild(text);
+	}
 
 	return container;
 }
@@ -662,6 +688,21 @@ function ariaLabel(selector, context = document) {
 
 function value(selector, context = document) {
 	return $(selector, context)?.value?.trim();
+}
+
+function attribute(attribute, element = null) {
+	if (element) {
+		return element.getAttribute(attribute).trim();
+	}
+
+	const selector = '[' + attribute.trim() + ']';
+	const firstElementWithAttribute = $(selector);
+
+	if (firstElementWithAttribute) {
+		return firstElementWithAttribute.getAttribute(attribute).trim();
+	}
+
+	return '';
 }
 
 function textList(selector, context = document, withoutDuplicates = true) {

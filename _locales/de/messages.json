@@ -429,10 +429,10 @@
     "message": "Vorhandene Felder"
   },
   "SHARED_MODULES__PROJECT_PICKER__FIND_TASK_LABEL": {
-    "message": "Aufgabe @projekt suchen oder { projectGroupingLabel }"
+    "message": "Aufgabe @Projekt oder { projectGroupingLabel } suchen"
   },
   "SHARED_MODULES__PROJECT_PICKER__FIND_PROJECT_LABEL": {
-    "message": "Projekt suchen oder { projectGroupingLabel }"
+    "message": "Projekt oder { projectGroupingLabel } suchen"
   },
   "SHARED_MODULES__PROJECT_PICKER__CREATE_PROJECT_WITH_PARAM_LABEL": {
     "message": "{ project } Projekt erstellen."
@@ -558,7 +558,7 @@
     "message": "Son."
   },
   "NO_MATCHING": {
-    "message": "Keine Übereinstimmung { entityInPlural }"
+    "message": "Keine passenden { entityInPlural }"
   },
   "FILTER_NAME": {
     "message": "Filter { name }"
@@ -614,6 +614,9 @@
   "ENTER_REQUIRED_FIELDS": {
     "message": "Pflichtfelder eingeben oder optional deine Arbeitsbereichseinstellungen bearbeiten."
   },
+  "EVERY": {
+    "message": "Jede"
+  },
   "CANNOT_START_ENTRY_WITHOUT_PROJECT": {
     "message": "Der Eintrag kann nicht ohne Projekt, Aufgabe, Beschreibung oder Tags gestartet werden."
   },
@@ -651,7 +654,7 @@
     "message": "Keine aktuellen Einträge vorhanden"
   },
   "YOU_HAVE_NOT_TRACKED": {
-    "message": "Es sieht so aus, als hättest du in letzter Zeit keine Zeit verfolgt"
+    "message": "Es sieht so aus, als hättest du in letzter Zeit keine Zeit erfasst"
   },
   "GET_ONLINE": {
     "message": "Online gehen, um deine Einträge zu sehen"
@@ -963,7 +966,7 @@
     "message": "Du bist seit { hours }h { minutes }m inaktiv, während du { desc } verfolgst."
   },
   "IDLE_MESSAGE_MINUTES": {
-    "message": "Du warst { minutes }m lang inaktiv, während du { desc } verfolgt hast."
+    "message": "Du warst { minutes }m lang inaktiv, während du { desc } erfasst hast."
   },
   "CLIENTS": {
     "message": "Kunden"
@@ -1176,7 +1179,7 @@
     "message": "Standard-Arbeitsbereich geändert"
   },
   "EMAIL__VERIFICATION__CAMPAIGN__TITLE": {
-    "message": "Bestätige deine E-Mail"
+    "message": "Deine E-Mail bestätigen"
   },
   "EMAIL__VERIFICATION__CAMPAIGN__MESSAGE_1": {
     "message": "In den nächsten 30 Tagen ist ein verifiziertes Konto erforderlich, um Clockify weiterhin nahtlos nutzen zu können."
@@ -1227,7 +1230,7 @@
     "message": "Du hast keine Berechtigung zum Erstellen eines Projektes"
   },
   "ENTRY_IN_PROGRESS_EXISTS": {
-    "message": "Sie haben eine laufende Zeiteingabe!"
+    "message": "Du hast eine laufende Zeiteingabe!"
   },
   "WEBSITE_FORMAT_ERROR": {
     "message": "Das Website-Format ist ungültig"

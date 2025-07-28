@@ -1,82 +1,68 @@
+addCustomCSS();
+initializeHtmlTagObserver();
+
+// Task sidebar
 clockifyButton.render(
-	'.offcanvas__header.offcanvas-header:not(.clockify)',
+	'#clockify-extension-container:not(.clockify)',
 	{ observe: true, onNavigationRerender: true },
-	async elem => {
-		await timeout({ milliseconds: 500 });
+	placeholder => {
+		const plakyTaskName = () => placeholder.getAttribute('data-item-title');
+		const plakyBoardName = () => placeholder.getAttribute('data-board-title');
 
-		$('.clockify-widget-container')?.remove();
-
-		const description = () => text('.offcanvas-header [role="textbox"] span');
-		const { projectName, taskName } = getProjectTask();
+		const description = () => plakyTaskName();
+		const projectName = () => plakyBoardName().split(':')?.[0]?.trim();
+		const taskName = () => plakyBoardName().split(':')?.[1]?.trim();
 
 		const entry = { description, projectName, taskName };
 
-		const link = clockifyButton.createButton(entry);
+		const timer = clockifyButton.createTimer(entry);
 		const input = clockifyButton.createInput(entry);
 
-		const container = createTag('div', 'clockify-widget-container');
+		const container = createContainer(timer, input);
 
-		container.append(link);
-		container.append(input);
-
-		elem.after(container);
-
-		addCustomCSS();
-	},
+		placeholder.append(container);
+	}
 );
 
-function getProjectTask() {
-	const cardName = text('.offcanvas-header [role="textbox"] span');
-
-	const boardName =
-		text('.main-wrapper > .sticky-header div[role=textbox]') ||
-		text('#sidebar-main-wrapper .navigation-item a.active div > span') ||
-		document.title.replace(` - ${cardName}`, '');
-
-	const [projectName, taskName] = boardName?.split(':');
-
-	return { projectName, taskName };
-}
-
-initializeBodyObserver();
-
-async function initializeBodyObserver() {
-	const bodyObserver = new MutationObserver(addCustomCSS);
-
-	const observationTarget = await waitForElement('.icon-sun', document.body);
-	const observationConfig = { childList: true, attributes: true };
-
-	bodyObserver.observe(observationTarget, observationConfig);
-}
-
 function addCustomCSS() {
-	$('.clockify-custom-css')?.remove();
+	const isThemeLight = document.documentElement.getAttribute('data-theme').includes('light');
 
-	const isThemeLight = window.localStorage['theme'].includes('light');
+	applyStyles(`
+		#clockify-extension-container {
+			display: block !important;
+			height: 40px !important;
+		}
 
-	// const isThemeLight = Boolean($('.icon-sun--on'));
-	const style = createTag('style', 'clockify-custom-css');
-
-	style.innerHTML = `
 		.clockify-widget-container {
-			margin: 10px 0 10px 20px;
 			display: flex;
 			align-items: center;
+			justify-content: flex-start;
+			margin-left: 1rem;
+			padding-top: 0.5rem;
+			gap: 2rem;
 		}
 
 		.clockify-input {
-			border-color: rgba(121,120,156, 0.3) !important;
-			background-color: rgba(121,120,156, 0.3) !important;
+			border-color: #c7c6d94d !important;
+			background-color: ${isThemeLight ? '#c7c6d94d' : '#79789c4d'} !important;
+			color: ${isThemeLight ? '#13121d8c' : 'rgba(242,242,248,.87)'} !important;
 		}
 
-		.clockify-button-inactive,  .clockify-input{
-			color: ${isThemeLight ? '#444 !important;' : 'rgba(242,242,248,.87) !important;'}
+		.clockify-input::placeholder {
+			color: ${isThemeLight ? '#13121d8c' : '#f2f2f880'};
 		}
 
-		#clockifyButton {
-			margin-right: 15px;
+		.clockify-button-inactive {
+			color: ${isThemeLight ? '#444' : 'rgba(242,242,248,.87)'} !important;
 		}
-	`;
+	`);
+}
 
-	document.head.append(style);
+function initializeHtmlTagObserver() {
+	const htmlTagObserver = new MutationObserver(addCustomCSS);
+
+	const observationTarget = document.documentElement;
+	const observationConfig = { attributes: true };
+
+	htmlTagObserver.observe(observationTarget, observationConfig);
 }

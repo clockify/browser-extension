@@ -8,12 +8,12 @@ import moment from 'moment';
 import { HtmlStyleHelper } from '~/helpers/html-style-helper';
 import { getKeyCodes } from '~/enums/key-codes.enum';
 import Pomodoro from './pomodoro.component';
-import DefaultProject from './default-project.component';
 import Toaster from './toaster-component';
 import HomePage from './home-page.component';
 import locales from '../helpers/locales';
 import { mapStateToProps } from '~/zustand/mapStateToProps';
 import { DarkMode } from '~/components/DarkMode.tsx';
+import { DefaultProjectComponent } from '~/components/DefaultProject';
 
 const htmlStyleHelpers = new HtmlStyleHelper();
 
@@ -73,7 +73,7 @@ class Settings extends Component {
 						time: defaultStopTime,
 					},
 				]),
-				getLocalStorageEnums().PERMANENT_PREFIX
+				getLocalStorageEnums().PERMANENT_PREFIX,
 			);
 
 			this.setState({
@@ -83,8 +83,8 @@ class Settings extends Component {
 		}
 		const stopTimerOnSelectedTimeForUser = stopTimerOnSelectedTime
 			? JSON.parse(stopTimerOnSelectedTime).find(
-					stopTimerOnSelectedTime => stopTimerOnSelectedTime.userId === userData.id
-			  )
+				stopTimerOnSelectedTime => stopTimerOnSelectedTime.userId === userData.id,
+			)
 			: null;
 		// if there is no stopTimerOnSelectedTime for the user, set it to default
 		if (!stopTimerOnSelectedTimeForUser) {
@@ -100,7 +100,7 @@ class Settings extends Component {
 						},
 					],
 				]),
-				getLocalStorageEnums().PERMANENT_PREFIX
+				getLocalStorageEnums().PERMANENT_PREFIX,
 			);
 			this.setState({
 				timeToStopTimer: defaultStopTime,
@@ -114,21 +114,21 @@ class Settings extends Component {
 			},
 			() => {
 				getBrowser().runtime.sendMessage({ eventName: 'createStopTimerEvent' });
-			}
+			},
 		);
 	}
 
 	async checkForRemindersDatesAndTimes() {
 		const userId = await localStorage.getItem('userId');
 		const reminderDatesAndTimesFromStorageForUser = JSON.parse(
-			await localStorage.getItem('reminderDatesAndTimes')
+			await localStorage.getItem('reminderDatesAndTimes'),
 		).filter(reminderDatesAndTimes => reminderDatesAndTimes.userId === userId)[0];
 
 		this.setState(state => ({
 			reminderFromTime: reminderDatesAndTimesFromStorageForUser.timeFrom,
 			reminderToTime: reminderDatesAndTimesFromStorageForUser.timeTo,
 			reminderMinutesSinceLastEntry: parseInt(
-				reminderDatesAndTimesFromStorageForUser.minutesSinceLastEntry
+				reminderDatesAndTimesFromStorageForUser.minutesSinceLastEntry,
 			),
 			daysOfWeek: state.daysOfWeek.map(day => ({
 				...day,
@@ -160,7 +160,7 @@ class Settings extends Component {
 
 		if (this.state.idleDetection) {
 			idleDetectionToSaveInStorage = JSON.parse(idleDetectionFromStorage).filter(
-				idleDetection => idleDetection.userId !== userId
+				idleDetection => idleDetection.userId !== userId,
 			);
 
 			this.setState({
@@ -189,7 +189,7 @@ class Settings extends Component {
 		localStorage.setItem(
 			'idleDetection',
 			JSON.stringify(idleDetectionToSaveInStorage),
-			getLocalStorageEnums().PERMANENT_PREFIX
+			getLocalStorageEnums().PERMANENT_PREFIX,
 		);
 
 		this.showSuccessMessage();
@@ -205,11 +205,11 @@ class Settings extends Component {
 		const idleDetectionFromStorage = await localStorage.getItem('idleDetection');
 
 		let idleDetectionToSaveInStorage = JSON.parse(idleDetectionFromStorage).filter(
-			idleDetection => idleDetection.userId !== userId
+			idleDetection => idleDetection.userId !== userId,
 		);
 
 		const idleDetectionForCurrentUserFromStorage = JSON.parse(idleDetectionFromStorage).filter(
-			idleDetection => idleDetection.userId === userId
+			idleDetection => idleDetection.userId === userId,
 		)[0];
 
 		const idleDetectionForCurrentUserChanged = {
@@ -231,7 +231,7 @@ class Settings extends Component {
 		localStorage.setItem(
 			'idleDetection',
 			JSON.stringify(idleDetectionToSaveInStorage),
-			getLocalStorageEnums().PERMANENT_PREFIX
+			getLocalStorageEnums().PERMANENT_PREFIX,
 		);
 
 		this.showSuccessMessage();
@@ -288,7 +288,7 @@ class Settings extends Component {
 			localStorage.setItem(
 				'reminderDatesAndTimes',
 				JSON.stringify(reminderDatesAndTimesToSaveInStorage),
-				getLocalStorageEnums().PERMANENT_PREFIX
+				getLocalStorageEnums().PERMANENT_PREFIX,
 			);
 
 			this.setState(
@@ -301,7 +301,7 @@ class Settings extends Component {
 				() => {
 					this.checkForRemindersDatesAndTimes();
 					this.sendReminderRequest();
-				}
+				},
 			);
 		} else {
 			if (this.state.reminder) {
@@ -317,14 +317,14 @@ class Settings extends Component {
 								getBrowser().runtime.sendMessage({
 									eventName: 'removeReminderTimer',
 								});
-							}
+							},
 						);
 					}
 					return reminder;
 				});
 			} else {
 				const noDatesReminder = reminderDatesAndTimesFromStorage.find(
-					reminder => reminder.userId === userId && reminder.dates.length === 0
+					reminder => reminder.userId === userId && reminder.dates.length === 0,
 				);
 
 				if (noDatesReminder) {
@@ -337,7 +337,7 @@ class Settings extends Component {
 					localStorage.setItem(
 						'reminderDatesAndTimes',
 						JSON.stringify(resetDates),
-						getLocalStorageEnums().PERMANENT_PREFIX
+						getLocalStorageEnums().PERMANENT_PREFIX,
 					);
 				}
 
@@ -351,7 +351,7 @@ class Settings extends Component {
 							() => {
 								this.checkForRemindersDatesAndTimes();
 								this.sendReminderRequest();
-							}
+							},
 						);
 					}
 					return reminder;
@@ -362,7 +362,7 @@ class Settings extends Component {
 		localStorage.setItem(
 			'reminders',
 			JSON.stringify(reminderToSaveInStorage),
-			getLocalStorageEnums().PERMANENT_PREFIX
+			getLocalStorageEnums().PERMANENT_PREFIX,
 		);
 
 		this.showSuccessMessage();
@@ -379,11 +379,11 @@ class Settings extends Component {
 		const stopTimerOnSelectedTimeForCurrentUser =
 			stopTimerOnSelectedTimeFromStorage &&
 			stopTimerOnSelectedTimeFromStorage.filter(
-				stopTimerOnSelectedTime => stopTimerOnSelectedTime.userId === userId
+				stopTimerOnSelectedTime => stopTimerOnSelectedTime.userId === userId,
 			).length > 0
 				? stopTimerOnSelectedTimeFromStorage.find(
-						stopTimerOnSelectedTime => stopTimerOnSelectedTime.userId === userId
-				  )
+					stopTimerOnSelectedTime => stopTimerOnSelectedTime.userId === userId,
+				)
 				: null;
 		let stopTimerOnSelectedTimeToSaveInStorage;
 
@@ -418,11 +418,11 @@ class Settings extends Component {
 									getBrowser().runtime.sendMessage({
 										eventName: 'removeStopTimerEvent',
 									});
-								}
+								},
 							);
 						}
 						return stopTimerOnSelectedTime;
-					}
+					},
 				);
 			} else {
 				stopTimerOnSelectedTimeToSaveInStorage = stopTimerOnSelectedTimeFromStorage.map(
@@ -438,11 +438,11 @@ class Settings extends Component {
 									getBrowser().runtime.sendMessage({
 										eventName: 'createStopTimerEvent',
 									});
-								}
+								},
 							);
 						}
 						return stopTimerOnSelectedTime;
-					}
+					},
 				);
 			}
 		}
@@ -450,7 +450,7 @@ class Settings extends Component {
 		localStorage.setItem(
 			'stopTimerOnSelectedTime',
 			JSON.stringify(stopTimerOnSelectedTimeToSaveInStorage),
-			getLocalStorageEnums().PERMANENT_PREFIX
+			getLocalStorageEnums().PERMANENT_PREFIX,
 		);
 
 		this.showSuccessMessage();
@@ -492,7 +492,7 @@ class Settings extends Component {
 
 		const userId = await localStorage.getItem('userId');
 		const remindersDatesAndTimesToSaveInStorage = JSON.parse(
-			await localStorage.getItem('reminderDatesAndTimes')
+			await localStorage.getItem('reminderDatesAndTimes'),
 		).map(reminder => {
 			if (reminder.userId === userId) {
 				reminder.minutesSinceLastEntry = value ? value : reminder.minutesSinceLastEntry;
@@ -508,7 +508,7 @@ class Settings extends Component {
 		localStorage.setItem(
 			'reminderDatesAndTimes',
 			JSON.stringify(remindersDatesAndTimesToSaveInStorage),
-			getLocalStorageEnums().PERMANENT_PREFIX
+			getLocalStorageEnums().PERMANENT_PREFIX,
 		);
 
 		getBrowser().runtime.sendMessage({
@@ -544,7 +544,7 @@ class Settings extends Component {
 		const day = this.state.daysOfWeek.find(day => day.name === dayName);
 		const userId = await localStorage.getItem('userId');
 		const reminderDatesAndTimesFromStorage = JSON.parse(
-			await localStorage.getItem('reminderDatesAndTimes')
+			await localStorage.getItem('reminderDatesAndTimes'),
 		).map(reminder => {
 			if (reminder.userId === userId) {
 				if (reminder.dates.includes(day.id)) {
@@ -575,7 +575,7 @@ class Settings extends Component {
 		localStorage.setItem(
 			'reminderDatesAndTimes',
 			JSON.stringify(reminderDatesAndTimesFromStorage),
-			getLocalStorageEnums().PERMANENT_PREFIX
+			getLocalStorageEnums().PERMANENT_PREFIX,
 		);
 
 		getBrowser().runtime.sendMessage({
@@ -653,7 +653,7 @@ class Settings extends Component {
 		localStorage.setItem(
 			'stopTimerOnSelectedTime',
 			JSON.stringify(stopTimerOnSelectedTimeToSaveInStorage),
-			getLocalStorageEnums().PERMANENT_PREFIX
+			getLocalStorageEnums().PERMANENT_PREFIX,
 		);
 		getBrowser().runtime.sendMessage({
 			eventName: 'createStopTimerEvent',
@@ -665,7 +665,7 @@ class Settings extends Component {
 	async changeTime(time, type) {
 		const userId = await localStorage.getItem('userId');
 		const remindersForCurrentUserToSaveInStorage = JSON.parse(
-			await localStorage.getItem('reminderDatesAndTimes')
+			await localStorage.getItem('reminderDatesAndTimes'),
 		).map(reminder => {
 			if (reminder.userId === userId) {
 				if (type === 'fromTime') {
@@ -681,7 +681,7 @@ class Settings extends Component {
 		localStorage.setItem(
 			'reminderDatesAndTimes',
 			JSON.stringify(remindersForCurrentUserToSaveInStorage),
-			getLocalStorageEnums().PERMANENT_PREFIX
+			getLocalStorageEnums().PERMANENT_PREFIX,
 		);
 
 		getBrowser().runtime.sendMessage({
@@ -773,7 +773,7 @@ class Settings extends Component {
 					<span>{this.state.userPicture && <img src={this.state.userPicture} />}</span>
 					<span>{this.state.userEmail}</span>
 				</div>
-				<DefaultProject
+				<DefaultProjectComponent
 					workspaceSettings={this.props.workspaceSettings}
 					changeSaved={this.showSuccessMessage.bind(this)}
 				/>
@@ -933,7 +933,7 @@ class Settings extends Component {
 									this.state.userTimeFormat === 'HOUR12'
 										? this.convert24To12(this.state.timeToStopTimer)
 										: this.state.timeToStopTimer,
-									'HH:mm'
+									'HH:mm',
 								)}
 								format="HH:mm"
 								size="large"
@@ -1021,6 +1021,7 @@ class Settings extends Component {
 						</div>
 					</div>
 					<div className="settings__reminder__times--minutes_since_last_entry">
+						<p>{locales.EVERY}</p>
 						<input
 							value={this.state.reminderMinutesSinceLastEntry}
 							onBlur={this.changeReminderMinutes.bind(this)}

@@ -3,11 +3,11 @@ import { getEnv } from '~/environment';
 import Header from './header.component.jsx';
 import SignUp from './sign-up.component';
 import packageJson from '../../package.json';
-import SelfHostedUrl from './self-hosted-url.component';
+import { SelfHostedUrl } from '~/components/SelfHostedUrl';
 
 import { getLocalStorageEnums } from '~/enums/local-storage.enum';
 import { getBrowser, isChrome } from '~/helpers/browser-helper';
-import SubDomainName from './sub-domain-name.component';
+import { SubDomainName } from '~/components/SubDomainName';
 import locales from '../helpers/locales';
 import { checkConnection } from './check-connection';
 import { removeDarkModeClassFromBodyElement } from '~/zustand/slices/darkThemeSlice';
@@ -40,7 +40,7 @@ const ErrorMessageComponent = props => {
 				<div>
 					<p className="login-error-message">
 						{locales.BANNED__INFO_MODAL__WORKSPACE_MESSAGE_PART_ONE(
-							`${locales.WORKSPACE} ${data?.name}`
+							`${locales.WORKSPACE} ${data?.name}`,
 						)}{' '}
 						<br />
 						{locales.BANNED__INFO_MODAL__MESSAGE_PART_TWO}{' '}
@@ -152,7 +152,8 @@ class Login extends React.Component {
 		});
 	}
 
-	forgotPassword() {}
+	forgotPassword() {
+	}
 
 	async openLoginPage() {
 		await localStorage.setItem('signupExpected', 'false');
@@ -205,7 +206,7 @@ class Login extends React.Component {
 		localStorage.setItem(
 			'baseUrl',
 			environment.endpoint,
-			getLocalStorageEnums().PERMANENT_PREFIX
+			getLocalStorageEnums().PERMANENT_PREFIX,
 		);
 		localStorage.setItem('homeUrl', environment.home, getLocalStorageEnums().PERMANENT_PREFIX);
 		localStorage.clearByPrefixes([
@@ -226,8 +227,8 @@ class Login extends React.Component {
 		const isOffline = await localStorage.getItem('offline');
 		getBrowser()
 			.runtime.sendMessage({
-				eventName: 'invalidateToken',
-			})
+			eventName: 'invalidateToken',
+		})
 			.finally(() => {
 				localStorage.removeItem('token');
 			});
@@ -245,7 +246,7 @@ class Login extends React.Component {
 					getLocalStorageEnums().SUB_DOMAIN_PREFIX,
 					getLocalStorageEnums().APP_STORE,
 				],
-				true
+				true,
 			);
 
 			localStorage.setItem('timeEntriesOffline', JSON.stringify(timeEntriesOffline));

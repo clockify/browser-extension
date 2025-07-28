@@ -1,9 +1,9 @@
 import React, { useRef, useState } from 'react';
 import locales from '../helpers/locales';
-import { getBrowser } from '../helpers/browser-helper';
+import { getBrowser } from '~/helpers/browser-helper';
 import Toaster from './toaster-component';
-import { TimeEntryDto } from '../DTOs/TimeEntryDto';
-import { ProjectDtoImpl } from '../DTOs/ProjectDtoImpl';
+import { TimeEntryDto } from '~/DTOs/TimeEntryDto';
+import { ProjectDtoImpl } from '~/DTOs/ProjectDtoImpl';
 
 interface PropsInterface {
 	project: ProjectDtoImpl;
@@ -29,13 +29,13 @@ export const CreateTask = (props: PropsInterface) => {
 		}
 
 		if (!taskName) {
-			toasterRef.current.toaster.toast('error', locales.NAME_IS_REQUIRED, 2);
+			toasterRef.current.toast('error', locales.NAME_IS_REQUIRED, 2);
 			return;
 		}
 
 		const task = {
 			name: taskName,
-			projectId: project.id,
+			projectId: project.id
 		};
 
 		const createTaskSuccess = (response: {
@@ -54,7 +54,7 @@ export const CreateTask = (props: PropsInterface) => {
 			toasterRef.current.toast(
 				'error',
 				locales.replaceLabels(error.response.data.message),
-				2
+				2,
 			);
 		};
 
@@ -91,6 +91,7 @@ export const CreateTask = (props: PropsInterface) => {
 					className="create-task__task-name"
 					placeholder={locales.TASK_NAME}
 					value={taskName}
+					onBlur={() => setTaskName(taskName.trim())}
 					onChange={event => setTaskName(event.target.value)}></input>
 
 				<div className="create-task__actions">

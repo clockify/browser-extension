@@ -614,6 +614,9 @@
   "ENTER_REQUIRED_FIELDS": {
     "message": "Introduce los campos requeridos o edita la configuración de tu espacio de trabajo."
   },
+  "EVERY": {
+    "message": "Cada"
+  },
   "CANNOT_START_ENTRY_WITHOUT_PROJECT": {
     "message": "No se puede iniciar la entrada sin proyecto, tarea, descripción o etiquetas."
   },
@@ -882,7 +885,7 @@
     "message": "Hecho"
   },
   "SIGNUP_TITLE": {
-    "message": "Empieza a usar Clockify"
+    "message": "Empezar a usar Clockify"
   },
   "CREATE_ACCOUNT_EXPLANATION": {
     "message": "Crea una cuenta gratis para empezar a controlar el tiempo y aumentar tu productividad."
@@ -951,7 +954,7 @@
     "message": "Descartar y continuar"
   },
   "FOCUS_MODE": {
-    "message": "Modo de enfoque"
+    "message": "Modo de concentración"
   },
   "IDLE_TIME_DETECTED": {
     "message": "Tiempo de inactividad detectado"

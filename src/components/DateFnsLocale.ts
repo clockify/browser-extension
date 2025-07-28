@@ -1,9 +1,8 @@
 import { de, enUS, es, fr, ja, ko, pt, ru } from 'date-fns/locale';
-
 import { registerLocale } from 'react-datepicker';
 
-var dateFnsLocale = {
-	regLocale: async () => {
+export const dateFnsLocale = {
+	regLocale: async (): Promise<void> => {
 		const lang = await localStorage.getItem('lang');
 		switch (lang) {
 			case 'en':
@@ -36,7 +35,7 @@ var dateFnsLocale = {
 		}
 	},
 
-	getLocale: async () => {
+	getLocale: async (): Promise<any> => {
 		const lang = await localStorage.getItem('lang');
 		switch (lang) {
 			case 'en':
@@ -60,7 +59,7 @@ var dateFnsLocale = {
 		}
 	},
 
-	async getDaysShort() {
+	async getDaysShort(): Promise<any[]> {
 		const loc = await this.getLocale();
 		const days = [];
 		for (let i = 0; i <= 6; i++) {
@@ -69,15 +68,13 @@ var dateFnsLocale = {
 		return days;
 	},
 
-	async getDayShort(num) {
+	async getDayShort(num: number): Promise<any> {
 		const loc = await this.getLocale();
 		return loc.day(num, { width: 'short' });
 	},
 
-	async getDuration(hours, minutes) {
+	async getDuration(hours: number, minutes: number): Promise<any> {
 		const loc = await this.getLocale();
 		return loc.formatDuration({ hours, minutes });
 	},
 };
-
-export default dateFnsLocale;

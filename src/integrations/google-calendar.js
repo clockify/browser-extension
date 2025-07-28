@@ -6,7 +6,7 @@ clockifyButton.render('span[jsslot].kma42e', { observe: true }, eventCard => {
 
 	const eventTimeInterval = text('#xDetDlgWhen .AzuXid.O2VjS.CyPPBf');
 
-	if (!eventTimeInterval) return console.error('Interval can\'t be extracted.');
+	if (!eventTimeInterval) return console.error("Interval can't be extracted.");
 
 	const description = text('[role="heading"]', eventCard);
 
@@ -19,7 +19,7 @@ clockifyButton.render('span[jsslot].kma42e', { observe: true }, eventCard => {
 	container.append(input);
 
 	// NOTE: we are showing this event "Copy as time entry" only for English language
-	if ([text('.E9bth-nBWOSb'), ariaLabel('.Fxj6he-BIzmGd')].includes('Create')) {
+	if (text('.T57Ued-nBWOSb') === 'Create' || text('[aria-label=Create]')) {
 		const eventTimeIntervalEndpoints = extractStartAndEnd(eventTimeInterval);
 		const start = eventTimeIntervalEndpoints.start;
 		const end = eventTimeIntervalEndpoints.end;
@@ -181,8 +181,10 @@ function extractStartAndEnd(interval) {
 	const intermediate3 = replaceMonthNameToIndex(intermediate2);
 	const intermediate3Arr = intermediate3.split(' ');
 
-	const is12HourFormat = (interval.includes('am') || interval.includes('pm'));
-	const isStartOrEndTimeAt12Am = intermediate3Arr[2] === '12' || (intermediate3Arr[12] === 'am' && intermediate3Arr[10] === '12');
+	const is12HourFormat = interval.includes('am') || interval.includes('pm');
+	const isStartOrEndTimeAt12Am =
+		intermediate3Arr[2] === '12' ||
+		(intermediate3Arr[12] === 'am' && intermediate3Arr[10] === '12');
 	const isEndTimeBiggerThanStart = intermediate3Arr[1] !== intermediate3Arr[7];
 
 	if (is12HourFormat && (isStartOrEndTimeAt12Am || isEndTimeBiggerThanStart)) {
@@ -223,14 +225,17 @@ function replaceMonthNameToIndex(interval) {
 		[newInterval[0], newInterval[1]] = [newInterval[1], newInterval[0]];
 
 		const monthCount = interval.split(' ').filter(str => monthList.includes(str)).length;
-		
+
 		const swapIfNeeded = (index1, index2) => {
 			if (!monthList.includes(interval.split(' ')[index1]) && monthCount === 2) {
-				[newInterval[index1], newInterval[index2]] = [newInterval[index2], newInterval[index1]];
+				[newInterval[index1], newInterval[index2]] = [
+					newInterval[index2],
+					newInterval[index1],
+				];
 			}
 		};
 
-		(interval.includes('am') || interval.includes('pm'))
+		interval.includes('am') || interval.includes('pm')
 			? swapIfNeeded(7, 8)
 			: swapIfNeeded(6, 7);
 
@@ -260,7 +265,7 @@ function convertTo24HourFormat(interval) {
 	const isEndAM = hasEndAM && !hasEndPM;
 	/* Note: start time without both 'am' and 'pm' should have the same meridien as end time */
 	if (!hasStartMeridien) start.push(isEndAM ? 'am' : 'pm');
-	const isStartAM = hasStartAM && !hasStartPM;
+	const isStartAM = hasStartAM || (hasEndAM && !hasStartPM);
 
 	const indexOfStartHours = start.indexOf(isStartAM ? 'am' : 'pm') - 2;
 	const indexOfEndHours = end.indexOf(isEndAM ? 'am' : 'pm') - 2;
@@ -346,7 +351,7 @@ function makeStartAndEnd(interval) {
 
 	const intervalWithEndpoints = {
 		start: new Date(startYear, startMonth, startDay, startHours, startMinutes),
-		end: new Date(endYear, endMonth, endDay, endHours, endMinutes)
+		end: new Date(endYear, endMonth, endDay, endHours, endMinutes),
 	};
 
 	return intervalWithEndpoints;
@@ -364,7 +369,8 @@ function initializeBodyObserver() {
 }
 
 function applyManualInputStyles() {
-	const isDarkThemeEnabled = getComputedStyle(document.body).backgroundColor !== 'rgb(255, 255, 255)';
+	const isDarkThemeEnabled =
+		getComputedStyle(document.body).backgroundColor !== 'rgb(255, 255, 255)';
 
 	const darkStyles = `
 		.clockify-copy-as-entry-container > svg path, .clockify-button-inactive, .clockify-copy-as-entry-container { color: #FFFFFF8A !important; fill: #FFFFFF8A; }

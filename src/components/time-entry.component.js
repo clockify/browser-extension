@@ -4,7 +4,7 @@ import EditForm from './edit-form.component';
 import locales from '../helpers/locales';
 import moment, { duration } from 'moment';
 import 'moment-duration-format';
-import TimeEntryDropdown from './time-entry-dropdown.component';
+import { TimeEntryDropdown } from '~/components/TimeEntryDropdown';
 import Toaster from './toaster-component';
 import { getBrowser } from '~/helpers/browser-helper';
 import { getRequiredAndMissingCustomFieldNames, getRequiredAndMissingFieldNames } from '~/helpers/utils';
@@ -21,7 +21,7 @@ const TimeEntry = props => {
 		showGroup: false,
 		entryDropdownShown: false,
 		askToDeleteEntry: false,
-		hideBillable: true
+		hideBillable: true,
 	});
 
 	const toasterRef = useRef(null);
@@ -37,7 +37,7 @@ const TimeEntry = props => {
 		timeEntryIndex,
 		timeFormat,
 		userSettings,
-		playTimeEntry
+		playTimeEntry,
 	} = props;
 
 	const durationFormat = () => {
@@ -75,13 +75,13 @@ const TimeEntry = props => {
 		entryDuration = numberFormatTransform(
 			parseTime(sumOfDurations, durationFormatValue),
 			numberFormat,
-			durationFormatValue
+			durationFormatValue,
 		);
 	} else {
 		entryDuration = numberFormatTransform(
 			parseTime(timeEntry.timeInterval.duration, durationFormatValue),
 			numberFormat,
-			durationFormatValue
+			durationFormatValue,
 		);
 	}
 
@@ -106,9 +106,12 @@ const TimeEntry = props => {
 	};
 
 	useEffect(() => {
-		createTitle();
 		canChangeBillable();
 	}, []);
+
+	useEffect(() => {
+		createTitle();
+	}, [timeEntry.tags.length]);
 
 	const goToEdit = async () => {
 		if (
@@ -123,7 +126,7 @@ const TimeEntry = props => {
 					workspaceSettings={workspaceSettings}
 					timeFormat={timeFormat}
 					userSettings={userSettings}
-				/>
+				/>,
 			);
 		}
 	};
@@ -138,7 +141,7 @@ const TimeEntry = props => {
 		if (timeEntry.approvalRequestId == null && (!timeEntry.isLocked || isUserOwnerOrAdmin)) {
 			setState(state => ({
 				...state,
-				entryDropdownShown: !state.entryDropdownShown
+				entryDropdownShown: !state.entryDropdownShown,
 			}));
 		}
 	};
@@ -178,7 +181,7 @@ const TimeEntry = props => {
 		setState(prevState => ({
 			...prevState,
 			title,
-			tagTitle
+			tagTitle,
 		}));
 	};
 
@@ -190,7 +193,7 @@ const TimeEntry = props => {
 		e.stopPropagation();
 		setState(state => ({
 			...state,
-			showGroup: !state.showGroup
+			showGroup: !state.showGroup,
 		}));
 	};
 
@@ -199,7 +202,7 @@ const TimeEntry = props => {
 		setState(state => ({
 			...state,
 			askToDeleteEntry: !state.askToDeleteEntry,
-			entryDropdownShown: false
+			entryDropdownShown: false,
 		}));
 	};
 
@@ -209,14 +212,14 @@ const TimeEntry = props => {
 		const { project } = timeEntry;
 		const requiredAndMissingCustomFieldNames = await getRequiredAndMissingCustomFieldNames(
 			project,
-			timeEntry
+			timeEntry,
 		);
 		const requiredAndMissingFieldNames = getRequiredAndMissingFieldNames(
 			timeEntry,
-			workspaceSettings
+			workspaceSettings,
 		);
 		const missingFields = requiredAndMissingFieldNames.concat(
-			requiredAndMissingCustomFieldNames
+			requiredAndMissingCustomFieldNames,
 		);
 
 		// Admin and Owners can duplicate a Holiday/TimeOff TimeEntry even if they have missing fields.
@@ -229,7 +232,7 @@ const TimeEntry = props => {
 		if (missingFields.length > 0 && !canDuplicate) {
 			const errorMessage = `${locales.CANT_SAVE_WITHOUT_REQUIRED_FIELDS.replace(
 				'.',
-				''
+				'',
 			)}: ${missingFields.join(', ')}`;
 			toasterRef.current.toast('error', errorMessage, 3);
 			return;
@@ -240,8 +243,8 @@ const TimeEntry = props => {
 			.runtime.sendMessage({
 			eventName: 'duplicateTimeEntry',
 			options: {
-				entryId: timeEntry.id
-			}
+				entryId: timeEntry.id,
+			},
 		})
 			.then(() => {
 				props.handleRefresh();
@@ -251,7 +254,7 @@ const TimeEntry = props => {
 				toasterRef.current.toast(
 					'error',
 					locales.replaceLabels(error.response.data.message),
-					2
+					2,
 				);
 			});
 	};
@@ -269,8 +272,8 @@ const TimeEntry = props => {
 			.runtime.sendMessage({
 			eventName: 'deleteTimeEntry',
 			options: {
-				entryId
-			}
+				entryId,
+			},
 		})
 			.then(() => {
 				setState(state => ({ ...state, askToDeleteEntry: false }));
@@ -285,8 +288,8 @@ const TimeEntry = props => {
 			.runtime.sendMessage({
 			eventName: 'deleteTimeEntries',
 			options: {
-				entryIds
-			}
+				entryIds,
+			},
 		})
 			.then(() => {
 				setState(state => ({ ...state, askToDeleteEntry: false }));
@@ -403,24 +406,25 @@ const TimeEntry = props => {
 								onClick={continueTimeEntry}
 								title={locales.TRACKER__TIME_TRACKER__ENTRY__CONTINUE}
 							/>
-							<span className="time-entry-menu">
-								<img
-									onClick={toggleEntryDropdownMenu}
-									className="time-entry-menu__icon"
-									src="./assets/images/menu-dots-vertical.svg"
-									alt="Menu"
-								/>
-								{state.entryDropdownShown && (
-									<TimeEntryDropdown
-										entry={timeEntry}
-										group={groupedEntries}
-										onDelete={e => toggleDeleteConfirmationModal(e)}
-										onDuplicate={e => onClickDuplicateEntry(e)}
-										toggleDropdown={toggleEntryDropdownMenu}
-										manualModeDisabled={props.manualModeDisabled}
+							{!((timeEntry.isLocked && !isUserOwnerOrAdmin) || timeEntry.approvalRequestId) &&
+								<span className="time-entry-menu">
+									<img
+										onClick={toggleEntryDropdownMenu}
+										className="time-entry-menu__icon"
+										src="./assets/images/menu-dots-vertical.svg"
+										alt="Menu"
 									/>
-								)}
-							</span>
+									{state.entryDropdownShown && (
+										<TimeEntryDropdown
+											entry={timeEntry}
+											group={groupedEntries}
+											onDelete={e => toggleDeleteConfirmationModal(e)}
+											onDuplicate={e => onClickDuplicateEntry(e)}
+											toggleDropdown={toggleEntryDropdownMenu}
+											manualModeDisabled={props.manualModeDisabled}
+										/>
+									)}
+							</span>}
 						</div>
 					</div>
 				</div>

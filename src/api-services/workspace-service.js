@@ -19,7 +19,7 @@ class UserWorkspaceStorage extends ClockifyService {
 		let storage = str ? JSON.parse(str) : {};
 		if (Array.isArray(storage)) {
 			const obj = {};
-			storage.map((item) => {
+			storage.map(item => {
 				const { userId, workspaceId, project, enabled } = item;
 				let user = obj[userId];
 				if (!user) {
@@ -83,17 +83,14 @@ class UserWorkspaceStorage extends ClockifyService {
 		let endPoint = `${apiEndpoint}/workspaces/${workspaceId}`;
 		const { data, error, status } = await this.apiCall(endPoint);
 		if (data) {
-			const { workspaceSettings, features, featureSubscriptionType } = data;
+			const { workspaceSettings, features, featureSubscriptionType, memberships } = data;
 			workspaceSettings.projectPickerSpecialFilter = projectPickerTaskFilter;
 			workspaceSettings.features = {
 				featureSubscriptionType,
 				customFields: features.includes('CUSTOM_FIELDS'),
 				timeTracking: features.includes('TIME_TRACKING'),
 			};
-			localStorage.setItem(
-				'workspaceSettings',
-				JSON.stringify(workspaceSettings)
-			);
+			localStorage.setItem('workspaceSettings', JSON.stringify(workspaceSettings));
 			const {
 				forceDescription,
 				forceProjects,
@@ -102,6 +99,7 @@ class UserWorkspaceStorage extends ClockifyService {
 				projectPickerSpecialFilter,
 				projectFavorites,
 			} = workspaceSettings;
+			await localStorage.setItem('memberships', JSON.stringify(memberships));
 			aBrowser.storage.local.set({
 				wsSettings: {
 					forceDescription,
@@ -222,7 +220,7 @@ class UserWorkspaceStorage extends ClockifyService {
 		const baseUrl = await this.apiEndpoint;
 		const workspaceId = await this.workspaceId;
 		const workspaceRegionalUrl = `${baseUrl}/workspaces/${workspaceId}/payments/was-regional-ever-allowed`;
-		return await this.apiCall(workspaceRegionalUrl).then((response) => {
+		return await this.apiCall(workspaceRegionalUrl).then(response => {
 			localStorage.setItem('wasRegionalEverAllowed', response.data);
 			return response.data;
 		});

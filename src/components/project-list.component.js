@@ -6,6 +6,7 @@ import { CreateTask } from './CreateTask.tsx';
 import locales from '../helpers/locales';
 import { mapStateToProps } from '~/zustand/mapStateToProps';
 import { CreateProject } from '~/components/CreateProject.tsx';
+import onClickOutside from 'react-onclickoutside';
 
 export const pageSize = 50;
 
@@ -139,7 +140,7 @@ class ProjectList extends React.Component {
 					this.setState({
 						title: this.createTitle(),
 					});
-				},
+				}
 			);
 		}
 	}
@@ -166,23 +167,22 @@ class ProjectList extends React.Component {
 		const alreadyIds = page === 1 ? [] : this.state.projectList.map(p => p.id);
 		getBrowser()
 			.runtime.sendMessage({
-			eventName: 'getProjects',
-			options: {
-				filter: this.state.filter,
-				page,
-				pageSize,
-				forceTasks: false,
-				alreadyIds,
-			},
-		})
+				eventName: 'getProjects',
+				options: {
+					filter: this.state.filter,
+					page,
+					pageSize,
+					forceTasks: false,
+					alreadyIds,
+				},
+			})
 			.then(response => {
 				const projects = response.data;
-				const projectList =
-					page === 1 ? projects : this.state.projectList.concat(projects);
+				const projectList = page === 1 ? projects : this.state.projectList.concat(projects);
 				let projectListToPutInState;
 				if (this.state.filter.length > 0) {
 					projectListToPutInState = projectList.filter(
-						project => project.id !== 'no-project',
+						project => project.id !== 'no-project'
 					);
 				} else if (projectList.length > 0) {
 					projectListToPutInState = projectList;
@@ -205,10 +205,10 @@ class ProjectList extends React.Component {
 							specFilterNoTasksOrProject: this.createMessageForNoTaskOrProject(
 								projects,
 								this.state.isSpecialFilter,
-								this.state.filter,
+								this.state.filter
 							),
 						});
-					},
+					}
 				);
 			});
 	}
@@ -218,22 +218,22 @@ class ProjectList extends React.Component {
 			const alreadyIds = page === 1 ? [] : this.state.projectList.map(p => p.id);
 			getBrowser()
 				.runtime.sendMessage({
-				eventName: 'getProjects',
-				options: {
-					filter: this.state.filter,
-					page,
-					pageSize,
-					forceTasks: false,
-					alreadyIds,
-				},
-			})
+					eventName: 'getProjects',
+					options: {
+						filter: this.state.filter,
+						page,
+						pageSize,
+						forceTasks: false,
+						alreadyIds,
+					},
+				})
 				.then(response => {
 					const projects = response.data;
 					const projectList = projects;
 					let projectListToPutInState;
 					if (this.state.filter.length > 0) {
 						projectListToPutInState = projectList.filter(
-							project => project.id !== 'no-project',
+							project => project.id !== 'no-project'
 						);
 					} else if (projectList.length > 0) {
 						projectListToPutInState = projectList;
@@ -256,14 +256,13 @@ class ProjectList extends React.Component {
 								specFilterNoTasksOrProject: this.createMessageForNoTaskOrProject(
 									projects,
 									this.state.isSpecialFilter,
-									this.state.filter,
+									this.state.filter
 								),
 							});
-						},
+						}
 					);
 				})
-				.catch(() => {
-				});
+				.catch(() => {});
 		}
 	}
 
@@ -380,20 +379,18 @@ class ProjectList extends React.Component {
 				() => {
 					this.projectFilterRef.current?.focus();
 					this.getProjects(this.state.page, pageSize);
-				},
+				}
 			);
 		}
 	}
 
 	closeProjectList() {
 		this.projectListDropdownRef.current?.scroll(0, 0);
-		this.setState(
-			{
-				isOpen: false,
-				filter: '',
-				page: 1,
-			},
-		);
+		this.setState({
+			isOpen: false,
+			filter: '',
+			page: 1,
+		});
 	}
 
 	filterProjects(e) {
@@ -405,7 +402,7 @@ class ProjectList extends React.Component {
 			},
 			() => {
 				this.getProjects(this.state.page, pageSize);
-			},
+			}
 		);
 	}
 
@@ -454,7 +451,7 @@ class ProjectList extends React.Component {
 			},
 			() => {
 				this.getProjects(this.state.page, pageSize);
-			},
+			}
 		);
 	}
 
@@ -570,8 +567,8 @@ class ProjectList extends React.Component {
 						this.state.isOffline
 							? 'project-list-button-offline'
 							: this.props.projectRequired || this.props.taskRequired
-								? 'project-list-button-required'
-								: 'project-list-button'
+							? 'project-list-button-required'
+							: 'project-list-button'
 					}>
 					<span
 						className="project-list-name"
@@ -600,9 +597,9 @@ class ProjectList extends React.Component {
 						style={{
 							content: `url(${getBrowser().runtime.getURL(
 								'assets/images/' +
-								(this.state.isOpen
-									? 'arrow-light-mode-up.png'
-									: 'arrow-light-mode.png'),
+									(this.state.isOpen
+										? 'arrow-light-mode-up.png'
+										: 'arrow-light-mode.png')
 							)})`,
 						}}></span>
 				</div>
@@ -665,7 +662,9 @@ class ProjectList extends React.Component {
 													selectProject={this.selectProject.bind(this)}
 													selectTask={this.selectTask.bind(this)}
 													workspaceSettings={this.props.workspaceSettings}
-													isUserOwnerOrAdmin={this.props.isUserOwnerOrAdmin}
+													isUserOwnerOrAdmin={
+														this.props.isUserOwnerOrAdmin
+													}
 													getProjectTasks={this.getProjectTasks}
 													projectFavorites={false}
 													openCreateTaskModal={this.openCreateTaskModal}
@@ -674,7 +673,7 @@ class ProjectList extends React.Component {
 															isEnabledCreateTask ||
 															(isEnabledCreateTaskForPM &&
 																projectManagerFor.includes(
-																	project.id,
+																	project.id
 																))
 														)
 													}
@@ -702,7 +701,7 @@ class ProjectList extends React.Component {
 														project={project}
 														noTasks={this.props.noTasks}
 														selectProject={this.selectProject.bind(
-															this,
+															this
 														)}
 														selectTask={this.selectTask.bind(this)}
 														workspaceSettings={
@@ -730,7 +729,7 @@ class ProjectList extends React.Component {
 																isEnabledCreateTask ||
 																(isEnabledCreateTaskForPM &&
 																	projectManagerFor.includes(
-																		project.id,
+																		project.id
 																	))
 															)
 														}
@@ -762,7 +761,7 @@ class ProjectList extends React.Component {
 															project={project}
 															noTasks={this.props.noTasks}
 															selectProject={this.selectProject.bind(
-																this,
+																this
 															)}
 															selectTask={this.selectTask.bind(this)}
 															workspaceSettings={
@@ -790,13 +789,13 @@ class ProjectList extends React.Component {
 																	isEnabledCreateTask ||
 																	(isEnabledCreateTaskForPM &&
 																		projectManagerFor.includes(
-																			project.id,
+																			project.id
 																		))
 																)
 															}
 														/>
 													</div>
-												),
+												)
 											)}
 										</div>
 									)}
@@ -808,7 +807,7 @@ class ProjectList extends React.Component {
 													'FAVORITES',
 													'NO-PROJECT',
 													'WITHOUT-CLIENT',
-												].includes(client),
+												].includes(client)
 										)
 										.map(client => (
 											<div key={client}>
@@ -826,7 +825,7 @@ class ProjectList extends React.Component {
 														project={project}
 														noTasks={this.props.noTasks}
 														selectProject={this.selectProject.bind(
-															this,
+															this
 														)}
 														selectTask={this.selectTask.bind(this)}
 														workspaceSettings={
@@ -854,7 +853,7 @@ class ProjectList extends React.Component {
 																isEnabledCreateTask ||
 																(isEnabledCreateTaskForPM &&
 																	projectManagerFor.includes(
-																		project.id,
+																		project.id
 																	))
 															)
 														}
@@ -881,7 +880,7 @@ class ProjectList extends React.Component {
 												className="projects-list__create-project--icon"
 												style={{
 													content: `url(${getBrowser().runtime.getURL(
-														'assets/images/create.png',
+														'assets/images/create.png'
 													)})`,
 												}}></span>
 											<span className="projects-list__create-project--text">
@@ -903,4 +902,4 @@ const selectedState = state => ({
 	isCurrentUserDarkTheme: state.isCurrentUserDarkTheme,
 });
 
-export default mapStateToProps(selectedState)(ProjectList);
+export default mapStateToProps(selectedState)(onClickOutside(ProjectList));

@@ -84,7 +84,13 @@ class ProjectItem extends React.Component {
 
 	async filterTasks(isInitial = false) {
 		const response = await this.props.getProjectTasks(this.props.project.id, this.props.filter, this.state.page);
-		let filteredTasks = response.data?.filter(i => i.id !== this.props.selectedTask?.id) ?? [];
+		let filteredTasks = response.data?.filter(task => {
+			if (task.id === this.props.selectedTask?.id) {
+				return true;
+			}
+
+			return task.id !== this.props.selectedTask?.id;
+		}) ?? [];
 
 		if (response.data?.length === 0 && this.props.project.tasks?.length) {
 			filteredTasks = this.props.project.tasks.filter(i => i.id !== this.props.selectedTask?.id);

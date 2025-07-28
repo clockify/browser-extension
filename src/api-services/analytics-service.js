@@ -125,54 +125,33 @@ class AnalyticsService extends ClockifyService {
 		const { analyticsEventName, eventParameters } = options;
 
 		const body = {
-			event_name: analyticsEventName,
-			event_parameters: eventParameters,
-			user_properties: {
-				user_id: userId,
-				workspace_id: workspaceId,
-				client_id: clientId
-			}
+			eventName: analyticsEventName,
+			eventParameters: eventParameters,
+			userProperties: {
+				userId: userId,
+				workspaceId: workspaceId,
+				clientId: clientId,
+			},
 		};
 
 		try {
-			return await this.apiCall(
-				endPoint,
-				'POST',
-				AnalyticsService.convertKeysToSnakeNotation(body)
-			);
+			return await this.apiCall(endPoint, 'POST', AnalyticsService.camelize(body));
 		} catch (error) {
 			console.error('Error sending analytics event:', error);
 			throw error;
 		}
 	}
 
-	// Because all across our code base we use camelCase notation
-	// and analytics specification requires snake case notation,
-	// we use this function to be absolutely sure that body properties
-	// will be snake case based
-	static convertKeysToSnakeNotation(object) {
-		if (typeof object != 'object') return object;
+	static camelize(object) {
+		const string = JSON.stringify(object);
 
-		for (const currentKeyName in object) {
-			const keyNameWithSnakeNotation = currentKeyName.replace(
-				/([A-Z])/g,
-				$1 => '_' + $1.toLowerCase()
-			);
+		const camelString = string
+			.replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) =>
+				index === 0 ? word.toLowerCase() : word.toUpperCase()
+			)
+			.replace(/\s+/g, '');
 
-			if (keyNameWithSnakeNotation != currentKeyName) {
-				if (object.hasOwnProperty(currentKeyName)) {
-					object[keyNameWithSnakeNotation] = object[currentKeyName];
-					delete object[currentKeyName];
-				}
-			}
-
-			if (typeof object[keyNameWithSnakeNotation] == 'object') {
-				object[keyNameWithSnakeNotation] = AnalyticsService.convertKeysToSnakeNotation(
-					object[keyNameWithSnakeNotation]
-				);
-			}
-		}
-		return object;
+		return JSON.parse(camelString);
 	}
 
 	static async getClientId() {
@@ -195,8 +174,24 @@ class AnalyticsService extends ClockifyService {
 
 	static async storeAnalyticsEvents(addedEvents = []) {
 		const workspaceId = await localStorage.getItem('activeWorkspaceId');
+		const memberships = JSON.parse(await localStorage.getItem('memberships'));
 
-		addedEvents = addedEvents.map(event => ({ ...event, workspaceId }));
+		const workspaceUsers = memberships?.length || 0;
+		const workspaceUsersActivated =
+			memberships?.filter(m => m?.membershipStatus === 'ACTIVE')?.length || 0;
+		const workspaceUsersDeactivated =
+			memberships?.filter(m => m?.membershipStatus === 'INACTIVE')?.length || 0;
+		const workspaceUsersInvited =
+			memberships?.filter(m => m?.membershipStatus === 'PENDING')?.length || 0;
+
+		addedEvents = addedEvents.map(event => ({
+			...event,
+			workspaceId,
+			workspaceUsers,
+			workspaceUsersActivated,
+			workspaceUsersDeactivated,
+			workspaceUsersInvited,
+		}));
 
 		const existingEvents = JSON.parse(await localStorage.getItem('AnalyticsEvents'));
 

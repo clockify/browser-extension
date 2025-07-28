@@ -1,82 +1,143 @@
-(async () => {
-	const selectors = await getSelectors('gitlab', 'MergeRequestAndIssueView');
+// Old UI (MR view & issue view) & New UIs (show MR view)
+clockifyButton.render(
+	`
+	[data-page^="projects:issues:"] main .title-container:not(.clockify),
+	[data-page^="projects:merge_requests:"] main .detail-page-header:not(.clockify)
+	`,
+	{ observe: true },
+	async heading => {
+		const labels = await waitForElement('[data-testid="sidebar-labels"]');
+		const breadcrumbs = await waitForElement('[class$="breadcrumbs"]');
+		const breadcrumbsList = Array.from($$('li a', breadcrumbs));
+		const lastBreadcrumbText = breadcrumbsList.reverse()[0].textContent.trim();
 
-	// Issue view & Merge Request view - old UIs and new UI
-	clockifyButton.render(
-		`
-		[data-page="projects:issues:show"] [data-testid="breadcrumb-links"]:not(.clockify),
-		[data-page="projects:merge_requests:show"] [data-testid="breadcrumb-links"]:not(.clockify),
-		[data-page="projects:work_items:show"] [data-testid="breadcrumb-links"]:not(.clockify)
-		`,
-		{ observe: true },
-		() => {
-			const breadcrumbs = $(selectors.breadcrumbs);
-			const breadcrumbsList = Array.from($$('li', breadcrumbs));
+		const isIssue = Boolean($('[data-page^="projects:issues:"]'));
 
-			const lastBreadcrumbItemIndex = breadcrumbsList.length - 1;
-			const thirdToLastBreadcrumbItemIndex = breadcrumbsList.length - 3;
+		const id = () => lastBreadcrumbText.replace('#', '').replace('!', '');
+		const title = () => text('h1, h2', heading);
+		const group = () => attribute('data-group');
+		const project = () => attribute('data-project');
+		const separator = () => (isIssue ? '#' : '!');
 
-			const groupBreadcrumb = breadcrumbsList[0];
-			const projectBreadcrumb = breadcrumbsList[thirdToLastBreadcrumbItemIndex];
-			const idBreadcrumb = breadcrumbsList[lastBreadcrumbItemIndex];
+		const description = () => `${group()}/${project()}${separator()}${id()} ${title()}`;
+		const projectName = () => project();
+		const taskName = () => `${id()} ${title()}`;
+		const tagNames = () => extractLabels('.gl-label-link', labels);
 
-			const groupName =
-				text(selectors.groupName, groupBreadcrumb) ||
-				text(selectors.anchor, groupBreadcrumb) ||
-				groupBreadcrumb?.innerText;
-			const id = idBreadcrumb.innerText.trim();
-			const title = () => text(selectors.issueTitle);
-			const labels = () => Array.from($$(selectors.label));
-			const labelsFormated = () =>
-				labels().map((label) => {
-					const firstSpan = text(selectors.firstSpan, label);
-					const secondSpan = text(selectors.secondSpan, label);
+		const entry = { description, projectName, taskName, tagNames };
 
-					const isLabelScoped = !!secondSpan;
+		const timer = clockifyButton.createTimer(entry);
+		const input = clockifyButton.createInput(entry);
 
-					return isLabelScoped ? `${firstSpan}:${secondSpan}` : firstSpan;
-				});
+		const container = createContainer(timer, input);
 
-			const projectName = projectBreadcrumb.textContent.trim();
+		heading.after(container);
+	}
+);
 
-			const description = () => `${groupName}/${projectName}${id} ${title()}`;
-			const taskName = () => `${id} ${title()}`;
-			const tagNames = () => [...new Set(labelsFormated())];
+// New UIs (show issue view & sidebar issue view)
+clockifyButton.render(
+	'[data-page^="projects:issues:"] main div:has(> [data-testid="work-item-type"]):not(.clockify)',
+	{ observe: true },
+	async heading => {
+		const labels = await waitForElement('[data-testid="work-item-labels"]');
 
-			const clockifyContainer = createTag('div', 'clockify-widget-container');
+		const id = () =>
+			text('[data-testid="work-item-drawer-ref-link"]')?.split('#')?.reverse()?.[0] ||
+			text('.breadcrumb li:last-child a span').split('#').reverse()[0];
+		const title = () => text('h1, h2', heading);
+		const group = () => attribute('data-group');
+		const project = () => attribute('data-project');
 
-			const entry = { description, projectName, taskName, tagNames };
+		const description = () => `${group()}/${project()}#${id()} ${title()}`;
+		const projectName = () => project();
+		const taskName = () => `${id()} ${title()}`;
+		const tagNames = () => extractLabels('.gl-label-link', labels);
 
-			const link = clockifyButton.createButton(entry);
-			const input = clockifyButton.createInput(entry);
+		const entry = { description, projectName, taskName, tagNames };
 
-			clockifyContainer.append(link);
-			clockifyContainer.append(input);
+		const timer = clockifyButton.createTimer(entry);
+		const input = clockifyButton.createInput(entry);
 
-			breadcrumbs.append(clockifyContainer);
-		}
-	);
-})();
+		const container = createContainer(timer, input);
+
+		heading.after(container);
+	}
+);
+
+function extractLabels(selector, context) {
+	const labels = Array.from($$(selector, context)).map(label => {
+		const firstSpan = text('span:nth-child(1)', label);
+		const secondSpan = text('span:nth-child(2)', label);
+
+		const isLabelScoped = Boolean(secondSpan);
+
+		return isLabelScoped ? `${firstSpan}:${secondSpan}` : firstSpan;
+	});
+
+	return [...new Set(labels)];
+}
 
 applyStyles(`
-	#clockifyButton {
+	.clockify-widget-container {
+		width: 100%;
+		height: 40px;
 		display: flex;
-		align-items: flex-start !important;
-		margin: 0 7px;
-	}
-
-	#clockify-manual-input-form {
-		margin-right: 7px;
-	}
-
-	[aria-label*=\"Breadcrumb\"], .clockify-widget-container {
-		display: flex;
+		flex-direction: row;
+		justify-content: flex-start;
 		align-items: center;
-		justify-content: space-between;
-		flex-wrap: wrap;
+		gap: 2rem;
 	}
-	
-	.top-bar-fixed {
-		width: auto !important;
+
+	input.clockify-input { 
+		border-radius: 0.25rem; 
 	}
 `);
+
+initializeHtmlObserver();
+applyManualInputStyles();
+
+function initializeHtmlObserver() {
+	const bodyObserver = new MutationObserver(applyManualInputStyles);
+
+	const observationTarget = document.documentElement;
+	const observationConfig = { attributes: true };
+
+	bodyObserver.observe(observationTarget, observationConfig);
+}
+
+function applyManualInputStyles() {
+	const lightStyles = `
+		span.clockify-button-inactive {
+			color: #444444 !important;
+		}
+
+		input.clockify-input {
+			color: #444444 !important;
+			border: none !important;
+			background: #fff !important;
+			border: 1px solid #dcdcde !important;
+		}
+	`;
+	const darkStyles = `
+		span.clockify-button-inactive {
+			color: #fff !important;
+		}
+		input.clockify-input {
+			color: #fff !important;
+			border: none !important;
+			background: rgba(255, 255, 255, 0.16) !important;
+		}
+	`;
+
+	const htmlTagClasslist = [
+		...Array.from(document.documentElement.classList),
+		...Array.from(document.body.classList),
+	];
+	const valueWithDark = htmlTagClasslist.find(attributeValue => attributeValue.includes('dark'));
+	const isThemeDark = Boolean(valueWithDark);
+
+	const stylesToApply = isThemeDark ? darkStyles : lightStyles;
+
+	applyStyles(stylesToApply, 'clockify-theme-dependent-styles');
+}

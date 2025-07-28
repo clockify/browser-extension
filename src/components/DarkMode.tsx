@@ -1,6 +1,6 @@
 import * as React from 'react';
 import locales from '../helpers/locales';
-import { useAppStore } from '../zustand/store';
+import { useAppStore } from '~/zustand/store';
 
 interface DarkModeProps {
 	changeSaved: Function;

@@ -614,6 +614,9 @@
   "ENTER_REQUIRED_FIELDS": {
     "message": "Saisissez les champs obligatoires ou modifiez éventuellement les paramètres de votre espace de travail."
   },
+  "EVERY": {
+    "message": "Chaque"
+  },
   "CANNOT_START_ENTRY_WITHOUT_PROJECT": {
     "message": "Impossible de démarrer l'entrée sans projet, tâche, description ou balises."
   },

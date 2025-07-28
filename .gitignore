@@ -21,7 +21,6 @@ dist/
 node_modules/
 www/
 stylesheets/
-package-lock.json
 chrome/
 firefox/
 winehq.key

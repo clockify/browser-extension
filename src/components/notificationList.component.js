@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import locales from '../helpers/locales';
-import Notification from './notification.component';
-import NoNewNotification from './noNewNotification.component';
+import { Notification } from '~/components/Notification';
+import { NoNewNotification } from '~/components/NoNewNotification';
 import { getBrowser } from '../helpers/browser-helper';
 import moment from 'moment';
 
@@ -23,16 +23,16 @@ async function isBrowserTimezoneDifferentComparedToUserSettingsTimezone() {
 }
 
 function NotificationList({
-	markAsRead,
-	notifications,
-	invitationNotifications,
-	fileImportNotifications,
-	newsNotifications,
-	notificationsWithoutInvitation,
-	toaster,
-	updateNotifications,
-	changeWorkspaceTo,
-}) {
+							  markAsRead,
+							  notifications,
+							  invitationNotifications,
+							  fileImportNotifications,
+							  newsNotifications,
+							  notificationsWithoutInvitation,
+							  toaster,
+							  updateNotifications,
+							  changeWorkspaceTo,
+						  }) {
 	if (notifications.length === 0) return <NoNewNotification />;
 
 	async function accept({ notificationId, workspaceId }) {
@@ -60,7 +60,7 @@ function NotificationList({
 			toaster.toast('success', locales.USER__SETTINGS__SAVE__SUCCESS, 2);
 
 			const isDomainSelfHosted = JSON.parse(
-				await localStorage.getItem('selfHosted', false)
+				await localStorage.getItem('selfHosted', false),
 			);
 
 			if (isDomainSelfHosted) {
@@ -75,7 +75,7 @@ function NotificationList({
 					toaster.toast(
 						'success',
 						locales.WORKSPACE_DEFAULT_SUCCESS_MESSAGE,
-						2
+						2,
 					);
 				}
 			}
@@ -253,7 +253,7 @@ function NotificationList({
 				title = data.title;
 				message = data.message.replace(
 					'For more information, please see here.',
-					''
+					'',
 				);
 
 				if (
@@ -335,7 +335,7 @@ function NotificationList({
 		(async () => {
 			setHomeUrl(await localStorage.getItem('permanent_homeUrl'));
 			setShowTimezoneNotification(
-				await isBrowserTimezoneDifferentComparedToUserSettingsTimezone()
+				await isBrowserTimezoneDifferentComparedToUserSettingsTimezone(),
 			);
 		})();
 	});

@@ -12,9 +12,7 @@ class ProjectTaskService extends ClockifyService {
 	static async getUrlProjects(useWriteEndpoint, useV1 = false) {
 		const apiEndpoint = await (useWriteEndpoint ? this.apiWriteEndpoint() : this.apiEndpoint);
 		const workspaceId = await this.workspaceId;
-		return `${apiEndpoint}/${
-			useV1 ? 'v1/' : ''
-		}workspaces/${workspaceId}/projects`;
+		return `${apiEndpoint}/${useV1 ? 'v1/' : ''}workspaces/${workspaceId}/projects`;
 	}
 
 	static async getOrCreateProjectAndTask(projectName, task) {
@@ -26,7 +24,7 @@ class ProjectTaskService extends ClockifyService {
 			found,
 			created,
 			onlyAdminsCanCreateProjects,
-			projectArchived
+			projectArchived,
 		} = await this.getOrCreateProject(projectName);
 
 		let message = msg ? msg : '';
@@ -53,7 +51,7 @@ class ProjectTaskService extends ClockifyService {
 						projectDB: p,
 						taskDB: t,
 						msg,
-						msgId
+						msgId,
 					} = await DefaultProject.getProjectTaskFromDB();
 					if (msg) {
 						message += ' ' + msg;
@@ -74,21 +72,13 @@ class ProjectTaskService extends ClockifyService {
 
 		let project;
 		projectName = projectName.trim().replace(/\s+/g, ' ');
-		if (projectPickerSpecialFilter) {
-			projectFilter = '@' + projectName;
-		} else {
-			projectFilter = projectName;
-		}
-		const { projects, error } = await this.getProjectWithFilter(
-			projectFilter,
-			page,
-			pageSize
-		);
+		projectFilter = projectName;
+		const { projects, error } = await this.getProjectWithFilter(projectFilter, page, pageSize);
 		if (error) {
 			return { projectDB: null, error };
 		} else {
 			if (projects && projects.length > 0) {
-				project = projects.find((p) => p.name === projectName);
+				project = projects.find(p => p.name === projectName);
 			}
 		}
 
@@ -109,11 +99,7 @@ class ProjectTaskService extends ClockifyService {
 				requestBody.billable = wsSettings.defaultBillableProjects;
 			}
 
-			const {
-				data: project,
-				error,
-				status
-			} = await this.createProject(requestBody);
+			const { data: project, error, status } = await this.createProject(requestBody);
 			if (status === 201) {
 				return { projectDB: project, created: true };
 			}
@@ -125,8 +111,7 @@ class ProjectTaskService extends ClockifyService {
 				onlyAdminsCanCreateProjects = true;
 			}
 		}
-		const { projectDB, taskDB, msg, msgId } =
-			await DefaultProject.getProjectTaskFromDB();
+		const { projectDB, taskDB, msg, msgId } = await DefaultProject.getProjectTaskFromDB();
 		if (msg) {
 		}
 
@@ -136,7 +121,7 @@ class ProjectTaskService extends ClockifyService {
 			msg,
 			msgId,
 			projectArchived,
-			onlyAdminsCanCreateProjects
+			onlyAdminsCanCreateProjects,
 		};
 	}
 
@@ -146,15 +131,15 @@ class ProjectTaskService extends ClockifyService {
 		// project was freshly created in which case there simply are no tasks
 
 		let error = null;
-		let task = (project.tasks || []).find((t) => t.name === taskName);
+		let task = (project.tasks || []).find(t => t.name === taskName);
 		if (!task) {
 			let { data, error: err } = await this.getTaskOfProject({
 				projectId: project.id,
-				taskName: encodeURIComponent(taskName)
+				taskName: encodeURIComponent(taskName),
 			});
 
 			// backend returns a list of tasks, but we only want the one with the exact name
-			data = data?.filter((t) => t.name === taskName);
+			data = data?.filter(t => t.name === taskName);
 
 			task = data && data.length > 0 ? data[0] : null;
 			error = err;
@@ -165,7 +150,7 @@ class ProjectTaskService extends ClockifyService {
 			const {
 				data,
 				error: err,
-				status
+				status,
 			} = await this.createTask({ projectId: project.id, name: taskName });
 			task = data;
 			if (status === 201) {
@@ -182,12 +167,14 @@ class ProjectTaskService extends ClockifyService {
 	}
 
 	static async getProjectWithFilter(filter, page, pageSize) {
-		const { projectPickerSpecialFilter } = JSON.parse(await localStorage.getItem('userSettings'));
-		const filterTrimmedEncoded = encodeURIComponent(filter.trim());
+		const { projectPickerSpecialFilter } = JSON.parse(
+			await localStorage.getItem('userSettings')
+		);
+		const searchKeyWord = projectPickerSpecialFilter ? '@' : '';
+		const filterTrimmedEncoded = encodeURIComponent(searchKeyWord + filter.trim());
 		const apiEndpoint = await this.apiEndpoint;
 		const workspaceId = await this.workspaceId;
-		const searchKeyWord = projectPickerSpecialFilter ? 'search=@' : 'search=';
-		const endPoint = `${apiEndpoint}/workspaces/${workspaceId}/project-picker/projects?page=${page}&${searchKeyWord}${filterTrimmedEncoded}`; // &favorites
+		const endPoint = `${apiEndpoint}/workspaces/${workspaceId}/project-picker/projects?page=${page}&search=${filterTrimmedEncoded}`; // &favorites
 		const { data: projects, error } = await this.apiCall(endPoint);
 		return { projects, error };
 	}
@@ -202,7 +189,7 @@ class ProjectTaskService extends ClockifyService {
 		const endPoint = `${urlProjects}/${projectId}/tasks`;
 		const body = {
 			name,
-			projectId
+			projectId,
 		};
 		return await this.apiCall(endPoint, 'POST', body);
 	}
@@ -212,8 +199,7 @@ class ProjectTaskService extends ClockifyService {
 		let data, error, status;
 
 		if (forceTasks) {
-			({ data, error, status } =
-				await this.getLastUsedProjectAndTaskFromTimeEntries());
+			({ data, error, status } = await this.getLastUsedProjectAndTaskFromTimeEntries());
 		}
 
 		// if both project and task are found, return them
@@ -244,22 +230,14 @@ class ProjectTaskService extends ClockifyService {
 		const urlProjects = await this.getUrlProjects(true);
 		const endPoint = `${urlProjects}/ids`;
 		const body = { ids: projectIds };
-		const {
-			data: projects,
-			error,
-			status
-		} = await this.apiCall(endPoint, 'POST', body);
+		const { data: projects, error, status } = await this.apiCall(endPoint, 'POST', body);
 		if (error) {
 			return { error };
 		}
 		if (status === 200 && projects.length > 0) {
 			const projectDB = projects[0];
 			if (taskIds) {
-				const {
-					tasks,
-					error: err,
-					status: st
-				} = await this.getAllTasks(taskIds);
+				const { tasks, error: err, status: st } = await this.getAllTasks(taskIds);
 				if (err) {
 				} else {
 					projectDB.tasks = [tasks[0]];
@@ -275,11 +253,7 @@ class ProjectTaskService extends ClockifyService {
 		const urlProjects = await this.getUrlProjects(true);
 		const endPoint = `${urlProjects}/taskIds`;
 		const body = { ids: [taskId] };
-		const {
-			data: tasks,
-			error,
-			status
-		} = await this.apiCall(endPoint, 'POST', body);
+		const { data: tasks, error, status } = await this.apiCall(endPoint, 'POST', body);
 		if (status === 200 && tasks.length > 0) {
 			return tasks[0];
 		}
@@ -304,13 +278,9 @@ class ProjectTaskService extends ClockifyService {
 		const urlProjects = await this.getUrlProjects(true);
 		const endPoint = `${urlProjects}/taskIds`;
 		const body = {
-			ids: taskIds
+			ids: taskIds,
 		};
-		const {
-			data: tasks,
-			error,
-			status
-		} = await this.apiCall(endPoint, 'POST', body);
+		const { data: tasks, error, status } = await this.apiCall(endPoint, 'POST', body);
 		return { tasks, error, status };
 	}
 
@@ -363,19 +333,12 @@ class ProjectTaskService extends ClockifyService {
 		}
 	}
 
-	static async addFavs(
-		alreadyIds,
-		projectUrl,
-		data,
-		page,
-		pageSize,
-		forceTasks
-	) {
+	static async addFavs(alreadyIds, projectUrl, data, page, pageSize, forceTasks) {
 		let endPoint = `${projectUrl}&page=${page}&pageSize=${pageSize}&favorites=true`;
 		const { data: projects, error } = await this.apiCall(endPoint);
 		if (error) return { data: projects, error };
 
-		projects.forEach((project) => {
+		projects.forEach(project => {
 			if (
 				!alreadyIds.includes(project.id) &&
 				data.length < pageSize &&
@@ -386,18 +349,11 @@ class ProjectTaskService extends ClockifyService {
 		return { data, error };
 	}
 
-	static async addNonFavs(
-		alreadyIds,
-		projectUrl,
-		data,
-		page,
-		pageSize,
-		forceTasks
-	) {
+	static async addNonFavs(alreadyIds, projectUrl, data, page, pageSize, forceTasks) {
 		let endPoint = `${projectUrl}&pageSize=${pageSize}&page=${page}`;
 		const { data: projects, error } = await this.apiCall(endPoint);
 		if (error) return { data: projects, error };
-		projects.forEach((project) => {
+		projects.forEach(project => {
 			if (
 				!project.favorite &&
 				!alreadyIds.includes(project.id) &&
@@ -409,28 +365,14 @@ class ProjectTaskService extends ClockifyService {
 		if (projects.length < pageSize || data.length >= pageSize) {
 			return { data, error };
 		}
-		return await this.addNonFavs(
-			alreadyIds,
-			projectUrl,
-			data,
-			page + 1,
-			pageSize,
-			forceTasks
-		);
+		return await this.addNonFavs(alreadyIds, projectUrl, data, page + 1, pageSize, forceTasks);
 	}
 
-	static async addPage(
-		alreadyIds,
-		projectUrl,
-		data,
-		page,
-		pageSize,
-		forceTasks
-	) {
+	static async addPage(alreadyIds, projectUrl, data, page, pageSize, forceTasks) {
 		let endPoint = `${projectUrl}&page=${page}`;
 		const { data: projects, error } = await this.apiCall(endPoint);
 		if (error) return { data: projects, error };
-		projects.forEach((project) => {
+		projects.forEach(project => {
 			if (
 				!alreadyIds.includes(project.id) &&
 				data.length < pageSize &&
@@ -441,14 +383,7 @@ class ProjectTaskService extends ClockifyService {
 		if (projects.length < pageSize || data.length >= pageSize) {
 			return { data, error };
 		}
-		return await this.addPage(
-			alreadyIds,
-			projectUrl,
-			data,
-			page + 1,
-			pageSize,
-			forceTasks
-		);
+		return await this.addPage(alreadyIds, projectUrl, data, page + 1, pageSize, forceTasks);
 	}
 
 	static async getProjectTasksWithFilter(projectId, filter, page) {

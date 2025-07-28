@@ -261,7 +261,7 @@
 	},
 	"outlook.live.com": {
 		"name": "Outlook",
-		"link": "*://outlook.*/*",
+		"link": "*://outlook.*/*,*://outlook.live.com/*",
 		"script": "outlook.js"
 	},
 	"phacility.com": {

@@ -135,7 +135,7 @@
     "message": "Favoritos"
   },
   "GLOBAL__SELECT_LABEL": {
-    "message": "Selecione { label }"
+    "message": "Selecionar { label }"
   },
   "GLOBAL__SHOW_ALL_LABEL": {
     "message": "Mostrar todos"
@@ -165,7 +165,7 @@
     "message": "Atualização falhou"
   },
   "GLOBAL__USER_LABEL": {
-    "message": "Do utilizador"
+    "message": "Utilizador"
   },
   "GLOBAL__USERS_LABEL": {
     "message": "Comercial"
@@ -210,7 +210,7 @@
     "message": "Mudar"
   },
   "GLOBAL__CHANGE_NAME_LABEL": {
-    "message": "Mude o nome"
+    "message": "Alterar o nome"
   },
   "GLOBAL__CLOSE_BTN": {
     "message": "Fechar"
@@ -234,7 +234,7 @@
     "message": "Conecte-se"
   },
   "GLOBAL__MANAGE_LABEL": {
-    "message": "Gerenciar"
+    "message": "Gerenciando"
   },
   "MANUAL": {
     "message": "Manual"
@@ -294,7 +294,7 @@
     "message": "Administrador"
   },
   "GLOBAL__CLEAR_FILTERS_LABEL": {
-    "message": "Limpar filtros"
+    "message": "Remover filtros"
   },
   "DASHBOARD": {
     "message": "Painel"
@@ -333,7 +333,7 @@
     "message": "Em progresso"
   },
   "GLOBAL__SELECT_RANGEE_LABEL": {
-    "message": "Selecione o alcance"
+    "message": "Selecionar a gama"
   },
   "GLOBAL__PLACEHOLDER__ENTER_NAME": {
     "message": "Insira o nome"
@@ -396,13 +396,13 @@
     "message": "Trocar"
   },
   "SELECT": {
-    "message": "Selecione"
+    "message": "Selecionar"
   },
   "SHARED_MODULES__CUSTOM_FIELD__OPTION_PART_LABEL": {
     "message": "Opção"
   },
   "SHARED_MODULES__CUSTOM_FIELD__TYPE_SELECT_MULTIPLE_LABEL": {
-    "message": "Selecione vários"
+    "message": "Selecionar vários"
   },
   "SHARED_MODULES__CUSTOM_FIELD__DROPDOWN_DEFAULT_VALUE_INFO": {
     "message": "Estado padrão e valor de opção"
@@ -411,7 +411,7 @@
     "message": "LIGADO"
   },
   "SELECT_CLIENT": {
-    "message": "Selecione o cliente"
+    "message": "Selecionar o cliente"
   },
   "SHARED_MODULES__CUSTOM_FIELD__ADD_OPTION_LABEL": {
     "message": "Adicionar opção"
@@ -614,6 +614,9 @@
   "ENTER_REQUIRED_FIELDS": {
     "message": "Insira os campos obrigatórios ou, opcionalmente, edite as configurações do seu espaço de trabalho."
   },
+  "EVERY": {
+    "message": "Cada"
+  },
   "CANNOT_START_ENTRY_WITHOUT_PROJECT": {
     "message": "Não é possível iniciar a entrada sem projeto, tarefa, descrição ou etiquetas."
   },
@@ -642,7 +645,7 @@
     "message": "Se você usa uma ferramenta hospedada em um domínio personalizado, pode habilitá-la aqui"
   },
   "ENTER_DOMAIN_NAME": {
-    "message": "Insira o nome do domínio no formato 'mydomain.com' e selecione a integração no menu suspenso"
+    "message": "Inserir o nome do domínio no formato 'mydomain.com' e selecionar a integração no menu suspenso"
   },
   "PORTS_NOT_SUPPORTED": {
     "message": "Portes não são suportados"
@@ -795,7 +798,7 @@
     "message": "e tarefa"
   },
   "SELECT_COLOR": {
-    "message": "Selecione a cor"
+    "message": "Selecionar a cor"
   },
   "ADD_TIME": {
     "message": "ADICIONAR TEMPO"
@@ -1065,7 +1068,7 @@
     "message": "Espaço de trabalho bloqueado por estar hospedado no servidor regional. Por favor, adicione informações de pagamento ou troque o espaço de trabalho."
   },
   "ACTIVITY_TABS__SCREENSHOTS__NO_SCREENSHOTS_PROMO_BTN": {
-    "message": "Baixe o aplicativo de gravação de tela"
+    "message": "Baixe o aplicativo de captura de tela"
   },
   "ENTER_REQUIRED_FIEEDS_OR_EDIT_WORKSPACE_SETTINGS": {
     "message": "Insira os campos obrigatórios ou, opcionalmente, edite as configurações do seu espaço de trabalho."
@@ -1110,7 +1113,7 @@
     "message": "No momento você não tem novas notificações"
   },
   "CLEAR_ALL": {
-    "message": "Limpar tudo"
+    "message": "Remover tudo"
   },
   "WORKSPACE_INVITATION_NOTIFICATION_TITLE": {
     "message": "Convite para espaço de trabalho"
@@ -1146,10 +1149,10 @@
     "message": "Verificar email"
   },
   "LAYOUT__NOTIFICATIONS__UNVERIFIED_EMAIL_NOTIFICATION": {
-    "message": "Você não verificou seu email ainda."
+    "message": "Você ainda não verificou seu e-mail."
   },
   "LAYOUT__NOTIFICATIONS__RESEND_EMAIL_LABEL": {
-    "message": "Reenviar email"
+    "message": "Reenviar e-mail"
   },
   "LAYOUT__NOTIFICATIONS__RECEIVE_UPDATES_LABEL": {
     "message": "Receber atualizações"

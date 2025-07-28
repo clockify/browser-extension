@@ -13,7 +13,7 @@ class TimeEntryList extends React.Component {
 		this.state = {
 			timeEntry: {},
 			time: moment().hour(0).minute(0).second(0).format('HH:mm:ss'),
-			wsSettings: {},
+			wsSettings: {}
 		};
 		this.application = new Application();
 		this.handleRefresh = this.handleRefresh.bind(this);
@@ -26,7 +26,7 @@ class TimeEntryList extends React.Component {
 	async getTimeFormat() {
 		const wsSettings = JSON.parse(await localStorage.getItem('workspaceSettings'));
 		this.setState({
-			wsSettings,
+			wsSettings
 		});
 	}
 
@@ -42,7 +42,7 @@ class TimeEntryList extends React.Component {
 		return duration(total.replace(',', ''))
 			.add(this.state.time)
 			.format(this.state.wsSettings?.trackTimeDownToSecond ? 'HH:mm:ss' : 'h:mm', {
-				trim: false,
+				trim: false
 			});
 	}
 
@@ -51,12 +51,12 @@ class TimeEntryList extends React.Component {
 			if (this.props.timeChange === '00:00:00') {
 				setTimeout(() => {
 					this.setState({
-						time: this.props.timeChange,
+						time: this.props.timeChange
 					});
 				}, 315);
 			} else {
 				this.setState({
-					time: this.props.timeChange,
+					time: this.props.timeChange
 				});
 			}
 		}
@@ -88,7 +88,7 @@ class TimeEntryList extends React.Component {
 			projectId,
 			taskId,
 			customFieldValues,
-			type: type1,
+			type: type1
 		} = entry1;
 
 		const {
@@ -100,7 +100,7 @@ class TimeEntryList extends React.Component {
 			projectId: projectId2,
 			taskId: taskId2,
 			customFieldValues: customFieldValues2,
-			type: type2,
+			type: type2
 		} = entry2;
 
 		const isEmptyOrFalsey = value => {

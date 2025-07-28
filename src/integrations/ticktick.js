@@ -1,12 +1,12 @@
 clockifyButton.render(
 	'#td-caption:not(.clockify)',
-	{ observe: true },
-	(elem) => {
+	{ observe: true, onNavigationRerender: true },
+	elem => {
 		elem.querySelector('#clockifyButton')?.remove();
 
 		const description = () => $('span[role="presentation"]', elem).textContent;
 		const tagNames = () =>
-			Array.from($$('.content-editor .tag-name')).map((tag) => tag.textContent);
+			Array.from($$('.content-editor .tag-name')).map(tag => tag.textContent);
 
 		const link = clockifyButton.createButton({ description, tagNames });
 

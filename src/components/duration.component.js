@@ -8,7 +8,7 @@ import MyTimePicker from './my-time-picker.component';
 import { MyDurationPicker } from '~/components/MyDurationPicker.tsx';
 import { HtmlStyleHelper } from '../helpers/html-style-helper';
 import locales from '../helpers/locales';
-import dateFnsLocale from './date-fns-locale';
+import { dateFnsLocale } from '~/components/DateFnsLocale';
 
 const htmlStyleHelpers = new HtmlStyleHelper();
 const daysOfWeek = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
@@ -91,8 +91,8 @@ class Duration extends React.Component {
 					endTime,
 					time: duration(
 						moment(endTime.set('second', 0).set('milliseconds', 0)).diff(
-							startTime.set('second', 0).set('milliseconds', 0)
-						)
+							startTime.set('second', 0).set('milliseconds', 0),
+						),
 					),
 					datePickerOpen: false,
 				});

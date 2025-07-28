@@ -614,6 +614,9 @@
   "ENTER_REQUIRED_FIELDS": {
     "message": "Enter required fields or optionally edit your workspace settings."
   },
+  "EVERY": {
+    "message": "Every"
+  },
   "CANNOT_START_ENTRY_WITHOUT_PROJECT": {
     "message": "Can't start entry without project, task, description or tags."
   },

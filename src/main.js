@@ -30,39 +30,34 @@ function getClockifyButtonHTML(props) {
 	const { active, small, options } = props;
 	const container = document.createElement('div');
 	const icon = active ? getActiveIcon() : getInactiveIcon();
-	const text = document.createElement('span');
 
 	const containerStyles = {
 		display: 'flex',
 		alignItems: 'center',
-		cursor: 'pointer'
+		cursor: 'pointer',
 	};
 	Object.assign(container.style, containerStyles);
 
-	text.innerHTML = `<span class=${
-		active
-			? 'clockify-button-active clockify-button-active-span'
-			: 'clockify-button-inactive clockify-button-inactive-span'
-	}>
-    ${!active ? locales.START_TIMER : locales.STOP_TIMER}
-  </span>`;
-	const textStyles = {
-		marginLeft: '5px',
-		float: 'none',
-		position: 'relative'
-	};
-
-	if (active) {
-		textStyles.color = '#03A9F4';
-	} else {
-		textStyles.color = options.inactiveButtonColor || '#444444';
-	}
-	Object.assign(text.style, textStyles);
-
 	container.innerHTML = icon;
+
 	if (!small) {
+		const text = document.createElement('span');
+		text.className = active
+			? 'clockify-button-active clockify-button-active-span'
+			: 'clockify-button-inactive clockify-button-inactive-span';
+		text.textContent = !active ? locales.START_TIMER : locales.STOP_TIMER;
+
+		const textStyles = {
+			marginLeft: '5px',
+			float: 'none',
+			position: 'relative',
+			color: active ? '#03A9F4' : options.inactiveButtonColor || '#444444',
+		};
+		Object.assign(text.style, textStyles);
+
 		container.appendChild(text);
 	}
+
 	return container;
 }
 
@@ -77,7 +72,7 @@ function Mac() {
 		window.screenLeft > window.screen.width ||
 		window.screenTop > window.screen.height
 	) {
-		chrome.runtime.getPlatformInfo(function(info) {
+		chrome.runtime.getPlatformInfo(function (info) {
 			if (info.os === 'mac') {
 				const fontFaceSheet = new CSSStyleSheet();
 				fontFaceSheet.insertRule(`
@@ -224,9 +219,9 @@ if (
 								{...(props.popupProps?.manualMode || props.popupProps?.copyAsEntry
 									? props.popupProps
 									: {
-										inProgressDescription:
-										props.popupProps.inProgressDescription
-									})}
+											inProgressDescription:
+												props.popupProps.inProgressDescription,
+									  })}
 								updateButtonProps={(btnProps, popupProps) =>
 									window.updateButtonProperties(
 										btnProps
@@ -244,7 +239,7 @@ if (
 				function createReactRoot() {
 					removeReactRoot();
 					integrationRoots[buttonId] = createRoot(entryPoint, {
-						identifierPrefix: buttonId
+						identifierPrefix: buttonId,
 					});
 				}
 
@@ -347,7 +342,7 @@ if (
 	window.updateButtonProperties = ((
 		props = {
 			popupProps: {},
-			btnProps: []
+			btnProps: [],
 		}
 	) => {
 		return (newBtnProps, newPopupProps) => {
@@ -368,7 +363,7 @@ if (
 				}
 				props.btnProps[newBtnProps.buttonId] = {
 					...props.btnProps[newBtnProps.buttonId],
-					...newBtnProps
+					...newBtnProps,
 				};
 			}
 

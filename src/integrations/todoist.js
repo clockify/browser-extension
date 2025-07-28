@@ -7,7 +7,8 @@ clockifyButton.render(
 		const todoistTaskDescription = () => text('.task_description', todoistTaskContainer);
 		const todoistProjectWithSectionName = () =>
 			text('.vYXIACn', todoistTaskContainer) ||
-			text('[data-testid="task-details-modal"] button[aria-label="Select a project"] span') ||
+			text('[data-testid="task-details-modal"] [aria-label=Project] button[aria-label="Select a project"] span') ||
+			text('[data-testid=task-info-tags] .yccFlei', todoistTaskContainer) ||
 			text('.task_list_item__project', todoistTaskContainer) ||
 			text('header h1 .simple_content') ||
 			text('header h1 .simple_content') ||
@@ -15,7 +16,7 @@ clockifyButton.render(
 		const description = () => todoistTaskDescription() || todoistTaskName();
 		const projectName = withoutSection(todoistProjectWithSectionName());
 		const taskName = todoistTaskName;
-		const tagNames = () => textList('.BwOc7_n', todoistTaskContainer);
+		const tagNames = () => textList('.GsmZQHC', todoistTaskContainer);
 
 		const entry = { description, projectName, taskName, tagNames, small: true };
 
@@ -25,7 +26,7 @@ clockifyButton.render(
 		link.style.height = 'fit-content';
 
 		todoistTaskContainer.prepend(link);
-	}
+	},
 );
 
 // Cards (board) view
@@ -37,14 +38,15 @@ clockifyButton.render(
 		const todoistTaskDescription = text('.task_description', todoistTaskCard);
 		const todoistProjectWithSectionName =
 			text('.E7WJVdp', todoistTaskCard) ||
+			text('[data-testid=task-info-tags] > span:last-of-type', todoistTaskCard) ||
 			text('.task_list_item__project', todoistTaskCard) ||
 			text('header h1');
-
 		const description = todoistTaskDescription ?? todoistTaskName;
 		const projectName = withoutSection(todoistProjectWithSectionName);
 		const taskName = todoistTaskName;
+		const tagNames = () => textList('.simple_content', todoistTaskCard);
 
-		const entry = { description, projectName, taskName, small: true };
+		const entry = { description, projectName, taskName, tagNames, small: true };
 
 		const link = clockifyButton.createButton(entry);
 
@@ -55,7 +57,7 @@ clockifyButton.render(
 		link.style.left = '13px';
 
 		todoistTaskCard.append(link);
-	}
+	},
 );
 
 // Modal view - Sidebar timer
@@ -100,13 +102,13 @@ clockifyButton.render(
 		todoistTaskModalSidebar.style.justifyContent = 'start';
 
 		todoistTaskModalSidebar.append(container);
-	}
+	},
 );
 
-/* 
+/*
 	Todoist has a bucnh of light themes (todoist, tangerine, neutral, ...) and one dark theme (dark).
 	Trace of currentely applied theme can be found in <HTML> element's class named theme_*
-	where * represents name of theme. 
+	where * represents name of theme.
 */
 
 setManualInputStyles();
@@ -175,11 +177,11 @@ function withoutSection(projectName) {
 	return projectName;
 }
 
-/* 
-	Todoist application listens to focus events on DOM (including extension popup fields) 
-	and then handles those events in such way that popup editable elements can't be edited 
+/*
+	Todoist application listens to focus events on DOM (including extension popup fields)
+	and then handles those events in such way that popup editable elements can't be edited
 	(it occurs only when popup is opened by clicking Start time from Todoist task modal).
-	The following functions fix issues caused by those Todoist application event handlers. 
+	The following functions fix issues caused by those Todoist application event handlers.
 */
 
 observeBodyChanges();
@@ -206,6 +208,7 @@ async function bodyChanges() {
 	const editableElements = ['textarea', 'input'];
 
 	const taskContent = $('.task-overview-content', todoistModal);
+
 	const manualInput = $('.clockify-input', todoistModal);
 	const editablePopupFields = editableElements
 		.map(editableElement => $$(editableElement, clockifyPopup))
@@ -213,17 +216,17 @@ async function bodyChanges() {
 		.flat();
 
 	blockPropagation({
-		elements: [taskContent, manualInput],
-		eventName: 'focusout'
+		elements: [taskContent, manualInput, todoistModal],
+		eventName: 'focusout',
 	});
 	blockPropagation({
 		elements: editablePopupFields,
-		eventName: 'focusin'
+		eventName: 'focusin',
 	});
 }
 
 function blockPropagation({ elements = [], eventName }) {
 	elements.forEach(element =>
-		element.addEventListener(eventName, event => event.stopPropagation())
+		element.addEventListener(eventName, event => event.stopPropagation()),
 	);
 }

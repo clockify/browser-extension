@@ -59,12 +59,17 @@ module.exports = {
 			{
 				test: /\.s[ac]ss$/i,
 				use: [
-					// Creates `style` nodes from JS strings
 					'style-loader',
-					// Translates CSS into CommonJS
 					'css-loader',
-					// Compiles Sass to CSS
-					'sass-loader',
+					{
+						loader: 'sass-loader',
+						options: {
+							implementation: require('sass'),
+							sassOptions: {
+								outputStyle: 'compressed',
+							},
+						},
+					},
 				],
 			},
 			{
@@ -109,13 +114,18 @@ module.exports = {
 		alias: {
 			'~': path.resolve(__dirname, 'src'),
 		},
+		fallback: {
+			process: false,
+			buffer: require.resolve('buffer/'),
+		},
 	},
 	plugins: [
 		new webpack.ProvidePlugin({
-			// Make a global `process` variable that points to the `process` package,
-			// because the `util` package expects there to be a global variable named `process`.
-			// Thanks to https://stackoverflow.com/a/65018686/14239942
-			process: 'process/browser',
+			Buffer: ['buffer', 'Buffer'],
+			process: require.resolve('process/browser'),
+		}),
+		new webpack.DefinePlugin({
+			'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
 		}),
 		new NodePolyfillPlugin(),
 		new CopyWebpackPlugin({
