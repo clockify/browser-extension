@@ -446,7 +446,7 @@
 	},
 	"usepixie.net": {
 		"name": "Pixie",
-		"link": "*://*.usepixie.net/*,*://pureworkflow.io/*",
+		"link": "*://*.usepixie.net/*,*://pureworkflow.io/*,*://*.access-practice-se.com/*",
 		"script": "usepixie.js"
 	},
 	"figma.com": {
