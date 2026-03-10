@@ -3,155 +3,173 @@
 
 .create-task-wrapper,
 .create-project-wrapper {
-	background-color: rgba(0, 0, 0, 0.8);
-	position: fixed;
-	width: 100vw;
-	height: 100vh;
-	left: 0;
-	top: 0;
-	z-index: 999;
+  background-color: rgba(0, 0, 0, 0.8);
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  left: 0;
+  top: 0;
+  z-index: 999;
 }
 
 .create-project,
 .create-task {
-	position: relative;
-	display: flex;
-	flex-direction: column;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	width: 320px;
-	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-	border-radius: 2px;
-	background-color: white;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 320px;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 2px;
+  background-color: white;
 
-	&__project-name,
-	&__task-name {
-		padding-left: 10px;
-		border: 1px solid variables.$border;
-		border-radius: 2px;
-		height: 40px;
-		width: 80%;
-		margin: 20px auto;
-		&::placeholder {
-			font-size: 14px;
-			line-height: 16px;
-			color: variables.$lighter_text;
-		}
-		&:focus {
-			outline: none;
-			border: 2px solid #0f3beb;
-			border-radius: 5px;
-		}
-	}
-	&__project-name {
-		margin: 20px auto 0;
-		width: 80%;
-	}
-	&__client-list {
-		position: relative;
-		margin: 20px auto 0;
-		width: 80%;
-	}
-	&__billable {
-		display: flex;
-		margin-top: 20px;
-		margin-bottom: 20px;
-		margin-left: 20px;
-		align-items: center;
-		&-title {
-			margin-left: 10px;
-			color: variables.$middle_light_text;
-			font-size: 14px;
-			cursor: pointer;
-		}
-		&-img {
-			margin-top: 2px;
-			margin-left: 1px;
-			&-hidden {
-				visibility: hidden;
-			}
-		}
-	}
-	&__public {
-		display: flex;
-		margin-top: 20px;
-		margin-bottom: 20px;
-		margin-left: 20px;
-		align-items: center;
-		&-title {
-			margin-left: 10px;
-			color: variables.$middle_light_text;
-			font-size: 14px;
-			cursor: pointer;
-		}
-		&-img {
-			margin-top: 2px;
-			margin-left: 1px;
-			&-hidden {
-				visibility: hidden;
-			}
-		}
-	}
-	&__checkbox {
-		display: inline-block;
-		width: 16px;
-		height: 16px;
-		background: white;
-		border: 1px solid variables.$border;
-		border-radius: 2px;
-		cursor: pointer;
-	}
-	&__divider {
-		height: 1px;
-		border-bottom: 1px dotted #cacaca;
-	}
-	&__add-button {
-		display: block;
-		margin-top: 20px;
-		margin-bottom: 20px;
-		padding-top: 18px;
-		width: 80%;
-		height: 32px;
-		background-color: variables.$blue;
-		border-radius: 2px;
-		text-transform: uppercase;
-		text-align: center;
-		color: white;
-		cursor: pointer;
-	}
-	&__cancel {
-		display: block;
-		margin: 19px auto;
-		width: fit-content;
-		color: variables.$blue;
-		cursor: pointer;
-	}
+  &__project-name,
+  &__task-name {
+    padding-left: 10px;
+    border: 1px solid variables.$border;
+    border-radius: 2px;
+    height: 40px;
+    width: 80%;
+    margin: 20px auto;
 
-	&__actions {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-	}
-	&__title-and-close {
-		width: 100%;
-		display: flex;
-	}
+    &::placeholder {
+      font-size: 14px;
+      line-height: 16px;
+      color: variables.$lighter_text;
+    }
 
-	&__title {
-		margin-top: 20px;
-		margin-left: 20px;
-		font-size: 18px;
-		color: variables.$middle_light_text;
-	}
+    &:focus {
+      outline: none;
+      border: 2px solid #0f3beb;
+      border-radius: 5px;
+    }
+  }
 
-	&__close {
-		position: absolute;
-		right: 20px;
-		top: 25px;
-		height: 12px;
-		width: 12px;
-		content: url('../assets/images/x.png');
-		cursor: pointer;
-	}
+  &__project-name {
+    margin: 20px auto 0;
+    width: 80%;
+  }
+
+  &__client-list {
+    position: relative;
+    margin: 20px auto 0;
+    width: 80%;
+  }
+
+  &__billable {
+    display: flex;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    margin-left: 20px;
+    align-items: center;
+
+    &-title {
+      margin-left: 10px;
+      color: variables.$middle_light_text;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    &-img {
+      margin-top: 2px;
+      margin-left: 1px;
+
+      &-hidden {
+        visibility: hidden;
+      }
+    }
+  }
+
+  &__public {
+    display: flex;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    margin-left: 20px;
+    align-items: center;
+
+    &-title {
+      margin-left: 10px;
+      color: variables.$middle_light_text;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    &-img {
+      margin-top: 2px;
+      margin-left: 1px;
+
+      &-hidden {
+        visibility: hidden;
+      }
+    }
+  }
+
+  &__checkbox {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background: white;
+    border: 1px solid variables.$border;
+    border-radius: 2px;
+    cursor: pointer;
+  }
+
+  &__divider {
+    height: 1px;
+    border-bottom: 1px dotted #cacaca;
+  }
+
+  &__add-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    width: 80%;
+    height: 50px;
+    background-color: variables.$blue;
+    border-radius: 2px;
+    text-transform: uppercase;
+    text-align: center;
+    color: white;
+    cursor: pointer;
+  }
+
+  &__cancel {
+    display: block;
+    margin: 19px auto;
+    width: fit-content;
+    color: variables.$blue;
+    cursor: pointer;
+  }
+
+  &__actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  &__title-and-close {
+    width: 100%;
+    display: flex;
+  }
+
+  &__title {
+    margin-top: 20px;
+    margin-left: 20px;
+    font-size: 18px;
+    color: variables.$middle_light_text;
+  }
+
+  &__close {
+    position: absolute;
+    right: 20px;
+    top: 25px;
+    height: 12px;
+    width: 12px;
+    content: url('../assets/images/x.png');
+    cursor: pointer;
+  }
 }

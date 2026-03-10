@@ -10,16 +10,16 @@ import CustomFieldDropSingle from './customField-DropSingle';
 import { getAllCustomFieldsForProject } from '../../helpers/utils';
 
 export function CustomFieldsContainer({
-																				timeEntry,
-																				isUserOwnerOrAdmin,
-																				manualMode,
-																				updateCustomFields,
-																				isInProgress,
-																				areCustomFieldsValid,
-																				workspaceSettings,
-																				cfContainsWrongChars,
-																				selectedProjectId
-																			}) {
+	timeEntry,
+	isUserOwnerOrAdmin,
+	manualMode,
+	updateCustomFields,
+	isInProgress,
+	areCustomFieldsValid,
+	workspaceSettings,
+	cfContainsWrongChars,
+	selectedProjectId,
+}) {
 	const [customFields, setCustomFields] = useState([]);
 	const [projectId, setProjectId] = useState(timeEntry.projectId);
 	const [validatedCustomFields, setValidatedCustomFields] = useState({});
@@ -41,6 +41,7 @@ export function CustomFieldsContainer({
 
 			async function onChangeProjectRedrawCustomFields() {
 				await createCustomFields();
+				areCustomFieldsValid(true);
 			}
 
 			onChangeProjectRedrawCustomFields();
@@ -48,12 +49,12 @@ export function CustomFieldsContainer({
 	}, [selectedProjectId, timeEntry.projectId, timeEntry.project?.id]);
 
 	const updateValue = (customFieldId, value) => {
-		const cf = customFields.find((x) => x.customFieldId === customFieldId);
+		const cf = customFields.find(x => x.customFieldId === customFieldId);
 		cf.value = value;
 		const arr = customFields.map(({ customFieldId, value }) => ({
 			customFieldId,
 			sourceType: 'TIMEENTRY',
-			value
+			value,
 		}));
 		if (manualMode) {
 			updateCustomFields(arr);
@@ -63,19 +64,45 @@ export function CustomFieldsContainer({
 	};
 
 	const validateCustomFields = ({ id, isValid }) => {
-		setValidatedCustomFields((validatedCustomFields) => {
+		for (let id in validatedCustomFields) {
+			if (!customFields.find(cf => cf.customFieldId === id)) {
+				delete validatedCustomFields[id];
+			}
+		}
+
+		setValidatedCustomFields(validatedCustomFields => {
 			return { ...validatedCustomFields, ...{ [id]: isValid } };
 		});
 	};
 
 	useEffect(() => {
 		let allFieldsValid = true;
+
 		for (const [id, isValid] of Object.entries(validatedCustomFields)) {
 			if (!isValid) {
 				allFieldsValid = false;
 			}
 		}
+
 		areCustomFieldsValid(allFieldsValid);
+
+		getAllCustomFieldsForProject(timeEntry.project).then(allCustomFieldsForProject => {
+			if (
+				!allCustomFieldsForProject.length ||
+				allCustomFieldsForProject.every(cf => !cf.required) ||
+				allCustomFieldsForProject.every(cf => {
+					const cf2 = customFields.find(cf2 => cf2.customFieldId === cf.id);
+
+					if (Array.isArray(cf2?.value)) {
+						return cf2.value.length;
+					}
+
+					return cf2?.value;
+				})
+			) {
+				areCustomFieldsValid(true);
+			}
+		});
 	}, [validatedCustomFields]);
 
 	const createCustomFields = async (initialRender = false) => {
@@ -89,18 +116,34 @@ export function CustomFieldsContainer({
 			allCustomFieldsForProject.forEach(customField => {
 				let { value } = customField;
 				const { projectDefaultValues } = customField;
+				let defaultValueForTheProject;
 
-				if (projectDefaultValues && projectDefaultValues.length > 0) {
-					const defaultValueForTheProject = projectDefaultValues.find(
-						(projectDefaultValue) => projectDefaultValue.projectId === projectId
+				if (projectDefaultValues.length) {
+					defaultValueForTheProject = projectDefaultValues.find(
+						projectDefaultValue => projectDefaultValue.projectId === projectId
 					);
 
-					if (defaultValueForTheProject) {
-						value = defaultValueForTheProject.value;
+					value =
+						defaultValueForTheProject === undefined
+							? customField.workspaceDefaultValue
+							: defaultValueForTheProject.value;
+				}
+
+				if (!isUserOwnerOrAdmin && customField.type !== 'CHECKBOX') {
+					if (customField.required && !defaultValueForTheProject?.value) {
+						value = customField.workspaceDefaultValue;
+					}
+
+					if (!customField.onlyAdminCanEdit) {
+						value = defaultValueForTheProject?.value;
 					}
 				}
 
-				if (!value?.length && customField.workspaceDefaultValue) {
+				if (!value && !defaultValueForTheProject) {
+					value = customField.workspaceDefaultValue;
+				}
+
+				if (projectId === 'no-project') {
 					value = customField.workspaceDefaultValue;
 				}
 
@@ -114,7 +157,7 @@ export function CustomFieldsContainer({
 					manualMode,
 					isVisible: true,
 					required: customField.required,
-					randomizedId: Math.floor(Math.random() * 9000000) + 10000000
+					randomizedId: Math.floor(Math.random() * 9000000) + 10000000,
 				});
 			});
 
@@ -122,18 +165,24 @@ export function CustomFieldsContainer({
 				const manualCustomFields =
 					customFieldsToPutIntoState && customFieldsToPutIntoState.length > 0
 						? customFieldsToPutIntoState.map(({ type, customFieldId, value }) => ({
-							customFieldId,
-							sourceType: 'TIMEENTRY',
-							value: type === 'NUMBER' ? parseFloat(value) : value
-						}))
+								customFieldId,
+								sourceType: 'TIMEENTRY',
+								value: type === 'NUMBER' ? parseFloat(value) : value,
+							}))
 						: [];
 				updateCustomFields(manualCustomFields);
 			}
 
 			if (initialRender) {
 				customFieldsToPutIntoState.forEach(fieldToPut => {
-					const matchingField = customFieldValues.find(field => field.customFieldId === fieldToPut.customFieldId);
-					if (matchingField && matchingField.value !== null && matchingField.value !== undefined) {
+					const matchingField = customFieldValues.find(
+						field => field.customFieldId === fieldToPut.customFieldId
+					);
+					if (
+						matchingField &&
+						matchingField.value !== null &&
+						matchingField.value !== undefined
+					) {
 						fieldToPut.value = matchingField.value;
 					}
 				});
@@ -143,13 +192,14 @@ export function CustomFieldsContainer({
 		setCustomFields(customFieldsToPutIntoState);
 		haveFieldsRenderedInitially.current = true;
 	};
+
 	return (
 		<div className="custom-fields">
 			{customFields
-				.filter((cf) => cf.isVisible)
-				.map((cf) => {
+				.filter(cf => cf.isVisible)
+				.map(cf => {
 					const {
-						wsCustomField: { id, type }
+						wsCustomField: { id, type },
 					} = cf;
 					const { randomizedId } = cf;
 					switch (type) {

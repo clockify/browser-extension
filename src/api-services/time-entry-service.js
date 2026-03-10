@@ -20,6 +20,12 @@ class TimeEntry extends ClockifyService {
 		return `${apiEndpoint}/workspaces/${workspaceId}/timeEntries`;
 	}
 
+	static async getStopwatchUrl() {
+		const workspaceId = await this.workspaceId;
+
+		return `${await this.apiWriteEndpoint()}/workspaces/${workspaceId}/stopwatch`;
+	}
+
 	get timeEntryIdTemp() {
 		return (
 			Math.random().toString(36).substring(2, 15) +
@@ -82,7 +88,7 @@ class TimeEntry extends ClockifyService {
 				entries.find(
 					entry =>
 						entry.description !== 'Pomodoro break' &&
-						entry.description !== 'Pomodoro long break',
+						entry.description !== 'Pomodoro long break'
 				);
 
 			const onlineEntry = findFirstNonBreakEntry(timeEntries);
@@ -119,6 +125,15 @@ class TimeEntry extends ClockifyService {
 		return { data, error };
 	}
 
+	static async discardTimeEntry() {
+		const userId = await this.userId;
+
+		const endpoint = await this.getStopwatchUrl();
+		const { data, error } = await this.apiCall(endpoint, 'DELETE', { userId });
+
+		return { data, error };
+	}
+
 	static async deleteTimeEntry(entryId) {
 		const baseUrl = await this.getUrlTimeEntries(true);
 
@@ -137,7 +152,7 @@ class TimeEntry extends ClockifyService {
 		const userId = await this.userId;
 
 		const endPoint = `${apiEndpoint}/v1/workspaces/${workspaceId}/user/${userId}/time-entries?time-entry-ids=${timeEntries.join(
-			',',
+			','
 		)}`;
 
 		const { data, error } = await this.apiCall(endPoint, 'DELETE');
@@ -148,25 +163,107 @@ class TimeEntry extends ClockifyService {
 	}
 
 	static async continueEntry(timeEntryId) {
-		const apiEndpoint = await this.apiWriteEndpoint();
-		const wsId = await this.workspaceId;
-		const endPoint = `${apiEndpoint}/workspaces/${wsId}/time-entries/${timeEntryId}/continue`;
+		const endPoint = `${await this.getStopwatchUrl()}?timeEntryId=${timeEntryId}`;
 
-		const { data, error } = await this.apiCall(endPoint, 'POST', {});
+		const { data, error } = await this.apiCall(endPoint, 'POST', {
+			continueStrategy: 'STOP_PREVIOUS_TIMER',
+		});
+
 		if (error) {
 			console.error('oh no, failed', error);
 		} else {
 			await AnalyticsService.storeAnalyticsEvents([AnalyticsService.events.entryContinued]);
 		}
+
 		return { data, error };
 	}
 
-	static async updateTimeEntryValues(entryId, body) {
+	static async updateTimeEntryValues(entryId, modifiedFields) {
 		const apiEndpoint = await this.apiWriteEndpoint();
 		const workspaceId = await this.workspaceId;
 		const endPoint = `${apiEndpoint}/workspaces/${workspaceId}/timeEntries/${entryId}`;
+		const mappedProperties = {
+			billable: await this.updateBillableField.bind(this, modifiedFields.billable, endPoint),
+			tagIds: await this.updateTagsField.bind(this, modifiedFields.tagIds, endPoint),
+			projectId: await this.updateProjectField.bind(this, modifiedFields.projectId, endPoint),
+			projectAndTask: await this.updateProjectAndTaskField.bind(
+				this,
+				modifiedFields.projectAndTask,
+				endPoint
+			),
+			customFields: await this.updateCustomFieldField.bind(
+				this,
+				modifiedFields.customFields,
+				endPoint
+			),
+			start: await this.updateStartField.bind(this, modifiedFields.start, endPoint),
+			end: await this.updateEndField.bind(this, modifiedFields.end, endPoint),
+			timeInterval: await this.updateTimeIntervalField.bind(
+				this,
+				modifiedFields.timeInterval,
+				endPoint
+			),
+			description: await this.updateDescriptionField.bind(
+				this,
+				modifiedFields.description,
+				endPoint
+			),
+		};
 
-		return await this.apiCall(endPoint, 'PUT', body);
+		for (const request of Object.keys(modifiedFields)) {
+			await mappedProperties[request]();
+		}
+
+		return Promise.resolve({});
+	}
+
+	static async delay(ms) {
+		return await new Promise(resolve => setTimeout(resolve, ms));
+	}
+
+	static async updateBillableField(billable, endpoint) {
+		return await this.apiCall(`${endpoint}/billable`, 'PUT', { billable });
+	}
+
+	static async updateTagsField(tagIds, endpoint) {
+		return await this.apiCall(`${endpoint}/tags`, 'PUT', { tagIds });
+	}
+
+	static async updateProjectField(projectId, endpoint) {
+		return await this.apiCall(`${endpoint}/project`, 'PUT', { projectId });
+	}
+
+	static async updateDescriptionField(description, endpoint) {
+		return await this.apiCall(`${endpoint}/description`, 'PUT', { description });
+	}
+
+	static async updateStartField(start, endpoint) {
+		return await this.apiCall(`${endpoint}/start`, 'PUT', { start });
+	}
+
+	static async updateEndField(end, endpoint) {
+		return await this.apiCall(`${endpoint}/end`, 'PUT', { end });
+	}
+
+	static async updateTimeIntervalField(timeInterval, endpoint) {
+		return await this.apiCall(`${endpoint}/timeInterval`, 'PUT', { ...timeInterval });
+	}
+
+	static async updateProjectAndTaskField(projectAndTask, url) {
+		const body = {
+			taskId: projectAndTask.taskId,
+			projectId: projectAndTask.projectId,
+		};
+
+		return await this.apiCall(`${url}/projectAndTask`, 'PUT', body);
+	}
+
+	static async updateCustomFieldField(customFields, url) {
+		const requests = customFields.map(
+			async cf => await this.apiCall(`${url}/custom-field`, 'PUT', cf)
+		);
+
+		return await Promise.all(requests);
 	}
 
 	static async duplicateTimeEntry(entryId) {
@@ -204,12 +301,12 @@ class TimeEntry extends ClockifyService {
 	}
 
 	static async endInProgress({
-								   timeEntry = null,
-								   end = moment(),
-								   endedFromIntegration = null,
-								   integrationName,
-								   endEntryInProgressToContinueOtherEntry,
-							   } = {}) {
+		timeEntry = null,
+		end = moment(),
+		endedFromIntegration = null,
+		integrationName,
+		endEntryInProgressToContinueOtherEntry,
+	} = {}) {
 		const inProgress = await this.getEntryInProgress();
 		let timeEntryInProgress = inProgress.entry;
 
@@ -228,7 +325,7 @@ class TimeEntry extends ClockifyService {
 					timeEntryInProgress = await this.updateProjectTask(
 						timeEntry,
 						projectDB,
-						taskDB,
+						taskDB
 					);
 				}
 			}
@@ -251,18 +348,18 @@ class TimeEntry extends ClockifyService {
 
 		const body = {
 			projectId,
-			taskId: task ? task.id : undefined,
+			taskId: projectId ? task?.id : null,
 			tagIds: tags && tags.length ? tags.map(({ id }) => id) : undefined,
 			description,
-			start,
-			end,
 			billable,
 			customFields: customFieldValues,
+			state: 'STOPPED',
+			userId: await this.userId,
 		};
 
-		const endPoint = `${await this.getUrlTimeEntries(true)}/${id}/full`;
+		const endPoint = await this.getStopwatchUrl();
 
-		const data = await this.apiCall(endPoint, 'PUT', body);
+		const data = await this.apiCall(endPoint, 'PATCH', body);
 		if (data.error) {
 			if (data.error.status === 400) {
 				return data;
@@ -317,7 +414,7 @@ class TimeEntry extends ClockifyService {
 				if (error.status === 400)
 					localStorage.setItem(
 						'integrationAlert',
-						error.message + 'startTimerWithDescription',
+						error.message + 'startTimerWithDescription'
 					);
 				// alert(error.message + 'startTimerWithDescription')
 			} else {
@@ -340,11 +437,24 @@ class TimeEntry extends ClockifyService {
 			end: null,
 			isSubmitTime: false,
 			customFields: [],
+			continueEntryByStartingEntryAgain: false,
+			manualMode: false,
 		},
-		isPomodoro = false,
+		isPomodoro = false
 	) {
 		const { forceTasks } = await this.getForces();
-		let { projectId, task, billable, tags, start, end, isSubmitTime, customFields } = options;
+		let {
+			projectId,
+			task,
+			billable,
+			tags,
+			start,
+			end,
+			manualMode,
+			isSubmitTime,
+			customFields,
+			continueEntryByStartingEntryAgain,
+		} = options;
 		if (!isPomodoro) {
 			if (!projectId || (forceTasks && !task)) {
 				const workspaceSettingsInStorage = await localStorage.getItem('workspaceSettings');
@@ -365,28 +475,41 @@ class TimeEntry extends ClockifyService {
 					task = null;
 				}
 			}
-			
+
 			if (projectId === 'no-project') {
 				projectId = null;
 			}
-
 		}
 
 		if (task?.status === 'DONE') {
 			task = null;
 		}
 
-		const endPoint = `${await this.getUrlTimeEntries(true)}/full`;
-		const body = {
-			start: start ?? new Date(),
-			end: end ?? null,
+		let endPoint = isSubmitTime
+			? `${await this.getUrlTimeEntries(true)}/full`
+			: await this.getStopwatchUrl();
+		let body = {
 			description,
 			billable,
 			projectId,
 			tagIds: tags ? tags.map(tag => tag.id) : [],
-			taskId: task ? task.id : null,
+			taskId: projectId ? task?.id : null,
 			customFields,
 		};
+
+		if (isSubmitTime) {
+			body.start = start ?? new Date();
+			body.end = end ?? null;
+		} else {
+			body.continueStrategy = 'REQUIRE_STOPPED';
+		}
+
+		if (continueEntryByStartingEntryAgain) {
+			body = {
+				continueStrategy: 'STOP_PREVIOUS_TIMER',
+			};
+		}
+
 		const { data, error, status } = await this.apiCall(endPoint, 'POST', body);
 		if (error) {
 			console.error('oh no, failed', error);
@@ -416,11 +539,9 @@ class TimeEntry extends ClockifyService {
 			appStoreParsed.usersAutoStartOnBrowserStartPreferences;
 
 		const userPreference = usersAutoStartOnBrowserStartPreferences.find(
-			(pref) => pref.userId === userId,
+			pref => pref.userId === userId
 		);
-		const autoStartOnBrowserStart = userPreference
-			? userPreference.enabled
-			: false;
+		const autoStartOnBrowserStart = userPreference ? userPreference.enabled : false;
 
 		if (autoStartOnBrowserStart) {
 			const { entry, error } = await this.getEntryInProgress();
@@ -439,11 +560,9 @@ class TimeEntry extends ClockifyService {
 			appStoreParsed?.usersAutoStopOnBrowserClosePreferences;
 
 		const userPreference = usersAutoStopOnBrowserClosePreferences.find(
-			(pref) => pref.userId === userId,
+			pref => pref.userId === userId
 		);
-		const autoStopOnBrowserClose = userPreference
-			? userPreference.enabled
-			: false;
+		const autoStopOnBrowserClose = userPreference ? userPreference.enabled : false;
 
 		if (autoStopOnBrowserClose) {
 			const { entry, error, status } = await this.getEntryInProgress();
@@ -615,6 +734,7 @@ class TimeEntry extends ClockifyService {
 			end = null,
 			isSubmitTime = false,
 			customFields = [],
+			continueEntryByStartingEntryAgain,
 		} = timeEntryOptions;
 		let project = { id: projectId, name: projectName };
 		let task = { id: taskId ?? null, name: taskName ?? null };
@@ -624,13 +744,13 @@ class TimeEntry extends ClockifyService {
 			const createObjects = await this.getCreateObjects();
 			let { projectDB, taskDB, message } = await ProjectTaskService.getOrCreateProjectAndTask(
 				project.name,
-				task,
+				task
 			);
 			if (projectDB) {
 				project = projectDB;
 			} else {
 				if ((forceProjects || (forceTasks && !taskDB)) && !createObjects) {
-					message += '\n Integrations can\'t create projects/tasks. ';
+					message += "\n Integrations can't create projects/tasks. ";
 				}
 			}
 			task = taskDB;
@@ -646,7 +766,7 @@ class TimeEntry extends ClockifyService {
 		let tags = null;
 		if (tagNames && tagNames.length > 0) {
 			const { tagovi, message: msg } = await TagService.getOrCreateTags(
-				tagNames.map(tagName => tagName.trim()),
+				tagNames.map(tagName => tagName.trim())
 			);
 			if (tagovi) tags = tagovi;
 		} else if (forceTags) {
@@ -660,6 +780,7 @@ class TimeEntry extends ClockifyService {
 			end,
 			isSubmitTime,
 			customFields,
+			continueEntryByStartingEntryAgain,
 		});
 	}
 

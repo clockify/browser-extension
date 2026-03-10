@@ -3,9 +3,8 @@ clockifyButton.render(
 	'.ticket-tabs .multitab-navlist:not(.clockify)',
 	{ observe: true },
 	(elem) => {
-		const ticketId = () =>
-			$('[data-test-id="ticket-human-display-id"]').textContent;
-		const ticketSubject = () => $('[data-test-id="subject-text"]').textContent;
+		const ticketId = () => text('[data-test-id="ticket-human-display-id"]');
+		const ticketSubject = () => text('[data-test-id="subject-text"]');
 
 		const description = () => `[ ${ticketId()} ] ${ticketSubject()}`;
 
@@ -14,16 +13,16 @@ clockifyButton.render(
 		link.style.marginLeft = '16px';
 
 		elem.append(link);
-	}
+	},
 );
 
 // Ticket detail - https://*.freshservice.com/helpdesk/tickets/{ID}
 clockifyButton.render(
 	'#sticky_header.tkt-details-sticky .sticky_right:not(.clockify)',
 	{ observe: true },
-	function (elem) {
-		const desc = $('#ticket_original_request_section .subject').innerText;
-		const ticket = $('.ticket_header span').innerText;
+	function(elem) {
+		const desc = text('#ticket_original_request_section .subject');
+		const ticket = text('.ticket_header span');
 		const link = clockifyButton.createButton('[' + ticket + '] ' + desc);
 		link.style.marginRight = '12px';
 		link.style.marginLeft = '10px';
@@ -37,19 +36,19 @@ clockifyButton.render(
 		} else {
 			elem.append(container);
 		}
-	}
+	},
 );
 
 // Customer-facing ticket view - https://*.freshservice.com/support/tickets/{ID}
 clockifyButton.render(
 	'#ticket-sidebar:not(.clockify)',
 	{ observe: true },
-	function (elem) {
-		const desc = $('#ticket-show h2.heading>span').innerText;
+	function(elem) {
+		const desc = text('#ticket-show h2.heading > span');
 		const nodes = $('#ticket-show h2.heading').childNodes;
 		for (const node of nodes) {
 			if (node.nodeType === Node.TEXT_NODE) {
-				ticket = node.textContent;
+				ticket = node.textContent.trim();
 				break;
 			}
 		}
@@ -60,5 +59,5 @@ clockifyButton.render(
 		link.style.display = 'inline-flex';
 		link.style.verticalAlign = 'middle';
 		elem.prepend(link);
-	}
+	},
 );

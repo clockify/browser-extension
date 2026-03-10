@@ -1,21 +1,22 @@
-(async () => {
-	clockifyButton.render(
-		await getSelectors('coda', 'documentView', 'hanger'),
-		{ observe: true },
-		(elem) => {
-			const isDocumentOpened = location.pathname.split('/')[1] === 'd';
+clockifyButton.render(
+	'[data-coda-ui-id="canvasRoot"] h1:not(.clockify)',
+	{ observe: true },
+	async documentTitle => {
+		const description = () => {
+			const documentTitle = text('h1 div:has( + textarea)');
 
-			if (!isDocumentOpened) return;
+			const isDocumentUntitled = documentTitle === 'Add page title';
 
-			$('#clockifyButton')?.remove();
+			if (isDocumentUntitled) return 'Untitled document';
 
-			const description = document.title;
-			const link = clockifyButton.createButton({ description });
+			return documentTitle;
+		};
 
-			link.style.margin = '0 15px';
-			link.style.pointerEvents = 'all';
+		const timer = clockifyButton.createButton({ description });
 
-			elem.after(link);
-		}
-	);
-})();
+		timer.style.marginTop = '2rem';
+		timer.style.fontWeight = '400';
+
+		documentTitle.after(timer);
+	}
+);

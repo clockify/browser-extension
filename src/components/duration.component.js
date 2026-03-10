@@ -10,6 +10,8 @@ import { HtmlStyleHelper } from '../helpers/html-style-helper';
 import locales from '../helpers/locales';
 import { dateFnsLocale } from '~/components/DateFnsLocale';
 
+import './duration.css';
+
 const htmlStyleHelpers = new HtmlStyleHelper();
 const daysOfWeek = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
 
@@ -17,6 +19,8 @@ let _currentPeriod;
 let _interval;
 
 class Duration extends React.Component {
+	isDaySubtractedFromStart = false;
+
 	constructor(props) {
 		super(props);
 
@@ -25,10 +29,6 @@ class Duration extends React.Component {
 		let endTime = null;
 		if (end) {
 			endTime = moment(end);
-			if (moment(start).date() !== moment(end).date()) {
-				startTime = moment(start).subtract(1, 'day');
-				endTime = moment(end).subtract(1, 'day');
-			}
 		}
 		this.state = {
 			datePickerOpen: false,
@@ -77,10 +77,6 @@ class Duration extends React.Component {
 		let endTime = null;
 		if (end) {
 			endTime = moment(end);
-			if (!this.props.isFormManual && moment(start).date() !== moment(end).date()) {
-				startTime = moment(start).subtract(1, 'day');
-				endTime = moment(end).subtract(1, 'day');
-			}
 		}
 		if (start !== prevState.start) {
 			if (end !== prevState.end) {
@@ -91,8 +87,8 @@ class Duration extends React.Component {
 					endTime,
 					time: duration(
 						moment(endTime.set('second', 0).set('milliseconds', 0)).diff(
-							startTime.set('second', 0).set('milliseconds', 0),
-						),
+							startTime.set('second', 0).set('milliseconds', 0)
+						)
 					),
 					datePickerOpen: false,
 				});
@@ -137,6 +133,8 @@ class Duration extends React.Component {
 
 	setTime() {
 		const { timeInterval } = this.props.timeEntry;
+		/* this.changeStart(timeInterval.start); */
+
 		if (!timeInterval.end) {
 			_currentPeriod = moment().diff(moment(timeInterval.start));
 			clearInterval(_interval);
@@ -162,43 +160,46 @@ class Duration extends React.Component {
 	}
 
 	changeStart(startTime) {
-		const timeInterval = Object.assign(this.props.timeEntry.timeInterval, {});
-		startTime = moment(startTime).set('second', 0);
+		let start = moment(startTime).set('second', 0);
+		const end =
+			this.state.endTime !== null ? this.calculateEndTime(this.state.endTime, start) : null;
 
-		const endTime = this.state.endTime || moment();
-
-		if (moment(endTime).diff(startTime) < 0) {
-			startTime = moment(startTime).subtract(1, 'day');
-		} else if (
-			moment(endTime).date() !== moment(startTime).date() &&
-			moment(endTime).date(1).diff(moment(startTime).date(1)) > 0
+		if (
+			!this.isDaySubtractedFromStart &&
+			!this.state.end &&
+			moment(this.props.timeEntry.startTime).diff(start) < 0
 		) {
-			startTime = moment(startTime).add(1, 'day');
+			start = moment(start).subtract(1, 'day');
+			this.isDaySubtractedFromStart = true;
 		}
 
-		timeInterval.start = startTime;
-		timeInterval.end = this.state.endTime;
-		this.props.changeInterval(timeInterval);
+		this.props.changeInterval({ ...this.props.timeEntry.timeInterval, start, end });
+	}
+
+	calculateEndTime(endTime, startTime) {
+		let newEndTime = endTime;
+
+		if (moment(newEndTime).diff(startTime) < 0) {
+			newEndTime = moment(newEndTime).add(1, 'day');
+		} else if (
+			moment(newEndTime).date() !== moment(startTime).date() &&
+			moment(newEndTime).date(1).diff(moment(startTime).date(1), 'month') > 0
+		) {
+			newEndTime = moment(newEndTime).subtract(1, 'day');
+		}
+
+		if (moment(newEndTime).diff(moment(startTime), 'hours') >= 24) {
+			newEndTime = moment(newEndTime).subtract(1, 'day');
+		}
+
+		return newEndTime;
 	}
 
 	changeEnd(endTime) {
-		const timeInterval = Object.assign(this.props.timeEntry.timeInterval, {});
+		const start = this.state.startTime;
+		const end = this.calculateEndTime(moment(endTime).set('second', 0), start);
 
-		let startTime = this.state.startTime;
-		endTime = moment(endTime).set('second', 0);
-
-		if (moment(endTime).diff(startTime) < 0) {
-			startTime = moment(startTime).subtract(1, 'day');
-		} else if (
-			moment(endTime).date() !== moment(startTime).date() &&
-			moment(endTime).date(1).diff(moment(startTime).date(1)) > 0
-		) {
-			startTime = moment(startTime).add(1, 'day');
-		}
-
-		timeInterval.start = startTime;
-		timeInterval.end = endTime;
-		this.props.changeInterval(timeInterval);
+		this.props.changeInterval({ ...this.props.timeEntry.timeInterval, start, end });
 	}
 
 	selectDuration(time, timeString) {
@@ -240,13 +241,17 @@ class Duration extends React.Component {
 	get durationFormat() {
 		const { trackTimeDownToSecond, decimalFormat } = this.props.workspaceSettings;
 
+		if (this.props.forceFullDurationFormat) {
+			return 'HH:mm:ss';
+		}
+
 		if (decimalFormat) {
 			return 'h.hh'; /* decimal */
 		} else if (trackTimeDownToSecond) {
 			return 'HH:mm:ss'; /* full */
-		} else {
-			return 'H:mm'; /* compact */
 		}
+
+		return 'H:mm'; /* compact */
 	}
 
 	get calendarIcon() {
@@ -259,12 +264,14 @@ class Duration extends React.Component {
 	get selectedDate() {
 		const { start, dayAfterLockedEntries } = this.state;
 
-		const startInMilliseconds = start.valueOf();
+		const startInMilliseconds = moment(start).valueOf();
 		const dayAfterInMilliseconds = new Date(dayAfterLockedEntries).getTime();
 
-		return dayAfterInMilliseconds > startInMilliseconds
-			? new Date(dayAfterLockedEntries)
-			: new Date(start);
+		if (this.props.isUserOwnerOrAdmin || dayAfterInMilliseconds <= startInMilliseconds) {
+			return new Date(start);
+		}
+
+		return new Date(dayAfterLockedEntries);
 	}
 
 	get firstUnlockedDate() {
@@ -274,9 +281,20 @@ class Duration extends React.Component {
 		return isUserOwnerOrAdmin ? null : new Date(dayAfterLockedEntries);
 	}
 
+	get dateLabel() {
+		const startDay = moment(this.state.start);
+
+		if (startDay.isSame(moment(), 'day')) {
+			return locales.TODAY_LABEL;
+		}
+
+		return startDay.format('DD/MM/YYYY');
+	}
+
 	render() {
 		const renderDayContents = (day, date) => {
-			const isDayDisabled = new Date(this.state.dayAfterLockedEntries) > date;
+			const isDayDisabled =
+				!this.props.isUserOwnerOrAdmin && new Date(this.state.dayAfterLockedEntries) > date;
 			const tooltipText = isDayDisabled ? `Can't add time to locked period.` : '';
 			return (
 				<div
@@ -330,6 +348,7 @@ class Duration extends React.Component {
 					title={this.state.manualModeDisabled ? locales.DISABLED_MANUAL_MODE : ''}
 				/>
 				<DatePicker
+					dateFormat="ddd"
 					selected={this.selectedDate}
 					onChange={this.selectDate.bind(this)}
 					customInput={this.calendarIcon}
@@ -339,6 +358,7 @@ class Duration extends React.Component {
 					className={this.state.manualModeDisabled ? 'disable-manual' : ''}
 					locale={this.state.lang}
 					renderDayContents={renderDayContents}
+					useWeekdaysShort={true}
 				/>
 			</div>
 		) : (
@@ -400,15 +420,16 @@ class Duration extends React.Component {
 									bottom: '-12px',
 									wordBreak: 'keep-all',
 								}}>
-								{locales.TODAY_LABEL}
+								{this.dateLabel}
 							</span>
 						) : (
 							<DatePicker
-								selected={new Date(this.state.start)} //moment(this.state.start)}
+								dateFormat="ddd"
+								selected={this.selectedDate} //moment(this.state.start)}
 								onChange={this.selectDate.bind(this)}
 								customInput={<img src="./assets/images/calendar.png" />}
 								withPortal
-								minDate={new Date(this.state.dayAfterLockedEntries)}
+								minDate={this.firstUnlockedDate}
 								disabled={this.state.manualModeDisabled}
 								renderDayContents={renderDayContents}
 								title={
@@ -418,11 +439,13 @@ class Duration extends React.Component {
 								}
 								className={this.state.manualModeDisabled ? 'disable-manual' : ''}
 								locale={this.state.lang}
+								useWeekdaysShort={true}
 							/>
 						)}
 					</span>
 					<span className="duration-divider"></span>
-					<span className="ant-time-picker duration-end ant-time-picker-small">
+					<span
+						className={`ant-time-picker  ant-time-picker-small ${this.state.end && 'duration-total-time'}`}>
 						<MyDurationPicker
 							id="durationTimePicker"
 							time={this.state.time}

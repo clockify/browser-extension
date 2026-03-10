@@ -1,45 +1,29 @@
 // Inbox
 clockifyButton.render(
-	'.inbox2__composer__container > div:last-child:not(.clockify)',
-	{ observe: true },
-	(elem) => {
-		const description = $(
-			'.text-lg.u__one-truncated-line > div > span'
-		).textContent;
+	'[data-intercom-target="conversation-toolbar"] > div > div > div:nth-of-type(2):not(.clockify)',
+	{ observe: true, onNavigationRerender: true },
+	elem => {
+		const description = text('[data-inbox-conversation-header-title] span');
+		const projectName = () => text('span .u__one-truncated-line');
 
-		const companyRow = $('.o__inbox2__company')?.closest(
-			'.flex.flex-row.items-center'
-		);
-		const companyName = $(
-			'p > span > a > span',
-			companyRow
-		)?.textContent?.trim();
-		const projectName = companyName ?? '';
+		const link = clockifyButton.createSmallButton({ description, projectName });
 
-		const link = clockifyButton.createButton({ description, projectName });
+		link.style.position = 'relative';
+		link.style.left = '10px';
 
-		link.style.padding = '8px';
-		link.style.position = 'absolute';
-		link.style.marginLeft = '80px';
-
-		$('div:first-child', elem).after(link);
-	}
+		elem.prepend(link);
+	},
 );
 
 // Articles
 clockifyButton.render(
-	'.js__articles__scrollable-content .flex.flex-row.pr-8.pt-6.pb-2:not(.clockify)',
+	'.side-sheet.side-sheet-top-level-render > div > div > div > div:first-child > div:first-child > div:nth-of-type(2):not(.clockify)',
 	{ observe: true },
-	(elem) => {
-		const description =
-			$('.educate__article__editor__title')?.getAttribute('placeholder') ||
-			$('.educate__article__view__title')?.textContent?.trim() ||
-			'';
+	elem => {
+		const description = () => text('.educate__article__editor__title');
 
-		const link = clockifyButton.createButton({ description });
-
-		link.style.marginRight = '20px';
+		const link = clockifyButton.createSmallButton({ description });
 
 		elem.prepend(link);
-	}
+	},
 );

@@ -43,6 +43,7 @@
   background: variables.$blue;
   color: variables.$background;
   cursor: pointer;
+  z-index: 1;
 }
 
 .start-timer_button-start:hover {

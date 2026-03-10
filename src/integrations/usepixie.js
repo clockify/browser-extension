@@ -1,122 +1,81 @@
-(function () {
-	function ready(callbackFunc) {
-		if (document.readyState == 'complete') {
-			callbackFunc();
-		} else {
-			document.addEventListener('load', callbackFunc);
-		}
-	}
+// Tasks list
+clockifyButton.render(
+	'[data-flout="middle-- end-- nowrap--"]:not(.clockify)',
+	{ observe: true },
+	async container => {
+		await timeout({ milliseconds: 250 });
 
-	function getTaskName() {
-		if ($('.c-header__jobtitle') != null) {
-			return $('.c-header__jobtitle').textContent.trim();
-		}
+		const parentElement = container.parentElement.parentElement.parentElement;
+		const taskName = text('tbody [data-column-id="name"] > a', parentElement);
+		const clientName = text('tbody [data-column-id="client"]', parentElement);
+		const description = `${clientName ? clientName + ' - ' : ''}${taskName}`;
 
-		return $('.editable-task-container input').value.trim();
-	}
-
-	function getClientName() {
-		if ($('#client-editor .has-selected .px-select-label') != null) {
-			// task html
-			return $(
-				'#client-editor .has-selected .px-select-label'
-			).textContent.trim();
-		} else if (
-			$('.c-header--context__section--client .client-name p') != null
-		) {
-			// task vuejs component
-			return $(
-				'.c-header--context__section--client .client-name p'
-			).textContent.trim();
-		} else {
-			// client page
-			return $(
-				'.c-header .o-media .o-media__body .c-heading-3'
-			).textContent.trim();
-		}
-	}
-
-	function taskElementsReady() {
-		var clientLoaded =
-			$('#client-editor .has-selected .px-select-label') != null ||
-			$('.c-header--context__section--client .client-name p') != null;
-		var taskLoaded =
-			$('.c-header__jobtitle') != null ||
-			$('.editable-task-container input') != null;
-
-		return clientLoaded && taskLoaded;
-	}
-
-	function insertButtonForTask() {
-		clockifyButton.renderTo(
-			'#job-details-header .c-toolbar-container:not(.clockify)',
-			(elem) => {
-				var taskName = getTaskName(),
-					clientName = getClientName(),
-					link = clockifyButton.createButton({
-						description: `${clientName} - ${taskName}`,
-						projectName: clientName,
-						taskName: taskName,
-						billable: true,
-					});
-
-				insertButton(link);
-			}
-		);
-	}
-
-	function insertButtonForClient() {
-		clockifyButton.renderTo('.c-toolbar-container:not(.clockify)', (elem) => {
-			var clientName = getClientName(),
-				link = clockifyButton.createButton({
-					description: clientName,
-					projectName: clientName,
-					taskName: null,
-					billable: true,
-				});
-
-			insertButton(link);
+		const timer = clockifyButton.createTimer({
+			description,
+			projectName: clientName,
+			taskName,
+			small: true,
 		});
+		timer.style.marginRight = '10px';
+
+		container.prepend(timer);
 	}
+);
 
-	function insertButton(button) {
-		var container = $('.c-header > .c-header__section:nth-child(3)'),
-			plusBtn = $('.c-dropdown-container:nth-child(1)');
+// Task view
+clockifyButton.render(
+	'#job-details-header [data-flitem="shy-left--"] > div:not(.clockify)',
+	{ observe: true },
+	async container => {
+		await timeout({ milliseconds: 250 });
+		if (container.textContent.includes('Reopen task')) return;
 
-		button.classList.add(
-			'c-button',
-			'c-button--outline',
-			'c-button--neutral',
-			'c-button--small',
-			'u-mr-small'
-		);
-		button.dataset.flitem = 'shy-left--';
-		plusBtn.dataset.flitem = '';
-		container.insertBefore(button, plusBtn);
+		const taskName = () => text('[data-target="job-rename.jobName"]');
+		let clientName = text('#client-editor .px-select-placeholder');
+		clientName = clientName !== 'No client selected' ? clientName : '';
+		const description = () => `${clientName ? clientName + ' - ' : ''}${taskName()}`;
+
+		const timer = clockifyButton.createTimer({
+			description,
+			projectName: clientName,
+			taskName,
+			small: true,
+		});
+		adaptButton(timer);
+
+		container.prepend(timer);
 	}
+);
 
-	function viewingTaskDetailsPage() {
-		return document.getElementById('job-details-header') != null;
+// Clients page - opened client
+clockifyButton.render(
+	'#client-info-container [data-flitem="shy-left--"] > div [data-flitem="shy-left--"]:not(.clockify)',
+	{ observe: true },
+	async container => {
+		await timeout({ milliseconds: 100 });
+
+		const clientName = text('[data-flout="between-- middle--"] h2');
+
+		const timer = clockifyButton.createTimer({
+			description: clientName,
+			projectName: clientName,
+			small: true,
+		});
+		adaptButton(timer);
+
+		container.insertAdjacentElement('afterend', timer);
 	}
+);
 
-	function viewingClientDetailsPage() {
-		return location.pathname.startsWith('/clients/');
-	}
+function adaptButton(button) {
+	button.style.border = '1px solid #252525';
+	button.style.padding = '7px';
+	button.style.marginRight = '10px';
+	button.style.borderRadius = '5px';
 
-	function loadTaskButton() {
-		if (!taskElementsReady()) {
-			setTimeout(loadTaskButton, 100);
-			return;
+	applyStyles(`
+		.clockifyButton:hover {
+			background: #E1E1E1;
 		}
-
-		insertButtonForTask();
-	}
-
-	ready(() => {
-		if (viewingClientDetailsPage()) {
-			insertButtonForClient();
-		} else if (viewingTaskDetailsPage()) {
-			loadTaskButton();
-		}
-	});
-})();
+	`);
+}

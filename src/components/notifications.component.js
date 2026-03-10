@@ -16,26 +16,25 @@ async function isBrowserTimezoneDifferentComparedToUserSettingsTimezone() {
 	const browserTimezone = moment.tz.guess();
 	const userSettingsTimezone = userSettings.timeZone;
 
-	return (
-		moment.tz(browserTimezone).utcOffset() !==
-		moment.tz(userSettingsTimezone).utcOffset()
-	);
+	return moment.tz(browserTimezone).utcOffset() !== moment.tz(userSettingsTimezone).utcOffset();
 }
 
 async function getUnreadNotifications() {
 	const { data: verificationNotifications = [] } = await sendMessage({
-		eventName: 'getVerificationNotificationsForUser'
+		eventName: 'getVerificationNotificationsForUser',
 	});
 
 	const { data: otherNotifications = [] } = await sendMessage({
-		eventName: 'getNotificationsForUser'
+		eventName: 'getNotificationsForUser',
 	});
 
 	const unreadNotifications = otherNotifications
-		.filter((element) => removeEmptyArrays(element))
+		.filter(element => removeEmptyArrays(element))
 		.filter(({ status }) => status === 'UNREAD')
 		.filter(({ type }) => type !== 'CONTACT_SALES')
-		.filter(({ type }) => type !== 'PUMBLE_COUPON');
+		.filter(({ type }) => type !== 'PUMBLE_COUPON')
+		.filter(({ type }) => type !== 'PUMBLE_INTEGRATION')
+		.filter(({ type }) => type !== 'SAMPLE_DATA');
 
 	return [...verificationNotifications, ...unreadNotifications];
 }
@@ -43,26 +42,19 @@ async function getUnreadNotifications() {
 async function getNews() {
 	const { data: news } = await sendMessage({ eventName: 'getNewsForUser' });
 
-	return news.filter((singleNews) => removeEmptyArrays(singleNews));
+	return news.filter(singleNews => removeEmptyArrays(singleNews));
 }
 
-function Notifications({
-												 isDropdownOpen,
-												 onClick,
-												 toaster,
-												 changeWorkspaceTo
-											 }) {
+function Notifications({ isDropdownOpen, onClick, toaster, changeWorkspaceTo }) {
 	const [allNotifications, setAllNotifications] = useState([]);
 	const [notificationCount, setNotificationCount] = useState(0);
 	const [invitationNotifications, setInvitationNotifications] = useState([]);
 	const [fileImportNotifications, setFileImportNotifications] = useState([]);
 	const [newsNotifications, setNewsNotifications] = useState([]);
-	const [notificationsWithoutInvitation, setNotificationsWithoutInvitation] =
-		useState([]);
-	const [
-		notificationsThatCanBeMarkedAsRead,
-		setNotificationsThatCanBeMarkedAsRead
-	] = useState([]);
+	const [notificationsWithoutInvitation, setNotificationsWithoutInvitation] = useState([]);
+	const [notificationsThatCanBeMarkedAsRead, setNotificationsThatCanBeMarkedAsRead] = useState(
+		[]
+	);
 
 	async function updateNotifications() {
 		const unreadNotifications = await getUnreadNotifications();
@@ -85,7 +77,7 @@ function Notifications({
 					type !== 'TIME_ZONE' &&
 					type !== 'PUMBLE_COUPON' &&
 					type !==
-					'FILE_IMPORT_COMPLETED' /* This line is a quick fix for blank notification */
+						'FILE_IMPORT_COMPLETED' /* This line is a quick fix for blank notification */
 			)
 		);
 
@@ -95,9 +87,7 @@ function Notifications({
 		const notifications = [...unreadNotifications, ...news];
 
 		setAllNotifications(notifications);
-		setNotificationCount(
-			notifications.length + Number(isTimezoneNotificationAvailable)
-		);
+		setNotificationCount(notifications.length + Number(isTimezoneNotificationAvailable));
 	}
 
 	useEffect(() => {
@@ -121,13 +111,12 @@ function Notifications({
 				.filter(({ type }) => type === 'EMAIL_VERIFICATION')
 				.map(({ id }) => id);
 
-			const idsThatBelongToNews = idOrIds.filter((id) => newsIds.includes(id));
+			const idsThatBelongToNews = idOrIds.filter(id => newsIds.includes(id));
 			const idsThatBelongToNotifications = idOrIds.filter(
-				(id) =>
-					!idsThatBelongToNews.includes(id) &&
-					!verificationNotificationsIds.includes(id)
+				id =>
+					!idsThatBelongToNews.includes(id) && !verificationNotificationsIds.includes(id)
 			);
-			const idsThatBelongToVerificationNotifications = idOrIds.filter((id) =>
+			const idsThatBelongToVerificationNotifications = idOrIds.filter(id =>
 				verificationNotificationsIds.includes(id)
 			);
 
@@ -148,7 +137,7 @@ function Notifications({
 			if (idsThatBelongToVerificationNotifications.length > 0) {
 				const eventName = 'readSingleOrMultipleVerificationNotificationForUser';
 				const options = {
-					idOrIds: idsThatBelongToVerificationNotifications
+					idOrIds: idsThatBelongToVerificationNotifications,
 				};
 
 				await sendMessage({ eventName, options });
@@ -157,7 +146,7 @@ function Notifications({
 			const notifications = [
 				...invitationNotifications,
 				...fileImportNotifications,
-				...notificationsWithoutInvitation
+				...notificationsWithoutInvitation,
 			];
 
 			const isNotificationTypeRegularNotification = notifications.find(
@@ -166,9 +155,7 @@ function Notifications({
 			const isNotificationTypeVerificationNotification = notifications.find(
 				({ id, type }) => id === idOrIds && type === 'EMAIL_VERIFICATION'
 			);
-			const isNotificationTypeNews = newsNotifications.find(
-				({ id }) => id === idOrIds
-			);
+			const isNotificationTypeNews = newsNotifications.find(({ id }) => id === idOrIds);
 
 			if (isNotificationTypeRegularNotification) {
 				const eventName = 'readSingleNotificationForUser';
@@ -197,9 +184,7 @@ function Notifications({
 		<div title={'Notifications'} className="notifications" onClick={onClick}>
 			<div className="notifications-count">
 				{notificationCount > 0 && (
-					<div className={'notifications-count-display'}>
-						{notificationCount}
-					</div>
+					<div className={'notifications-count-display'}>{notificationCount}</div>
 				)}
 			</div>
 			{isDropdownOpen && (
@@ -207,9 +192,7 @@ function Notifications({
 					<div className="rectangle"></div>
 					<div className="dropdown-menu">
 						<div className="dropdown-menu-header">
-							<div className="dropdown-menu-header-left">
-								{NOTIFICATIONS_TITLE}
-							</div>
+							<div className="dropdown-menu-header-left">{NOTIFICATIONS_TITLE}</div>
 							{notificationsThatCanBeMarkedAsRead.length > 1 && (
 								<div
 									className="dropdown-menu-header-right"
@@ -219,8 +202,7 @@ function Notifications({
 
 										markAsRead(notificationsToBeReadIds);
 										setNotificationsThatCanBeMarkedAsRead([]);
-									}}
-								>
+									}}>
 									{CLEAR_ALL}
 								</div>
 							)}

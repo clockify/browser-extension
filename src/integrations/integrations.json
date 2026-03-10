@@ -1,497 +1,728 @@
-{
-	"airtable.com": {
-		"name": "Airtable",
-		"link": "*://airtable.com/*",
-		"script": "airtable.js"
-	},
-	"ambra.app": {
-		"name": "Ambra",
-		"link": "*://ambra.app",
-		"script": "ambra.js"
-	},
-	"asana.com": {
-		"name": "Asana",
-		"link": "*://app.asana.com",
-		"script": "asana.js"
-	},
-	"axosoft.com": {
-		"name": "Axosoft",
-		"link": "*://axosoft.com/",
-		"script": "axosoft.js"
-	},
-	"azure.com": {
-		"name": "Azure",
-		"link": "*://*.azure.*/*",
-		"script": "azure.js"
-	},
-	"basecamp.com": {
-		"name": "Basecamp",
-		"link": "*://*.basecamp.com/*,*://*.basecamphq.com/*,*://basecamp.com/*",
-		"script": "basecamp.js"
-	},
-	"bitbucket.org": {
-		"name": "Bitbucket",
-		"link": "*://bitbucket.org/*",
-		"script": "bitbucket.js"
-	},
-	"breeze.pm": {
-		"name": "Breeze",
-		"link": "*://app.breeze.pm/*",
-		"script": "breeze.js"
-	},
-	"capsulecrm.com": {
-		"name": "CapsuleCRM",
-		"link": "*://*.capsulecrm.com/*",
-		"script": "capsulecrm.js"
-	},
-	"clickup.com": {
-		"name": "ClickUp",
-		"link": "*://*.clickup.com/*",
-		"script": "clickup.js"
-	},
-	"crowdin.com": {
-		"name": "Crowdin",
-		"link": "*://crowdin.com/*",
-		"script": "crowdin.js"
-	},
-	"shortcut.com": {
-		"name": "Shortcut",
-		"link": "*://app.shortcut.com/*",
-		"script": "shortcut.js"
-	},
-	"coda.io": {
-		"name": "Coda",
-		"link": "*://coda.io/*",
-		"script": "coda.js"
-	},
-	"conectohub.com": {
-		"name": "ConectoHub",
-		"link": "*://*.conectohub.com/*",
-		"script": "conectohub.js"
-	},
-	"dixa.com": {
-		"name": "Dixa",
-		"link": "*://*.dixa.com/*",
-		"script": "dixa.js"
-	},
-	"evernote.com": {
-		"name": "Evernote",
-		"link": "*://*.evernote.com/*",
-		"script": "evernote.js"
-	},
-	"fibery.io": {
-		"name": "Fibery",
-		"link": "*://*.fibery.io/*",
-		"script": "fibery.js"
-	},
-	"freedcamp.com": {
-		"name": "FreedCamp",
-		"link": "*://freedcamp.com/*",
-		"script": "freedcamp.js"
-	},
-	"freshdesk.com": {
-		"name": "Freshdesk",
-		"link": "*://*.freshdesk.com/*",
-		"script": "freshdesk.js"
-	},
-	"freshservice.com": {
-		"name": "Freshservice",
-		"link": "*://*.freshservice.com/*",
-		"script": "freshservice.js"
-	},
-	"frontapp.com": {
-		"name": "Front",
-		"link": "*://*.frontapp.com/*",
-		"script": "front.js"
-	},
-	"getflow.com": {
-		"name": "Getflow",
-		"link": "*://app.getflow.com/*",
-		"script": "flow.js"
-	},
-	"gitea.io": {
-		"name": "Gitea",
-		"link": "*://try.gitea.io/*",
-		"script": "gitea.js"
-	},
-	"groupnwork.com": {
-		"name": "Group&Work",
-		"link": "*://*.groupnwork.com/*",
-		"script": "groupnwork.js"
-	},
-	"github.com": {
-		"name": "Github",
-		"link": "*://github.com/*",
-		"script": "github.js"
-	},
-	"gitlab.com": {
-		"name": "Gitlab",
-		"link": "*://gitlab.com/*,*://*.coingdevelopment.com/*",
-		"script": "gitlab.js"
-	},
-	"calendar.google.com": {
-		"name": "Google calendar",
-		"link": "*://calendar.google.com/*",
-		"script": "google-calendar.js"
-	},
-	"docs.google.com": {
-		"name": "Google Docs / Sheets",
-		"link": "*://docs.google.com/*",
-		"script": "google-docs.js"
-	},
-	"clockify.me": {
-		"name": "Clockify",
-		"link": "*://*.clockify.me/*",
-		"script": "clockify-me.js"
-	},
-	"kanbanize.com": {
-		"name": "Kanbanize",
-		"link": "*://*.kanbanize.com/*",
-		"script": "kanbanize.js"
-	},
-	"keep.google.com": {
-		"name": "Google Keep",
-		"link": "*://keep.google.com/*",
-		"script": "google-keep.js"
-	},
-	"mail.google.com": {
-		"name": "Google Mail",
-		"link": "*://mail.google.com/*",
-		"script": "google-mail.js"
-	},
-	"helpscout.net": {
-		"name": "Helpscout",
-		"link": "*://*.helpscout.net/*",
-		"script": "helpscout.js"
-	},
-	"helprace.com": {
-		"name": "Helprace",
-		"link": "*://*.helprace.com/*",
-		"script": "helprace.js"
-	},
-	"hillia.app": {
-		"name": "Hillia",
-		"link": "*://hillia.app/*",
-		"script": "hillia.js"
-	},
-	"hubspot.com": {
-		"name": "Hubspot",
-		"link": "*://*.hubspot.com/*",
-		"script": "hubspot.js"
-	},
-	"huskymarketingplanner.com": {
-		"name": "Husky Marketing Planner",
-		"link": "*://*.huskymarketingplanner.com/*",
-		"script": "husky-marketing-planner.js"
-	},
-	"linear.app": {
-		"name": "Linear",
-		"link": "*://linear.app/*",
-		"script": "linear.js"
-	},
-	"liquidplanner.com": {
-		"name": "Liquidplanner",
-		"link": "*://*.liquidplanner.com/*",
-		"script": "liquidplanner.js"
-	},
-	"manageengine.com": {
-		"name": "ManageEngine",
-		"link": "*://*.manageengine.com/*",
-		"script": "manageengine.js"
-	},
-	"mantishub.io": {
-		"name": "Mantishub",
-		"link": "*://*.mantishub.io/*,*://*.mantishub.com/*",
-		"script": "mantishub.js"
-	},
-	"manuscript.com": {
-		"name": "Manuscript",
-		"link": "*://*.manuscript.com/*",
-		"script": "manuscript.js"
-	},
-	"meistertask.com": {
-		"name": "Meistertask",
-		"link": "*://www.meistertask.com/*",
-		"script": "meistertask.js"
-	},
-	"tasks.office.com": {
-		"name": "Microsoft Planner",
-		"link": "*://tasks.office.com/*,*://planner.cloud.microsoft/*",
-		"script": "microsoft-planner.js"
-	},
-	"miro.com": {
-		"name": "Miro",
-		"link": "*://miro.com/*",
-		"script": "miro.js"
-	},
-	"monday.com": {
-		"name": "Monday",
-		"link": "*://*.monday.com/*",
-		"script": "monday.js"
-	},
-	"youtrack.": {
-		"name": "Youtrack",
-		"link": "*://youtrack.*/*,*://*.youtrack.*/*",
-		"script": "youtrack.js"
-	},
-	"myfocusspace.com": {
-		"name": "MyFocusSpace",
-		"link": "*://*.myfocusspace.com/*",
-		"script": "myfocusspace.js"
-	},
-	"notion.so": {
-		"name": "Notion",
-		"link": "*://*.notion.so/*,*://notion.so/*",
-		"script": "notion.js"
-	},
-	"nozbe.com": {
-		"name": "Nozbe",
-		"link": "*://nozbe.app/*,*://*.nozbe.app/*,*://nozbe.com/*,*://*.nozbe.com/*",
-		"script": "nozbe.js"
-	},
-	"openproject.com": {
-		"name": "Openproject",
-		"link": "*://*.openproject.com/*",
-		"script": "openproject.js"
-	},
-	"osticket.com": {
-		"name": "osTicket",
-		"link": "*://*.supportsystem.com/*",
-		"script": "osticket.js"
-	},
-	"outlook.live.com": {
-		"name": "Outlook",
-		"link": "*://outlook.*/*,*://outlook.live.com/*",
-		"script": "outlook.js"
-	},
-	"phacility.com": {
-		"name": "Phabricator",
-		"link": "*://*.phacility.com/*,*://phabricator.*/*",
-		"script": "phabricator.js"
-	},
-	"pipefy.com": {
-		"name": "Pipefy",
-		"link": "*://app.pipefy.com/*",
-		"script": "pipefy.js"
-	},
-	"pivotaltracker.com": {
-		"name": "PivotalTracker",
-		"link": "*://*.pivotaltracker.com/*",
-		"script": "pivotaltracker.js"
-	},
-	"podio.com": {
-		"name": "Podio",
-		"link": "*://podio.com/*",
-		"script": "podio.js"
-	},
-	"pipedrive.com": {
-		"name": "Pipedrive",
-		"link": "*://*.pipedrive.com/*",
-		"script": "pipedrive.js"
-	},
-	"placker.com": {
-		"name": "Placker",
-		"link": "*://*.placker.com/*,*://placker.com/*",
-		"script": "placker.js"
-	},
-	"plaky.com": {
-		"name": "Plaky",
-		"link": "*://*.plaky.com/*,*://*.*.*.plaky.com/*",
-		"script": "plaky.js"
-	},
-	"plutio.com": {
-		"name": "Plutio",
-		"link": "*://*.plutio.com/*",
-		"script": "plutio.js"
-	},
-	"pyrus.com": {
-		"name": "Pyrus",
-		"link": "*://pyrus.com/*",
-		"script": "pyrus.js"
-	},
-	"redbooth.com": {
-		"name": "Redbooth",
-		"link": "*://redbooth.com/*",
-		"script": "redbooth.js"
-	},
-	"redmine.org": {
-		"name": "Redmine",
-		"link": "*://*.redmine.org/*",
-		"script": "redmine.js"
-	},
-	"lightning.force.com": {
-		"name": "Salesforce Lightning",
-		"link": "*://*.salesforce.com/*,*://*.my.salesforce.com/*,*://*.lightning.force.com/*",
-		"script": "salesforce.js"
-	},
-	"scoro.com": {
-		"name": "Scoro",
-		"link": "*://*.scoro.com/*",
-		"script": "scoro.js"
-	},
-	"sprint.ly": {
-		"name": "Sprint",
-		"link": "*://sprint.ly/*",
-		"script": "sprintly.js"
-	},
-	"app.startinfinity.com": {
-		"name": "Infinity",
-		"link": "*://app.startinfinity.com/*",
-		"script": "infinity.js"
-	},
-	"taiga.io": {
-		"name": "Taiga",
-		"link": "*://*.taiga.io/*",
-		"script": "taiga.js"
-	},
-	"teamwave.com": {
-		"name": "Teamwave",
-		"link": "*://*.teamwave.com/*,*://*.*.teamwave.com/*",
-		"script": "teamwave.js"
-	},
-	"teamwork.com": {
-		"name": "Teamwork",
-		"link": "*://*.teamwork.com/*,*://*.*.teamwork.com/*",
-		"script": "teamwork.js"
-	},
-	"ticktick.com": {
-		"name": "TickTick",
-		"link": "*://ticktick.com/*",
-		"script": "ticktick.js"
-	},
-	"todoist.com": {
-		"name": "Todoist",
-		"link": "*://todoist.com/*,*://app.todoist.com/*",
-		"script": "todoist.js"
-	},
-	"toodledo.com": {
-		"name": "Toodledo",
-		"link": "*://*.toodledo.com/*",
-		"script": "toodledo.js"
-	},
-	"trello.com": {
-		"name": "Trello",
-		"link": "*://trello.com/*",
-		"script": "trello.js"
-	},
-	"unfuddle.com": {
-		"name": "Unfuddle",
-		"link": "*://*.unfuddle.com/*",
-		"script": "unfuddle.js"
-	},
-	"visualstudio.com": {
-		"name": "VisualStudio",
-		"link": "*://*.visualstudio.com/*",
-		"script": "azure.js"
-	},
-	"waywedo.com": {
-		"name": "Way We Do",
-		"link": "*://*.waywedo.com/*",
-		"script": "waywedo.js"
-	},
-	"wekan.github.io": {
-		"name": "Wekan",
-		"link": "*://*.wekan.*/*",
-		"script": "wekan.js"
-	},
-	"wrike.com": {
-		"name": "Wrike",
-		"link": "*://*.wrike.com/*",
-		"script": "wrike.js"
-	},
-	"zammad.com": {
-		"name": "Zammad",
-		"link": "*://*.zammad.com/*",
-		"script": "zammad.js"
-	},
-	"zendesk.com": {
-		"name": "Zendesk",
-		"link": "*://*.zendesk.com/*",
-		"script": "zendesk.js"
-	},
-	"zenkit.com": {
-		"name": "Zenkit",
-		"link": "*://*.zenkit.com/*",
-		"script": "zenkit.js"
-	},
-	"rallydev.com": {
-		"name": "Rally",
-		"link": "*://*.rallydev.com/*",
-		"script": "rallydev.js"
-	},
-	"ladesk.com": {
-		"name": "LiveAgent",
-		"link": "*://*.ladesk.com/*",
-		"script": "liveagent.js"
-	},
-	"nela.com.br": {
-		"name": "Nela",
-		"link": "*://*.nela.com.br/*",
-		"script": "nela.js"
-	},
-	"intercom.com": {
-		"name": "Rally",
-		"link": "*://*.intercom.com/*",
-		"script": "intercom.js"
-	},
-	"to-do.live.com": {
-		"name": "Microsoft To-Do",
-		"link": "*://to-do.live.com/*",
-		"script": "microsoft-todo.js"
-	},
-	"cerb.ai": {
-		"name": "Cerb",
-		"link": "*://*.cerb.ai/*",
-		"script": "cerb.js"
-	},
-	"usepixie.net": {
-		"name": "Pixie",
-		"link": "*://*.usepixie.net/*,*://pureworkflow.io/*",
-		"script": "usepixie.js"
-	},
-	"figma.com": {
-		"name": "Figma",
-		"link": "*://*.figma.com/*,*://figma.com/*",
-		"script": "figma.js"
-	},
-	"freshrelease.com": {
-		"name": "Freshrelease",
-		"link": "*://*.freshrelease.com/*",
-		"script": "freshrelease.js"
-	},
-	"desk.zoho.com": {
-		"name": "Zoho Desk",
-		"link": "*://desk.zoho.*/*",
-		"script": "zohodesk.js"
-	},
-	"sentry.io": {
-		"name": "Sentry",
-		"link": "*://sentry.io/*,*://*.sentry.io/*",
-		"script": "sentry.js"
-	},
-	"jetbrains.space": {
-		"name": "JetBrains Space",
-		"link": "*://*.jetbrains.space/*",
-		"script": "jetbrains.js"
-	},
-	"nifty.pm": {
-		"name": "Nifty",
-		"link": "*://*.nifty.pm/*",
-		"script": "nifty.js"
-	},
-	"connect.zoho.com": {
-		"name": "Zoho Connect",
-		"link": "*://connect.zoho.*/*",
-		"script": "zohoconnect.js"
-	},
-	"app.slack.com": {
-		"name": "Slack",
-		"link": "*://*.slack.com/*",
-		"script": "slack.js"
-	},
-	"app.pumble.com": {
-		"name": "Pumble",
-		"link": "*://app.pumble.com/*",
-		"script": "pumble.js"
-	}
-}
+[
+    {
+        "name": "Airtable",
+        "urls": [
+            "*://airtable.com/*"
+        ],
+        "script": "airtable.js"
+    },
+    {
+        "name": "Ambra",
+        "urls": [
+            "*://ambra.app/*"
+        ],
+        "script": "ambra.js"
+    },
+    {
+        "name": "Asana",
+        "urls": [
+            "*://app.asana.com/*"
+        ],
+        "script": "asana.js"
+    },
+    {
+        "name": "Axosoft",
+        "urls": [
+            "*://axosoft.com/*"
+        ],
+        "script": "axosoft.js"
+    },
+    {
+        "name": "Azure",
+        "urls": [
+            "*://*.azure.com/*"
+        ],
+        "script": "azure.js"
+    },
+    {
+        "name": "Basecamp",
+        "urls": [
+            "*://*.basecamp.com/*",
+            "*://*.basecamphq.com/*",
+            "*://basecamp.com/*"
+        ],
+        "script": "basecamp.js"
+    },
+    {
+        "name": "Bitbucket",
+        "urls": [
+            "*://bitbucket.org/*"
+        ],
+        "script": "bitbucket.js"
+    },
+    {
+        "name": "Breeze",
+        "urls": [
+            "*://app.breeze.pm/*"
+        ],
+        "script": "breeze.js"
+    },
+    {
+        "name": "CapsuleCRM",
+        "urls": [
+            "*://*.capsulecrm.com/*"
+        ],
+        "script": "capsulecrm.js"
+    },
+    {
+        "name": "Cerb",
+        "urls": [
+            "*://*.cerb.ai/*"
+        ],
+        "script": "cerb.js"
+    },
+    {
+        "name": "ClickUp",
+        "urls": [
+            "*://*.clickup.com/*"
+        ],
+        "script": "clickup.js"
+    },
+    {
+        "name": "Clockify",
+        "urls": [
+            "*://*.clockify.me/*"
+        ],
+        "script": "clockify-me.js"
+    },
+    {
+        "name": "Coda",
+        "urls": [
+            "*://coda.io/*"
+        ],
+        "script": "coda.js"
+    },
+    {
+        "name": "ConectoHub",
+        "urls": [
+            "*://*.conectohub.com/*"
+        ],
+        "script": "conectohub.js"
+    },
+    {
+        "name": "Crowdin",
+        "urls": [
+            "*://crowdin.com/*"
+        ],
+        "script": "crowdin.js"
+    },
+    {
+        "name": "Dixa",
+        "urls": [
+            "*://*.dixa.com/*"
+        ],
+        "script": "dixa.js"
+    },
+    {
+        "name": "Evernote",
+        "urls": [
+            "*://*.evernote.com/*"
+        ],
+        "script": "evernote.js"
+    },
+    {
+        "name": "Fibery",
+        "urls": [
+            "*://*.fibery.io/*"
+        ],
+        "script": "fibery.js"
+    },
+    {
+        "name": "Figma",
+        "urls": [
+            "*://*.figma.com/*",
+            "*://figma.com/*"
+        ],
+        "script": "figma.js"
+    },
+    {
+        "name": "FreedCamp",
+        "urls": [
+            "*://freedcamp.com/*"
+        ],
+        "script": "freedcamp.js"
+    },
+    {
+        "name": "Freshdesk",
+        "urls": [
+            "*://*.freshdesk.com/*"
+        ],
+        "script": "freshdesk.js"
+    },
+    {
+        "name": "Freshrelease",
+        "urls": [
+            "*://*.freshrelease.com/*"
+        ],
+        "script": "freshrelease.js"
+    },
+    {
+        "name": "Freshservice",
+        "urls": [
+            "*://*.freshservice.com/*"
+        ],
+        "script": "freshservice.js"
+    },
+    {
+        "name": "Front",
+        "urls": [
+            "*://*.frontapp.com/*"
+        ],
+        "script": "front.js"
+    },
+    {
+        "name": "Generic integration",
+        "urls": [
+            "*://invalid-url/*"
+        ],
+        "script": "generic-integration.js"
+    },
+    {
+        "name": "Getflow",
+        "urls": [
+            "*://app.getflow.com/*"
+        ],
+        "script": "flow.js"
+    },
+    {
+        "name": "Gitea",
+        "urls": [
+            "*://try.gitea.io/*"
+        ],
+        "script": "gitea.js"
+    },
+    {
+        "name": "Github",
+        "urls": [
+            "*://github.com/*"
+        ],
+        "script": "github.js"
+    },
+    {
+        "name": "Gitlab",
+        "urls": [
+            "*://gitlab.com/*",
+            "*://*.coingdevelopment.com/*"
+        ],
+        "script": "gitlab.js"
+    },
+    {
+        "name": "Google calendar",
+        "urls": [
+            "*://calendar.google.com/*"
+        ],
+        "script": "google-calendar.js"
+    },
+    {
+        "name": "Google Docs / Sheets",
+        "urls": [
+            "*://docs.google.com/*"
+        ],
+        "script": "google-docs.js"
+    },
+    {
+        "name": "Google Keep",
+        "urls": [
+            "*://keep.google.com/*"
+        ],
+        "script": "google-keep.js"
+    },
+    {
+        "name": "Google Mail",
+        "urls": [
+            "*://mail.google.com/*"
+        ],
+        "script": "google-mail.js"
+    },
+    {
+        "name": "Group and Work",
+        "urls": [
+            "*://*.groupnwork.com/*"
+        ],
+        "script": "groupnwork.js"
+    },
+    {
+        "name": "Helprace",
+        "urls": [
+            "*://*.helprace.com/*"
+        ],
+        "script": "helprace.js"
+    },
+    {
+        "name": "Helpscout",
+        "urls": [
+            "*://*.helpscout.net/*"
+        ],
+        "script": "helpscout.js"
+    },
+    {
+        "name": "Hillia",
+        "urls": [
+            "*://hillia.app/*"
+        ],
+        "script": "hillia.js"
+    },
+    {
+        "name": "Hubspot",
+        "urls": [
+            "*://*.hubspot.com/*"
+        ],
+        "script": "hubspot.js"
+    },
+    {
+        "name": "Husky Marketing Planner",
+        "urls": [
+            "*://*.huskymarketingplanner.com/*"
+        ],
+        "script": "husky-marketing-planner.js"
+    },
+    {
+        "name": "Infinity",
+        "urls": [
+            "*://app.startinfinity.com/*"
+        ],
+        "script": "infinity.js"
+    },
+    {
+        "name": "Intercom",
+        "urls": [
+            "*://*.intercom.com/*"
+        ],
+        "script": "intercom.js"
+    },
+    {
+        "name": "JetBrains Space",
+        "urls": [
+            "*://*.jetbrains.space/*"
+        ],
+        "script": "jetbrains.js"
+    },
+    {
+        "name": "Kanbanize",
+        "urls": [
+            "*://*.kanbanize.com/*"
+        ],
+        "script": "kanbanize.js"
+    },
+    {
+        "name": "Linear",
+        "urls": [
+            "*://linear.app/*"
+        ],
+        "script": "linear.js"
+    },
+    {
+        "name": "Liquidplanner",
+        "urls": [
+            "*://*.liquidplanner.com/*"
+        ],
+        "script": "liquidplanner.js"
+    },
+    {
+        "name": "LiveAgent",
+        "urls": [
+            "*://*.ladesk.com/*"
+        ],
+        "script": "liveagent.js"
+    },
+    {
+        "name": "ManageEngine",
+        "urls": [
+            "*://*.manageengine.com/*"
+        ],
+        "script": "manageengine.js"
+    },
+    {
+        "name": "Mantishub",
+        "urls": [
+            "*://*.mantishub.io/*",
+            "*://*.mantishub.com/*"
+        ],
+        "script": "mantishub.js"
+    },
+    {
+        "name": "Manuscript",
+        "urls": [
+            "*://*.manuscript.com/*"
+        ],
+        "script": "manuscript.js"
+    },
+    {
+        "name": "Meistertask",
+        "urls": [
+            "*://www.meistertask.com/*"
+        ],
+        "script": "meistertask.js"
+    },
+    {
+        "name": "Microsoft Planner",
+        "urls": [
+            "*://tasks.office.com/*",
+            "*://planner.cloud.microsoft/*"
+        ],
+        "script": "microsoft-planner.js"
+    },
+    {
+        "name": "Microsoft To-Do",
+        "urls": [
+            "*://to-do.live.com/*"
+        ],
+        "script": "microsoft-todo.js"
+    },
+    {
+        "name": "Miro",
+        "urls": [
+            "*://miro.com/*"
+        ],
+        "script": "miro.js"
+    },
+    {
+        "name": "Monday",
+        "urls": [
+            "*://*.monday.com/*"
+        ],
+        "script": "monday.js"
+    },
+    {
+        "name": "MyFocusSpace",
+        "urls": [
+            "*://*.myfocusspace.com/*"
+        ],
+        "script": "myfocusspace.js"
+    },
+    {
+        "name": "Nela",
+        "urls": [
+            "*://*.nela.com.br/*"
+        ],
+        "script": "nela.js"
+    },
+    {
+        "name": "Nifty",
+        "urls": [
+            "*://*.nifty.pm/*"
+        ],
+        "script": "nifty.js"
+    },
+    {
+        "name": "Notion",
+        "urls": [
+            "*://*.notion.so/*",
+            "*://notion.so/*"
+        ],
+        "script": "notion.js"
+    },
+    {
+        "name": "Nozbe",
+        "urls": [
+            "*://nozbe.app/*",
+            "*://*.nozbe.app/*",
+            "*://nozbe.com/*",
+            "*://*.nozbe.com/*"
+        ],
+        "script": "nozbe.js"
+    },
+    {
+        "name": "Openproject",
+        "urls": [
+            "*://*.openproject.com/*"
+        ],
+        "script": "openproject.js"
+    },
+    {
+        "name": "osTicket",
+        "urls": [
+            "*://*.supportsystem.com/*"
+        ],
+        "script": "osticket.js"
+    },
+    {
+        "name": "Outlook",
+        "urls": [
+            "*://outlook.live.com/*"
+        ],
+        "script": "outlook.js"
+    },
+    {
+        "name": "Phabricator",
+        "urls": [
+            "*://*.phacility.com/*"
+        ],
+        "script": "phabricator.js"
+    },
+    {
+        "name": "Pipedrive",
+        "urls": [
+            "*://*.pipedrive.com/*"
+        ],
+        "script": "pipedrive.js"
+    },
+    {
+        "name": "Pipefy",
+        "urls": [
+            "*://app.pipefy.com/*"
+        ],
+        "script": "pipefy.js"
+    },
+    {
+        "name": "PivotalTracker",
+        "urls": [
+            "*://*.pivotaltracker.com/*"
+        ],
+        "script": "pivotaltracker.js"
+    },
+    {
+        "name": "Pixie",
+        "urls": [
+            "*://*.usepixie.net/*",
+            "*://pureworkflow.io/*"
+        ],
+        "script": "usepixie.js"
+    },
+    {
+        "name": "Placker",
+        "urls": [
+            "*://*.placker.com/*",
+            "*://placker.com/*"
+        ],
+        "script": "placker.js"
+    },
+    {
+        "name": "Plutio",
+        "urls": [
+            "*://*.plutio.com/*"
+        ],
+        "script": "plutio.js"
+    },
+    {
+        "name": "Podio",
+        "urls": [
+            "*://podio.com/*"
+        ],
+        "script": "podio.js"
+    },
+    {
+        "name": "Pumble",
+        "urls": [
+            "*://app.pumble.com/*"
+        ],
+        "script": "pumble.js"
+    },
+    {
+        "name": "Pyrus",
+        "urls": [
+            "*://pyrus.com/*"
+        ],
+        "script": "pyrus.js"
+    },
+    {
+        "name": "Rally",
+        "urls": [
+            "*://*.rallydev.com/*"
+        ],
+        "script": "rallydev.js"
+    },
+    {
+        "name": "Redbooth",
+        "urls": [
+            "*://redbooth.com/*"
+        ],
+        "script": "redbooth.js"
+    },
+    {
+        "name": "Redmine",
+        "urls": [
+            "*://*.redmine.org/*"
+        ],
+        "script": "redmine.js"
+    },
+    {
+        "name": "Salesforce Lightning",
+        "urls": [
+            "*://*.salesforce.com/*",
+            "*://*.my.salesforce.com/*",
+            "*://*.lightning.force.com/*"
+        ],
+        "script": "salesforce.js"
+    },
+    {
+        "name": "Scoro",
+        "urls": [
+            "*://*.scoro.com/*"
+        ],
+        "script": "scoro.js"
+    },
+    {
+        "name": "Sentry",
+        "urls": [
+            "*://sentry.io/*",
+            "*://*.sentry.io/*"
+        ],
+        "script": "sentry.js"
+    },
+    {
+        "name": "Shortcut",
+        "urls": [
+            "*://app.shortcut.com/*"
+        ],
+        "script": "shortcut.js"
+    },
+    {
+        "name": "Slack",
+        "urls": [
+            "*://*.slack.com/*"
+        ],
+        "script": "slack.js"
+    },
+    {
+        "name": "Sprint",
+        "urls": [
+            "*://sprint.ly/*"
+        ],
+        "script": "sprintly.js"
+    },
+    {
+        "name": "Taiga",
+        "urls": [
+            "*://*.taiga.io/*"
+        ],
+        "script": "taiga.js"
+    },
+    {
+        "name": "Teamwave",
+        "urls": [
+            "*://*.teamwave.com/*"
+        ],
+        "script": "teamwave.js"
+    },
+    {
+        "name": "Teamwork",
+        "urls": [
+            "*://*.teamwork.com/*"
+        ],
+        "script": "teamwork.js"
+    },
+    {
+        "name": "TickTick",
+        "urls": [
+            "*://ticktick.com/*"
+        ],
+        "script": "ticktick.js"
+    },
+    {
+        "name": "Todoist",
+        "urls": [
+            "*://todoist.com/*",
+            "*://app.todoist.com/*"
+        ],
+        "script": "todoist.js"
+    },
+    {
+        "name": "Toodledo",
+        "urls": [
+            "*://*.toodledo.com/*"
+        ],
+        "script": "toodledo.js"
+    },
+    {
+        "name": "Trello",
+        "urls": [
+            "*://trello.com/*"
+        ],
+        "script": "trello.js"
+    },
+    {
+        "name": "Unfuddle",
+        "urls": [
+            "*://*.unfuddle.com/*"
+        ],
+        "script": "unfuddle.js"
+    },
+    {
+        "name": "VisualStudio",
+        "urls": [
+            "*://*.visualstudio.com/*"
+        ],
+        "script": "azure.js"
+    },
+    {
+        "name": "Way We Do",
+        "urls": [
+            "*://*.waywedo.com/*"
+        ],
+        "script": "waywedo.js"
+    },
+    {
+        "name": "Wekan",
+        "urls": [
+            "*://*.wekan.fi/*"
+        ],
+        "script": "wekan.js"
+    },
+    {
+        "name": "Wrike",
+        "urls": [
+            "*://*.wrike.com/*"
+        ],
+        "script": "wrike.js"
+    },
+    {
+        "name": "Youtrack",
+        "urls": [
+            "*://youtrack.com/*",
+            "*://*.youtrack.com/*",
+            "*://youtrack.cloud/*",
+            "*://*.youtrack.cloud/*"
+        ],
+        "script": "youtrack.js"
+    },
+    {
+        "name": "Zammad",
+        "urls": [
+            "*://*.zammad.com/*"
+        ],
+        "script": "zammad.js"
+    },
+    {
+        "name": "Zendesk",
+        "urls": [
+            "*://*.zendesk.com/*"
+        ],
+        "script": "zendesk.js"
+    },
+    {
+        "name": "Zenkit",
+        "urls": [
+            "*://*.zenkit.com/*"
+        ],
+        "script": "zenkit.js"
+    },
+    {
+        "name": "Zoho Connect",
+        "urls": [
+            "*://connect.zoho.com/*",
+            "*://connect.zoho.eu/*",
+            "*://connect.zoho.in/*",
+            "*://connect.zoho.cn/*",
+            "*://connect.zoho.au/*",
+            "*://connect.zoho.jp/*",
+            "*://connect.zoho.sa/*",
+            "*://connect.zoho.ca/*"
+        ],
+        "script": "zohoconnect.js"
+    },
+    {
+        "name": "Zoho Desk",
+        "urls": [
+            "*://desk.zoho.com/*",
+            "*://desk.zoho.eu/*",
+            "*://desk.zoho.in/*",
+            "*://desk.zoho.cn/*",
+            "*://desk.zoho.au/*",
+            "*://desk.zoho.jp/*",
+            "*://desk.zoho.sa/*",
+            "*://desk.zoho.ca/*"
+        ],
+        "script": "zohodesk.js"
+    }
+]

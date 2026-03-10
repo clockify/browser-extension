@@ -48,8 +48,7 @@ class SignUp extends React.Component {
 			() => {
 				this.setState(
 					{
-						emailAlert:
-							!this.state.email.includes('@') || this.state.email.length < 3,
+						emailAlert: !this.state.email.includes('@') || this.state.email.length < 3,
 						cakeTermsAlert: !this.state.cakeTermsOfUse,
 						passwordAlert: this.state.password.length < 6,
 					},
@@ -69,7 +68,7 @@ class SignUp extends React.Component {
 										timeZone: moment.tz.guess(),
 									},
 								})
-								.then((response) => {
+								.then(response => {
 									let data = response.data;
 									aBrowser.tabs.create({
 										url: `${aBrowser.identity.getRedirectURL()}?accessToken=${
@@ -93,7 +92,7 @@ class SignUp extends React.Component {
 									// localStorage.setItem('refreshToken', data.refreshToken);
 									// this.fetchUser();
 								})
-								.catch((error) => {
+								.catch(error => {
 									disabledSignup = false;
 									if (error.response?.data?.code === 503) {
 										this.setState({
@@ -106,9 +105,9 @@ class SignUp extends React.Component {
 									}
 								});
 						}
-					},
+					}
 				);
-			},
+			}
 		);
 	}
 
@@ -117,7 +116,7 @@ class SignUp extends React.Component {
 			.runtime.sendMessage({
 				eventName: 'getUser',
 			})
-			.then((response) => {
+			.then(response => {
 				let data = response.data;
 				localStorage.setItem('activeWorkspaceId', data.activeWorkspace);
 				localStorage.setItem('userSettings', JSON.stringify(data.settings));
@@ -129,7 +128,7 @@ class SignUp extends React.Component {
 				disabledSignup = false;
 				window.reactRoot.render(<HomePage />);
 			})
-			.catch((error) => {});
+			.catch(error => {});
 	}
 
 	onChange(e) {
@@ -157,11 +156,7 @@ class SignUp extends React.Component {
 		return (
 			<div>
 				<Header showActions={false} showSync={false} />
-				<div
-					className={
-						this.state.signupDisabledMessage ? 'signup__disabled' : 'disabled'
-					}
-				>
+				<div className={this.state.signupDisabledMessage ? 'signup__disabled' : 'disabled'}>
 					{this.state.signupDisabledMessage}
 				</div>
 				<div className="signup-title_and_text">
@@ -180,14 +175,10 @@ class SignUp extends React.Component {
 							value={this.state.email}
 							onChange={this.onChange}
 						/>
-						<label
-							className={this.state.emailAlert ? 'signup-alert' : 'disabled'}
-						>
+						<label className={this.state.emailAlert ? 'signup-alert' : 'disabled'}>
 							{locales.INVALID_EMAIL}
 						</label>
-						<label
-							className={this.state.emailExists ? 'signup-alert' : 'disabled'}
-						>
+						<label className={this.state.emailExists ? 'signup-alert' : 'disabled'}>
 							{locales.INVALID_EMAIL}
 						</label>
 					</div>
@@ -202,9 +193,7 @@ class SignUp extends React.Component {
 							value={this.state.password}
 							onChange={this.onChange}
 						/>
-						<label
-							className={this.state.passwordAlert ? 'signup-alert' : 'disabled'}
-						>
+						<label className={this.state.passwordAlert ? 'signup-alert' : 'disabled'}>
 							{locales.PASSWORD_MIN_LENGTH_ERROR_MSG(6)}
 						</label>
 					</div>
@@ -221,8 +210,7 @@ class SignUp extends React.Component {
 										? 'signup-checkbox checked'
 										: 'signup-checkbox'
 								}
-								onClick={this.toggleCakeTermsOfUse.bind(this)}
-							>
+								onClick={this.toggleCakeTermsOfUse.bind(this)}>
 								<img
 									src="./assets/images/checked.png"
 									className={
@@ -240,11 +228,7 @@ class SignUp extends React.Component {
 								{/* <a onClick={this.cakeTermsOfUse.bind(this)}>{locales.TOS}</a> */}
 							</span>
 						</div>
-						<label
-							className={
-								this.state.cakeTermsAlert ? 'signup-alert' : 'disabled'
-							}
-						>
+						<label className={this.state.cakeTermsAlert ? 'signup-alert' : 'disabled'}>
 							{locales.TOS_ACCEPT_ERROR}
 						</label>
 					</div>

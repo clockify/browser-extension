@@ -7,7 +7,10 @@ import 'moment-duration-format';
 import { TimeEntryDropdown } from '~/components/TimeEntryDropdown';
 import Toaster from './toaster-component';
 import { getBrowser } from '~/helpers/browser-helper';
-import { getRequiredAndMissingCustomFieldNames, getRequiredAndMissingFieldNames } from '~/helpers/utils';
+import {
+	getRequiredAndMissingCustomFieldNames,
+	getRequiredAndMissingFieldNames,
+} from '~/helpers/utils';
 import { TimeEntryTypeEnum } from '~/enums/timeEntry-type.enum';
 import { numberFormatTransform } from '~/helpers/duration-formater';
 import { parseTime } from './time-input-parser';
@@ -75,13 +78,13 @@ const TimeEntry = props => {
 		entryDuration = numberFormatTransform(
 			parseTime(sumOfDurations, durationFormatValue),
 			numberFormat,
-			durationFormatValue,
+			durationFormatValue
 		);
 	} else {
 		entryDuration = numberFormatTransform(
 			parseTime(timeEntry.timeInterval.duration, durationFormatValue),
 			numberFormat,
-			durationFormatValue,
+			durationFormatValue
 		);
 	}
 
@@ -126,7 +129,7 @@ const TimeEntry = props => {
 					workspaceSettings={workspaceSettings}
 					timeFormat={timeFormat}
 					userSettings={userSettings}
-				/>,
+				/>
 			);
 		}
 	};
@@ -209,17 +212,19 @@ const TimeEntry = props => {
 	const onClickDuplicateEntry = async e => {
 		e.stopPropagation();
 
+		const timeEntry = groupedEntries?.[0] || props.timeEntry;
 		const { project } = timeEntry;
+
 		const requiredAndMissingCustomFieldNames = await getRequiredAndMissingCustomFieldNames(
 			project,
-			timeEntry,
+			timeEntry
 		);
 		const requiredAndMissingFieldNames = getRequiredAndMissingFieldNames(
 			timeEntry,
-			workspaceSettings,
+			workspaceSettings
 		);
 		const missingFields = requiredAndMissingFieldNames.concat(
-			requiredAndMissingCustomFieldNames,
+			requiredAndMissingCustomFieldNames
 		);
 
 		// Admin and Owners can duplicate a Holiday/TimeOff TimeEntry even if they have missing fields.
@@ -232,7 +237,7 @@ const TimeEntry = props => {
 		if (missingFields.length > 0 && !canDuplicate) {
 			const errorMessage = `${locales.CANT_SAVE_WITHOUT_REQUIRED_FIELDS.replace(
 				'.',
-				'',
+				''
 			)}: ${missingFields.join(', ')}`;
 			toasterRef.current.toast('error', errorMessage, 3);
 			return;
@@ -241,20 +246,25 @@ const TimeEntry = props => {
 
 		getBrowser()
 			.runtime.sendMessage({
-			eventName: 'duplicateTimeEntry',
-			options: {
-				entryId: timeEntry.id,
-			},
-		})
-			.then(() => {
+				eventName: 'duplicateTimeEntry',
+				options: {
+					entryId: timeEntry.id,
+				},
+			})
+			.then(response => {
+				if (!response?.data) {
+					return toasterRef.current.toast('error', response, 2);
+				}
+
 				props.handleRefresh();
 				toasterRef.current.toast('success', locales.GLOBAL__DUPLICATE_SUCCESS_MSG, 2);
 			})
 			.catch(error => {
+				console.log('failure');
 				toasterRef.current.toast(
 					'error',
 					locales.replaceLabels(error.response.data.message),
-					2,
+					2
 				);
 			});
 	};
@@ -270,33 +280,31 @@ const TimeEntry = props => {
 	const deleteEntry = async entryId => {
 		getBrowser()
 			.runtime.sendMessage({
-			eventName: 'deleteTimeEntry',
-			options: {
-				entryId,
-			},
-		})
+				eventName: 'deleteTimeEntry',
+				options: {
+					entryId,
+				},
+			})
 			.then(() => {
 				setState(state => ({ ...state, askToDeleteEntry: false }));
 				props.handleRefresh();
 			})
-			.catch(() => {
-			});
+			.catch(() => {});
 	};
 
 	const deleteMultipleEntries = async entryIds => {
 		getBrowser()
 			.runtime.sendMessage({
-			eventName: 'deleteTimeEntries',
-			options: {
-				entryIds,
-			},
-		})
+				eventName: 'deleteTimeEntries',
+				options: {
+					entryIds,
+				},
+			})
 			.then(() => {
 				setState(state => ({ ...state, askToDeleteEntry: false }));
 				props.handleRefresh();
 			})
-			.catch(() => {
-			});
+			.catch(() => {});
 	};
 
 	const byTimeDate = (firstEntry, secondEntry) => {
@@ -308,6 +316,7 @@ const TimeEntry = props => {
 			<Toaster ref={toasterRef} />
 			<div>
 				<div
+					data-testid="time-entry"
 					data-pw={`time-entry-${timeEntryIndex}`}
 					className={entryClassNames.join(' ')}
 					title={state.title}
@@ -406,7 +415,10 @@ const TimeEntry = props => {
 								onClick={continueTimeEntry}
 								title={locales.TRACKER__TIME_TRACKER__ENTRY__CONTINUE}
 							/>
-							{!((timeEntry.isLocked && !isUserOwnerOrAdmin) || timeEntry.approvalRequestId) &&
+							{!(
+								(timeEntry.isLocked && !isUserOwnerOrAdmin) ||
+								timeEntry.approvalRequestId
+							) && (
 								<span className="time-entry-menu">
 									<img
 										onClick={toggleEntryDropdownMenu}
@@ -424,7 +436,8 @@ const TimeEntry = props => {
 											manualModeDisabled={props.manualModeDisabled}
 										/>
 									)}
-							</span>}
+								</span>
+							)}
 						</div>
 					</div>
 				</div>
@@ -436,8 +449,8 @@ const TimeEntry = props => {
 								timeEntryIndex={index}
 								key={entry.id}
 								timeEntry={entry}
-								project={entry.project ? entry.project : null}
-								task={entry.task ? entry.task : null}
+								project={entry?.project}
+								task={entry?.project ? entry?.task : null}
 								playTimeEntry={props.playTimeEntry}
 								changeMode={props.changeMode}
 								timeFormat={props.timeFormat}

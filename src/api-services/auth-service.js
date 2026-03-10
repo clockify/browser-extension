@@ -6,7 +6,7 @@ class AuthService extends ClockifyService {
 		const body = {
 			key: email,
 			secret: password,
-			timeZone: timeZone
+			timeZone: timeZone,
 		};
 
 		return this.apiCall(signupUrl, 'POST', body, true);
@@ -15,20 +15,19 @@ class AuthService extends ClockifyService {
 	static async invalidateToken() {
 		const baseUrl = await this.apiWriteEndpoint();
 		const invalidateTokenUrl = `${baseUrl}/auth/tokens`;
-		const { token, refreshToken } = await localStorage.getItem([
-			'token',
-			'refreshToken'
-		]);
-		if (token && refreshToken) {
-			const headers = await createHttpHeaders(token);
 
-			const body = {
-				token,
-				refreshToken
-			};
+		const token = await localStorage.getItem('token');
+		const refreshToken = await localStorage.getItem('refreshToken');
 
-			return this.apiCall(invalidateTokenUrl, 'DELETE', body, true, headers);
-		}
-		return Promise.resolve({ data: {}, status: 200 });
+		const headers = await createHttpHeaders(token);
+
+		const body = { token, refreshToken };
+
+		const response = await this.apiCall(invalidateTokenUrl, 'DELETE', body, true, headers);
+
+		await localStorage.removeItem('token');
+		await localStorage.removeItem('refreshToken');
+
+		return response;
 	}
 }

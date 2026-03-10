@@ -1,23 +1,26 @@
-
 // Entity View
-clockifyButton.render('.extension-entity-view-header-spot:not(.clockify)', { observe: true }, elem => {
+clockifyButton.render(
+	'.extension-entity-view-header-spot:not(.clockify)',
+	{ observe: true },
+	elem => {
+		const description = () => {
+			return elem ? elem.dataset?.entityTitle : '';
+		};
+
+		const timer = clockifyButton.createButton({ description });
+		const input = clockifyButton.createInput({ description });
+
+		const container = createContainer(timer, input);
+		container.append(timer);
+		container.append(input);
+
+		elem.append(container);
+	}
+);
+
+function createButtonOnView({ small, elem }) {
 	const description = () => {
-		return  elem ? elem.dataset?.entityTitle : '';
-	};
-
-	const timer = clockifyButton.createButton({ description });
-	const input = clockifyButton.createInput({ description });
-
-	const container = createContainer(timer, input);
-	container.append(timer);
-	container.append(input);
-
-	elem.append(container);
-});
-
-function createButtonOnView({small, elem}) {
-	const description = () => {
-		return  elem ? elem.dataset?.entityTitle : '';
+		return elem ? elem.dataset?.entityTitle : '';
 	};
 
 	const timer = clockifyButton.createButton({ small, description });
@@ -29,34 +32,58 @@ function createButtonOnView({small, elem}) {
 }
 
 // List View
-clockifyButton.render('.i-role-list-view .extension-entity-card-spot:not(.clockify)', { observe: true }, elem => {
-	createButtonOnView({ small: true, elem });
-});
+clockifyButton.render(
+	'.i-role-list-view .extension-entity-card-spot:not(.clockify)',
+	{ observe: true },
+	elem => {
+		createButtonOnView({ small: true, elem });
+	}
+);
 
 // Board View
-clockifyButton.render('.i-role-board-view .extension-entity-card-spot:not(.clockify)', { observe: true }, elem => {
-	createButtonOnView({ small: false, elem });
-});
+clockifyButton.render(
+	'.i-role-board-view .extension-entity-card-spot:not(.clockify)',
+	{ observe: true },
+	elem => {
+		createButtonOnView({ small: false, elem });
+	}
+);
 
 // Table View
-clockifyButton.render('.i-role-table-view .extension-entity-card-spot:not(.clockify)', { observe: true }, elem => {
-	createButtonOnView({ small: true, elem });
-});
+clockifyButton.render(
+	'.i-role-table-view .extension-entity-card-spot:not(.clockify)',
+	{ observe: true },
+	elem => {
+		createButtonOnView({ small: true, elem });
+	}
+);
 
 // Timeline and Gantt View
-clockifyButton.render('.i-role-timeline-view .extension-entity-card-spot:not(.clockify)', { observe: true }, elem => {
-	createButtonOnView({ small: true, elem });
-});
+clockifyButton.render(
+	'.i-role-timeline-view .extension-entity-card-spot:not(.clockify)',
+	{ observe: true },
+	elem => {
+		createButtonOnView({ small: true, elem });
+	}
+);
 
 // Feed View
-clockifyButton.render('.i-role-feed-view .extension-entity-card-spot:not(.clockify)', { observe: true }, elem => {
-	createButtonOnView({ small: true, elem });
-});
+clockifyButton.render(
+	'.i-role-feed-view .extension-entity-card-spot:not(.clockify)',
+	{ observe: true },
+	elem => {
+		createButtonOnView({ small: true, elem });
+	}
+);
 
 // Calendar View
-clockifyButton.render('.i-role-calendar-view .extension-entity-card-spot:not(.clockify)', { observe: true }, elem => {
-	createButtonOnView({ small: true, elem });
-});
+clockifyButton.render(
+	'.i-role-calendar-view .extension-entity-card-spot:not(.clockify)',
+	{ observe: true },
+	elem => {
+		createButtonOnView({ small: true, elem });
+	}
+);
 
 // Common functions
 function preventEventPropagation(element) {
@@ -79,7 +106,6 @@ function setupInputEvents(input) {
 		});
 	}
 }
-
 
 // Custom styles
 applyStyles(`

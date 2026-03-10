@@ -5,14 +5,7 @@ async function isNavigatorOffline() {
 }
 
 function isChrome() {
-	if (typeof chrome !== 'undefined') {
-		if (typeof browser !== 'undefined') {
-			return false;
-		} else {
-			return true;
-		}
-	}
-	return false;
+	return TARGET_BROWSER_FOR_CLOCKIFY_EXT.toLowerCase() === 'chrome';
 }
 
 async function createHttpHeaders(token) {
@@ -132,12 +125,12 @@ class ClockifyService {
 					forceTasks: false,
 					projectPickerSpecialFilter: false,
 					forceTags: false,
-			  };
+				};
 		const userSettings = us
 			? JSON.parse(us)
 			: {
 					projectPickerSpecialFilter: false,
-			  };
+				};
 		const { forceDescription, forceProjects, forceTasks, forceTags } = wsSettings;
 		const { projectPickerSpecialFilter } = userSettings;
 		return {
@@ -166,12 +159,12 @@ class ClockifyService {
 		const { whoCanCreateProjectsAndClients } = workspaceSettings?.entityCreationPermissions || {
 			whoCanCreateProjectsAndClients: 'ADMINS',
 		};
-		const isEnabledCreateProject =
+		return (
 			whoCanCreateProjectsAndClients === 'EVERYONE' ||
 			userRoles.includes('WORKSPACE_ADMIN') ||
 			(whoCanCreateProjectsAndClients === 'ADMINS_AND_PROJECT_MANAGERS' &&
-				userRoles.includes('PROJECT_MANAGER'));
-		return isEnabledCreateProject;
+				userRoles.includes('PROJECT_MANAGER'))
+		);
 	}
 
 	static async getCanCreateTasks() {
@@ -182,12 +175,12 @@ class ClockifyService {
 		const { whoCanCreateTasks } = workspaceSettings?.entityCreationPermissions || {
 			whoCanCreateTasks: 'ADMINS',
 		};
-		const isEnabledCreateTask =
+		return (
 			whoCanCreateTasks === 'EVERYONE' ||
 			userRoles.includes('WORKSPACE_ADMIN') ||
 			(whoCanCreateTasks === 'ADMINS_AND_PROJECT_MANAGERS' &&
-				userRoles.includes('PROJECT_MANAGER'));
-		return isEnabledCreateTask;
+				userRoles.includes('PROJECT_MANAGER'))
+		);
 	}
 
 	static async getCanCreateTags() {
@@ -198,12 +191,12 @@ class ClockifyService {
 		const { whoCanCreateTags } = workspaceSettings?.entityCreationPermissions || {
 			whoCanCreateTags: 'ADMINS',
 		};
-		const isEnabledCreateTags =
+		return (
 			whoCanCreateTags === 'EVERYONE' ||
 			userRoles.includes('WORKSPACE_ADMIN') ||
 			(whoCanCreateTags === 'ADMINS_AND_PROJECT_MANAGERS' &&
-				userRoles.includes('PROJECT_MANAGER'));
-		return isEnabledCreateTags;
+				userRoles.includes('PROJECT_MANAGER'))
+		);
 	}
 
 	static async setOnline() {
@@ -252,7 +245,7 @@ class ClockifyService {
 		method = 'GET',
 		body = null,
 		withNoToken = false,
-		additionalHeaders,
+		additionalHeaders
 	) {
 		let token;
 		if (withNoToken) {
@@ -320,7 +313,8 @@ class ClockifyService {
 					/Tag with name .* already exists/,
 					/Manual time tracking disabled on .*/,
 					/Task with name '.*' already exists/,
-					/You entered wrong value. Don't use \"<\" and \">\" characters/
+					/You entered wrong value. Don't use \"<\" and \">\" characters/,
+					/Can't save, required fields are missing or archived./,
 				];
 				switch (response.status) {
 					case 400:
@@ -329,14 +323,14 @@ class ClockifyService {
 
 						const returnMessageToComponent =
 							errorMessagesThatShouldBeReturnedToComponent.find(pattern =>
-								pattern.test(message),
+								pattern.test(message)
 							);
 
 						if (returnMessageToComponent) return errorObj(400, message);
 
 						return errorObj(
 							400,
-							`${clockifyLocales.YOU_ALREADY_HAVE_ENTRY_WITHOUT}. ${clockifyLocales.PLEASE_EDIT_YOUR_TIME_ENTRY}.`,
+							`${clockifyLocales.YOU_ALREADY_HAVE_ENTRY_WITHOUT}. ${clockifyLocales.PLEASE_EDIT_YOUR_TIME_ENTRY}.`
 						);
 					case 403:
 						errorData = await response.json();
@@ -354,7 +348,7 @@ class ClockifyService {
 								return errorObj(
 									response.status,
 									'Manual time tracking disabled',
-									errorData,
+									errorData
 								);
 							} else if (errorData.code === 501) {
 								return errorObj(response.status, 'Access Denied', errorData);
@@ -369,6 +363,8 @@ class ClockifyService {
 						return errorObj(response.status, 'Unauthenticated');
 					case 404:
 						return errorObj(response.status, 'Not found');
+					case 429:
+						return errorObj(response.status, (await response.json())['message']);
 					case 405:
 						return errorObj(response.status, 'Method not allowed');
 					case 406:

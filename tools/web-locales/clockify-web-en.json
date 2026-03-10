@@ -46,7 +46,8 @@
             "WITHDRAWN_BY": "Withdrawn by",
             "APPROVE": "Approve",
             "REJECT": "Reject",
-            "SUBMITTED_BY_WITH_INTERPOLATION": "Submitted by: {value}"
+            "SUBMITTED_BY_WITH_INTERPOLATION": "Submitted by: {value}",
+            "EDIT": "Edit"
         },
         "GROUPS": {
             "TOTAL_TIME": "Total",
@@ -72,7 +73,10 @@
             "REMIND_ALL_BODY_PM": "Ready to send email reminders to project managers who haven’t yet approved their project member’s pending timesheets?",
             "REMIND_SUBMIT_TIME_EXPENSES_TITLE": "Remind to submit time and expenses",
             "REMIND_APPROVE_TIME_EXPENSES_TITLE": "Remind to approve time and expenses",
-            "REMIND_ALL_BODY_PM_CUSTOM": "Ready to send email reminders to { projectLabel } managers who haven’t yet approved their { projectLabel } member’s pending timesheets?"
+            "REMIND_ALL_BODY_PM_CUSTOM": "Ready to send email reminders to { projectLabel } managers who haven’t yet approved their { projectLabel } member’s pending timesheets?",
+            "BULK_APPROVE_BODY": "Once approved, timesheet will be locked and no one will be able to edit it anymore",
+            "BULK_REJECT_BODY_LABEL": "Send note to users",
+            "SUBMIT_TIMESHEET_FOR_USERS": "Ready to submit { openingBoldTag }{ approvalGroupTitle }{ closingBoldTag } timesheet for approval, for selected users?"
         },
         "SORT_BY": {
             "WEEK": "Sort by: Week",
@@ -108,7 +112,8 @@
                 "ERROR_MESSAGE": "Reminders not sent"
             },
             "APPROVAL_COUNT_FAIL": "Get Approval Count Failed",
-            "SUCCESSFULLY_WITHDRAWN": "Successfully withdrawn"
+            "SUCCESSFULLY_WITHDRAWN": "Successfully withdrawn",
+            "TIMESHEET_NOT_AVAILABLE": "Timesheet is no longer available for approval."
         },
         "SHOW_APPROVED_LABEL": "Show approved",
         "SHOW_WITHDRAWN_LABEL": "Show withdrawn",
@@ -126,7 +131,10 @@
             "SECOND_PART": "have unsubmitted timesheets, send them a reminder every",
             "THIRD_PART": "of the month",
             "FIRST_PART": "If there are pending timesheets for approval, send a reminder to"
-        }
+        },
+        "SHOW_REJECTED_LABEL": "Show rejected",
+        "NO_EXPENSES_MESSAGE": "No { value } expenses",
+        "NO_EXPENSES_ON_UNSUBMITTED_LABEL": "No { value } expenses for { label }"
     },
     "CALENDAR": {
         "INTEGRATIONS_HEADER": "Calendar integrations",
@@ -253,11 +261,14 @@
             "ATTACH_INVOICE_CHECKBOX": "Attach invoice as PDF",
             "SEND_ME_COPY_CHECKBOX": "Send me a copy",
             "ATTACH_RECEIPTS_CHECKBOX": "Attach receipts as PDF",
-            "ATTACH_EXPENSE_CHECKBOX": "Attach an expense report",
+            "ATTACH_EXPENSE_CHECKBOX": "Include an expense report",
             "NO_EXPENSES_AVAILABLE": "There are no expenses on this invoice",
             "INVOICE_TAXATION": "Invoice Taxation",
             "INVOICE_SUBJECT_PLACEHOLDER": "Subject text",
-            "INVOICE_NOTES_PLACEHOLDER": "My note"
+            "INVOICE_NOTES_PLACEHOLDER": "My note",
+            "ATTACH_TIME_CHECKBOX": "Include time report",
+            "NO_TIME_AVAILABLE": "There are no time entries on this invoice",
+            "EMAIL_TEXTAREA_PLACEHOLDER": "Enter text"
         },
         "IMPORT": {
             "PROJECT_INFO": "Import uninvoiced billable time from",
@@ -315,7 +326,13 @@
             "REQUIRED_LABEL": "Value is required",
             "BODY_NO_LONGER_THAN_INFO": "Body can’t be longer than { value } characters.",
             "SUBJECT_LESS_THAN_INFO": "Subject has to have less than { value } characters.",
-            "INVOICE_TAXATION_DEFAULT_PREFERENCE": "Set a default preference for invoice taxation"
+            "INVOICE_TAXATION_DEFAULT_PREFERENCE": "Set a default preference for invoice taxation",
+            "APPEARANCE_ALERT": "Appearances are applied on all future invoices as defaults for this workspace",
+            "DEFAULTS": {
+                "MAIN_ALERT": "Preferences are applied on all future invoices as defaults for this workspace",
+                "MAIN_LABEL": "Main"
+            },
+            "TRANSLATIONS_ALERT": "Translations are applied on all future invoices as defaults for this workspace"
         },
         "DROPDOWNVALUES": {
             "GROUPING_HOURS_SINGLE": "Single item (combine all hours into one line)",
@@ -427,7 +444,7 @@
                 "NOTIFICATION_CONTENT": "Choose team members to notify by Clockify and email each time new invoice is generated.",
                 "SWITCH": "Enable recurring invoice",
                 "NEXT_ISSUE_DAYS_LABEL": "Days",
-                "AUTO_GENERATE_LABEL": "Invoice will generate at 8:00 AM automatically"
+                "AUTO_GENERATE_LABEL": "Invoice will generate at { startTime } automatically"
             },
             "RECURRENCE_LABEL": "Recurrence",
             "RECURRING_SETTINGS": {
@@ -435,7 +452,24 @@
             },
             "RECURRING_SUPPORTED_PART_1": "Recurring settings is available only for invoices dated { date }, or later, because this feature wasn’t supported before then.",
             "RECURRING_SUPPORTED_PART_2": "Please select a more recent invoice or create a new one to set up a recurring settings.",
-            "RECURRING_SETTINGS_LABEL_PRO": "Recurring settings (PRO)"
+            "RECURRING_SETTINGS_LABEL_PRO": "Recurring settings (PRO)",
+            "RECURRING_SUPPORTED_AFTER": "Available only for invoices created after { date }",
+            "OVERDUE_INVOICES": {
+                "UPGRADE": "your subscription to PRO Plan and start tracking overdue invoices."
+            },
+            "CLIENTS_LIMIT": {
+                "LESS_SELECTED_MESSAGE": "To create invoice from report select one client first.",
+                "MORE_SELECTED_MESSAGE": "Select only one client to generate an invoice from this report.",
+                "ONE_CLIENT_AND_APPLY": "Select a single client and apply the filter to generate an invoice from this report"
+            },
+            "INVOICE_FROM_REPORT": {
+                "ALERT": "Only billable and uninvoiced time entries from this report will be included in the invoice.",
+                "UPGRADE": "to Standard to use invoicing.",
+                "FEATURE_OFF": "Invoicing is disabled. Enable it in"
+            },
+            "CREATE_INVOICE_PRO": "Create invoice (PRO)",
+            "BILLED_TO": "Billed to",
+            "NO_INACTIVE_CLIENTS": "No inactive clients"
         },
         "ITEM_TYPE": {
             "CREATE": {
@@ -563,7 +597,8 @@
                 },
                 "DAYS_PAST_DUE_DATE": {
                     "LABEL": "Days past due"
-                }
+                },
+                "DESCRIPTION_V2": "Customize your email template using input parameters provided here"
             }
         },
         "TOOLTIP": {
@@ -572,7 +607,7 @@
         },
         "EXPENSES_REPORT": {
             "WELCOME_MESSAGE": "Hey there!",
-            "DESCRIPTION": "To download the expense report, please enter the code from the email. The download link expires on { date }.",
+            "DESCRIPTION": "To download the report, please enter the code from the email. The download link expires on { date }.",
             "DOWNLOAD_LABEL": "Download expense report",
             "EXPIRED_CODE_ERROR": "This code has expired.",
             "RESET_CODE": "Reset code",
@@ -587,6 +622,76 @@
         },
         "EXPORT_SETTINGS": {
             "TITLE": "Invoice export settings"
+        },
+        "CC_RECIPIENTS": {
+            "NO_RECIPIENTS": {
+                "PLACEHOLDER": "No additional recipients"
+            },
+            "ADD_RECIPIENTS": {
+                "LABEL": "Add Cc Recipients"
+            },
+            "EDIT_RECIPIENTS": {
+                "LABEL": "Edit Cc recipients"
+            },
+            "LABEL": "Cc recipients"
+        },
+        "RECIPIENTS": {
+            "ADD_OR_EDIT": {
+                "CONTENT": "Add additional recipients for { clientName } here. These emails will be saved saved for future use and can be edited in the client profile."
+            },
+            "MODAL_TITLE": "Additional recipients"
+        },
+        "TIME_REPORT": {
+            "DOWNLOAD_LABEL": "Download time report",
+            "DOWNLOAD_SUCCESS": "You have successfully downloaded the time report."
+        },
+        "EDITOR": {
+            "SIDEBAR": {
+                "EMAIL": {
+                    "MESSAGE": "E-mail template is applied on all future invoices as defaults for this workspace.",
+                    "TITLE": "Email template"
+                },
+                "PREVIEW": {
+                    "TITLE": "Preview and download",
+                    "TIME_CHECKBOX_LABEL": "Time report",
+                    "PDF_CHECKBOX_LABEL": "PDF Invoice",
+                    "EXPENSE_CHECKBOX_LABEL": "Expense report",
+                    "DOWNLOAD_LABEL": "Download"
+                },
+                "GENERAL_SETTINGS_LABEL": "General settings",
+                "DELETE": {
+                    "TITLE": "Delete invoice",
+                    "MODAL_CONTENT": "Are you sure you want to delete this invoice? This action will take you back to the invoices page."
+                },
+                "TOOLS": {
+                    "TITLE": "Invoice tools and actions"
+                },
+                "DUPLICATE": {
+                    "TITLE": "Duplicate invoice",
+                    "MODAL_CONTENT": "Are you sure you want to duplicate this invoice? This action will take you to the new duplicated invoice."
+                }
+            },
+            "FOOTER": {
+                "POWERED_BY_LABEL": "Powered by Clockify",
+                "CAKE_LABEL": "CAKE.com"
+            },
+            "BODY": {
+                "SUBJECT_PLACEHOLDER": "Enter text",
+                "SUBJECT_LABEL": "Invoice subject",
+                "ADD_INVOICE_ITEM": "Add new item",
+                "ADD_SUBJECT": "Add invoice subject",
+                "NOTES_LABEL": "Invoice notes",
+                "NOTES_PLACEHOLDER": "Enter text"
+            },
+            "BACK_LABEL": "Back to invoices",
+            "COMPANY": {
+                "NO_LOGO": "No logo available",
+                "NO_ADDRESS": "No address available",
+                "UPLOAD_LOGO": "Upload logo in workspace settings"
+            }
+        },
+        "DEFAULTS": {
+            "DAYS_AFTER_LABEL": "Days after invoice issue"
         }
     },
     "LAYOUT": {
@@ -639,6 +744,9 @@
             },
             "RECURRING_INVOICE": {
                 "TITLE": "Recurring invoice generated"
+            },
+            "INVOICE_REMINDERS": {
+                "TITLE": "Overdue invoice"
             }
         },
         "REGISTER_LAYOUT": {
@@ -677,7 +785,8 @@
                 "PTO_LABEL": "Time off",
                 "LOGINAS": {
                     "OWNER_PERMISSION": "This action is available only for the owner of this Clockify account."
-                }
+                },
+                "SUBSCRIPTION_BACK_LABEL": "Back to Subscription"
             },
             "SWITCH_WORKSPACE_TOOLTIP": "You can switch between your workspaces here!",
             "TRIAL_LEFT": "left in trial.",
@@ -772,7 +881,7 @@
         },
         "EDIT_PROJECT_NOTE": {
             "CHARACTER_LIMIT_EXCEEDED_WARNING": "You're over the limit by { exceededBy } characters (max { limit })",
-            "ADD_MEDIA_TOOLTIP": "Learn how to add links, images, and formatting."
+            "ADD_MEDIA_TOOLTIP": "Learn how to format text and add links."
         },
         "EDIT_PROJECT_SETTINGS": {
             "PROJECT_GROUPING_LABEL_EXPLANATION": "Used for grouping similar projects together.",
@@ -1150,7 +1259,8 @@
             "WORKSPACE_ACCESS_DENIED": "You don’t have permission to access this workspace.",
             "CONTINUE_WITH_OAUTH2_BTN": "Continue with OAuth 2.0",
             "CONTINUE_WITH_APPLE_LABEL": "Continue with Apple",
-            "CONTINUE_WITH_SAML2_BTN": "Continue with SAML 2.0"
+            "CONTINUE_WITH_SAML2_BTN": "Continue with SAML 2.0",
+            "CONTINUE_WITH_MICROSOFT_LABEL": "Continue with Microsoft"
         },
         "ENTER_VERIFICATION_CODE": {
             "CHECK_EMAIL_TITLE": "Check your email for a code",
@@ -1209,6 +1319,15 @@
             "REGION": "It looks like you don't have an account on this region.",
             "SIGN_UP_TO_CLOCKIFY": "Sign up to Clockify",
             "SUBDOMAIN": "It looks like you don't have an account on this subdomain."
+        },
+        "SUBDOMAIN": {
+            "CONFIRM_IDENTITY_MSG": "Confirm your identity and join the workspace."
+        },
+        "CREATE_ACCOUNT_USER_NAME_ERROR": "Name must contain 1-50 characters. Special characters not supported.",
+        "SPECIAL_CHARS_ERROR_MESSAGE": "The name must contain 1-50 characters. Links or special formatting is not allowed.",
+        "WORKSPACES_LOCKED_INFO_BANNER": {
+            "SINGLE_WORKSPACE_LOCKED_MSG": "{ workspaceName } workspace is temporary locked due to data transfer. You'll be able to access it no later than in 12h. Thank you for your patience.",
+            "MULTIPLE_WORKSPACES_LOCKED_MSG": "{ workspacesNames } workspaces are temporary locked due to data transfer. You'll be able to access it no later than in 12h. Thank you for your patience."
         }
     },
     "REPORTS": {
@@ -1381,7 +1500,21 @@
             "ASSIGNMENT_LABEL": "Assignments",
             "UPGRADE_TO_SCEDULE_REPORT_PART_2_WITH_INTERPOLATION": "to schedule reports.",
             "SCHEDULED_LABEL_WITH_INTERPOLATION": "Scheduled:",
-            "REPORT_NAME_MIN_INFO": "Report name must have at least { value } characters."
+            "REPORT_NAME_MIN_INFO": "Report name must have at least { value } characters.",
+            "DATE_RANGE": {
+                "THIS_WEEK": "this week",
+                "ALL_TIME_LABEL": "all time",
+                "LAST_WEEK": "last week",
+                "PAST_2_WEEKS_LABEL": "past two weeks",
+                "CURRENT_PERIOD": "current period",
+                "LAST_PERIOD": "last period",
+                "TODAY_LABEL": "today",
+                "YESTERDAY_LABEL": "yesterday",
+                "THIS_MONTH_LABEL": "this month",
+                "LAST_MONTH_LABEL": "last month",
+                "THIS_YEAR_LABEL": "this year",
+                "LAST_YEAR_LABEL": "last year"
+            }
         },
         "SUMMARY": {
             "SORT_BY_TITLE_ASC_LABEL": "Title (up)",
@@ -1559,7 +1692,14 @@
         "ATTENDANCE": {
             "OVERTIME_COLUMN_INFO_ICON_TOOLTIP": "How much time a user worked over their capacity (breaks are excluded).",
             "START_COLUMN_LABEL": "Start",
-            "CAPACITY_NOT_REACHED": "User has tracked { hours } less than the capacity"
+            "CAPACITY_NOT_REACHED": "User has tracked { hours } less than the capacity",
+            "UNDERTIME_COLUMN_INFO_ICON_TOOLTIP": "How much time a user worked under their capacity (breaks are excluded).",
+            "BALANCE_COLUMN_INFO_ICON_TOOLTIP": "The total difference between hours worked and capacity (breaks excluded). This number will be negative if the user has undertime."
+        },
+        "LOADER": {
+            "TITLE": "Generating Report",
+            "SUBTITLE": "Wait for the report to load, or adjust the filters and date range to run a different report.",
+            "SUBTITLE_NEW_LINE": "Wait for the report to load, or adjust the filters <br> and date range to run a different report."
         }
     },
     "SHARED_MODULES": {
@@ -1865,7 +2005,7 @@
                 "DESCRIPTION": "Define more than one currency and assign each client their own. Later, see amounts and costs in reports broken down by currency."
             },
             "DATA_REGIONS": {
-                "DESCRIPTION": "Host your data in the EU (Germany), UK, USA or Australia to ensure legal compliance.",
+                "DESCRIPTION": "Host your data in the EU (Germany), UK, USA or Australia (excluding data used for CAKE.com account).",
                 "TITLE": "Data regions"
             },
             "FAVORITE_TIME_ENTRIES": {
@@ -1883,7 +2023,9 @@
             },
             "KIOSK": {
                 "DESCRIPTION": "Let employees clock in and out from a single phone or tablet. Track work hours, attendance, and breaks. Export timesheets for payroll and control labor costs.",
-                "TITLE": "Kiosk"
+                "TITLE": "Kiosk",
+                "QR_CODE_DESCRIPTION": "Require employees to scan QR code to clock in via kiosk.  { doubleBreak }  Each employee gets a personal QR code, along with a personal 6-digit fallback PIN, so others can’t clock for them.",
+                "QR_CODE_TITLE": "QR code (kiosk)"
             },
             "SCHEDULING_FORECASTING": {
                 "TITLE": "Scheduling & Forecasting"
@@ -1891,6 +2033,11 @@
             "RECURRING_INVOICES": {
                 "TITLE": "Recurring Invoices",
                 "DESCRIPTION": "Set a recurring schedule that matches your workflow—weekly, monthly, or fully custom. Invoices will be generated automatically, and you’ll get a notification when they’re ready to review and send."
+            },
+            "KIOSK_PIN_AUTH": {
+                "TITLE": "PIN (kiosk)",
+                "DESCRIPTION": "Require employees to enter PIN to clock in via kiosk.<br><br>Each employee gets a personal PIN so others can't clock for them. 6-digit PIN is unique, so users don't have to search for themselves on the list, shortening the clock-in process and keeping privacy of your employees.",
+                "TAG_PARAMETERS_DESCRIPTION": "Require employees to enter PIN to clock in via kiosk. { doubleBreak } Each employee gets a personal PIN so others can't clock for them. 6-digit PIN is unique, so users don't have to search for themselves on the list, shortening the clock-in process and keeping privacy of your employees."
             }
         },
         "PROJECT_PICKER": {
@@ -1952,7 +2099,8 @@
             "UPGRADE_EXPLANATION_SINGLE_VARIABLE_TAX": "You will be immediately charged a prorated price with { taxDisplayName } for plan upgrade for the rest of the billing cycle. When a new billing cycle comes, it will be charged according to its full price.",
             "CUSTOMER_INFO_REQUIRED_NOTICE": "You will have to fill the Customer and Invoice information before the downgrade.",
             "UPDATE_INFO_BUTTON": "Update info",
-            "SAVE_AND_DOWNGRADE_BTN": "Save & Downgrade"
+            "SAVE_AND_DOWNGRADE_BTN": "Save & Downgrade",
+            "MINIMUM_PLAN_ADDONS": "Add-on(s) with minimum plan higher than { plan } will also be uninstalled:"
         },
         "TIME_ENTRY_BULK_EDIT": {
             "TITLE_PARAMS": "Bulk edit { count } { count, plural, =0{} one{entry} other{entries} }",
@@ -2133,7 +2281,10 @@
             "TAX_EXEMPT": "Are you tax exempt? { learnMoreLink }",
             "COMMERCIAL_ONLY": "For Business and commercial entities only.",
             "VALID_ADDRESS_NOTICE": "Please provide a valid address to ensure accurate tax calculations and proper billing.",
-            "VALID_ADDRESS_NOTICE_LEGACY": "Please provide valid address to ensure proper billing."
+            "VALID_ADDRESS_NOTICE_LEGACY": "Please provide valid address to ensure proper billing.",
+            "HAWAII_TAX_NOTICE": "Hawaii General Excise Tax (GET) applies to all taxable goods and services as required by state law.",
+            "INVALID_INFO_TITLE": "Invalid Information",
+            "INVALID_FORM_NOTICE": "Please correct the errors and try again."
         },
         "STRIPE_INVOICE": {
             "MISSING_TAX_ID_ERROR_MESSAGE": "Missing Tax ID information",
@@ -2176,7 +2327,8 @@
             "NO_MATCHING_GROUP_LABEL": "No matching group",
             "CREATE_GROUP": "create { search } group.",
             "ADD_OR_FIND_GROUPS_PLACEHOLDER": "Add/Find groups...",
-            "ADD_OR_SEARCH_GROUPS_PLACEHOLDER": "Add/Search groups"
+            "ADD_OR_SEARCH_GROUPS_PLACEHOLDER": "Add/Search groups",
+            "STATUS_LABEL": "status"
         },
         "SHARED_BY": "Shared by:",
         "ENTITY_TEMPLATES_LABEL": "templates",
@@ -2260,7 +2412,8 @@
             "CHANGE_PLAN": "Change plan",
             "SWITCH_TO_ANNUAL_LABEL": "Save 20% by switching to annual",
             "CANCELED_WARNING_ENDS": "Subscription canceled. Ends on { endDate }",
-            "ESTIMATED_PRORATED_PRICE_CHANGE_LABEL": "Estimated prorated price for this change."
+            "ESTIMATED_PRORATED_PRICE_CHANGE_LABEL": "Estimated prorated price for this change.",
+            "SUBSCRIPTION_CANCELED": "Your subscription has been canceled.<br>A confirmation email has been sent to you."
         },
         "INVOICES": {
             "PAST_BILLING_HEADER": "Past billing statements",
@@ -2310,7 +2463,8 @@
             "PRICE_CHANGE_WARNING_TWO_VARIABLE_TAXES": "You will be immediately charged a prorated price with { taxDisplayName1 } and { taxDisplayName2 } for additional seats for the rest of the billing cycle. When a new billing cycle comes, they'll be charged according to their full price. There are no refunds.",
             "BUY_LIMITED_SEATS_TITLE": "Buy more limited seats",
             "REMOVE_SEATS_LABEL": "Remove seats",
-            "OUT_OF_BOUNDS_WARNING": "Number provided must be between 1 and 5000"
+            "OUT_OF_BOUNDS_WARNING": "Number provided must be between 1 and 5000",
+            "MIN_MAX_ERROR": "Number provided must be between { min } and { max }"
         },
         "PAYMENT_LABEL": "Payment",
         "PLANS_LABEL": "Plans",
@@ -2382,7 +2536,8 @@
                     "RECAPTCHA": "You first need to click on the I'm not a robot checkbox",
                     "EMAIL_ALREADY_EXISTS": "You have already entered this email address."
                 },
-                "INVITE_EMAIL": "Send an invite email"
+                "INVITE_EMAIL": "Send an invite email",
+                "RESEND_INVITE_EMAIL": "Resend an invite email"
             },
             "INVITE_LINK": {
                 "COPY": "Copy invite link"
@@ -2468,13 +2623,19 @@
                 "TITLE_SINGLE": "Bulk edit 1 user",
                 "CLEAR_SELECTION": "Clear selection",
                 "ALL_SELECTED": "All { numberOfUsers } users are selected",
-                "SELECT_DAY": "Select day"
+                "SELECT_DAY": "Select day",
+                "TOO_MANY_UPDATES": "Can't update assigned team managers, too many users selected."
             },
             "SETTINGS_TOOLTIP": "Full members export settings",
             "SETTINGS_TOOLTIP_NOT_FULL": "Members export settings",
             "SEARCH_MEMBER": "Search member",
             "ASSIGN_ADMIN": "This grants the user administrative privileges, including access to billing details and managing subscription.",
-            "ASSIGN_ADMIN_TITLE": "Change user role to admin"
+            "ASSIGN_ADMIN_TITLE": "Change user role to admin",
+            "REVOKE": {
+                "INVITE_EMAIL": "Revoke invitation",
+                "INVITE_EMAIL_BUTTON": "Revoke",
+                "INVITE_EMAIL_DESC": "Once the invite is revoked, the user with email { email } will no longer have access to the workspace and will require a new invite to join."
+            }
         },
         "REMINDERS": {
             "DATE_RANGE": {
@@ -2565,7 +2726,8 @@
                 "TITLE_FULL": "Not enough full seats"
             },
             "NO_PAYMENT_METHOD": "To add seats, add payment method or { contactSupportLink }.",
-            "OPEN_INVOICE_WARNING": "Can’t buy more seats while you have unpaid invoice."
+            "OPEN_INVOICE_WARNING": "Can’t buy more seats while you have unpaid invoice.",
+            "CHECK_UNPAID_INVOICES": "Check unpaid invoices"
         },
         "FEATURE": {
             "STANDARD": "STANDARD feature",
@@ -2594,7 +2756,11 @@
             "LIMITED_MEMBERS": "Clockify_Limited_Members",
             "TEAM_GROUPS": "Clockify_Team_Groups"
         },
-        "SEARCH_MEMBERS": "Search members"
+        "SEARCH_MEMBERS": "Search members",
+        "SCIM": {
+            "SCIM_ENABLED_MANAGE_USERS_IN_IDP": "SCIM is enabled. Manage users in your IdP.",
+            "SCIM_ENABLED_MANAGE_GROUPS_IN_IDP": "SCIM is enabled. Manage groups in your IdP."
+        }
     },
     "TIMESHEET2": {
         "FIX": "Fix",
@@ -3034,6 +3200,48 @@
             "DISABLED": {
                 "SUCESS": "2FA disabled"
             }
+        },
+        "PUMBLE_NOTIFICATIONS": {
+            "SUBTITLE": "Receive Clockify notifications in Pumble (by CAKE.com).",
+            "SELECT_PUMBLE_WORKSPACE_LABEL": "Pumble workspace",
+            "TAB_TITLE": "Pumble notifications",
+            "TITLE": "Manage notifications",
+            "SELECT_PUMBLE_WORKSPACE_PLACEHOLDER": "Select Pumble workspace",
+            "APPROVAL": {
+                "TITLE": "Approval",
+                "DESCRIPTION": "Receive a message when a timesheet is submitted, rejected, withdrawn, or approved."
+            },
+            "SELECT_PUMBLE_WORKSPACE_TOOLTIP": "The Pumble workspace where you will receive notifications from this Clockify workspace.",
+            "REMINDERS": {
+                "DESCRIPTION": "Receive a message when you or your teammates miss or go over time tracking targets or forget to submit / approve timesheets & expenses.",
+                "TITLE": "Reminders",
+                "NOTIFICATIONS": {
+                    "SUBMIT_TIMESHEET": "Reminder to submit my timesheet",
+                    "MISS_OR_EXCEED_TIME_TRACKING_TARGET": "When I miss or exceed my time tracking target",
+                    "TEAM_MEMBERS_MISS_OR_EXCEED_TIME_TRACKING_TARGET": "When my team members miss or exceed their time tracking target",
+                    "APPROVE_TIMESHEET": "Reminder to approve timesheets"
+                }
+            },
+            "TIME_OFF": {
+                "TITLE": "Time off",
+                "DESCRIPTION": "Receive a message when balance is updated, or a time off request is submitted, approved, or rejected.",
+                "NOTIFICATIONS": {
+                    "MY_REQUEST_HANDLED": "When my time off request is approved, rejected or withdrawn",
+                    "BALANCE_UPDATED": "When my balance is updated",
+                    "REQUEST_SUBMITTED": "When a time off request is submitted",
+                    "OTHERS_HANDLE_MEMBERS_REQUEST": "When others approve, reject, or withdraw my team members' time off request",
+                    "I_HANDLE_MEMBERS_REQUEST": "When I approve, reject, or withdrawn my team members' time off requests"
+                }
+            },
+            "CHANGED_SUCCESSFULLY": "Pumble notifications updated successfully!",
+            "APPROVALS": {
+                "NOTIFICATIONS": {
+                    "MY_TIMESHEET_HANDLED": "When my timesheet is approved, rejected, or withdrawn",
+                    "MY_TEAM_MEMBERS_TIMESHEET_HANDLED": "When my team member’s timesheet is approved, rejected, or withdrawn",
+                    "TIMESHEET_SUBMITTED": "When a timesheet is submitted"
+                },
+                "TITLE": "Approvals"
+            }
         }
     },
     "WEBHOOKS": {
@@ -3169,7 +3377,8 @@
             }
         },
         "WEBHOOKS_CREATED": "Webhooks created",
-        "RETRYING": "Retrying"
+        "RETRYING": "Retrying",
+        "WEBHOOK_DISABLED": "Webhook disabled after too many failed attempts."
     },
     "WORKSPACE": {
         "ADD_NEW_LABEL": "Add new { label }",
@@ -3213,6 +3422,10 @@
                 },
                 "EMAIL": {
                     "PLACEHOLDER": "Enter email"
+                },
+                "CC_RECIPIENT": {
+                    "TOOLTIP": "Additional recipients can be used when sending invoices",
+                    "LABEL": "Cc recipients (3 maximum)"
                 }
             }
         },
@@ -3483,7 +3696,77 @@
                 "EXPENSES_SECTION": "and expenses",
                 "DESCRIPTION_1": "Allow managers to approve timesheets",
                 "DESCRIPTION_2": "submitted by their team or project members.",
-                "DESCRIPTION_2_INFO": "submitted by their team or  { projectLabel }  members."
+                "DESCRIPTION_2_INFO": "submitted by their team or  { projectLabel }  members.",
+                "DESCRIPTION": "Allow managers to approve timesheets submitted by their team or project members."
+            },
+            "APPROVE_SUBMITTED_EXPENSES": {
+                "TITLE": "Who can approve submitted expenses",
+                "DESCRIPTION": "Allow managers to approve expenses submitted by their team or project members."
+            },
+            "FINANCES": {
+                "SECTION_TITLE": "Finances",
+                "SECTION_INFO": "Manage billable and cost rates for projects and team members.",
+                "VIEW_HOURLY_RATES_AND_AMOUNTS_TITLE": "View hourly rates and amounts",
+                "VIEW_HOURLY_RATES_AND_AMOUNTS_INFO": "Allow this role to view hourly rates and financial amounts.",
+                "CHANGE_BILLABLE_STATUS_TITLE": "View and change billable status of time entries and expenses",
+                "CHANGE_BILLABLE_STATUS_INFO": "Allow this role to mark entries as billable or non-billable."
+            },
+            "TIME_AND_EXPENSE_TRACKING": {
+                "SECTION_TITLE": "Time and expense tracking",
+                "SECTION_INFO": "Categorize and manage time and expense tracking.",
+                "CREATE_TAGS_TITLE": "Create tags",
+                "CREATE_TAGS_INFO": "Allow this role to create and manage tags for categorizing entries.",
+                "TIME_AND_EXPENSE_TITLE": "Who’s time and expenses can this role see",
+                "TIME_AND_EXPENSE_INFO": "Set privacy of time entries and expenses.",
+                "TIME_AND_EXPENSE": {
+                    "OPTIONS": {
+                        "ALL_USERS": "All users",
+                        "PUBLIC_PROJECTS_ONLY": "Public projects only",
+                        "THEIR_OWN_ONLY": "Their own only"
+                    }
+                },
+                "ACCESS_TEAM_DASHBOARD_TITLE": "Access team dashboard",
+                "EDIT_TIME_AND_EXPENSE_INFO": "Allow this role to add or adjust entries for other team members.",
+                "EDIT_TIME_AND_EXPENSE_TITLE": "Edit time and expenses for others",
+                "ACCESS_TEAM_DASHBOARD_INFO": "Allow this role to access dashboard information and view the dashboard page.",
+                "APPROVE_TIMESHEETS_TITLE": "Approve timesheets",
+                "APPROVE_TIMESHEETS_INFO": "Allow this role to review and approve team timesheets.",
+                "APPROVE_EXPENSES_TITLE": "Approve expenses",
+                "APPROVE_EXPENSES_INFO": "Allow this role to review and approve team expenses."
+            },
+            "PROJECTS_AND_REPORTING": {
+                "SECTION_TITLE": "Projects and reporting",
+                "SECTION_INFO": "Control if this role can create clients, projects, tasks and who can access reports and project information.",
+                "CREATE_PROJECTS_AND_CLIENTS_TITLE": "Create projects and clients",
+                "CREATE_PROJECTS_AND_CLIENTS_INFO": "Allow this role to add and manage new projects and clients.",
+                "CREATE_TASKS_ON_PROJECTS_TITLE": "Create tasks on their projects",
+                "CREATE_TASKS_ON_PROJECTS_INFO": "Allow this role to create tasks within projects.",
+                "ACCESS_REPORTS_TITLE": "Access reports",
+                "ACCESS_REPORTS_INFO": "Allow this role to access reports and view the reports page.",
+                "ACCESS_PROJECTS_INFORMATION_TITLE": "Access projects information",
+                "ACCESS_PROJECTS_INFORMATION_INFO": "Allow this role to access project information and view the projects page.",
+                "ACCESS_PROJECTS_INFORMATION": {
+                    "VIEW_PROJECT_STATUS_TITLE": "View project status",
+                    "VIEW_PROJECT_STATUS_INFO": "Allow this role to view progress and remaining estimates on projects."
+                }
+            },
+            "TEAM_AVAILABILITY": {
+                "SECTION_TITLE": "Team availability",
+                "SECTION_INFO": "Define what this role can see in terms of team information visibility and coordination.",
+                "ACCESS_TEAM_INFORMATION_TITLE": "Access team information",
+                "ACCESS_TEAM_INFORMATION_INFO": "Allow this role to access team information and view the team page.",
+                "VIEW_TIME_OFF_OUTSIDE_TEAM_TITLE": "View time off outside their team",
+                "VIEW_TIME_OFF_OUTSIDE_TEAM_INFO": "Allow this role to view time off details for people outside their own team.",
+                "VIEW_EVERYONE_ASSIGNMENTS_TITLE": "View everyone’s assignments",
+                "VIEW_EVERYONE_ASSIGNMENTS_INFO": "Allow this role to view scheduling assignments for all team members.",
+                "CREATE_AND_MANAGE_ASSIGNMENTS_TITLE": "Create and manage assignments",
+                "CREATE_AND_MANAGE_ASSIGNMENTS_INFO": "Allow this role to create and edit assignments within their projects."
+            },
+            "KIOSK": {
+                "SECTION_TITLE": "Kiosk",
+                "SECTION_INFO": "Manage who can log in and launch the Kiosk on shared devices.",
+                "LOGIN_AND_LAUNCH_KIOSK_TITLE": "Log in and launch the Kiosk",
+                "LOGIN_AND_LAUNCH_KIOSK_INFO": "Allow this role to access and launch the Kiosk."
             }
         },
         "TIME_ROUNDING_MODAL": {
@@ -3701,6 +3984,20 @@
                     "OWNER": {
                         "ERROR_MESSAGE": "Only workspace owner can manage authentication settings."
                     }
+                },
+                "SCIM": {
+                    "TITLE_SCIM": "SCIM",
+                    "DESC_SCIM": "Enable SCIM to automatically create, edit, and deactivate users and groups in Clockify via your identity provider.",
+                    "BUTTON_ENABLE_SCIM": "Enable SCIM",
+                    "SCIM_CONFIGURATION_LABEL": "SCIM configuration",
+                    "BASE_URL": "Base URL",
+                    "BEARER_TOKEN": "Bearer Token",
+                    "COPY_TOKEN_WARNING": "Make sure to copy the Bearer token and store it in a secure location. You will not be able to view this key again.",
+                    "DISABLE_SCIM": "Disable SCIM Provisioning",
+                    "CONFIRM_MESSAGE": "If you disable SCIM, automatic user and group synchronization from your identity provider will cease. All user management (creating, updating, deactivating) will then need to be performed manually within Clockify or CAKE.",
+                    "ACTIVATED": "SCIM activated",
+                    "DEACTIVATED": "SCIM deactivated",
+                    "BUTTON_AUTOJOIN_TOOLTIP_TEXT": "Disable 'Users can join without invite' to enable SCIM"
                 }
             },
             "IDP_TEMPLATES": "IdP Templates",
@@ -3737,7 +4034,8 @@
             "USER": {
                 "JOIN": {
                     "TOGGLE": "Users can join without an invite",
-                    "INFO_MESSAGE": "When enabled, anyone can join your workspace by signing up with email and password, SSO, or both."
+                    "INFO_MESSAGE": "When enabled, anyone can join your workspace by signing up with email and password, SSO, or both.",
+                    "SCIM_ENABLED_TOOLTIP_TEXT": "SCIM enabled, users can't join without invite."
                 },
                 "LOGIN_SETUP": {
                     "TITLE": "Log-in setup",
@@ -3785,7 +4083,8 @@
                         "DEFAULT": "We’re unable to transfer your data to {region}.",
                         "BUNDLE_SUBSCRIPTION": "We’re unable to transfer your data to {region} due to Bundle subscription.",
                         "CAKE_MIGRATION": "Data transfer not possible at this moment. Please try again in a few minutes.",
-                        "ACCOUNT_ON_DESTINATION": "We’re unable to transfer your data to {region}. Some users in your workspace already have an account in that region."
+                        "ACCOUNT_ON_DESTINATION": "We’re unable to transfer your data to {region}. Some users in your workspace already have an account in that region.",
+                        "FILE_IMPORT_IN_PROGRESS": "Changing your data region is not possible while a data import is running. Please wait for the import to finish and then try again."
                     },
                     "FURTHER_INFO": "for further assistance.",
                     "CONTACT_SUPPORT": "Please { contactUs } for further assistance.",
@@ -4116,11 +4415,38 @@
                 "4_DIGIT_PIN": "4-digit PIN",
                 "TOOLTIP": "It can be set as required for each kiosk individually.",
                 "SET_UP_AUTH": "Set up authentication system",
-                "PIN_CHANGE_WARNING": "Changing the authentication system will generate new PINs for all members and kiosks requiring authentication. This change will initiate automatic download of the new PIN files.",
+                "PIN_CHANGE_WARNING": "Changing the authentication system will generate new PINs for all members and kiosks requiring authentication. This change will initiate automatic download of the new PIN and QR code files.",
                 "6_DIGIT_PIN": "6-digit PIN",
-                "4_DIGIT_PIN_DESC": "Each employee need to search the employee list to enter the pin.",
+                "4_DIGIT_PIN_DESC": "Each employee needs to search the employee list to enter the PIN.",
                 "6_DIGIT_PIN_DESC": "Without name search, shortening clock-in process and keeping privacy of your employees.",
-                "UPGRADE_INFO": "to set up authentication"
+                "UPGRADE_INFO": "to set up authentication",
+                "QR_CODE": "QR code",
+                "QR_CODE_DESC": "Prevents clocking-in on behalf of others. Supporting 6-digit fallback system.",
+                "QR_CODE_UPGRADE_INFO": "to use QR code"
+            },
+            "EXPENSE_APPROVAL": {
+                "TOGGLE": "Enable expenses approval",
+                "AVAILABLE_ON_PRO_PLAN_TOOLTIP": "Available on PRO plan. Upgrade to unlock expense approvals.",
+                "EXPENSES_TRACKING_NOT_ACTIVATED_ALERT_MESSAGE": "Expense tracking not activated.",
+                "ACTIVATE_EXPENSE_TRACKING_ALERT_MESSAGE": "Activate expense tracking in order for expense approval to work.",
+                "ACTIVATE_EXPENSES_ALERT_BUTTON": "Activate expenses"
+            },
+            "DAILY_WORK_CAPACITY": {
+                "TITLE": "Daily work capacity",
+                "INFO_MESSAGE": "Default daily work capacity for all new members (you can override work capacity on member profile).",
+                "SET_WORK_CAPACITY_MODAL": {
+                    "APPLY_NEW_DEFAULT_CAPACITY_LABEL": "Apply new default capacity to:",
+                    "NEW_AND_EXISTING_USERS_OPTION": "New and existing users currently using default",
+                    "NEW_AND_EXISTING_USERS_OPTION_TOOLTIP": "Does not change users with a custom capacity",
+                    "ALL_USERS_OPTION": "All users",
+                    "ALL_USERS_OPTION_TOOLTIP": "Replaces any custom capacity with the new default"
+                }
+            },
+            "OVERTIME_CALCULATION_PERIOD": {
+                "TITLE": "Overtime calculation period",
+                "INFO_MESSAGE": "We calculate total capacity (daily × working days) and overtime for the period and update attendance report grouping and filters to highlight overtime.",
+                "UPGRADE_TO_CALCULATE_WEEKLY_OVERTIME_MSG": "to calculate weekly overtime",
+                "UPGRADE_TO_CALCULATE_MONTHLY_OVERTIME_MSG": "to calculate monthly overtime"
             }
         },
         "SHARED": {
@@ -4297,7 +4623,8 @@
                 "TOTAL": "Total price",
                 "VAT_LABEL": "VAT",
                 "ESTIMATED_SALES_TAX_LABEL": "Est. Sales tax",
-                "SALES_TAX_LABEL": "Sales tax"
+                "SALES_TAX_LABEL": "Sales tax",
+                "ESTIMATED_TAX_LABEL": "Est. Tax"
             },
             "UPGRADE_WORKSPACE": "Upgrade { workspaceName } workspace",
             "UPGRADE_WORKSPACE_LABEL": "Upgrade workspace",
@@ -4872,7 +5199,9 @@
                     "SUCCESS_MESSAGE": "Users have been invited to workspace",
                     "ERROR_MESSAGE": "User is already member of this workspace or email is invalid",
                     "RESEND_SUCCESS_MESSAGE": "Invite email resent",
-                    "MIGRATION_PENDING": "User invitation is scheduled. This might take some time."
+                    "MIGRATION_PENDING": "User invitation is scheduled. This might take some time.",
+                    "REVOKE_SUCCESS_MESSAGE": "User invite has been revoked",
+                    "REVOKE_ERROR_MESSAGE": "Failed to revoke invite. Please try again"
                 },
                 "LEAVE": {
                     "SUCCESS_MESSAGE": "You have left this workspace",
@@ -5635,7 +5964,46 @@
         "ASSIGNMENT_LABEL": "Assignment",
         "INVITED_LABEL": "Invited",
         "SELECT_TEAM_MANAGER_LABEL": "Select team manager",
-        "SWITCH_WORKSPACE_LABEL": "Switch workspace"
+        "SWITCH_WORKSPACE_LABEL": "Switch workspace",
+        "FILTER_LABEL_TOOLTIP": "Your selected filters will appear in the tablesheet  in exact this order.",
+        "VIEW_TIME_OFF_POLICIES": "View time off policies",
+        "WORKSPACE_NOT_ACCESSIBLE": "Workspace removed – no longer accessible.",
+        "SELECT_DATE_LABEL": "Select Date",
+        "INVOICES_LABEL_PRO": "Invoices (PRO)",
+        "CLOSE": "Close",
+        "TO_LABEL": "To",
+        "ADD_LIMITED_MEMBER": "Add limited member",
+        "CREATE_NEW_HOLIDAY": "create new holiday",
+        "ACCRUAL": "Accrual",
+        "UNIT": "Unit",
+        "CONFIRM": "Confirm",
+        "DISABLED": "Disabled",
+        "VIEW_ALL": "View all",
+        "ENABLED": "Enabled",
+        "WEBSITE": "Website",
+        "ENABLE": "Enable",
+        "SET_PREFERENCES": "Set preferences",
+        "NO_DATA_SHOW_LABEL": "No data to show",
+        "NO_DATA_VISUALIZE_LABEL": "No data to visualize",
+        "REJECTED_LABEL": "Rejected",
+        "GO_TO_POLICIES_LABEL": "View policies",
+        "FIELD_REQUIRED_VALIDATION": "This field is required",
+        "SELECT_PLACEHOLDER": "Select",
+        "DISCARD_CHANGES_QUESTION": "Discard unsaved changes?",
+        "DISCARD_CHANGES_PARAGRAPH": "Your changes will not be saved.",
+        "SKIP_FOR_NOW": "Skip for now",
+        "REJECTION_NOTE_LABEL": "Rejection note",
+        "WITHOUT_GROUP_LABEL": "Without group",
+        "SUBMIT_CHANGES": "Submit changes",
+        "LETS_GO_LABEL": "Let's go",
+        "YOU_HAVE_PENDING_INVITATIONS": "You have pending invitations",
+        "SET_LABEL": "Set",
+        "TITLE_LABEL": "Title",
+        "UNDERTIME_LABEL": "Undertime",
+        "ADD_MEMBER_BUTTON": "Add Member",
+        "ADD_PROJECT": "Add project",
+        "CREATE_NEW_PROJECT_BUTTON": "Create new project",
+        "DISCARD_CHANGES": "Discard changes"
     },
     "EXPENSES": {
         "TITLE": "Expenses",
@@ -6047,11 +6415,11 @@
         },
         "ALERTS": {
             "TITLE": "Alerts",
-            "DESCRIPTION": "Receive an email when a project or task reaches a certain percentage of its estimated time or budget."
+            "DESCRIPTION": "Receive an email when a project or task reaches a certain percentage of its budget or estimated time."
         },
         "REMINDERS": {
             "TITLE": "Reminders",
-            "DESCRIPTION": "Receive an email when you or your teammates miss or go over time tracking targets or forget to submit / approve timesheets & expenses.",
+            "DESCRIPTION": "Receive an email when you or your team members miss or exceed time tracking targets or forget to submit / approve timesheets & expenses.",
             "MARKETPLACE_IFNO": "Reminders are sent to the users emails, they won’t reach your inbox."
         },
         "INFO_VERIFY": {
@@ -6076,6 +6444,10 @@
             "UPDATE_TITLE": "Success!",
             "UPDATE_ERROR": "Oops, session expired!",
             "UPDATE_ERROR_DESCRIPTION": "Your session has expired, please log in to manage your email preferences."
+        },
+        "INVOICES": {
+            "DESCRIPTION": "Receive an email when an invoice becomes overdue.",
+            "DESCRIPTION_V2": "Receive an email when a recurring invoice is created or when an invoice becomes overdue."
         }
     },
     "validation": {
@@ -6190,7 +6562,10 @@
             "REMIND_TO_PUBLISH_SUCCESS_MESSAGE": "Reminder sent",
             "REMIND_TO_PUBLISH_BODY_TEXT": "Ready to send email reminders to your managers to publish your draft assignments for { from } - { to }?",
             "PLUS_X_MORE": "+ {value} more",
-            "GENERIC_GET_ERROR_MESSAGE": "Couldn't get data, please try again"
+            "GENERIC_GET_ERROR_MESSAGE": "Couldn't get data, please try again",
+            "ERRORS": {
+                "NOTE_LENGTH_ERROR": "Assignment note cannot be longer than { characterCount } characters."
+            }
         },
         "ADD_MEMBERS_TO_PROJECT": {
             "TITLE": "Add member to { projectLabel }",
@@ -6254,7 +6629,8 @@
             "CREATE_MODAL": {
                 "SUCCESS_MESSAGE": "Milestone successfully created",
                 "FAILED_MESSAGE": "Milestone failed to create"
-            }
+            },
+            "ADD_MILESTONE": "Add<br />milestone"
         },
         "ASSIGNMENT": {
             "WEEKENDS_TOOLTIP": "Weekends and time off are skipped"
@@ -6365,7 +6741,26 @@
             "AUTOMATIC_ACCRUAL_TOOLTIP": "are added to each member’s balance every first day of the",
             "AUTOMATIC_ACCRUAL_EXPIRES_ON_TOOLTIP": "Last date the added balance can be used before it expires.",
             "AUTOMATIC_ACCRUAL_STARTS_FROM_TOOLTIP": "First date the added balance is available to use.",
-            "AUTOMATIC_ACCRUAL_TOOLTIP_INFO": "{timeUnit} are added to each member’s balance every first day of the {accrualPeriod}."
+            "AUTOMATIC_ACCRUAL_TOOLTIP_INFO": "{timeUnit} are added to each member’s balance every first day of the {accrualPeriod}.",
+            "RANGE_SMALLER_THAN_ACCRUED_ERROR": "The selected period can't have less days than the accrued days.",
+            "EXPIRY_DATE_ERROR": "The expiry date can’t be before the start date.",
+            "LIMIT_TO": "Limit to",
+            "ASSIGNEES_LABEL": "Assignees",
+            "CURRENT_YEAR_LABEL": "current year",
+            "EXPIRES_LABEL": "Expires",
+            "ON_LABEL": "on",
+            "CURRENT_MONTH_LABEL": "current month",
+            "FOLLOWING_MONTH_LABEL": "following month",
+            "FOLLOWING_YEAR_LABEL": "following year",
+            "HAS_EXPIRY_DATES": "Has expiry dates",
+            "BALANCE_EXPIRY": "Balance expiry",
+            "NEVER_EXPIRES": "Never expires",
+            "HAS_EXPIRY_DATES_TOOLTIP": "Set start and end dates for when each balance can be used.",
+            "SWITCH_EXPIRY_WARNING": "Switching to “Never expires” will remove expiry dates on all existing balances.",
+            "LIMIT_RESET": {
+                "TOOLTIP": "Automatically clears all accumulated negative time off from employee balances, without affecting the available balance",
+                "TEXT": "Reset negative balance at the end of the {period}"
+            }
         },
         "REQUIRES_APPROVAL_CHECKBOX": "Requires approval",
         "REQUIRES_APPROVAL_CHECKBOX_INFO": "Requests must be manually approved by admin or manager.",
@@ -6374,7 +6769,9 @@
         "EMPTY_COMPONENT": {
             "NO_POLICIES": "No time off policies yet",
             "INFO": "Create your first policy and assign it to people so they can request time off.",
-            "EMPTY_POLICIES": "No time off policies yet."
+            "EMPTY_POLICIES": "No time off policies yet.",
+            "TRACK_HOLIDAYS_TIMEOFF": "Track your team's holidays and time off",
+            "DESCRIPTION": "Easily set up time off policies, approve requests, and track employee availability."
         },
         "CREATE_POLICY_BUTTON": "Create policy",
         "CREATE_HOLIDAY": {
@@ -6398,7 +6795,10 @@
             "BUTTON": "Request time off",
             "NON_WORKING_DAYS_WONT_COUNT": "Non-working days won't count as days off.",
             "NON_WORKING_DAYS_HOLIDAYS_WONT_COUNT": "Non-working days and holidays won't count as days off.",
-            "CREATE_REQUEST_SUCCESS": "Request successfully created."
+            "CREATE_REQUEST_SUCCESS": "Request successfully created.",
+            "UPDATE_REQUEST_SUCCESS": "Request successfully updated.",
+            "BALANCE_DIFF": "Your requested days are updated due to changes in your working days.",
+            "BALANCE_DIFF_HOURS": "Your requested hours are updated due to changes in your working days."
         },
         "HOME": {
             "MANAGE_HOLIDAY_SELECT": "Manage holidays",
@@ -6424,7 +6824,9 @@
         },
         "BALANCE_HISTORY_MODAL": {
             "TITLE": "Balance history",
-            "WITHOUT_NOTE": "(Without note)"
+            "WITHOUT_NOTE": "(Without note)",
+            "ACCRUED_DAYS": "Added accrued days have annulled negative balance.",
+            "ACCRUED_HOURS": "Added accrued hours have annulled negative balance."
         },
         "ADJUST_BALANCE_MODAL": {
             "REMOVE_FROM_BALANCE": "Remove from balance",
@@ -6440,7 +6842,17 @@
             "TOTAL_AVAILABLE_HOURS": "Total available hours",
             "SAVE": "SAVE",
             "BALANCE_DETAILS": "Balance details",
-            "NOTE_ALERT": "Please provide information for adjusting balance."
+            "NOTE_ALERT": "Please provide information for adjusting balance.",
+            "SELECT_ALL": "Select all {number} users",
+            "NO_EXPIRY_DATE": "no expiry date",
+            "NEGATIVE_BALANCE_RESET": "The negative balance will automatically reset to 0 at the end of the { period }.",
+            "AUTOMATICALLY_ACCRUE_BALANCE": "All assignees will automatically accrue { days } days as their new balance on { accrualDate }.",
+            "NEGATIVE_ALLOWED": "Negative allowed",
+            "TOOLTIP_BALANCE_ANNULLED": "Days used from negative balance can be annulled by adding a new balance",
+            "TOOLTIP_BALANCE_ANNULLED_HOURS": "Hours used from negative balance can be annulled by adding a new balance",
+            "AUTOMATICALLY_ACCRUE_BALANCE_HOURS": "All assignees will automatically accrue { hours } hours as their new balance on { accrualDate }.",
+            "YEAR": "year",
+            "MONTH": "month"
         },
         "EDIT_POLICY_BUTTON": "Edit policy",
         "DELETE_POLICY_TITLE": "Delete policy",
@@ -6453,7 +6865,10 @@
             "DELETE_POLICY_FAILED": "Delete policy failed."
         },
         "HOLIDAY": {
-            "DELETE": "Delete holiday",
+            "DELETE": {
+                "MODAL_TITLE": "Delete { holiday } holiday",
+                "MODAL_MESSAGE": "Future time off requests will start counting these days as working."
+            },
             "CREATE_SUCCESS_MESSAGE": "Holiday { holidayName } has been created.",
             "ALREADY_EXISTS_MESSAGE": "Holiday with name { holidayName } already exists.",
             "DELETE_HOLIDAY_FAILED": "Delete holiday failed.",
@@ -6468,7 +6883,12 @@
             "SHOW_REJECTED": "Show rejected",
             "SHOW_ALL_TIME_OFF": "Show all time off",
             "NO_TIME_OFF": "No time off requests",
-            "REJECTED": "rejected"
+            "REJECTED": "Rejected",
+            "NO_REJECTED": "No rejected requests",
+            "NO_APPROVED": "No approved requests",
+            "NO_REJECTED_APPROVED": "No approved or rejected requests",
+            "NO_PENDING_REJECTED": "No pending or rejected requests",
+            "NO_PENDING_APPROVED": "No pending or approved requests"
         },
         "USERS": {
             "FIND": "Find users…"
@@ -6542,7 +6962,57 @@
             "AVAILABLE_FROM_TOOLTIP": "First date the added balance is available to use.",
             "LAST_VALID_DATE_TOOLTIP": "Last date the added balance can be used before it expires.",
             "CREATE_SUCCESS": "Balance added.",
-            "EDIT_SUCCESS": "Balance updated."
+            "EDIT_SUCCESS": "Balance updated.",
+            "ANNUL_NEGATIVE_BALANCE": "Affect negative balance",
+            "ANNUL_NEGATIVE_BALANCE_TOOLTIP": "Days added will affect negative balance and total available",
+            "NEW_AVAILABLE_BALANCE": "New available balance:",
+            "ANNUL_NEGATIVE_BALANCE_TOOLTIP_HOURS": "Hours added will affect negative balance and total available"
+        },
+        "UPDATED_BY_LABEL": "Edited by",
+        "EDIT_TIME_OFF_REQUEST": {
+            "TITLE": "Edit time off request"
+        },
+        "HOLIDAYS": {
+            "EMPTY_TITLE": "No holidays yet",
+            "CREATE_HOLIDAY": "create holiday",
+            "CREATE_FIRST_HOLIDAY": "Create your first holiday and assign it to members."
+        },
+        "CREATE_NEW_POLICY": "create new policy",
+        "NO_POLICIES_YET": "No policies yet",
+        "CREATE_AND_ASSIGN_POLICIES": "Create policy and assign it to members.",
+        "NO_ACTIVE_POLICIES": "No active policies",
+        "ACTION_CANNOT_BE_REVERSED": "This action cannot be reversed.",
+        "ARCHIVE_NAME_POLICY": "Archive {policyName} policy",
+        "NO_LONGER_SUBMIT_NEW_ENTRY": "By archiving this policy, employees will no longer be able to submit new time off requests under it.",
+        "CAN_RESTORE_ANY_TIME": "You can restore this policy at any time.",
+        "DELETE_NAME_POLICY": "Delete {policyName} policy",
+        "ACCURAL_SETUP": "Accrual setup",
+        "ADVANCED_OPTIONS": "Advanced options",
+        "ADD_INITIAL_BALANCE": "Add initial balance",
+        "INITIAL_BALANCE": {
+            "SUBTITLE": "The entered value will be automatically assigned to each employee after creation of this policy"
+        },
+        "BALANCE_SETUP": "Balance setup",
+        "NEGATIVE_BALANCE": {
+            "TOOLTIP": {
+                "YEAR": "Yearly",
+                "MONTH": "Monthly"
+            },
+            "NEGATIVE": "negative",
+            "PROGRESS_TOOLTIP": "Days used from negative balance can be annulled by adding a new balance",
+            "TOOLTIP_TEXT": "{period} Negative balance with {amount} {timeUnit} limit",
+            "PROGRESS_TOOLTIP_HOURS": "Hours used from negative balance can be annulled by adding a new balance"
+        },
+        "LIMIT_RESET": {
+            "YEAR": "year",
+            "MONTH": "month"
+        },
+        "REQUESTS": {
+            "NEGATIVE_BALANCE_TOOLTIP": "Negative balance will be affected"
+        },
+        "BULK_ADJUST_MODAL": {
+            "NEGATIVE_BALANCE_IMPACT": "Days used from negative balance will be affected with this accrual.",
+            "NEGATIVE_BALANCE_IMPACT_HOURS": "Hours used from negative balance will be affected with this accrual."
         }
     },
     "PUMBLE_COUPON": {
@@ -6690,7 +7160,61 @@
         " SWITCH_WORKSPACE": "Switch workspace",
         "CAN_NOT_CREATE_PROJECT_MISSING_PERMISSIONS": "You don't have permissions to create project",
         "ENTRY_IN_PROGRESS_EXISTS": "You have time entry in progress!",
-        "EVERY": "Every"
+        "EVERY": "Every",
+        "INTEGRATIONS": {
+            "ENABLE_TOOLS_INFORMATION": "Enable the tools you want to use with Clockify extension. You can enable everything by clicking the \"Enable all\" button.",
+            "CUSTOM_DOMAINS_INFO": "If you're using a tool hosted on a custom domain, you can activate it here. Just input the domain name and choose the integration from the dropdown menu.",
+            "INTEGRATION_NAME": "Integration name",
+            "ENTER_CUSTOM_DOMAIN": "Enter custom domain",
+            "SEARCH_PLACEHOLDER": "Search by name",
+            "FIND_CUSTOM_DOMAINS": "Find custom domains",
+            "DELETE_CUSTOM_INTEGRATION": "Delete custom integration",
+            "DELETE_CUSTOM_INTEGRATION_INFO": "Deleting this integration will permanently erase all associated data and configurations. You will need to set it up again from scratch if you decide to use it in the future.",
+            "DELETE_CUSTOM_INTEGRATION_CONFIRM": "Type DELETE to confirm"
+        },
+        "SETTINGS": {
+            "GENERAL_SETTINGS": "General settings",
+            "RESET_ALL": "Reset all settings",
+            "RESET_ALL_MODAL_INFO": "Resetting all settings will restore your device to its original configuration without deleting personal data. Ensure you’re ready, as this action cannot be undone.",
+            "INFO": "Enable the preferences you want to use with Clockify extension.",
+            "RESET_ALL_CHANGES": "Reset all changes",
+            "RESET_ALL_INFO": "Resetting all settings will restore your device to its original configuration without deleting personal data. Ensure you’re ready, as this action cannot be undone."
+        },
+        "OPTIONS": {
+            "LINKS": {
+                "INTEGRATIONS": "Integrations",
+                "SETTINGS": "Settings",
+                "POMODORO_TIMER": "Pomodoro timer"
+            }
+        },
+        "TIMER_SETTINGS": "Timer settings",
+        "DETECT_IDLE_TIME_LABEL": "Detect idle time",
+        "OTHER_SETTINGS": "Other settings",
+        "PROJECT_SETTINGS": "Project settings",
+        "THEME": "Theme",
+        "POMODORO": {
+            "INFO": "Adjust Pomodoro settings to suit your productivity style and maximize efficiency.",
+            "TIME_INTERVAL": "Time interval",
+            "TOOLTIP": "To customize the Pomodoro timer settings, you first need to enable the \"Pomodoro Timer\" option. Once enabled, you’ll be able to set the time intervals, break durations, and other preferences.",
+            "START_LONG_BREAK": "Start long break",
+            "CLICK_HERE_TO_START_LONG_BREAK": "Click here to start long break",
+            "CLICK_HERE_TO_START_NEW_ENTRY": "Click here to start new entry",
+            "THE_BREAK_IS_OVER": "The break is over",
+            "TIME_FOR_SHORT_BREAK": "It's time for a short break!",
+            "TIME_FOR_LONG_BREAK": "It's time for a long break!",
+            "TIME_FOR_POMODORO": "It's pomodoro time.",
+            "BREAK_LABEL": "Pomodoro break"
+        },
+        "MIN_LABEL": "Min",
+        "APP_VERSION": "Version",
+        "SHORT_BREAKS": "short breaks",
+        "CONTINUE_LAST_ENTRY": "Continue last entry",
+        "POMODORO_CLICK_HERE_TO_START_SHORT_BREAK": "Click here to start short break",
+        "RESET_ALL_SETTINGS_MESSAGE": "Are you sure you want to reset all settings?",
+        "FEEDBACK_LIMIT_REACHED_ERROR_MESSAGE": "You've reached the limit of 5 feedback submissions for today. Please try again tomorrow.",
+        "POMODORO_VALIDATION_MIN_LENGTH": "Length must be at least { value }",
+        "POMODORO_VALIDATION_LONG_BREAK": "Long break must be longer than short break",
+        "CAN_NOT_CREATE_TAGS_MISSING_PERMISSIONS": "You don't have permissions to create tags"
     },
     "ENABLE_ALL_INTEGRATIONS": "You can enable everything by clicking the 'Enable all' button.",
     "REFRESH": "Refresh",
@@ -6777,7 +7301,16 @@
         "EDIT": {
             "MEMBER": {
                 "PIN": "Edit kiosk PIN",
-                "EDIT_PIN": "Edit PIN"
+                "EDIT_PIN": "Edit PIN",
+                "EDIT_QR_CODE": "Edit QR code",
+                "QR_CODE": "Edit kiosk QR code",
+                "SEND_QR_CODE": {
+                    "DISABLED": "Available once user joins",
+                    "ENABLED": "Send QR code"
+                }
+            },
+            "QR_CODE": {
+                "GENERATE": "Generate new"
             }
         },
         "UPGRADE_MESSAGE": {
@@ -6785,8 +7318,8 @@
         },
         "POPUP": {
             "REQUIRE_PIN": {
-                "INFO": "Overrides anyone's PIN so you can clock in for them.",
-                "UPGRADE_INFO": "to require PIN"
+                "INFO": "Overrides anyone's PIN so you can clock in for them. Owner/Admin should use their own PIN.",
+                "UPGRADE_INFO": "to require authentication"
             },
             "DURATION": {
                 "INFO": "to edit login duration"
@@ -6795,6 +7328,15 @@
                 "A_THIRD_PART_2": "authentication system first.",
                 "A_FIRST_PART": "You need to ",
                 "SET_UP": "set up "
+            },
+            "AUTH_REQUIRED_PIN": {
+                "INFO": "Require PIN code authentication for each user."
+            },
+            "AUTH_REQUIRED_QR": {
+                "INFO": "Require QR code authentication for each user."
+            },
+            "REQUIRE_QR": {
+                "INFO": "Overrides anyone’s QR code so you can clock in for them. Owner/Admin should use their own PIN."
             }
         },
         "MEMBER": {
@@ -6819,7 +7361,29 @@
         "SELECT_BREAK_TASK_LABEL": "Select break {taskLabel}",
         "NAME_CONTAINS_SPECIAL_CHAR": "Name can't contain { symbols } character.",
         "NAME_CONTAINS_SPECIAL_CHARS": "Name can't contain { symbols } characters.",
-        "SESSIONS_WILL_CLOSE": "Turning this option will cause all kiosk sessions to close. Are you sure you want to proceed?"
+        "SESSIONS_WILL_CLOSE": "Turning this option will cause all kiosk sessions to close. Are you sure you want to proceed?",
+        "SEND": {
+            "MEMBER": {
+                "QR_CODE": {
+                    "BULK_SEND_LABEL": "Send QR codes",
+                    "TITLE_BULK": "Bulk send kiosk QR codes",
+                    "LABEL": "The QR code will be sent to the this team member’s account email",
+                    "LABEL_BULK": "Each selected team member will receive their own QR code at the account emails listed below:",
+                    "SINGLE_SEND_LABEL": "Send kiosk QR code"
+                }
+            }
+        },
+        "QR": {
+            "UPDATED": "QR code updated",
+            "UPDATE": {
+                "ERROR": "Unable to update QR code"
+            },
+            "SEND": {
+                "FAILED": "Unable to send QR code"
+            },
+            "SENT": "QR code sent",
+            "SENT_BULK": "QR codes sent"
+        }
     },
     "UPGRADE": {
         "SUCCESS": {
@@ -7044,14 +7608,35 @@
             "MESSAGE": "For { period } , all pending entries and expenses  will be withdrawn and won't be available for approval  unless they are resubmitted.",
             "MESSAGE1": "For { period } , all pending entries and expenses will be withdrawn and won't be available for approval  unless they are resubmitted.",
             "INFO_MESSAGE": "For { period } , all pending entries and expenses will be withdrawn and won't be available for approval unless they are resubmitted.",
-            "INFO_MESSAGE_BOLD": "For <strong>{ period }</strong> , all pending entries and expenses will be withdrawn and won't be available for approval unless they are resubmitted."
+            "INFO_MESSAGE_BOLD": "For <strong>{ period }</strong> , all pending entries and expenses will be withdrawn and won't be available for approval unless they are resubmitted.",
+            "INFO_MESSAGE_TIMESHEET": "For { period }, all pending entries will be withdrawn and won't be available for approval unless they are resubmitted.",
+            "INFO_MESSAGE_EXPENSE": "For { period }, all pending expenses will be withdrawn and won't be available for approval unless they are resubmitted."
         },
         "APPROVAL_MODAL": {
             "MESSAGE": "For { from } - { to } , all pending entries and expenses  will be withdrawn and won't be available for approval  unless they are resubmitted.",
             "MESSAGE1": "For { from } - { to } , all pending entries and expenses will be withdrawn and won't be available for approval  unless they are resubmitted.",
             "INFO_MESSAGE": "For { from } - { to } , all pending entries and expenses will be withdrawn and won't be available for approval unless they are resubmitted.",
             "INFO_MESSAGE_BOLD": "For <strong>{ from } - { to } </strong>, all pending entries and expenses will be withdrawn and won't be available for approval unless they are resubmitted.",
-            "EXPENSES_OFF_INFO_MESSAGE": "For { from } - { to } , all pending entries  will be withdrawn and won't be available for approval unless they are resubmitted."
+            "EXPENSES_OFF_INFO_MESSAGE": "For { from } - { to } , all pending entries  will be withdrawn and won't be available for approval unless they are resubmitted.",
+            "SUBMIT_APPROVAL_TRACKER_MSG_LONG": "You're about to submit time entries that were previously rejected. Please make sure you adjusted the changes accordingly before submitting for approval.",
+            "SUBMIT_APPROVAL_EXPENSES_MSG_LONG": "You're about to submit expenses that were previously rejected. Please make sure you adjusted the changes accordingly before submitting for approval.",
+            "INFO_MESSAGE_TIMESHEET": "For { from } - { to }, all pending entries will be withdrawn and won't be available for approval unless they are resubmitted.",
+            "INFO_MESSAGE_EXPENSE": "For { from } - { to }, all pending expenses will be withdrawn and won't be available for approval unless they are resubmitted."
+        },
+        "SUBMIT_CHANGES_MODAL": {
+            "TITLE": "Submit changes",
+            "MESSAGE": "This action will apply your changes to the pending request. Click submit to confirm and proceed with the update."
+        },
+        "UNSUBMITTED_CHANGES_BANNER_MSG": "Unsubmitted changes. Submit them to update approval request.",
+        "ALERT_BANNER": {
+            "MESSAGE_USER": "{ openingBoldTag }Timesheets{ closingBoldTag } and { openingBoldTag }expenses{ closingBoldTag } must now be submitted separately. Make sure to submit both.",
+            "MESSAGE_APPROVER": "{ openingBoldTag }Timesheets{ closingBoldTag } and { openingBoldTag }expenses{ closingBoldTag } must now be reviewed separately. Make sure to review both.",
+            "MESSAGE": "{ openingBoldTag }Timesheets and expenses got separated.{ closingBoldTag } Make sure to submit them both."
+        },
+        "ENABLE_APPROVALS_IN_WORKSPACE_SETTINGS_MSG": "Enable approvals in { workspaceSettingsLink }.",
+        "UNSUBMITTED_TAB": {
+            "SHOW_USERS_WITHOUT_TIME_BTN": "Show users without time",
+            "SHOW_USERS_WITHOUT_EXPENSES_BTN": "Show users without expenses"
         }
     },
     "AUDITLOG": {
@@ -7068,7 +7653,8 @@
             "KIOSK_ENABLED": "To enable required { cfname }, kiosk must be off",
             "ONLY_ADMIN_ALLOWED_AND_NO_DEFAULT_VALUE_SAVE_BTN": "This field is required. Either set default value or make it editable by everyone.",
             "EMAIL_CANNOT_BE_CHANGED_TOOLTIP": "Email can't be changed until you set a password",
-            "TOOLTIP_MAXIMUM_NUMBER_OF_OPTIONS": "Can't have more then 500 options"
+            "TOOLTIP_MAXIMUM_NUMBER_OF_OPTIONS": "Can't have more then 500 options",
+            "TOOLTIP_MAXIMUM_NUMBER_OF_SELECT_OPTIONS": "Can't have more than { maximumSelectOptions } options"
         },
         "CURRENCY": {
             "DELETE": {
@@ -7208,7 +7794,8 @@
         },
         "UPDATE_PAYMENT_INFORMATION": "update your payment information",
         "SHOW_ADDON_BUTTON": "Show Add-on",
-        "DOES_NOT_EXIST_LABEL": "Addon does not exist on Marketplace"
+        "DOES_NOT_EXIST_LABEL": "Addon does not exist on Marketplace",
+        "ACTIONS_LABEL": "Add-on actions"
     },
     "MESSAGES": {
         "ERROR_MISSING_FIELDS_IS_REQUIRED": "{ fields } is required."
@@ -7241,6 +7828,11 @@
             "email": {
                 "password": "Invalid email or password"
             }
+        },
+        "payment": {
+            "subscription": {
+                "transfer": "Exception occurred while transferring subscription."
+            }
         }
     },
     "SUSPENDED": {
@@ -7264,7 +7856,8 @@
             "ADDON_UNINSTALLED_SUCCESS_LABEL": "Addon successfully uninstalled",
             "ADDON_INSTALLED_FAIL_LABEL": "Failed to install addon",
             "ADDON_REMOVED_FAIL_LABEL": "Failed to remove addon",
-            "ADDON_REMOVED_SUCCESS_LABEL": "Addon successfully removed"
+            "ADDON_REMOVED_SUCCESS_LABEL": "Addon successfully removed",
+            "ACTION_SUCCESSFUL": "Action successful"
         },
         "NOT_AVAILABLE_ON_TEST_ACCOUNTS": "Not available on test accounts",
         "UNPAID_INVOICE_WARNING": "You have an unpaid invoice on the Marketplace. Please pay the invoice or { contactUsLink }."
@@ -7406,9 +7999,11 @@
             "CONTENT_PART_2": "After your subscription ends:",
             "CONTENT_PART_3": "You will lose access to all paid features.",
             "BUNDLE_WARNING_ORG_PLACEHOLDER": "current",
-            "BUNDLE_WARNING": "Canceling CAKE.com Bundle plan will affect all workspaces in the { organizationName } organization. All workspaces will be downgraded to the Free plan at the end of the billing period."
+            "BUNDLE_WARNING": "Canceling CAKE.com Bundle plan will affect all workspaces in the { organizationName } organization. All workspaces will be downgraded to the Free plan at the end of the billing period.",
+            "CONTENT_PART_1_IMMEDIATELY": "By canceling, your subscription will end immediately."
         },
-        "ABN_HINT": "If you're registered for GST, provide your valid ABN."
+        "ABN_HINT": "If you're registered for GST, provide your valid ABN.",
+        "IRD_HINT": "If you're registered for GST, provide your valid IRD number."
     },
     "CLIENTS": {
         "MODALS": {
@@ -7489,7 +8084,8 @@
         "MANAGE_ACCOUNT": "Manage account",
         "TRY_NOW": "Try now",
         "SIGN_UP_TO_ANOTHER_WORKSPACE": "Sign up to another workspace",
-        "WORKSPACE_LOCKED_DUE_TO_DATA_TRANSFER": "Workspace locked due to data transfer"
+        "WORKSPACE_LOCKED_DUE_TO_DATA_TRANSFER": "Workspace locked due to data transfer",
+        "CAKE_COM_ACCOUNT": "CAKE.com Account"
     },
     "WALKTHROUGH": {
         "STEP_ONE_TITLE": "Switch workspaces here",
@@ -7539,7 +8135,10 @@
         "TITLE": "Your 7-day trial starts today!",
         "SUBTITLE": "During this trial explore our paid features for free. \nWhich features you’d like to start with?",
         "SUCCESS_MESSAGE": "Free trial successfully started",
-        "BUTTON_LABEL": "Let's start"
+        "BUTTON_LABEL": "Let's start",
+        "SAMPLE_DATA_PARAGRAPH": "Quickly explore features with preloaded team members, projects and tasks. You can remove it anytime.",
+        "NO_CARD_REQUIRED": "No card required. Once your trial ends, you can continue on Clockify Free plan.",
+        "UNLOCKED_FEATURE": "Unlocked features"
     },
     "ORGANIZATION_PICKER": {
         "CONTACT_ADMIN": "To get invited again, you'll need to contact your workspace admin.",
@@ -7591,7 +8190,11 @@
         "REMOVE_ALL_INVALID_EMAILS": "Remove all invalid emails",
         "EMAIL_SUSPENDED": "Email or email domain has been suspended",
         "ADD_SEATS_SUCCESS": "Successfully added seats.",
-        "EMPTY_FIELD_ERROR": "This field is required."
+        "EMPTY_FIELD_ERROR": "This field is required.",
+        "INSERT_NAMES": "Insert names",
+        "INSERT_NAMES_TOOLTIP": "Include names with each member invite.",
+        "INSERT_NAMES_PLACEHOLDER": "Enter full name",
+        "INVITED_USER": "Invited user"
     },
     "ADD_LIMITED_MEMBERS": {
         "HEADER": "Employee name",
@@ -7607,11 +8210,15 @@
         },
         "PROJECTS": {
             "TITLE": "Create { projectsLabel } to stay organized and on track",
-            "SUBTITLE": "Set up { projectLabel } estimates and { tasksLabel }, and monitor { projectLabel }’s progress as people track time."
+            "SUBTITLE": "Set up { projectLabel } estimates and { tasksLabel }, and monitor { projectLabel }’s progress as people track time.",
+            "TITLE_V2": "Keep everything on track with { projectsLabel } "
         },
         "GROUPS": {
             "TITLE": "Create groups to streamline management of users",
-            "SUBTITLE": "Add people to groups, and simplify management of people or track progress on a group level."
+            "SUBTITLE": "Add people to groups, and simplify management of people or track progress on a group level.",
+            "NO_USER_GROUPS": "No user groups yet",
+            "NO_USER_GROUPS_SUBTITLE": "Add a group to simplify management and tracking.",
+            "ENTER_GROUP_NAME": "Enter group name"
         },
         "TAGS": {
             "SUBTITLE": "Use tags to add an additional information to time entries, and get more data insights with reports.",
@@ -7619,23 +8226,127 @@
         },
         "REMINDERS": {
             "SUBTITLE": "Notify team members and their managers when they missed their tracking target or worked overtime.",
-            "TITLE": "Create reminders to keep work on track"
+            "TITLE": "Create reminders to keep work on track",
+            "TITLE_V2": "No reminders yet",
+            "SUBTITLE_V2": "Create reminders to keep work on track"
         },
         "LIMITED": {
             "TITLE": "Add limited members to clock in and out via kiosk"
+        },
+        "EXPENSES": {
+            "TITLE": "Record project and task-related expenses",
+            "FIRST_CARD": {
+                "TITLE": "1. Organize and manage",
+                "SUBTITLE": "Sort expenses by billable status and custom categories."
+            },
+            "SUBTITLE": "Track and manage team expenses to stay on budget and simplify client billing.",
+            "THIRD_CARD": {
+                "TITLE": "3. Invoice and report",
+                "SUBTITLE": "Invoice expenses to clients and attach expense receipts."
+            },
+            "SECOND_CARD": {
+                "TITLE": "2. Analyze and compare",
+                "SUBTITLE": "Review expenses against budgets to ensure cost control."
+            }
+        },
+        "FILTERS": {
+            "SUBTITLE": "Try adjusting the filters to get some results.",
+            "NO_SHARED_REPORTS_SUBTITLE": "Try sharing summary, detailed or weekly report.",
+            "NO_SHARED_REPORTS": "No shared reports",
+            "NO_SCHEDULE": "No schedule for this period",
+            "NO_SCHEDULE_PROJECT": "Add a project and create assignments.",
+            "NO_SCHEDULE_TEAM": "Add a member and create assignments.",
+            "NO_APPROVALS_PENDING": "View in the Unsubmitted tab who hasn't submitted time and expenses.",
+            "NO_APPROVALS_ARCHIVED": "Approve pending requests to view data in the archive.",
+            "NO_SCREENSHOT_ACTIVATED": "Screenshots not activated",
+            "NO_SCREENSHOTS_RECORDED": "No recorded screenshots for this day.",
+            "NO_SCREENSHOTS": "No screenshots",
+            "NO_SCREENSHOTS_LEARN": "Learn how to track screenshots.",
+            "NO_LOCATIONS": "No locations",
+            "NO_LOCATIONS_LEARN": "Learn how to track locations.",
+            "NO_TIMEOFF_REQUESTS_SUBTITLE": "Submit a time off request and it will be listed here."
+        },
+        "TIMEOFF": {
+            "FIRST_CARD": {
+                "SUBTITLE": "Assign custom rules and manage balance for each policy.",
+                "TITLE": "1. Add time off policy"
+            },
+            "TITLE": "Track your team's holidays and time off",
+            "SECOND_CARD": {
+                "TITLE": "2. Manage requests",
+                "SUBTITLE": "Approve and decline time off requests, and track balance."
+            },
+            "SUBTITLE": "Easily set up time off policies, approve requests, and track employee availability.",
+            "THIRD_CARD": {
+                "TITLE": "3. Track availability",
+                "SUBTITLE": "Review your team's absence to plan workloads efficiently."
+            }
+        },
+        "INVOICES": {
+            "SUBTITLE": "Generate invoices, track payments, and keep billing organized for your business.",
+            "TITLE": "Create invoices to bill your clients",
+            "SECOND_CARD": {
+                "TITLE": "2. Track payments",
+                "SUBTITLE": "Send invoices to your clients and record each payment."
+            },
+            "THIRD_CARD": {
+                "TITLE": "3. Monitor billing",
+                "SUBTITLE": "View reports, track status and send reminders to clients."
+            },
+            "FIRST_CARD": {
+                "TITLE": "1. Generate invoice",
+                "SUBTITLE": "Assign a client and import billable hours and expenses."
+            }
+        },
+        "KIOSKS": {
+            "SECOND_CARD": {
+                "SUBTITLE": "Members can clock in and out and log daily breaks.",
+                "TITLE": "2. Clock In and Out"
+            },
+            "FIRST_CARD": {
+                "TITLE": "1. Set up Kiosk",
+                "SUBTITLE": "Assign members and choose an authentication method."
+            },
+            "TITLE": "Simplify time tracking with Kiosk",
+            "SUBTITLE": "Set up a kiosk to enable clock in and clock out using a shared device.",
+            "THIRD_CARD": {
+                "SUBTITLE": "Use reports for monitoring team attendance and breaks.",
+                "TITLE": "3. Track attendance"
+            }
+        },
+        "PROJECT_STATUS": {
+            "TITLE": "Nothing to show",
+            "SUBTITLE": "No activity has been recorded for this project."
+        },
+        "PROJECT_TASKS": {
+            "TITLE": "No tasks yet",
+            "SUBTITLE": "Add your first one and start tracking progress."
+        },
+        "LIMITED_TAB": {
+            "TITLE": "No limited members yet"
         }
     },
     "DATA_IMPORT": {
         "DOWNLOAD_TEMPLATES": {
             "TIMESHEET_LABEL": "timesheet",
             "TITLE": "Download template",
-            "DESC": "Download CSV example files for {clientsLabel}, {projectsLabel} or Timesheets."
+            "DESC": "Download CSV example files for {clientsLabel}, {projectsLabel} or Timesheets.",
+            "LIMITED_USERS_LABEL": "Limited Users",
+            "USERS_LABEL": "Users",
+            "FULL_USERS_LABEL": "Full Users"
         },
         "FILE_DETAILS": {
             "TITLE": "File details",
             "DATE_FORMAT_QUESTION": "What date format are you using in your file?",
             "DATE_FORMAT_PLACEHOLDER": "Choose date format",
-            "TOOLTIP_MSG": "Please choose a date format."
+            "TOOLTIP_MSG": "Please choose a date format.",
+            "IMPORT_FILE_LABEL": "What would you like to import?",
+            "IMPORT_FILE_PLACEHOLDER": "Choose import type",
+            "FILE_HAS_HEADER_LABEL": "First row has column names",
+            "PROJECTS": "Clients & projects",
+            "TIMESHEET": "Timesheet",
+            "LIMITED_USER": "Limited users",
+            "FULL_USER": "Full users"
         },
         "DRAG_DROP_FILE": {
             "SUBTITLE": "or drag and drop it here",
@@ -7645,37 +8356,281 @@
         },
         "UPLOAD": {
             "UPLOAD_IN_PROGRESS_FIRST_PART": "Uploading",
-            "TITLE_SECOND_PART": "guidelines.",
             "TITLE_FIRST_PART": "To ensure a smooth import process, please prepare your file before uploading, following our",
             "UPLOAD_IN_PROGRESS_SECOND_PART": "Upload in progress, please wait.",
-            "TITLE_THIRD_PART": "Using the templates below will help you follow the recommended format and organize the data correctly in Clockify."
+            "CANCEL_MESSAGE": "Data import canceled.",
+            "ERROR_MESSAGE": "Something went wrong. Please try uploading your file again.",
+            "MOBILE_SCREEN_MESSAGE": "The Import feature is currently unavailable on mobile devices. Please switch to a desktop for access.",
+            "SUCCESS_MESSAGE": "Upload completed.",
+            "UPLOAD_NEW_FILE_BTN": "Upload new file",
+            "TITLE_SECOND_PART": "guidelines",
+            "TITLE_THIRD_PART": ". Using the { openingBoldTag }templates{ closingBoldTag } below will help you follow the recommended format and organize the data correctly in Clockify."
         },
         "TITLE": "Data Import",
         "ERRORS": {
             "MAX_SIZE": "Maximum file size is 10MB",
-            "WRONG_FILE_FORMAT": "Unable to read the file. Please make sure that the formatting of the CSV file is correct."
+            "WRONG_FILE_FORMAT": "Unable to read the file. Please make sure that the formatting of the CSV file is correct.",
+            "UNKNOWN_ERROR": "Something went wrong. Please try again later."
         },
         "STEPPER": {
             "STEP1_SUBTITLE": "Inspect Data",
-            "STEP2_SUBTITLE": "Import Summary"
+            "STEP2_SUBTITLE": "Import Summary",
+            "STEP_1_SUBTITLE": "Field Mapping",
+            "STEP_2_SUBTITLE": "Inspect Data",
+            "STEP_3_SUBTITLE": "Import Summary"
         },
         "PREVIEW": {
-            "TITLE": "Review your file and the data to be imported based on the first 1000 rows. Ensure that the first row contains headers named exactly as specified in the provided template and guidelines. Any mismatched headers will neither be recognized nor imported.",
             "DATE_FORMAT_LABEL": "Date Format",
-            "SHOW_ONLY_ERROR_ROWS_LABEL": "Only show rows with errors"
+            "SHOW_ONLY_ERROR_ROWS_LABEL": "Only show rows with errors",
+            "TITLE": "Review your file and the data to be imported based on the { openingBoldTag }first 1000 rows{ closingBoldTag }. Ensure that the first row contains headers named exactly as specified in the provided template and guidelines. { openingBoldTag }Any mismatched headers will neither be recognized nor imported{ closingBoldTag }.",
+            "USER_IMPORT_UPGRADE_LABEL": "Please upgrade to {openingBoldTag}Standard plan{closingBoldTag} to import Users",
+            "USER_IMPORT_ADMINS_MODAL_TITLE": "Add admins",
+            "USER_IMPORT_ADMINS_MODAL_MESSAGE": "You set some of the uploaded users as admins. This grants the user administrative privileges, including access to billing details and managing subscriptions.",
+            "PURCHASE_ADDITIONAL_SEATS_LIMITED_MEMBER": "To import all limited members, you need to purchase additional seats.",
+            "ADDITIONAL_SEATS_NO_FULL_MEMBER": "Number of full seats needed:",
+            "PURCHASE_ADDITIONAL_SEATS_FULL_MEMBER": "To import all full members, you need to purchase additional seats.",
+            "ADDITIONAL_SEATS_NO_LIMITED_MEMBER": "Number of limited seats needed:",
+            "BUY_SEATS_LABEL": "Buy seats",
+            "NOT_ENOUGH_SEATS_LABEL": "Not enough seats",
+            "ENABLE_BILLABLE_HOURS_LABEL": "To import billable rates, please enable billable hours in your workspace",
+            "COST_RATE_UPGRADE_LABEL": "Upgrade to {openingBoldTag}PRO{closingBoldTag} plan to import cost rates",
+            "ENABLE_COST_RATE_LABEL": "To import cost rates, please enable Costs in your workspace",
+            "SUBTITLE": "Review your file and the data to be imported based on the { openingBoldTag }first 1000 rows{ closingBoldTag }. Make sure to address any relevant errors, update your original CSV file, and import it again."
         },
         "RESULT": {
-            "TITLE": "Success! You have uploaded new data!"
+            "TITLE": "Success! You have uploaded new data!",
+            "RESTART_BTN": "Start a new import",
+            "USER_IMPORT": {
+                "TOTAL_NEW_USERS": "Total New Users",
+                "PROJECT_MANAGERS": "Project Managers",
+                "MEMBERS": "Members",
+                "ADMIN": "Admin",
+                "TEAM_MANAGERS": "Team Managers",
+                "TOTAL_LIMITED_USERS": "Total Limited Users"
+            },
+            "IMPORT_ERROR_MESSAGE": "Unable to import data",
+            "REVERT_BTN": "Revert import",
+            "FULL_USERS": {
+                "TITLE": "Success! Your new users have been imported and invited to your workspace."
+            },
+            "SUBTITLE": "Once the import of your data is complete, you can review your data in the system or check the Reports section for valuable insights."
         },
         "IMPORTING": {
             "TITLE": "Once the import of your data is complete, you can review your data in the system or check the Reports section for valuable insights.",
             "LABEL": "Importing data",
             "SUBTITLE": "Import in progress (it can last up to 5 minutes). You can leave the page — your import will continue."
+        },
+        "NOTIFICATION": {
+            "SUCCESS_MESSAGE": "Data import complete",
+            "FAILED_MESSAGE": "Data import failed",
+            "SUCCESS_BTN_LABEL": "View summary",
+            "FAILED_BTN_LABEL": "Go to import page"
+        },
+        "HISTORY": {
+            "SUBTITLE": "Track all imports made in the past <strong>{ historyPeriod } days</strong>. You can access your imported file and revert imported data within <strong>{ revertPeriod } hours</strong> of the import.",
+            "TITLE": "History",
+            "REVERT": {
+                "TITLE": "Revert",
+                "IN_PROGRESS": "Please wait, another revert is in progress."
+            },
+            "NO_IMPORTS": "No imports in the past { historyPeriod } days",
+            "IMPORT_AVAILABILITY": "Imported file is only available in the first { importPeriod } hours.",
+            "STATUS": {
+                "IMPORTED": "Imported",
+                "REVERTED": "Reverted",
+                "REVERT_IN_PROGRESS": "Revert in progress",
+                "FAILED_REVERT": "Revert failed",
+                "FAILED_IMPORT": "Failed import"
+            },
+            "TABLE_HEADERS": {
+                "DATE_TIME": "Date & time",
+                "IMPORTED_BY": "Imported by",
+                "IMPORT_DATA": "Import data",
+                "FILE_NAME": "File name",
+                "STATUS": "Status",
+                "REVERT": "Revert"
+            },
+            "IMPORT_TYPE": {
+                "PROJECTS_AND_CLIENTS": "Clients & Projects",
+                "TIMESHEET": "Timesheet",
+                "LIMITED_USERS": "Limited users",
+                "FULL_USERS": "Full users"
+            },
+            "REVERT_MODAL": {
+                "TITLE": "Revert import",
+                "BODY_TEXT": "This will permanently remove all records from this import. This cannot be undone. Edited items and items used elsewhere (e.g., time entries) will also be deleted.",
+                "EXCEPTION_TEXT": "Exception: Projects currently used on Kiosk cannot be deleted and will remain.",
+                "CONFIRM_TEXT": "Type { confirmText } to confirm",
+                "FILE_NAME_LABEL": "File name",
+                "IMPORT_DATE_LABEL": "Import date",
+                "IMPORT_BY_LABEL": "Import by"
+            }
+        },
+        "REVERT": {
+            "NOTIFICATION": {
+                "SUCCESS_TITLE": "Data import reverted",
+                "FAILED_TITLE": "Failed to revert data import",
+                "SUCCESS_MESSAGE": "Successfully reverted { name } data from the workspace { workspaceName }.",
+                "FAILED_MESSAGE": "An error occurred while trying to revert the data import. Please try again."
+            }
+        },
+        "FIELD_MAPPING": {
+            "SUBTITLE": "Match each CSV column with the corresponding Clockify field. Ensure your file includes headers in the first row to make data mapping easier, <strong>as any unmapped columns will not be imported.</strong>",
+            "HEADER_1": "CSV COLUMN",
+            "HEADER_2": "MATCHED COLUMNS",
+            "HEADER_3": "CLOCKIFY DATA FIELDS",
+            "SELECT_PLACEHOLDER": "Select matching field"
         }
     },
     "NOTIFICATIONS": {
         "RECURRING_INVOICES": {
             "SWITCH_WORKSPACE": "This action will take you to the { workspace } workspace. To confirm click continue."
         }
+    },
+    "SAMPLE_DATA": {
+        "ADD_MODAL": {
+            "SECOND_OPTION": "Sample clients, projects and tasks",
+            "TEXT": "We’ll populate your workspace with sample data including:",
+            "FIRST_OPTION": "Sample team members",
+            "THIRD_OPTION": "Logged hours on the sample projects",
+            "REMOVE_TEXT": "You can remove sample data anytime."
+        },
+        "REMOVE_MODAL": {
+            "TEXT": "All automatically added sample data and entries will be removed from the workspace.",
+            "TEXT_2": "All data manually added by you or your users will not be removed.",
+            "ADD_TEXT": "You can always add sample data again if needed."
+        },
+        "ADD_LABEL": "Add sample data",
+        "REMOVING": "Removing data...",
+        "REMOVE_LABEL": "Remove sample data",
+        "ERROR": "Adding sample data failed. Please try again.",
+        "ADDING": "Adding data..."
+    },
+    "TRY_PUMBLE": {
+        "DESCRIPTION": "Send messages to teammates and talk via video meetings.",
+        "BUTTON_LABEL": "Try Pumble"
+    },
+    "MEMBER_LOGIN": {
+        "SCAN_QR_CODE": "Please scan your QR code.",
+        "CLOCK_IN_USING_PIN": "Clock-in using PIN?"
+    },
+    "EXIT_SURVEY": {
+        "PARAGRAPH_1": "If you choose to end your Clockify subscription today, it will take effect on <b>{ endDate }</b>. Whatever you decide, you'll continue to have full access to your { plan } plan until that date.",
+        "TITLE": "You’re about to cancel subscription",
+        "PARAGRAPH_2": "Once your subscription ends, you will lose access to:",
+        "CANCELATION_LABEL": "Continue with cancelation",
+        "OPTION_1": "All your data associated with paid features you used.",
+        "COMPLETE_LABEL": "Complete cancelation",
+        "OPTION_2": "Access to all paid features.",
+        "SKIP_LABEL": "Skip survey",
+        "SKIP_MODAL": {
+            "TITLE": "We've canceled your subscription",
+            "QUESTION": "Would you consider returning under these conditions?",
+            "CONTENT": "A confirmation email was sent to you. If you change your mind, you can reactivate your membership at any time. Hope to work with you again!"
+        },
+        "QUESTION_SUBTITLE": "Please select your reason and help us improve",
+        "QUESTION": "Why are you canceling?",
+        "POPUP": "Select the reason first",
+        "PARAGRAPH_1_IMMEDIATE": "If you choose to end your Clockify subscription today, it will take effect immediately.",
+        "OPTION_3": "Add-on(s) with minimum plan will also be uninstalled:"
+    },
+    "LINUX": {
+        "AUTOTRACKER": {
+            "RECORDING_BTN": {
+                "STOP": "Stop recording",
+                "START": "Start recording",
+                "RECORDING": "Recording..."
+            },
+            "BANNER_MSG": "Autotracker is an experimental feature on this operating system.",
+            "BULK_MERGE": "Merge Selected",
+            "BANNER_CLOSE": "Don't show this again",
+            "TIMELINE": {
+                "FINISHED": "Time finished",
+                "STARTED": "Time started",
+                "WORKED": "Time worked"
+            },
+            "BULK_ADD": "Add Selected",
+            "BULK_DELETE": "Delete Selected",
+            "DESCRIPTION": "Description",
+            "END": "End",
+            "APP_NAME": "App name",
+            "START": "Start",
+            "TOTAL": "Total time"
+        }
+    },
+    "FEEDBACK_FORM": {
+        "TITLE": "Feedback",
+        "PARAGRAPH": "Please share details about your idea or issue and help us build a better Clockify. The best feedback is specific.",
+        "PLATFORM_LABEL": "Platform",
+        "SHARE_FEEDBACK_LABEL": "Share your feedback",
+        "SHARE_FEEDBACK_PLACEHOLDER": "Tell us your idea, how it would help you, and where you expect to see it",
+        "PRODUCT_RESEARCH_LABEL": "I’d like to participate in product research",
+        "SUBMITTED_HERE_LINK": "here",
+        "SHARE_FEEDBACK_OPTION": "Share feedback",
+        "SUBMITTED_TITLE": "Тhank you for your feedback!",
+        "SUBMITTED_SUBTITLE": "The product team regularly reviews all submissions to plan and update the future roadmap.",
+        "SUBMITTED_UPDATES": "Check for newest updates",
+        "LIMIT_REACHED_ERROR": "You've reached the limit of 5 feedback submissions for today. Please try again tomorrow.",
+        "MAXIMUM_CHARACTER_LIMIT_ERROR": "Maximum character limit reached. Please shorten your response.",
+        "DISCARD_FEEDBACK_TITLE": "Discard feedback",
+        "DISCARD_FEEDBACK_TEXT": "If you cancel now, your feedback will not be saved and you’ll need to start over later.",
+        "DISCARD_FEEDBACK_BUTTON": "Back to form"
+    },
+    "INVOICE": {
+        "EDITOR": {
+            "BASIC_INFO": {
+                "SELECT_CLIENT": "Select client first"
+            }
+        }
+    },
+    "TEMPLATE_ROW": {
+        "DELETE_SUGGESTION": "You should delete this template because it's empty."
+    },
+    "TIME_VIEW_MODE": {
+        "BETA_MODE_ACTIVE_WARRNING": "BETA MODE ACTIVE: Original time view is active. This beta feature only applies to reports, so you may notice time differences when comparing with other parts of the app.",
+        "TIME_VIEW_SELECT_MODAL": {
+            "LOCAL_TIME_VIEW_LABEL": "Local time view",
+            "LOCAL_TIME_VIEW_EXPLANATION": "All time entries are translated to the time zone set by the viewer.",
+            "ORIGINAL_TIME_VIEW_LABEL": "Original time view",
+            "ORIGINAL_TIME_VIEW_EXPLANATION": "All time entries are displayed as they were originally entered in the system, without a time zone conversion.",
+            "BETA_MODE_LABEL": "beta",
+            "MODAL_TITLE": "Time display settings"
+        },
+        "UPDATE_SUCCESS_LOCAL_TIME_VIEW": "Local Time View is now active on this workspace",
+        "UPDATE_SUCCESS_ORIGINAL_TIME_VIEW": "Original Time View is now active on this workspace",
+        "UPDATE_ERROR": "The system was unable to switch the time display. Please try again."
+    },
+    "ONBOARDING_SURVEY": {
+        "TITLE": "Help us customize your Clockify experience",
+        "PART_1": "I’m here to",
+        "PART_2": "with my team of",
+        "PART_3": "and our primary billing model is",
+        "GOAL_PLACEHOLDER": "Select primary goal",
+        "SIZE_PLACEHOLDER": "Select size",
+        "MODEL_PLACEHOLDER": "Select model",
+        "START_USING_BUTTON": "Start using Clockify",
+        "VALIDATION_POPOVER": "Complete all fields above."
+    },
+    "SERVER_ERROR": {
+        "SERVER_CONNECTING_PROBLEM": "It seems there's a problem connecting to our servers. We're investigating the issue.",
+        "CHECK_STATUS_PAGE": "Please check our { statusPage } for updates.",
+        "STATUS_PAGE_LABEL": "Status page",
+        "LOADER_MESSAGE": {
+            "TITLE": "A problem has occurred",
+            "SUBTITLE": "Please wait"
+        }
+    },
+    "QR_PREVIEW_MODAL": {
+        "TITLE": "Download QR code"
+    },
+    "GENERAL_SETTINGS": {
+        "DAILY_WORK_CAPACITY": {
+            "SET_WORK_CAPACITY_MODAL": {
+                "TITLE": "Set work capacity"
+            }
+        }
+    },
+    "ADD_MEMBERS": {
+        "DISCARD_CHANGES_TEXT": "Discard adding new members?"
     }
 }

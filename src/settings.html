@@ -9,16 +9,14 @@
 				<h1 class="settings__title" id="h11">Clockify - Integrations</h1>
 			</div>
 			<div class="settings__tabs">
-				<button id="integrationsTab" class="settings__tablinks">
-					INTEGRATIONS
-				</button>
+				<button id="integrationsTab" class="settings__tablinks">INTEGRATIONS</button>
 			</div>
 			<div id="integrations" class="settings__content">
 				<div class="settings__permissions">
 					<h2 id="h21">Enable Integrations</h2>
 					<p id="p11">
-						Enable the tools you want to use with Clockify extension. You can
-						enable everything by clicking the "Enable all" button.
+						Enable the tools you want to use with Clockify extension. You can enable
+						everything by clicking the "Enable all" button.
 					</p>
 					<div class="settings__permissions-toolbar" data-id="regular">
 						<input
@@ -44,29 +42,31 @@
 					</div>
 					<div id="settings__permissions-container"></div>
 				</div>
+				<div id="integration-list"></div>
 				<div class="settings__custom-domains">
 					<h2 id="custom-domains">Custom domains</h2>
 					<p id="tool-hosted"></p>
-					<input
-						type="text"
-						id="custom-domain-url"
-						placeholder="Custom domain url"
-						class="settings__custom-domains__input"
-					/>
-					<div class="settings__custom-domains__button-container">
-						<div id="settings__custom-domains__origins-container"></div>
-						<button
-							id="add-custom-domain"
-							class="settings__custom-domains__button"
-						>
-							Add
-						</button>
+					<div id="custom-domain-form">
+						<input
+							type="text"
+							id="custom-domain-url"
+							placeholder="Custom domain url"
+							class="settings__custom-domains__input"
+						/>
+						<select id="integration-selection-list"></select>
+						<div class="settings__custom-domains__button-container">
+							<div id="settings__custom-domains__origins-container"></div>
+							<button id="add-custom-domain" class="settings__custom-domains__button">
+								Add
+							</button>
+						</div>
 					</div>
 					<div id="settings__custom-domains__custom-perm-container"></div>
 				</div>
 			</div>
 		</div>
 		<script src="./contentScripts/URLPatternHelper.js"></script>
+		<script src="./contentScripts/clockifyLocales.js"></script>
 		<script src="settings.js"></script>
 	</body>
 </html>

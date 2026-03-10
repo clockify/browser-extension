@@ -50,7 +50,8 @@ class EditFormManual extends React.Component {
 		this.areCustomFieldsValid = this.areCustomFieldsValid.bind(this);
 		this.cfContainsWrongChars = this.cfContainsWrongChars.bind(this);
 		this.checkRequiredFields = this.checkRequiredFields.bind(this);
-		this.checkProjectError = this.checkProjectError.bind(this);
+		this.checkDefaultProjectTask = this.checkDefaultProjectTask.bind(this);
+		this.checkProjectTagsErrors = this.checkProjectTagsErrors.bind(this);
 	}
 
 	async setAsyncStateItems() {
@@ -77,12 +78,18 @@ class EditFormManual extends React.Component {
 		this.setAsyncStateItems();
 	}
 
-	async checkProjectError() {
+	async checkProjectTagsErrors() {
 		const createProjectError = await localStorage.getItem('createProjectError');
-		const createProjectErrorParsed = JSON.parse(createProjectError);
-		if (createProjectErrorParsed) {
+		const createTagsError = await localStorage.getItem('createTagsError');
+
+		if (createProjectError) {
 			this.notify(locales.CAN_NOT_CREATE_PROJECT_MISSING_PERMISSIONS, 'error', 5);
 			await localStorage.removeItem('createProjectError');
+		}
+
+		if (createTagsError) {
+			this.notify(locales.CAN_NOT_CREATE_TAGS_MISSING_PERMISSIONS, 'error', 5);
+			await localStorage.removeItem('createTagsError');
 		}
 	}
 
@@ -186,6 +193,25 @@ class EditFormManual extends React.Component {
 				}
 			);
 		}
+
+		// Google calendar fix for event that lasts 2 days and regular user is logged in and days are locked
+		if (this.props.copyAsEntry) {
+			const timeInterval = this.state.timeEntry.timeInterval;
+
+			if (moment(timeInterval.end).diff(moment(timeInterval.start)) < 0) {
+				this.setState(state => ({
+					timeEntry: {
+						...state.timeEntry,
+						timeInterval: {
+							...state.timeEntry.timeInterval,
+							end: moment(state.timeEntry.timeInterval.end).add(1, 'day'),
+						},
+					},
+				}));
+			}
+		}
+
+		setTimeout(this.checkProjectTagsErrors, 0);
 	}
 
 	handleInputChange(inputValue) {
@@ -733,6 +759,7 @@ class EditFormManual extends React.Component {
 							tagIds: tagIds ? tagIds : [],
 							customFields: cfs,
 							manualMode: true,
+							isSubmitTime: true,
 							integrationName: this.props.integrationName,
 							isStartedFromIntegration: Boolean(this.props.integrationName),
 						},
@@ -787,20 +814,25 @@ class EditFormManual extends React.Component {
 	}
 
 	changeDate(date) {
-		const choosenDate = new Date(date);
+		const chosenDate = new Date(date);
 
-		const choosenYear = choosenDate.getFullYear();
-		const choosenMonth = choosenDate.getMonth();
-		const choosenDay = choosenDate.getDate();
+		const chosenYear = chosenDate.getFullYear();
+		const chosenMonth = chosenDate.getMonth();
+		const chosenDay = chosenDate.getDate();
 
 		const start = moment(this.state.timeEntry.timeInterval.start)
-			.year(choosenYear)
-			.month(choosenMonth)
-			.date(choosenDay);
-		const end = moment(this.state.timeEntry.timeInterval.end)
-			.year(choosenYear)
-			.month(choosenMonth)
-			.date(choosenDay);
+			.year(chosenYear)
+			.month(chosenMonth)
+			.date(chosenDay);
+		let end = moment(this.state.timeEntry.timeInterval.end)
+			.year(chosenYear)
+			.month(chosenMonth)
+			.date(chosenDay);
+
+		if (end.diff(start) < 0) {
+			end = end.add(1, 'day');
+		}
+
 		const duration = end.diff(start);
 
 		const timeEntry = this.state.timeEntry;
@@ -863,7 +895,6 @@ class EditFormManual extends React.Component {
 		if (!this.state.ready) {
 			return null;
 		} else {
-			this.checkProjectError();
 			const { timeEntry } = this.state;
 			//const hideBillable = offlineStorage.onlyAdminsCanChangeBillableStatus && !offlineStorage.isUserOwnerOrAdmin;
 

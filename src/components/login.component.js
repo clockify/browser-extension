@@ -40,7 +40,7 @@ const ErrorMessageComponent = props => {
 				<div>
 					<p className="login-error-message">
 						{locales.BANNED__INFO_MODAL__WORKSPACE_MESSAGE_PART_ONE(
-							`${locales.WORKSPACE} ${data?.name}`,
+							`${locales.WORKSPACE} ${data?.name}`
 						)}{' '}
 						<br />
 						{locales.BANNED__INFO_MODAL__MESSAGE_PART_TWO}{' '}
@@ -152,8 +152,7 @@ class Login extends React.Component {
 		});
 	}
 
-	forgotPassword() {
-	}
+	forgotPassword() {}
 
 	async openLoginPage() {
 		await localStorage.setItem('signupExpected', 'false');
@@ -206,7 +205,7 @@ class Login extends React.Component {
 		localStorage.setItem(
 			'baseUrl',
 			environment.endpoint,
-			getLocalStorageEnums().PERMANENT_PREFIX,
+			getLocalStorageEnums().PERMANENT_PREFIX
 		);
 		localStorage.setItem('homeUrl', environment.home, getLocalStorageEnums().PERMANENT_PREFIX);
 		localStorage.clearByPrefixes([
@@ -225,18 +224,11 @@ class Login extends React.Component {
 
 	async logout() {
 		const isOffline = await localStorage.getItem('offline');
-		getBrowser()
-			.runtime.sendMessage({
-			eventName: 'invalidateToken',
-		})
-			.finally(() => {
-				localStorage.removeItem('token');
-			});
+
 		if (isOffline && !JSON.parse(isOffline)) {
 			this.props.resetSlices();
 			let timeEntriesOffline = await localStorage.getItem('timeEntriesOffline');
 			timeEntriesOffline = timeEntriesOffline ? JSON.parse(timeEntriesOffline) : [];
-			this.clearPermissions();
 			getBrowser().runtime.sendMessage('closeOptionsPage');
 
 			await localStorage.clearByPrefixes(
@@ -246,7 +238,7 @@ class Login extends React.Component {
 					getLocalStorageEnums().SUB_DOMAIN_PREFIX,
 					getLocalStorageEnums().APP_STORE,
 				],
-				true,
+				true
 			);
 
 			localStorage.setItem('timeEntriesOffline', JSON.stringify(timeEntriesOffline));
@@ -256,33 +248,6 @@ class Login extends React.Component {
 		});
 
 		checkConnection();
-	}
-
-	clearPermissions() {
-		getBrowser().storage.local.get(['permissions'], result => {
-			const { permissions } = result;
-			if (permissions) {
-				const newPermissions = [];
-				permissions.forEach(permissionsForUser => {
-					const { userId, permissions } = permissionsForUser;
-					if (permissions.filter(p => p.isCustom || p.isEnabled).length > 0) {
-						const newPermissionsForUser = {
-							userId,
-							permissions: [],
-						};
-						permissions.forEach(p => {
-							if (p.isCustom || p.isEnabled)
-								newPermissionsForUser.permissions.push(Object.assign(p, {}));
-						});
-						newPermissions.push(newPermissionsForUser);
-					}
-				});
-
-				localStorage.removeItem('permissions');
-				if (newPermissions.length > 0)
-					getBrowser().storage.local.set({ permissions: newPermissions });
-			}
-		});
 	}
 
 	render() {

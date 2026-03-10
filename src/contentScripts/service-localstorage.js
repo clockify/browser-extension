@@ -1,8 +1,5 @@
 function isChrome() {
-	if (typeof chrome !== 'undefined' && typeof browser === 'undefined') {
-		return true;
-	}
-	return false;
+	return TARGET_BROWSER_FOR_CLOCKIFY_EXT.toLowerCase() === 'chrome';
 }
 
 const localStorageEnums = {

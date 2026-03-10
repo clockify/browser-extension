@@ -153,7 +153,7 @@
     "message": "Este mês"
   },
   "LAST_MONTH": {
-    "message": "Mês passado"
+    "message": "Último mês"
   },
   "MONTHLY_TOTAL": {
     "message": "Total do mês"
@@ -177,7 +177,7 @@
     "message": "Sem projeto"
   },
   "CREATE_NEW_PROJECT": {
-    "message": "Crie um novo projeto"
+    "message": "Criar novo projeto"
   },
   "CREATE_NEW_TASK": {
     "message": "Criar nova tarefa"
@@ -204,7 +204,7 @@
     "message": "Administradores"
   },
   "GLOBAL__BILLING_LABEL": {
-    "message": "Cobrança"
+    "message": "Faturamento"
   },
   "GLOBAL__CHANGE_LABEL": {
     "message": "Mudar"
@@ -219,7 +219,7 @@
     "message": "Criar"
   },
   "GLOBAL__CREATE_NEW_TITLE": {
-    "message": "Crie um novo"
+    "message": "Criar novo"
   },
   "GLOBAL__FAILED_MESSAGE": {
     "message": "Fracassado"
@@ -231,7 +231,7 @@
     "message": "Horas"
   },
   "LOG_IN": {
-    "message": "Conecte-se"
+    "message": "Iniciar sessão"
   },
   "GLOBAL__MANAGE_LABEL": {
     "message": "Gerenciando"
@@ -339,7 +339,7 @@
     "message": "Insira o nome"
   },
   "DESCRIPTION_LIMIT_ERROR_MSG": {
-    "message": "Descrição reduzida (comprimento máximo { limit } caracteres)"
+    "message": "Descrição reduzida (comprimento máximo de { limit } caracteres)"
   },
   "INSTAL_AND_TRACK_ANYWHERE": {
     "message": "Instale Clockify e controle o tempo em qualquer lugar."
@@ -450,7 +450,7 @@
     "message": "{ count } Tarefas"
   },
   "SHARED_MODULES__PROJECT_PICKER__CREATE_NEW_PROJ_TASK_LABEL": {
-    "message": "Crie um novo projeto e tarefa"
+    "message": "Criar projeto e tarefa"
   },
   "SHARED_MODULES__INPUT_NUMBER__NUMBER_INVALID_ERROR_MSG": {
     "message": "Digite um número válido."
@@ -466,6 +466,12 @@
   },
   "SHARED_MODULES__INPUT_STRING__VALUE_REQUIRED_ERROR_MESSAGE": {
     "message": "Valor é obrigatório."
+  },
+  "SHARED_MODULES__PROJECT_PICKER__SEARCH_TASK_CUSTOM_LABEL": {
+    "message": "Pesquise { taskLabel } @{ projectLabel } ou { projectGroupingLabel }…"
+  },
+  "NO_TAGS_LABEL": {
+    "message": "Ainda sem etiquetas"
   },
   "NO_DESCRIPTION": {
     "message": "(sem descrição)"
@@ -741,7 +747,7 @@
     "message": "Se você usa uma ferramenta hospedada em um domínio personalizado, pode habilitá-la aqui"
   },
   "ENTER_TIME": {
-    "message": "Insira o tempo (por exemplo, 1,5)"
+    "message": "Insira o tempo (ex.: 1,5)"
   },
   "ENTRY_MODE": {
     "message": "Modo de entrada"
@@ -939,7 +945,7 @@
     "message": "Clique aqui para iniciar a longa pausa."
   },
   "POMODORO_TIMER": {
-    "message": "Cronômetro Pomodoro"
+    "message": "Temporizador Pomodoro"
   },
   "REMINDER_MESSAGE": {
     "message": "Não se esqueça de rastrear o seu tempo! ({ minutes }min passaram desde a última atividade)"
@@ -1229,11 +1235,74 @@
   "CAN_NOT_CREATE_PROJECT_MISSING_PERMISSIONS": {
     "message": "Você não tem permissão para criar um projeto"
   },
+  "CAN_NOT_CREATE_TAGS_MISSING_PERMISSIONS": {
+    "message": "Você não tem permissão para criar etiquetas"
+  },
   "ENTRY_IN_PROGRESS_EXISTS": {
     "message": "Você tem entrada de tempo em andamento!"
   },
   "WEBSITE_FORMAT_ERROR": {
     "message": "O formato do site não é válido"
+  },
+  "NO_YET_FILTER_NAME": {
+    "message": "Não há { filterName } ainda"
+  },
+  "FIELD_REQUIRED_VALIDATION": {
+    "message": "Este campo é obrigatório"
+  },
+  "SELECT_PLACEHOLDER": {
+    "message": "Selecionar"
+  },
+  "DISCARD_CHANGES_QUESTION": {
+    "message": "Descartar alterações não salvas?"
+  },
+  "DISCARD_CHANGES_PARAGRAPH": {
+    "message": "Suas alterações não serão salvas."
+  },
+  "DISCARD": {
+    "message": "Descartar"
+  },
+  "FEEDBACK_FORM_PARAGRAPH": {
+    "message": "Compartilhe detalhes sobre sua ideia ou problema e nos ajude a construir um Clockify melhor. O melhor feedback é aquele que é específico."
+  },
+  "FEEDBACK_FORM_PLATFORM": {
+    "message": "Plataforma"
+  },
+  "FEEDBACK_FORM_MESSAGE": {
+    "message": "Compartilhar seu feedback"
+  },
+  "FEEDBACK_FORM_MESSAGE_PLACEHOLDER": {
+    "message": "Conte-nos sua ideia, como ela o ajudaria e onde você espera vê-la"
+  },
+  "FEEDBACK_FORM_PARTICIPATION": {
+    "message": "Gostaria de participar de uma pesquisa de produtos"
+  },
+  "SHARE_FEEDBACK": {
+    "message": "Compartilhar feedback"
+  },
+  "FEEDBACK_SUBMITTED_TITLE": {
+    "message": "Obrigado pelo seu feedback!"
+  },
+  "FEEDBACK_SUBMITTED_SUBTITLE": {
+    "message": "A equipe do produto analisa regularmente todos os envios para planejar e atualizar o roteiro futuro."
+  },
+  "FEEDBACK_SUBMITTED_UPDATES": {
+    "message": "Verifique as atualizações mais recentes"
+  },
+  "SUBMITTED_HERE_LINK": {
+    "message": "aqui"
+  },
+  "DISCARD_FEEDBACK_TITLE": {
+    "message": "Descartar feedback"
+  },
+  "DISCARD_FEEDBACK_TEXT": {
+    "message": "Se você cancelar agora, seu feedback não será salvo e você precisará começar tudo de novo mais tarde."
+  },
+  "DISCARD_FEEDBACK_BUTTON": {
+    "message": "Voltar ao formulário"
+  },
+  "TOO_MANY_REQUESTS": {
+    "message": "Muitas solicitações, tente novamente mais tarde."
   },
   "appName": {
     "message": "Rastreador de Tempo Clockify",

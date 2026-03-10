@@ -2,13 +2,13 @@ import { getBrowser } from '../helpers/browser-helper';
 import locales from '../helpers/locales';
 
 const getWSCustomFields = () =>
-	new Promise((resolve) => {
+	new Promise(resolve => {
 		getBrowser().runtime.sendMessage(
 			{
 				eventName: 'getWSCustomField',
 				options: {},
 			},
-			(response) => {
+			response => {
 				if (response) {
 					const { data, status } = response;
 					if (status !== 200) {
@@ -48,12 +48,8 @@ var offlineStorage = {
 	_timeEntryInOffline: null,
 
 	async load() {
-		const activeBillableHours = await localStorage.getItem(
-			'activeBillableHours'
-		);
-		this._activeBillableHours = activeBillableHours
-			? JSON.parse(activeBillableHours)
-			: false;
+		const activeBillableHours = await localStorage.getItem('activeBillableHours');
+		this._activeBillableHours = activeBillableHours ? JSON.parse(activeBillableHours) : false;
 		const onlyAdminsCanChangeBillableStatus = await localStorage.getItem(
 			'onlyAdminsCanChangeBillableStatus'
 		);
@@ -67,13 +63,9 @@ var offlineStorage = {
 		const wsCustomFields = await localStorage.getItem('wsCustomFields');
 		this._wsCustomFields = wsCustomFields ? JSON.parse(wsCustomFields) : [];
 		const timeEntriesOffline = await localStorage.getItem('timeEntriesOffline');
-		this._timeEntriesOffline = timeEntriesOffline
-			? JSON.parse(timeEntriesOffline)
-			: [];
+		this._timeEntriesOffline = timeEntriesOffline ? JSON.parse(timeEntriesOffline) : [];
 		const timeEntryInOffline = await localStorage.getItem('timeEntryInOffline');
-		this._timeEntryInOffline = timeEntryInOffline
-			? JSON.parse(timeEntryInOffline)
-			: null;
+		this._timeEntryInOffline = timeEntryInOffline ? JSON.parse(timeEntryInOffline) : null;
 
 		// this.log('After load storage:');
 	},
@@ -102,10 +94,7 @@ var offlineStorage = {
 	set onlyAdminsCanChangeBillableStatus(val) {
 		if (this._onlyAdminsCanChangeBillableStatus !== val) {
 			this._onlyAdminsCanChangeBillableStatus = val;
-			localStorage.setItem(
-				'onlyAdminsCanChangeBillableStatus',
-				JSON.stringify(val)
-			);
+			localStorage.setItem('onlyAdminsCanChangeBillableStatus', JSON.stringify(val));
 		}
 	},
 
@@ -162,22 +151,13 @@ var offlineStorage = {
 			`===>>> OfflineStorage userHasCustomFieldsFeature ${x}:`,
 			this._userHasCustomFieldsFeature
 		);
-		console.log(
-			`===>>> OfflineStorage wsCustomFields ${x}:`,
-			this._wsCustomFields
-		);
-		console.log(
-			`===>>> OfflineStorage timeEntriesOffline ${x}:`,
-			this._timeEntriesOffline
-		);
-		console.log(
-			`===>>> OfflineStorage timeEntryInOffline ${x}:`,
-			this._timeEntryInOffline
-		);
+		console.log(`===>>> OfflineStorage wsCustomFields ${x}:`, this._wsCustomFields);
+		console.log(`===>>> OfflineStorage timeEntriesOffline ${x}:`, this._timeEntriesOffline);
+		console.log(`===>>> OfflineStorage timeEntryInOffline ${x}:`, this._timeEntryInOffline);
 	},
 
 	getWSCustomField(customFieldId) {
-		return this._wsCustomFields.find((cf) => cf.id === customFieldId);
+		return this._wsCustomFields.find(cf => cf.id === customFieldId);
 	},
 
 	get timeEntryIdTemp() {
@@ -225,7 +205,7 @@ var offlineStorage = {
 							name,
 						},
 					})
-			  )
+				)
 			: [];
 	},
 
@@ -239,17 +219,29 @@ var offlineStorage = {
 	},
 
 	updateCustomFieldValues(timeEntry, customFields) {
-		if (timeEntry.customFieldValues) {
-			customFields.forEach(({ value, customFieldId }) => {
-				const cfIndex = timeEntry.customFieldValues.findIndex(
-					(item) => item.customFieldId === customFieldId
-				);
-				if (cfIndex !== undefined && cfIndex !== null)
-					timeEntry.customFieldValues[cfIndex].value = value;
+		if (!timeEntry.customFieldValues) return;
+
+		if (customFields.length > timeEntry.customFieldValues.length) {
+			customFields.forEach(cf => {
+				if (
+					!timeEntry.customFieldValues.find(
+						entryCf => entryCf.customFieldId === cf.customFieldId
+					)
+				) {
+					timeEntry.customFieldValues = [...timeEntry.customFieldValues, cf];
+				}
 			});
-		} else {
-			//customFieldValues
 		}
+
+		customFields.forEach(({ value, customFieldId }) => {
+			const cfIndex = timeEntry.customFieldValues.findIndex(
+				item => item.customFieldId === customFieldId
+			);
+
+			if (cfIndex !== undefined && cfIndex !== null) {
+				timeEntry.customFieldValues[cfIndex].value = value;
+			}
+		});
 	},
 };
 

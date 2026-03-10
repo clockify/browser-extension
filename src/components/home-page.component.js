@@ -6,7 +6,6 @@ import TimeEntryList from './time-entry-list.component';
 import { TimeEntryListNotSynced } from '~/components/TimeEntryListNotSynced';
 import 'moment-duration-format';
 import EditForm from './edit-form.component';
-import { RequiredFields } from '~/components/RequiredFields.tsx';
 import { isOffline } from './check-connection';
 import packageJson from '../../package.json';
 import { getIconStatus } from '~/enums/browser-icon-status-enum';
@@ -23,7 +22,7 @@ import Toaster from './toaster-component';
 import { getManualTrackingModeEnums } from '~/enums/manual-tracking-mode.enum';
 import { debounce } from 'lodash';
 import { Logger } from '~/components/Logger.tsx';
-import { offlineStorage } from '~/helpers/offlineStorage';
+import { getWSCustomFields, offlineStorage } from '~/helpers/offlineStorage';
 import locales from '../helpers/locales';
 import { numberFormatTransform } from '~/helpers/duration-formater';
 import { parseTime } from './time-input-parser';
@@ -65,7 +64,6 @@ class HomePage extends Component {
 			selectedTimeEntry: {},
 			timeEntries: [],
 			dates: {},
-			loadMore: true,
 			pageCount: 0,
 			inProgress: null,
 			loading: false,
@@ -98,7 +96,6 @@ class HomePage extends Component {
 		this.application = new Application();
 
 		this.initialJob = this.initialJob.bind(this);
-		this.handleScroll = this.handleScroll.bind(this);
 		this.loadMoreEntries = this.loadMoreEntries.bind(this);
 		this.getEntryFromPomodoroAndIdleEvents = this.getEntryFromPomodoroAndIdleEvents.bind(this);
 		this.saveAllOfflineEntries = this.saveAllOfflineEntries.bind(this);
@@ -129,7 +126,6 @@ class HomePage extends Component {
 		let mode = await localStorage.getItem('mode');
 		const isOff = await isOffline();
 		const lang = await localStorage.getItem('lang');
-		const preData = await localStorage.getItem('preData');
 		moment.locale(lang);
 
 		mode = mode ? mode : 'timer';
@@ -140,35 +136,20 @@ class HomePage extends Component {
 			isOffline: isOff,
 		});
 
-		if (preData) {
-			let timeEntries = preData?.groupEntries;
-			if (!preData.groupEntries && preData.bgEntries && preData.weekStatusMap) {
-				timeEntries = await this.groupEntries(
-					preData.bgEntries,
-					preData.durationMap,
-					preData.weekStatusMap,
-					preData.periodStatusMap,
-					preData.approvalPeriod,
-				);
-			}
-			this.setState(state => ({
-				timeEntries: timeEntries || state.timeEntries,
-				dates: preData?.dates || state.dates,
-				durationMap: preData?.durationMap || state.durationMap,
-				weekStatusMap: preData?.weekStatusMap || state.weekStatusMap,
-				periodStatusMap: preData?.periodStatusMap || state.periodStatusMap,
-				groups: preData?.groups || state.groups,
-			}));
-		}
-
 		localStorage.setItem('appVersion', packageJson.version);
-		document.addEventListener('scroll', this.handleScroll, false);
 
 		_receiveOfflineEventsName = 'receivingOfflineEvents';
 
 		this.getWorkspaceSettings();
-
 		this.initialJob();
+
+		if (offlineStorage.userHasCustomFieldsFeature) {
+			const { data, msg } = await getWSCustomFields();
+			if (data) offlineStorage.wsCustomFields = data;
+		}
+		if (!offlineStorage.userHasCustomFieldsFeature) {
+			offlineStorage.wsCustomFields = [];
+		}
 
 		if (_withLogger)
 			_loggerInterval = setInterval(() => {
@@ -211,7 +192,6 @@ class HomePage extends Component {
 	}
 
 	async componentDidMount() {
-		this.handleRefresh();
 		const workspaceSettings = await localStorage.getItem('workspaceSettings');
 		if (!workspaceSettings) {
 			getBrowser().storage.onChanged.addListener(this.onStorageChange);
@@ -286,13 +266,12 @@ class HomePage extends Component {
 		if (!_networkHandlerListener) this.networkMessagesHandler();
 
 		if (!_webSocketConnectExtensionDone) {
-			this.enableAllIntegrationsButtonIfNoneIsEnabled();
 			this.enableTimerShortcutForFirstTime();
 			if (isOnline) {
 				getBrowser()
 					.runtime.sendMessage({
-					eventName: 'webSocketConnect',
-				})
+						eventName: 'webSocketConnect',
+					})
 					.catch(error => {
 						console.log('home-page.component.js | line 306 | error:', error);
 					});
@@ -319,8 +298,7 @@ class HomePage extends Component {
 				if (this.header) this.header.checkScreenshotNotifications();
 				sendMessage({ eventName: 'restartPomodoro' });
 			})
-			.catch(error => {
-			});
+			.catch(error => {});
 
 		sendMessage({ eventName: 'workspaceChanged' });
 	}
@@ -340,8 +318,6 @@ class HomePage extends Component {
 
 		getBrowser().runtime.onMessage.removeListener(this.backgroundMessageListener);
 
-		document.removeEventListener('scroll', this.handleScroll, false);
-
 		this.log('componentWillUnmount done');
 		if (_loggerInterval) clearInterval(_loggerInterval);
 
@@ -353,8 +329,7 @@ class HomePage extends Component {
 			.then(response => {
 				this.initialJob();
 			})
-			.catch(error => {
-			});
+			.catch(error => {});
 	}
 
 	reloadOnlineByChecking() {
@@ -362,8 +337,7 @@ class HomePage extends Component {
 			.then(response => {
 				this.initialJob();
 			})
-			.catch(error => {
-			});
+			.catch(error => {});
 	}
 
 	reloadOffline() {
@@ -379,7 +353,7 @@ class HomePage extends Component {
 		localStorage.setItem(
 			_receiveOfflineEventsName,
 			'true',
-			getLocalStorageEnums().PERMANENT_PREFIX,
+			getLocalStorageEnums().PERMANENT_PREFIX
 		);
 		let isOff;
 		if (event.type === 'online') {
@@ -415,15 +389,15 @@ class HomePage extends Component {
 		if (!(await isOffline())) {
 			getBrowser()
 				.runtime.sendMessage({
-				eventName: 'getPermissionsForUser',
-			})
+					eventName: 'getPermissionsForUser',
+				})
 				.then(response => {
 					if (!response?.data?.userRoles) return;
 					const isUserOwnerOrAdmin =
 						response.data.userRoles.filter(
 							permission =>
 								permission.role === getWorkspacePermissionsEnums().WORKSPACE_OWN ||
-								permission.role === getWorkspacePermissionsEnums().WORKSPACE_ADMIN,
+								permission.role === getWorkspacePermissionsEnums().WORKSPACE_ADMIN
 						).length > 0;
 					this.setState(
 						{
@@ -432,7 +406,7 @@ class HomePage extends Component {
 						() => {
 							localStorage.setItem('isUserOwnerOrAdmin', isUserOwnerOrAdmin);
 							// this.handleRefresh(true);
-						},
+						}
 					);
 				});
 		}
@@ -441,7 +415,7 @@ class HomePage extends Component {
 	enableTimerShortcutForFirstTime() {
 		const { usersTimerShortcutPreferences, userData, toggleTimerShortcut } = this.props;
 		const hasUserTimerShortcut = usersTimerShortcutPreferences.some(
-			timerShortcut => timerShortcut && timerShortcut.userId === userData.id,
+			timerShortcut => timerShortcut && timerShortcut.userId === userData.id
 		);
 
 		if (!hasUserTimerShortcut) {
@@ -463,8 +437,8 @@ class HomePage extends Component {
 								this.log('TIME_ENTRY_STARTED');
 								getBrowser()
 									.runtime.sendMessage({
-									eventName: 'getEntryInProgress',
-								})
+										eventName: 'getEntryInProgress',
+									})
 									.then(response => {
 										if (this.start)
 											this.start.setTimeEntryInProgress(response.data);
@@ -472,7 +446,7 @@ class HomePage extends Component {
 									.catch(error => {
 										console.log(
 											'home-page.component.js | line 500 | error:',
-											error,
+											error
 										);
 									});
 								break;
@@ -486,15 +460,15 @@ class HomePage extends Component {
 							case getWebSocketEventsEnums().TIME_ENTRY_UPDATED:
 								getBrowser()
 									.runtime.sendMessage({
-									eventName: 'getEntryInProgress',
-								})
+										eventName: 'getEntryInProgress',
+									})
 									.then(response => {
 										this.start.setTimeEntryInProgress(response.data);
 									})
 									.catch(error => {
 										console.log(
 											'home-page.component.js | line 522 | error:',
-											error,
+											error
 										);
 									});
 								this.getTimeEntries();
@@ -502,15 +476,15 @@ class HomePage extends Component {
 							case getWebSocketEventsEnums().TIME_ENTRY_DELETED:
 								getBrowser()
 									.runtime.sendMessage({
-									eventName: 'getEntryInProgress',
-								})
+										eventName: 'getEntryInProgress',
+									})
 									.then(response => {
 										this.start.setTimeEntryInProgress(response.data);
 									})
 									.catch(error => {
 										console.log(
 											'home-page.component.js | line 538 | error:',
-											error,
+											error
 										);
 									});
 								this.getTimeEntries();
@@ -525,7 +499,7 @@ class HomePage extends Component {
 								this.setIsUserOwnerOrAdmin();
 								break;
 						}
-					},
+					}
 				);
 			}
 		};
@@ -559,40 +533,40 @@ class HomePage extends Component {
 				const cfs =
 					entry.customFieldValues && entry.customFieldValues.length > 0
 						? entry.customFieldValues
-							.filter(cf => cf.customFieldDto.status === 'VISIBLE')
-							.map(({ type, customFieldId, value }) => ({
-								customFieldId,
-								sourceType: 'TIMEENTRY',
-								value: type === 'NUMBER' ? parseFloat(value) : value,
-							}))
+								.filter(cf => cf.customFieldDto.status === 'VISIBLE')
+								.map(({ type, customFieldId, value }) => ({
+									customFieldId,
+									sourceType: 'TIMEENTRY',
+									value: type === 'NUMBER' ? parseFloat(value) : value,
+								}))
 						: [];
 				getBrowser()
 					.runtime.sendMessage({
-					eventName: 'startWithDescription',
-					options: {
-						projectId: entry.projectId,
-						description: entry.description,
-						billable: entry.billable,
-						start: entry.timeInterval.start,
-						end: entry.timeInterval.end,
-						taskId: entry.taskId,
-						tagIds: entry.tagIds,
-						customFields: cfs,
-					},
-				})
+						eventName: 'startWithDescription',
+						options: {
+							projectId: entry.projectId,
+							description: entry.description,
+							billable: entry.billable,
+							start: entry.timeInterval.start,
+							end: entry.timeInterval.end,
+							taskId: entry.taskId,
+							tagIds: entry.tagIds,
+							customFields: cfs,
+						},
+					})
 					.then(response => {
-						if (response && response.data) {
+						if (response?.data) {
 							let timeEntries = offlineStorage.timeEntriesOffline;
 							if (
 								timeEntries.findIndex(
-									entryOffline => entryOffline.id === entry.id,
+									entryOffline => entryOffline.id === entry.id
 								) > -1
 							) {
 								timeEntries.splice(
 									timeEntries.findIndex(
-										entryOffline => entryOffline.id === entry.id,
+										entryOffline => entryOffline.id === entry.id
 									),
-									1,
+									1
 								);
 							}
 							offlineStorage.timeEntriesOffline = timeEntries;
@@ -600,7 +574,7 @@ class HomePage extends Component {
 							this.toaster.toast(
 								'error',
 								`Missing fields in entry: ${entry.description}`,
-								4,
+								4
 							);
 						}
 					})
@@ -621,8 +595,8 @@ class HomePage extends Component {
 		if (!(await isOffline())) {
 			getBrowser()
 				.runtime.sendMessage({
-				eventName: 'getUserRoles',
-			})
+					eventName: 'getUserRoles',
+				})
 				.then(response => {
 					if (response && response.data && response.data.userRoles) {
 						const { userRoles } = response.data;
@@ -676,7 +650,7 @@ class HomePage extends Component {
 						localStorage.setItem('mode', this.state.mode); // for usage in edit-forms
 						localStorage.setItem(
 							'manualModeDisabled',
-							JSON.stringify(this.state.manualModeDisabled),
+							JSON.stringify(this.state.manualModeDisabled)
 						); // for usage in header
 						workspaceSettings = Object.assign({}, workspaceSettings, {
 							features: {
@@ -687,7 +661,7 @@ class HomePage extends Component {
 						});
 						localStorage.setItem(
 							'workspaceSettings',
-							JSON.stringify(workspaceSettings),
+							JSON.stringify(workspaceSettings)
 						);
 						offlineStorage.userHasCustomFieldsFeature =
 							workspaceSettings.features.customFields;
@@ -695,7 +669,7 @@ class HomePage extends Component {
 						offlineStorage.onlyAdminsCanChangeBillableStatus =
 							workspaceSettings.onlyAdminsCanChangeBillableStatus;
 						return Promise.resolve(true);
-					},
+					}
 				);
 			})
 			.catch(error => {
@@ -706,67 +680,36 @@ class HomePage extends Component {
 	}
 
 	async getTimeEntries(reload) {
-		const isOff = await isOffline();
-		if (!isOff) {
-			// shouldn't use this.state.isOffline here
-
-			getBrowser()
-				.runtime.sendMessage({
+		getBrowser()
+			.runtime.sendMessage({
 				eventName: 'getTimeEntries',
 				options: {
 					page: reload ? 0 : this.state.pageCount,
 				},
 			})
-				.then(async response => {
-					const timeEntries = response.data.timeEntriesList.filter(
-						entry => entry.timeInterval.end,
-					);
-					const { durationMap, weekStatusMap, periodStatusMap, approvalPeriod } =
-						response.data;
-					const groupEntries = await this.groupEntries(
-						timeEntries,
-						durationMap,
-						weekStatusMap,
-						periodStatusMap,
-						approvalPeriod,
-					);
-					this.setState(
-						{
-							timeEntries: groupEntries,
-							durationMap,
-							weekStatusMap,
-							periodStatusMap,
-							ready: true,
-							isOffline: false, // should set isOffline here
-						},
-						() => {
-							localStorage.setItem('preData', {
-								groupEntries: groupEntries,
-								durationMap,
-								dates: this.state.dates,
-								weekStatusMap,
-								groups: this.state.groups,
-								periodStatusMap,
-								approvalPeriod,
-							});
-						},
-					);
-				})
-				.catch(error => {
-					this.setState({
-						isOffline: isOff,
-					});
+			.then(async response => {
+				const timeEntries = response.data.timeEntriesList.filter(
+					entry => entry.timeInterval.end
+				);
+				const { durationMap, weekStatusMap, periodStatusMap, approvalPeriod } =
+					response.data;
+				const groupEntries = await this.groupEntries(
+					timeEntries,
+					durationMap,
+					weekStatusMap,
+					periodStatusMap,
+					approvalPeriod
+				);
+				this.setState({
+					timeEntries: groupEntries,
+					durationMap,
+					weekStatusMap,
+					periodStatusMap,
+					ready: true,
+					allEntriesCount: response.data.allEntriesCount,
 				});
-		} else {
-			this.setState({
-				timeEntries:
-					offlineStorage.timeEntriesOffline.length > 0
-						? await this.groupEntries(offlineStorage.timeEntriesOffline)
-						: [],
-				ready: true,
-				isOffline: true,
 			});
-		}
+
 		if (reload || this.state.pageCount === 0) {
 			htmlStyleHelper.scrollToTop();
 		}
@@ -790,7 +733,7 @@ class HomePage extends Component {
 		durationMap,
 		weekStatusMap = {},
 		periodStatusMap = {},
-		approvalPeriod,
+		approvalPeriod
 	) {
 		const wsSettings = JSON.parse(await localStorage.getItem('workspaceSettings'));
 		const { timeZone } = JSON.parse(await localStorage.getItem('userSettings')) || {};
@@ -826,7 +769,7 @@ class HomePage extends Component {
 				const total = numberFormatTransform(
 					parseTime(group.total, durationFormat),
 					wsSettings.numberFormat,
-					durationFormat,
+					durationFormat
 				);
 				let title = `${moment.utc(group.dateRange.start).format('MMM D')} - ${moment
 					.utc(group.dateRange.end)
@@ -882,7 +825,7 @@ class HomePage extends Component {
 				trackTimeDownToSeconds,
 				dates,
 				groups,
-				timeZone,
+				timeZone
 			);
 		}
 		const formatedDurationMap = this.formatDurationMap(durationMap, timeZone);
@@ -902,7 +845,7 @@ class HomePage extends Component {
 			const format = numberFormatTransform(
 				parseTime(dayDuration, durationFormat),
 				wsSettings.numberFormat,
-				durationFormat,
+				durationFormat
 			);
 
 			return day + '-' + format;
@@ -922,7 +865,7 @@ class HomePage extends Component {
 		trackTimeDownToSeconds,
 		dates,
 		groups,
-		timeZone,
+		timeZone
 	) {
 		const wsSettings = JSON.parse(await localStorage.getItem('workspaceSettings'));
 		const durationFormat = await this.durationFormat();
@@ -958,12 +901,12 @@ class HomePage extends Component {
 				}
 			}
 			const durationDiff = duration(
-				moment(timeEntry.timeInterval.end).tz(timeZone).diff(timeEntry.timeInterval.start),
+				moment(timeEntry.timeInterval.end).tz(timeZone).diff(timeEntry.timeInterval.start)
 			);
 			timeEntry.duration = numberFormatTransform(
 				parseTime(durationDiff, durationFormat),
 				wsSettings.numberFormat,
-				durationFormat,
+				durationFormat
 			);
 			if (dates.indexOf(timeEntry.start) === -1) {
 				dates.push(timeEntry.start);
@@ -971,7 +914,7 @@ class HomePage extends Component {
 					const dateA = moment.utc(group.dateRange.start);
 					const dateB = moment.utc(group.dateRange.end);
 					const dateC = moment.utc(
-						moment(timeEntry.timeInterval.start).tz(timeZone).format('YYYY-MM-DD'),
+						moment(timeEntry.timeInterval.start).tz(timeZone).format('YYYY-MM-DD')
 					);
 					return dateC.isBetween(dateA, dateB, 'days', '[]');
 				});
@@ -1008,20 +951,6 @@ class HomePage extends Component {
 		return formatedDurationMap;
 	}
 
-	async handleScroll() {
-		const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-		const viewportHeight = window.innerHeight;
-		const totalHeight = document.documentElement.scrollHeight;
-
-		if (
-			scrollTop + viewportHeight > totalHeight - 100 &&
-			this.state.loadMore &&
-			!this.state.loading
-		) {
-			this.loadMoreEntries();
-		}
-	}
-
 	loadMoreEntries() {
 		this.setState(
 			{
@@ -1031,29 +960,29 @@ class HomePage extends Component {
 			() => {
 				getBrowser()
 					.runtime.sendMessage({
-					eventName: 'getTimeEntries',
-					options: {
-						page: this.state.pageCount,
-					},
-				})
+						eventName: 'getTimeEntries',
+						options: {
+							page: this.state.pageCount,
+						},
+					})
 					.then(async response => {
 						const data = response.data;
 						const entries = data.timeEntriesList.filter(
-							entry => entry.timeInterval.end,
+							entry => entry.timeInterval.end
 						);
 						const { durationMap, weekStatusMap, approvalPeriod, periodStatusMap } =
 							data;
 						const newDurationMap = this.concatDurationMap(
 							this.state.durationMap,
-							durationMap,
+							durationMap
 						);
 						const newWeekStatusMap = this.concatDurationMap(
 							this.state.weekStatusMap,
-							weekStatusMap,
+							weekStatusMap
 						);
 						const newPeriodStatusMap = this.concatDurationMap(
 							this.state.periodStatusMap,
-							periodStatusMap,
+							periodStatusMap
 						);
 						this.setState(
 							{
@@ -1062,7 +991,7 @@ class HomePage extends Component {
 									newDurationMap,
 									newWeekStatusMap,
 									newPeriodStatusMap,
-									approvalPeriod,
+									approvalPeriod
 								),
 								durationMap: newDurationMap,
 								weekStatusMap: newWeekStatusMap,
@@ -1075,13 +1004,13 @@ class HomePage extends Component {
 										loadMore: false,
 									});
 								}
-							},
+							}
 						);
 					})
 					.catch(error => {
 						console.log('home-page.component.js | line 1097 | error:', error);
 					});
-			},
+			}
 		);
 	}
 
@@ -1108,13 +1037,15 @@ class HomePage extends Component {
 			},
 			() => {
 				localStorage.setItem('mode', mode);
-			},
+			}
 		);
 	}
 
 	startTimeChanged(time) {
 		this.setState({
-			time: time,
+			time: this.state.inProgress
+				? time
+				: moment().hour(0).minute(0).second(0).format('HH:mm:ss'),
 		});
 	}
 
@@ -1126,142 +1057,125 @@ class HomePage extends Component {
 			() => {
 				localStorage.setItem('inProgress', !!inProgress);
 				localStorage.setItem('timeEntryInProgress', inProgress);
-			},
+			}
 		);
 	}
 
 	async endStartedAndStart(timeEntry) {
-		if (await isOffline()) {
-			const inProgress = await localStorage.getItem('inProgress');
-			if (inProgress && JSON.parse(inProgress)) {
-				this.start.setTimeEntryInProgress(null);
-			}
+		const { projectId, billable, task, description, customFieldValues, tags } = timeEntry;
+		const taskId = task ? task.id : null;
+		const tagIds = tags ? tags.map(tag => tag.id) : [];
 
-			if (offlineStorage.timeEntryInOffline) {
-				const entry = offlineStorage.timeEntryInOffline;
-				if (entry) {
-					let timeEntries = this.timeEntriesOffline;
-					entry.timeInterval.end = moment();
-					timeEntries.push(entry);
-					offlineStorage.timeEntriesOffline = timeEntries;
-				}
-			}
-
-			let timeEntryNew = {
-				id: offlineStorage.timeEntryIdTemp,
-				description: timeEntry.description,
-				timeInterval: { start: moment() },
-				projectId: timeEntry.projectId,
-				taskId: timeEntry.task ? timeEntry.task.id : null,
-				tagIds: timeEntry.tags ? timeEntry.tags.map(tag => tag.id) : [],
-				billable: timeEntry.billable,
-				customFieldValues: offlineStorage.customFieldValues, // generated from wsCustomFields
-			};
-
-			offlineStorage.timeEntryInOffline = timeEntryNew;
-			this.start.setTimeEntryInProgress(timeEntryNew);
-			this.handleRefresh();
-		} else {
-			const { projectId, billable, task, description, customFieldValues, tags } = timeEntry;
-			const taskId = task ? task.id : null;
-			const tagIds = tags ? tags.map(tag => tag.id) : [];
-
-			getBrowser()
-				.runtime.sendMessage({
-				eventName: 'endInProgress',
+		getBrowser()
+			.runtime.sendMessage({
+				eventName: 'continueEntry',
 				options: {
-					endedFromIntegration: false,
-					endEntryInProgressToContinueOtherEntry: true,
+					timeEntryId: timeEntry.id,
 				},
 			})
-				.then(() => {
-					// getBrowser().extension.getBackgroundPage().removeIdleListenerIfIdleIsEnabled();
-					getBrowser().runtime.sendMessage({
-						eventName: 'removeIdleListenerIfIdleIsEnabled',
-					});
-					// getBrowser().extension.getBackgroundPage().setTimeEntryInProgress(null);
-					localStorage.setItem('timeEntryInProgress', null);
-					this.getTimeEntries();
-
-					const cfs =
-						customFieldValues && customFieldValues.length > 0
-							? customFieldValues
-								.filter(
-									({ customFieldDto }) => customFieldDto.status === 'VISIBLE',
-								)
-								.map(({ type, customFieldId, value }) => ({
-									customFieldId,
-									sourceType: 'TIMEENTRY',
-									value: type === 'NUMBER' ? parseFloat(value) : value,
-								}))
-							: [];
-
-					getBrowser()
-						.runtime.sendMessage({
-						eventName: 'startWithDescription',
-						options: {
-							projectId,
-							description,
-							billable,
-							start: null,
-							end: null,
-							taskId,
-							tagIds,
-							customFields: cfs,
-							continueEntryByStartingEntryAgain: true,
-						},
-					})
-						.then(response => {
-							let data = response.data;
-							this.start.getTimeEntryInProgress();
-
-							// getBrowser().extension.getBackgroundPage().addIdleListenerIfIdleIsEnabled();
-							getBrowser().runtime.sendMessage({
-								eventName: 'addIdleListenerIfIdleIsEnabled',
-							});
-							// getBrowser().extension.getBackgroundPage().setTimeEntryInProgress(data);
-							localStorage.setItem('timeEntryInProgress', data);
-						})
-						.catch(() => {
-						});
-				})
-				.catch(() => {
+			.then(response => {
+				getBrowser().runtime.sendMessage({
+					eventName: 'removeIdleListenerIfIdleIsEnabled',
 				});
-		}
+				localStorage.setItem('timeEntryInProgress', response.data);
+				this.start.getTimeEntryInProgress();
+				this.getTimeEntries(true);
+
+				// const cfs =
+				// 	customFieldValues && customFieldValues.length > 0
+				// 		? customFieldValues
+				// 				.filter(({ customFieldDto }) => customFieldDto.status === 'VISIBLE')
+				// 				.map(({ type, customFieldId, value }) => ({
+				// 					customFieldId,
+				// 					sourceType: 'TIMEENTRY',
+				// 					value: type === 'NUMBER' ? parseFloat(value) : value,
+				// 				}))
+				// 		: [];
+
+				// getBrowser()
+				// 	.runtime.sendMessage({
+				// 		eventName: 'startWithDescription',
+				// 		options: {
+				// 			projectId,
+				// 			description,
+				// 			billable,
+				// 			start: null,
+				// 			end: null,
+				// 			taskId,
+				// 			tagIds,
+				// 			customFields: cfs,
+				// 			continueEntryByStartingEntryAgain: true,
+				// 		},
+				// 	})
+				// 	.then(response => {
+				// 		let data = response.data;
+				// 		this.start.getTimeEntryInProgress();
+				//
+				// 		// getBrowser().extension.getBackgroundPage().addIdleListenerIfIdleIsEnabled();
+				// 		getBrowser().runtime.sendMessage({
+				// 			eventName: 'addIdleListenerIfIdleIsEnabled',
+				// 		});
+				// 		// getBrowser().extension.getBackgroundPage().setTimeEntryInProgress(data);
+				// 		localStorage.setItem('timeEntryInProgress', data);
+				// 	})
+				// 	.catch(() => {});
+			})
+			.catch(() => {});
 	}
 
-	async checkRequiredFields(timeEntry) {
+	checkRequiredFields(timeEntry) {
+		const { inProgress } = this.state;
 		const { forceProjects, forceTasks, forceTags, forceDescription } =
 			this.state.workspaceSettings;
-		const { mode, inProgress } = this.state;
-		if (await isOffline()) {
-			this.endStartedAndStart(timeEntry);
-		} else if (forceDescription && (inProgress.description === '' || !inProgress.description)) {
-			window.reactRoot.render(
-				<RequiredFields
-					field={'description'}
-					mode={mode}
-					goToEdit={this.goToEdit.bind(this)}
-				/>,
-			);
-		} else if (forceProjects && !inProgress.projectId) {
-			window.reactRoot.render(
-				<RequiredFields field={'project'} mode={mode} goToEdit={this.goToEdit.bind(this)} />,
-			);
-		} else if (forceTasks && !inProgress.task) {
-			window.reactRoot.render(
-				<RequiredFields field={'task'} mode={mode} goToEdit={this.goToEdit.bind(this)} />,
-			);
-		} else if (
-			forceTags &&
-			(!this.state.timeEntry.tags || !this.state.timeEntry.tags.length > 0)
-		) {
-			window.reactRoot.render(
-				<RequiredFields field={'tags'} mode={mode} goToEdit={this.goToEdit.bind(this)} />,
-			);
-		} else {
-			this.endStartedAndStart(timeEntry);
+		const customFields = inProgress.customFieldValues.filter(
+			cf => offlineStorage.getWSCustomField(cf.customFieldId).required
+		);
+
+		let missingFields = '';
+
+		if (forceDescription && !inProgress.description) {
+			missingFields += 'description, ';
 		}
+
+		if (forceProjects && !inProgress.projectId) {
+			missingFields += 'project, ';
+		}
+
+		if (forceTasks && !inProgress.task) {
+			missingFields += 'task, ';
+		}
+
+		if (forceTags && inProgress.tags?.length === 0) {
+			missingFields += 'tags, ';
+		}
+
+		for (let cf of inProgress.customFieldValues) {
+			let value = inProgress.customFieldValues.find(
+				el => el.customFieldId === cf.customFieldId
+			).value;
+
+			if (inProgress.projectId !== null) {
+				value = timeEntry.customFieldValues.find(
+					el => el.customFieldId === cf.customFieldId
+				).value;
+			}
+
+			if (!cf.value && !value && cf.type !== 'CHECKBOX') missingFields += `${cf.name}, `;
+		}
+
+		missingFields = missingFields.trim();
+		missingFields = missingFields.endsWith(',') ? missingFields.slice(0, -1) : missingFields;
+
+		if (missingFields) {
+			this.toaster.toast(
+				'error',
+				`Can't save, field${missingFields.split(' ').length > 1 ? 's' : ''} missing: ${missingFields}`,
+				4
+			);
+			return;
+		}
+
+		this.endStartedAndStart(timeEntry);
 	}
 
 	goToEdit() {
@@ -1272,7 +1186,7 @@ class HomePage extends Component {
 				workspaceSettings={this.state.workspaceSettings}
 				timeFormat={this.state.userSettings.timeFormat}
 				userSettings={this.state.userSettings}
-			/>,
+			/>
 		);
 	}
 
@@ -1280,40 +1194,30 @@ class HomePage extends Component {
 		if (this.state.inProgress) {
 			this.checkRequiredFields(timeEntry);
 		} else {
-			if (await isOffline()) {
-				let timeEntryOffline = {
-					id: offlineStorage.timeEntryIdTemp,
-					description: timeEntry.description,
-					timeInterval: {
-						start: moment(),
-					},
-					billable: timeEntry.billable,
-					customFieldValues: offlineStorage.customFieldValues, // generated from wsCustomFields
-					loadMore: false,
-				};
-
-				offlineStorage.timeEntryInOffline = timeEntryOffline;
-				this.start.setTimeEntryInProgress(timeEntryOffline);
-			} else {
-				getBrowser()
-					.runtime.sendMessage({
+			getBrowser()
+				.runtime.sendMessage({
 					eventName: 'continueEntry',
 					options: {
 						timeEntryId: timeEntry.id,
 					},
 				})
-					.then(response => {
-						let data = response.data;
-						this.start.getTimeEntryInProgress();
-						getBrowser().runtime.sendMessage({
-							eventName: 'addIdleListenerIfIdleIsEnabled',
-						});
-						localStorage.setItem('timeEntryInProgress', data);
-						this.application.setIcon(getIconStatus().timeEntryStarted);
-					})
-					.catch(() => {
+				.then(response => {
+					let data = response.data;
+
+					if (!data) {
+						return this.toaster.toast('error', response, 2);
+					}
+
+					this.start.getTimeEntryInProgress();
+					getBrowser().runtime.sendMessage({
+						eventName: 'addIdleListenerIfIdleIsEnabled',
 					});
-			}
+					localStorage.setItem('timeEntryInProgress', data);
+					this.application.setIcon(getIconStatus().timeEntryStarted);
+				})
+				.catch(error => {
+					console.log(error);
+				});
 		}
 	}
 
@@ -1321,8 +1225,8 @@ class HomePage extends Component {
 		if (check) {
 			getBrowser()
 				.runtime.sendMessage({
-				eventName: 'getEntryInProgress',
-			})
+					eventName: 'getEntryInProgress',
+				})
 				.then(response => {
 					// if there is no time entry in progress, then we can safely sync offline entries
 					!response.data && this.triggerOfflineEntrySync();
@@ -1339,12 +1243,12 @@ class HomePage extends Component {
 		if (!(await isOffline())) {
 			getBrowser()
 				.runtime.sendMessage({
-				eventName: 'getEntryInProgress',
-			})
+					eventName: 'getEntryInProgress',
+				})
 				.then(response => {
 					// if there is no time entry in progress, then we can safely sync offline entries
 					if (!response.data) this.saveAllOfflineEntries();
-					else this.toaster.toast('error', 'Can\'t sync while entry in progress', 2);
+					else this.toaster.toast('error', "Can't sync while entry in progress", 2);
 				});
 		}
 	}
@@ -1355,10 +1259,11 @@ class HomePage extends Component {
 			this.setState(
 				{
 					pageCount: 0,
+					loading: false,
 				},
 				() => {
 					this.getTimeEntries(reload);
-				},
+				}
 			);
 			if (this.start) {
 				this.start.getTimeEntryInProgress();
@@ -1375,7 +1280,7 @@ class HomePage extends Component {
 
 			if (permissions && permissions.length > 0) {
 				const permissionForUser = permissions.filter(
-					permission => permission.userId === userId,
+					permission => permission.userId === userId
 				);
 				if (
 					permissionForUser.length > 0 &&
@@ -1395,7 +1300,7 @@ class HomePage extends Component {
 				getBrowser().storage.local.get('permissions', result => {
 					const permissionsForStorage = result.permissions ? result.permissions : [];
 					let arr = permissionsForStorage.filter(
-						permission => permission.userId === userId,
+						permission => permission.userId === userId
 					);
 					let permissionForUser;
 					if (arr.length === 0) {
@@ -1474,7 +1379,7 @@ class HomePage extends Component {
 		} = this.state;
 
 		const timeEntriesOffline = offlineStorage.timeEntriesOffline.filter(
-			timeEntry => !timeEntry.workspaceId || timeEntry.workspaceId === activeWorkspaceId,
+			timeEntry => !timeEntry.workspaceId || timeEntry.workspaceId === activeWorkspaceId
 		);
 
 		const isTrackingDisabled =
@@ -1616,6 +1521,7 @@ class HomePage extends Component {
 									timeEntries={timeEntries}
 									isLoading={!this.state.ready}
 									dates={dates}
+									inProgressStartDate={this.state.inProgress?.timeInterval.start}
 									groups={groups}
 									timeChange={this.state.time}
 									selectTimeEntry={this.continueTimeEntry.bind(this)}
@@ -1630,6 +1536,17 @@ class HomePage extends Component {
 									isUserOwnerOrAdmin={isUserOwnerOrAdmin}
 									manualModeDisabled={this.state.manualModeDisabled}
 								/>
+
+								{this.state.allEntriesCount - (this.state.pageCount + 1) * 50 >
+									0 && (
+									<button
+										className={'time-entry-list-load-more'}
+										onClick={this.state.loading ? null : this.loadMoreEntries}>
+										{this.state.loading
+											? locales.GLOBAL__LOADER_LOADING
+											: locales.LOAD_MORE}
+									</button>
+								)}
 							</div>
 						)}
 					</>

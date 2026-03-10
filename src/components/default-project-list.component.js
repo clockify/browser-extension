@@ -1,5 +1,4 @@
 import React from 'react';
-import onClickOutside from 'react-onclickoutside';
 import ProjectItem from './project-item.component';
 import { debounce } from 'lodash';
 
@@ -8,6 +7,7 @@ import { DefaultProject } from '~/helpers/storageUserWorkspace';
 import locales from '../helpers/locales';
 import { getBrowser } from '~/helpers/browser-helper';
 import { mapStateToProps } from '~/zustand/mapStateToProps.js';
+import { onClickOutside } from '~/helpers/onClickOutside';
 
 const pageSize = 50;
 
@@ -94,8 +94,8 @@ class DefaultProjectList extends React.PureComponent {
 		this.checkDefaultProjectTask = this.checkDefaultProjectTask.bind(this);
 		this.clearProjectFilter = this.clearProjectFilter.bind(this);
 		this.setAsyncStateItems = this.setAsyncStateItems.bind(this);
-		this.projectFilterRef = null;
-		this.projectDropdownRef = null;
+		this.projectFilterRef = React.createRef();
+		this.projectDropdownRef = React.createRef();
 		this.handleScroll = this.handleScroll.bind(this);
 	}
 
@@ -141,6 +141,7 @@ class DefaultProjectList extends React.PureComponent {
 				title: this.createTitle(),
 			});
 		});
+		onClickOutside(this.projectDropdownRef, this.closeProjectList.bind(this));
 	}
 
 	async componentDidUpdate(prevProps, prevState) {
@@ -149,9 +150,8 @@ class DefaultProjectList extends React.PureComponent {
 		const projectsAreDifferent =
 			projectsAreObjects &&
 			(this.props.selectedProject.name !== prevProps.selectedProject.name ||
-				(this.props.selectedProject.selectedTask &&
-					this.props.selectedProject.selectedTask.name !==
-					prevProps.selectedProject.selectedTask.name));
+				this.props.selectedProject.selectedTask?.name !==
+					prevProps.selectedProject.selectedTask?.name);
 		if (
 			projectsAreDifferent ||
 			(!projectsAreObjects && this.props.selectedProject && !this.state.selectedProject)
@@ -169,13 +169,13 @@ class DefaultProjectList extends React.PureComponent {
 			this.setState(
 				{
 					selectedProject,
-					selectedTaskName: this.props.selectedProject?.selectedTask?.name || null,
+					selectedTaskName: this.props.selectedProject?.selectedTask?.name,
 				},
 				() => {
 					if (this.props.selectedProject.id !== _lastUsedProject.id) {
 						this.checkDefaultProjectTask();
 					}
-				},
+				}
 			);
 		}
 
@@ -210,15 +210,15 @@ class DefaultProjectList extends React.PureComponent {
 			this.setState({
 				selectedProject: projectDB
 					? {
-						...this.state.selectedProject,
-						id: projectDB.id,
-						name: projectDB.name,
-						client: {
-							...this.state.selectedProject.client,
-							id: projectDB.clientId,
-							name: projectDB.clientName,
-						},
-					}
+							...this.state.selectedProject,
+							id: projectDB.id,
+							name: projectDB.name,
+							client: {
+								...this.state.selectedProject.client,
+								id: projectDB.clientId,
+								name: projectDB.clientName,
+							},
+						}
 					: _lastUsedProject,
 			});
 		}
@@ -242,7 +242,7 @@ class DefaultProjectList extends React.PureComponent {
 				this.setState({
 					title: this.createTitle(),
 				});
-			},
+			}
 		);
 	}
 
@@ -263,15 +263,15 @@ class DefaultProjectList extends React.PureComponent {
 			const alreadyIds = page === 1 ? [] : projectList.map(p => p.id);
 			getBrowser()
 				.runtime.sendMessage({
-				eventName: 'getProjects',
-				options: {
-					filter,
-					page,
-					pageSize,
-					forceTasks,
-					alreadyIds,
-				},
-			})
+					eventName: 'getProjects',
+					options: {
+						filter,
+						page,
+						pageSize,
+						forceTasks,
+						alreadyIds,
+					},
+				})
 				.then(response => {
 					const projects = response.data;
 					this.setState(
@@ -290,14 +290,13 @@ class DefaultProjectList extends React.PureComponent {
 								specFilterNoTasksOrProject: this.createMessageForNoTaskOrProject(
 									projects,
 									isSpecialFilter,
-									filter,
+									filter
 								),
 							});
-						},
+						}
 					);
 				})
-				.catch(() => {
-				});
+				.catch(() => {});
 		}
 	}
 
@@ -394,20 +393,19 @@ class DefaultProjectList extends React.PureComponent {
 					this.projectFilterRef.focus();
 					this.getProjects(pageSize);
 					this.props.projectListOpened();
-				},
+				}
 			);
 		}
 	}
 
 	closeProjectList() {
-		this.projectDropdownRef.scroll(0, 0);
+		this.projectDropdownRef.current.scroll(0, 0);
 		this.setState(
 			{
 				isOpen: false,
 				filter: '',
 			},
-			() => {
-			},
+			() => {}
 		);
 	}
 
@@ -419,7 +417,7 @@ class DefaultProjectList extends React.PureComponent {
 			},
 			() => {
 				this.getProjectsDebounced(pageSize);
-			},
+			}
 		);
 	}
 
@@ -464,18 +462,13 @@ class DefaultProjectList extends React.PureComponent {
 			},
 			() => {
 				this.getProjects(pageSize);
-			},
+				this.projectFilterRef.focus();
+			}
 		);
 	}
 
 	getColorForProject(darkMode) {
 		return darkMode ? '#90A4AE' : '#999999';
-	}
-
-	handleClickOutside() {
-		if (this.state.isOpen) {
-			this.closeProjectList();
-		}
 	}
 
 	handleScroll(event) {
@@ -544,7 +537,7 @@ class DefaultProjectList extends React.PureComponent {
 						className="project-list-name">
 						{selectedProject
 							? (selectedProject.getLocale && selectedProject.getLocale()) ||
-							selectedProject.name
+								selectedProject.name
 							: locales.ADD_PROJECT}
 						{selectedTaskName && (
 							<span
@@ -583,7 +576,7 @@ class DefaultProjectList extends React.PureComponent {
 						<div
 							className="project-list-dropdown"
 							id="project-dropdown"
-							ref={ref => (this.projectDropdownRef = ref)}>
+							ref={this.projectDropdownRef}>
 							<div
 								onScroll={this.handleScroll}
 								className="project-list-dropdown--content">
@@ -598,7 +591,7 @@ class DefaultProjectList extends React.PureComponent {
 											className="project-list-filter"
 											onChange={this.filterProjects.bind(this)}
 											id="project-filter"
-											ref={ref => (this.projectFilterRef = ref)}
+											ref={ref => this.projectFilterRef = ref}
 											value={this.state.filter}
 										/>
 										<span
@@ -661,7 +654,7 @@ class DefaultProjectList extends React.PureComponent {
 												projectFavorites={false}
 												disableCreateTask={true}
 											/>
-										),
+										)
 									)}
 								</div>
 								<div>
@@ -684,11 +677,13 @@ class DefaultProjectList extends React.PureComponent {
 														defaultProjectList={true}
 														key={project.id}
 														selectedProject={this.state.selectedProject}
-														selectedTask={this.state.selectedProject.selectedTask}
+														selectedTask={
+															this.state.selectedProject.selectedTask
+														}
 														project={project}
 														noTasks={this.props.noTasks}
 														selectProject={this.selectProject.bind(
-															this,
+															this
 														)}
 														selectTask={this.selectTask.bind(this)}
 														workspaceSettings={
@@ -741,4 +736,4 @@ const selectedState = state => ({
 	isCurrentUserDarkTheme: state.isCurrentUserDarkTheme,
 });
 
-export default onClickOutside(mapStateToProps(selectedState)(DefaultProjectList));
+export default mapStateToProps(selectedState)(DefaultProjectList);

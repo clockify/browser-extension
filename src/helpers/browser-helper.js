@@ -1,64 +1,81 @@
-let customBrowser;
+import { getBrowser as getBrowserLegacy } from '~/helpers/browser-helper-legacy';
+import { UAParser } from 'ua-parser-js';
 
-export function getBrowser() {
-	if (typeof chrome !== 'undefined') {
-		if (typeof browser !== 'undefined') {
-			return Object.assign(browser, {
-				action: browser.browserAction,
-				scripting: {
-					executeScript: ({ target, files }, cb) => {
-						browser.tabs.executeScript(target.tabId, { file: files[0] }, cb);
-					},
-					insertCSS: ({ target, files }) => {
-						browser.tabs.insertCSS(target.tabId, { file: files[0] });
-					},
-				},
-			});
-		} else {
-			return chrome;
-		}
-	} else {
-		return createBrowser();
+const MINIMAL_BROWSER_VERSION_THAT_REQUIRES_NEW_API = '144.0.0.0';
+
+function getBrowserName() {
+	return TARGET_BROWSER_FOR_CLOCKIFY_EXT;
+}
+
+function getBrowserVersion() {
+	const { browser } = UAParser(navigator.useragent);
+
+	return browser.version;
+}
+
+class ExtensionApi {
+	constructor() {
+		this.browserName = getBrowserName();
+		this.browserVersion = getBrowserVersion();
+		this.api = null;
+
+		this.init();
 	}
-}
 
-function createBrowser() {
-	if (customBrowser) return customBrowser;
+	init() {
+		this.api = this.shouldLegacyApiBeUsed ? getBrowserLegacy() : chrome;
+	}
 
-	let browser = {
-		runtime: {
-			callbacks: [],
-		},
-	};
+	getBrowser() {
+		return this.api;
+	}
 
-	browser.runtime.onMessage = {
-		addListener: (callback) => {
-			browser.runtime.callbacks.push(callback);
+	isChrome() {
+		return this.isBrowserChrome;
+	}
 
-			return callback;
-		},
+	get shouldLegacyApiBeUsed() {
+		const majorInstalledBrowserVersion = this.extractMajorPartOfVersion(this.browserVersion);
+		const majorMinimalBrowserVersion = this.extractMajorPartOfVersion(
+			MINIMAL_BROWSER_VERSION_THAT_REQUIRES_NEW_API
+		);
 
-		removeListener: (listener) => {
-			browser.runtime.callbacks = browser.runtime.callbacks.filter(
-				(cb) => cb !== listener
-			);
-		},
-	};
-
-	browser.runtime.sendMessage = (message) =>
-		browser.runtime.callbacks.forEach((callback) => callback(message));
-
-	customBrowser = browser;
-
-	return customBrowser;
-}
-
-export function isChrome() {
-	if (typeof chrome !== 'undefined') {
-		if (typeof browser !== 'undefined') {
-			return false;
-		} else {
+		if (this.isBrowserFirefox) {
 			return true;
 		}
+
+		if (
+			this.isBrowserChrome &&
+			parseInt(majorInstalledBrowserVersion) < parseInt(majorMinimalBrowserVersion)
+		) {
+			return true;
+		}
+
+		return false;
+	}
+
+	extractMajorPartOfVersion(version) {
+		return version.split('.')[0];
+	}
+
+	get isBrowserChrome() {
+		return this.browserName.toLowerCase() === 'chrome';
+	}
+
+	get isBrowserFirefox() {
+		return this.browserName.toLowerCase() === 'firefox';
+	}
+
+	get isBrowserEdge() {
+		return this.browserName.toLowerCase() === 'edge';
+	}
+
+	get isBrowserUnsupported() {
+		return !this.isBrowserChrome && !this.isBrowserFirefox && !this.isBrowserEdge;
 	}
 }
+
+const extensionApi = new ExtensionApi();
+
+export const getBrowser = extensionApi.getBrowser.bind(extensionApi);
+export const isChrome = extensionApi.isChrome.bind(extensionApi);

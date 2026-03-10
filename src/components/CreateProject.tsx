@@ -1,16 +1,18 @@
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
-import { ClientList } from './ClientList/ClientList.tsx';
 import locales from '../helpers/locales';
-import { ColorPicker } from './ColorPicker/ColorPicker.tsx';
 import { getBrowser } from '~/helpers/browser-helper';
 import Toaster from './toaster-component';
 import { ClientDto } from '~/DTOs/ClientDto';
+import { ClientList } from '~/components/ClientList/ClientList';
+import { ColorPicker } from '~/components/ColorPicker/ColorPicker';
+import { WorkspaceSettingsDto } from '~/DTOs/WorkspaceSettingsDto';
 
 interface PropsInterface {
 	selectProject: Function;
 	closeModal: VoidFunction;
 	checkRequiredFields: VoidFunction;
+	workspaceSettings: WorkspaceSettingsDto;
 }
 
 export const CreateProject = (props: PropsInterface) => {
@@ -29,7 +31,10 @@ export const CreateProject = (props: PropsInterface) => {
 	}, []);
 
 	const setAsyncStateItems = async (): Promise<void> => {
-		let billable, isProjectPublicByDefault, forceTasks, userCanChangeBillable = false;
+		let billable,
+			isProjectPublicByDefault,
+			forceTasks,
+			userCanChangeBillable = false;
 
 		const wsSettings = await localStorage.getItem('workspaceSettings');
 
@@ -52,13 +57,13 @@ export const CreateProject = (props: PropsInterface) => {
 		if (response.error) return toasterRef.current.toast('error', response.error?.message, 2);
 
 		if (!forceTasks) {
-			props.selectProject(response.data);
+			props.selectProject({ ...response.data, client });
 		}
 
 		getBrowser()
 			.runtime.sendMessage({
-			eventName: 'getUserRoles',
-		})
+				eventName: 'getUserRoles',
+			})
 			.then((response: { data: { userRoles: any } }) => {
 				if (response && response.data && response.data.userRoles) {
 					const { userRoles } = response.data;
@@ -97,9 +102,12 @@ export const CreateProject = (props: PropsInterface) => {
 			name: projectName,
 			clientId: client ? client.id : '',
 			color: selectedColor,
-			billable,
-			isPublic: isPublic
+			isPublic: isPublic,
 		};
+
+		if (props.workspaceSettings.activeBillableHours) {
+			project.billable = billable;
+		}
 
 		getBrowser()
 			.runtime.sendMessage({
@@ -142,12 +150,11 @@ export const CreateProject = (props: PropsInterface) => {
 				<div>
 					<ColorPicker selectedColor={(color: string) => setSelectedColor(color)} />
 				</div>
-				{canChangeBillable &&
+				{canChangeBillable && props.workspaceSettings.activeBillableHours && (
 					<div className="create-project__billable">
 						<span
 							className={`create-project__checkbox ${billable && 'checked'}`}
-							onClick={() => setBillable(!billable)}
-						>
+							onClick={() => setBillable(!billable)}>
 							<img
 								src="./assets/images/checked.png"
 								className={`create-project__billable-img${!billable && '-hidden'}`}
@@ -159,7 +166,7 @@ export const CreateProject = (props: PropsInterface) => {
 							{locales.BILLABLE_LABEL}
 						</label>
 					</div>
-				}
+				)}
 
 				<div className="create-project__public">
 					<span

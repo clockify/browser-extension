@@ -2,42 +2,32 @@
 	const selectors = await getSelectors('scoro');
 
 	// Task list
-	clockifyButton.render(
-		selectors.taskListView.hanger,
-		{ observe: true },
-		async (elem) => {
-			const description = $(selectors.taskListView.taskName, elem).textContent;
+	clockifyButton.render(selectors.taskListView.hanger, { observe: true }, async taskRow => {
+		const description = () => text(selectors.taskListView.taskName, taskRow);
 
-			const link = clockifyButton.createButton({
-				description,
-				small: true,
-			});
+		const timer = clockifyButton.createTimer({ description, small: true });
 
-			link.dataset.title = description;
+		timer.dataset.title = description();
 
-			link.style.marginTop =
-				window.location.href.indexOf('tasks') !== -1 ? '10px' : '11px';
-			link.style.paddingLeft = '8px';
+		const taskRowHeightPx = parseInt(getCssValue(taskRow, 'height').slice(0, -2));
+		const timerHeightPx = 16;
+		const timerVerticalMargin = `${(taskRowHeightPx - timerHeightPx) / 2}px`;
+		const timerRightMargin = window.location.href.includes('/tasks/') ? '0' : '15px';
 
-			elem.appendChild(link);
-		}
-	);
+		timer.style.margin = `${timerVerticalMargin} ${timerRightMargin} ${timerVerticalMargin} 5px`;
+
+		taskRow.append(timer);
+	});
 
 	// Single task
-	clockifyButton.render(
-		selectors.singleTaskView.hanger,
-		{ observe: true },
-		async (elem) => {
-			const description = $(
-				selectors.singleTaskView.taskTitle
-			).textContent.trim();
+	clockifyButton.render(selectors.singleTaskView.hanger, { observe: true }, async actions => {
+		const description = () => text(selectors.singleTaskView.taskTitle);
 
-			const link = clockifyButton.createButton({ description });
+		const timer = clockifyButton.createTimer({ description });
 
-			link.style.whiteSpace = 'nowrap';
-			link.style.paddingBottom = '3px';
+		timer.style.whiteSpace = 'nowrap';
+		timer.style.paddingBottom = '3px';
 
-			elem.prepend(link);
-		}
-	);
+		actions.prepend(timer);
+	});
 })();

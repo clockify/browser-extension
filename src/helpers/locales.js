@@ -3,16 +3,13 @@ export default (function () {
 
 	self.aBrowser = chrome || browser;
 
-	self.aBrowser.storage.local.get(
-		'workspaceSettings',
-		({ workspaceSettings }) => {
-			if (workspaceSettings) {
-				self.wsSettings = JSON.parse(workspaceSettings);
-			}
+	self.aBrowser.storage.local.get('workspaceSettings', ({ workspaceSettings }) => {
+		if (workspaceSettings) {
+			self.wsSettings = JSON.parse(workspaceSettings);
 		}
-	);
+	});
 
-	self.aBrowser.storage.onChanged.addListener((changes) => {
+	self.aBrowser.storage.onChanged.addListener(changes => {
 		if (changes.workspaceSettings && changes.workspaceSettings.newValue) {
 			self.wsSettings = JSON.parse(changes.workspaceSettings.newValue);
 		}
@@ -128,7 +125,10 @@ export default (function () {
 				)}|${this.getMessage('CLIENTS')})`,
 				'i'
 			);
-			return localeStr.replaceAll(regex, (match) => {
+
+			if (!localeStr) return;
+
+			return localeStr.replaceAll(regex, match => {
 				const plural = pluralRegex.test(match);
 				let label = projectLabel;
 				if (
@@ -197,18 +197,15 @@ export default (function () {
 	};
 
 	// if (self.clockifyLocales) {
-	self.aBrowser.storage.local.get(
-		['lang', 'locale_messages'],
-		({ lang, locale_messages }) => {
-			objLocales.lang = lang;
-			objLocales.messages = locale_messages;
-			self.aBrowser.runtime.sendMessage({
-				eventName: 'updateContexMenu',
-			});
-		}
-	);
+	self.aBrowser.storage.local.get(['lang', 'locale_messages'], ({ lang, locale_messages }) => {
+		objLocales.lang = lang;
+		objLocales.messages = locale_messages;
+		self.aBrowser.runtime.sendMessage({
+			eventName: 'updateContexMenu',
+		});
+	});
 
-	self.aBrowser.storage.onChanged.addListener((changes) => {
+	self.aBrowser.storage.onChanged.addListener(changes => {
 		if (changes.lang) {
 			objLocales.lang = changes.lang.newValue;
 		}
@@ -230,9 +227,7 @@ export default (function () {
 					'PROJECT'
 				)}|${objLocales.getMessage('TASKS')}|${objLocales.getMessage(
 					'TASK'
-				)}|${objLocales.getMessage('CLIENTS')}|${objLocales.getMessage(
-					'CLIENT'
-				)})`,
+				)}|${objLocales.getMessage('CLIENTS')}|${objLocales.getMessage('CLIENT')})`,
 				'gi'
 			);
 

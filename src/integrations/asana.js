@@ -6,20 +6,21 @@ clockifyButton.render(
 		$('.clockify-widget-container', sidepanelHeader)?.remove();
 
 		const sidepanel = $('.TaskPaneBody-main');
-		const isSubtaskOpened = $('.TaskAncestry');
 
 		const asanaTaskname = () =>
 			text('[role="heading"] textarea', sidepanel) ||
 			/* text('[aria-label="Task Name"]') || */
 			text('.TaskPane-titleRow textarea') ||
 			text('.TaskPane-titleRow :first-child');
-		const asanaTaskTags = () => textList('ul [class*="TaskTag"] span');
+		const asanaTaskTags = () => textList('.TaskTagTokenPills span');
 
 		const description = asanaTaskname;
+
 		const projectName = () =>
-			isSubtaskOpened
-				? text('.TaskAncestry-ancestorProject')
-				: text('.TaskProjectTokenPill-name');
+			text('.TaskProjectTokenPill-name') ||
+			text('.TaskPaneFields-projectHeader') ||
+			text('.TaskAncestry-ancestorProjects a:first-child') ||
+			text('.PageHeaderEditableTitle-container');
 		const taskName = asanaTaskname;
 		const tagNames = asanaTaskTags;
 
@@ -45,9 +46,13 @@ clockifyButton.render(
 		const actions = $('.SubtaskTaskRow-rightChildren', subtask);
 
 		const description = () => text('[id*="Task"]', subtask);
+
 		const projectName = () =>
-			text('.TaskProjects .TaskProjectTokenPill-name') ||
-			text('.TaskAncestry-ancestorProject');
+			text('.TaskProjectTokenPill-name') ||
+			text('.TaskPaneFields-projectHeader') ||
+			text('.TaskAncestry-ancestorProjects a:first-child') ||
+			text('.PageHeaderEditableTitle-container');
+
 		const taskName = () => text('[id*="Task"]', subtask);
 
 		const entry = { description, projectName, taskName, small: true };

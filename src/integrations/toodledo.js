@@ -1,40 +1,21 @@
 clockifyButton.render(
-	'.row:not(.clockify), .taskRow:not(.clockify)',
+	'.taskCell.tc_title.editable:not(.clockify)',
 	{ observe: true },
-	function (elem) {
-		if (elem.querySelectorAll('.clockify-button').length) {
-			return;
-		}
+	taskNameElement => {
+		if ($('.clockifyButton', taskNameElement.parentElement)) return;
 
-		const newLayout = $('.tc_title', elem);
-		const taskElem = newLayout || $('.task', elem);
-		const folderElem = $('.col1', elem) || $('.taskCell:not(.tc_title)', elem);
-		let folderName = folderElem && folderElem.firstChild.textContent;
+		const folderName = () => text('[class="taskCell editable"]', taskNameElement.parentElement);
+		const taskName = () => taskNameElement.textContent?.trim() || text('[class="taskCell tc_title editable completed"]');
 
-		folderName =
-			!folderName || folderName === 'No Folder' ? '' : ' - ' + folderName;
+		const description = () => `${taskName()}${folderName() ? ` - ${folderName()}` : ''}`;
 
-		const link = clockifyButton.createSmallButton(
-			taskElem.textContent + folderName
-		);
+		const button = clockifyButton.createSmallButton({ description });
 
-		const newElem = document.createElement('div');
-		newElem.appendChild(link);
-		newElem.setAttribute(
-			'style',
-			(newLayout ? 'display:inline-block;' : 'float:left;') +
-				'width:30px;height:20px;'
-		);
-		if (!newLayout) {
-			link.setAttribute('style', 'top:1px;');
-		}
+		taskNameElement.parentElement.style.display = 'flex';
+		taskNameElement.parentElement.style.alignItems = 'center';
+		button.style.marginRight = '5px';
 
-		const landmarkElem =
-			$('.subm', elem) ||
-			$('.subp', elem) ||
-			$('.ax', elem) ||
-			$('.cellAction', elem) ||
-			$('.cellStarSmall', elem);
-		landmarkElem.parentElement.insertBefore(newElem, landmarkElem.nextSibling);
-	}
+		taskNameElement.insertAdjacentElement('beforebegin', button);
+	},
 );
+

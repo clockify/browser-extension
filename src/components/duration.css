@@ -1,0 +1,7 @@
+.react-datepicker__sr-only {
+	display: none !important;
+}
+
+.react-datepicker__sr-only + * {
+	display: inline-block !important;
+}

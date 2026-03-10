@@ -1,99 +1,104 @@
 {
-	"manifest_version": 2,
-	"name": "__MSG_appName__",
-	"short_name": "Clockify",
-	"description": "__MSG_appDesc__",
-	"default_locale": "en",
-	"background": {
-		"scripts": [
-			"moment.js",
-			"contentScripts/URLPatternHelper.js",
-			"contentScripts/service-localstorage.js",
-			"contentScripts/defaultProject.js",
-			"contentScripts/service-background.js",
-			"api-services/workspace-service.js",
-			"api-services/token-service.js",
-			"api-services/user-service.js",
-			"api-services/client-service.js",
-			"api-services/project-task-service.js",
-			"api-services/tag-service.js",
-			"api-services/time-entry-service.js",
-			"api-services/auth-service.js",
-			"api-services/analytics-service.js",
-			"api-services/selectors-service.js",
-			"contentScripts/integration-background.js",
-			"contentScripts/custom-field-service-background.js",
-			"contentScripts/clockifyLocales.js",
-			"contentScripts/background.js",
-			"contentScripts/webSocket-background.js",
-			"contentScripts/idle-detection-background.js",
-			"contentScripts/context-menu.background.js",
-			"contentScripts/notification-background.js",
-			"contentScripts/stop-timer-at-background.js",
-			"contentScripts/reminder-background.js",
-			"contentScripts/pomodoro-background.js",
-			"api-services/notification-service.js"
-		]
-	},
-	"browser_specific_settings": {
-		"gecko": {
-			"id": "{1262fc44-5ec9-4088-a7a7-4cd42f3f548d}",
-			"strict_min_version": "58.0"
-		}
-	},
-	"version": "2.11.22",
-	"browser_action": {
-		"default_popup": "index.html",
-		"default_title": "Clockify"
-	},
-	"content_scripts": [
-		{
-			"matches": ["https://*/*", "http://*/*"],
-			"js": [
-				"contentScripts/service-localstorage.js",
-				"contentScripts/clockifyLocales.js",
-				"vendors.bundle.js",
-				"main.bundle.js"
-			],
-			"css": ["styles/main-integration.css", "styles/react-datepicker.css"]
-		}
-	],
-	"options_ui": {
-		"page": "settings.html",
-		"open_in_tab": true
-	},
-	"commands": {
-		"quick-start-stop-entry": {
-			"suggested_key": {
-				"default": "Ctrl+Shift+U"
-			},
-			"description": "Quick start/stop current entry"
-		}
-	},
-	"icons": {
-		"16": "assets/images/logo-16.png",
-		"48": "assets/images/logo-48.png",
-		"128": "assets/images/logo-128.png"
-	},
-	"web_accessible_resources": [
-		"assets/images/*.png",
-		"assets/images/*.svg",
-		"assets/images/ui-icons/*.svg"
-	],
-	"permissions": [
-		"contextMenus",
-		"*://*.clockify.me/*",
-		"*://*/",
-		"storage",
-		"tabs",
-		"activeTab",
-		"identity",
-		"idle",
-		"notifications",
-		"*://developer.mozilla.org/*",
-		"webRequest",
-		"alarms"
-	],
-	"optional_permissions": ["*://*/"],
-	"content_security_policy": "script-src 'self'; object-src 'self'"
+    "manifest_version": 2,
+    "name": "__MSG_appName__",
+    "short_name": "Clockify",
+    "description": "__MSG_appDesc__",
+    "default_locale": "en",
+    "background": {
+        "scripts": [
+            "moment.js",
+            "contentScripts/URLPatternHelper.js",
+            "contentScripts/service-localstorage.js",
+            "contentScripts/defaultProject.js",
+            "contentScripts/service-background.js",
+            "api-services/workspace-service.js",
+            "api-services/token-service.js",
+            "api-services/user-service.js",
+            "api-services/client-service.js",
+            "api-services/project-task-service.js",
+            "api-services/tag-service.js",
+            "api-services/time-entry-service.js",
+            "api-services/auth-service.js",
+            "api-services/analytics-service.js",
+            "api-services/selectors-service.js",
+            "contentScripts/integration-background.js",
+            "contentScripts/custom-field-service-background.js",
+            "contentScripts/clockifyLocales.js",
+            "contentScripts/background.js",
+            "contentScripts/webSocket-background.js",
+            "contentScripts/idle-detection-background.js",
+            "contentScripts/context-menu.background.js",
+            "contentScripts/notification-background.js",
+            "contentScripts/stop-timer-at-background.js",
+            "contentScripts/reminder-background.js",
+            "contentScripts/pomodoro-background.js",
+            "api-services/notification-service.js",
+            "api-services/feedback-service.js"
+        ]
+    },
+    "browser_specific_settings": {
+        "gecko": {
+            "id": "{1262fc44-5ec9-4088-a7a7-4cd42f3f548d}",
+            "strict_min_version": "58.0"
+        }
+    },
+    "version": "2.11.48",
+    "browser_action": {
+        "default_popup": "index.html",
+        "default_title": "Clockify"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "https://*/*",
+                "http://*/*"
+            ],
+            "js": [
+                "vendors.bundle.js",
+                "./global.content-script.bundle.js"
+            ]
+        }
+    ],
+    "options_ui": {
+        "page": "settings.html",
+        "open_in_tab": true
+    },
+    "commands": {
+        "quick-start-stop-entry": {
+            "suggested_key": {
+                "default": "Ctrl+Shift+U"
+            },
+            "description": "Quick start/stop current entry"
+        }
+    },
+    "icons": {
+        "16": "assets/images/logo-16.png",
+        "48": "assets/images/logo-48.png",
+        "128": "assets/images/logo-128.png"
+    },
+    "web_accessible_resources": [
+        "assets/images/*.png",
+        "assets/images/*.svg",
+        "assets/images/ui-icons/*.svg",
+        "_locales/*/messages.json"
+    ],
+    "permissions": [
+        "contextMenus",
+        "*://*.clockify.me/*",
+        "*://*/",
+        "storage",
+        "tabs",
+        "activeTab",
+        "identity",
+        "idle",
+        "notifications",
+        "*://developer.mozilla.org/*",
+        "webRequest",
+        "alarms",
+        "scripting"
+    ],
+    "optional_permissions": [
+        "*://*/"
+    ],
+    "content_security_policy": "script-src 'self'; object-src 'self'"
 }

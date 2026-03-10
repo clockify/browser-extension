@@ -7,7 +7,10 @@ import { getLocalStorageEnums } from '~/enums/local-storage.enum';
 import locales from '../helpers/locales';
 import { logout } from '~/helpers/utils';
 import { useAppStore } from '~/zustand/store';
-import { addDarkModeClassOnBodyElement, removeDarkModeClassFromBodyElement } from '~/zustand/slices/darkThemeSlice';
+import {
+	addDarkModeClassOnBodyElement,
+	removeDarkModeClassFromBodyElement,
+} from '~/zustand/slices/darkThemeSlice';
 
 let messageListener = null;
 
@@ -172,7 +175,7 @@ export class Extension {
 							)?.name;
 							logout(request.eventName, {
 								...request.options,
-								name: bannedWorkspace
+								name: bannedWorkspace,
 							});
 						})
 						.catch(() => {

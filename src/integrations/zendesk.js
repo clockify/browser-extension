@@ -3,7 +3,7 @@
 
 	// Single ticket view (old UI, we can propbably delete this render)
 	clockifyButton.render(
-		singleTicketView.hanger,
+		'nav[aria-label="Secondary"]:not(.clockify)',
 		{ observe: true, onNavigationRerender: true },
 		navBar => {
 			const ticketNumber = () => location.href.match(/tickets\/(\d+)/)[1];
@@ -23,7 +23,7 @@
 
 	// Single ticket view (new UI)
 	clockifyButton.render(
-		'[aria-label="Ticket page location"]:not(.clockify)',
+		'#main_panes nav.ember-view:not(.clockify)',
 		{ observe: true, onNavigationRerender: true },
 		navBar => {
 			const ticketNumber = () => location.href.match(/tickets\/(\d+)/)[1];

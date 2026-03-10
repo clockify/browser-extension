@@ -1,23 +1,37 @@
-// Old UI (MR view & issue view) & New UIs (show MR view)
+// Old UI (MR view & issue view & task view) & New UIs (show MR view)
 clockifyButton.render(
 	`
-	[data-page^="projects:issues:"] main .title-container:not(.clockify),
-	[data-page^="projects:merge_requests:"] main .detail-page-header:not(.clockify)
+		[data-page^="projects:issues:"] main .title-container:not(.clockify),
+		[data-page^="projects:issues:"] div:has(> [data-testid="issue-title"]):not(.clockify),
+		[data-page^="projects:merge_requests:"] main .detail-page-header:not(.clockify),
+		[data-page="projects:work_items:index"] [aria-labelledby="item-title"]:not(.clockify)
 	`,
 	{ observe: true },
 	async heading => {
-		const labels = await waitForElement('[data-testid="sidebar-labels"]');
+		const labels = await waitForElement(
+			'[data-testid="sidebar-labels"], [data-testid="work-item-labels-input"]'
+		);
+
+		const isIssue = Boolean($('[data-page^="projects:issues:"]'));
+		const isTask = Boolean($('[data-page="projects:work_items:index"]'));
+
 		const breadcrumbs = await waitForElement('[class$="breadcrumbs"]');
 		const breadcrumbsList = Array.from($$('li a', breadcrumbs));
 		const lastBreadcrumbText = breadcrumbsList.reverse()[0].textContent.trim();
 
-		const isIssue = Boolean($('[data-page^="projects:issues:"]'));
-
-		const id = () => lastBreadcrumbText.replace('#', '').replace('!', '');
-		const title = () => text('h1, h2', heading);
+		let id = () => lastBreadcrumbText.replace('#', '').replace('!', '');
+		const title = () => text('[data-testid="work-item-title"]') || text('h1, h2', heading);
 		const group = () => attribute('data-group');
 		const project = () => attribute('data-project');
-		const separator = () => (isIssue ? '#' : '!');
+		const separator = () => (isIssue || isTask ? '#' : '!');
+
+		if (isTask) {
+			id = () =>
+				$('li:has([data-testid="issue-type-task-icon"])')
+					.innerText.split(' ')
+					.reverse()[0]
+					.slice(1);
+		}
 
 		const description = () => `${group()}/${project()}${separator()}${id()} ${title()}`;
 		const projectName = () => project();
@@ -35,16 +49,33 @@ clockifyButton.render(
 	}
 );
 
-// New UIs (show issue view & sidebar issue view)
+// New UIs (show issue view & sidebar issue view & task view)
 clockifyButton.render(
-	'[data-page^="projects:issues:"] main div:has(> [data-testid="work-item-type"]):not(.clockify)',
+	`
+		[data-page^="projects:issues:"] main div:has(> [data-testid="work-item-type"]):not(.clockify),
+		[data-page^="projects:work_items:show"] main div:has(> [data-testid="work-item-type"]):not(.clockify)
+	`,
 	{ observe: true },
 	async heading => {
 		const labels = await waitForElement('[data-testid="work-item-labels"]');
 
-		const id = () =>
+		const isSubitem = $('[data-page^="projects:work_items:show"]');
+		const isCurrentPlanCommunityEdition = $('[name="description"]')
+			.content.toLowerCase()
+			.includes('community');
+
+		let id = () =>
 			text('[data-testid="work-item-drawer-ref-link"]')?.split('#')?.reverse()?.[0] ||
 			text('.breadcrumb li:last-child a span').split('#').reverse()[0];
+
+		if (isSubitem && isCurrentPlanCommunityEdition) {
+			id = () =>
+				$('nav:last-child li.gl-breadcrumb-item:last-child')
+					.innerText.split(' ')
+					.reverse()[0]
+					.slice(1);
+		}
+
 		const title = () => text('h1, h2', heading);
 		const group = () => attribute('data-group');
 		const project = () => attribute('data-project');

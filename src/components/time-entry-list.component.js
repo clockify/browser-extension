@@ -13,7 +13,7 @@ class TimeEntryList extends React.Component {
 		this.state = {
 			timeEntry: {},
 			time: moment().hour(0).minute(0).second(0).format('HH:mm:ss'),
-			wsSettings: {}
+			wsSettings: {},
 		};
 		this.application = new Application();
 		this.handleRefresh = this.handleRefresh.bind(this);
@@ -26,11 +26,25 @@ class TimeEntryList extends React.Component {
 	async getTimeFormat() {
 		const wsSettings = JSON.parse(await localStorage.getItem('workspaceSettings'));
 		this.setState({
-			wsSettings
+			wsSettings,
 		});
 	}
 
-	getTotalWeekTimeFormatted(total) {
+	getCountingTotalTime(firstPart, lastPart) {
+		const dateMapping = {
+			[locales.TODAY_LABEL]: moment(),
+			[locales.YESTERDAY_LABEL]: moment().subtract(1, 'day'),
+		};
+		const targetDate = dateMapping[firstPart];
+
+		if (targetDate && moment(this.props.inProgressStartDate).isSame(targetDate, 'day')) {
+			return this.getTotalTimeFormatted(lastPart);
+		}
+
+		return lastPart;
+	}
+
+	getTotalTimeFormatted(total) {
 		if (this.state.wsSettings?.decimalFormat) {
 			if (!isNaN(Number(total))) {
 				const result = Number(total) + Number(toDecimalFormat(duration(this.state.time)));
@@ -42,23 +56,13 @@ class TimeEntryList extends React.Component {
 		return duration(total.replace(',', ''))
 			.add(this.state.time)
 			.format(this.state.wsSettings?.trackTimeDownToSecond ? 'HH:mm:ss' : 'h:mm', {
-				trim: false
+				trim: false,
 			});
 	}
 
 	componentDidUpdate(prevProps, prevState, snapshot) {
 		if (prevProps.timeChange !== this.props.timeChange) {
-			if (this.props.timeChange === '00:00:00') {
-				setTimeout(() => {
-					this.setState({
-						time: this.props.timeChange
-					});
-				}, 315);
-			} else {
-				this.setState({
-					time: this.props.timeChange
-				});
-			}
+			this.setState({ time: this.props.timeChange });
 		}
 
 		if (prevProps.groups !== this.props.groups) {
@@ -88,7 +92,7 @@ class TimeEntryList extends React.Component {
 			projectId,
 			taskId,
 			customFieldValues,
-			type: type1
+			type: type1,
 		} = entry1;
 
 		const {
@@ -100,7 +104,7 @@ class TimeEntryList extends React.Component {
 			projectId: projectId2,
 			taskId: taskId2,
 			customFieldValues: customFieldValues2,
-			type: type2
+			type: type2,
 		} = entry2;
 
 		const isEmptyOrFalsey = value => {
@@ -169,7 +173,7 @@ class TimeEntryList extends React.Component {
 										</span>
 										<span className="week-header-total-time">
 											{group.title === locales.THIS_WEEK
-												? this.getTotalWeekTimeFormatted(group.total)
+												? this.getTotalTimeFormatted(group.total)
 												: group.total}
 										</span>
 									</span>
@@ -181,6 +185,7 @@ class TimeEntryList extends React.Component {
 										const parts = day.split('-');
 										const lastPart = parts.pop();
 										const firstPart = parts.join('-');
+
 										return (
 											<div
 												className="time-entries-list"
@@ -195,7 +200,10 @@ class TimeEntryList extends React.Component {
 															{locales.TOTAL}
 														</span>
 														<span className="time-entries-list-total-time">
-															{lastPart}
+															{this.getCountingTotalTime(
+																firstPart,
+																lastPart
+															)}
 														</span>
 													</div>
 												</div>
@@ -254,14 +262,10 @@ class TimeEntryList extends React.Component {
 																timeEntryIndex={index}
 																key={timeEntry.id}
 																timeEntry={timeEntry}
-																project={
-																	timeEntry.project
-																		? timeEntry.project
-																		: null
-																}
+																project={timeEntry?.project}
 																task={
-																	timeEntry.task
-																		? timeEntry.task
+																	timeEntry?.project
+																		? timeEntry?.task
 																		: null
 																}
 																playTimeEntry={this.playTimeEntry.bind(

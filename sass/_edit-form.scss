@@ -50,26 +50,28 @@
   background: white;
   border-radius: 2px;
 
-	&:has(.react-autocomplete textarea:focus) {
-		border: 1px solid darkgrey !important;
-	}
+  &:has(.react-autocomplete textarea:focus) {
+    border: 1px solid darkgrey !important;
+  }
 
-	&-required {
-		margin-bottom: 10px;
-		border: 1px solid variables.$red;
-		padding: 10px;
-		background: white;
-		border-radius: 2px;
-	}
-	&:focus-within {
-		border: 1px solid variables.$bg-04 !important;
-		border-radius: 2px !important;
-	}
+  &-required {
+    margin-bottom: 10px;
+    border: 1px solid variables.$red;
+    padding: 10px;
+    background: white;
+    border-radius: 2px;
+  }
+
+  &:focus-within {
+    border: 1px solid variables.$bg-04 !important;
+    border-radius: 2px !important;
+  }
 }
 
-.description-textarea > textarea {
+.description-textarea textarea {
   padding: 6px 6px;
   box-sizing: border-box;
+  outline: none;
 }
 
 .edit-form-checkbox {
@@ -84,14 +86,14 @@
 }
 
 .edit-form-buttons {
-	margin-top: 0;
+  margin-top: 0;
 
-	&__billable {
-		margin: 15px 0;
-		line-height: 1;
-		display: flex;
-		align-items: center;
-	}
+  &__billable {
+    margin: 15px 0;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+  }
 }
 
 .edit-form-billable-img {
@@ -149,21 +151,21 @@
   cursor: pointer;
   text-align: center;
 
-	&:hover {
-		background-color: variables.$blue_hover;
-		border-color: variables.$blue_hover;
-		transition: background-color 0.15s ease-in-out,
-			border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-	}
+  &:hover {
+    background-color: variables.$blue_hover;
+    border-color: variables.$blue_hover;
+    transition: background-color 0.15s ease-in-out,
+    border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  }
 
-	&-disabled {
-		width: 100%;
-		height: 50px;
-		border: none;
-		border-radius: 3px;
-		color: white;
-		background: variables.$lighter_text;
-	}
+  &-disabled {
+    width: 100%;
+    height: 50px;
+    border: none;
+    border-radius: 3px;
+    color: white;
+    background: variables.$lighter_text;
+  }
 }
 
 .shake-heartache {

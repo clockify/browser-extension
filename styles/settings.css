@@ -55,7 +55,8 @@ body {
 		rgb(237, 237, 237) 38%,
 		rgb(222, 222, 222)
 	);
-	box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 0px,
+	box-shadow:
+		rgba(0, 0, 0, 0.08) 0px 1px 0px,
 		rgba(255, 255, 255, 0.75) 0px 1px 2px inset;
 	color: rgb(68, 68, 68);
 	text-shadow: rgb(240, 240, 240) 0px 1px 0px;
@@ -78,7 +79,8 @@ body {
 		rgb(237, 237, 237) 38%,
 		rgb(222, 222, 222)
 	);
-	box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 0px,
+	box-shadow:
+		rgba(0, 0, 0, 0.08) 0px 1px 0px,
 		rgba(255, 255, 255, 0.75) 0px 1px 2px inset;
 	color: rgb(68, 68, 68);
 	text-shadow: rgb(240, 240, 240) 0px 1px 0px;
@@ -101,7 +103,8 @@ body {
 		rgb(237, 237, 237) 38%,
 		rgb(222, 222, 222)
 	);
-	box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 0px,
+	box-shadow:
+		rgba(0, 0, 0, 0.08) 0px 1px 0px,
 		rgba(255, 255, 255, 0.75) 0px 1px 2px inset;
 	color: rgb(68, 68, 68);
 	text-shadow: rgb(240, 240, 240) 0px 1px 0px;
@@ -129,7 +132,8 @@ body {
 		rgb(237, 237, 237) 38%,
 		rgb(222, 222, 222)
 	);
-	box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 0px,
+	box-shadow:
+		rgba(0, 0, 0, 0.08) 0px 1px 0px,
 		rgba(255, 255, 255, 0.75) 0px 1px 2px inset;
 	color: rgb(68, 68, 68);
 	text-shadow: rgb(240, 240, 240) 0px 1px 0px;
@@ -249,4 +253,48 @@ body {
 
 button {
 	text-transform: uppercase;
+}
+
+#integration-list {
+	padding: 0.5rem;
+	max-width: 700px;
+	border: 1px solid #999;
+	height: 400px;
+	overflow-y: scroll;
+}
+
+button,
+label,
+input[type='checkbox'] {
+	cursor: pointer;
+}
+
+select {
+	margin-top: 1rem;
+	height: 2rem;
+}
+
+#custom-domain-form {
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+	align-items: end;
+	gap: 1rem;
+	margin-bottom: 2.5rem;
+}
+
+#custom-domain-url {
+	width: 370px;
+}
+
+#integration-selection-list {
+	width: 220px;
+}
+
+#add-custom-domain {
+	width: 80px;
+}
+
+#settings__custom-domains__custom-perm-container {
+	margin-bottom: 4rem;
 }

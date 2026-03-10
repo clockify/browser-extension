@@ -21,7 +21,7 @@
     "message": "Detener"
   },
   "START": {
-    "message": "Iniciar"
+    "message": "Inicio"
   },
   "TRACKER__CONFIRM_ACTION": {
     "message": "¿Estás seguro?"
@@ -467,6 +467,12 @@
   "SHARED_MODULES__INPUT_STRING__VALUE_REQUIRED_ERROR_MESSAGE": {
     "message": "Se requiere valor."
   },
+  "SHARED_MODULES__PROJECT_PICKER__SEARCH_TASK_CUSTOM_LABEL": {
+    "message": "Buscar { taskLabel } @{ projectLabel } o { projectGroupingLabel }…"
+  },
+  "NO_TAGS_LABEL": {
+    "message": "Aún no hay etiquetas"
+  },
   "NO_DESCRIPTION": {
     "message": "(sin descripción)"
   },
@@ -501,7 +507,7 @@
     "message": "Cerrar sesión"
   },
   "CANT_SAVE_WITHOUT_REQUIRED_FIELDS": {
-    "message": "No se puede guardar sin campos requeridos."
+    "message": "No se puede guardar sin campos obligatorios."
   },
   "TAG__GET__ERROR": {
     "message": "Error al obtener etiquetas"
@@ -612,7 +618,7 @@
     "message": "Por favor, ¡primero completa tu Entrada actual!"
   },
   "ENTER_REQUIRED_FIELDS": {
-    "message": "Introduce los campos requeridos o edita la configuración de tu espacio de trabajo."
+    "message": "Introduce los campos obligatorios o edita la configuración de tu espacio de trabajo."
   },
   "EVERY": {
     "message": "Cada"
@@ -696,7 +702,7 @@
     "message": "Detección de inactividad"
   },
   "DETECT_IDLE_TIME": {
-    "message": "Detectar el tiempo de inactividad si está inactivo durante"
+    "message": "Detectar el tiempo de inactividad si estás inactivo durante"
   },
   "CANT_START_ENTRY_WITHOUT_PROJECT": {
     "message": "No se puede iniciar la entrada sin proyecto, tarea, descripción o etiquetas"
@@ -720,7 +726,7 @@
     "message": "Ya tienes una entrada en curso sin proyecto/tarea/descripción o etiquetas"
   },
   "ENTER_REQUIRED_FIELDS_OR_EDIT_WORKSPACE_SETTINGS": {
-    "message": "Introduce los campos requeridos o edita la configuración de tu espacio de trabajo"
+    "message": "Introduce los campos obligatorios o edita la configuración de tu espacio de trabajo"
   },
   "EXT_RELOADED": {
     "message": "Se ha vuelto a cargar la extensión"
@@ -825,7 +831,7 @@
     "message": "Crear nueva etiqueta"
   },
   "FIELD_REQUIRED": {
-    "message": "requerido"
+    "message": "obligatorio"
   },
   "ENABLE_ALL_INTEGRATIONS": {
     "message": "Puedes habilitar todo haciendo clic en el botón 'Habilitar todo'."
@@ -918,7 +924,7 @@
     "message": "Tu descanso ha terminado. Se reanudó el temporizador de trabajo."
   },
   "POMODORO_TAKE_BREAK": {
-    "message": "Has estado trabajando { minLength } minutos. ¡Hora de tomar un descanso!"
+    "message": "Llevas { minLength } minutos trabajando. ¡Es hora de tomar un descanso!"
   },
   "POMODORO_TIME_TO_WORK": {
     "message": "Ha terminado el descanso. ¡Hora de trabajar!"
@@ -933,7 +939,7 @@
     "message": "(Sesión { number })."
   },
   "POMODORO_TAKE_LONG_BREAK": {
-    "message": "Has estado trabajando { minLength } minutos. ¡Hora de tomarse un largo descanso!"
+    "message": "Llevas { minLength } minutos trabajando. ¡Es hora de tomar el descanso largo!"
   },
   "CLICK_HERE_TO_START_LONG_BREAK": {
     "message": "Haz clic aquí para iniciar el descanso largo."
@@ -1071,7 +1077,7 @@
     "message": "Obtener la app de capturas de pantalla"
   },
   "ENTER_REQUIRED_FIEEDS_OR_EDIT_WORKSPACE_SETTINGS": {
-    "message": "Introduce los campos requeridos o edita la configuración de tu espacio de trabajo."
+    "message": "Introduce los campos obligatorios o edita la configuración de tu espacio de trabajo."
   },
   "FORBIDDEN_CHARACTERS": {
     "message": "Has introducido un valor incorrecto. No uses los caracteres \"&lt;\" y \"&gt;\""
@@ -1229,11 +1235,74 @@
   "CAN_NOT_CREATE_PROJECT_MISSING_PERMISSIONS": {
     "message": "No tienes permisos para crear proyecto"
   },
+  "CAN_NOT_CREATE_TAGS_MISSING_PERMISSIONS": {
+    "message": "No tienes permisos para crear etiquetas"
+  },
   "ENTRY_IN_PROGRESS_EXISTS": {
     "message": "¡Tienes una entrada de tiempo en progreso!"
   },
   "WEBSITE_FORMAT_ERROR": {
     "message": "El formato del sitio web no es válido"
+  },
+  "NO_YET_FILTER_NAME": {
+    "message": "Todavía no hay { filterName }"
+  },
+  "FIELD_REQUIRED_VALIDATION": {
+    "message": "Este campo es obligatorio"
+  },
+  "SELECT_PLACEHOLDER": {
+    "message": "Seleccionar"
+  },
+  "DISCARD_CHANGES_QUESTION": {
+    "message": "¿Quieres descartar cambios no guardados?"
+  },
+  "DISCARD_CHANGES_PARAGRAPH": {
+    "message": "Tus cambios no se guardarán."
+  },
+  "DISCARD": {
+    "message": "Descartar"
+  },
+  "FEEDBACK_FORM_PARAGRAPH": {
+    "message": "Comparte detalles sobre tu idea o problema y ayúdanos a mejorar Clockify. El mejor feedback es específico."
+  },
+  "FEEDBACK_FORM_PLATFORM": {
+    "message": "Plataforma"
+  },
+  "FEEDBACK_FORM_MESSAGE": {
+    "message": "Compartir tu feedback"
+  },
+  "FEEDBACK_FORM_MESSAGE_PLACEHOLDER": {
+    "message": "Cuéntanos tu idea, cómo te ayudaría y dónde esperas verla"
+  },
+  "FEEDBACK_FORM_PARTICIPATION": {
+    "message": "Me gustaría participar en la investigación del producto"
+  },
+  "SHARE_FEEDBACK": {
+    "message": "Compartir feedback"
+  },
+  "FEEDBACK_SUBMITTED_TITLE": {
+    "message": "¡Gracias por tu feedback!"
+  },
+  "FEEDBACK_SUBMITTED_SUBTITLE": {
+    "message": "El equipo de producto revisa periódicamente todos los envíos para planificar y actualizar la mapa de ruta futura."
+  },
+  "FEEDBACK_SUBMITTED_UPDATES": {
+    "message": "Buscar actualizaciones más recientes"
+  },
+  "SUBMITTED_HERE_LINK": {
+    "message": "aquí"
+  },
+  "DISCARD_FEEDBACK_TITLE": {
+    "message": "Descartar el feedback"
+  },
+  "DISCARD_FEEDBACK_TEXT": {
+    "message": "Si cancelas ahora, tu feedback no se guardará y deberás comenzar de nuevo más tarde."
+  },
+  "DISCARD_FEEDBACK_BUTTON": {
+    "message": "Volver al formulario"
+  },
+  "TOO_MANY_REQUESTS": {
+    "message": "Demasiadas solicitudes, inténtelo de nuevo más tarde."
   },
   "appName": {
     "message": "Clockify Rastreador de tiempo",

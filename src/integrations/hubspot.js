@@ -1,9 +1,10 @@
 // Inbox view
 clockifyButton.render(
-	'[role=main] [role=group]:first-child:not(.UIButtonGroup):not(.clockify)',
+	'[data-test-id="close-thread-button"]:not(.clockify)',
 	{ observe: true },
 	async elem => {
 		await timeout({ milliseconds: 500 });
+		if ($('#clockifyButton')) return;
 
 		const ticketId = extractIdFromUrl();
 		const contact = text(
@@ -19,19 +20,23 @@ clockifyButton.render(
 		link.style.order = '-1';
 		link.style.marginRight = '11px';
 
-		elem.insertAdjacentElement('beforebegin', link);
+		elem.parentElement.insertAdjacentElement('beforebegin', link);
 	}
 );
 
 // Help Desk
 clockifyButton.render(
-	'[role=heading] > div:first-child:not(.clockify)',
+	`[data-application-name="svh-help-desk"] [role=heading] > div:first-child:not(.clockify),
+	[data-layer-for="Panel"] [role=heading] > div:first-child:not(.clockify)`,
 	{ observe: true, onNavigationRerender: true },
 	async elem => {
+		await timeout({ milliseconds: 1000 });
+		if ($('.clockifyButton')) return;
+
 		const name = text('[data-test-id="ticket-header-name-link"] span');
 		const contact = text('[data-selenium-test="contact-chicklet-title-link"]');
 		const wrappedContact = contact ? `(${contact})` : '';
-		const description = `[#${extractIdFromUrl()}] ${name} ${wrappedContact}`;
+		const description = `[#${extractIdFromUrl(true)}] ${name} ${wrappedContact}`;
 		const projectName = () => text('[data-selenium-test="company-chicklet-title-link"]');
 
 		const link = clockifyButton.createButton({ description, projectName });
@@ -44,14 +49,12 @@ clockifyButton.render(
 
 // Contact, Ticket, Deal and Company view
 clockifyButton.render(
-	`
-	[data-selenium-test="contact-highlight-details"]:not(.clockify),
-	[data-selenium-test="ticket-highlight-details"]:not(.clockify),
-	[data-selenium-test="deal-highlight-details"]:not(.clockify),
-	[data-selenium-test="company-highlight-details"]:not(.clockify)
-	`,
+	`[data-scroll-trackable-container="left-sidebar"] [data-test-id="record-highlight-main-content"]:not(.clockify)`,
 	{ observe: true },
 	async elem => {
+		await timeout({ milliseconds: 500 });
+		if ($('.clockifyButton', elem)) return;
+
 		const id = extractIdFromUrl();
 		const name = text('[data-selenium-test="highlightTitle"]');
 		const contact = text('[data-selenium-test="contact-chicklet-title-link"]');
@@ -68,22 +71,59 @@ clockifyButton.render(
 		const link = clockifyButton.createButton({ description, projectName });
 
 		link.style.fontSize = '16px';
-		link.style.display = 'block';
+		link.style.marginBottom = '5px';
+		link.style.justifyContent = 'end';
 		link.style.position = 'absolute';
-		link.style.right = '15px';
-		link.style.top = '40px';
+		link.style.top = '46px';
+		link.style.right = '10px';
 
 		elem.append(link);
 	}
 );
 
-function extractIdFromUrl() {
+// Contact, Ticket, Deal and Company view (Preview modal)
+clockifyButton.render(
+	`[data-test-id="IndexPageInlineSidebar"] [data-test-id="record-highlight-main-content"] > div:first-child:not(.clockify),
+	[data-selenium-test="sidebar-preview-panel"] [data-test-id="record-highlight-main-content"] > div:first-child:not(.clockify),
+	[data-test-id="order-highlight-card"] > div:first-child > div:first-child:not(.clockify)`,
+	{ observe: true },
+	async elem => {
+		await timeout({ milliseconds: 1000 });
+		if ($('.clockifyButton')) return;
+
+		const description = () =>
+			text('[data-selenium-test="highlightTitle"]') ||
+			text('header[class*=ScrollingColumn] p > div') ||
+			text('[data-selenium-test="preview-panel-header"] span');
+		const projectName = () =>
+			value('[data-selenium-test="property-input-company"]') ||
+			text('[data-selenium-test="property-input-name"]') ||
+			text(
+				'[data-selenium-test="company-highlight-details"] [data-selenium-test="highlightTitle"] span'
+			);
+
+		const link = clockifyButton.createButton({ description, projectName });
+
+		link.style.justifyContent = 'end';
+		link.style.paddingTop = '5px';
+		link.style.paddingRight = '10px';
+
+		elem.insertAdjacentElement('afterend', link);
+
+		applyStyles(`
+			#clockifyButton {
+				justify-content: end;
+			}
+		`);
+	}
+);
+
+function extractIdFromUrl(isHelpDesk = false) {
 	const url = window.location.href;
 
-	const inboxId = url.match(/inbox\/(.*?)(#|$)/)?.[1];
-	const contactId = url.match(/contact\/([^/]+)/)?.[1];
-	const recordId = url.match(/record\/[^/]+\/([^/]+)/)?.[1];
-	const ticketId = url.match(/ticket\/([^/]+)/)?.[1];
+	if (isHelpDesk) {
+		return url.match(/\/ticket\/(\d+)\/thread/)?.[1];
+	}
 
-	return inboxId || contactId || recordId || ticketId;
+	return url.match(/(\d+)(?=\/?(?:[?#]|$))/)?.[1];
 }

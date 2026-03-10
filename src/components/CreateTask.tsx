@@ -12,6 +12,7 @@ interface PropsInterface {
 	refreshProjectList: Function;
 	setShouldAddNewTask: VoidFunction;
 	closeModal: VoidFunction;
+	selectTask: Function;
 }
 
 export const CreateTask = (props: PropsInterface) => {
@@ -35,7 +36,7 @@ export const CreateTask = (props: PropsInterface) => {
 
 		const task = {
 			name: taskName,
-			projectId: project.id
+			projectId: project.id,
 		};
 
 		const createTaskSuccess = (response: {
@@ -46,6 +47,7 @@ export const CreateTask = (props: PropsInterface) => {
 				return toasterRef.current.toast('error', response.error.message, 2);
 			}
 
+			props.selectTask(response.data, project);
 			props.checkRequiredFields();
 			goBackToEdit();
 		};
@@ -60,9 +62,9 @@ export const CreateTask = (props: PropsInterface) => {
 
 		getBrowser()
 			.runtime.sendMessage({
-				eventName: 'createTask',
-				options: { task },
-			})
+			eventName: 'createTask',
+			options: { task },
+		})
 			.then(createTaskSuccess)
 			.catch(createTaskFailure);
 	};

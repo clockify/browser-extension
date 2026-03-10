@@ -5,6 +5,7 @@ const webKeysWeUse = require('./web-keys-we-use.json');
 let lang = process.argv[2];
 let printAllKeys = false;
 let langs = [lang];
+let allKeys = [];
 
 if (!lang) {
 	langs = ['en'];
@@ -31,13 +32,8 @@ function getVal(obj, i = 0) {
 	return i < parts.length ? getVal(obj[parts[i]], i + 1) : obj;
 }
 
-langs.forEach((lang) => {
-	var jsonPath = path.join(
-		__dirname,
-		'.',
-		'web-locales',
-		`clockify-web-${lang}.json`
-	);
+langs.forEach(lang => {
+	var jsonPath = path.join(__dirname, '.', 'web-locales', `clockify-web-${lang}.json`);
 
 	const data = fs.readFileSync(jsonPath, 'utf8');
 	const web = JSON.parse(data);
@@ -49,7 +45,7 @@ langs.forEach((lang) => {
 		const outPath = path.join(__dirname, 'all-keys.txt');
 		console.log('Created:', outPath);
 		fs.writeFileSync(outPath, JSON.stringify(allKeys, null, 2), 'utf8');
-		process.exit(0);
+		// process.exit(0);
 	}
 
 	parts = [];
@@ -57,7 +53,7 @@ langs.forEach((lang) => {
 	const missingKeys = [];
 	const res = {};
 
-	Object.keys(webKeysWeUse).forEach((key) => {
+	Object.keys(webKeysWeUse).forEach(key => {
 		parts = key.split('__');
 		let message = getVal(web);
 		if (message) {
@@ -71,7 +67,7 @@ langs.forEach((lang) => {
 	});
 
 	if (missingKeys.length > 0) {
-		missingKeys.forEach((key) => console.log(key));
+		missingKeys.forEach(key => console.log(key));
 	}
 
 	res['appName'] = {
@@ -90,7 +86,7 @@ langs.forEach((lang) => {
 
 	const outPath = path.join(__dirname, '..', '_locales', lang, 'messages.json');
 	console.log('Created:', outPath);
-	fs.writeFile(outPath, JSON.stringify(res, null, 2), 'utf8', (writeError) => {
+	fs.writeFile(outPath, JSON.stringify(res, null, 2), 'utf8', writeError => {
 		if (writeError) {
 			process.exit(1);
 		}

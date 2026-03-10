@@ -10,11 +10,11 @@ import { Application } from '../application';
 import { TimeEntryHelper } from '../helpers/timeEntry-helper';
 import { getKeyCodes } from '../enums/key-codes.enum';
 import { getBrowser } from '../helpers/browser-helper';
-import { getRequiredMissingCustomFields } from '../helpers/utils';
 import { offlineStorage } from '../helpers/offlineStorage';
 import locales from '../helpers/locales';
 import debounce from 'lodash.debounce';
 import Toaster from './toaster-component';
+import { getRequiredMissingCustomFields } from '~/helpers/utils';
 
 const timeEntryHelper = new TimeEntryHelper();
 let interval;
@@ -86,8 +86,8 @@ class StartTimer extends Component {
 	getRecentEntries() {
 		getBrowser()
 			.runtime.sendMessage({
-			eventName: 'getRecentTimeEntries',
-		})
+				eventName: 'getRecentTimeEntries',
+			})
 			.then(res => {
 				this.setState({
 					autocompleteItemsRecent: res.data?.map(
@@ -104,7 +104,7 @@ class StartTimer extends Component {
 								},
 								billable: entry.projectBillable,
 								...entry,
-							} || []),
+							}) || []
 					),
 				});
 			})
@@ -115,11 +115,11 @@ class StartTimer extends Component {
 		if (!inputValue) return;
 		getBrowser()
 			.runtime.sendMessage({
-			eventName: 'searchEntries',
-			options: {
-				searchValue: inputValue,
-			},
-		})
+				eventName: 'searchEntries',
+				options: {
+					searchValue: inputValue,
+				},
+			})
 			.then(res => {
 				this.setState({
 					autocompleteItems: res.data.map(entry => ({
@@ -151,7 +151,7 @@ class StartTimer extends Component {
 				() => {
 					if (this.state.timeEntry.timeInterval) {
 						let currentPeriod = moment().diff(
-							moment(this.state.timeEntry.timeInterval.start),
+							moment(this.state.timeEntry.timeInterval.start)
 						);
 						interval = setInterval(() => {
 							currentPeriod = currentPeriod + 1000;
@@ -165,13 +165,13 @@ class StartTimer extends Component {
 						this.props.changeMode('timer');
 						this.props.setTimeEntryInProgress(this.state.timeEntry);
 					}
-				},
+				}
 			);
 		} else {
 			getBrowser()
 				.runtime.sendMessage({
-				eventName: 'getEntryInProgress',
-			})
+					eventName: 'getEntryInProgress',
+				})
 				.then(response => {
 					let timeEntry = response.data;
 					this.setTimeEntryInProgress(timeEntry);
@@ -206,11 +206,11 @@ class StartTimer extends Component {
 					}, 1000);
 					this.props.changeMode('timer');
 					this.props.setTimeEntryInProgress(timeEntry);
-				},
+				}
 			);
 			inProgress = true;
 			this.application.setIcon(
-				inProgress ? getIconStatus().timeEntryStarted : getIconStatus().timeEntryEnded,
+				inProgress ? getIconStatus().timeEntryStarted : getIconStatus().timeEntryEnded
 			);
 			const { forceProjects, forceTasks } = this.props.workspaceSettings;
 			const taskId = timeEntry.task ? timeEntry.task.id : timeEntry.taskId;
@@ -222,7 +222,7 @@ class StartTimer extends Component {
 					const entry = await timeEntryHelper.updateProjectTask(
 						timeEntry,
 						projectDB,
-						taskDB,
+						taskDB
 					);
 					this.setState({
 						timeEntry: entry,
@@ -236,7 +236,7 @@ class StartTimer extends Component {
 			});
 			this.props.setTimeEntryInProgress(timeEntry);
 			this.application.setIcon(
-				inProgress ? getIconStatus().timeEntryStarted : getIconStatus().timeEntryEnded,
+				inProgress ? getIconStatus().timeEntryStarted : getIconStatus().timeEntryEnded
 			);
 			getBrowser().runtime.sendMessage({
 				eventName: 'restartPomodoro',
@@ -334,7 +334,7 @@ class StartTimer extends Component {
 					this.props.changeMode('timer');
 					this.props.setTimeEntryInProgress(this.state.timeEntry);
 					this.goToEdit({ inProgress: true });
-				},
+				}
 			);
 		} else {
 			let { projectId, billable, task, description, customFieldValues, tags } =
@@ -361,25 +361,25 @@ class StartTimer extends Component {
 			const cfs =
 				customFieldValues && customFieldValues.length > 0
 					? customFieldValues.map(({ type, customFieldId, value }) => ({
-						customFieldId,
-						sourceType: 'TIMEENTRY',
-						value: type === 'NUMBER' ? parseFloat(value) : value,
-					}))
+							customFieldId,
+							sourceType: 'TIMEENTRY',
+							value: type === 'NUMBER' ? parseFloat(value) : value,
+						}))
 					: [];
 			getBrowser()
 				.runtime.sendMessage({
-				eventName: 'startWithDescription',
-				options: {
-					projectId,
-					description,
-					billable: null,
-					start: null,
-					end: null,
-					taskId,
-					tagIds,
-					customFields: cfs,
-				},
-			})
+					eventName: 'startWithDescription',
+					options: {
+						projectId,
+						description,
+						billable: null,
+						start: null,
+						end: null,
+						taskId,
+						tagIds,
+						customFields: cfs,
+					},
+				})
 				.then(response => {
 					let data = response.data;
 					this.setState(
@@ -402,11 +402,10 @@ class StartTimer extends Component {
 							});
 
 							this.goToEdit({ inProgress: true });
-						},
+						}
 					);
 				})
-				.catch(() => {
-				});
+				.catch(() => {});
 		}
 	}
 
@@ -432,7 +431,7 @@ class StartTimer extends Component {
 					offlineStorage.timeEntryInOffline = this.state.timeEntry;
 					this.props.changeMode('timer');
 					this.props.setTimeEntryInProgress(this.state.timeEntry);
-				},
+				}
 			);
 		} else {
 			let { projectId, billable, task, description, customFieldValues, tags } =
@@ -459,25 +458,25 @@ class StartTimer extends Component {
 			const cfs =
 				customFieldValues && customFieldValues.length > 0
 					? customFieldValues.map(({ type, customFieldId, value }) => ({
-						customFieldId,
-						sourceType: 'TIMEENTRY',
-						value: type === 'NUMBER' ? parseFloat(value) : value,
-					}))
+							customFieldId,
+							sourceType: 'TIMEENTRY',
+							value: type === 'NUMBER' ? parseFloat(value) : value,
+						}))
 					: [];
 			getBrowser()
 				.runtime.sendMessage({
-				eventName: 'startWithDescription',
-				options: {
-					projectId,
-					description: description?.trim(),
-					billable: null,
-					start: null,
-					end: null,
-					taskId,
-					tagIds,
-					customFields: cfs,
-				},
-			})
+					eventName: 'startWithDescription',
+					options: {
+						projectId,
+						description: description?.trim(),
+						billable: null,
+						start: null,
+						end: null,
+						taskId,
+						tagIds,
+						customFields: cfs,
+					},
+				})
 				.then(response => {
 					let data = response.data;
 
@@ -503,45 +502,28 @@ class StartTimer extends Component {
 							localStorage.setItem({
 								timeEntryInProgress: data,
 							});
-						},
+						}
 					);
 				})
-				.catch(() => {
-				});
+				.catch(() => {});
 		}
 	}
 
 	async checkRequiredFields() {
-		const isOff = await isOffline();
 		if (this.state.stopDisabled) return;
+		this.setState({ stopDisabled: true });
 
-		if (isOff) {
-			let timeEntryOffline = offlineStorage.timeEntryInOffline;
-			if (!timeEntryOffline) {
-				// user tries to Stop TimeEntry which has been started onLine
-				const inProgress = await localStorage.getItem('inProgress');
-				if (inProgress && JSON.parse(inProgress)) {
-					this.setTimeEntryInProgress(null);
-				}
-				this.props.endStarted();
-				return;
-			}
-		}
-		this.setState({
-			stopDisabled: true,
-		});
 		const { forceDescription, forceProjects, forceTasks, forceTags } =
 			this.props.workspaceSettings;
 		const { description, project, task, tags } = this.state.timeEntry;
 
-		const requiredAndMissingCustomFields = await getRequiredMissingCustomFields(
-			project,
-			this.state.timeEntry,
-		);
+		let requiredAndMissingCustomFields = null;
 
-		if (isOff) {
-			this.stopEntryInProgress();
-		} else if (forceDescription && (description === '' || !description)) {
+		if (this.state.timeEntry.customFieldValues.length) {
+			await getRequiredMissingCustomFields(project, this.state.timeEntry);
+		}
+
+		if (forceDescription && (description === '' || !description)) {
 			this.goToEdit({ inProgress: true });
 		} else if (forceProjects && !project) {
 			this.goToEdit({ inProgress: true });
@@ -549,7 +531,7 @@ class StartTimer extends Component {
 			this.goToEdit({ inProgress: true });
 		} else if (forceTags && (!tags || !tags.length > 0)) {
 			this.goToEdit({ inProgress: true });
-		} else if (requiredAndMissingCustomFields.length) {
+		} else if (requiredAndMissingCustomFields?.length) {
 			this.goToEdit({ inProgress: true });
 		} else {
 			this.stopEntryInProgress();
@@ -565,7 +547,7 @@ class StartTimer extends Component {
 			if (!timeEntryOffline) return;
 			timeEntryOffline.timeInterval.end = moment();
 			timeEntryOffline.timeInterval.duration = duration(
-				moment().diff(timeEntryOffline.timeInterval.start),
+				moment().diff(timeEntryOffline.timeInterval.start)
 			);
 			const timeEntriesOffline = offlineStorage.timeEntriesOffline;
 			timeEntriesOffline.push(timeEntryOffline);
@@ -584,11 +566,11 @@ class StartTimer extends Component {
 		} else {
 			getBrowser()
 				.runtime.sendMessage({
-				eventName: 'endInProgress',
-				options: {
-					endedFromIntegration: false,
-				},
-			})
+					eventName: 'endInProgress',
+					options: {
+						endedFromIntegration: false,
+					},
+				})
 				.then(data => {
 					if (data.status === 403) {
 						this.setState({ stopDisabled: false });
@@ -650,7 +632,7 @@ class StartTimer extends Component {
 				timeFormat={this.props.timeFormat}
 				userSettings={this.props.userSettings}
 				inProgress={params.inProgress}
-			/>,
+			/>
 		);
 	}
 
@@ -677,9 +659,9 @@ class StartTimer extends Component {
 							timeFormat={this.props.timeFormat}
 							userSettings={this.props.userSettings}
 							inProgress={true}
-						/>,
+						/>
 					);
-				},
+				}
 			);
 		} else {
 			const { timeEntry } = this.state;
@@ -694,7 +676,7 @@ class StartTimer extends Component {
 					timeFormat={this.props.timeFormat}
 					userSettings={this.props.userSettings}
 					inProgress={true}
-				/>,
+				/>
 			);
 		}
 	}
@@ -784,11 +766,11 @@ class StartTimer extends Component {
 									const selected =
 										this.state.timeEntry.description?.length >= 2
 											? this.state.autocompleteItems.find(
-												entry => entry.id === item.id,
-											)
+													entry => entry.id === item.id
+												)
 											: this.state.autocompleteItemsRecent.find(
-												entry => entry.id === item.id,
-											);
+													entry => entry.id === item.id
+												);
 									if (selected) {
 										this.setState(
 											{
@@ -796,7 +778,7 @@ class StartTimer extends Component {
 											},
 											() => {
 												this.startNewEntry();
-											},
+											}
 										);
 									}
 								}}

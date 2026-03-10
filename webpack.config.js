@@ -4,14 +4,20 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 const webpack = require('webpack');
 
-let DEV =
-	!process.env.NODE_ENV || process.env.NODE_ENV !== 'prod' || process.env.TARGET === 'www/chrome';
-let targetForManifest = process.env.TARGET === 'www/chrome' ? 'chrome' : process.env.TARGET;
+const { TARGET, NODE_ENV } = process.env;
+
+const DEV = !NODE_ENV || NODE_ENV !== 'prod' || TARGET === 'www/chrome';
+const targetForManifest = TARGET === 'www/chrome' ? 'chrome' : TARGET;
+
+const browser = TARGET.includes('.') ? TARGET.split('.')[0] : TARGET;
 
 module.exports = {
 	mode: DEV ? 'development' : 'production',
 	devtool: DEV ? 'source-map' : 'nosources-cheap-module-source-map',
-	entry: './src/main.js',
+	entry: {
+		main: './src/main.js',
+		'global.content-script': './src/contentScripts/global.content-script.js',
+	},
 	output: {
 		path: path.join(__dirname, `${process.env.TARGET}`),
 		filename: '[name].bundle.js',
@@ -127,6 +133,9 @@ module.exports = {
 		new webpack.DefinePlugin({
 			'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
 		}),
+		new webpack.DefinePlugin({
+			TARGET_BROWSER_FOR_CLOCKIFY_EXT: JSON.stringify(browser),
+		}),
 		new NodePolyfillPlugin(),
 		new CopyWebpackPlugin({
 			patterns: [
@@ -134,12 +143,57 @@ module.exports = {
 				{ from: './styles', to: './styles' },
 				{ from: `./index.html`, to: './' },
 				{ from: `./manifest.${targetForManifest}.json`, to: `./manifest.json` },
-				{ from: './src/contentScripts', to: './contentScripts' },
-				{ from: './src/api-services', to: './api-services' },
+				{
+					from: './src/contentScripts',
+					to: './contentScripts',
+					transform(content, absoluteFrom) {
+						const fileName = path.basename(absoluteFrom);
+
+						if (
+							fileName === 'service-background.js' ||
+							fileName === 'service-localstorage.js'
+						) {
+							return content
+								.toString()
+								.replace(
+									'TARGET_BROWSER_FOR_CLOCKIFY_EXT',
+									JSON.stringify(browser)
+								);
+						}
+
+						return content;
+					},
+				},
+				{
+					from: './src/api-services',
+					to: './api-services',
+					transform(content, absoluteFrom) {
+						const fileName = path.basename(absoluteFrom);
+
+						if (fileName === 'analytics-service.js') {
+							return content
+								.toString()
+								.replace(
+									'TARGET_BROWSER_FOR_CLOCKIFY_EXT',
+									JSON.stringify(browser)
+								);
+						}
+
+						return content;
+					},
+				},
 				{ from: './src/integrations', to: './integrations' },
 				{ from: './src/popupDlg', to: './popupDlg' },
 				{ from: './src/settings.html', to: './' },
-				{ from: './src/settings.js', to: './' },
+				{
+					from: './src/settings.js',
+					to: './',
+					transform(content) {
+						return content
+							.toString()
+							.replace('TARGET_BROWSER_FOR_CLOCKIFY_EXT', JSON.stringify(browser));
+					},
+				},
 				{ from: './_locales', to: './_locales' },
 				{
 					from: './src/helpers/locales.js',

@@ -13,7 +13,7 @@ class UserService extends ClockifyService {
 		const jsonPayload = decodeURIComponent(
 			atob(base64)
 				.split('')
-				.map(function(c) {
+				.map(function (c) {
 					return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
 				})
 				.join('')
@@ -28,8 +28,7 @@ class UserService extends ClockifyService {
 		if (await isNavigatorOffline()) return;
 		const { data, error } = await this.getUser();
 		if (data) {
-			const { email, id, activeWorkspace, settings, profilePicture, status } =
-				data;
+			const { email, id, activeWorkspace, settings, profilePicture, status } = data;
 			await localStorage.setItem('user', data);
 			await localStorage.setItem('userEmail', email);
 			await localStorage.setItem('userId', id);
@@ -41,9 +40,7 @@ class UserService extends ClockifyService {
 				const lang = settings.lang.toLowerCase();
 				await localStorage.setItem('lang', lang);
 			}
-			UserWorkspaceStorage.getSetWorkspaceSettings(
-				settings.projectPickerTaskFilter
-			);
+			UserWorkspaceStorage.getSetWorkspaceSettings(settings.projectPickerTaskFilter);
 			UserService.getSetUserRoles();
 		}
 	}
@@ -71,7 +68,7 @@ class UserService extends ClockifyService {
 		if (data) {
 			const { userRoles } = data;
 			aBrowser.storage.local.set({
-				userRoles
+				userRoles,
 			});
 		} else {
 		}
@@ -126,10 +123,7 @@ class UserService extends ClockifyService {
 
 		const userResponse = await localStorage.getItem('user');
 
-		const user =
-			typeof userResponse === 'string'
-				? JSON.parse(userResponse)
-				: userResponse;
+		const user = typeof userResponse === 'string' ? JSON.parse(userResponse) : userResponse;
 
 		const { name, settings, profilePicture } = user;
 
@@ -187,10 +181,7 @@ class UserService extends ClockifyService {
 
 		const userResponse = await localStorage.getItem('user');
 
-		const user =
-			typeof userResponse === 'string'
-				? JSON.parse(userResponse)
-				: userResponse;
+		const user = typeof userResponse === 'string' ? JSON.parse(userResponse) : userResponse;
 
 		const { name, settings, profilePicture } = user;
 

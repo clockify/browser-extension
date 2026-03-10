@@ -24,46 +24,27 @@ If you need the fix quicker, feel free to update the integration yourself and se
 
 1. Make sure you have Node and NPM installed on your system (see setup instructions below)
 2. Clone the repository
-3. Run `npm install --legacy-peer-deps`
+3. Run `npm install`
 4. Build Chrome extension by running:<br>
    `npm run compile.dev.chrome`<br>
 
 5. Navigate to `chrome://extensions/`
 6. Enable "Developer mode" (located in the top right corner)
-7. Click "Load unpacked" and select the `www/chrome.dev/` folder that you've built
+7. Click "Load unpacked" and select the `chrome.dev/` folder that you've built
 
 ### Firefox extension
-
-#### BUILDING THE PRODUCTION VERSION
-
-1. Make sure you have Node and NPM installed on your system (see setup instructions below)
-2. Clone the repository
-3. In project root run `npm install --legacy-peer-deps`
-4. Build Firefox add-on by running:
-   `npm run compile.prod.firefox`<br>
-5. Zip the contents of the `/firefox` folder
-6. Navigate to `about:debugging#/runtime/this-firefox`
-7. Click `"Load Temporary Add-on"`
-8. Select the zipped file
-   > The extension is now built and loaded into firefox successfully
-
----
-
-if you wish to play around with functionality:  
-9. Proceed to login/signup
-10.You are either redirected to the clockify web to login or if you're already logged in to the web version, then extension will instantly log you in once you've pressed the login button. Open some website (eg. some random Gitlab issue https://gitlab.com/gitlab-org/gitlab/-/issues/220296) 12. "Start timer" will appear, which you can click and the add-on will pick up the issue name and start the timer 13. Stop timer to save the time entry
 
 #### BUILDING THE DEVELOPMENT VERSION
 
 1. Make sure you have Node and NPM installed on your system (see setup instructions below)
 2. Clone the repository
-3. Run `npm install --legacy-peer-deps`
+3. Run `npm install`
 4. Build Firefox add-on by running:
    `npm run compile.dev.firefox`<br>
 
-5. Navigate to `about:debugging`
+5. Navigate to `about:debugging#/runtime/this-firefox`
 6. Click "Load Temporary Add-on"
-7. Select the `www/firefox.dev/manifest.json` file
+7. Select the `firefox.dev/manifest.json` file
 
 ### How adding an integration works
 
@@ -71,7 +52,7 @@ Add the url of the new tool in `/src/integrations/integrations.json`. Then, crea
 
 When the extension recognizes that you're on that url, it will load the necessary script.
 
-If you need an example, you can see how [Trello](/src/integrations/trello.js) is implemented.
+If you need an example, you can see how [Asana](/src/integrations/asana.js) is implemented.
 
 Use `createButton()` so both the icon and "Start timer" is displayed. If there's not enough space, you can use `createSmallButton` (so only the icon is displayed).
 
@@ -81,22 +62,23 @@ Before sending us a pull request, make sure you test the integration in both Chr
 
 ```
 sudo apt-get install nodejs
-sudo npm install --legacy-peer-deps
+sudo npm install
 ```
 
 ## Setup (Windows)
 
-- Install/Update Node.js to Latest: https://nodejs.org/en/download/
+-   Install/Update Node.js to Latest: https://nodejs.org/en/download/
 
 ```
-> npm install --legacy-peer-deps
+> npm install
 ```
 
 ## Setup (Mac)
 
+-   Install/Update Node.js to Latest: https://nodejs.org/en/download/
+
 ```
-sudo npm install --legacy-peer-deps
-npm install @popperjs/core
+sudo npm install
 ```
 
 ## Compile

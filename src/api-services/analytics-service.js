@@ -34,7 +34,7 @@ class AnalyticsService extends ClockifyService {
 
 	static async sendAnalyticsEvents({ forceClearEvents } = {}) {
 		const isOnline = Boolean((await UserService.checkInternetConnection()).data);
-		const isCurrentBrowserFirefox = typeof browser !== 'undefined';
+		const isCurrentBrowserFirefox = this.getBrowserName().toLowerCase() === 'firefox';
 		const isCurrentEnvironmentProduction = 'update_url' in chrome.runtime.getManifest();
 
 		// If the browser is Firefox, exit early and don't send analytics
@@ -78,8 +78,8 @@ class AnalyticsService extends ClockifyService {
 		const analyticsEndpoint = aimDevelopment
 			? developmentAnalyticsEndpoint
 			: aimStage
-			? stageAnalyticsEndpoint
-			: productionAnalyticsEndpoint;
+				? stageAnalyticsEndpoint
+				: productionAnalyticsEndpoint;
 
 		const body = events.map(event => ({
 			...event,
@@ -106,7 +106,7 @@ class AnalyticsService extends ClockifyService {
 	}
 
 	static async sendAnalyticsEvent(options = {}) {
-		const isCurrentBrowserFirefox = typeof browser !== 'undefined';
+		const isCurrentBrowserFirefox = this.getBrowserName().toLowerCase() === 'firefox';
 		const isCurrentEnvironmentProduction = 'update_url' in chrome.runtime.getManifest();
 
 		// If the browser is not Chrome, exit early and don't send analytics
@@ -135,23 +135,44 @@ class AnalyticsService extends ClockifyService {
 		};
 
 		try {
-			return await this.apiCall(endPoint, 'POST', AnalyticsService.camelize(body));
+			return await this.apiCall(
+				endPoint,
+				'POST',
+				AnalyticsService.convertKeysToSnakeNotation(body)
+			);
 		} catch (error) {
 			console.error('Error sending analytics event:', error);
 			throw error;
 		}
 	}
 
-	static camelize(object) {
-		const string = JSON.stringify(object);
+	// Because all across our code base we use camelCase notation
+	// and analytics specification requires snake case notation,
+	// we use this function to be absolutely sure that body properties
+	// will be snake case based
+	static convertKeysToSnakeNotation(object) {
+		if (typeof object != 'object') return object;
 
-		const camelString = string
-			.replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) =>
-				index === 0 ? word.toLowerCase() : word.toUpperCase()
-			)
-			.replace(/\s+/g, '');
+		for (const currentKeyName in object) {
+			const keyNameWithSnakeNotation = currentKeyName.replace(
+				/([A-Z])/g,
+				$1 => '_' + $1.toLowerCase()
+			);
 
-		return JSON.parse(camelString);
+			if (keyNameWithSnakeNotation != currentKeyName) {
+				if (object.hasOwnProperty(currentKeyName)) {
+					object[keyNameWithSnakeNotation] = object[currentKeyName];
+					delete object[currentKeyName];
+				}
+			}
+
+			if (typeof object[keyNameWithSnakeNotation] == 'object') {
+				object[keyNameWithSnakeNotation] = AnalyticsService.convertKeysToSnakeNotation(
+					object[keyNameWithSnakeNotation]
+				);
+			}
+		}
+		return object;
 	}
 
 	static async getClientId() {
@@ -176,21 +197,21 @@ class AnalyticsService extends ClockifyService {
 		const workspaceId = await localStorage.getItem('activeWorkspaceId');
 		const memberships = JSON.parse(await localStorage.getItem('memberships'));
 
-		const workspaceUsers = memberships?.length || 0;
-		const workspaceUsersActivated =
+		const wsUsers = memberships?.length || 0;
+		const wsUsersActivated =
 			memberships?.filter(m => m?.membershipStatus === 'ACTIVE')?.length || 0;
-		const workspaceUsersDeactivated =
+		const wsUsersDeactivated =
 			memberships?.filter(m => m?.membershipStatus === 'INACTIVE')?.length || 0;
-		const workspaceUsersInvited =
+		const wsUsersInvited =
 			memberships?.filter(m => m?.membershipStatus === 'PENDING')?.length || 0;
 
 		addedEvents = addedEvents.map(event => ({
 			...event,
 			workspaceId,
-			workspaceUsers,
-			workspaceUsersActivated,
-			workspaceUsersDeactivated,
-			workspaceUsersInvited,
+			wsUsers,
+			wsUsersActivated,
+			wsUsersDeactivated,
+			wsUsersInvited,
 		}));
 
 		const existingEvents = JSON.parse(await localStorage.getItem('AnalyticsEvents'));
@@ -200,5 +221,9 @@ class AnalyticsService extends ClockifyService {
 			: JSON.stringify([...addedEvents]);
 
 		await localStorage.setItem('AnalyticsEvents', allEvents);
+	}
+
+	static getBrowserName() {
+		return TARGET_BROWSER_FOR_CLOCKIFY_EXT;
 	}
 }

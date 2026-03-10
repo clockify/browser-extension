@@ -1,6 +1,6 @@
 import React, { MouseEventHandler, useRef } from 'react';
-import { useOnClickOutside } from '~/components/customFields/useOnClickOutside';
 import locales from '~/helpers/locales';
+import { onClickOutside } from '~/helpers/onClickOutside';
 
 interface PropsInterface {
 	onDelete: MouseEventHandler;
@@ -12,7 +12,7 @@ interface PropsInterface {
 export const TimeEntryDropdown = (props: PropsInterface) => {
 	const menuRef = useRef(null);
 
-	useOnClickOutside(menuRef, () => props.toggleDropdown());
+	onClickOutside(menuRef, () => props.toggleDropdown());
 
 	return (
 		<div className="time-entry-menu__dropdown" ref={menuRef}>
@@ -20,15 +20,13 @@ export const TimeEntryDropdown = (props: PropsInterface) => {
 				{!props.manualModeDisabled && (
 					<li
 						onClick={props.onDuplicate}
-						className="time-entry-menu__dropdown-menu-item dropdown-item"
-					>
+						className="time-entry-menu__dropdown-menu-item dropdown-item">
 						{locales.DUPLICATE}
 					</li>
 				)}
 				<li
 					onClick={props.onDelete}
-					className="time-entry-menu__dropdown-menu-item dropdown-item"
-				>
+					className="time-entry-menu__dropdown-menu-item dropdown-item">
 					{locales.DELETE}
 				</li>
 			</ul>

@@ -20,7 +20,7 @@ class IntegrationSelectors {
 					minutesUntilExpiration
 				).toFixed(2)} minutes (${Math.round(secondsUntilExpiration)} seconds).`;
 
-				console.warn(message);
+				// console.warn(message);
 
 				return;
 			}
@@ -31,7 +31,7 @@ class IntegrationSelectors {
 				'cache-control': 'no-cache',
 			});
 			await this.store(externalSelectors);
-			//console.log('%cFetching selectors remotely succeed.', 'color: green;');
+			console.log('%cFetching selectors remotely succeed.', 'color: green;');
 		} catch (error) {
 			console.error('Fetching selectors remotely failed:', error);
 			try {

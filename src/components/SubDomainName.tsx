@@ -12,7 +12,9 @@ export const SubDomainName = (): React.JSX.Element => {
 	};
 
 	const submitDomainName = (): void => {
-		window.reactRoot.render(<SelfHostedBootSettings url={`https://${domainName}.clockify.me`} />);
+		window.reactRoot.render(
+			<SelfHostedBootSettings isSubdomain={true} url={`https://${domainName}.clockify.me`} />
+		);
 	};
 
 	const cancel = (): void => {
@@ -38,9 +40,7 @@ export const SubDomainName = (): React.JSX.Element => {
 				</div>
 			</form>
 			<div className="sub-domain__actions">
-				<button
-					className="sub-domain__actions--submit"
-					onClick={submitDomainName}>
+				<button className="sub-domain__actions--submit" onClick={submitDomainName}>
 					{locales.SUBMIT}
 				</button>
 				<a className="sub-domain__actions--cancel" onClick={cancel.bind(this)}>

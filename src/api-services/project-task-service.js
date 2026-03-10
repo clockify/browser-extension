@@ -85,11 +85,15 @@ class ProjectTaskService extends ClockifyService {
 		let onlyAdminsCanCreateProjects = false;
 		let projectArchived = false;
 		const createObjects = await this.getCreateObjects();
-		const canCreateProject = await this.getCanCreateProjects();
+
 		if (project) {
 			if (!project.archived) return { projectDB: project, found: true };
 			projectArchived = true;
 		} else if (createObjects) {
+			if (!(await this.getCanCreateProjects())) {
+				await localStorage.setItem('createProjectError', true);
+			}
+
 			let wsSettings = await this.wsSettings();
 			const requestBody = { name: projectName };
 			if (
@@ -103,10 +107,7 @@ class ProjectTaskService extends ClockifyService {
 			if (status === 201) {
 				return { projectDB: project, created: true };
 			}
-			const { errorData } = error;
-			if (errorData && errorData.code === 501) {
-				await localStorage.setItem('createProjectError', 'true');
-			}
+
 			if (error && error.status === 403) {
 				onlyAdminsCanCreateProjects = true;
 			}

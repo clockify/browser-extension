@@ -1,196 +1,140 @@
-// Tasks listing page in project
+// Task list view - actions bar
 clockifyButton.render(
-	'div.taskRHS:not(.clockify), div.row-rightElements:not(.clockify)',
+	'[data-identifier="task-list-item"]:not(.clockify)',
 	{ observe: true },
-	function (elem) {
-		let desc;
-		let isTKO = false;
-		const className = 'huh';
-		let container = $('.taskIcons', elem);
-		const project = $('.w-header-titles__project-name a').textContent.trim();
+	async taskRow => {
+		await timeout({ milliseconds: 500 });
+		const actionsBar = $('[data-identifier="task-list-item-action-bar"]', taskRow);
+		const tagsContainer = $('[data-identifier="task-list-item-inline-elements-tags"]', taskRow);
 
-		if (container === null) {
-			// check if TKO container is there
-			container = $('.task-options', elem);
-			isTKO = true;
-			if (container === null) {
-				// remove class so we re-check after async data is loaded
-				elem.classList.remove('clockify');
-				return;
-			}
-		}
-
-		if ($('.taskName', elem) === null) {
-			// check if TKO element is there
-			if ($('p.task-name a', elem.parentElement) !== null) {
-				desc = $('p.task-name a', elem.parentElement).textContent;
-			} else {
-				return;
-			}
-		} else {
-			desc = $('.taskName', elem).textContent;
-		}
-
-		const link = clockifyButton.createButton({
-			description: desc,
-			projectName: project,
-		});
-
-		if (isTKO) {
-			// different behaviour in TKO
-			link.classList.add('option');
-		} else {
-			link.classList.add(className);
-			link.addEventListener('click', function () {
-				// Run through and hide all others
-				let i;
-				let len;
-				const elems = document.querySelectorAll('#clockifyButton');
-				for (i = 0, len = elems.length; i < len; i += 1) {
-					elems[i].classList.add('huh');
-				}
-
-				if (link.classList.contains(className)) {
-					link.classList.remove(className);
-				} else {
-					link.classList.add(className);
-				}
-			});
-		}
-
-		const spanTag = document.createElement('span');
-		spanTag.classList.add('clockify-span');
-		link.style.width = 'auto';
-		if (isTKO) {
-			// different styling due to different layout in TKO
-			link.style.paddingLeft = '25px';
-			link.style.transform = 'scale(1)';
-			link.style.fontSize = '13px';
-			link.style.marginRight = '10px';
-		} else {
-			link.style.paddingLeft = '20px';
-		}
-		link.setAttribute('title', 'Clockify Timer');
-		spanTag.appendChild(link);
-		if (isTKO) {
-			// need to use parent, some <a>'s can be nested e.g. HubSpot integration,
-			// can't just use "unused icons" container as the layout has changed
-			container.insertBefore(
-				spanTag,
-				container.parentElement.querySelector('.task-options > a:not(.active)')
-			);
-		} else {
-			container.insertBefore(spanTag, container.lastChild);
-		}
-	}
-);
-
-// Teamwork Desk
-clockifyButton.render(
-	'section.inbox--body header.ticket--header:not(.clockify)',
-	{ observe: true },
-	function (elem) {
-		// ticket view
-		const container = $('.title-label', elem);
-		const id = $('.id-hold', elem).textContent;
-		const description = $('a', elem).textContent;
-
-		const descFunc = function () {
-			return id.trim() + ' ' + description.trim();
-		};
-
-		const link = clockifyButton.createButton({
-			small: true,
-			description: descFunc,
-		});
-
-		container.appendChild(link);
-	}
-);
-
-// Teamwork Desk - new design 2019
-clockifyButton.render(
-	'.ticket-view-page__main-content:not(.clockify)',
-	{ observe: true },
-	function (elem) {
-		// ticket view
-		const container = $('.title', elem);
-		const id = $('.ticket-id', elem).textContent;
-		const description = $('.title__subject', elem).textContent;
-
-		const descFunc = function () {
-			return id.trim() + ' ' + description.trim();
-		};
-
-		const link = clockifyButton.createButton({
-			small: true,
-			description: descFunc,
-		});
-
-		link.style.margin = '3px 0 0 7px';
-
-		container.appendChild(link);
-	}
-);
-
-// Teamwork (July 2020)
-clockifyButton.render(
-	'[data-identifier="task-list-task-name"]:not(.clockify)',
-	{ observe: true },
-	(elem) => {
-		const description = () =>
-			$('.w-task-row__name > a', elem).textContent.trim();
-		const projectName = () =>
-			$('.tw-toolbar-title > span')?.textContent?.trim() || '';
-		const tagNames = () => [
-			...new Set(
-				Array.from($$('.w-tags__tag-name', elem)).map((tag) =>
-					tag.textContent.trim()
-				)
-			),
-		];
-
-		if (!description()) return;
-
-		const link = clockifyButton.createButton({
-			description,
-			projectName,
-			tagNames,
-			small: true,
-		});
-
-		link.style.backgroundSize = '16px';
-
-		link.setAttribute('data-content', 'Clockify Timer');
-
-		link.classList.add(
-			'w-task-row__option',
-			'integration--hide',
-			'tipped-delegate',
-			'show-on-mouseenter'
-		);
-
-		elem.appendChild(link);
-	}
-);
-
-clockifyButton.render(
-	'[data-task-detail-panel-id]:not(.clockify)',
-	{ observe: true },
-	(elem) => {
-		const description = () => text('.taskLinkName', elem);
+		const description = () => text('[class*="group/taskName"]', taskRow);
 		const projectName = () => text('.tw-toolbar-title > span');
-		const tagNames = () => textList('.v-chip__content span', elem);
+		const tagNames = () => textList('[class*="group/LscChip"]', tagsContainer);
 
 		const entry = { description, projectName, tagNames, small: true };
 
-		const link = clockifyButton.createButton(entry);
+		const timer = clockifyButton.createTimer(entry);
 
-		elem.style.marginLeft = '28px';
-		link.style.position = 'absolute';
-		link.style.top = '16px';
-		link.style.left = '-24px';
-		link.style.marginLeft = '2px';
-		elem.prepend(link);
+		// On hover background effect
+		timer.style.padding = '4px';
+		timer.style.borderRadius = '50%';
+		timer.classList.add('hover:bg-[--lsds-c-button-color-bg-tertiary-hover]');
+
+		const threeDotsIcon = $('button:last-of-type', actionsBar);
+
+		threeDotsIcon && !$('[class*="clockify"]', actionsBar) && threeDotsIcon.before(timer);
 	}
 );
+
+// Task board view - card
+clockifyButton.render(
+	'[class*="group/card"]:not(.clockify)',
+	{
+		observe: true,
+		observerConfig: { attributes: true },
+		showTimerOnhover: '[class*="group/card"]',
+	},
+	card => {
+		const description = () => text('h1,h2,h3,h4', card);
+		const projectName = () => text('.tw-toolbar-title > span');
+		const tagNames = () =>
+			textList('[data-identifier="task-tag-list"] [class*="group/LscChip"]', card);
+
+		const entry = { description, projectName, tagNames, small: true };
+
+		const timer = clockifyButton.createTimer(entry);
+
+		// On hover background effect
+		timer.style.padding = '4px';
+		timer.style.borderRadius = '50%';
+		timer.classList.add('hover:bg-[--lsds-c-button-color-bg-tertiary-hover]');
+
+		timer.style.position = 'absolute';
+		timer.style.top = '2.8rem';
+		timer.style.left = '0.64rem';
+
+		!$('[class*="clockify"]', card) && card.append(timer);
+	}
+);
+
+// Sidebar view
+clockifyButton.render(
+	'[data-task-details-section="main"]:not(.clockify)',
+	{ observe: true, observerConfig: { attributes: true }, onNavigationRerender: true },
+	sidebarDetails => {
+		const description = () =>
+			text(`a[class*="text-default"]`, sidebarDetails.children[1]) ||
+			text(`span[class*="text-default"]`, sidebarDetails.children[1]);
+		const projectName = () => text('.tw-toolbar-title > span');
+		const tagNames = () =>
+			textList('[class*="!hover:text-primary"] [class*="group/LscChip"]', sidebarDetails);
+
+		const entry = { description, projectName, tagNames };
+
+		const timer = clockifyButton.createTimer(entry);
+		const input = clockifyButton.createInput(entry);
+
+		const container = createContainer(timer, input);
+
+		container.style.display = 'flex';
+		container.style.alignItems = 'center';
+		container.style.justifyContent = 'space-between';
+		container.style.gap = '1rem';
+		container.style.width = 'fit-content';
+		container.style.margin = '8px 0 0 25px';
+
+		$('input', container).style.padding = '5px';
+		$('input', container).style.borderRadius = '5px';
+
+		sidebarDetails.before(container);
+	}
+);
+
+initializeHtmlObserver();
+applyManualInputStyles();
+
+function initializeHtmlObserver() {
+	const bodyObserver = new MutationObserver(applyManualInputStyles);
+
+	const observationTarget = document.documentElement;
+	const observationConfig = { attributes: true };
+
+	bodyObserver.observe(observationTarget, observationConfig);
+}
+
+function applyManualInputStyles() {
+	const lightStyles = `
+		span.clockify-button-inactive {
+			color: #444444 !important;
+		}
+
+		input.clockify-input {
+			color: #444444 !important;
+			border: none !important;
+			background: #fff !important;
+			border: 1px solid #dcdcde !important;
+		}
+	`;
+	const darkStyles = `
+		.clockify-widget-container {
+			margin-bottom: 8px !important;
+		}
+
+		span.clockify-button-inactive {
+			color: #eef1f5 !important;
+		}
+		input.clockify-input {
+			color: #eef1f5 !important;
+			border: none !important;
+			background: #2b2e2e !important;
+		}
+	`;
+
+	const htmlTagClasslist = Array.from(document.documentElement.classList);
+	const valueWithDark = htmlTagClasslist.find(attributeValue => attributeValue.includes('dark'));
+	const isThemeDark = Boolean(valueWithDark);
+
+	const stylesToApply = isThemeDark ? darkStyles : lightStyles;
+
+	applyStyles(stylesToApply, 'clockify-theme-dependent-styles');
+}

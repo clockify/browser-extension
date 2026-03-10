@@ -1,484 +1,414 @@
-const aBrowser = chrome || browser;
-let clockifyOrigins = [];
+const aBrowser = isChrome() ? chrome : browser;
 
-document.addEventListener('DOMContentLoaded', initLoad);
-document
-	.getElementById('settings__permissions-container')
-	.addEventListener('click', (e) => {
-		if (e.target.tagName === 'INPUT' && e.target.type === 'checkbox') {
-			save_permissions();
-		}
-	});
+document.addEventListener('DOMContentLoaded', onDomContentLoaded);
 
-aBrowser.runtime.onMessage.addListener((request, sender, sendResponse) => {
-	if (request.eventName === 'closeOptionsPage') {
-		window.close();
+const integrationsTab = $('#integrationsTab');
+const filterInput = $('#permission-filter');
+const enableAllButton = $('#enable-all');
+const disableAllButton = $('#disable-all');
+const customUrlInput = $('#custom-domain-url');
+const integrationsSelect = $('#origins');
+const addCustomUrlButton = $('#add-custom-domain');
+const integratonListContainer = $('#integration-list');
+const integratonSelectionList = $('#integration-selection-list');
+
+document.addEventListener('click', onClick);
+filterInput.addEventListener('input', onFilterChange);
+addCustomUrlButton.addEventListener('click', onAddCustomUrl);
+
+showIntegrationList();
+addIntegrationSelectionItems();
+showIntegrationsWithCustomDomain();
+
+// DOM Helper functions
+
+function $(selector, context = document) {
+	return context.querySelector(selector);
+}
+
+function $$(selector, context = document) {
+	return context.querySelectorAll(selector);
+}
+
+function text(selector, context = document) {
+	return $(selector, context)?.textContent?.trim();
+}
+
+function value(selector, context = document) {
+	return $(selector, context)?.value?.trim();
+}
+
+// Storage helpers
+
+async function getItem(key) {
+	try {
+		const result = await aBrowser.storage.local.get(key);
+
+		return result[key] || undefined;
+	} catch (error) {
+		console.error(`Error getting storage item (key = ${key}). Error:`, error);
+
+		return null;
 	}
-});
-
-const integrationsTab = document.getElementById('integrationsTab');
-integrationsTab.className += ' active';
-
-document
-	.getElementById('enable-all')
-	.addEventListener('click', enableAllOrigins);
-document
-	.getElementById('disable-all')
-	.addEventListener('click', disableAllOrigins);
-document
-	.getElementById('permission-filter')
-	.addEventListener('keyup', filterPermissions);
-document
-	.getElementById('add-custom-domain')
-	.addEventListener('click', addCustomDomain);
-document
-	.querySelector('#settings__custom-domains__custom-perm-container')
-	.addEventListener('click', removeCustomDomain);
-integrationsTab.addEventListener('click', openTab);
-
-function createOriginList() {
-	fetch('integrations/integrations.json')
-		.then((result) => result.json())
-		.then((data) => {
-			clockifyOrigins = data;
-			addIntegrationsInPermissionsIfNewIntegrationsExist(clockifyOrigins);
-			let origins = document.createElement('select');
-			let option;
-			origins.id = 'origins';
-			origins.style.minHeight = '2em';
-			origins.style.marginRight = '10px';
-			let permContainer = document.getElementById(
-				'settings__permissions-container'
-			);
-			permContainer.style.height = '500px';
-			permContainer.style.width = '500px';
-			permContainer.style.overflowY = 'scroll';
-			permContainer.style.border = '1px solid #bbb';
-			permContainer.style.borderRadius = '2px';
-
-			for (let key in data) {
-				if (!data[key].script.includes('custom-')) {
-					const checkbox = addCheckbox(key, data[key]);
-					permContainer.appendChild(checkbox);
-				}
-
-				createOriginListForCustomDomain(data, key, option, origins);
-			}
-			addGenericIntegrationToList(option, origins);
-
-			replaceContent('#settings__custom-domains__origins-container', origins);
-			setTimeout(() => restore_options(), 0);
-		});
 }
 
-function createOriginListForCustomDomain(data, key, option, origins) {
-	option = document.createElement('option');
-	option.id = 'origin';
-	option.value = key;
-	option.setAttribute('data-id', key);
-	option.textContent = data[key].name;
-	origins.appendChild(option);
+async function setItem(key, value) {
+	try {
+		await aBrowser.storage.local.set({ [key]: value });
+	} catch (error) {
+		console.error(`Error setting storage item (key = ${key}). Error:`, error);
+	}
 }
 
-function addGenericIntegrationToList(option, origins) {
-	option = document.createElement('option');
-	option.id = 'origin';
-	option.value = 'generic-integration';
-	option.setAttribute('data-id', 'generic-integration');
-	option.textContent = 'Generic integration';
-	origins.appendChild(option);
+async function getCurrentUserIntegrationSettings() {
+	const userId = await getItem('userId');
+	const integrations = await getItem('integrations');
+
+	return integrations[userId];
 }
 
-function initLoad() {
-	aBrowser.storage.local.get(['locale_messages', 'lang'], async (result) => {
-		await clockifyLocales.onProfileLangChange(result.lang);
-		const localesScript = document.createElement('script');
-		localesScript.src = 'contentScripts/clockifyLocales.js';
-		document.body.appendChild(localesScript);
-		localesScript.onload = () => {
-			aBrowser.storage.local.get('token', (result) => {
-				if (result.token) {
-					integrationsTab.innerText = clockifyLocales.INTEGRATIONS;
+async function setCurrentUserIntegrationSettings(integrations) {
+	const currentUserId = await getItem('userId');
+	const integrationSettingsForAllUsers = await getItem('integrations');
 
-					document.getElementById(
-						'h11'
-					).innerText = `Clockify - ${clockifyLocales.INTEGRATIONS}`;
-					document.getElementById('h21').innerText =
-						clockifyLocales.ENABLE_INTEGRATIONS;
-					document.getElementById('p11').innerText =
-						clockifyLocales.ENABLE_TOOLS +
-						'\n' +
-						clockifyLocales.ENABLE_ALL_INTEGRATIONS;
+	const currentUserUpdatedIntegrationSettings = { [currentUserId]: integrations };
 
-					document.getElementById('enable-all').innerText =
-						clockifyLocales.ENABLE_ALL;
-					document.getElementById('disable-all').innerText =
-						clockifyLocales.DISABLE_ALL;
-
-					document.getElementById('custom-domains').innerText =
-						clockifyLocales.CUSTOM_DOMAINS;
-
-					document.getElementById('tool-hosted').innerText =
-						clockifyLocales.HOSTED_ON_CUSTOM_DOMAIN +
-						'\n' +
-						clockifyLocales.ENTER_DOMAIN_NAME +
-						'\n' +
-						clockifyLocales.PORTS_NOT_SUPPORTED;
-
-					document.getElementById('add-custom-domain').innerText =
-						clockifyLocales.ADD;
-					document.getElementById('custom-domain-url').placeholder =
-						clockifyLocales.CUSTOM_DOMAINS + ' url';
-				}
-			});
-		};
-	});
-
-	aBrowser.storage.local.get(['permissions', 'userId'], (result) => {
-		const { userId } = result;
-		let { permissions } = result;
-		if (!permissions) permissions = [];
-
-		let permissionsByUser = permissions.filter(
-			(permission) => permission.userId === userId
-		); // [0]
-		if (permissionsByUser.length > 0) {
-			createOriginList();
-			showCustomDomains();
-		} else {
-			permissionsByUser = { userId, permissions: [] };
-			for (let key in clockifyOrigins) {
-				const clockifyOrigin = clockifyOrigins[key];
-				permissionsByUser.permissions.push({
-					domain: key,
-					isEnabled: true,
-					script: clockifyOrigin.script,
-					name: clockifyOrigin.name,
-					isCustom: true,
-				});
-			}
-			permissions.push(permissionsByUser);
-			aBrowser.storage.local.set({ permissions: permissions }, () => {
-				createOriginList();
-				showCustomDomains();
-			});
-		}
+	await setItem('integrations', {
+		...integrationSettingsForAllUsers,
+		...currentUserUpdatedIntegrationSettings,
 	});
 }
 
-function restore_options() {
-	aBrowser.storage.local.get(['permissions', 'userId'], (result) => {
-		const { userId } = result;
-		if (result && result.permissions && result.permissions.length > 0) {
-			const permissionsByUser = result.permissions.filter(
-				(permission) => permission.userId === userId
-			)[0];
+async function getUserSettingsForIntegrationByName(name) {
+	const integrations = await getCurrentUserIntegrationSettings();
 
-			if (!permissionsByUser) {
-				return;
-			}
-			const filteredPermissions = permissionsByUser.permissions.filter(
-				(p) => !p.isCustom && !p.script.includes('custom-')
-			);
-			for (let key in filteredPermissions) {
-				const el = document.getElementById(filteredPermissions[key].domain);
-				if (el) {
-					// we don't remove integration in storage, although we don't have it in integrations.json
-					el.checked = filteredPermissions[key].isEnabled;
-				}
-			}
-		}
-	});
+	return integrations.find(integration => integration.name.toLowerCase() === name.toLowerCase());
 }
 
-function save_permissions() {
-	aBrowser.storage.local.get(['permissions', 'userId'], (result) => {
-		const { userId } = result;
-		if (result && result.permissions && result.permissions.length > 0) {
-			const permissionsForStorage = result.permissions;
-			const permissionsByUser = result.permissions.filter(
-				(permission) => permission.userId === userId
-			)[0];
+// Localization
 
-			if (!permissionsByUser) {
-				return;
-			}
-			const filteredPermissions = permissionsByUser.permissions.filter(
-				(p) => !p.isCustom && !p.script.includes('custom-')
-			);
-			for (let i in filteredPermissions) {
-				let permission = filteredPermissions[i];
-				const el = document.getElementById(filteredPermissions[i].domain);
-				if (el) {
-					// we don't remove integration in storage, although we don't have it in integrations.json
-					permission['isEnabled'] = el.checked;
-				}
-			}
+async function onDomContentLoaded() {
+	const language = await getItem('lang');
+	await clockifyLocales.onProfileLangChange(language);
+	const localesScript = document.createElement('script');
+	localesScript.src = 'contentScripts/clockifyLocales.js';
+	document.body.appendChild(localesScript);
 
-			aBrowser.storage.local.set({ permissions: permissionsForStorage });
-		}
-	});
+	integrationsTab.innerText = clockifyLocales.INTEGRATIONS;
+
+	$('#h11').innerText = `Clockify - ${clockifyLocales.INTEGRATIONS}`;
+	$('#h21').innerText = clockifyLocales.ENABLE_INTEGRATIONS;
+	$('#p11').innerText =
+		clockifyLocales.ENABLE_TOOLS + '\n' + clockifyLocales.ENABLE_ALL_INTEGRATIONS;
+
+	$('#enable-all').innerText = clockifyLocales.ENABLE_ALL;
+	$('#disable-all').innerText = clockifyLocales.DISABLE_ALL;
+
+	$('#custom-domains').innerText = clockifyLocales.CUSTOM_DOMAINS;
+
+	$('#tool-hosted').innerText =
+		clockifyLocales.HOSTED_ON_CUSTOM_DOMAIN +
+		'\n' +
+		clockifyLocales.ENTER_DOMAIN_NAME +
+		'\n' +
+		clockifyLocales.PORTS_NOT_SUPPORTED;
+
+	$('#add-custom-domain').innerText = clockifyLocales.ADD;
+	$('#custom-domain-url').placeholder = clockifyLocales.CUSTOM_DOMAINS + ' url';
 }
 
-function addCustomDomain() {
-	aBrowser.storage.local.get(['permissions', 'userId'], (result) => {
-		const { userId } = result;
-		let customDomain = extractCustomDomain(
-			document.getElementById('custom-domain-url').value
+// Core logic
+
+async function onClick({ target }) {
+	if (target.matches('#enable-all')) {
+		onEnableAllClick();
+		return;
+	}
+
+	if (target.matches('#disable-all')) {
+		onDisableAllClick();
+		return;
+	}
+
+	if (target.matches('#integration-list input[type="checkbox"]')) {
+		const name = target.getAttribute('data-integration-name');
+		const isChecked = target.checked;
+
+		const currentUserIntegrationSettings = await getCurrentUserIntegrationSettings();
+
+		const currentUserUpdatedIntegrationSettings = currentUserIntegrationSettings.map(
+			integration => {
+				if (integration.name.toLowerCase() !== name.toLowerCase()) return integration;
+
+				return { ...integration, isEnabled: isChecked };
+			}
 		);
-		const selectedOrigin = document.querySelector('#origins').value;
-		const permissionsForStorage = result.permissions;
-		const permissionsByUser = result.permissions.filter(
-			(permission) => permission.userId === userId
-		)[0];
-		let newPermission = {};
 
-		if (permissionsByUser) {
-			for (let key in clockifyOrigins) {
-				if (key === selectedOrigin) {
-					newPermission['domain'] = customDomain;
-					newPermission['isEnabled'] = true;
-					newPermission['script'] = clockifyOrigins[key].script;
-					newPermission['name'] = clockifyOrigins[key].name;
-					newPermission['isCustom'] = true;
-					newPermission['urlPattern'] = `*://${customDomain}/*`;
+		await setCurrentUserIntegrationSettings(currentUserUpdatedIntegrationSettings);
 
-					permissionsByUser.permissions.unshift(newPermission);
-					break;
+		const { sendMessage } = aBrowser.runtime;
+		const eventName = isChecked ? 'enableIntegration' : 'disableIntegration';
+
+		await sendMessage({ eventName, options: { name } });
+
+		return;
+	}
+
+	if (target.matches('span#deleteButton')) {
+		const name = target.getAttribute('data-integration-name');
+
+		const currentUserIntegrationSettings = await getCurrentUserIntegrationSettings();
+
+		const currentUserUpdatedIntegrationSettings = currentUserIntegrationSettings.map(
+			integration => {
+				if (integration.name.toLowerCase() !== name.toLowerCase()) {
+					return integration;
+				} else if (integration.name.toLowerCase() !== 'generic integration') {
+					return { ...integration, customUrls: [] };
+				} else {
+					return { ...integration, customUrls: [], isEnabled: false };
 				}
 			}
+		);
 
-			// check if custom domain has chosen a generic integration file
-			if (selectedOrigin === 'generic-integration') {
-				newPermission['domain'] = customDomain;
-				newPermission['isEnabled'] = true;
-				newPermission['script'] = 'generic-integration.js';
-				newPermission['name'] = customDomain;
-				newPermission['isCustom'] = true;
-				newPermission['urlPattern'] = `*://${customDomain}/*`;
+		await setCurrentUserIntegrationSettings(currentUserUpdatedIntegrationSettings);
 
-				permissionsByUser.permissions.unshift(newPermission);
-			}
-		}
+		// Once "delete" button is clicked, all custom URLs are deleted
+		// Disable "Genetic integration"
+		if (name.toLowerCase() === 'generic integration') {
+			const { sendMessage } = aBrowser.runtime;
+			const eventName = 'disableIntegration';
 
-		aBrowser.storage.local.set({ permissions: permissionsForStorage }, () => {
-			document.getElementById('custom-domain-url').value = '';
-			showCustomDomains();
-		});
-	});
-}
-
-function showCustomDomains() {
-	let customDomainsHtml = document.createElement('ul');
-	let li;
-	let dom;
-
-	customDomainsHtml.id = 'custom-permissions-list';
-	customDomainsHtml.className = 'settings__custom-domains__custom-origin-list';
-
-	aBrowser.storage.local.get(['permissions', 'userId'], (result) => {
-		const { userId } = result;
-		result.permissions
-			.filter((permissionByUser) => permissionByUser.userId === userId)[0]
-			.permissions.filter((permission) => permission.isCustom)
-			.forEach((p) => {
-				li = document.createElement('li');
-
-				dom = document.createElement('a');
-				dom.className = 'settings__custom_domains__remove';
-				dom.textContent = 'delete';
-				li.appendChild(dom);
-
-				dom = document.createElement('strong');
-				dom.textContent = p.domain;
-				li.appendChild(dom);
-
-				li.appendChild(document.createTextNode(' - '));
-
-				dom = document.createElement('i');
-				dom.textContent = p.name;
-				li.appendChild(dom);
-
-				customDomainsHtml.appendChild(li);
-			});
-
-		if (customDomainsHtml.childNodes.length > 0) {
-			replaceContent(
-				'#settings__custom-domains__custom-perm-container',
-				customDomainsHtml
-			);
+			await sendMessage({ eventName, options: { name } });
 		} else {
-			if (
-				document.getElementById(
-					'settings__custom-domains__custom-perm-container'
-				).childNodes.length > 0
-			) {
-				document
-					.getElementById('settings__custom-domains__custom-perm-container')
-					.removeChild(document.getElementById('custom-permissions-list'));
-			}
+			await aBrowser.runtime.sendMessage({
+				eventName: 'updateIntegration',
+				options: { name },
+			});
 		}
-	});
+
+		window.location.reload();
+	}
 }
 
-function removeCustomDomain(e) {
-	let domain;
-	let parent;
+async function onEnableAllClick() {
+	$$('input[type="checkbox"]').forEach(checkbox => (checkbox.checked = true));
 
-	if (e.target.className === 'settings__custom_domains__remove') {
-		parent = e.target.parentNode;
-		domain = parent.querySelector('strong').textContent;
+	const currentUserIntegrationSettings = await getCurrentUserIntegrationSettings();
+	const currentUserUpdatedIntegrationSettings = currentUserIntegrationSettings.map(
+		integration => ({ ...integration, isEnabled: true })
+	);
 
-		aBrowser.storage.local.get(['permissions', 'userId'], (result) => {
-			const { userId } = result;
-			const permissionsForStorage = result.permissions;
-			const permissionsByUser = result.permissions.filter(
-				(permissionByUser) => permissionByUser.userId === userId
-			)[0].permissions;
-			permissionsByUser.splice(
-				permissionsByUser.findIndex((p) => p.isCustom && p.domain === domain),
-				1
-			);
-			aBrowser.storage.local.set({ permissions: permissionsForStorage }, () => {
-				showCustomDomains();
-			});
+	await setCurrentUserIntegrationSettings(currentUserUpdatedIntegrationSettings);
+	await aBrowser.runtime.sendMessage({ eventName: 'enableAllIntegrations' });
+}
+
+async function onDisableAllClick() {
+	$$('input[type="checkbox"]').forEach(checkbox => (checkbox.checked = false));
+
+	const currentUserIntegrationSettings = await getCurrentUserIntegrationSettings();
+	const currentUserUpdatedIntegrationSettings = currentUserIntegrationSettings.map(
+		integration => ({ ...integration, isEnabled: false })
+	);
+
+	await setCurrentUserIntegrationSettings(currentUserUpdatedIntegrationSettings);
+	await aBrowser.runtime.sendMessage({ eventName: 'disableAllIntegrations' });
+}
+
+function onFilterChange({ target }) {
+	const { value } = target;
+
+	if (!value) {
+		$$('.integration-data-container').forEach(container => {
+			container.style.display = 'block';
+		});
+	} else {
+		$$('.integration-data-container').forEach(container => {
+			if (!container.textContent.toLowerCase().includes(value.toLowerCase())) {
+				container.style.display = 'none';
+			}
 		});
 	}
 }
 
-function filterPermissions(e) {
-	let container = document.getElementById('settings__permissions-container');
-	let child;
-	for (let i in container.getElementsByTagName('div')) {
-		if (!isNaN(i)) {
-			child = container.childNodes[i];
-		}
+function isValidUrl(url) {
+	try {
+		new URL(url);
 
-		if (child) {
-			const childInput = child.getElementsByTagName('input')[0];
+		return true;
+	} catch (error) {
+		return false;
+	}
+}
 
-			const searchTerm = e.target.value?.toLowerCase();
+async function onAddCustomUrl() {
+	const url = value('#custom-domain-url');
 
-			if (!childInput.id.includes(searchTerm)) {
-				child.style.display = 'none';
+	if (!url) {
+		customUrlInput.style.border = '1.4px solid red';
+
+		setTimeout(() => {
+			customUrlInput.style.border = '1px solid rgb(191, 191, 191)';
+		}, 1200);
+
+		return;
+	}
+
+	const { hostname } = isValidUrl(url)
+		? new URL(url)
+		: isValidUrl(`https://${url}`)
+			? new URL(`https://${url}`)
+			: null;
+
+	if (!hostname) {
+		customUrlInput.style.border = '1.4px solid red';
+
+		setTimeout(() => {
+			customUrlInput.style.border = '1px solid rgb(191, 191, 191)';
+		}, 1200);
+
+		return;
+	}
+
+	const pattern = `*://${hostname}/*`;
+
+	const name = value('#integration-selection-list');
+
+	$('#custom-domain-url').value = '';
+
+	await addCustomUrl(name, pattern);
+}
+
+async function addCustomUrl(name, url) {
+	const currentUserIntegrationSettings = await getCurrentUserIntegrationSettings();
+
+	const currentUserUpdatedIntegrationSettings = currentUserIntegrationSettings.map(
+		integration => {
+			if (integration.name.toLowerCase() !== name.toLowerCase()) {
+				return integration;
+			} else if (integration.name.toLowerCase() !== 'generic integration') {
+				return {
+					...integration,
+					customUrls: [...new Set([...integration.customUrls, url])],
+				};
 			} else {
-				child.style.display = 'block';
+				return {
+					...integration,
+					customUrls: [...new Set([...integration.customUrls, url])],
+					isEnabled: true,
+				};
 			}
 		}
+	);
+
+	await setCurrentUserIntegrationSettings(currentUserUpdatedIntegrationSettings);
+
+	// adding custom URL to generic integration
+	// should enable it
+	if (name.toLowerCase() === 'generic integration') {
+		console.log('[Generic integration] Added new URL, update integration');
+
+		const { sendMessage } = aBrowser.runtime;
+		const eventName = 'enableIntegration';
+
+		await sendMessage({ eventName, options: { name } });
+	} else {
+		await aBrowser.runtime.sendMessage({ eventName: 'updateIntegration', options: { name } });
+	}
+
+	window.location.reload();
+}
+
+async function showIntegrationList() {
+	const currentUserIntegrationSettings = await getCurrentUserIntegrationSettings();
+
+	for (const integration of currentUserIntegrationSettings) {
+		const { name, urls, isEnabled } = integration;
+
+		if (name.toLowerCase() === 'generic integration') continue;
+
+		const mainUrl = new URLPattern(urls[0]).hostname.replace('*.', '');
+
+		const checkbox = document.createElement('input');
+		checkbox.id = name;
+		checkbox.type = 'checkbox';
+		checkbox.checked = isEnabled;
+		checkbox.style.width = '1rem';
+		checkbox.style.height = '1rem';
+		checkbox.setAttribute('data-integration-name', name);
+
+		const label = document.createElement('label');
+		label.setAttribute('for', name);
+		label.textContent = `${name} - ${mainUrl}`;
+
+		const container = document.createElement('div');
+
+		container.style.display = 'flex';
+		container.style.flexDirection = 'row';
+		container.style.gap = '0.5rem';
+		container.style.margin = '0.25rem 0';
+		container.classList.add('integration-data-container');
+
+		container.append(checkbox);
+		container.append(label);
+
+		integratonListContainer.append(container);
 	}
 }
 
-function addCheckbox(key, origin) {
-	let div = document.createElement('div');
-	let label = document.createElement('label');
-	let input = document.createElement('input');
-	div.id = 'div-' + key;
-	div.style.display = 'flex';
-	div.style.alignItems = 'center';
-	div.style.borderBottom = '1px solid #e8e8e8';
-	input.type = 'checkbox';
-	input.id = key;
-	div.appendChild(input);
-	label.style.display = 'inline-block';
-	label.style.marginLeft = '15px';
-	label.textContent = origin.name + ' - ' + key;
-	div.appendChild(label);
+async function addIntegrationSelectionItems() {
+	const userIntegrationSettings = await getCurrentUserIntegrationSettings();
 
-	return div;
-}
+	userIntegrationSettings.forEach(integration => {
+		const item = document.createElement('option');
 
-function enableAllOrigins() {
-	for (let key in clockifyOrigins) {
-		const elementById = document.getElementById(key);
-		if (elementById) {
-			elementById.checked = true;
-		}
-	}
+		item.textContent = integration.name;
 
-	save_permissions();
-}
-
-function disableAllOrigins() {
-	for (let key in clockifyOrigins) {
-		const elementById = document.getElementById(key);
-		if (elementById) {
-			elementById.checked = false;
-		}
-	}
-
-	save_permissions();
-}
-
-function replaceContent(parentSelector, html) {
-	const container = document.querySelector(parentSelector);
-	while (container.firstChild) {
-		container.removeChild(container.firstChild);
-	}
-
-	container.appendChild(html);
-}
-
-function extractCustomDomain(url) {
-	if (url.includes('://')) {
-		url = url.split('://')[1];
-	} else if (url.includes('/')) {
-		url = url.split('/')[0];
-	}
-
-	return url;
-}
-
-function openTab(event) {
-	let i, tabcontent, tablinks, tabName;
-
-	tabName = event.target.textContent.trim().toLowerCase();
-	tabcontent = document.getElementsByClassName('settings__content');
-
-	for (i = 0; i < tabcontent.length; i++) {
-		tabcontent[i].style.display = 'none';
-	}
-	tablinks = document.getElementsByClassName('settings__tablinks');
-
-	for (i = 0; i < tablinks.length; i++) {
-		tablinks[i].className = tablinks[i].className.replace(' active', '');
-	}
-	document.getElementById(tabName).style.display = 'block';
-	event.currentTarget.className += ' active';
-}
-
-function addIntegrationsInPermissionsIfNewIntegrationsExist(origins) {
-	aBrowser.storage.local.get(['permissions', 'userId'], (result) => {
-		const { userId } = result;
-		let permissionsForStorage = result.permissions;
-		const permissionsByUser = permissionsForStorage.filter(
-			(permissionByUser) => permissionByUser.userId === userId
-		)[0];
-		const permissionsDomainsByUser = permissionsByUser.permissions.map(
-			(permission) => permission.domain
-		);
-
-		for (let key in clockifyOrigins) {
-			if (!permissionsDomainsByUser.includes(key)) {
-				let permission = {};
-				permission['domain'] = key;
-				permission['isEnabled'] = true;
-				permission['script'] = clockifyOrigins[key].script;
-				permission['name'] = clockifyOrigins[key].name;
-				permission['isCustom'] = false;
-				permissionsByUser.permissions.push(permission);
-			}
-		}
-
-		permissionsForStorage = permissionsForStorage.map(
-			(permissionForStorage) => {
-				if (permissionForStorage.userId === userId) {
-					permissionForStorage.permissions = permissionsByUser.permissions;
-				}
-
-				return permissionForStorage;
-			}
-		);
-
-		aBrowser.storage.local.set({ permissions: permissionsForStorage });
+		integratonSelectionList.append(item);
 	});
+}
+
+async function showIntegrationsWithCustomDomain() {
+	const currentUserIntegrationSettings = await getCurrentUserIntegrationSettings();
+
+	const integrationsWithCustomUrl = currentUserIntegrationSettings.filter(({ customUrls }) =>
+		Boolean(customUrls.length)
+	);
+
+	integrationsWithCustomUrl.forEach(integration => {
+		const { customUrls, name } = integration;
+
+		const container = document.createElement('div');
+
+		container.id = 'custom-permissions-list';
+
+		container.style.width = '500px';
+		container.style.minWidth = '500px';
+		container.style.padding = '10px 7px';
+		container.style.borderRadius = '2px';
+		container.style.marginTop = '2px';
+		container.style.background = '#f4f4f4';
+
+		const info = document.createElement('span');
+		const deleteButton = document.createElement('span');
+
+		deleteButton.id = 'deleteButton';
+		deleteButton.style.fontSize = '14px';
+		deleteButton.setAttribute('data-integration-name', name);
+		deleteButton.classList.add('settings__custom_domains__remove');
+
+		const urls = customUrls.map(url => url.replace('/*', '').replace('*://', '')).join(', ');
+
+		info.textContent = `${urls} - ${name}`;
+		deleteButton.textContent = 'delete';
+
+		container.append(info);
+		container.append(deleteButton);
+
+		$('#settings__custom-domains__custom-perm-container').append(container);
+	});
+}
+
+function isChrome() {
+	return TARGET_BROWSER_FOR_CLOCKIFY_EXT.toLowerCase() === 'chrome';
 }

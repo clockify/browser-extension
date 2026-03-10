@@ -9,9 +9,28 @@ import ErrorBoundary from './components/error-boundary';
 import ClockifyButton from './components/integrationPopup/ClockifyButton';
 import { offlineStorage } from './helpers/offlineStorage';
 import { isChrome } from './helpers/browser-helper';
-import { UAParser } from 'ua-parser-js';
 
-parseUseragent();
+document.addEventListener('DOMContentLoaded', () => {
+	if (!navigator.userAgent.includes('Firefox')) return;
+
+	const isMediumScreenResolution = window.screen.height <= 800 && window.screen.width <= 1280;
+	const isLowScreenResolution = window.screen.height <= 600 && window.screen.width <= 800;
+	const isBigResolutionScale = window.devicePixelRatio > 1.25;
+	const isMacOrLinux = navigator.userAgent.includes('Mac') || navigator.userAgent.includes('Lin');
+	const isWindows = navigator.userAgent.includes('Win');
+
+	if (isMacOrLinux && (isLowScreenResolution || isMediumScreenResolution)) {
+		document.documentElement.style.minHeight = isLowScreenResolution ? '430px' : '500px';
+		document.documentElement.style.maxHeight = isLowScreenResolution ? '430px' : '500px';
+		return;
+	}
+
+	if (isWindows && isBigResolutionScale) {
+		document.documentElement.style.minHeight = '430px';
+		document.documentElement.style.maxHeight = '430px';
+	}
+});
+
 offlineStorage.load();
 
 let HTMLButtonsWithClickListener = [];
@@ -96,33 +115,6 @@ function Mac() {
 	}
 }
 
-window.getAllDocuments = () => {
-	/*
-	 * On the Firefox browser, we only want to use iframe documents for integrations that run on applications that use iframes.
-	 * The reason for this is that Firefox throws a "Can't access dead object" error that confuses users when we try to save the iframe's document to a constant.
-	 */
-
-	function shouldIntegrationHandleIframes() {
-		const currentDomain = location.host.split('.').reverse()[1];
-
-		// be aware that array has not to contains always integration name but name of domain that integration runs on
-		const integrationsThatShouldHandleIframes = ['teamwork'];
-
-		return integrationsThatShouldHandleIframes.includes(currentDomain);
-	}
-
-	if (!isChrome() && !shouldIntegrationHandleIframes()) return [document];
-
-	const iframes = Array.from(document.querySelectorAll('iframe'));
-	const iframeDocuments = iframes
-		.map(({ contentDocument }) => contentDocument)
-		.filter(contentDocument => Boolean(contentDocument))
-		.filter(contentDocument => JSON.stringify(contentDocument) !== '{}');
-	const documents = [document, ...iframeDocuments];
-
-	return documents;
-};
-
 const LoadingElement = () => {
 	return <div className="clockify-splash-screen"></div>;
 };
@@ -190,10 +182,7 @@ if (
 			buttonId = getSiblingButtonId(props.popupProps?.origin) || 0;
 		}
 		const intervalId = setTimeout(() => {
-			const documents = getAllDocuments();
-			const [entryPoint] = documents
-				.map(document => document.querySelector(`.clockifyButtonId${buttonId}`))
-				.filter(Boolean);
+			const entryPoint = document.querySelector(`.clockifyButtonId${buttonId}`);
 
 			if (entryPoint) {
 				const currBtnProps = props?.btnProps[buttonId];
@@ -221,7 +210,7 @@ if (
 									: {
 											inProgressDescription:
 												props.popupProps.inProgressDescription,
-									  })}
+										})}
 								updateButtonProps={(btnProps, popupProps) =>
 									window.updateButtonProperties(
 										btnProps
@@ -336,7 +325,7 @@ if (
 			if (counter > 5) {
 				clearTimeout(intervalId);
 			}
-		}, 700);
+		}, 100);
 	};
 
 	window.updateButtonProperties = ((
@@ -379,19 +368,4 @@ if (
 			renderClockifyButton(props, newBtnProps?.buttonId);
 		};
 	})();
-}
-
-async function parseUseragent() {
-	const isUseragentAlredyParsed = await localStorage.getItem('useragentParsed');
-
-	if (isUseragentAlredyParsed) return;
-
-	const { os, browser } = UAParser(navigator.useragent);
-
-	localStorage.setItem('useragentParsed', 'true');
-
-	localStorage.setItem('osName', os.name);
-	localStorage.setItem('osVersion', os.version);
-	localStorage.setItem('browserName', browser.name);
-	localStorage.setItem('browserVersion', browser.version);
 }

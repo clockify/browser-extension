@@ -21,11 +21,11 @@ let reconnectIntervalId;
 
 async function connectWebSocket() {
 	const webSocketClientId = await localStorage.getItem(
-		'permanent_webSocketClientId'
+		'permanent_webSocketClientId',
 	);
 	const userEmail = await localStorage.getItem('userEmail');
 	const webSocketEndpoint = await localStorage.getItem(
-		'permanent_webSocketEndpoint'
+		'permanent_webSocketEndpoint',
 	);
 
 	if (!webSocketClientId || !userEmail || !webSocketEndpoint || connection) {
@@ -180,6 +180,7 @@ async function messageHandler(event) {
 			UserService.getSetUserRoles();
 			break;
 		case webSocketEventsEnums.ACTIVE_WORKSPACE_CHANGED:
+			await TokenService.getToken(true);
 			UserService.getAndStoreUser()
 				.then(() => {
 					this.sendWebSocketEventToExtension(event.data);

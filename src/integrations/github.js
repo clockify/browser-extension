@@ -1,32 +1,50 @@
-// Issue view, PR view
-clockifyButton.render(`.gh-header-actions:not(.clockify)`, { observe: true }, actions => {
-	const repositoryName = location.href.split('/')[4];
+// PR view, Issue view
+clockifyButton.render(
+	`[data-component="PH_Actions"]:not(.clockify)`,
+	{ observe: true },
+	async actions => {
+		await timeout({ milliseconds: 500 });
+		if ($('.clockifyButton')) return;
 
-	const id = text('.gh-header-number') || text('[aria-label="Header"] h2 a');
-	const title = text('.js-issue-title');
+		const isIssuesTab = window.location.pathname.includes('issues');
 
-	const description = () => `${id} ${title}`;
-	const projectName = () =>
-		repositoryName ||
-		text('[aria-label="Page context"] ul li:nth-child(2) span') ||
-		text('[itemprop="name"] a');
-	const taskName = () => `${id} ${title}`;
-	const tagNames = () => textList('.IssueLabel');
+		const repositoryName = location.href.split('/')[4];
 
-	const entry = { description, projectName, taskName, tagNames };
+		const id = text('[data-component=PH_Title] > :last-child');
+		const title = text('[data-component=PH_Title] > :first-child');
 
-	const timer = clockifyButton.createTimer(entry);
-	const input = clockifyButton.createInput(entry);
+		const description = () => `${id} ${title}`;
+		const projectName = () =>
+			repositoryName ||
+			text('[aria-label="Page context"] ul li:nth-child(2) span') ||
+			text('[itemprop="name"] a');
+		const taskName = () => `${id} ${title}`;
+		const tagNames = () =>
+			textList('.IssueLabel').length
+				? textList('.IssueLabel')
+				: textList('a[class*=LabelsList-module] > span:first-child');
 
-	timer.style.padding = '3px 14px';
+		const entry = { description, projectName, taskName, tagNames };
 
-	actions.prepend(timer);
-	actions.prepend(input);
-});
+		const timer = clockifyButton.createTimer(entry);
+		const input = clockifyButton.createInput(entry);
+
+		timer.style.padding = '3px 14px';
+
+		if (isIssuesTab) {
+			$('[class*=HeaderMenu-module__menuActionsContainer]', actions).prepend(timer);
+			$('[class*=HeaderMenu-module__menuActionsContainer]', actions).prepend(input);
+			return;
+		}
+
+		actions.prepend(timer);
+		actions.prepend(input);
+	}
+);
 
 // Issue sidepanel view (project details)
 clockifyButton.render(
-	'[class*=issueViewerContainer]:not(.clockify)',
+	'[class*="SidePanel-module"] [class*=issueViewerContainer]:not(.clockify)',
 	{ observe: true },
 	async sidepanelHeader => {
 		const issueId = await waitForText('h1 bdi + span, [data-testid="issue-header"] a');
@@ -49,6 +67,9 @@ clockifyButton.render(
 
 		container.style.display = 'flex';
 		container.style.gap = '8px';
+		container.style.marginRight = '10px';
+		input.style.display = 'flex';
+		input.style.alignItems = 'center';
 
 		actions.prepend(container);
 	}

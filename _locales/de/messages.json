@@ -18,7 +18,7 @@
     "message": "standardmäßig"
   },
   "STOP": {
-    "message": "Stop"
+    "message": "Stopp"
   },
   "START": {
     "message": "Start"
@@ -201,7 +201,7 @@
     "message": "Tags hinzufügen"
   },
   "GLOBAL__ADMINS_LABEL": {
-    "message": "Administratoren"
+    "message": "Admins"
   },
   "GLOBAL__BILLING_LABEL": {
     "message": "Abrechnung"
@@ -243,7 +243,7 @@
     "message": "Nein"
   },
   "NONE": {
-    "message": "Kein"
+    "message": "Keine"
   },
   "OK_BTN": {
     "message": "Okay"
@@ -357,7 +357,7 @@
     "message": "Standardmäßig abrechenbar"
   },
   "PROJECTS__EDIT_PROJECT_SETTINGS__TASK_BASED_LABEL": {
-    "message": "Aufgabenbezogen"
+    "message": "Aufgabenbasiert"
   },
   "PROJECTS__NEW_PROJECT__CUSTOM_COLOR_LABEL": {
     "message": "Benutzerdefinierte Farbe"
@@ -393,7 +393,7 @@
     "message": "Link"
   },
   "SHARED_MODULES__CUSTOM_FIELD__TYPE_SWITCH_LABEL": {
-    "message": "Wechseln"
+    "message": "Schalter"
   },
   "SELECT": {
     "message": "Auswählen"
@@ -467,6 +467,12 @@
   "SHARED_MODULES__INPUT_STRING__VALUE_REQUIRED_ERROR_MESSAGE": {
     "message": "Der Wert ist erforderlich."
   },
+  "SHARED_MODULES__PROJECT_PICKER__SEARCH_TASK_CUSTOM_LABEL": {
+    "message": "Nach { taskLabel } @{ projectLabel } oder { projectGroupingLabel } suchen…"
+  },
+  "NO_TAGS_LABEL": {
+    "message": "Noch keine Tags"
+  },
   "NO_DESCRIPTION": {
     "message": "(Keine Beschreibung)"
   },
@@ -519,31 +525,31 @@
     "message": "Montag"
   },
   "MONDAY_SHORT": {
-    "message": "Mon."
+    "message": "Mo."
   },
   "TUESDAY": {
     "message": "Dienstag"
   },
   "TUESDAY_SHORT": {
-    "message": "Die."
+    "message": "Di."
   },
   "WEDNESDAY": {
     "message": "Mittwoch"
   },
   "WEDNESDAY_SHORT": {
-    "message": "Mittw."
+    "message": "Mi."
   },
   "THURSDAY": {
     "message": "Donnerstag"
   },
   "THURSDAY_SHORT": {
-    "message": "Don."
+    "message": "Do."
   },
   "FRIDAY": {
     "message": "Freitag"
   },
   "FRIDAY_SHORT": {
-    "message": "Frei."
+    "message": "Fr."
   },
   "SATURDAY": {
     "message": "Samstag"
@@ -555,7 +561,7 @@
     "message": "Sonntag"
   },
   "SUNDAY_SHORT": {
-    "message": "Son."
+    "message": "So."
   },
   "NO_MATCHING": {
     "message": "Keine passenden { entityInPlural }"
@@ -564,7 +570,7 @@
     "message": "Filter { name }"
   },
   "APPEND_THE_WEBSITE_URL": {
-    "message": "Anhängen der Website-URL"
+    "message": "Website-URL anhängen"
   },
   "ADD_PROJECT": {
     "message": "Projekt hinzufügen"
@@ -573,7 +579,7 @@
     "message": "Aufgabe hinzufügen"
   },
   "ADD_TIME_MANUAL": {
-    "message": "Zeit hinzufügen (z.B. 15m)"
+    "message": "Zeit hinzufügen (z.B. 15 Min.)"
   },
   "SHORTCUT": {
     "message": "Tastenkombination"
@@ -591,7 +597,7 @@
     "message": "Beschreibung (erforderlich)"
   },
   "START_STOP_TIME_SHORTCUT": {
-    "message": "Timer-Tastenkombination zum Starten/Stoppen"
+    "message": "Timer-Tastenkürzel zum Starten/Stoppen"
   },
   "DEFAULT_PROJECT_ARCHIVED": {
     "message": "Dein Standardprojekt wird archiviert."
@@ -606,7 +612,7 @@
     "message": "Dein Standardprojekt ist nicht mehr verfügbar."
   },
   "YOU_CAN_SET_A_NEW_ONE_IN_SETTINGS": {
-    "message": "Du kannst in den Einstellungen ein neues festlegen."
+    "message": "Du kannst in den Einstellungen neue festlegen."
   },
   "COMPLETE_CURRENT_ENTRY": {
     "message": "Bitte zuerst deinen aktuellen Eintrag abschließen!"
@@ -615,7 +621,7 @@
     "message": "Pflichtfelder eingeben oder optional deine Arbeitsbereichseinstellungen bearbeiten."
   },
   "EVERY": {
-    "message": "Jede"
+    "message": "Alle"
   },
   "CANNOT_START_ENTRY_WITHOUT_PROJECT": {
     "message": "Der Eintrag kann nicht ohne Projekt, Aufgabe, Beschreibung oder Tags gestartet werden."
@@ -651,7 +657,7 @@
     "message": "Ports werden nicht unterstützt"
   },
   "NO_RECENT_ENTRIES_TO_SHOW": {
-    "message": "Keine aktuellen Einträge vorhanden"
+    "message": "Keine aktuellen Einträge zum Anzeigen"
   },
   "YOU_HAVE_NOT_TRACKED": {
     "message": "Es sieht so aus, als hättest du in letzter Zeit keine Zeit erfasst"
@@ -681,7 +687,7 @@
     "message": "Integrationen können Projekte/Aufgaben/Tags erstellen"
   },
   "SHOW_POST_START_POPUP": {
-    "message": "Popup nach dem Start anzeigen"
+    "message": "Popup nach Start anzeigen"
   },
   "REMIND_ME_TO_TRACK_TIME": {
     "message": "An die Zeiterfassung erinnern"
@@ -708,7 +714,7 @@
     "message": "Eintrag kann nicht ohne Projekt, Aufgabe, Beschreibung oder Tags beendet werden"
   },
   "STOP_TIME": {
-    "message": "Stoppe die Zeit"
+    "message": "Zeit stoppen"
   },
   "STOP_AT_SPECIFIED_TIME": {
     "message": "Stoppe den Timer automatisch zu einer bestimmten Tageszeit"
@@ -756,7 +762,7 @@
     "message": "Anmeldung bei der Subdomäne"
   },
   "RETURN_TO_CLOCKIFY_CLOUD": {
-    "message": "Zurück zu Clockify Cloud"
+    "message": "Zurück zur Clockify-Cloud"
   },
   "CREATE_AN_ACCOUNT": {
     "message": "Ein Konto erstellen"
@@ -783,7 +789,7 @@
     "message": "Lange Pause beginnt nach"
   },
   "BREAKS": {
-    "message": "unterbricht"
+    "message": "Pausen"
   },
   "SOUND_NOTIFICATION": {
     "message": "Ton-Benachrichtigung"
@@ -852,13 +858,13 @@
     "message": "Die E-Mail-Adresse wird bereits verwendet oder ist ungültig!"
   },
   "AGREE_LABEL": {
-    "message": "Ich stimme dem zu"
+    "message": "Ich stimme den"
   },
   "CLOCKIFY_TERMS_OF_USE": {
-    "message": "Ich stimme Clockify zu"
+    "message": "Ich stimme Clockify"
   },
   "CAKE_TERMS_OF_USE": {
-    "message": "Ich stimme CAKE.com zu"
+    "message": "Ich stimme CAKE.com"
   },
   "TOS": {
     "message": "Nutzungsbedingungen"
@@ -1068,7 +1074,7 @@
     "message": "Der Arbeitsbereich ist gesperrt, da er auf einem regionalen Server gehostet wird. Bitte Zahlungsinformationen hinzufügen oder den Arbeitsbereich wechseln."
   },
   "ACTIVITY_TABS__SCREENSHOTS__NO_SCREENSHOTS_PROMO_BTN": {
-    "message": "Screenshot-Aufnahme-App holen"
+    "message": "Screenshot-Aufnahme-App herunterladen"
   },
   "ENTER_REQUIRED_FIEEDS_OR_EDIT_WORKSPACE_SETTINGS": {
     "message": "Gib die erforderlichen Felder ein oder bearbeite optional deine Arbeitsbereichseinstellungen."
@@ -1086,13 +1092,13 @@
     "message": "Deine E-Mail bestätigen: { userEmail }"
   },
   "SEND_VERIFICATION_EMAIL_BTN": {
-    "message": "E-Mail-Verifizierung senden"
+    "message": "Bestätigungs-E-Mail senden"
   },
   "EMAIL_SENT_SUCCESS_MESSAGE": {
     "message": "E-Mail gesendet"
   },
   "VERIFY_EMAIL_TITLE": {
-    "message": "Bestätige deine E-Mail!"
+    "message": "Bestätige deine E-Mail-Adresse!"
   },
   "LONG_VERIFY_EMAIL_MESSAGE": {
     "message": "{ userName }, um dein Clockify-Konto weiterhin nutzen zu können, musst du deine E-Mail-Adresse bestätigen: { userEmail }"
@@ -1101,7 +1107,7 @@
     "message": "Hast du Probleme beim Zugriff auf deine E-Mails?"
   },
   "CHANGE_EMAIL_TITLE": {
-    "message": "E-Mail ändern"
+    "message": "E-Mail-Adresse ändern"
   },
   "NOTIFICATIONS_TITLE": {
     "message": "Benachrichtigungen"
@@ -1119,13 +1125,13 @@
     "message": "Einladung zum Arbeitsbereich"
   },
   "LAYOUT__NOTIFICATIONS__WORKSPACE_INVITATION__FULL_ACCOUNT_ACCESS_INVITATION__PART_1": {
-    "message": "Du bist eingeladen, dich anzuschließen "
+    "message": "Du bist eingeladen beizutreten "
   },
   "LAYOUT__NOTIFICATIONS__WORKSPACE_INVITATION__FULL_ACCOUNT_ACCESS_INVITATION__PART_2": {
     "message": " Arbeitsbereich. Sobald du akzeptierst, hat der { workspaceName } Administrator"
   },
   "LAYOUT__NOTIFICATIONS__WORKSPACE_INVITATION__ACCESS_INVITATION__PART_1": {
-    "message": "hat dich eingeladen, die Zeit zu verfolgen auf"
+    "message": "hat dich eingeladen, die Zeit zu verfolgen im"
   },
   "LAYOUT__NOTIFICATIONS__WORKSPACE_INVITATION__ACCESS_INVITATION__PART_2": {
     "message": "Arbeitsbereich."
@@ -1229,11 +1235,74 @@
   "CAN_NOT_CREATE_PROJECT_MISSING_PERMISSIONS": {
     "message": "Du hast keine Berechtigung zum Erstellen eines Projektes"
   },
+  "CAN_NOT_CREATE_TAGS_MISSING_PERMISSIONS": {
+    "message": "Du hast keine Berechtigung zum Erstellen von Tags"
+  },
   "ENTRY_IN_PROGRESS_EXISTS": {
     "message": "Du hast eine laufende Zeiteingabe!"
   },
   "WEBSITE_FORMAT_ERROR": {
     "message": "Das Website-Format ist ungültig"
+  },
+  "NO_YET_FILTER_NAME": {
+    "message": "Noch kein { filterName }."
+  },
+  "FIELD_REQUIRED_VALIDATION": {
+    "message": "Das Feld ist erforderlich"
+  },
+  "SELECT_PLACEHOLDER": {
+    "message": "Auswählen"
+  },
+  "DISCARD_CHANGES_QUESTION": {
+    "message": "Nicht gespeicherte Änderungen verwerfen?"
+  },
+  "DISCARD_CHANGES_PARAGRAPH": {
+    "message": "Deine Änderungen werden nicht gespeichert."
+  },
+  "DISCARD": {
+    "message": "Verwerfen"
+  },
+  "FEEDBACK_FORM_PARAGRAPH": {
+    "message": "Bitte teile uns deine Ideen oder dein Problem mit und hilf uns, ein besseres Clockify zu entwickeln. Das beste Feedback ist konkret."
+  },
+  "FEEDBACK_FORM_PLATFORM": {
+    "message": "Plattform"
+  },
+  "FEEDBACK_FORM_MESSAGE": {
+    "message": "Feedback teilen"
+  },
+  "FEEDBACK_FORM_MESSAGE_PLACEHOLDER": {
+    "message": "Bitte teile uns deine Idee mit, wie diese dir helfen würde und wo du ihre Realisierung erwartest"
+  },
+  "FEEDBACK_FORM_PARTICIPATION": {
+    "message": "Ich möchte an der Produktforschung teilnehmen"
+  },
+  "SHARE_FEEDBACK": {
+    "message": "Feedback teilen"
+  },
+  "FEEDBACK_SUBMITTED_TITLE": {
+    "message": "Vielen Dank für dein Feedback!"
+  },
+  "FEEDBACK_SUBMITTED_SUBTITLE": {
+    "message": "Das Produktteam überprüft regelmäßig alle Einsendungen, um die zukünftige Roadmap zu planen und zu aktualisieren."
+  },
+  "FEEDBACK_SUBMITTED_UPDATES": {
+    "message": "Nach neuesten Updates suchen"
+  },
+  "SUBMITTED_HERE_LINK": {
+    "message": "hier"
+  },
+  "DISCARD_FEEDBACK_TITLE": {
+    "message": "Feedback verwerfen"
+  },
+  "DISCARD_FEEDBACK_TEXT": {
+    "message": "Wenn du jetzt abbrichst, wird dein Feedback nicht gespeichert und du musst später von vorne beginnen."
+  },
+  "DISCARD_FEEDBACK_BUTTON": {
+    "message": "Zurück zum Formular"
+  },
+  "TOO_MANY_REQUESTS": {
+    "message": "Zu viele Anträge. Später noch einmal versuchen."
   },
   "appName": {
     "message": "Clockify-Zeiterfassung",

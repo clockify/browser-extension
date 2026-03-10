@@ -9,34 +9,26 @@
 
 	//entire checklist
 	clockifyButton.render(
-		'#maincontent .checklist-buttons>.pull-right',
+		'.panel.panel-checklist.panel-tabs .article-heading:not(.clockify)',
 		{ observe: true },
 		elem => {
-			// Unable to filter out with :not(.clockify) because full screen mode messes with the DOM
-			if (elem.getElementsByClassName(checklistWrapperClass).length) {
-				return;
-			}
 			const description = () => text(instanceTitle);
 			const wrapper = document.createElement('div');
 			wrapper.classList.add(checklistWrapperClass);
 
 			const link = clockifyButton.createSmallButton(description);
+			link.style.paddingBottom = '5px';
 
 			wrapper.appendChild(link);
-
 			elem.prepend(wrapper);
-		}
+		},
 	);
 
 	//full screen entire checklist
 	clockifyButton.render(
-		'.fullscreen-open.checklist-open .navbar-fullscreen #navbuttons>div',
+		'.fullscreen-open.checklist-open .navbar-fullscreen #navbuttons > div:not(.clockify)',
 		{ observe: true },
 		elem => {
-			// Unable to filter out with :not(.clockify) because full screen mode messes with the DOM
-			if (elem.getElementsByClassName(checklistWrapperClass).length) {
-				return;
-			}
 			const description = () => text(instanceTitle);
 			const wrapper = document.createElement('div');
 			wrapper.classList.add(checklistWrapperClass);
@@ -46,7 +38,7 @@
 			wrapper.appendChild(link);
 
 			elem.append(wrapper);
-		}
+		},
 	);
 
 	//step content
@@ -65,7 +57,7 @@
 			wrapper.appendChild(link);
 
 			elem.append(wrapper);
-		}
+		},
 	);
 
 	applyStyles(`

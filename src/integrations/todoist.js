@@ -3,11 +3,17 @@ clockifyButton.render(
 	'[data-action-hint="task-root"]:not(.clockify)',
 	{ observe: true },
 	async todoistTaskContainer => {
+		// these 2 lines below prevent duplicated timers
+		await timeout({ milliseconds: 500 });
+		if ($('.clockifyButton', todoistTaskContainer)) return;
+
 		const todoistTaskName = () => text('.task_content', todoistTaskContainer);
 		const todoistTaskDescription = () => text('.task_description', todoistTaskContainer);
 		const todoistProjectWithSectionName = () =>
 			text('.vYXIACn', todoistTaskContainer) ||
-			text('[data-testid="task-details-modal"] [aria-label=Project] button[aria-label="Select a project"] span') ||
+			text(
+				'[data-testid="task-details-modal"] [aria-label=Project] button[aria-label="Select a project"] span'
+			) ||
 			text('[data-testid=task-info-tags] .yccFlei', todoistTaskContainer) ||
 			text('.task_list_item__project', todoistTaskContainer) ||
 			text('header h1 .simple_content') ||
@@ -26,7 +32,7 @@ clockifyButton.render(
 		link.style.height = 'fit-content';
 
 		todoistTaskContainer.prepend(link);
-	},
+	}
 );
 
 // Cards (board) view
@@ -34,14 +40,14 @@ clockifyButton.render(
 	'[data-testid="task-card"]:not(.clockify)',
 	{ observe: true },
 	todoistTaskCard => {
-		const todoistTaskName = text('.task_content', todoistTaskCard);
-		const todoistTaskDescription = text('.task_description', todoistTaskCard);
+		const todoistTaskName = () => text('.task_content', todoistTaskCard);
+		const todoistTaskDescription = () => text('.task_description', todoistTaskCard);
 		const todoistProjectWithSectionName =
 			text('.E7WJVdp', todoistTaskCard) ||
 			text('[data-testid=task-info-tags] > span:last-of-type', todoistTaskCard) ||
 			text('.task_list_item__project', todoistTaskCard) ||
 			text('header h1');
-		const description = todoistTaskDescription ?? todoistTaskName;
+		const description = todoistTaskDescription() || todoistTaskName();
 		const projectName = withoutSection(todoistProjectWithSectionName);
 		const taskName = todoistTaskName;
 		const tagNames = () => textList('.simple_content', todoistTaskCard);
@@ -57,13 +63,13 @@ clockifyButton.render(
 		link.style.left = '13px';
 
 		todoistTaskCard.append(link);
-	},
+	}
 );
 
 // Modal view - Sidebar timer
 clockifyButton.render(
 	'[data-testid="task-details-modal"]:not(.clockify)',
-	{ observe: true },
+	{ observe: true, onNavigationRerender: true },
 	todoistTaskModal => {
 		const todoistTaskName = () =>
 			text('.task-overview-content .task_content', todoistTaskModal);
@@ -72,12 +78,10 @@ clockifyButton.render(
 		const todoistProjectWithSectionName = () =>
 			text('div[data-testid="task-detail-default-header"] span', todoistTaskModal);
 
-		const description = () => todoistTaskDescription() ?? todoistTaskName();
+		const description = () => todoistTaskDescription() || todoistTaskName();
 		const projectName = () => withoutSection(todoistProjectWithSectionName());
 		const taskName = () => todoistTaskName();
 		const tagNames = () => textList('[data-item-label-name]', todoistTaskModal);
-
-		console.log('desc', description());
 
 		const entry = { description, projectName, taskName, tagNames, small: true };
 
@@ -102,7 +106,7 @@ clockifyButton.render(
 		todoistTaskModalSidebar.style.justifyContent = 'start';
 
 		todoistTaskModalSidebar.append(container);
-	},
+	}
 );
 
 /*
@@ -227,6 +231,6 @@ async function bodyChanges() {
 
 function blockPropagation({ elements = [], eventName }) {
 	elements.forEach(element =>
-		element.addEventListener(eventName, event => event.stopPropagation()),
+		element.addEventListener(eventName, event => event.stopPropagation())
 	);
 }

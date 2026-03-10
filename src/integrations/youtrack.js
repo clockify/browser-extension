@@ -38,10 +38,13 @@ clockifyButton.render(
 	'[data-test="issue-container"]:not(.clockify)',
 	{ observe: true, onNavigationRerender: true },
 	async elem => {
+		await timeout({ milliseconds: 500 });
 		if ($('.clockify-container', elem)) return;
-
-		await timeout({ milliseconds: 1000 });
-		const ticketId = () => text('[id*="id-link"]', elem);
+		// when view goes to edit mode and back, rerender buttons
+		observeEditIssue();
+		// rerender on edit close
+		const ticketId = () =>
+			text('[data-test=breadcrumbs-container] [id*=id-link]') || text('[id*=id-link]');
 		const ticketTitle = () => text('[data-test="ticket-summary"]', elem);
 
 		const description = () => `${ticketId()} ${ticketTitle()}`;
@@ -92,6 +95,8 @@ clockifyButton.render(
 	{ observe: true },
 	async taskModal => {
 		await timeout({ milliseconds: 1000 });
+		// when view goes to edit mode and back, rerender buttons
+		observeEditIssue();
 		await waitForElement('[data-test="fields-sidebar"]', taskModal);
 
 		const ticketId = () => text('[id*="id-link"]', taskModal);
@@ -132,22 +137,24 @@ initializeBodyObserver();
 function initializeBodyObserver() {
 	const bodyObserver = new MutationObserver(applyManualInputStyles);
 
-	const observationTarget = document.body;
+	const observationTarget = document.documentElement;
 	const observationConfig = { childList: true, attributes: true };
 
 	bodyObserver.observe(observationTarget, observationConfig);
 }
 
 function applyManualInputStyles() {
-	const isDarkThemeEnabled = Array.from(document.body.classList).join(' ').includes('dark');
+	const isDarkThemeEnabled = Array.from(document.documentElement.classList)
+		.join(' ')
+		.includes('dark');
 
 	const darkStyles = `
-		#clockify-manual-input-form input { background: #28343d !important; color: #f5f4f3 !important; border: 0.5px solid #28343d !important; }
+		#clockify-manual-input-form input { background: #28343d !important; color: #f5f4f3 !important; border: none !important; }
 		#clockify-manual-input-form input:hover { border-color: #6a696a !important; transition: border-color 100ms; }
 		.clockify-button-inactive { color: #f5f4f3 !important; }
 	`;
 	const lightStyles = `
-		.clockify-input { background: white !important; color: #28343d !important; border: 1px solid white !important; }
+		.clockify-input { background: white !important; color: #28343d !important; border: 1px solid #dcdcde !important; }
 		.clockify-input:hover { border-color: #cfcbcb !important; transition: border-color 100ms; }
 		.clockify-button-inactive { color: #444444 !important };
 	`;
@@ -155,4 +162,22 @@ function applyManualInputStyles() {
 	const stylesToApply = isDarkThemeEnabled ? darkStyles : lightStyles;
 
 	applyStyles(stylesToApply, 'clockify-theme-dependent-styles');
+}
+
+function observeEditIssue() {
+	const attributeObserver = new MutationObserver(() => {
+		if (document.querySelector('[data-test="view-mode"]')) {
+			clockifyButton.rerenderAllButtons();
+		}
+	});
+	const observationTarget = document.querySelector('[class*="ticketContentInner"]');
+
+	if (observationTarget) {
+		const observationConfig = {
+			attributes: true,
+			attributeFilter: ['data-test'],
+		};
+
+		attributeObserver.observe(observationTarget, observationConfig);
+	}
 }

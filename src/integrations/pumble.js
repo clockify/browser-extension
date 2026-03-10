@@ -1,115 +1,85 @@
 // Message options bar
 clockifyButton.render(
-	'.message-options:not(.clockify)',
+	'#clockify-extension-small-button-container:not(.clockify)',
 	{ observe: true },
-	(messageOptions) => {
-		const message = messageOptions.closest('.message-item');
-
-		if (isMessageSystemMessage(message)) return;
-
-		const lastOption = $('button:last-child', messageOptions);
+	messageOptionsPlaceholder => {
+		const message = messageOptionsPlaceholder.closest('.message-item');
 
 		const description = () => getDescriptionFromMessage(message);
 
-		if (!description) return;
+		const entry = { description, small: true };
 
-		const link = clockifyButton.createButton({ description, small: true });
+		const timer = clockifyButton.createButton(entry);
 
-		link.classList.add('message-options__button');
-
-		lastOption.before(link);
+		messageOptionsPlaceholder.append(timer);
 	}
 );
 
-// Message context menu
+// Both right click & three dots context menus
 clockifyButton.render(
-	'.context-menu:not(.clockify)',
+	'#clockify-extension-large-button-container:not(.clockify)',
 	{ observe: true },
-	async (contextMenu) => {
-		const messages = Array.from($$('.message-item'));
-		const message = messages.find(({ classList }) =>
-			classList.contains('message-item--optionsOpen')
-		);
-
-		if (isMessageSystemMessage(message)) return;
-
-		if (!message) return;
-
-		const contextMenuSeparator = createTag('div', 'context-menu-separator');
+	contextMenuPlaceholder => {
+		const message = $('.message-item--highlighted:not(.message-item--pinned)');
 
 		const description = () => getDescriptionFromMessage(message);
 
-		const link = clockifyButton.createButton({ description });
+		const entry = { description };
 
-		link.style.display = 'block';
-		link.classList.add('context-menu-item', 'context-menu-item--selectable');
+		const timer = clockifyButton.createButton(entry);
 
-		contextMenu.append(contextMenuSeparator);
-		contextMenu.append(link);
-
-		await timeout({ milliseconds: 1000 });
-
-		const isContextMenuVisible = isElementInViewport(contextMenu);
-
-		if (!isContextMenuVisible) {
-			moveElementUp(contextMenu, 35);
-		}
+		contextMenuPlaceholder.append(timer);
 	}
 );
 
-function moveElementUp(element, pixels) {
-	const top = element.getBoundingClientRect().top;
-	element.style.top = `${top - pixels}px`;
-}
+applyStyles(`
+	/* make visible option bar timers of message with text  */
+	.message-item:not(:has(.message-item__text--join)) [id^="clockify"][id$="container"] {
+		display: block !important;
+	}
 
-function isElementInViewport(element) {
-	var rect = element.getBoundingClientRect();
+	/* make visible context menu timers of message with text */
+	#root:not(:has(.message-item--highlighted .message-item__text--join)) .context-menu [id^="clockify"][id$="container"] {
+		display: block !important;
+	}
 
-	return (
-		rect.top >= 0 &&
-		rect.left >= 0 &&
-		rect.bottom <=
-			(window.innerHeight || document.documentElement.clientHeight) &&
-		rect.right <= (window.innerWidth || document.documentElement.clientWidth)
-	);
-}
+	/* hide timers from deleted messages */
+	.message-item:has([class*="deleted"]) [id^="clockify"][id$="container"] {
+		display: none !important;
+	}
+ 	#root:has(.message-item--highlighted [class*="deleted"]) .context-menu [id^="clockify"][id$="container"] {
+		display: none !important;
+	}
 
-function isMessageSystemMessage(message) {
-	return !!text('.join-left-message', message);
-}
+	.message-item:has(.blocks-renderer:empty) [id^="clockify"][id$="container"] {
+		display: none !important;
+	}
+
+	#root:has(.message-item--highlighted .blocks-renderer:empty) .context-menu [id^="clockify"][id$="container"] {
+		display: none !important;
+	}
+
+	.clockifyButton svg {
+		height: 16px !important;
+	}
+`);
 
 function getDescriptionFromMessage(message) {
-	const textMessageSelector = '.message-item__text div > *';
-	const callMessageSelector = '.message-call-attachment';
+	if (!message) return;
 
-	handleEmojis(message);
-
-	const messageWrapper = $('.message-item__text > div', message)?.parentElement;
-
-	if ($(textMessageSelector, message)) return messageWrapper?.innerText?.trim();
-
-	if ($(callMessageSelector, message)) {
-		const callParticipantsSelector = '.call-participants__img-others-wrapper';
-		const callParticipantsElement = $(callParticipantsSelector, message);
-		const callParticipants = callParticipantsElement.getAttribute('aria-label');
-
-		return `Call: ${callParticipants}`;
-	}
+	return getTextContentOfMessage(message) ?? '';
 }
 
-function handleEmojis(message) {
-	if ($('.clockify-extension', message)) return;
+function getTextContentOfMessage(message) {
+	const messageText = message.querySelector('.rich-text-block');
 
-	const messageWrapper = $(
-		'.message-item__text div > *',
-		message
-	)?.parentElement;
+	if (!messageText) return;
 
-	if (!messageWrapper) return;
+	const messageTextClone = messageText.cloneNode(true);
 
-	const messageImages = Array.from($$('div > img', messageWrapper) || []);
+	messageTextClone.style.display = 'none';
 
-	messageImages.forEach((image) => {
+	messageTextClone.querySelectorAll('img[data-image]').forEach(image => {
 		const dataImageAttribute = image.getAttribute('data-image');
 		const isEmoji = dataImageAttribute && dataImageAttribute.length < 10;
 
@@ -120,13 +90,14 @@ function handleEmojis(message) {
 
 		const emoji = createTag('span', 'clockify-extension', emojiCharacter);
 
-		emoji.style.display = 'inline-block';
-		emoji.style.height = '0';
-		emoji.style.width = '0';
-		emoji.style.overflow = 'hidden';
-
-		image.after(emoji);
+		image.replaceWith(emoji);
 	});
+
+	messageTextClone.querySelectorAll('br').forEach(element => element.replaceWith('\n'));
+
+	messageTextClone.querySelectorAll('li').forEach(element => element.prepend('\n'));
+
+	return messageTextClone.innerText.trim();
 }
 
 initializeBodyObserver();
@@ -134,20 +105,24 @@ initializeBodyObserver();
 function initializeBodyObserver() {
 	const bodyObserver = new MutationObserver(applyManualInputStyles);
 
-	const observationTarget = document.body;
+	const observationTarget = document.documentElement;
 	const observationConfig = { attributes: true };
 
 	bodyObserver.observe(observationTarget, observationConfig);
 }
 
 function applyManualInputStyles() {
-	const backgroundColor = document.body
-		.getAttribute('style')
-		.split('; ')
-		.find((style) => style.startsWith('--background'))
-		.split(': ')[1];
+	const htmlClasses = document.documentElement.classList.toString();
 
-	const isLightThemeEnabled = backgroundColor === '#ffffff';
+	let isLightThemeEnabled;
+
+	if (htmlClasses.includes('light')) {
+		isLightThemeEnabled = true;
+	} else if (htmlClasses.includes('dark')) {
+		isLightThemeEnabled = false;
+	} else {
+		isLightThemeEnabled = window.matchMedia('(prefers-color-scheme: light)').matches;
+	}
 
 	const darkStyles = `.clockify-button-inactive { color: #f5f4f3 !important; }`;
 	const lightStyles = `.clockify-button-inactive { color: #444444 !important };`;

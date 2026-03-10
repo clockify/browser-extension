@@ -1,4 +1,4 @@
-import React, { UIEvent, useEffect, useState } from 'react';
+import React, { UIEvent, useEffect, useRef, useState } from 'react';
 import { ClientDto } from '~/DTOs/ClientDto.ts';
 import { ClientListCreateForm } from '~/components/ClientList/ClientListCreateForm.tsx';
 import { ClientListItem } from '~/components/ClientList/ClientListItem.tsx';
@@ -14,7 +14,7 @@ const pageSize: number = 50;
 
 export const ClientList = (props: PropsInterface) => {
 	const [selectedClient, setSelectedClient] = useState<ClientDto>({
-		name: locales.SELECT_CLIENT
+		name: locales.SELECT_CLIENT,
 	});
 	const [isOpen, setIsOpen] = useState(false);
 	const [page, setPage] = useState(1);
@@ -23,6 +23,8 @@ export const ClientList = (props: PropsInterface) => {
 	const [shouldLoadMore, setShouldLoadMore] = useState(false);
 	const [shouldOpenCreateForm, setShouldOpenCreateForm] = useState(false);
 	const [clientName, setClientName] = useState('');
+
+	const inputFilterRef = useRef(null);
 
 	useEffect((): void => {
 		getClients();
@@ -71,6 +73,7 @@ export const ClientList = (props: PropsInterface) => {
 	const clearClientFilter = (): void => {
 		resetList();
 		setFilter('');
+		inputFilterRef.current.focus();
 	};
 
 	const filterClients = (event: { target: HTMLInputElement }): void => {
@@ -87,19 +90,23 @@ export const ClientList = (props: PropsInterface) => {
 	const getClients = (pageNumber: number = page): void => {
 		getBrowser()
 			.runtime.sendMessage({
-			eventName: 'getClientsWithFilter',
-			options: {
-				page: pageNumber,
-				pageSize,
-				filter,
-				archived: false
-			}
-		})
+				eventName: 'getClientsWithFilter',
+				options: {
+					page: pageNumber,
+					pageSize,
+					filter,
+					archived: false,
+				},
+			})
 			.then(response => {
-				setClientList(clientList.concat(response.data));
+				setClientList(sortClientList(clientList.concat(response.data)));
 				setShouldLoadMore(response.data.length >= pageSize);
 				setPage(pageNumber + 1);
 			});
+	};
+
+	const sortClientList = (clientList: ClientDto[]): ClientDto[] => {
+		return clientList.sort((a, b) => a.name.localeCompare(b.name));
 	};
 
 	const addClient = (): void => {
@@ -117,9 +124,9 @@ export const ClientList = (props: PropsInterface) => {
 
 		getBrowser()
 			.runtime.sendMessage({
-			eventName: 'createClient',
-			options: { client: { name: clientName } }
-		})
+				eventName: 'createClient',
+				options: { client: { name: clientName } },
+			})
 			.then(response => {
 				if (response.error) {
 					return props.errorMessage(response.error?.message);
@@ -131,7 +138,7 @@ export const ClientList = (props: PropsInterface) => {
 				setSelectedClient(response.data);
 				setShouldOpenCreateForm(false);
 				setIsOpen(false);
-				setClientList(clientList.concat(response.data));
+				setClientList(sortClientList(clientList.concat(response.data)));
 			})
 			.catch(error => props.errorMessage(error.response.data.message));
 	};
@@ -174,6 +181,7 @@ export const ClientList = (props: PropsInterface) => {
 										placeholder={locales.FILTER_NAME(
 											locales.CLIENTS.toLowerCase()
 										)}
+										ref={inputFilterRef}
 										className="client-list-filter"
 										onChange={filterClients}
 										value={filter}

@@ -1,14 +1,15 @@
 clockifyButton.render(
-	`.multiplayer_view--multiplayerView--dkdv7:not(.clockify),
-	.multiplayer_view--usersContainer--bzaNI:not(.clockify)`,
+	'[data-onboarding-key="multiplayer-users-container"]:not(.clockify)',
 	{ observe: true },
-	(elem) => {
+	elem => {
 		const description = document.title.replace(' – Figma', '');
-		const projectName =
+		const projectName = () =>
 			text('.filename_view--folderName--Q2b88') ||
-			text('.filename_view--folderName--ELUh-');
+			text('.filename_view--folderName--ELUh-') ||
+			text('[data-testid=folder-name-link]');
+		const taskName = () => text('[data-testid=filename]');
 
-		const entry = { description, projectName, small: true };
+		const entry = { description, projectName, taskName, small: true };
 
 		const link = clockifyButton.createButton(entry);
 

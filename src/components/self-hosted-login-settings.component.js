@@ -20,10 +20,12 @@ class SelfHostedBootSettings extends React.Component {
 
 	componentDidMount() {
 		let url = this.props.url.replace(/(\/)+$/, '');
+		const { isSubdomain } = this.props;
 		this.setState(
 			{
 				homeUrl: url,
 				ready: true,
+				isSubdomain,
 			},
 			() => {
 				this.fetchBootData();
@@ -67,13 +69,13 @@ class SelfHostedBootSettings extends React.Component {
 		}
 
 		let baseUrl;
-							let baseWriteUrl;
+		let baseWriteUrl;
 		let selfHosted = true;
 		try {
 			const data = result.data;
 			selfHosted = data.selfHosted;
 			extParameters.setSelfHosted(true);
-								baseWriteUrl = data.writeEndpoint;
+			baseWriteUrl = data.writeEndpoint;
 			if (data.endpoint.startsWith('/')) {
 				baseUrl = `${this.state.homeUrl}${data.endpoint}`;
 			} else {
@@ -104,11 +106,14 @@ class SelfHostedBootSettings extends React.Component {
 		}
 		extParameters.setBaseUrl(baseUrl);
 		extParameters.setHomeUrl(this.state.homeUrl);
-							extParameters.setBaseWriteUrl(baseWriteUrl);
+		extParameters.setBaseWriteUrl(baseWriteUrl);
 
 		const subDomain = [...this.state.homeUrl.matchAll(/\/\/(.*)\.clockify\.me/g)][0]?.[1];
-		if (subDomain) {
+
+		if (this.state.isSubdomain && subDomain) {
 			extParameters.setSubDomainName(subDomain);
+		} else {
+			localStorage.removeItem('subDomainName');
 		}
 
 		return <Login />;

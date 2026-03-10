@@ -31,8 +31,7 @@ class Header extends React.Component {
 		};
 
 		this.closeMenus = this.closeMenus.bind(this);
-		this.showScreenshotNotifications =
-			this.showScreenshotNotifications.bind(this);
+		this.showScreenshotNotifications = this.showScreenshotNotifications.bind(this);
 		// this.processNotifications = this.processNotifications.bind(this);
 		this.handleRefresh = this.handleRefresh.bind(this);
 		this.returnClockifyLink = this.returnClockifyLink.bind(this);
@@ -43,13 +42,13 @@ class Header extends React.Component {
 	componentDidMount() {
 		// this.checkScreenshotNotifications();
 		isLoggedIn()
-			.then((isLoggedIn) => {
+			.then(isLoggedIn => {
 				this.setState({
 					isLoggedIn,
 				});
 			})
 			.catch(() => {});
-		this.returnClockifyLink().then((link) => {
+		this.returnClockifyLink().then(link => {
 			this.setState({
 				clockifyLink: link,
 			});
@@ -128,7 +127,7 @@ class Header extends React.Component {
 
 		this.beforeWorkspaceChange();
 
-		this.setState((state) => ({
+		this.setState(state => ({
 			revert: false,
 			selectedWorkspaceId: workspaceId,
 			workspaceNameSelected: workspaceName,
@@ -142,10 +141,8 @@ class Header extends React.Component {
 					workspaceId,
 				},
 			})
-			.then((response) => {
-				const subDomainName = response.headers
-					? response.headers['sub-domain-name']
-					: null;
+			.then(response => {
+				const subDomainName = response.headers ? response.headers['sub-domain-name'] : null;
 				if (subDomainName) {
 					this.setState({
 						revert: false,
@@ -173,7 +170,7 @@ class Header extends React.Component {
 
 				this.props.workspaceChanged();
 			})
-			.catch((error) => {
+			.catch(error => {
 				if (error.response?.data.code === 1013) {
 					this.setState({
 						show2FAPopup: true,
@@ -183,47 +180,31 @@ class Header extends React.Component {
 	}
 
 	async returnClockifyLink() {
-		const subDomain = await localStorage.getItem('subDomainName', null);
-		const homeUrl = subDomain
-			? `https://${subDomain}.${environment.mainDomain}`
-			: environment.home;
+		const homeUrl = await localStorage.getItem('permanent_homeUrl', null);
 
-		return `${homeUrl}/tracker`;
+		return `${homeUrl || environment.home}/tracker`;
 	}
 
 	async getScreenshotNotificationInfo() {
-		const activeWorkspaceId = await localStorage.getItem(
-			'activeWorkspaceId',
-			null
-		);
+		const activeWorkspaceId = await localStorage.getItem('activeWorkspaceId', null);
 		const userId = await localStorage.getItem('userId', null);
 		let workspaceSettings = await localStorage.getItem('workspaceSettings');
-		workspaceSettings = (await workspaceSettings)
-			? JSON.parse(workspaceSettings)
-			: null;
-		const isScreenshotMessageRed = await localStorage.getItem(
-			'isScreenshotMessageRed'
-		);
-		let list = (await isScreenshotMessageRed)
-			? JSON.parse(isScreenshotMessageRed)
-			: [];
+		workspaceSettings = (await workspaceSettings) ? JSON.parse(workspaceSettings) : null;
+		const isScreenshotMessageRed = await localStorage.getItem('isScreenshotMessageRed');
+		let list = (await isScreenshotMessageRed) ? JSON.parse(isScreenshotMessageRed) : [];
 		return { activeWorkspaceId, userId, workspaceSettings, list };
 	}
 
 	async showScreenshotNotifications() {
 		const { activeWorkspaceId, userId, workspaceSettings, list } =
 			await this.getScreenshotNotificationInfo();
-		if (
-			activeWorkspaceId == null ||
-			userId == null ||
-			workspaceSettings == null
-		) {
+		if (activeWorkspaceId == null || userId == null || workspaceSettings == null) {
 			return;
 		}
 
 		let message = locales.SCREENSHOT_RECORDING;
 		let filtered = list.filter(
-			(item) => item.workspaceId === activeWorkspaceId && item.userId === userId
+			item => item.workspaceId === activeWorkspaceId && item.userId === userId
 		);
 
 		const item = filtered.length > 0 ? filtered[0] : null;
@@ -263,9 +244,8 @@ class Header extends React.Component {
 	async onBackendScreenshotNotification(notification) {
 		const { list } = await this.getScreenshotNotificationInfo();
 		let index = list.findIndex(
-			(item) =>
-				item.workspaceId === notification.workspaceId &&
-				item.userId === notification.userId
+			item =>
+				item.workspaceId === notification.workspaceId && item.userId === notification.userId
 		);
 		if (index >= 0) {
 			list[index].isClosed = false;
@@ -294,8 +274,7 @@ class Header extends React.Component {
 	}
 
 	async closeScreenshotNotification() {
-		const { activeWorkspaceId, userId, list } =
-			await this.getScreenshotNotificationInfo();
+		const { activeWorkspaceId, userId, list } = await this.getScreenshotNotificationInfo();
 		if (list.length === 0) {
 			list.push({
 				userId: userId,
@@ -304,8 +283,7 @@ class Header extends React.Component {
 			});
 		} else {
 			let index = list.findIndex(
-				(item) =>
-					item.workspaceId === activeWorkspaceId && item.userId === userId
+				item => item.workspaceId === activeWorkspaceId && item.userId === userId
 			);
 			if (index >= 0) {
 				list[index].isClosed = true;
@@ -350,10 +328,8 @@ class Header extends React.Component {
 		const { activeWorkspaceId, userId, workspaceSettings, list } =
 			await this.getScreenshotNotificationInfo();
 		let index = list.findIndex(
-			(item) =>
-				item.workspaceId === activeWorkspaceId &&
-				item.userId === userId &&
-				!item.isClosed
+			item =>
+				item.workspaceId === activeWorkspaceId && item.userId === userId && !item.isClosed
 		);
 		if (index >= 0) {
 			return; // has unShown
@@ -390,11 +366,8 @@ class Header extends React.Component {
 							? 'invisible-menu'
 							: 'disabled'
 					}
-					onClick={this.closeMenus.bind(this)}
-				></div>
-				<div className={this.props.isOffline ? 'header-offline' : 'disabled'}>
-					Offline
-				</div>
+					onClick={this.closeMenus.bind(this)}></div>
+				<div className={this.props.isOffline ? 'header-offline' : 'disabled'}>Offline</div>
 				<div className="header">
 					<div className="self-hosted-url__logo">
 						<a target={'_blank'} href={this.state.clockifyLink}>
@@ -405,8 +378,7 @@ class Header extends React.Component {
 						<div
 							onClick={this.handleRefresh}
 							title={locales.REFRESH}
-							className={this.props.showSync ? 'refresh-icon' : 'disabled'}
-						></div>
+							className={this.props.showSync ? 'refresh-icon' : 'disabled'}></div>
 						{this.props.showActions && (
 							<Notifications
 								onClick={this.openNotificationsDropdown.bind(this)}
@@ -419,8 +391,7 @@ class Header extends React.Component {
 							<div
 								className={this.props.showActions ? 'actions' : 'disabled'}
 								title={locales.SETTINGS}
-								onClick={this.openMenu.bind(this)}
-							>
+								onClick={this.openMenu.bind(this)}>
 								<Menu
 									isOpen={this.state.isMenuOpen}
 									mode={this.props.mode}
@@ -441,8 +412,7 @@ class Header extends React.Component {
 						)}
 						<span
 							className={this.props.backButton ? 'header-back' : 'disabled'}
-							onClick={this.goBack.bind(this)}
-						>
+							onClick={this.goBack.bind(this)}>
 							{locales.BACK}
 						</span>
 					</div>
@@ -453,8 +423,7 @@ class Header extends React.Component {
 							this.state.showScreenshotNotification
 								? 'screenshot-notification'
 								: 'disabled'
-						}
-					>
+						}>
 						<div className="screenshot-notification__info_and_close_button">
 							<span className="screenshot-notification__info">
 								{this.state.screenshotMessage}
@@ -462,8 +431,7 @@ class Header extends React.Component {
 									<a
 										href="https://clockify.me/screenshot-recording-app"
 										target={'_blank'}
-										className="screenshot-notification__action_buttons--help"
-									>
+										className="screenshot-notification__action_buttons--help">
 										{
 											locales.ACTIVITY_TABS__SCREENSHOTS__NO_SCREENSHOTS_PROMO_BTN
 										}
@@ -472,8 +440,7 @@ class Header extends React.Component {
 							</span>
 							<span
 								className="screenshot-notification__close"
-								onClick={this.closeScreenshotNotification.bind(this)}
-							></span>
+								onClick={this.closeScreenshotNotification.bind(this)}></span>
 						</div>
 					</div>
 				)}

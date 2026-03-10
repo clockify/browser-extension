@@ -4,12 +4,27 @@ var _waitingForResponse = false;
 var _selectors = null;
 var _clockifyShowPostStartPopup = true;
 var _timeEntryInProgressDescription = null;
-var documents = window.getAllDocuments();
 var timerIds = {};
 
 removeAllButtons();
 setPostStartPopup();
 setManualElementsVisibility();
+
+function findCurrentIntegration(integrations, currentUserId) {
+	const currentUrl = new URL(window.location.href);
+	currentUrl.port = '';
+	const currentUserIntegrationsSettings = integrations[currentUserId];
+
+	const currentIntegration = currentUserIntegrationsSettings.find(integration => {
+		const patterns = [...integration.urls, ...integration.customUrls];
+
+		const isMatched = patterns.some(pattern => new URLPattern(pattern).test(currentUrl));
+
+		return isMatched;
+	});
+
+	return currentIntegration || { name: 'unknown' };
+}
 
 function triggerUrlChanged() {
 	const event = new Event('urlChanged');
@@ -75,16 +90,13 @@ var clockifyButton = {
 					if (opts.noDebounce) {
 						mutationObserver.observer = new MutationObserver(mutationObserver.callback);
 					} else {
-						mutationObserver.observer = new MutationObserver(
-							clockifyDebounce(mutationObserver.callback, 1000)
-						);
+						mutationObserver.observer = new MutationObserver(mutationObserver.callback);
 					}
 
-					documents.forEach(document => {
-						mutationObserver.observer.observe(document, {
-							childList: true,
-							subtree: true,
-						});
+					mutationObserver.observer.observe(document, {
+						childList: true,
+						subtree: true,
+						...opts.observerConfig,
 					});
 				}
 				mutationObserver.allSelectors.push({
@@ -126,14 +138,14 @@ var clockifyButton = {
 
 	rerenderAllButtons: () => {
 		const integrationElementSelectors = `.clockifyButton, #clockify-manual-input-form, .clockify-widget-container, .button-link:has(.clockifyButton)`;
-		const integrationElements = Array.from($$$(integrationElementSelectors));
+		const integrationElements = Array.from($$(integrationElementSelectors));
 
 		integrationElements.forEach(e => e?.remove());
-		$$$('.clockify').forEach(e => e.classList.remove('clockify'));
+		$$('.clockify').forEach(e => e.classList.remove('clockify'));
 	},
 
 	renderTo: (selector, renderer) => {
-		const elements = $$$(selector);
+		const elements = $$(selector);
 
 		elements.forEach((element, index) => {
 			element.classList.add('clockify', 'clockify' + index);
@@ -161,9 +173,14 @@ var clockifyButton = {
 		let title = invokeIfFunction(options.description);
 		const pipeSeparator = title?.includes(' | ') ? ' || ' : ' | ';
 
+		if (title && title.length > 3000) {
+			title = title.slice(0, 3000);
+		}
+
 		const titleMatchesInProgressDescription =
 			withoutAppendedUrl(title, pipeSeparator) ===
 			withoutAppendedUrl(_timeEntryInProgressDescription, pipeSeparator);
+
 		const isActive = title && titleMatchesInProgressDescription;
 
 		const button = getClockifyButtonHTML({ options, isActive, isSmall });
@@ -171,9 +188,13 @@ var clockifyButton = {
 		if (isSmall) button.classList.add('small');
 
 		aBrowser.storage.local.get(
-			['timeEntryInProgress', 'appStore', 'userId'],
-			({ timeEntryInProgress, appStore, userId }) => {
+			['timeEntryInProgress', 'appStore', 'userId', 'integrations'],
+			({ timeEntryInProgress, appStore, userId, integrations }) => {
 				const entry = timeEntryInProgress;
+
+				const { name: integrationName } = findCurrentIntegration(integrations, userId);
+
+				button.setAttribute('data-integration-name', integrationName);
 
 				if (appStore) {
 					const parsedAppStore = JSON.parse(appStore);
@@ -201,7 +222,7 @@ var clockifyButton = {
 						active: isActive,
 						small: isSmall,
 						buttonId: currIndex,
-						integrationName: clockifyButton?.injectedArguments?.integrationName,
+						integrationName,
 					},
 					{
 						inProgressDescription: clockifyButton.inProgressDescription,
@@ -232,6 +253,8 @@ var clockifyButton = {
 		input.classList.add('clockify-input', 'clockify-input-default');
 		input.setAttribute('placeholder', clockifyLocales.ADD_TIME_MANUAL);
 		const inputWrapper = input.parentElement;
+
+		addLocale(input, 'ADD_TIME_MANUAL');
 
 		input.addEventListener(
 			'focus',
@@ -296,8 +319,8 @@ var clockifyButton = {
 							? clockifyLocales.UPGRADE_REGIONAL_ADMIN
 							: clockifyLocales.UPGRADE_REGIONAL
 						: isUserOwnerOrAdmin
-						? clockifyLocales.SUBSCRIPTION_EXPIRED
-						: clockifyLocales.FEATURE_DISABLED_CONTACT_ADMIN
+							? clockifyLocales.SUBSCRIPTION_EXPIRED
+							: clockifyLocales.FEATURE_DISABLED_CONTACT_ADMIN
 				);
 				return;
 			}
@@ -306,6 +329,14 @@ var clockifyButton = {
 			// format options so that if a function is passed we get its return value
 			// as part of the options objects key value pairs
 			const timeEntryOptionsInvoked = objInvokeIfFunction(options);
+
+			if (timeEntryOptionsInvoked.description.length > 3000) {
+				timeEntryOptionsInvoked.description = timeEntryOptionsInvoked.description.slice(
+					0,
+					3000
+				);
+				alert(clockifyLocales.DESCRIPTION_LIMIT_ERROR_MSG(3000));
+			}
 
 			let title = timeEntryOptionsInvoked.description;
 
@@ -331,9 +362,15 @@ var clockifyButton = {
 						defaultProjects = JSON.parse(defaultProjects);
 						let wsId = await localStorage.getItem('activeWorkspaceId');
 						let userId = await localStorage.getItem('userId');
-						const defaultProject = defaultProjects?.[userId]?.[wsId].defaultProject;
+						const defaultProject = defaultProjects?.[userId]?.[wsId]?.defaultProject;
 						let appStore = await localStorage.getItem('appStore');
 						appStore = JSON.parse(appStore);
+
+						const integrations = await localStorage.getItem('integrations');
+						const { name: integrationName } = findCurrentIntegration(
+							integrations,
+							userId
+						);
 
 						if (await isPopupShowable({ hasDescriptionValue })) {
 							if (
@@ -379,8 +416,7 @@ var clockifyButton = {
 									manualMode: true,
 									isPopupOpen: true,
 									origin: inputWrapper,
-									integrationName:
-										clockifyButton?.injectedArguments?.integrationName,
+									integrationName: integrationName,
 								});
 								input.value = '';
 							} else {
@@ -403,8 +439,7 @@ var clockifyButton = {
 									manualMode: true,
 									isPopupOpen: true,
 									origin: inputWrapper,
-									integrationName:
-										clockifyButton?.injectedArguments?.integrationName,
+									integrationName: integrationName,
 								});
 								input.value = '';
 							}
@@ -416,8 +451,7 @@ var clockifyButton = {
 									options: {
 										totalMins,
 										timeEntryOptions: timeEntryOptionsInvoked,
-										integrationName:
-											clockifyButton?.injectedArguments?.integrationName,
+										integrationName: integrationName,
 									},
 								},
 								response => {
@@ -671,15 +705,14 @@ function $$(selector, context = document) {
 	return context.querySelectorAll(selector);
 }
 
-function $$$(selector, contexts = documents) {
-	return contexts
-		.map(context => context.querySelectorAll(selector))
-		.map(nodeList => Array.from(nodeList))
-		.flat();
-}
-
 function text(selector, context = document) {
-	return $(selector, context)?.textContent?.trim();
+	try {
+		return $(selector, context)?.textContent?.trim() || '';
+	} catch (error) {
+		console.error('[Clockify] Unable to get element or its textual content.');
+
+		return '';
+	}
 }
 
 function ariaLabel(selector, context = document) {
@@ -692,7 +725,9 @@ function value(selector, context = document) {
 
 function attribute(attribute, element = null) {
 	if (element) {
-		return element.getAttribute(attribute).trim();
+		const value = element.getAttribute(attribute)?.trim();
+
+		return value || '';
 	}
 
 	const selector = '[' + attribute.trim() + ']';
@@ -706,14 +741,18 @@ function attribute(attribute, element = null) {
 }
 
 function textList(selector, context = document, withoutDuplicates = true) {
-	const elements = Array.from($$(selector, context) || []);
+	try {
+		const elements = Array.from($$(selector, context) || []);
 
-	const texts = elements
-		.map(element => element.textContent)
-		.filter(value => Boolean(value))
-		.map(text => text.trim());
+		const texts = elements
+			.map(element => element.innerText)
+			.filter(value => Boolean(value))
+			.map(text => text.trim());
 
-	return withoutDuplicates ? [...new Set(texts)] : texts;
+		return withoutDuplicates ? [...new Set(texts)] : texts;
+	} catch (error) {
+		return [];
+	}
 }
 
 function timeout({ milliseconds }) {
@@ -827,10 +866,10 @@ async function getSelectors(integrationName, viewName, selectorsName) {
 	return selectorsName
 		? _selectors[integrationName][viewName][selectorsName]
 		: viewName
-		? _selectors[integrationName][viewName]
-		: integrationName
-		? _selectors[integrationName]
-		: _selectors;
+			? _selectors[integrationName][viewName]
+			: integrationName
+				? _selectors[integrationName]
+				: _selectors;
 }
 
 function invokeIfFunction(trial) {
@@ -901,6 +940,21 @@ async function isPopupShowable({ hasDescriptionValue }) {
 	return isAnyRequiredFieldMissing || isPostStartPopupEnabled;
 }
 
+/* 👇 temporary fix for "undefined" placeholder in integration inputs */
+async function addLocale(entity, key) {
+	const value = await localStorage.getItem('locale_messages');
+
+	if (value && value[key] && value[key].message) {
+		entity.setAttribute('placeholder', value[key].message);
+
+		return;
+	}
+
+	await timeout({ milliseconds: 500 });
+
+	await addLocale(entity, key);
+}
+
 function closestClockifyButton(rootElement, clockifyButtonSelector = '.clockifyButton') {
 	let element = rootElement;
 	while (element) {
@@ -935,14 +989,11 @@ function inputMessage(input, msg, type, clearInput = false) {
 }
 
 function setButtonProperties(button, title, active, buttonId = 0) {
-	button.title = title;
-
 	const isSmall = button.classList.contains('small');
 	const idAttribute = isSmall ? 'clockifySmallButton' : 'clockifyButton';
 
 	button.classList.add('clockifyButton', 'clockifyButtonId' + buttonId);
 	button.setAttribute('id', idAttribute);
-
 	window.updateButtonProperties(
 		{
 			title,
@@ -962,7 +1013,7 @@ function updateButtonOnProgressChanged(timeEntry) {
 	clockifyButton.inProgressDescription =
 		timeEntryInProgress && timeEntryInProgress.id ? timeEntryInProgress.description : '';
 
-	const allButtons = $$$('.clockifyButton');
+	const allButtons = $$('.clockifyButton');
 
 	allButtons.forEach(button => {
 		const buttonId = button.className.match(/clockifyButtonId(\d+)/)[1];
@@ -1109,8 +1160,8 @@ if (!window.clockifyListeners) {
 }
 
 function removeAllButtons(wrapperClass) {
-	const buttons = $$$(wrapperClass || '.clockifyButton, #clockify-manual-input-form');
-	const divs = $$$('.clockify');
+	const buttons = $$(wrapperClass || '.clockifyButton, #clockify-manual-input-form');
+	const divs = $$('.clockify');
 
 	buttons.forEach(button => button.parentNode.removeChild(button));
 	divs.forEach(div => div.classList.remove('clockify'));
@@ -1243,16 +1294,6 @@ function onMessageListener(request, sender, sendResponse) {
 		const urlChanged = new CustomEvent('urlChanged');
 
 		window.dispatchEvent(urlChanged);
-	}
-
-	if (request.eventName === 'passArgumentsToClockifyButton') {
-		// console.log('Active integration name:', request.options.integrationName);
-		// console.log('PASS options', request.options);
-		clockifyButton = {
-			...clockifyButton,
-			injectedArguments: request.options,
-		};
-		//console.log('Analytics data:', request);
 	}
 }
 

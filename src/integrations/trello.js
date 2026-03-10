@@ -31,29 +31,41 @@
 	);
 
 	/* Modal view - right sidebar */
-	clockifyButton.render(selectors.rightSidebarModalView.hanger, { observe: true }, copyButton => {
-		const description = () => text(selectors.rightSidebarModalView.modalTitle);
-		const projectName = () => text(selectors.rightSidebarModalView.boardTitle);
+	clockifyButton.render(
+		'[data-testid=\"card-back-name\"] header:not(.clockify)',
+		{ observe: true },
+		modal => {
+			const description = () => text(selectors.rightSidebarModalView.modalTitle);
+			const projectName = () => text(selectors.rightSidebarModalView.boardTitle);
 
-		const entry = { description, projectName };
+			const entry = { description, projectName, small: true };
 
-		const timer = clockifyButton.createTimer(entry);
-		const input = clockifyButton.createInput(entry);
+			const timer = clockifyButton.createTimer(entry);
+			const input = clockifyButton.createInput(entry);
 
-		const container = createContainer(timer, input);
+			const container = createContainer(timer, input);
 
-		input.children[0].style.boxShadow = 'none';
-		input.children[0].style.padding = '4px';
-		input.children[0].style.margin = '0';
-		timer.style.marginBottom = '5px';
+			/* positioning */
+			const actions = $('[type="button"]', modal);
+			const modalRect = modal.getBoundingClientRect();
+			const buttonRect = actions.getBoundingClientRect();
+			const right = modalRect.right - buttonRect.left;
 
-		const sidebar = copyButton.parentElement.parentElement;
+			container.style.position = 'absolute';
+			container.style.top = '14px';
+			container.style.right = `${right + 5}px`;
+			container.style.display = 'flex';
+			container.style.alignItems = 'center';
+			container.style.justifyContent = 'center';
+			container.style.gap = '10px';
+			container.style.zIndex = '1337';
 
-		container.prepend(input);
-		container.prepend(timer);
+			container.prepend(input);
+			container.prepend(timer);
 
-		sidebar.prepend(container);
-	});
+			modal.prepend(container);
+		}
+	);
 
 	/* Modal view - checklist */
 	clockifyButton.render(
@@ -89,26 +101,44 @@ function initializeHtmlObserver() {
 
 function applyManualInputStyles() {
 	const lightStyles = `
+		header form#clockify-manual-input-form {
+			background-color: white;
+   			border-radius: 5px;
+		}
+		header div#clockifySmallButton {
+			background-color: white;
+			padding: 7px;
+			border-radius: 50%;
+		}
 		span.clockify-button-inactive {
 			color: #444444 !important;
 		}
 		input.clockify-input {
 			color: #444444 !important;
-			width: 100%;
 			border: none !important;
 			padding: 0 18px !important;
-			background: rgba(9, 30, 66, 0.06) !important;
+			border-radius: 5px;
+			background: rgba(161, 189, 217, 0.08) !important;
 		}
 	`;
 	const darkStyles = `
+		header form#clockify-manual-input-form {
+			background-color: #2d3033;
+   			border-radius: 5px;
+		}
+		header	 div#clockifySmallButton {
+			background-color: #2d3033	;
+			padding: 6px;
+			border-radius: 50%;
+		}
 		span.clockify-button-inactive {
 			color: rgb(182, 194, 207) !important;
 		}
 		input.clockify-input {
 			color: rgb(182, 194, 207) !important;
-			width: 100%;
 			border: none !important;
 			padding: 0 18px !important;
+			border-radius: 5px;
 			background: rgba(161, 189, 217, 0.08) !important;
 		}
 	`;

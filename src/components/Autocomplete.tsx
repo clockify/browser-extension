@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
-import { useOnClickOutside } from './customFields/useOnClickOutside';
 import { TimeEntryDto } from '../DTOs/TimeEntryDto';
+import { onClickOutside } from '~/helpers/onClickOutside';
 
 interface PropsInterface {
 	renderInput: Function;
@@ -16,7 +16,7 @@ export const Autocomplete = (props: PropsInterface): JSX.Element => {
 	const menuRef = useRef<HTMLDivElement>(null);
 	const inputRef = useRef<HTMLInputElement>(null);
 
-	useOnClickOutside(menuRef, () => setIsDropdownOpen(false));
+	onClickOutside(menuRef, () => setIsDropdownOpen(false));
 
 	return (
 		<div className="react-autocomplete">
@@ -25,20 +25,19 @@ export const Autocomplete = (props: PropsInterface): JSX.Element => {
 				onChange: props.onChange,
 				onClick: () => setIsDropdownOpen(true),
 				autoComplete: 'off',
-				ref: inputRef
+				ref: inputRef,
 			})}
 
 			{isDropdownOpen && (
 				<div ref={menuRef} className="react-autocomplete-menu">
-					{props.items?.map((item) => (
+					{props.items?.map(item => (
 						<div
 							key={item.id}
 							className={'autocomplete-dropdown-item'}
 							onClick={() => {
 								setIsDropdownOpen(false);
 								props.onSelect(item);
-							}}
-						>
+							}}>
 							{item.description && (
 								<span className="autocomplete-dropdown-item__description">
 									{item.description}
@@ -48,8 +47,7 @@ export const Autocomplete = (props: PropsInterface): JSX.Element => {
 							{item.project?.name && (
 								<span
 									className="autocomplete-dropdown-item__project-task"
-									style={{ color: item.project?.color }}
-								>
+									style={{ color: item.project?.color }}>
 									<div
 										className="dot"
 										style={{ backgroundColor: item.project?.color }}
@@ -69,7 +67,7 @@ export const Autocomplete = (props: PropsInterface): JSX.Element => {
 								<span className="autocomplete-dropdown-item__tag">
 									{item.tags
 										.slice(0, 3)
-										.map((tag) => tag.name)
+										.map(tag => tag.name)
 										.join(', ')}
 									{item.tags.length > 3 ? '...' : ''}
 								</span>

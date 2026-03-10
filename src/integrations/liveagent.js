@@ -1,25 +1,27 @@
 clockifyButton.render(
 	'.ConversationDetailsView:not(.clockify)',
-	{ observe: true },
-	(ticketSidebar) => {
-		const descriptionSelector = () => {
-			const ticketCode = $('.CodeLabel').textContent.trim();
-			const ticketSubject = $('.ConversationHeaderSubject').textContent.trim();
-			return '[' + ticketCode + '] ' + ticketSubject;
-		};
+	{ observe: true, onNavigationRerender: true },
+	ticketSidebar => {
+		const conversationId = () => text('#conversation-code-label');
+		const conversationTitle = () => text('.ConversationHeaderSubject div:has(+ form) div');
 
-		const link = clockifyButton.createButton(descriptionSelector);
-		link.style.display = 'inline-block';
-		link.style.cursor = 'pointer';
-		link.style.padding = '10px 20px';
-		link.style.marginBottom = '1em';
+		const description = () => `[${conversationId()}] ${conversationTitle()}`;
 
-		var wrapper = document.createElement('div');
+		const timer = clockifyButton.createButton({ description });
+
+		timer.style.display = 'inline-block';
+		timer.style.cursor = 'pointer';
+		timer.style.padding = '10px 20px';
+		timer.style.marginBottom = '1em';
+
+		const wrapper = document.createElement('div');
+
 		wrapper.className = 'clockifyWrapper';
 		wrapper.style.textAlign = 'center';
 		wrapper.style.borderBottom = '1px solid rgba(125,125,125,0.3)';
 		wrapper.style.marginBottom = '1em';
-		wrapper.appendChild(link);
+
+		wrapper.append(timer);
 
 		ticketSidebar.insertBefore(wrapper, ticketSidebar.firstChild);
 	}
@@ -27,16 +29,20 @@ clockifyButton.render(
 
 clockifyButton.render(
 	'.ArticleDetails:not(.clockify)',
-	{ observe: true },
-	(articleDetails) => {
-		const articleHeader = $('.KbTitle').textContent.trim();
+	{
+		observe: true,
+	},
+	articleDetails => {
+		const articleHeader = () => value('.TextBox[name="title"]');
 		const link = clockifyButton.createButton(articleHeader);
+
 		link.style.display = 'inline-block';
 		link.style.cursor = 'pointer';
 		link.style.padding = '0 20px';
 		link.style.marginBottom = '1em';
 
-		var wrapper = document.createElement('div');
+		const wrapper = document.createElement('div');
+
 		wrapper.className = 'clockifyWrapper';
 		wrapper.style.textAlign = 'center';
 		wrapper.style.borderBottom = '1px solid rgba(125,125,125,0.3)';

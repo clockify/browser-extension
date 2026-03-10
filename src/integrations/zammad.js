@@ -1,35 +1,58 @@
-clockifyButton.render(
-	'.ticketZoom-header:not(.clockify)',
-	{ observe: true },
-	function (elem) {
-		var link,
-			titleFunc,
-			description,
-			divTag = document.createElement('div');
+const config = { observe: true, onNavigationRerender: true };
 
-		titleFunc = function () {
-			var titleElem = $('.ticket-title-update'),
-				ticketNum = $('.ticket-number').textContent.trim();
+clockifyButton.render('.ticketZoom-controls:not(.clockify)', config, ticketControls => {
+	const ticketNumber = () => text('.ticket-number');
+	const ticketTitle = () => text('.ticket-title-update');
 
-			if (titleElem !== null) {
-				description = titleElem.textContent.trim();
+	const description = () => `#${ticketNumber()} ${ticketTitle()}`;
+
+	const timer = clockifyButton.createTimer({ description });
+
+	timer.style.marginLeft = '10px';
+	timer.style.borderRadius = '4px';
+	timer.style.padding = '6px 11px 6px 11px';
+
+	!$('[class*="clockify"]', ticketControls) && ticketControls.append(timer);
+});
+
+initializeBodyObserver();
+applyManualInputStyles();
+
+function initializeBodyObserver() {
+	const bodyObserver = new MutationObserver(applyManualInputStyles);
+
+	const observationTarget = document.documentElement;
+	const observationConfig = { attributes: true, attributeFilter: ['style'] };
+
+	bodyObserver.observe(observationTarget, observationConfig);
+}
+
+function applyManualInputStyles() {
+	const isDarkThemeEnabled = document.documentElement.style.colorScheme === 'dark';
+
+	const darkStyles = `
+		#clockifyButton {
+			background: hsla(0, 0%, 100%, 0.03);
+			border: 1px solid hsl(230, 4%, 17%);
+			
+			span { 
+				color: hsl(213, 3%, 60%) !important;
+				top: 1px; 
 			}
-
-			if (ticketNum) {
-				description = '#' + ticketNum + ' ' + description;
+		}
+	`;
+	const lightStyles = `
+		#clockifyButton {
+			background: white;
+			border: 1px solid rgba(0,0,0,0.1);
+			
+			span {
+				top: 1px;
 			}
-			return description;
-		};
+		}
+	`;
 
-		link = clockifyButton.createButton(titleFunc);
-		link.style.marginLeft = '10px';
-		link.style.backgroundColor = 'white';
-		link.style.border = '1px solid rgba(0,0,0,0.1)';
-		link.style.borderRadius = '4px';
-		link.style.padding = '6px 11px 6px 30px';
-		link.style.backgroundPosition = '11px 6px';
-		link.style.color = '#999';
-		divTag.appendChild(link);
-		$('.ticketZoom-controls').appendChild(divTag);
-	}
-);
+	const stylesToApply = isDarkThemeEnabled ? darkStyles : lightStyles;
+
+	applyStyles(stylesToApply, 'clockify-theme-dependent-styles');
+}

@@ -1,15 +1,14 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import useCustomField from './useCustomField';
 import { getBrowser } from '../../helpers/browser-helper';
-import locales from '../../helpers/locales';
 
 let format;
 
-const isValueless = (value) => !Boolean(value) && value !== 0;
+const isValueless = value => !Boolean(value) && value !== 0;
 
-const isNumberNegative = (string) => string.startsWith('-');
+const isNumberNegative = string => string.startsWith('-');
 
-const prependMinus = (string) => '-'.concat(string);
+const prependMinus = string => '-'.concat(string);
 
 const toString = (number, { fixSeparator } = {}) => {
 	const { decimalSeparator } = getSeparators();
@@ -60,18 +59,16 @@ function getSeparators() {
 
 	const parts = formatter.formatToParts(12345.67);
 	const groupSeparator =
-		format === 'QUOTATION_MARK_PERIOD'
-			? "'"
-			: parts.find((part) => part.type === 'group')?.value;
+		format === 'QUOTATION_MARK_PERIOD' ? "'" : parts.find(part => part.type === 'group')?.value;
 	const decimalSeparator =
 		format === 'QUOTATION_MARK_PERIOD'
 			? '.'
-			: parts.find((part) => part.type === 'decimal')?.value;
+			: parts.find(part => part.type === 'decimal')?.value;
 
 	return { groupSeparator, decimalSeparator };
 }
 
-const sanitizeInput = (value) => {
+const sanitizeInput = value => {
 	value = String(value);
 	const startsWithMinus = isNumberNegative(value);
 	// Matches any character that is NOT a number, dot, or comma
@@ -108,7 +105,7 @@ const sanitizeInput = (value) => {
 	return startsWithMinus ? prependMinus(sanitizedValue) : sanitizedValue;
 };
 
-const localizeNumber = (num) => {
+const localizeNumber = num => {
 	if (isValueless(num)) return null;
 	num = sanitizeInput(num);
 	const startsWithMinus = isNumberNegative(num);
@@ -159,9 +156,7 @@ function delocalizeNumber(formattedNumber) {
 
 	const { groupSeparator } = getSeparators();
 
-	let sanitizedNumber = formattedNumber
-		.replaceAll(groupSeparator, '')
-		.replace(',', '.');
+	let sanitizedNumber = formattedNumber.replaceAll(groupSeparator, '').replace(',', '.');
 
 	return Number(sanitizedNumber);
 }
@@ -178,10 +173,8 @@ const CustomFieldNumber = ({ cf, updateValue, numberFormat, setIsValid }) => {
 	format = numberFormat;
 	const [value, setValue] = useState();
 
-	const [
-		{ id, index, isDisabled, placeHolder, manualMode, required, description },
-		storeValue,
-	] = useCustomField(cf, updateValue, value);
+	const [{ id, index, isDisabled, placeHolder, manualMode, required, description }, storeValue] =
+		useCustomField(cf, updateValue, value);
 	const inputRef = useRef(null);
 
 	const incrementOrDecrement = (incVal = 1) => {
@@ -199,7 +192,7 @@ const CustomFieldNumber = ({ cf, updateValue, numberFormat, setIsValid }) => {
 
 	const isNotValid = required && isValueless(value);
 
-	const handleChange = (event) => {
+	const handleChange = event => {
 		const enteredValue = event.target.value;
 		const sanitizedValue = sanitizeInput(enteredValue);
 
@@ -212,7 +205,7 @@ const CustomFieldNumber = ({ cf, updateValue, numberFormat, setIsValid }) => {
 		setValue(delocalizedNumber);
 	};
 
-	const handleBlur = (event) => {
+	const handleBlur = event => {
 		event.preventDefault();
 
 		const enteredValue = toString(value, { fixSeparator: true });
@@ -228,7 +221,7 @@ const CustomFieldNumber = ({ cf, updateValue, numberFormat, setIsValid }) => {
 	useEffect(() => {
 		const delocalizedNumber = delocalizeNumber(value);
 		storeValue(delocalizedNumber);
-	}, [value])
+	}, [value]);
 
 	useEffect(() => {
 		const initialValue = sanitizeInitialValue(cf.value);
@@ -240,74 +233,60 @@ const CustomFieldNumber = ({ cf, updateValue, numberFormat, setIsValid }) => {
 	}, [value]);
 
 	return (
-		<>
-			<div
-				key={id}
+		<div
+			key={id}
+			index={index}
+			className={`custom-field-number custom-field${isDisabled ? '-disabled' : ''}`}>
+			<input
+				type="text"
+				ref={inputRef}
 				index={index}
-				className={`custom-field-number custom-field${
-					isDisabled ? '-disabled' : ''
+				value={isValueless(value) ? '' : value}
+				className={`custom-field-number${isDisabled ? '-disabled' : ''} ${
+					isNotValid ? 'custom-field-required' : ''
 				}`}
-			>
-				<input
-					type="text"
-					ref={inputRef}
-					index={index}
-					value={isValueless(value) ? '' : value}
-					className={`custom-field-number${isDisabled ? '-disabled' : ''} ${
-						isNotValid ? 'custom-field-required' : ''
-					}`}
-					title={description}
-					placeholder={placeHolder}
-					disabled={isDisabled}
-					onChange={handleChange}
-					onBlur={handleBlur}
-					onFocus={handleFocus}
-				/>
-				{!isDisabled && (
-					<div className="input-stepper">
-						<div
-							className="input-stepper-wrapper"
-							onMouseDown={(event) => {
-								event.preventDefault();
-								incrementOrDecrement(1);
-							}}
-							onMouseUp={clearIncrement}
-						>
-							<span
-								className="input-stepper-up"
-								style={{
-									content: `url(${getBrowser().runtime.getURL(
-										'assets/images/arrow-light-mode-up.png'
-									)})`,
-								}}
-							></span>
-						</div>
-						<div
-							className="input-stepper-wrapper"
-							onMouseDown={(event) => {
-								event.preventDefault();
-								incrementOrDecrement(-1);
-							}}
-							onMouseUp={clearIncrement}
-						>
-							<span
-								className="input-stepper-down"
-								style={{
-									content: `url(${getBrowser().runtime.getURL(
-										'assets/images/arrow-light-mode.png'
-									)})`,
-								}}
-							></span>
-						</div>
+				title={description}
+				placeholder={placeHolder}
+				disabled={isDisabled}
+				onChange={handleChange}
+				onBlur={handleBlur}
+				onFocus={handleFocus}
+			/>
+			{!isDisabled && (
+				<div className="input-stepper">
+					<div
+						className="input-stepper-wrapper"
+						onMouseDown={event => {
+							event.preventDefault();
+							incrementOrDecrement(1);
+						}}
+						onMouseUp={clearIncrement}>
+						<span
+							className="input-stepper-up"
+							style={{
+								content: `url(${getBrowser().runtime.getURL(
+									'assets/images/arrow-light-mode-up.png'
+								)})`,
+							}}></span>
 					</div>
-				)}
-			</div>
-			{isNotValid && (
-				<p className="field-required-message">
-					*{cf.wsCustomField.name} {locales.FIELD_REQUIRED}
-				</p>
+					<div
+						className="input-stepper-wrapper"
+						onMouseDown={event => {
+							event.preventDefault();
+							incrementOrDecrement(-1);
+						}}
+						onMouseUp={clearIncrement}>
+						<span
+							className="input-stepper-down"
+							style={{
+								content: `url(${getBrowser().runtime.getURL(
+									'assets/images/arrow-light-mode.png'
+								)})`,
+							}}></span>
+					</div>
+				</div>
 			)}
-		</>
+		</div>
 	);
 };
 

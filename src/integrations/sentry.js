@@ -1,31 +1,34 @@
-clockifyButton.render('.group-detail:not(.clockify)', { observe: true }, () => {
-	if ($('#clockifyButton')) return;
+clockifyButton.render(
+	`[data-sentry-element=ActionBar] [data-sentry-element=ActionWrapper]:not(.clockify), 
+			 [data-sentry-element="Layout.Header"] [data-sentry-component=BaseTabList] ul:not(.clockify)
+	`,
+	{ observe: true },
+	elem => {
+		const projectNameWithId = text('[data-sentry-element=StyledShortId] span');
+		let issueName =
+			text('[data-sentry-element=PrimaryTitle]') ||
+			text('[data-sentry-component=EventOrGroupTitle]');
+		issueName =
+			issueName[0] === '<' && issueName[issueName.length - 1] === '>'
+				? issueName?.replace(/[<>]/g, '')
+				: issueName;
+		let issueDescription = text('[data-sentry-element=Message]');
+		issueDescription = issueDescription ? `-${issueDescription}` : '';
 
-	const issueNameWithNumber = $(
-		'.group-detail .auto-select-text > span'
-	).textContent;
+		const projectName = projectNameWithId.slice(0, projectNameWithId.lastIndexOf('-'));
+		const description = `#${projectNameWithId.slice(projectNameWithId.lastIndexOf('-') + 1)}: ${issueName}${issueDescription}`;
 
-	const issueNumber = issueNameWithNumber.split('-').slice(-1).join(' ');
+		const link = clockifyButton.createButton({ description, projectName });
+		link.style.marginLeft = '10px';
 
-	const detailTitle = (
-			$('h3 > span') ||
-			$('.ez9r7o64') ||
-			$('.app-1t4tomo') ||
-			$('.e1v8ok1u0')
-		).innerHTML
-			.split('<')[0]
-			.trim(),
-		detailDescription = $('.app-1h2hd63').textContent.trim();
 
-	const projectName = issueNameWithNumber
-		.split('-')
-		.slice(0, -1)
-		.join(' ')
-		.trim();
-	const description = `#${issueNumber}: ${detailTitle}-${detailDescription}`;
-	const link = clockifyButton.createButton({ description, projectName });
+		elem.appendChild(link);
+	},
+);
 
-	link.style.marginTop = '-5px';
-
-	$('.group-detail [role="tablist"]').appendChild(link);
-});
+applyStyles(`
+	.clockify-button-inactive-span,
+	.clockify-button-active-span {
+		top: ${navigator.userAgent.includes('Firefox') ? '1px' : 0};
+	}
+`);

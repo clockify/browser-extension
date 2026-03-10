@@ -2,9 +2,9 @@ import * as React from 'react';
 import { SortHepler } from '../helpers/sort-helper';
 import { debounce } from 'lodash';
 import locales from '../helpers/locales';
-import onClickOutside from 'react-onclickoutside';
 import { getBrowser } from '../helpers/browser-helper';
 import Toaster from './toaster-component';
+import { onClickOutside } from '~/helpers/onClickOutside';
 
 const sortHelpers = new SortHepler();
 const pageSize = 50;
@@ -23,7 +23,7 @@ class TagsList extends React.Component {
 			createFormOpened: false,
 			tagName: '',
 			tagIds: this.props.tagIds ? this.props.tagIds : [],
-			isOffline: null
+			isOffline: null,
 		};
 
 		this.tagFilterRef = React.createRef();
@@ -36,6 +36,7 @@ class TagsList extends React.Component {
 		this.setAsyncStateItems = this.setAsyncStateItems.bind(this);
 		this.handleScroll = this.handleScroll.bind(this);
 		this.getTagsInitial = this.getTagsInitial.bind(this);
+		this.moveCheckedTagsOnTop = this.moveCheckedTagsOnTop.bind(this);
 	}
 
 	async setAsyncStateItems() {
@@ -57,12 +58,7 @@ class TagsList extends React.Component {
 
 	componentDidMount() {
 		this.setAsyncStateItems();
-	}
-
-	handleClickOutside() {
-		if (this.state.isOpen) {
-			this.toggleTagsList();
-		}
+		onClickOutside(this.tagListDropdownRef, this.closeTagsList.bind(this));
 	}
 
 	isOpened() {
@@ -71,59 +67,58 @@ class TagsList extends React.Component {
 
 	closeOpened() {
 		this.setState({
-			isOpen: false
+			isOpen: false,
 		});
 	}
 
 	async getTags(page, pageSize) {
-		const offline = await localStorage.getItem('offline');
-		if (!JSON.parse(offline)) {
-			getBrowser()
-				.runtime.sendMessage({
-					eventName: 'getTags',
-					options: { page, pageSize, filter: this.state.filter },
-				})
-				.then(response => {
-					const { data } = response;
-					if (response && !data) {
-						console.log('getTags error: ', response);
-						return;
-					}
-					const tagsList =
-						this.state.page === 1 ? data : this.state.tagsList.concat(data);
-					this.setState({
+		getBrowser()
+			.runtime.sendMessage({
+				eventName: 'getTags',
+				options: { page, pageSize, filter: this.state.filter },
+			})
+			.then(response => {
+				const { data } = response;
+
+				if (response && !data) {
+					console.log('getTags error: ', response);
+					return;
+				}
+
+				const tagsList = this.state.page === 1 ? data : this.state.tagsList.concat(data);
+
+				this.setState(
+					{
 						tagsList: sortHelpers.sortArrayByStringProperty(tagsList, 'name'),
-						page: this.state.page + 1,
-						loadMore: data.length === pageSize ? true : false
-					});
-				})
-				.catch(() => {
-				});
-		}
+						page: this.state.page++,
+						loadMore: data.length === pageSize,
+					},
+					this.moveCheckedTagsOnTop
+				);
+			});
 	}
 
 	async getTagsInitial(page, pageSize) {
-		const offline = await localStorage.getItem('offline');
-		if (!JSON.parse(offline)) {
-			getBrowser()
-				.runtime.sendMessage({
-					eventName: 'getTags',
-					options: { page, pageSize, filter: this.state.filter },
-				})
-				.then(response => {
-					const { data } = response;
-					if (response && !data) {
-						console.log('getTags error: ', response);
-						return;
-					}
-					const tagsList = data;
-					this.setState({
-						tagsList: sortHelpers.sortArrayByStringProperty(tagsList, 'name')
-					});
-				})
-				.catch(() => {
-				});
-		}
+		getBrowser()
+			.runtime.sendMessage({
+				eventName: 'getTags',
+				options: { page, pageSize, filter: this.state.filter },
+			})
+			.then(response => {
+				const { data } = response;
+
+				if (response && !data) {
+					console.log('getTags error: ', response);
+					return;
+				}
+
+				this.setState(
+					{
+						tagsList: sortHelpers.sortArrayByStringProperty(data, 'name'),
+					},
+					this.moveCheckedTagsOnTop
+				);
+			});
 	}
 
 	closeTagsList() {
@@ -131,47 +126,56 @@ class TagsList extends React.Component {
 		this.setState(
 			{
 				isOpen: false,
-				tagsList: [],
 				page: 1,
-				filter: ''
+				filter: '',
 			},
 			() => {
 				this.getTags(this.state.page, pageSize);
+				this.props.onClose?.();
 			}
 		);
 	}
 
 	async toggleTagsList(e) {
-		if (e) {
-			e.stopPropagation();
+		if (e) e.stopPropagation();
+
+		if (!this.state.isOpen && this.state.tagsList.length === 0) {
+			this.getTags(this.state.page, pageSize);
 		}
-		const offline = await localStorage.getItem('offline');
-		if (!JSON.parse(offline)) {
-			if (!this.state.isOpen && this.state.tagsList.length === 0) {
-				this.getTags(this.state.page, pageSize);
+
+		this.setState({ isOpen: !this.state.isOpen }, () => {
+			if (this.state.isOpen) {
+				this.tagFilterRef.current.focus();
+				return;
 			}
-			this.setState(
-				{
-					isOpen: !this.state.isOpen
-				},
-				() => {
-					if (this.state.isOpen) {
-						this.tagFilterRef.current.focus();
-					} else {
-						this.props.onClose?.();
-					}
-				}
-			);
-		}
+
+			this.props.onClose?.();
+			this.closeTagsList();
+		});
 	}
+
+	moveCheckedTagsOnTop = () => {
+		const modifiedTagsList = this.state.tagsList;
+
+		this.props.tags.map((propsTag, index) => {
+			const tagIndex = this.state.tagsList.findIndex(
+				stateTag => stateTag?.id === propsTag.id
+			);
+			if (tagIndex === -1) return;
+
+			const checkedTag = modifiedTagsList.splice(tagIndex, 1)[0];
+
+			modifiedTagsList.splice(index, 0, checkedTag);
+		});
+
+		this.setState({ tagsList: modifiedTagsList });
+	};
 
 	filterTags(e) {
 		this.setState(
 			{
-				tagsList: [],
-				tagsListBackUp: [],
 				filter: e.target.value,
-				page: 1
+				page: 1,
 			},
 			() => {
 				this.getTags(this.state.page, pageSize);
@@ -182,13 +186,12 @@ class TagsList extends React.Component {
 	clearTagFilter() {
 		this.setState(
 			{
-				tagsList: [],
-				tagsListBackUp: [],
 				filter: '',
-				page: 1
+				page: 1,
 			},
 			() => {
 				this.getTags(this.state.page, pageSize);
+				this.tagFilterRef.current.focus();
 			}
 		);
 	}
@@ -212,7 +215,7 @@ class TagsList extends React.Component {
 	openCreateTag() {
 		this.setState(
 			{
-				createFormOpened: true
+				createFormOpened: true,
 			},
 			() => {
 				this.closeTagsList();
@@ -240,12 +243,12 @@ class TagsList extends React.Component {
 
 		getBrowser()
 			.runtime.sendMessage({
-			eventName: 'createTag',
-			options: {
-				tag
-			}
-		})
-			.then((response) => {
+				eventName: 'createTag',
+				options: {
+					tag,
+				},
+			})
+			.then(response => {
 				if (response.status === 400 && response.message) {
 					return this.toaster.toast('error', response.message, 2);
 				}
@@ -256,11 +259,12 @@ class TagsList extends React.Component {
 					{
 						tagsList: this.state.tagsList.concat(response.data),
 						createFormOpened: false,
-						tagName: ''
+						tagName: '',
 					},
 					() => {
+						this.moveCheckedTagsOnTop();
 						this.setState({
-							loadMore: this.state.tagsList.length >= pageSize
+							loadMore: this.state.tagsList.length >= pageSize,
 						});
 					}
 				);
@@ -273,13 +277,13 @@ class TagsList extends React.Component {
 	cancel() {
 		this.setState({
 			tagName: '',
-			createFormOpened: false
+			createFormOpened: false,
 		});
 	}
 
 	handleChange(event) {
 		this.setState({
-			tagName: event.target.value
+			tagName: event.target.value,
 		});
 	}
 
@@ -288,7 +292,7 @@ class TagsList extends React.Component {
 			if (this.state.page === 1) {
 				this.setState(
 					{
-						page: 2
+						page: 2,
 					},
 					() => {
 						this.loadMoreTags();
@@ -301,7 +305,8 @@ class TagsList extends React.Component {
 	}
 
 	render() {
-		const noMatcingTags = locales.NO_MATCHING('tags');
+		const noTagsMessage =
+			this.state.filter === '' ? locales.NO_TAGS_LABEL : locales.NO_MATCHING('tags');
 		const { tags } = this.props;
 
 		let title = '';
@@ -313,9 +318,10 @@ class TagsList extends React.Component {
 		}
 
 		return (
-			<div className="tag-list">
-				<Toaster ref={(instance) => this.toaster = instance} />
+			<div className="tag-list" ref={this.tagListDropdownRef}>
+				<Toaster ref={instance => (this.toaster = instance)} />
 				<div
+					data-testid="tag-dropdown"
 					title={title}
 					className={
 						this.state.isOffline
@@ -361,7 +367,6 @@ class TagsList extends React.Component {
 				</div>
 				<div
 					id="tagListDropdown"
-					ref={this.tagListDropdownRef}
 					className={this.state.isOpen ? 'tag-list-dropdown' : 'disabled'}>
 					<div onScroll={this.handleScroll} className="tag-list-dropdown--content">
 						<div className="tag-list-input">
@@ -427,7 +432,7 @@ class TagsList extends React.Component {
 									);
 								})
 							) : (
-								<span className="tag-list--not_tags">{noMatcingTags}</span>
+								<span className="tag-list--not_tags">{noTagsMessage}</span>
 							)}
 						</div>
 						<div
@@ -494,4 +499,4 @@ class TagsList extends React.Component {
 	}
 }
 
-export default onClickOutside(TagsList);
+export default TagsList;

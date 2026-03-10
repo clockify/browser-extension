@@ -1,32 +1,3 @@
-// Message actions bar
-clockifyButton.render(
-	'.c-message_actions__group:not(.clockify)',
-	{ observe: true },
-	(messageActions) => {
-		const message = messageActions.closest('[aria-roledescription="message"]');
-		const lastActionIcon = Array.from(messageActions.children).reverse()[0];
-
-		const handledMessage = handleEmojisAndNewLines(message);
-
-		const description = () =>
-			$('.c-message_kit__blocks', handledMessage).innerText;
-
-		if (!description()) return;
-
-		const link = clockifyButton.createButton({ description, small: true });
-
-		link.classList.add(
-			'c-button-unstyled',
-			'c-icon_button',
-			'c-icon_button--size_small',
-			'c-message_actions__button',
-			'c-icon_button--default'
-		);
-
-		lastActionIcon.before(link);
-	}
-);
-
 // Message context menu
 clockifyButton.render(
 	'.c-popover .c-menu__items:not(.clockify)',
@@ -37,7 +8,7 @@ clockifyButton.render(
 		if (isSubmenu) return;
 
 		const message = $('.c-message_actions__group').closest(
-			'[aria-roledescription="message"]'
+			'[aria-roledescription="message"]',
 		);
 
 		const handledMessage = handleEmojisAndNewLines(message);
@@ -61,16 +32,16 @@ clockifyButton.render(
 		// Highlight menu item effect
 		link.addEventListener('mouseover', () => {
 			const highlightedItems = Array.from(
-				$$('.c-menu_item__button--highlighted', contextMenu)
+				$$('.c-menu_item__button--highlighted', contextMenu),
 			);
 			highlightedItems.forEach((highlightedItem) => {
 				highlightedItem.classList.remove('c-menu_item__button--highlighted');
 				highlightedItem.parentElement.classList.remove(
-					'c-menu_item__li--highlighted'
+					'c-menu_item__li--highlighted',
 				);
 			});
 		});
-	}
+	},
 );
 
 applyStyles(`
@@ -130,7 +101,7 @@ function createContextMenuSeparator() {
 	container.classList.add(
 		'c-menu_separator__li',
 		'c-menu_separator__li--no_first_child',
-		'c-menu_separator__li--no_last_child'
+		'c-menu_separator__li--no_last_child',
 	);
 
 	line.classList.add('c-menu_separator__separator');

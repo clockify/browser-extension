@@ -8,12 +8,12 @@ class ClockifyIntegrationBase {
 		if (!entry || error) {
 			setTimeEntryInProgress(null);
 			aBrowser.action.setIcon({
-				path: iconPathEnded
+				path: iconPathEnded,
 			});
 		} else {
 			setTimeEntryInProgress(entry);
 			aBrowser.action.setIcon({
-				path: iconPathStarted
+				path: iconPathStarted,
 			});
 		}
 		sendResponse({ status: clockifyLocales.OK_BTN });
@@ -30,7 +30,7 @@ class ClockifyIntegrationBase {
 		const { error } = await TimeEntry.endInProgress({
 			endedFromIntegration,
 			integrationName,
-			endEntryInProgressToContinueOtherEntry
+			endEntryInProgressToContinueOtherEntry,
 		});
 		if (error) {
 			sendResponse({ status: error.status, message: error.message });
@@ -38,7 +38,7 @@ class ClockifyIntegrationBase {
 			aBrowser.notifications.clear('idleDetection');
 			aBrowser.runtime.sendMessage({ eventName: 'entryEnded' });
 			aBrowser.action.setIcon({
-				path: iconPathEnded
+				path: iconPathEnded,
 			});
 			sendResponse({ status: clockifyLocales.OK_BTN });
 		}
@@ -57,7 +57,7 @@ class ClockifyIntegrationBase {
 		if (entry) {
 			const { error } = await TimeEntry.endInProgress({
 				endedFromIntegration: true,
-				integrationName: timeEntryOptions.integrationName ?? null
+				integrationName: timeEntryOptions.integrationName ?? null,
 			});
 			if (error) {
 				sendResponse({ status: error.status });
@@ -67,7 +67,7 @@ class ClockifyIntegrationBase {
 		const {
 			data: ent,
 			error: err,
-			status
+			status,
 		} = await TimeEntry.integrationStartTimerWithDescription(
 			timeEntryOptions.description,
 			timeEntryOptions
@@ -88,7 +88,7 @@ class ClockifyIntegrationBase {
 							start_time: ent.timeInterval.start,
 							end_time: ent.timeInterval.end,
 							duration: ent.timeInterval.duration,
-							browser: 'chrome'
+							browser: 'chrome',
 						};
 						const options = { analyticsEventName, eventParameters };
 						await this.sendAnalyticsEvent(options);
@@ -98,7 +98,7 @@ class ClockifyIntegrationBase {
 						const analyticsEventName = 'entry_mode';
 						const eventParameters = {
 							timer_start: true,
-							browser: 'chrome'
+							browser: 'chrome',
 						};
 						const options = { analyticsEventName, eventParameters };
 						await this.sendAnalyticsEvent(options);
@@ -106,7 +106,7 @@ class ClockifyIntegrationBase {
 						await AnalyticsService.storeAnalyticsEvents([
 							timeEntryOptions.continueEntryByStartingEntryAgain
 								? entryContinued
-								: trackerStarted
+								: trackerStarted,
 						]);
 					}
 				} else {
@@ -118,7 +118,7 @@ class ClockifyIntegrationBase {
 							start_time: ent.timeInterval.start,
 							end_time: ent.timeInterval.end,
 							duration: ent.timeInterval.duration,
-							browser: 'chrome'
+							browser: 'chrome',
 						};
 						const options = { analyticsEventName, eventParameters };
 						await this.sendAnalyticsEvent(options);
@@ -129,7 +129,7 @@ class ClockifyIntegrationBase {
 						const eventParameters = {
 							integrationName: timeEntryOptions.integrationName,
 							timer_start: true,
-							browser: 'chrome'
+							browser: 'chrome',
 						};
 						const options = { analyticsEventName, eventParameters };
 						await this.sendAnalyticsEvent(options);
@@ -138,11 +138,11 @@ class ClockifyIntegrationBase {
 				}
 				if (!timeEntryOptions.manualMode) {
 					aBrowser.action.setIcon({
-						path: iconPathStarted
+						path: iconPathStarted,
 					});
 					aBrowser.runtime.sendMessage({
 						eventName: 'entryStarted',
-						options: { entry: ent }
+						options: { entry: ent },
 					});
 					aBrowser.storage.local.set({ timeEntryInProgress: ent });
 				}
@@ -163,7 +163,7 @@ class ClockifyIntegrationBase {
 
 			if (project && taskName) {
 				let { taskDB } = await ProjectTaskService.getOrCreateProjectAndTask(project.name, {
-					name: taskName
+					name: taskName,
 				});
 				task = taskDB;
 			}
@@ -197,7 +197,7 @@ class ClockifyIntegrationBase {
 		const {
 			projectDB,
 			error: projectError,
-			status
+			status,
 		} = await ProjectTaskService.getProjectsByIds(projectIds, taskIds);
 		if (projectError) {
 			sendResponse(projectError.message ? projectError.message : projectError.status);
@@ -206,12 +206,12 @@ class ClockifyIntegrationBase {
 		if (projectDB) {
 			sendResponse({
 				status,
-				data: [projectDB]
+				data: [projectDB],
 			});
 		} else {
 			sendResponse({
 				status,
-				data: []
+				data: [],
 			});
 		}
 	}
@@ -260,7 +260,7 @@ class ClockifyIntegrationBase {
 		}
 		sendResponse({
 			status: 201,
-			data
+			data,
 		});
 	}
 
@@ -277,7 +277,7 @@ class ClockifyIntegrationBase {
 		}
 		sendResponse({
 			status: 201,
-			data
+			data,
 		});
 	}
 
@@ -289,14 +289,14 @@ class ClockifyIntegrationBase {
 
 		const { data, error: projectsError } = await ProjectTaskService.getTaskOfProject({
 			projectId,
-			taskName
+			taskName,
 		});
 		if (projectsError) {
 			sendResponse(projectsError.message ? projectsError.message : projectsError.status);
 		}
 		sendResponse({
 			status: 201,
-			data
+			data,
 		});
 	}
 
@@ -323,7 +323,7 @@ class ClockifyIntegrationBase {
 		);
 		sendResponse({
 			status,
-			data
+			data,
 		});
 	}
 
@@ -343,7 +343,7 @@ class ClockifyIntegrationBase {
 		const {
 			data: timeEntry,
 			error,
-			status
+			status,
 		} = await TimeEntry.setDescription(id, description.trim());
 		if (error) {
 			sendResponse(error.message ? error.message : error.status);
@@ -462,7 +462,7 @@ class ClockifyIntegrationBase {
 		const {
 			data,
 			error: tagsError,
-			status
+			status,
 		} = await TagService.getAllTagsWithFilter(page, pageSize, filter);
 		if (tagsError) {
 			sendResponse(tagsError.message ? tagsError.message : tagsError.status);
@@ -487,7 +487,7 @@ class ClockifyIntegrationBase {
 		console.log({
 			data,
 			error,
-			status
+			status,
 		});
 		if (error) {
 			sendResponse(error);
@@ -615,7 +615,7 @@ class ClockifyIntegrationBase {
 		const {
 			entry: ent,
 			error: err,
-			status
+			status,
 		} = await TimeEntry.integrationStartTimerWithDescription(
 			timeEntryOptions.description,
 			timeEntryOptions
@@ -641,7 +641,7 @@ class ClockifyIntegrationBase {
 				start_time: timeEntryOptions.start,
 				end_time: timeEntryOptions.end,
 				duration: duration,
-				browser: 'chrome'
+				browser: 'chrome',
 			};
 			const options = { analyticsEventName, eventParameters };
 			await this.sendAnalyticsEvent(options);
@@ -1021,6 +1021,17 @@ class ClockifyIntegrationBase {
 		sendResponse({ data, status });
 	}
 
+	static async discardTimeEntry({ entryId }, sendResponse) {
+		const { data, error, status } = await TimeEntry.discardTimeEntry(entryId);
+
+		if (error) {
+			sendResponse(error.message, error.status);
+			return;
+		}
+
+		sendResponse({ data, status });
+	}
+
 	static async deleteTimeEntry({ entryId }, sendResponse) {
 		if (await isNavigatorOffline()) {
 			sendResponse('Connection is offline', 0);
@@ -1211,7 +1222,7 @@ class ClockifyIntegrationBase {
 		}
 
 		const { data, error, status } = await NotificationService.readSingleNotificationForUser({
-			notificationId
+			notificationId,
 		});
 
 		if (error) {
@@ -1245,7 +1256,7 @@ class ClockifyIntegrationBase {
 		}
 
 		const { data, error, status } = await NotificationService.readSingleOrMultipleNewsForUser({
-			newsIds
+			newsIds,
 		});
 
 		if (error) {
@@ -1262,7 +1273,7 @@ class ClockifyIntegrationBase {
 		}
 
 		const { data, error, status } = await NotificationService.readManyNotificationsForUser({
-			notificationIds
+			notificationIds,
 		});
 
 		if (error) {
@@ -1356,6 +1367,36 @@ class ClockifyIntegrationBase {
 		}
 
 		const { data, error, status } = await UserService.changeTimezone(options);
+
+		if (error) {
+			sendResponse({ error });
+			return;
+		}
+		sendResponse({ data, status });
+	}
+
+	static async getFeedbackLocalizationKeys(sendResponse) {
+		if (await isNavigatorOffline()) {
+			sendResponse('Connection is offline', 0);
+			return;
+		}
+
+		const { data, error, status } = await FeedbackService.getFeedbackLocalizationKeys();
+
+		if (error) {
+			sendResponse({ error });
+			return;
+		}
+		sendResponse({ data, status });
+	}
+
+	static async makeFeedback(options, sendResponse) {
+		if (await isNavigatorOffline()) {
+			sendResponse('Connection is offline', 0);
+			return;
+		}
+
+		const { data, error, status } = await FeedbackService.makeFeedback(options);
 
 		if (error) {
 			sendResponse({ error });

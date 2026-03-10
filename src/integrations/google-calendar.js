@@ -1,7 +1,5 @@
 // Both event card & task card
 clockifyButton.render('span[jsslot].kma42e', { observe: true }, eventCard => {
-	handleDynamicStyles();
-
 	if ($('.clockify-widget-container')) return;
 
 	const eventTimeInterval = text('#xDetDlgWhen .AzuXid.O2VjS.CyPPBf');
@@ -67,34 +65,13 @@ async function allowMovingScrollbarInModalPopup() {
 	});
 }
 
-async function handleDynamicStyles() {
-	const isManualModeDisabled = await isManuallyDisabled();
-	const paddingLeft = await containerPaddingLeft();
-	const width = cardWidth();
-
-	const dynamicStyles = `
-		.Tnsqdc { 
-			height: ${isManualModeDisabled ? '40px' : '80px'}; 
-		}
-
-		#xDetDlg {
-			width: ${width};
-		}
-
-		.clockify-widget-container {
-			top: ${isManualModeDisabled ? '17px' : '10px'}; 
-			padding-left: ${paddingLeft};
-		}
-	`;
-
-	applyStyles(dynamicStyles, 'clockify-custom-dynamic-styles');
-}
-
-window.addEventListener('workspaceSettingsChanged', handleDynamicStyles);
-
 applyStyles(`
 	#xDetDlg {
 		max-width: 600px;
+	}
+	
+	.Tnsqdc { 
+		height: 80px; 
 	}
 
 	.clockify-widget-container {
@@ -105,6 +82,8 @@ applyStyles(`
 		grid-row-gap: 0px;
 		justify-items: flex-start;
 		position: absolute;
+		top: 10px;
+		padding-left: 30px;
 	}
 	#clockify-manual-input-form {
 		margin-left: -25px;
@@ -123,39 +102,6 @@ applyStyles(`
 		align-items: center;
 	}
 `);
-
-function cardWidth() {
-	const defaultCardWidth = 448;
-
-	const defaultIconsCount = 3;
-	const iconsCount = $$('.pPTZAe > div').length;
-	const iconsExcess = iconsCount - defaultIconsCount || 0;
-
-	const pixelsToAddForAnyExtraIcon = 40;
-
-	return pixels(defaultCardWidth + iconsExcess * pixelsToAddForAnyExtraIcon);
-}
-
-function pixels(number) {
-	return `${number}px`;
-}
-
-async function containerPaddingLeft() {
-	const randomCardElement = await waitForElement('span[jsslot].kma42e .zZj8Pb.EaVNbc');
-
-	if (!randomCardElement) return '0px';
-
-	const paddingLeftInsideCard = parseInt(
-		window
-			.getComputedStyle(randomCardElement, null)
-			.getPropertyValue('padding-left')
-			.slice(0, -2)
-	);
-	const pixelsToAdd = 3;
-	const containerPaddingLeft = paddingLeftInsideCard + pixelsToAdd;
-
-	return pixels(containerPaddingLeft);
-}
 
 /*
 	The following functions are parsers/rearrangers/converters that
@@ -310,25 +256,25 @@ function makeStartAndEnd(interval) {
 	switch (howManyTimesWhitespaceOccurs) {
 		case 1:
 			[month, day] = interval.split(' ').map(toInteger);
-			(startYear = currentYear), (endYear = currentYear);
-			(startMonth = month), (endMonth = month);
-			(startDay = day), (endDay = day);
-			(startHours = 0), (endHours = 23);
-			(startMinutes = 0), (endMinutes = 59);
+			((startYear = currentYear), (endYear = currentYear));
+			((startMonth = month), (endMonth = month));
+			((startDay = day), (endDay = day));
+			((startHours = 0), (endHours = 23));
+			((startMinutes = 0), (endMinutes = 59));
 			break;
 		case 2:
 			[month, day, year] = interval.split(' ').map(toInteger);
-			(startYear = year), (endYear = year);
-			(startMonth = month), (endMonth = month);
-			(startDay = day), (endDay = day);
-			(startHours = 0), (endHours = 23);
-			(startMinutes = 0), (endMinutes = 59);
+			((startYear = year), (endYear = year));
+			((startMonth = month), (endMonth = month));
+			((startDay = day), (endDay = day));
+			((startHours = 0), (endHours = 23));
+			((startMinutes = 0), (endMinutes = 59));
 			break;
 		case 6:
 		case 7:
 			[startMonth, startDay, startHours, startMinutes] = start;
 			[endHours, endMinutes] = end;
-			(startYear = currentYear), (endYear = currentYear);
+			((startYear = currentYear), (endYear = currentYear));
 			endMonth = startMonth;
 			endDay = startDay;
 			break;

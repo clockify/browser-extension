@@ -467,6 +467,12 @@
   "SHARED_MODULES__INPUT_STRING__VALUE_REQUIRED_ERROR_MESSAGE": {
     "message": "La valeur est requise."
   },
+  "SHARED_MODULES__PROJECT_PICKER__SEARCH_TASK_CUSTOM_LABEL": {
+    "message": "Recherchez { taskLabel } @{ projectLabel } ou { projectGroupingLabel }…"
+  },
+  "NO_TAGS_LABEL": {
+    "message": "Aucune balise pour le moment"
+  },
   "NO_DESCRIPTION": {
     "message": "(aucune description)"
   },
@@ -573,7 +579,7 @@
     "message": "Ajouter une tâche"
   },
   "ADD_TIME_MANUAL": {
-    "message": "Ajouter du temps (ex. 15m)"
+    "message": "Ajouter du temps (ex. 15 min)"
   },
   "SHORTCUT": {
     "message": "Raccourci"
@@ -741,7 +747,7 @@
     "message": "Si vous utilisez un outil hébergé sur un domaine personnalisé, vous pouvez l'activer ici"
   },
   "ENTER_TIME": {
-    "message": "Entrez l'heure (par ex. 1.5)"
+    "message": "Saisissez la durée (ex. 1,5)"
   },
   "ENTRY_MODE": {
     "message": "Mode d'entrée"
@@ -1229,11 +1235,74 @@
   "CAN_NOT_CREATE_PROJECT_MISSING_PERMISSIONS": {
     "message": "Vous n'avez pas l'autorisation de créer un projet"
   },
+  "CAN_NOT_CREATE_TAGS_MISSING_PERMISSIONS": {
+    "message": "Vous n’avez pas les autorisations nécessaires pour créer des balises"
+  },
   "ENTRY_IN_PROGRESS_EXISTS": {
     "message": "Vous avez une saisie horaire en cours !"
   },
   "WEBSITE_FORMAT_ERROR": {
     "message": "Le format du site Web n'est pas valide"
+  },
+  "NO_YET_FILTER_NAME": {
+    "message": "Pas encore de { filterName }"
+  },
+  "FIELD_REQUIRED_VALIDATION": {
+    "message": "Ce champ est obligatoire"
+  },
+  "SELECT_PLACEHOLDER": {
+    "message": "Sélectionner"
+  },
+  "DISCARD_CHANGES_QUESTION": {
+    "message": "Rejeter les modifications non enregistrées ?"
+  },
+  "DISCARD_CHANGES_PARAGRAPH": {
+    "message": "Vos modifications ne seront pas enregistrées."
+  },
+  "DISCARD": {
+    "message": "Jeter"
+  },
+  "FEEDBACK_FORM_PARAGRAPH": {
+    "message": "Aidez-nous à améliorer Clockify en partageant les détails de votre idée ou problème. Pour des feedbacks plus pertinents, veuillez être précis."
+  },
+  "FEEDBACK_FORM_PLATFORM": {
+    "message": "Plateforme"
+  },
+  "FEEDBACK_FORM_MESSAGE": {
+    "message": "Partager votre feedback"
+  },
+  "FEEDBACK_FORM_MESSAGE_PLACEHOLDER": {
+    "message": "Décrivez votre idée, en quoi elle serait utile et où vous souhaiteriez la voir se réaliser"
+  },
+  "FEEDBACK_FORM_PARTICIPATION": {
+    "message": "Je souhaite participer à la recherche sur les produits"
+  },
+  "SHARE_FEEDBACK": {
+    "message": "Partager le feedback"
+  },
+  "FEEDBACK_SUBMITTED_TITLE": {
+    "message": "Merci pour vos commentaires !"
+  },
+  "FEEDBACK_SUBMITTED_SUBTITLE": {
+    "message": "L’équipe produit évalue systématiquement toutes les requêtes afin de planifier et d’actualiser la roadmap."
+  },
+  "FEEDBACK_SUBMITTED_UPDATES": {
+    "message": "Vérifier les dernières mises à jour"
+  },
+  "SUBMITTED_HERE_LINK": {
+    "message": "ici"
+  },
+  "DISCARD_FEEDBACK_TITLE": {
+    "message": "Ignorer le feedback"
+  },
+  "DISCARD_FEEDBACK_TEXT": {
+    "message": "Si vous annulez maintenant, vos commentaires ne seront pas enregistrés et vous devrez recommencer plus tard."
+  },
+  "DISCARD_FEEDBACK_BUTTON": {
+    "message": "Retour au formulaire"
+  },
+  "TOO_MANY_REQUESTS": {
+    "message": "Trop de demandes, réessayez plus tard."
   },
   "appName": {
     "message": "Clockify Suivi du temps",
