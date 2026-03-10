@@ -1,54 +1,61 @@
 
-
 // Entity View
-clockifyButton.render('.c1rrm0ax.object_editor_header:not(.clockify)', { observe: true }, elem => {
+clockifyButton.render('.extension-entity-view-header-spot:not(.clockify)', { observe: true }, elem => {
 	const description = () => {
-		const titleElem = $('.title_input');
-		return titleElem ? titleElem.textContent : '';
+		return  elem ? elem.dataset?.entityTitle : '';
 	};
 
 	const timer = clockifyButton.createButton({ description });
 	const input = clockifyButton.createInput({ description });
 
+	const container = createContainer(timer, input);
 	container.append(timer);
 	container.append(input);
-
-	const container = createContainer(timer, input);
 
 	elem.append(container);
 });
 
-// List View
-clockifyButton.render('.lkr9c4x.card_container:not(.clockify)', { observe: true }, elem => {
+function createButtonOnView({small, elem}) {
 	const description = () => {
-		const titleElem = elem.querySelector('.tooltip._rwggs7._ha62ha.s1qbmfeo.title');
-		return titleElem ? titleElem.textContent : '';
+		return  elem ? elem.dataset?.entityTitle : '';
 	};
 
-	const timer = clockifyButton.createButton({ small: true, description });
+	const timer = clockifyButton.createButton({ small, description });
 
 	const container = createContainer(timer);
 
 	preventEventPropagation(container);
+	elem.append(container);
+}
 
-	insertAfterTitleWrapper(elem, container, '.t9vmudw.title-wrapper');
+// List View
+clockifyButton.render('.i-role-list-view .extension-entity-card-spot:not(.clockify)', { observe: true }, elem => {
+	createButtonOnView({ small: true, elem });
 });
 
 // Board View
-clockifyButton.render('.c1yifu0v.card_container:not(.clockify)', { observe: true }, elem => {
-	const description = () => {
-		const cardContainer = elem.closest('.card_container');
-		const titleElem = cardContainer?.querySelector('.title');
-		return titleElem ? titleElem.textContent : '';
-	};
+clockifyButton.render('.i-role-board-view .extension-entity-card-spot:not(.clockify)', { observe: true }, elem => {
+	createButtonOnView({ small: false, elem });
+});
 
-	const timer = clockifyButton.createButton({ description });
+// Table View
+clockifyButton.render('.i-role-table-view .extension-entity-card-spot:not(.clockify)', { observe: true }, elem => {
+	createButtonOnView({ small: true, elem });
+});
 
-	const container = createContainer(timer);
+// Timeline and Gantt View
+clockifyButton.render('.i-role-timeline-view .extension-entity-card-spot:not(.clockify)', { observe: true }, elem => {
+	createButtonOnView({ small: true, elem });
+});
 
-	preventEventPropagation(container);
+// Feed View
+clockifyButton.render('.i-role-feed-view .extension-entity-card-spot:not(.clockify)', { observe: true }, elem => {
+	createButtonOnView({ small: true, elem });
+});
 
-	insertAfterTitleWrapper(elem, container, '.t1mu84wd.title-wrapper');
+// Calendar View
+clockifyButton.render('.i-role-calendar-view .extension-entity-card-spot:not(.clockify)', { observe: true }, elem => {
+	createButtonOnView({ small: true, elem });
 });
 
 // Common functions
@@ -73,14 +80,6 @@ function setupInputEvents(input) {
 	}
 }
 
-function insertAfterTitleWrapper(elem, container, titleWrapperSelector) {
-	const titleWrapper = elem.querySelector(titleWrapperSelector);
-	if (titleWrapper) {
-		titleWrapper.parentNode.insertBefore(container, titleWrapper.nextSibling);
-	} else {
-		elem.prepend(container);
-	}
-}
 
 // Custom styles
 applyStyles(`
@@ -113,7 +112,7 @@ applyStyles(`
 		position: relative;
 		z-index: 2;
 		width: 120px !important;
-		height: 26px !important;
+		height: 24px !important;
 	}
 
 	#clockify-manual-input-form input::placeholder {
