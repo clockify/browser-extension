@@ -2,7 +2,7 @@ clockifyButton.render(
 	'.StatusAssigneecss__ContainerUI-sc-2iztpe-0:not(.clockify)',
 	{ observe: true },
 	(actionMenu) => {
-		const description = text('[aria-label="Conversation Subject"]');
+		const description = getHelpScoutDescription();
 		const tagNames = () => textList('[data-cy="Tag"]');
 		const entry = { description, tagNames };
 		const link = clockifyButton.createButton(entry);
@@ -21,7 +21,7 @@ clockifyButton.render(
 	'.actions__wrapper:not(.clockify)',
 	{ observe: true },
 	(actionMenu) => {
-		const description = () => text('#subjectLine');
+		const description = () => getHelpScoutDescription();
 		const tagNames = () => textList('.tag');
 		const entry = { description, tagNames };
 		const link = clockifyButton.createButton(entry);
@@ -53,4 +53,22 @@ function addCustomCSS() {
 	`;
 
 	document.head.append(style);
+}
+
+function getHelpScoutDescription() {
+	const url = (() => {
+		try {
+			return window.top?.location?.href || location.href;
+		} catch {
+			return location.href || "";
+		}
+	})();
+
+	const match = url.match(/(?:conversation|conversations)\/\d+\/(\d+)(?:[/?#]|$)/i);
+
+	const subject = (text('[aria-label="Conversation Subject"]') || "").trim();
+
+	const ticketPrefix = match ? `#${match[1]} - ` : "";
+
+	return ticketPrefix + subject;
 }
