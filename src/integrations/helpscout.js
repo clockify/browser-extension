@@ -66,8 +66,14 @@ function getHelpScoutDescription() {
 
 	const match = url.match(/(?:conversation|conversations)\/\d+\/(\d+)(?:[/?#]|$)/i);
 
-	const subject = (text('[aria-label="Conversation Subject"]') || "").trim();
+	let subject = text('[aria-label="Conversation Subject"]');
 
+	// Legacy theme
+	if (!subject) {
+		subject = text('#subjectLine');
+	}
+
+	subject = (subject || "").trim();
 	const ticketPrefix = match ? `#${match[1]} - ` : "";
 
 	return ticketPrefix + subject;
