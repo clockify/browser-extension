@@ -488,6 +488,14 @@
         "script": "placker.js"
     },
     {
+        "name": "Plane",
+        "urls": [
+            "*://*.plane.so/*",
+            "*://plane.so/*"
+        ],
+        "script": "plane.js"
+    },
+    {
         "name": "Plutio",
         "urls": [
             "*://*.plutio.com/*"
