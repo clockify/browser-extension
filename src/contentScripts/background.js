@@ -97,6 +97,10 @@ aBrowser.runtime.onStartup.addListener(async () => {
 	const isLoggedIn = await TokenService.isLoggedIn();
 
 	if (isLoggedIn) {
+		await setIntegrationSettingsForCurrentUser();
+		await unregisterAllIntegrations();
+		await registerEnabledIntegrations();
+
 		const { entry, error } = await TimeEntry.getEntryInProgress();
 		if (entry === null || error) {
 			this.addReminderTimerOnStartingBrowser();
