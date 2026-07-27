@@ -15,7 +15,7 @@ import { getWSCustomFields, offlineStorage } from '../helpers/offlineStorage';
 import locales from '../helpers/locales';
 import { Autocomplete } from '~/components/Autocomplete.tsx';
 import { getBrowser } from '../helpers/browser-helper';
-import { DeleteEntryConfirmation } from '~/components/DeleteEntryConfirmation.tsx';
+import { NoInternetConnection } from '~/components/NoInternetConnection';
 
 class EditFormManual extends React.Component {
 	constructor(props) {
@@ -515,20 +515,6 @@ class EditFormManual extends React.Component {
 		});
 	}
 
-	deleteEntry() {
-		this.goBack();
-		let timeEntries = offlineStorage.timeEntriesOffline;
-		if (
-			timeEntries.findIndex(entryOffline => entryOffline.id === this.state.timeEntry.id) > -1
-		) {
-			timeEntries.splice(
-				timeEntries.findIndex(entry => entry.id === this.state.timeEntry.id),
-				1
-			);
-		}
-		offlineStorage.timeEntriesOffline = timeEntries;
-	}
-
 	async checkRequiredFields() {
 		let descRequired = false;
 		let projectRequired = false;
@@ -711,15 +697,32 @@ class EditFormManual extends React.Component {
 					billable,
 					customFieldValues,
 				} = timeEntry;
-				const cfs =
+				let cfs =
 					customFieldValues && customFieldValues.length > 0
 						? customFieldValues
 								//.filter((cf) => cf.customFieldDto.status === 'VISIBLE')
-								.map(({ type, customFieldId, value }) => ({
-									customFieldId,
-									sourceType: 'TIMEENTRY',
-									value: type === 'NUMBER' ? parseFloat(value) : value,
-								}))
+								.map(({ type, customFieldId, value, customFieldDto }) => {
+									let cfProjectValue = customFieldDto?.projectDefaultValues.find(
+										e => e.projectId === projectId
+									)?.value;
+
+									cfProjectValue =
+										(customFieldDto?.required && !cfProjectValue) ||
+										(value !== cfProjectValue &&
+											value !== customFieldDto.workspaceDefaultValue)
+											? value
+											: cfProjectValue;
+
+									return {
+										customFieldId,
+										sourceType: 'TIMEENTRY',
+										value:
+											type === 'NUMBER'
+												? parseFloat(cfProjectValue)
+												: cfProjectValue,
+									};
+								})
+								.filter(cf => (typeof cf.value === 'boolean' ? true : cf.value))
 						: [];
 
 				// if component is executed via "copy as time entry" feature
@@ -846,18 +849,6 @@ class EditFormManual extends React.Component {
 		this.props.changeMode(mode);
 	}
 
-	askToDeleteEntry() {
-		this.setState({
-			askToDeleteEntry: true,
-		});
-	}
-
-	cancelDeletingEntry() {
-		this.setState({
-			askToDeleteEntry: false,
-		});
-	}
-
 	goBack() {
 		if (this.props.integrationMode) {
 			this.props.closeIntegrationPopup();
@@ -899,10 +890,12 @@ class EditFormManual extends React.Component {
 			//const hideBillable = offlineStorage.onlyAdminsCanChangeBillableStatus && !offlineStorage.isUserOwnerOrAdmin;
 
 			return (
-				<div>
+				<div className={!this.props.integrationMode && 'sticky-header-padding-top'}>
+					<NoInternetConnection />
 					{!this.props.integrationMode && (
 						<>
 							<Header
+								stickyHeader={!this.props.integrationMode}
 								backButton={true}
 								disableManual={this.state.inProgress}
 								disableAutomatic={false}
@@ -951,12 +944,7 @@ class EditFormManual extends React.Component {
 							/>
 						)}
 
-						<div
-							className={
-								this.state.descRequired
-									? 'description-textarea-required'
-									: 'description-textarea'
-							}>
+						<div data-testid={'description-field'} className={'description-textarea'}>
 							<Autocomplete
 								items={
 									this.state.timeEntry.description?.length >= 2
@@ -1006,31 +994,42 @@ class EditFormManual extends React.Component {
 									}
 								}}
 								renderInput={props => (
-									<textarea
-										placeholder={
-											this.state.descRequired
-												? `${locales.DESCRIPTION_LABEL} ${locales.REQUIRED_LABEL}`
-												: locales.DESCRIPTION_LABEL
-										}
-										className={'edit-form-description'}
-										type="text"
-										onInput={this.onSetDescription.bind(this)}
-										{...props}
-										onBlur={event => {
-											const description = event.target.value;
-											const pattern = /<[^>]+>/;
-											const descriptionContainsWrongChars =
-												pattern.test(description);
+									<>
+										<textarea
+											className={'edit-form-description'}
+											type="text"
+											id={'description'}
+											onInput={this.onSetDescription.bind(this)}
+											{...props}
+											onBlur={event => {
+												const description = event.target.value;
+												const pattern = /<[^>]+>/;
+												const descriptionContainsWrongChars =
+													pattern.test(description);
 
-											if (descriptionContainsWrongChars) {
-												return this.toaster.toast(
-													'error',
-													locales.FORBIDDEN_CHARACTERS,
-													2
-												);
-											}
-										}}
-									/>
+												if (descriptionContainsWrongChars) {
+													return this.toaster.toast(
+														'error',
+														locales.FORBIDDEN_CHARACTERS,
+														2
+													);
+												}
+											}}
+										/>
+										{!this.state.description && (
+											<label
+												htmlFor={'description'}
+												className={'field-required-label-description'}>
+												{locales.DESCRIPTION_LABEL}{' '}
+												{this.state.descRequired && (
+													<span
+														className={'field-required-label-asterisk'}>
+														*
+													</span>
+												)}
+											</label>
+										)}
+									</>
 								)}
 							/>
 						</div>
@@ -1125,22 +1124,6 @@ class EditFormManual extends React.Component {
 									}>
 									{locales.ADD}
 								</button>
-								{!this.props.integrationMode && (
-									<>
-										<div className="edit-form-right-buttons__back_and_delete">
-											<span
-												onClick={this.askToDeleteEntry.bind(this)}
-												className="edit-form-delete">
-												{locales.DELETE}
-											</span>
-										</div>
-										<DeleteEntryConfirmation
-											askToDeleteEntry={this.state.askToDeleteEntry}
-											canceled={this.cancelDeletingEntry.bind(this)}
-											confirmed={this.deleteEntry.bind(this)}
-										/>
-									</>
-								)}
 							</div>
 						</div>
 					</div>

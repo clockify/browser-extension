@@ -288,8 +288,9 @@ const TimeEntry = props => {
 			.then(() => {
 				setState(state => ({ ...state, askToDeleteEntry: false }));
 				props.handleRefresh();
+				toasterRef.current.showUndoToast(locales.ENTRY_DELETED_SUCCESS, 5, [entryId]);
 			})
-			.catch(() => {});
+			.catch(() => { });
 	};
 
 	const deleteMultipleEntries = async entryIds => {
@@ -303,8 +304,9 @@ const TimeEntry = props => {
 			.then(() => {
 				setState(state => ({ ...state, askToDeleteEntry: false }));
 				props.handleRefresh();
+				toasterRef.current.showUndoToast(locales.ENTRIES_DELETED_SUCCESS, 5, entryIds);
 			})
-			.catch(() => {});
+			.catch(() => { });
 	};
 
 	const byTimeDate = (firstEntry, secondEntry) => {
@@ -313,7 +315,7 @@ const TimeEntry = props => {
 
 	return (
 		<React.Fragment>
-			<Toaster ref={toasterRef} />
+			<Toaster ref={toasterRef} handleRefresh={props.handleRefresh.bind(this)} />
 			<div>
 				<div
 					data-testid="time-entry"
@@ -419,25 +421,25 @@ const TimeEntry = props => {
 								(timeEntry.isLocked && !isUserOwnerOrAdmin) ||
 								timeEntry.approvalRequestId
 							) && (
-								<span className="time-entry-menu">
-									<img
-										onClick={toggleEntryDropdownMenu}
-										className="time-entry-menu__icon"
-										src="./assets/images/menu-dots-vertical.svg"
-										alt="Menu"
-									/>
-									{state.entryDropdownShown && (
-										<TimeEntryDropdown
-											entry={timeEntry}
-											group={groupedEntries}
-											onDelete={e => toggleDeleteConfirmationModal(e)}
-											onDuplicate={e => onClickDuplicateEntry(e)}
-											toggleDropdown={toggleEntryDropdownMenu}
-											manualModeDisabled={props.manualModeDisabled}
+									<span className="time-entry-menu">
+										<img
+											onClick={toggleEntryDropdownMenu}
+											className="time-entry-menu__icon"
+											src="./assets/images/menu-dots-vertical.svg"
+											alt="Menu"
 										/>
-									)}
-								</span>
-							)}
+										{state.entryDropdownShown && (
+											<TimeEntryDropdown
+												entry={timeEntry}
+												group={groupedEntries}
+												onDelete={e => toggleDeleteConfirmationModal(e)}
+												onDuplicate={e => onClickDuplicateEntry(e)}
+												toggleDropdown={toggleEntryDropdownMenu}
+												manualModeDisabled={props.manualModeDisabled}
+											/>
+										)}
+									</span>
+								)}
 						</div>
 					</div>
 				</div>

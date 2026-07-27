@@ -283,3 +283,31 @@ hr {
     }
   }
 }
+
+.field-required-label {
+  cursor: text;
+  color: variables.$lighter_text;
+  left: 9px;
+  top: 7px;
+  position: absolute;
+  font-size: 14px;
+
+  &-description {
+    @extend .field-required-label;
+    left: 6px;
+  }
+
+  &-link {
+    left: 8px;
+  }
+
+  &-input {
+    @extend .field-required-label;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  &-asterisk {
+    color: variables.$red;
+  }
+}

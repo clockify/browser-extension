@@ -19,10 +19,8 @@ export const CreateProject = (props: PropsInterface) => {
 	const [projectName, setProjectName] = useState('');
 	const [client, setClient] = useState(null);
 	const [selectedColor, setSelectedColor] = useState('');
-	const [billable, setBillable] = useState(false);
 	const [isPublic, setIsPublic] = useState(false);
 	const [forceTasks, setForceTasks] = useState(false);
-	const [canChangeBillable, setCanChangeBillable] = useState(false);
 
 	const toasterRef = useRef(null);
 
@@ -31,26 +29,24 @@ export const CreateProject = (props: PropsInterface) => {
 	}, []);
 
 	const setAsyncStateItems = async (): Promise<void> => {
-		let billable,
-			isProjectPublicByDefault,
-			forceTasks,
-			userCanChangeBillable = false;
+		let isProjectPublicByDefault,
+			forceTasks = false;
 
 		const wsSettings = await localStorage.getItem('workspaceSettings');
 
 		if (wsSettings) {
 			const parsedWsSettings = JSON.parse(wsSettings);
 
-			billable = parsedWsSettings.defaultBillableProjects;
 			isProjectPublicByDefault = parsedWsSettings.isProjectPublicByDefault;
 			forceTasks = parsedWsSettings.forceTasks;
-			userCanChangeBillable = !parsedWsSettings.onlyAdminsCanChangeBillableStatus;
+		}
+
+		if (props.workspaceSettings.features.featureSubscriptionType === 'FREE_2026') {
+			isProjectPublicByDefault = true;
 		}
 
 		setForceTasks(forceTasks);
-		setBillable(billable);
 		setIsPublic(isProjectPublicByDefault);
-		setCanChangeBillable(userCanChangeBillable);
 	};
 
 	const addProjectSuccess = (response: { error: { message: string }; data: any }) => {
@@ -99,15 +95,12 @@ export const CreateProject = (props: PropsInterface) => {
 		}
 
 		const project = {
+			billable: props.workspaceSettings.defaultBillableProjects,
 			name: projectName,
 			clientId: client ? client.id : '',
 			color: selectedColor,
-			isPublic: isPublic,
+			isPublic,
 		};
-
-		if (props.workspaceSettings.activeBillableHours) {
-			project.billable = billable;
-		}
 
 		getBrowser()
 			.runtime.sendMessage({
@@ -150,38 +143,25 @@ export const CreateProject = (props: PropsInterface) => {
 				<div>
 					<ColorPicker selectedColor={(color: string) => setSelectedColor(color)} />
 				</div>
-				{canChangeBillable && props.workspaceSettings.activeBillableHours && (
-					<div className="create-project__billable">
-						<span
-							className={`create-project__checkbox ${billable && 'checked'}`}
-							onClick={() => setBillable(!billable)}>
-							<img
-								src="./assets/images/checked.png"
-								className={`create-project__billable-img${!billable && '-hidden'}`}
-							/>
-						</span>
-						<label
-							onClick={() => setBillable(!billable)}
-							className="create-project__billable-title">
-							{locales.BILLABLE_LABEL}
-						</label>
-					</div>
-				)}
 
 				<div className="create-project__public">
-					<span
-						className={`create-project__checkbox ${isPublic && 'checked'}`}
-						onClick={() => setIsPublic(!isPublic)}>
-						<img
-							src="./assets/images/checked.png"
-							className={`create-project__public-img${!isPublic && '-hidden'}`}
-						/>
-					</span>
-					<label
-						onClick={() => setIsPublic(!isPublic)}
-						className="create-project__public-title">
-						{locales.PUBLIC}
-					</label>
+					{props.workspaceSettings.features.featureSubscriptionType !== 'FREE_2026' && (
+						<>
+							<span
+								className={`create-project__checkbox ${isPublic && 'checked'}`}
+								onClick={() => setIsPublic(!isPublic)}>
+								<img
+									src="./assets/images/checked.png"
+									className={`create-project__public-img${!isPublic && '-hidden'}`}
+								/>
+							</span>
+							<label
+								onClick={() => setIsPublic(!isPublic)}
+								className="create-project__public-title">
+								{locales.PUBLIC}
+							</label>
+						</>
+					)}
 				</div>
 				<div className="create-project__divider"></div>
 				<div className="create-project__actions">

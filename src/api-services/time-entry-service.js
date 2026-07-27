@@ -3,10 +3,6 @@ class TimeEntry extends ClockifyService {
 		return this._doAlert;
 	}
 
-	static set doAlert(b) {
-		this._doAlert = b;
-	}
-
 	static get timeEntryIdTemp() {
 		return (
 			Math.random().toString(36).substring(2, 15) +
@@ -17,6 +13,7 @@ class TimeEntry extends ClockifyService {
 	static async getUrlTimeEntries(useWriteEndpoint = false) {
 		const apiEndpoint = await (useWriteEndpoint ? this.apiWriteEndpoint() : this.apiEndpoint);
 		const workspaceId = await this.workspaceId;
+
 		return `${apiEndpoint}/workspaces/${workspaceId}/timeEntries`;
 	}
 
@@ -34,36 +31,29 @@ class TimeEntry extends ClockifyService {
 	}
 
 	static async getEntryInProgress(hydrated = true) {
-		//const endPoint = `${this.urlTimeEntries}/inProgress`;
 		const apiEndpoint = await this.apiEndpoint;
 		const userId = await this.userId;
 		const workspaceId = await this.workspaceId;
-		const endPoint = `${apiEndpoint}/v1/workspaces/${workspaceId}/user/${userId}/time-entries?in-progress=true${
-			hydrated ? '&hydrated=true' : ''
-		}`;
+		const endPoint = `${apiEndpoint}/v1/workspaces/${workspaceId}/user/${userId}/time-entries?in-progress=true${hydrated ? '&hydrated=true' : ''
+			}`;
 		const { data, error, status } = await this.apiCall(endPoint);
-		if (error) {
-			// entry instanceof Error) {
-		}
+
 		return { entry: data && data.length > 0 ? data[0] : null, error };
 	}
 
 	static async takeTimeEntryInProgress() {
 		const isLoggedIn = await TokenService.isLoggedIn();
-		if (isLoggedIn) {
-			const { entry, error } = await this.getEntryInProgress();
-			if (entry === null || error) {
-				setTimeEntryInProgress(null);
-				aBrowser.action.setIcon({
-					path: iconPathEnded,
-				});
-			} else {
-				setTimeEntryInProgress(entry);
-				aBrowser.action.setIcon({
-					path: iconPathStarted,
-				});
-			}
+		if (!isLoggedIn) return;
+
+		const { entry, error } = await this.getEntryInProgress();
+		if (entry === null || error) {
+			setTimeEntryInProgress(null);
+			aBrowser.action.setIcon({ path: iconPathEnded });
+			return;
 		}
+
+		setTimeEntryInProgress(entry);
+		aBrowser.action.setIcon({ path: iconPathStarted });
 	}
 
 	static async getLastPomodoroEntry() {
@@ -140,6 +130,21 @@ class TimeEntry extends ClockifyService {
 		const endPoint = `${baseUrl}/${entryId}`;
 
 		const { data, error } = await this.apiCall(endPoint, 'DELETE');
+		if (error) {
+			console.error('oh no, failed', error);
+		}
+		return { data, error };
+	}
+
+	static async restoreTimeEntries(ids) {
+		const baseUrl = await this.getUrlTimeEntries(true);
+		const timeEntryIds = {
+			"timeEntryIds": ids
+		};
+		const endPoint = `${baseUrl}/restore`;
+
+		const { data, error } = await this.apiCall(endPoint, 'POST', timeEntryIds);
+
 		if (error) {
 			console.error('oh no, failed', error);
 		}
@@ -318,9 +323,10 @@ class TimeEntry extends ClockifyService {
 		if (timeEntry) {
 			const { projectId, taskId } = timeEntry;
 			const { forceProjects, forceTasks } = await this.getForces();
+
 			if ((forceProjects && !projectId) || (forceTasks && !taskId)) {
-				const { projectDB, taskDB, msg, msgId } =
-					await DefaultProject.getProjectTaskFromDB();
+				const { projectDB, taskDB } = await DefaultProject.getProjectTaskFromDB();
+
 				if (projectDB) {
 					timeEntryInProgress = await this.updateProjectTask(
 						timeEntry,
@@ -399,8 +405,8 @@ class TimeEntry extends ClockifyService {
 
 	static async endInProgressAndStartNew(entry, description) {
 		const { error } = await this.endInProgress({ timeEntry: entry });
-		if (error) {
-		} else {
+
+		if (!error) {
 			this.startTimer(description);
 		}
 	}
@@ -408,22 +414,24 @@ class TimeEntry extends ClockifyService {
 	static async startTimerWithDescription(info) {
 		const decription = info && info.selectionText ? info.selectionText : '';
 		const { entry, error } = await this.getEntryInProgress();
+
 		if (entry) {
 			const { error } = await this.endInProgress({ timeEntry: entry });
 			if (error) {
-				if (error.status === 400)
+				if (error.status === 400) {
 					localStorage.setItem(
 						'integrationAlert',
 						error.message + 'startTimerWithDescription'
 					);
-				// alert(error.message + 'startTimerWithDescription')
-			} else {
-				this.startTimer(decription);
+				}
+				return;
 			}
-		} else {
-			// if (error)  what about error ?
+
 			this.startTimer(decription);
+			return;
 		}
+
+		this.startTimer(decription);
 	}
 
 	static async startTimer(
@@ -545,6 +553,7 @@ class TimeEntry extends ClockifyService {
 
 		if (autoStartOnBrowserStart) {
 			const { entry, error } = await this.getEntryInProgress();
+
 			if (!entry && !error) {
 				this.startTimer('');
 			}
@@ -566,8 +575,8 @@ class TimeEntry extends ClockifyService {
 
 		if (autoStopOnBrowserClose) {
 			const { entry, error, status } = await this.getEntryInProgress();
-			if (error) {
-			} else if (entry) {
+
+			if (!error && entry) {
 				this.endTimeEntryInProgress(entry);
 			}
 		}
@@ -575,6 +584,7 @@ class TimeEntry extends ClockifyService {
 
 	static async endTimeEntryInProgress(timeEntry) {
 		const { error } = await this.endInProgress({ timeEntry });
+
 		if (error && error.status === 400) {
 			const endTime = new Date();
 			this.saveEntryOfflineAndStopItByDeletingIt(timeEntry, endTime);
@@ -601,22 +611,22 @@ class TimeEntry extends ClockifyService {
 				project: entry.project ? entry.project : projectDB,
 				task: entry.task ? entry.task : taskDB,
 			});
-		} else {
-			const endPoint = `${await this.getUrlTimeEntries(true)}/${timeEntry.id}/project`;
-			const body = {
-				projectId: projectDB.id,
-			};
-			const { data: entry, error } = await this.apiCall(endPoint, 'PUT', body);
-			if (error) {
-				console.error('oh no, failed', error);
-				return null;
-			}
-			this.updateBillable(entry.id, projectDB.billable); // no need for await
-			return Object.assign(entry, {
-				project: entry.project ? entry.project : projectDB,
-				billable: projectDB.billable,
-			});
 		}
+
+		const endPoint = `${await this.getUrlTimeEntries(true)}/${timeEntry.id}/project`;
+		const body = {
+			projectId: projectDB.id,
+		};
+		const { data: entry, error } = await this.apiCall(endPoint, 'PUT', body);
+		if (error) {
+			console.error('oh no, failed', error);
+			return null;
+		}
+		this.updateBillable(entry.id, projectDB.billable); // no need for await
+		return Object.assign(entry, {
+			project: entry.project ? entry.project : projectDB,
+			billable: projectDB.billable,
+		});
 	}
 
 	static async updateBillable(id, billable) {

@@ -10,11 +10,8 @@ export const NotificationSecondaryText = (props: PropsInteface) => {
 		<div>
 			<p
 				className={
-					props.light
-						? 'notification-modal--text--light'
-						: 'notification-modal--text'
-				}
-			>
+					props.light ? 'notification-modal--text--light' : 'notification-modal--text'
+				}>
 				{props.text}
 			</p>
 		</div>

@@ -128,23 +128,74 @@ class TokenService extends ClockifyService {
 	}
 
 	static isTokenValid(token) {
-		if (!token) {
-			return false;
-		}
+		if (!token) return false;
 
-		const base64Url = token.split('.')[1];
-		if (!base64Url) {
-			return false;
-		}
-		const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-		const decodedToken = JSON.parse(atob(base64));
+		const [, payload] = parseToken(token);
+
 		const timeNow = new Date();
 
-		return decodedToken.exp > timeNow / 1000;
+		return payload.exp > timeNow / 1000;
 	}
 
 	static async isLoggedIn() {
 		const token = await localStorage.getItem('token');
+
 		return token !== null && token !== undefined;
+	}
+
+	parseToken(token) {
+		if (typeof token !== 'string') {
+			throw new TypeError('Invalid JWT: Token must be a string.');
+		}
+
+		const trimmedToken = token.trim();
+
+		if (!trimmedToken) {
+			throw new TypeError('Invalid JWT: Token cannot be empty.');
+		}
+
+		const segments = trimmedToken.split('.');
+
+		if (segments.length !== 3) {
+			throw new Error(
+				'Malformed JWT: A valid token must consist of exactly three dot-separated segments.'
+			);
+		}
+
+		const [encodedHeader, encodedPayload] = segments;
+
+		try {
+			const header = decodeBase64Url(encodedHeader);
+			const payload = decodeBase64Url(encodedPayload);
+
+			return [header, payload];
+		} catch (error) {
+			throw new Error(
+				`Unparsable JWT: Failed to decode or parse token components. Internal detail: ${error.message}`
+			);
+		}
+	}
+
+	decodeBase64Url(base64UrlString) {
+		try {
+			const base64 = base64UrlString.replace(/-/g, '+').replace(/_/g, '/');
+
+			const padLength = (4 - (base64.length % 4)) % 4;
+			const paddedBase64 = base64.padEnd(base64.length + padLength, '=');
+
+			const binaryString = atob(paddedBase64);
+
+			const bytes = new Uint8Array(binaryString.length);
+
+			for (let index = 0; index < binaryString.length; index++) {
+				bytes[index] = binaryString.charCodeAt(index);
+			}
+
+			const decoded = new TextDecoder().decode(bytes);
+
+			return JSON.parse(decoded);
+		} catch (error) {
+			throw new Error(`Base64 decoding failed: ${error.message}`);
+		}
 	}
 }

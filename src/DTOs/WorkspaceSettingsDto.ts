@@ -42,7 +42,7 @@ export interface WorkspaceSettingsDto {
 	companyAddress: {};
 	decimalFormat: boolean;
 	canManagerEditUsersTime: boolean;
-	workingDays: [],
+	workingDays: [];
 	timeOff: {};
 	auditLogSettings: {};
 	pumbleIntegrationSettings: {};
@@ -61,5 +61,7 @@ export interface WorkspaceSettingsDto {
 	favoriteEntriesEnabled: boolean;
 	breakSettings: {};
 	durationFormat: {};
-	features: {}
+	features: {
+		featureSubscriptionType: string;
+	};
 }

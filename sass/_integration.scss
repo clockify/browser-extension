@@ -1,176 +1,189 @@
 @use 'variables';
 
 .clockify-integration-popup {
-	background: #eff4f7;
-	box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
-	width: 350px;
-	position: fixed;
-	top: 3vh;
-	right: 3vw;
-	max-height: 90vh;
-	overflow-y: auto;
-	z-index: 2147483647 !important;
-	color: variables.$dark_text;
-	font-size: 14px;
+  background: #eff4f7;
+  box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
+  width: 350px;
+  position: fixed;
+  top: 3vh;
+  right: 3vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  z-index: 2147483647 !important;
+  color: variables.$dark_text;
+  font-size: 14px;
 
-	*::selection {
-		background: highlight;
-		color: highlighttext;
-	}
+  ::-moz-selection {
+    color: #fff;
+    background: #1890ff;
+  }
 
-	img,
-	svg {
-		vertical-align: inherit;
-	}
+  ::selection {
+    color: #fff;
+    background: #1890ff;
+  }
 
-	input:not([type='image'i]) {
-		box-sizing: border-box;
-	}
-	input,
-	textarea {
-		box-shadow: none;
-	}
-	label {
-		display: inline-block !important;
-		font-weight: normal;
-	}
-	span {
-		float: none;
-	}
+  img,
+  svg {
+    vertical-align: inherit;
+  }
 
-	&-close-icon {
-		width: 18px;
-		height: 18px;
-		cursor: pointer;
-		position: absolute;
-		top: 16px;
-		right: 20px;
-	}
-	&-header {
-		height: 20px;
-		width: fit-content;
-	}
+  input:not([type='image'i]) {
+    box-sizing: border-box;
+  }
 
-	.toaster__container {
-		position: absolute !important;
-	}
-	.projects-list {
-		display: block;
-	}
-	.ant-switch {
-		min-height: auto;
-	}
+  input,
+  textarea {
+    box-shadow: none;
+  }
+
+  label {
+    display: inline-block !important;
+    font-weight: normal;
+  }
+
+  span {
+    float: none;
+  }
+
+  &-close-icon {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    position: absolute;
+    top: 16px;
+    right: 20px;
+  }
+
+  &-header {
+    height: 20px;
+    width: fit-content;
+  }
+
+  .toaster__container {
+    position: absolute !important;
+  }
+
+  .projects-list {
+    display: block;
+  }
+
+  .ant-switch {
+    min-height: auto;
+  }
 }
 
 #clockifyButton,
 #clockifySmallButton {
-	font-size: 14px;
-	cursor: pointer;
-	img,
-	svg {
-		vertical-align: inherit;
-	}
+  font-size: 14px;
+  cursor: pointer;
+
+  img,
+  svg {
+    vertical-align: inherit;
+  }
 }
 
 #clockifyButton {
-	display: flex !important;
-	align-items: center !important;
+  display: flex !important;
+  align-items: center !important;
 }
 
 #clockifyButton > div {
-	display: flex !important;
-	align-items: center !important;
-	justify-content: center;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center;
 }
 
 #clockifyButton > div > span {
-	margin-left: 5px;
+  margin-left: 5px;
 }
 
 .clockify-button-active {
-	color: #03a9f4;
+  color: #03a9f4;
 }
 
 .clockify-button-inactive {
-	color: #444444;
+  color: #444444;
 }
 
 .clockify-button-active-span,
 .clockify-button-inactive-span {
-	margin-left: 5px;
-	float: none;
-	position: relative;
+  margin-left: 5px;
+  float: none;
+  position: relative;
 }
 
 .clockify-input {
-	border: 1px solid #c6d2d9;
-	border-radius: 2px;
-	width: 136px;
-	padding-left: 4px;
-	height: 30px;
-	font-size: 14px;
+  border: 1px solid #c6d2d9;
+  border-radius: 2px;
+  width: 136px;
+  padding-left: 4px;
+  height: 30px;
+  font-size: 14px;
 }
 
 .clockify-input:focus,
 .clockify-input:hover {
-	outline: none;
-	box-shadow: 0 0 4px rgba(0, 0, 0, 0.05);
-	border: 1px solid #03a9f4;
-	background-color: #fff;
+  outline: none;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.05);
+  border: 1px solid #03a9f4;
+  background-color: #fff;
 }
 
 .clockify-input.clockify-input-default {
-	border-color: #c6d2d9;
-	color: #333;
-	background-color: #fff;
+  border-color: #c6d2d9;
+  color: #333;
+  background-color: #fff;
 }
 
 .clockify-input.clockify-input-success {
-	border-color: #cde9ce;
-	color: #285b2a;
-	background-color: #dbefdc;
+  border-color: #cde9ce;
+  color: #285b2a;
+  background-color: #dbefdc;
 }
 
 .clockify-input.clockify-input-error {
-	border-color: #fccac7;
-	color: #7f231c;
-	background-color: #fdd9d7;
+  border-color: #fccac7;
+  color: #7f231c;
+  background-color: #fdd9d7;
 }
 
 .clockify-manual-entry-header-text {
-	margin-left: 20px;
+  margin-left: 20px;
 }
 
 .clockify-trello-card {
-	.clockifyButton {
-		visibility: hidden;
-	}
+  .clockifyButton {
+    visibility: hidden;
+  }
 
-	&:hover {
-		.clockifyButton {
-			visibility: visible;
-		}
-	}
-	&:not(:hover) {
-		.clockifyButton {
-			visibility: hidden;
+  &:hover {
+    .clockifyButton {
+      visibility: visible;
+    }
+  }
 
-			&.active {
-				visibility: visible;
-			}
+  &:not(:hover) {
+    .clockifyButton {
+      visibility: hidden;
 
-			&:not(.active) {
-				visibility: hidden;
-			}
-		}
-	}
+      &.active {
+        visibility: visible;
+      }
+
+      &:not(.active) {
+        visibility: hidden;
+      }
+    }
+  }
 }
 
 .clockify-copy-as-entry-container {
-	display: flex;
-	align-items: center;
-	gap: 3px;
-	cursor: pointer;
-	width: fit-content;
-	color: rgb(68, 68, 68);
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  cursor: pointer;
+  width: fit-content;
+  color: rgb(68, 68, 68);
 }

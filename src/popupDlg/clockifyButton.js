@@ -401,10 +401,9 @@ var clockifyButton = {
 											? null
 											: response.project?.id,
 									taskId: response.task?.id || response.project?.tasks?.[0]?.id,
-									billable:
-										workspaceSettings.taskBillableEnabled && response.task
-											? response.task?.billable
-											: response.project?.billable,
+									billable: workspaceSettings.taskBillableEnabled
+										? response.task?.billable
+										: response.project?.billable,
 									tags: response.tags,
 									tagIds: response.tags?.map(tag => tag.id) ?? [],
 									project: response.project,
@@ -444,7 +443,6 @@ var clockifyButton = {
 								input.value = '';
 							}
 						} else {
-							inputMessage(input, clockifyLocales.SUBMITTING);
 							aBrowser.runtime.sendMessage(
 								{
 									eventName: 'submitTime',
@@ -500,7 +498,7 @@ var clockifyButton = {
 
 	createEvent: ({ description, start, end }) => {
 		const icon = `<svg width="16" height="16" viewBox="0 0 17 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M3.50307 10.027H5.51427C5.76592 10.027 5.96945 9.761 5.96945 9.51C5.96945 9.259 5.76592 9.024 5.51427 9.024H3.50307C3.25142 9.024 3.04789 9.259 3.04789 9.51C3.04789 9.761 3.25142 10.027 3.50307 10.027ZM8.53309 13.041H3.50307C3.25142 13.041 3.04789 13.276 3.04789 13.527C3.04789 13.778 3.25142 14.012 3.50307 14.012H8.53309C8.78474 14.012 8.98826 13.778 8.98826 13.527C8.98826 13.276 8.78474 13.041 8.53309 13.041ZM6.52188 15.018H3.50307C3.25142 15.018 3.04789 15.253 3.04789 15.504C3.04789 15.755 3.25142 15.989 3.50307 15.989H6.52188C6.77453 15.989 6.97806 15.755 6.97806 15.504C6.97806 15.253 6.77453 15.018 6.52188 15.018ZM13.4027 0H6.81865C5.81204 0 4.99593 0.814 4.99593 1.818V3.556C4.99593 3.807 5.23154 4.011 5.48319 4.011C5.73484 4.011 5.96945 3.807 5.96945 3.556V1.818C5.96945 1.316 6.37751 0.971 6.88081 0.971H12.0362V4.042C12.0362 4.544 12.4442 5.013 12.9475 5.013H16.0265V14.135C16.0265 14.637 15.6806 15.044 15.1773 15.044H13.2152C12.9636 15.044 12.759 15.279 12.759 15.529C12.759 15.781 12.9636 16.015 13.2152 16.015H15.1773C16.1839 16.015 17 15.139 17 14.135V4.042L13.4027 0ZM13.0097 4.042V1.041L15.6686 4.042H13.0097ZM1.82272 5.013C0.816112 5.013 0 5.827 0 6.831V18.18C0 19.184 0.816112 19.998 1.82272 19.998H10.1192C11.1258 19.998 12.0051 19.184 12.0051 18.18V9.024L8.65841 5.013H1.82272ZM11.0306 18.117C11.0306 18.62 10.6225 19.026 10.1192 19.026H1.88588C1.38258 19.026 0.974522 18.62 0.974522 18.117V6.831C0.974522 6.329 1.38258 5.985 1.88588 5.985H7.00914V9.024C7.00914 9.526 7.48036 10.027 7.98366 10.027H11.0306V18.117ZM7.98366 9.024V6.055L10.6726 9.024H7.98366ZM3.04789 11.518C3.04789 11.77 3.25142 12.004 3.50307 12.004H8.53309C8.78474 12.004 8.98826 11.77 8.98826 11.518C8.98826 11.268 8.78474 11.033 8.53309 11.033H3.50307C3.25142 11.033 3.04789 11.268 3.04789 11.518Z" fill="#606266"/></svg>`;
-		const text = '<div>Copy as time entry</div>';
+		const text = `<div>${clockifyLocales.COPY_BTN_TOOLTIP}</div>`;
 
 		const container = createTag('div', 'clockify-copy-as-entry-container');
 
@@ -698,7 +696,7 @@ function objectFromParams(first, second, third) {
 }
 
 function $(selector, context = document) {
-	return context.querySelector(selector);
+	return context?.querySelector(selector);
 }
 
 function $$(selector, context = document) {
@@ -1008,7 +1006,7 @@ function setButtonProperties(button, title, active, buttonId = 0) {
 }
 
 function updateButtonOnProgressChanged(timeEntry) {
-	const { newValue: timeEntryInProgress, oldValue: oldTimeEntryValue } = timeEntry;
+	const { newValue: timeEntryInProgress } = timeEntry;
 
 	clockifyButton.inProgressDescription =
 		timeEntryInProgress && timeEntryInProgress.id ? timeEntryInProgress.description : '';
@@ -1025,26 +1023,9 @@ function updateButtonOnProgressChanged(timeEntry) {
 			pipeSeparator
 		);
 
-		const previousEntryDescriptionWoURL = withoutAppendedUrl(
-			oldTimeEntryValue?.description,
-			pipeSeparator
-		);
-
 		const active = timeEntryInProgress && titleWoURL === currentEntryDescriptionWoURL;
 
-		const titleMatchesCurrentOrPreviousEntryDescription =
-			titleWoURL === currentEntryDescriptionWoURL ||
-			titleWoURL === previousEntryDescriptionWoURL;
-
-		if (titleMatchesCurrentOrPreviousEntryDescription) {
-			console.count('updateButtonState');
-			this.setButtonProperties(
-				button,
-				clockifyButton.inProgressDescription || title,
-				active,
-				buttonId
-			);
-		}
+		this.setButtonProperties(button, title, active, buttonId);
 
 		if (button.onEntryChanged) button.onEntryChanged(timeEntryInProgress);
 	});

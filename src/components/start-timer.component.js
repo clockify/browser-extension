@@ -4,13 +4,11 @@ import { parseTimeEntryDuration } from './duration-input-converter';
 import EditForm from './edit-form.component';
 import { Autocomplete } from '~/components/Autocomplete.tsx';
 import EditFormManual from './edit-form-manual.component';
-import { isOffline } from './check-connection';
 import { getIconStatus } from '../enums/browser-icon-status-enum';
 import { Application } from '../application';
 import { TimeEntryHelper } from '../helpers/timeEntry-helper';
 import { getKeyCodes } from '../enums/key-codes.enum';
 import { getBrowser } from '../helpers/browser-helper';
-import { offlineStorage } from '../helpers/offlineStorage';
 import locales from '../helpers/locales';
 import debounce from 'lodash.debounce';
 import Toaster from './toaster-component';
@@ -141,45 +139,17 @@ class StartTimer extends Component {
 	}
 
 	async getTimeEntryInProgress() {
-		if (await isOffline()) {
-			this.setState(
-				{
-					timeEntry: offlineStorage.timeEntryInOffline
-						? offlineStorage.timeEntryInOffline
-						: {},
-				},
-				() => {
-					if (this.state.timeEntry.timeInterval) {
-						let currentPeriod = moment().diff(
-							moment(this.state.timeEntry.timeInterval.start)
-						);
-						interval = setInterval(() => {
-							currentPeriod = currentPeriod + 1000;
-							this.setState({
-								time: duration(currentPeriod).format('HH:mm:ss', {
-									trim: false,
-								}),
-							});
-						}, 1000);
-
-						this.props.changeMode('timer');
-						this.props.setTimeEntryInProgress(this.state.timeEntry);
-					}
-				}
-			);
-		} else {
-			getBrowser()
-				.runtime.sendMessage({
-					eventName: 'getEntryInProgress',
-				})
-				.then(response => {
-					let timeEntry = response.data;
-					this.setTimeEntryInProgress(timeEntry);
-				})
-				.catch(error => {
-					this.application.setIcon(getIconStatus().timeEntryEnded);
-				});
-		}
+		getBrowser()
+			.runtime.sendMessage({
+				eventName: 'getEntryInProgress',
+			})
+			.then(response => {
+				let timeEntry = response.data;
+				this.setTimeEntryInProgress(timeEntry);
+			})
+			.catch(error => {
+				this.application.setIcon(getIconStatus().timeEntryEnded);
+			});
 	}
 
 	async setTimeEntryInProgress(timeEntry) {
@@ -315,213 +285,170 @@ class StartTimer extends Component {
 		if (interval) {
 			clearInterval(interval);
 		}
-		if (await isOffline()) {
-			this.setState(
-				{
-					timeEntry: {
-						workspaceId: await localStorage.getItem('activeWorkspaceId'),
-						id: offlineStorage.timeEntryIdTemp,
-						description: this.state.timeEntry.description,
-						projectId: this.state.timeEntry.projectId,
-						timeInterval: {
-							start: moment(),
-						},
-						customFieldValues: offlineStorage.customFieldValues, // generated from wsCustomFields
-					},
-				},
-				() => {
-					offlineStorage.timeEntryInOffline = this.state.timeEntry;
-					this.props.changeMode('timer');
-					this.props.setTimeEntryInProgress(this.state.timeEntry);
-					this.goToEdit({ inProgress: true });
-				}
-			);
-		} else {
-			let { projectId, billable, task, description, customFieldValues, tags } =
-				this.state.timeEntry;
 
-			if (/<[^>]+>/.test(description)) {
-				return this.props.toaster.toast('error', locales.FORBIDDEN_CHARACTERS, 2);
-			}
-			let taskId = task ? task.id : null;
-			const tagIds = tags ? tags.map(tag => tag.id) : [];
+		let { projectId, billable, task, description, customFieldValues, tags } =
+			this.state.timeEntry;
 
-			const { forceProjects, forceTasks } = this.props.workspaceSettings;
-			//if (forceProjects && (!projectId || forceTasks && !taskId)) {
-			if (!projectId || (forceTasks && !taskId)) {
-				const { projectDB, taskDB } = await this.checkDefaultProjectTask(forceTasks);
-				if (projectDB) {
-					projectId = projectDB.id;
-					if (taskDB) {
-						taskId = taskDB.id;
-					}
-					billable = projectDB.billable;
-				}
-			}
-			const cfs =
-				customFieldValues && customFieldValues.length > 0
-					? customFieldValues.map(({ type, customFieldId, value }) => ({
-							customFieldId,
-							sourceType: 'TIMEENTRY',
-							value: type === 'NUMBER' ? parseFloat(value) : value,
-						}))
-					: [];
-			getBrowser()
-				.runtime.sendMessage({
-					eventName: 'startWithDescription',
-					options: {
-						projectId,
-						description,
-						billable: null,
-						start: null,
-						end: null,
-						taskId,
-						tagIds,
-						customFields: cfs,
-					},
-				})
-				.then(response => {
-					let data = response.data;
-					this.setState(
-						{
-							timeEntry: data,
-						},
-						() => {
-							this.props.changeMode('timer');
-							this.props.setTimeEntryInProgress(data);
-							this.application.setIcon(getIconStatus().timeEntryStarted);
-
-							getBrowser().runtime.sendMessage({
-								eventName: 'addIdleListenerIfIdleIsEnabled',
-							});
-							getBrowser().runtime.sendMessage({
-								eventName: 'removeReminderTimer',
-							});
-							localStorage.setItem({
-								timeEntryInProgress: data,
-							});
-
-							this.goToEdit({ inProgress: true });
-						}
-					);
-				})
-				.catch(() => {});
+		if (/<[^>]+>/.test(description)) {
+			return this.props.toaster.toast('error', locales.FORBIDDEN_CHARACTERS, 2);
 		}
+		let taskId = task ? task.id : null;
+		const tagIds = tags ? tags.map(tag => tag.id) : [];
+
+		const { forceProjects, forceTasks } = this.props.workspaceSettings;
+		//if (forceProjects && (!projectId || forceTasks && !taskId)) {
+		if (!projectId || (forceTasks && !taskId)) {
+			const { projectDB, taskDB } = await this.checkDefaultProjectTask(forceTasks);
+			if (projectDB) {
+				projectId = projectDB.id;
+				if (taskDB) {
+					taskId = taskDB.id;
+				}
+				billable = projectDB.billable;
+			}
+		}
+		const cfs =
+			customFieldValues && customFieldValues.length > 0
+				? customFieldValues.map(({ type, customFieldId, value }) => ({
+						customFieldId,
+						sourceType: 'TIMEENTRY',
+						value: type === 'NUMBER' ? parseFloat(value) : value,
+					}))
+				: [];
+		getBrowser()
+			.runtime.sendMessage({
+				eventName: 'startWithDescription',
+				options: {
+					projectId,
+					description,
+					billable: null,
+					start: null,
+					end: null,
+					taskId,
+					tagIds,
+					customFields: cfs,
+				},
+			})
+			.then(response => {
+				let data = response.data;
+				this.setState(
+					{
+						timeEntry: data,
+					},
+					() => {
+						this.props.changeMode('timer');
+						this.props.setTimeEntryInProgress(data);
+						this.application.setIcon(getIconStatus().timeEntryStarted);
+
+						getBrowser().runtime.sendMessage({
+							eventName: 'addIdleListenerIfIdleIsEnabled',
+						});
+						getBrowser().runtime.sendMessage({
+							eventName: 'removeReminderTimer',
+						});
+						localStorage.setItem({
+							timeEntryInProgress: data,
+						});
+
+						this.goToEdit({ inProgress: true });
+					}
+				);
+			})
+			.catch(() => {});
 	}
 
 	async startNewEntryWithoutGoingToEdit() {
 		if (interval) {
 			clearInterval(interval);
 		}
-		if (await isOffline()) {
-			this.setState(
-				{
-					timeEntry: {
-						workspaceId: await localStorage.getItem('activeWorkspaceId'),
-						id: offlineStorage.timeEntryIdTemp,
-						description: this.state.timeEntry.description,
-						projectId: this.state.timeEntry.projectId,
-						timeInterval: {
-							start: moment(),
-						},
-						customFieldValues: offlineStorage.customFieldValues, // generated from wsCustomFields
-					},
-				},
-				() => {
-					offlineStorage.timeEntryInOffline = this.state.timeEntry;
-					this.props.changeMode('timer');
-					this.props.setTimeEntryInProgress(this.state.timeEntry);
-				}
-			);
-		} else {
-			let { projectId, billable, task, description, customFieldValues, tags } =
-				this.state.timeEntry;
 
-			if (/<[^>]+>/.test(description)) {
-				return this.props.toaster.toast('error', locales.FORBIDDEN_CHARACTERS, 2);
-			}
-			let taskId = task ? task.id : null;
-			const tagIds = tags ? tags.map(tag => tag.id) : [];
+		let { projectId, billable, task, description, customFieldValues, tags } =
+			this.state.timeEntry;
 
-			const { forceProjects, forceTasks } = this.props.workspaceSettings;
-			//if (forceProjects && (!projectId || forceTasks && !taskId)) {
-			if (!projectId || (forceTasks && !taskId)) {
-				const { projectDB, taskDB } = await this.checkDefaultProjectTask(forceTasks);
-				if (projectDB) {
-					projectId = projectDB.id;
-					if (taskDB) {
-						taskId = taskDB.id;
-					}
-					billable = projectDB.billable;
-				}
-			}
-			const cfs =
-				customFieldValues && customFieldValues.length > 0
-					? customFieldValues.map(({ type, customFieldId, value }) => ({
-							customFieldId,
-							sourceType: 'TIMEENTRY',
-							value: type === 'NUMBER' ? parseFloat(value) : value,
-						}))
-					: [];
-			getBrowser()
-				.runtime.sendMessage({
-					eventName: 'startWithDescription',
-					options: {
-						projectId,
-						description: description?.trim(),
-						billable: null,
-						start: null,
-						end: null,
-						taskId,
-						tagIds,
-						customFields: cfs,
-					},
-				})
-				.then(response => {
-					let data = response.data;
-
-					if (data.task?.status === 'DONE') {
-						data.task = data.taskId = null;
-					}
-
-					this.setState(
-						{
-							timeEntry: data,
-						},
-						() => {
-							this.props.changeMode('timer');
-							this.props.setTimeEntryInProgress(data);
-							this.application.setIcon(getIconStatus().timeEntryStarted);
-
-							getBrowser().runtime.sendMessage({
-								eventName: 'addIdleListenerIfIdleIsEnabled',
-							});
-							getBrowser().runtime.sendMessage({
-								eventName: 'removeReminderTimer',
-							});
-							localStorage.setItem({
-								timeEntryInProgress: data,
-							});
-						}
-					);
-				})
-				.catch(() => {});
+		if (/<[^>]+>/.test(description)) {
+			return this.props.toaster.toast('error', locales.FORBIDDEN_CHARACTERS, 2);
 		}
+		let taskId = task ? task.id : null;
+		const tagIds = tags ? tags.map(tag => tag.id) : [];
+
+		const { forceProjects, forceTasks } = this.props.workspaceSettings;
+		//if (forceProjects && (!projectId || forceTasks && !taskId)) {
+		if (!projectId || (forceTasks && !taskId)) {
+			const { projectDB, taskDB } = await this.checkDefaultProjectTask(forceTasks);
+			if (projectDB) {
+				projectId = projectDB.id;
+				if (taskDB) {
+					taskId = taskDB.id;
+				}
+				billable = projectDB.billable;
+			}
+		}
+		const cfs =
+			customFieldValues && customFieldValues.length > 0
+				? customFieldValues.map(({ type, customFieldId, value }) => ({
+						customFieldId,
+						sourceType: 'TIMEENTRY',
+						value: type === 'NUMBER' ? parseFloat(value) : value,
+					}))
+				: [];
+		getBrowser()
+			.runtime.sendMessage({
+				eventName: 'startWithDescription',
+				options: {
+					projectId,
+					description: description?.trim(),
+					billable: null,
+					start: null,
+					end: null,
+					taskId,
+					tagIds,
+					customFields: cfs,
+				},
+			})
+			.then(response => {
+				let data = response.data;
+
+				if (data.task?.status === 'DONE') {
+					data.task = data.taskId = null;
+				}
+
+				this.setState(
+					{
+						timeEntry: data,
+					},
+					() => {
+						this.props.changeMode('timer');
+						this.props.setTimeEntryInProgress(data);
+						this.application.setIcon(getIconStatus().timeEntryStarted);
+
+						getBrowser().runtime.sendMessage({
+							eventName: 'addIdleListenerIfIdleIsEnabled',
+						});
+						getBrowser().runtime.sendMessage({
+							eventName: 'removeReminderTimer',
+						});
+						localStorage.setItem({
+							timeEntryInProgress: data,
+						});
+					}
+				);
+			})
+			.catch(() => {});
 	}
 
 	async checkRequiredFields() {
 		if (this.state.stopDisabled) return;
 		this.setState({ stopDisabled: true });
 
+		this.setState({ stopDisabled: true });
 		const { forceDescription, forceProjects, forceTasks, forceTags } =
 			this.props.workspaceSettings;
 		const { description, project, task, tags } = this.state.timeEntry;
 
-		let requiredAndMissingCustomFields = null;
-
-		if (this.state.timeEntry.customFieldValues.length) {
-			await getRequiredMissingCustomFields(project, this.state.timeEntry);
-		}
+		const requiredAndMissingCustomFields = await getRequiredMissingCustomFields(
+			project,
+			this.state.timeEntry
+		);
 
 		if (forceDescription && (description === '' || !description)) {
 			this.goToEdit({ inProgress: true });
@@ -542,77 +469,55 @@ class StartTimer extends Component {
 		getBrowser().runtime.sendMessage({
 			eventName: 'resetBadge',
 		});
-		if (await isOffline()) {
-			let timeEntryOffline = offlineStorage.timeEntryInOffline;
-			if (!timeEntryOffline) return;
-			timeEntryOffline.timeInterval.end = moment();
-			timeEntryOffline.timeInterval.duration = duration(
-				moment().diff(timeEntryOffline.timeInterval.start)
-			);
-			const timeEntriesOffline = offlineStorage.timeEntriesOffline;
-			timeEntriesOffline.push(timeEntryOffline);
-			offlineStorage.timeEntriesOffline = timeEntriesOffline;
-			offlineStorage.timeEntryInOffline = null;
 
-			clearInterval(interval);
-			interval = null;
-			this.setState({
-				timeEntry: {},
-				time: moment().hour(0).minute(0).second(0).format('HH:mm:ss'),
-				interval: '',
-				stopDisabled: false,
-			});
-			this.props.setTimeEntryInProgress(null);
-		} else {
-			getBrowser()
-				.runtime.sendMessage({
-					eventName: 'endInProgress',
-					options: {
-						endedFromIntegration: false,
-					},
-				})
-				.then(data => {
-					if (data.status === 403) {
-						this.setState({ stopDisabled: false });
-						return this.toaster.toast('error', data.message, 2);
-					}
+		getBrowser()
+			.runtime.sendMessage({
+				eventName: 'endInProgress',
+				options: {
+					endedFromIntegration: false,
+				},
+			})
+			.then(data => {
+				if (data.status === 403) {
+					this.setState({ stopDisabled: false });
+					return this.toaster.toast('error', data.message, 2);
+				}
 
-					if (data.status === 400) {
-						this.goToEdit({ inProgress: true });
-						return;
-					}
-					localStorage.setItem('timeEntryInProgress', null);
-					getBrowser().runtime.sendMessage({
-						eventName: 'restartPomodoro',
-					});
-					this.props.endStarted();
-					clearInterval(interval);
-					interval = null;
-					this.setState({
-						timeEntry: {},
-						time: moment().hour(0).minute(0).second(0).format('HH:mm:ss'),
-						stopDisabled: false,
-					});
-					this.props.setTimeEntryInProgress(null);
-
-					getBrowser().runtime.sendMessage({
-						eventName: 'removeIdleListenerIfIdleIsEnabled',
-					});
-
-					getBrowser().runtime.sendMessage({
-						eventName: 'reminder',
-					});
-
-					this.application.setIcon(getIconStatus().timeEntryEnded);
-				})
-				.catch(error => {
-					this.props.log('timeEntryService.stopEntryInProgress error');
-					// if error message says that some fields are required, open the edit page
-					if (res.response?.data?.message?.includes('required')) {
-						this.goToEdit({ inProgress: true });
-					}
+				if (data.status === 400) {
+					this.goToEdit({ inProgress: true });
+					return;
+				}
+				localStorage.setItem('timeEntryInProgress', null);
+				getBrowser().runtime.sendMessage({
+					eventName: 'restartPomodoro',
 				});
-		}
+				this.props.endStarted();
+				clearInterval(interval);
+				interval = null;
+				this.setState({
+					timeEntry: {},
+					time: moment().hour(0).minute(0).second(0).format('HH:mm:ss'),
+					stopDisabled: false,
+				});
+				this.props.setTimeEntryInProgress(null);
+
+				getBrowser().runtime.sendMessage({
+					eventName: 'removeIdleListenerIfIdleIsEnabled',
+				});
+
+				getBrowser().runtime.sendMessage({
+					eventName: 'reminder',
+				});
+
+				this.application.setIcon(getIconStatus().timeEntryEnded);
+			})
+			.catch(error => {
+				this.props.log('timeEntryService.stopEntryInProgress error');
+				// if error message says that some fields are required, open the edit page
+				if (res.response?.data?.message?.includes('required')) {
+					this.goToEdit({ inProgress: true });
+				}
+			});
 	}
 
 	changeMode(mode) {
@@ -620,9 +525,8 @@ class StartTimer extends Component {
 	}
 
 	goToEdit(params) {
-		if (!this.state.timeEntry) {
-			return null;
-		}
+		if (!this.state.timeEntry) return null;
+
 		window.reactRoot.render(
 			<EditForm
 				changeMode={this.changeMode.bind(this)}
@@ -718,7 +622,6 @@ class StartTimer extends Component {
 			<div id="start-timer">
 				<Toaster ref={instance => (this.toaster = instance)} />
 				<div className="start-timer">
-					{/* <span>Offline <input type='checkbox' checked={this.isChecked} onChange={this.handleChangeOffline} />  </span> */}
 					<span
 						className={
 							this.props.mode === 'timer' ? 'start-timer-description' : 'disabled'

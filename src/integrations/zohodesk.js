@@ -2,8 +2,11 @@
 clockifyButton.render(
 	'.zd_v2-ticketdetailview-container:not(.clockify)',
 	{ observe: true, onNavigationRerender: true },
-	() => {
-		const ticketId = text('.zd_v2-ticketsubject-ticketIdText');
+	async elem => {
+		await timeout({ milliseconds: 500 });
+		if ($('.clockifyButton', elem)) return;
+
+		const ticketId = text('.zd_v2-ticketsubjectui-ticketIdText');
 		const ticketSubject = text('[data-id="caseSubjectText"]');
 
 		const description = `[#${ticketId}##] ${ticketSubject}`;
@@ -12,7 +15,7 @@ clockifyButton.render(
 
 		link.style.marginRight = '15px';
 
-		const actions = $('.zd_v2-ticketsubject-rightSideDiv');
+		const actions = $('.zd_v2-ticketsubjectui-rightSideDiv');
 
 		actions.style.display = 'flex';
 		actions.style.alignItems = 'baseline';
@@ -26,9 +29,10 @@ clockifyButton.render(
 clockifyButton.render(
 	'.zd_v2-ticketdvleftpanel-sectionContainer .zd_v2-kanbanlistitem-container:not(.clockify)',
 	{ observe: true },
-	(ticketCard) => {
+	async ticketCard => {
 		ticketCard.classList.add('clockify-trello-card');
 
+		await timeout({ milliseconds: 500 });
 		if ($('.clockifyButton', ticketCard)) return;
 
 		const ticketId = text('a.zd_v2-ticketidwrapper-ticketId', ticketCard);

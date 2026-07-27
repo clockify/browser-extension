@@ -1,15 +1,10 @@
-clockifyButton.render(
-	'div.nH div.ha:not(.clockify)',
-	{ observe: true },
-	function (elem) {
-		let link,
-			description = $('h2', elem);
-		if (!description) {
-			return;
-		}
-		link = clockifyButton.createButton(description.textContent);
-		link.style.marginLeft = '20px';
-		link.style.fontSize = '14px';
-		elem.appendChild(link);
-	}
-);
+clockifyButton.render('div.nH div.ha:not(.clockify)', { observe: true }, elem => {
+	let description = text('h2', elem);
+
+	const link = clockifyButton.createButton(description);
+
+	link.style.fontSize = '14px';
+	link.style.fontWeight = '400';
+
+	elem.appendChild(link);
+});

@@ -49,16 +49,28 @@ const CustomFieldText = ({ cf, updateValue, setIsValid, cfContainsWrongChars }) 
 			<textarea
 				index={index}
 				rows="1"
-				className={`custom-field-text${isDisabled ? '-disabled' : ''} ${
-					isNotValid ? 'custom-field-required' : ''
-				}`}
+				className={`custom-field-text${isDisabled ? '-disabled' : ''}`}
+				data-testid={`custom-text-field`}
 				title={description}
-				placeholder={placeHolder}
 				disabled={isDisabled}
+				id={`cf-text-${index}`}
 				value={value ?? ''}
 				onChange={handleChange}
 				onBlur={handleBlur}
 			/>
+
+			{!value && (
+				<label htmlFor={`cf-text-${index}`} className={'field-required-label-input'}>
+					{placeHolder}{' '}
+					{required && (
+						<span
+							data-testid={`custom-text-field-asterisk`}
+							className={'field-required-label-asterisk'}>
+							*
+						</span>
+					)}
+				</label>
+			)}
 		</div>
 	);
 };

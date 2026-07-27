@@ -82,15 +82,10 @@ class ProjectList extends React.Component {
 		const isSpecialFilter = userSettings
 			? JSON.parse(userSettings).projectPickerSpecialFilter
 			: false;
-		const color = await this.getColorForProject();
 		await this.getProjectsInitial(this.state.page, pageSize);
 		this.setState(state => ({
 			isOffline: JSON.parse(isOffline),
 			isSpecialFilter,
-			selectedProject: {
-				name: state.selectedProject.name,
-				color,
-			},
 			userRoles,
 			projectManagerFor,
 		}));
@@ -122,6 +117,7 @@ class ProjectList extends React.Component {
 						this.props.timeEntry.task.name !== this.state.selectedTaskName))) ||
 			(!this.props.timeEntry.task?.name && this.state.selectedTaskName)
 		) {
+			console.log(this.props.timeEntry.project.color);
 			this.setState(
 				{
 					selectedProject: {
@@ -442,7 +438,6 @@ class ProjectList extends React.Component {
 			if (this.props.taskRequired) {
 				name = `${locales.ADD_TASK}`;
 			}
-			name += ` ${locales.REQUIRED_LABEL}`;
 		}
 		return name;
 	}
@@ -468,9 +463,9 @@ class ProjectList extends React.Component {
 	async getColorForProject() {
 		if (this.props.isCurrentUserDarkTheme()) {
 			return '#c6d2d9';
-		} else {
-			return '#666';
 		}
+
+		return '#333';
 	}
 
 	createProject() {
@@ -574,11 +569,7 @@ class ProjectList extends React.Component {
 						if (e.key === 'Enter') this.openProjectDropdown(e, isEnabledCreateProject);
 					}}
 					className={
-						this.state.isOffline
-							? 'project-list-button-offline'
-							: this.props.projectRequired || this.props.taskRequired
-								? 'project-list-button-required'
-								: 'project-list-button'
+						this.state.isOffline ? 'project-list-button-offline' : 'project-list-button'
 					}>
 					<span
 						className="project-list-name"
@@ -597,6 +588,9 @@ class ProjectList extends React.Component {
 								? ' - ' + this.state.selectedProject.client.name
 								: ''}
 						</span>
+						{this.props.projectRequired && (
+							<span className={'field-required-label-asterisk'}> *</span>
+						)}
 					</span>
 					<span
 						className={
@@ -611,15 +605,7 @@ class ProjectList extends React.Component {
 							)})`,
 						}}></span>
 				</div>
-				{this.props.taskRequired && (
-					<div
-						className="clokify-error"
-						style={{
-							color: this.props.isCurrentUserDarkTheme() ? 'white' : 'black',
-						}}>
-						{locales.CANT_SAVE_WITHOUT_REQUIRED_FIELDS} ({locales.TASK})
-					</div>
-				)}
+
 				{this.state.isOpen && (
 					<div className="project-list-open">
 						<div className="project-list-dropdown" id="project-dropdown">
@@ -646,6 +632,9 @@ class ProjectList extends React.Component {
 											autoComplete="off"
 										/>
 										<span
+											style={{
+												backgroundImage: `url("${aBrowser.runtime.getURL('assets/images/x.png')}")`,
+											}}
 											className={
 												!!this.state.filter
 													? 'project-list-filter__clear'

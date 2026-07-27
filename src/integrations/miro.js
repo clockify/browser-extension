@@ -12,11 +12,11 @@ clockifyButton.render(
 
 		const descriptionLines = () =>
 			textList('[data-placeholder="Add a title..."] p', document, false);
-		const description = descriptionLines().join('\n') || 'Untitled';
+		const description = () => descriptionLines().join('\n') || 'Untitled';
 		const projectName = () =>
 			text('[class*="boardTitle"] div') || text('[data-testid=board-title__container] span');
 
-		const tagNames = () => textList('[class*="tags-"] [class*="tag-"]');
+		const tagNames = () => textList('[class*="tags-"] div:not([class*="notSet"])');
 
 		const link = clockifyButton.createSmallButton({ description, projectName, tagNames });
 
@@ -30,10 +30,11 @@ clockifyButton.render(
 
 function observeSidebarTitle() {
 	const titleObserver = new MutationObserver(debounce(clockifyButton.rerenderAllButtons, 500));
+
 	const observationTarget = document.querySelector('[aria-label="Add a title..."]');
 
 	if (observationTarget) {
-		const observationConfig = { childList: true, subtree: true };
+		const observationConfig = { childList: true, subtree: true, characterData: true };
 		titleObserver.observe(observationTarget, observationConfig);
 	}
 }

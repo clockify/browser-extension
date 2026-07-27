@@ -52,20 +52,25 @@ export const EditDescription = (props: PropsInterface) => {
 	};
 
 	return (
-		<textarea
-			id={'description'}
-			type="text"
-			value={description}
-			ref={descriptionInputRef}
-			className={'edit-form-description'}
-			placeholder={
-				props.descRequired
-					? `${locales.DESCRIPTION_LABEL} ${locales.REQUIRED_LABEL}`
-					: locales.DESCRIPTION_LABEL
-			}
-			onChange={onChangeDescription}
-			onBlur={handleOnBlur}
-			onFocus={handleOnFocus}
-		/>
+		<div style={{ position: 'relative' }}>
+			<textarea
+				id={'description'}
+				type="text"
+				value={description}
+				ref={descriptionInputRef}
+				className={'edit-form-description'}
+				onChange={onChangeDescription}
+				onBlur={handleOnBlur}
+				onFocus={handleOnFocus}
+			/>
+			{!description && (
+				<label htmlFor={'description'} className={'field-required-label-description'}>
+					{locales.DESCRIPTION_LABEL}{' '}
+					{props.descRequired && (
+						<span className={'field-required-label-asterisk'}>*</span>
+					)}
+				</label>
+			)}
+		</div>
 	);
 };

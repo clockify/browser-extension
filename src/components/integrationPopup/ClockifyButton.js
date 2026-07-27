@@ -245,6 +245,11 @@ function ClockifyButton(props) {
 			return;
 		}
 
+		if (!(await localStorage.getItem('token'))) {
+			alert(clockifyLocales.YOU_MUST_BE_LOGGED_IN_TO_START);
+			return;
+		}
+
 		let workspaceSettings = await localStorage.getItem('workspaceSettings');
 		workspaceSettings = workspaceSettings && JSON.parse(workspaceSettings);
 		if (
@@ -303,7 +308,32 @@ function ClockifyButton(props) {
 				title?.split(pipeSeparator)[0] === inProgressDescription?.split(pipeSeparator)[0]
 			) {
 				const timeEntryDetails = getTimeEntryDetails() || {};
-				const { entryId, updatedFields } = timeEntryDetails;
+				let { entryId, updatedFields } = timeEntryDetails;
+				const customFieldsDB = JSON.parse(await localStorage.getItem('wsCustomFields'));
+
+				if (updatedFields?.customFields) {
+					updatedFields.customFields = updatedFields.customFields
+						.map(cf => {
+							const cfDB = customFieldsDB.find(cfDB => {
+								return cfDB.id === cf.customFieldId;
+							});
+							const cfProjectDefault = cfDB.projectDefaultValues.find(
+								cf => cf.projectId === updatedFields.projectId
+							);
+
+							return {
+								...cf,
+								value:
+									cfProjectDefault === undefined
+										? cf.value
+										: cfProjectDefault.value,
+							};
+						})
+						.filter(cf =>
+							typeof cf.value === 'boolean' ? true : (cf.value?.length ?? cf.value)
+						);
+				}
+
 				let timeEntryId, updatedFieldValues;
 
 				try {
@@ -327,6 +357,7 @@ function ClockifyButton(props) {
 				} catch (error) {
 					console.log(error);
 				}
+
 				if (!timeEntryId) {
 					aBrowser.runtime.sendMessage(
 						{
@@ -337,11 +368,7 @@ function ClockifyButton(props) {
 							},
 						},
 						response => {
-							if (!response) {
-								_waitingForResponse = false;
-								alert(clockifyLocales.YOU_MUST_BE_LOGGED_IN_TO_START);
-								return;
-							} else if (typeof response === 'string') {
+							if (typeof response === 'string') {
 								_waitingForResponse = false;
 								alert(response);
 								return;
@@ -423,12 +450,7 @@ function ClockifyButton(props) {
 										},
 									},
 									response => {
-										if (!response) {
-											_waitingForResponse = false;
-											alert(clockifyLocales.YOU_MUST_BE_LOGGED_IN_TO_START);
-											// this.hideClockifyButtonLinks();
-											return;
-										} else if (typeof response === 'string') {
+										if (typeof response === 'string') {
 											//alert("ClockifyService is temporarily unavailable.");
 											_waitingForResponse = false;
 											alert(response);
@@ -603,11 +625,7 @@ function ClockifyButton(props) {
 						},
 					},
 					response => {
-						if (!response) {
-							_waitingForResponse = false;
-							alert(clockifyLocales.YOU_MUST_BE_LOGGED_IN_TO_START);
-							return;
-						} else if (typeof response === 'string') {
+						if (typeof response === 'string') {
 							_waitingForResponse = false;
 							alert(response);
 							return;
@@ -702,6 +720,17 @@ function ClockifyButton(props) {
 				inactiveButtonColor={props.options?.inactiveButtonColor}
 			/>
 			<Modal
+				parentSelector={() =>
+					(window.location.hostname.includes('teamwork') &&
+						document.querySelector('[data-test-id="td-drawer"]')) ||
+					(window.location.hostname.includes('github') &&
+						document.querySelector('[class*="SidePanel-module__sidePanel__"]')) ||
+					(window.location.hostname.includes('todoist') &&
+						document.querySelector('[data-testid="task-details-modal"]')) ||
+					(window.location.hostname.includes('trello') &&
+						document.querySelector('.cMcSJ6d3jjVbP6')) ||
+					document.body
+				}
 				style={{
 					overlay: {
 						position: 'fixed',
@@ -728,7 +757,9 @@ function ClockifyButton(props) {
 							</div>
 						) : props.copyAsEntry ? (
 							<div className="clockify-manual-entry-header-container">
-								<p className="clockify-manual-entry-header-text">Time and date</p>
+								<p className="clockify-manual-entry-header-text">
+									{clockifyLocales.CALENDAR_DATE_TIME}
+								</p>
 							</div>
 						) : (
 							<></>

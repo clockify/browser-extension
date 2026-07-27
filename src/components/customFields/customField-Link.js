@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import useCustomField from './useCustomField';
 import { getBrowser } from '~/helpers/browser-helper';
 import locales from '../../helpers/locales';
@@ -73,7 +73,9 @@ const CustomFieldLink = ({ cf, updateValue, setIsValid, projectId }) => {
 	return (
 		<>
 			<Toaster ref={toasterRef} />
-			<div className={`custom-field${isDisabled ? '-disabled' : ''}`}>
+			<div
+				className={`custom-field${isDisabled ? '-disabled' : ''}`}
+				data-testid={`custom-link-field`}>
 				{previewMode ? (
 					<div className={`custom-field-inner${isDisabled ? '-disabled' : ''}`}>
 						<a
@@ -99,19 +101,35 @@ const CustomFieldLink = ({ cf, updateValue, setIsValid, projectId }) => {
 						)}
 					</div>
 				) : (
-					<input
-						name={`txtCustomField${index}`}
-						type="url"
-						className={`custom-field-link clockify-link-input${
-							isDisabled ? '-disabled' : ''
-						} ${isNotValid ? 'custom-field-required' : ''}`}
-						title={description}
-						placeholder={placeHolderOrName}
-						onChange={onLinkChange}
-						onBlur={onLinkBlur}
-						disabled={isDisabled}
-						value={value || ''}
-					/>
+					<div style={{ position: 'relative' }}>
+						<input
+							name={`txtCustomField${index}`}
+							type="url"
+							className={`custom-field-link clockify-link-input${
+								isDisabled ? '-disabled' : ''
+							}`}
+							title={description}
+							onChange={onLinkChange}
+							onBlur={onLinkBlur}
+							id={`cf-link-${index}`}
+							disabled={isDisabled}
+							value={value || ''}
+						/>
+						{!value && (
+							<label
+								htmlFor={`cf-link-${index}`}
+								className={'field-required-label-input field-required-label-link'}>
+								{placeHolderOrName}{' '}
+								{required && (
+									<span
+										data-testid={`custom-link-field-asterisk`}
+										className={'field-required-label-asterisk'}>
+										*
+									</span>
+								)}
+							</label>
+						)}
+					</div>
 				)}
 			</div>
 		</>

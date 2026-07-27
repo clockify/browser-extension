@@ -214,10 +214,10 @@ body.clockify-dark-mode,
     }
   }
 
-  .clockify-link-input-disabled,
-  .custom-field-number-disabled {
+  input.clockify-link-input-disabled,
+  input.custom-field-number-disabled {
     border: 1px solid #12191d !important;
-    background-color: #36464f !important;
+    background-color: inherit !important;
     cursor: not-allowed;
     color: #90a4ae !important;
 
@@ -333,10 +333,10 @@ body.clockify-dark-mode,
     input {
       background: variables.$bg-10 !important;
       border: 1px solid variables.$bg-12;
-      color: variables.$bg-04;
+      color: variables.$bg-04 !important;
 
       &::placeholder {
-        color: variables.$bg-04;
+        color: variables.$bg-04 !important;
       }
     }
   }
@@ -819,20 +819,6 @@ body.clockify-dark-mode,
     color: #f4f4f4;
   }
 
-  .notification {
-    & .notification-title {
-      color: #c6d2d9 !important;
-    }
-
-    & .notification-message {
-      color: #c6d2d9 !important;
-    }
-
-    &:hover {
-      background-color: #263238 !important;
-    }
-  }
-
   .feedback-page {
     color: #ffffffde;
 
@@ -927,5 +913,67 @@ body.clockify-dark-mode,
     &__current-month {
       color: #fff;
     }
+  }
+
+  // Onboarding survey
+  .onboarding-survey {
+    background-color: variables.$bg-10;
+
+    &-title {
+      span {
+        color: variables.$bg-02;
+      }
+    }
+
+    &-content {
+      &-section {
+        .dropdown-header {
+          border-color: variables.$bg-12;
+          background-color: variables.$bg-10;
+
+          span {
+            color: variables.$bg-03;
+          }
+
+          .arrow {
+            border-color: variables.$bg-02;
+          }
+
+          &:hover {
+            background-color: variables.$bg-12;
+          }
+        }
+
+        .dropdown-list {
+          background-color: variables.$bg-12;
+          border-color: variables.$bg-12;
+
+          &-selected-item {
+            color: #9ba8b0;
+            background-color: variables.$bg-10;
+          }
+
+          li {
+            color: #9ba8b0;
+
+            &:hover {
+              background-color: variables.$bg-10;
+            }
+          }
+        }
+      }
+
+      &-sections {
+        background-color: variables.$bg-11;
+
+        span {
+          color: variables.$bg-02;
+        }
+      }
+    }
+  }
+
+  .sticky-header {
+    background-color: variables.$bg-09;
   }
 }

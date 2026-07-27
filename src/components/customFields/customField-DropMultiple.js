@@ -30,11 +30,13 @@ const CustomFieldDropMultiple = ({ cf, updateValue, setIsValid }) => {
 	] = useCustomField(cf, updateValue, value);
 
 	const newList = (val = '') =>
-		allowedValues.map((name, id) => ({
-			id,
-			name,
-			isChecked: val.includes(name),
-		}));
+		allowedValues
+			.map((name, id) => ({
+				id,
+				name,
+				isChecked: val.includes(name),
+			}))
+			.sort((a, b) => a.name.localeCompare(b.name));
 
 	const [isOpen, setOpen] = useState(false);
 
@@ -112,7 +114,7 @@ const CustomFieldDropMultiple = ({ cf, updateValue, setIsValid }) => {
 		<div index={index} className={`custom-field${isDisabled ? '-disabled' : ''}`}>
 			<div
 				data-testid={'multiple-select-option'}
-				className={`tag-list ${isNotValid ? 'custom-field-required' : ''}`}
+				className={`tag-list`}
 				title={description}
 				ref={menuRef}>
 				<div
@@ -142,7 +144,14 @@ const CustomFieldDropMultiple = ({ cf, updateValue, setIsValid }) => {
 									))}
 							</span>
 						) : (
-							<span className="tag-list-add">{placeHolder}</span>
+							!value.length && (
+								<span className="tag-list-add">
+									{placeHolder}{' '}
+									{required && (
+										<span data-testid={'multiple-select-option-asterisk'} className={'field-required-label-asterisk'}>*</span>
+									)}
+								</span>
+							)
 						)}
 					</span>
 

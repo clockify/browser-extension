@@ -16,6 +16,7 @@ import locales from '../helpers/locales';
 import CustomFieldsContext from './customFields/CustomFieldsContext';
 import { DeleteEntryConfirmation } from '~/components/DeleteEntryConfirmation.tsx';
 import { cloneDeep } from 'lodash';
+import { NoInternetConnection } from '~/components/NoInternetConnection';
 
 const timeEntryHelper = new TimeEntryHelper();
 
@@ -675,8 +676,7 @@ class EditForm extends React.Component {
 						eventName: 'restartPomodoro',
 					});
 					localStorage.setItem('timeEntryInProgress', null);
-
-					this.goBack();
+					this.goBack(this.state.timeEntry.id);
 				})
 				.catch(() => {});
 		}
@@ -823,7 +823,9 @@ class EditForm extends React.Component {
 				});
 
 				if (modifiedCFs.length) {
-					modifiedFields.customFields = modifiedCFs;
+					modifiedFields.customFields = modifiedCFs.filter(cf =>
+						typeof cf.value === 'boolean' ? true : cf.value
+					);
 				}
 				continue;
 			}
@@ -1082,8 +1084,10 @@ class EditForm extends React.Component {
 		});
 	}
 
-	goBack() {
-		window.reactRoot.render(<HomePage />);
+	goBack(id = null) {
+		window.reactRoot.render(
+			<HomePage entryToRestoreId={id} entryToRestoreInProgress={this.state.isInProgress} />
+		);
 	}
 
 	notifyAboutError(message, type = 'error', n = 2) {
@@ -1100,10 +1104,12 @@ class EditForm extends React.Component {
 				value={{
 					addCustomFieldValuesToState: this.addCustomFieldValuesToState,
 				}}>
-				<div>
+				<div className={!this.props.integrationMode && 'sticky-header-padding-top'}>
+					<NoInternetConnection />
 					{!this.props.integrationMode && (
 						<>
 							<Header
+								stickyHeader={!this.props.integrationMode}
 								backButton={true}
 								disableManual={this.state.inProgress}
 								changeMode={this.changeMode.bind(this)}
@@ -1143,15 +1149,10 @@ class EditForm extends React.Component {
 					)}
 					<Toaster ref={instance => (this.toaster = instance)} />
 					<div className="edit-form">
-						<div
-							className={
-								this.state.descRequired
-									? 'description-textarea-required'
-									: 'description-textarea'
-							}>
+						<div data-testid={'description-field'} className={'description-textarea'}>
 							<EditDescription
+								descRequired={this.props.workspaceSettings.forceDescription}
 								description={this.state.description}
-								descRequired={this.descRequired}
 								onSetDescription={this.onSetDescription}
 								toaster={this.toaster}
 							/>

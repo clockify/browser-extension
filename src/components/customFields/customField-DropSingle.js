@@ -92,7 +92,7 @@ const CustomFieldDropSingle = ({ cf, updateValue, setIsValid }) => {
 		<div key={id} index={index} className={`custom-field${isDisabled ? '-disabled' : ''}`}>
 			<div
 				data-testid={'single-select-option'}
-				className={`tag-list ${isNotValid ? 'custom-field-required' : ''}`}
+				className={`tag-list`}
 				title={description}
 				ref={menuRef}>
 				<div
@@ -120,7 +120,12 @@ const CustomFieldDropSingle = ({ cf, updateValue, setIsValid }) => {
 									))}
 							</span>
 						) : (
-							<span className="tag-list-add">{placeHolder}</span>
+							<span className="tag-list-add">
+								{placeHolder}{' '}
+								{required && (
+									<span data-testid={'single-select-option-asterisk'} className={'field-required-label-asterisk'}>*</span>
+								)}
+							</span>
 						)}
 					</span>
 
@@ -145,6 +150,7 @@ const CustomFieldDropSingle = ({ cf, updateValue, setIsValid }) => {
 										//     </span>
 										// </div>
 										<div
+											data-testid={`custom-field-select-option`}
 											onClick={() => selectTag(tag.id)}
 											key={tag.name}
 											tabIndex={'0'}

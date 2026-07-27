@@ -1,7 +1,5 @@
 const aBrowser = this.isChrome() ? chrome : { ...browser, action: browser.browserAction };
 
-console.log('this.isChrome:', this.isChrome());
-
 const windowIds = [];
 const clockifyProd = 'https://app.clockify.me/tracker';
 const iconPathEnded = '../assets/images/logo-16-gray.png';
@@ -17,7 +15,7 @@ aBrowser.alarms.onAlarm.addListener(alarm => {
 
 aBrowser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 	const hasUrlChanged = changeInfo.status === 'complete';
-	const isIdentityRedirectUrl = tab.url.includes(aBrowser.identity.getRedirectURL());
+	// const isIdentityRedirectUrl = tab.url.includes(aBrowser.identity.getRedirectURL());
 	const isUserLoggedIn = await TokenService.isLoggedIn();
 	const registeredIntegrations = await getRegisteredIntegrations();
 
@@ -26,27 +24,6 @@ aBrowser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 	}
 
 	if (hasUrlChanged) {
-		if (isIdentityRedirectUrl) {
-			if (!isUserLoggedIn) {
-				try {
-					await extractAndStoreTokens(tab.url);
-
-					await aBrowser.tabs.remove(tabId);
-
-					await setDataAfterLogin();
-				} catch (error) {
-					console.error(error);
-				}
-			}
-
-			if (isUserLoggedIn) {
-				const homeUrl = await localStorage.getItem('permanent_homeUrl');
-				const url = homeUrl || 'https://app.clockify.me/';
-
-				await aBrowser.tabs.update(tabId, { url });
-			}
-		}
-
 		await aBrowser.tabs.sendMessage(tabId, { eventName: 'urlChanged' });
 
 		setTimeout(() => backgroundWebSocketConnect(), 1000);
@@ -56,8 +33,6 @@ aBrowser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 });
 
 aBrowser.runtime.onInstalled.addListener(async details => {
-	console.log(`[Clockify] [onInstalled] 1: ${details.reason}`);
-
 	if (details.reason === 'install') {
 		aBrowser.tabs.create({ url: clockifyProd });
 		aBrowser.action.setIcon({ path: iconPathEnded });
@@ -74,22 +49,10 @@ aBrowser.runtime.onInstalled.addListener(async details => {
 	const isLoggedIn = await TokenService.isLoggedIn();
 	const registeredIntegrations = await getRegisteredIntegrations();
 
-	console.log(
-		`[Clockify] [onInstalled] 2: ${details.reason}`,
-		'| isLoggedIn:',
-		isLoggedIn,
-		'| alreadyRegisteredIntegrations:',
-		registeredIntegrations.length
-	);
-
 	if (isLoggedIn) {
-		console.log(`[Clockify] [onInstalled] 3: ${details.reason}`);
-
 		await setIntegrationSettingsForCurrentUser();
 		await unregisterAllIntegrations();
 		await registerEnabledIntegrations();
-	} else {
-		console.error(`[Clockify] [onInstalled] 4: ${details.reason}, `);
 	}
 });
 
@@ -144,6 +107,12 @@ aBrowser.windows.onRemoved.addListener(window => {
 		TimeEntry.endInProgressOnClosingBrowser();
 		this.disconnectWebSocket();
 		this.restartPomodoro();
+	}
+});
+
+aBrowser.storage.onChanged.addListener(async changes => {
+	if (changes['setIntDataForPlaywrightTestsSig']) {
+		await setDataAfterLogin();
 	}
 });
 
@@ -300,10 +269,10 @@ async function getDefaultIntegrationSettingsWithPreservingCustomData(
 	for (const integration of defaultIntegrationSettings) {
 		const { customUrls } = userIntegrationSettings.find(
 			({ name }) => lower(name) === lower(integration.name)
-		);
+		) || { customUrls: [] };
 		const { isEnabled } = userIntegrationSettings.find(
 			({ name }) => lower(name) === lower(integration.name)
-		);
+		) || { isEnabled: true };
 
 		updatedIntegrationSettings.push({ ...integration, customUrls, isEnabled });
 	}
@@ -424,22 +393,11 @@ async function registerIntegrations(integrations) {
 		await splitIntegrationsByRegistrationStatus(registrationData);
 
 	try {
-		console.log(
-			'Registered:',
-			registered.length,
-			'| Unregistered:',
-			unregistered.length,
-			'| of:',
-			integrations.length
-		);
-
 		if (registered.length) {
-			console.trace('Update the following integrations:', registered);
 			await aBrowser.scripting.updateContentScripts(registered);
 		}
 
 		if (unregistered.length) {
-			console.trace('Register the following integrations:', unregistered);
 			await aBrowser.scripting.registerContentScripts(unregistered);
 		}
 	} catch (error) {
@@ -462,8 +420,11 @@ function generateIntegrationRegistrationData(integrations) {
 		];
 		const css = ['styles/main-integration.css', 'styles/react-datepicker.css'];
 		const matches = [...urls, ...customUrls];
+		const runAt = 'document_idle';
+		const allFrames = true;
+		const persistAcrossSessions = true;
 
-		return { id, js, css, matches, runAt: 'document_idle', allFrames: true };
+		return { id, js, css, matches, runAt, allFrames, persistAcrossSessions };
 	});
 }
 
@@ -529,11 +490,145 @@ async function rerenderIntegrations() {
 	}
 }
 
-aBrowser.runtime.onMessage.addListener((request, sender, sendResponse) => {
-	request.eventName.toLowerCase().includes('integration') &&
-		console.log('[Clockify] [New message] Message:', request);
+async function startSigninFlow() {
+	const url = await generateBaseAuthUrl();
 
+	return authenticateCurrentUser(`${url}?type=login`);
+}
+
+async function startSignupFlow() {
+	const url = await generateBaseAuthUrl();
+
+	return authenticateCurrentUser(`${url}?type=signup`);
+}
+
+async function generateBaseAuthUrl() {
+	const homeUrl = await localStorage.getItem('homeUrl');
+
+	const firefoxRedirectNumber = 4;
+	const chromeRedirectNumber = 3;
+
+	const redirectNumber =
+		TARGET_BROWSER_FOR_CLOCKIFY_EXT === 'firefox'
+			? firefoxRedirectNumber
+			: chromeRedirectNumber;
+
+	return `${homeUrl}/redirect/${redirectNumber}`;
+}
+
+async function authenticateCurrentUser(url) {
+	try {
+		const { webAccessToken, webRefreshToken } = await extractWebTokens(url);
+		const [, webAccessTokenPayload] = parseToken(webAccessToken);
+		const userId = webAccessTokenPayload.sub;
+		const { token, refreshToken } = await fetchExtensionTokens(userId, webRefreshToken);
+
+		await storeExtensionTokens(token, refreshToken);
+
+		await setDataAfterLogin();
+	} catch (error) {
+		console.error(error);
+	}
+}
+
+function extractWebTokens(url) {
+	return new Promise((resolve, reject) => {
+		aBrowser.identity.launchWebAuthFlow({ url, interactive: true }, responseUrl => {
+			if (!responseUrl) {
+				return reject(new Error('Response URL is unavailable.'));
+			}
+
+			const responseUrlObject = new URL(responseUrl);
+			const responseUrlParams = new URLSearchParams(responseUrlObject.search);
+
+			const webAccessToken = responseUrlParams.get('accessToken');
+			const webRefreshToken = responseUrlParams.get('refreshToken');
+
+			if (!webAccessToken) {
+				reject(new Error('Web access param is unavailable'));
+			}
+
+			if (!webRefreshToken) {
+				reject(new Error('Web refresh param is unavailable'));
+			}
+
+			return resolve({ webAccessToken, webRefreshToken });
+		});
+	});
+}
+
+function parseToken(token) {
+	if (typeof token !== 'string') {
+		throw new TypeError('Invalid JWT: Token must be a string.');
+	}
+
+	const trimmedToken = token.trim();
+
+	if (!trimmedToken) {
+		throw new TypeError('Invalid JWT: Token cannot be empty.');
+	}
+
+	const segments = trimmedToken.split('.');
+
+	if (segments.length !== 3) {
+		throw new Error(
+			'Malformed JWT: A valid token must consist of exactly three dot-separated segments.'
+		);
+	}
+
+	const [encodedHeader, encodedPayload] = segments;
+
+	try {
+		const header = JSON.parse(decodeBase64Url(encodedHeader));
+		const payload = JSON.parse(decodeBase64Url(encodedPayload));
+
+		return [header, payload];
+	} catch (error) {
+		throw new Error(
+			`Unparsable JWT: Failed to decode or parse token components. Internal detail: ${error.message}`
+		);
+	}
+}
+
+function decodeBase64Url(base64UrlString) {
+	try {
+		const base64 = base64UrlString.replace(/-/g, '+').replace(/_/g, '/');
+
+		const padLength = (4 - (base64.length % 4)) % 4;
+		const paddedBase64 = base64.padEnd(base64.length + padLength, '=');
+
+		const binaryString = atob(paddedBase64);
+
+		const bytes = new Uint8Array(binaryString.length);
+
+		for (let index = 0; index < binaryString.length; index++) {
+			bytes[index] = binaryString.charCodeAt(index);
+		}
+
+		return new TextDecoder().decode(bytes);
+	} catch (error) {
+		throw new Error(`Base64 decoding failed: ${error.message}`);
+	}
+}
+
+async function fetchExtensionTokens(userId, webRefreshToken) {
+	const exchangeToken = await TokenService.fetchExchangeToken(userId, webRefreshToken);
+	const { token, refreshToken } = await TokenService.fetchTokens(exchangeToken);
+
+	return { token, refreshToken };
+}
+
+async function storeExtensionTokens(token, refreshToken) {
+	await localStorage.setItem('token', token);
+	await localStorage.setItem('refreshToken', refreshToken);
+}
+
+aBrowser.runtime.onMessage.addListener((request, sender, sendResponse) => {
 	switch (request.eventName) {
+		case 'startSigninFlow':
+			return startSigninFlow();
+		case 'startSignupFlow':
+			return startSignupFlow();
 		case 'workspaceChanged':
 			return workspaceChanged();
 		case 'rerenderIntegrations':
@@ -573,6 +668,7 @@ aBrowser.runtime.onMessage.addListener((request, sender, sendResponse) => {
 		case 'updateNewsSubscription':
 		case 'clearAnalyticsEvents':
 		case 'getFeedbackLocalizationKeys':
+		case 'getOnboardingSurvey':
 			return ClockifyIntegration.callFunction(request.eventName, null, sendResponse);
 		case 'sendAnalyticsEvents':
 		case 'endInProgress':
@@ -612,6 +708,7 @@ aBrowser.runtime.onMessage.addListener((request, sender, sendResponse) => {
 		case 'duplicateTimeEntry':
 		case 'updateTimeEntryValues':
 		case 'deleteTimeEntries':
+		case 'restoreTimeEntries':
 		case 'removeProjectAsFavorite':
 		case 'makeProjectFavorite':
 		case 'editBillable':
@@ -626,6 +723,7 @@ aBrowser.runtime.onMessage.addListener((request, sender, sendResponse) => {
 		case 'createClient':
 		case 'sendAnalyticsEvent':
 		case 'makeFeedback':
+		case 'submitOnboardingSurvey':
 			return ClockifyIntegration.callFunction(request.eventName, request, sendResponse);
 		default:
 			return false;

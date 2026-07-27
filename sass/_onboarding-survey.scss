@@ -1,0 +1,221 @@
+@use 'variables';
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.onboarding-survey {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 99999999999;
+  background-color: white;
+  width: 100%;
+  height: calc(100vh - 15px);
+  padding-top: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: slideDown 0.3s ease-out forwards;
+
+  &-title {
+    align-items: center;
+    justify-self: center;
+    display: flex;
+    width: 250px;
+    gap: 15px;
+    flex-direction: column;
+
+    img {
+      width: 56px;
+      height: 56px;
+    }
+
+    span {
+      color: #000000DE;
+      font-size: 22px;
+      line-height: 34px;
+      text-align: center;
+    }
+  }
+
+  &-content {
+    display: flex;
+    flex-direction: column;
+    padding: 0 10px;
+    width: 340px;
+    height: 100%;
+    justify-content: space-evenly;
+
+    &-sections {
+      align-self: center;
+      padding: 20px;
+      background-color: variables.$task-background;
+    }
+
+    &-action {
+      position: relative;
+      min-width: 200px;
+      max-width: 320px;
+      place-self: center;
+
+      button {
+        cursor: pointer;
+        width: fit-content;
+        border-radius: 2px;
+        padding: 12px 20px;
+        border: none;
+        color: white;
+        background: variables.$blue;
+        font-size: 14px;
+        text-transform: uppercase;
+        align-self: center;
+
+        &:hover {
+          background-color: variables.$blue_hover;
+          border-color: variables.$blue_hover;
+          transition: background-color 0.15s ease-in-out,
+          border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        }
+      }
+
+      .error-popover {
+        background-color: variables.$bg-09;
+        position: absolute;
+        bottom: calc(100% + 12px);
+        left: 50%;
+        transform: translateX(-50%);
+        color: white;
+        padding: 10px;
+        border-radius: 3px;
+        font-size: 14px;
+        white-space: nowrap;
+        z-index: 100;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+        .arrow {
+          position: absolute;
+          bottom: -4px;
+          left: 50%;
+          transform: translateX(-50%) rotate(45deg);
+          width: 8px;
+          height: 8px;
+          background-color: variables.$bg-09;
+        }
+      }
+    }
+  }
+}
+
+.onboarding-survey-content-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+  margin-bottom: 20px;
+  width: 280px;
+
+  span {
+    font-size: 13px;
+    font-weight: 500;
+    color: #333;
+  }
+
+  .dropdown {
+    position: relative;
+    width: 100%;
+    height: 40px;
+
+    &-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 16px;
+      background: #ffffff;
+      border: 1px solid #d1d5db;
+      border-radius: 2px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s ease;
+
+      span {
+        color: variables.$middle_light_text;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        padding-right: 5px;
+      }
+
+      &:hover {
+        background-color: variables.$entries_header;
+      }
+
+      .arrow {
+        border: solid #6b7280;
+        border-width: 0 2px 2px 0;
+        display: inline-block;
+        padding: 3px;
+        transform: rotate(45deg);
+        transition: transform 0.2s ease;
+      }
+    }
+
+    &.is-open {
+      .dropdown-header {
+        .arrow {
+          transform: rotate(-135deg);
+          margin-top: 4px;
+        }
+      }
+    }
+
+    &-list {
+      position: absolute;
+      left: 0;
+      width: calc(100% - 2px);
+      background: #ffffff;
+      border: 1px solid #d1d5db;
+      border-radius: 2px;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      z-index: 999;
+      padding: 4px 0;
+      margin: 0;
+      list-style: none;
+      max-height: 200px;
+      overflow-y: auto;
+
+      &-selected-item {
+        color: variables.$dark-text;
+        background-color: variables.$hover-selection;
+      }
+
+      &-top {
+        bottom: calc(100% + 4px);
+      }
+
+      &-bottom {
+        top: calc(100% + 4px);
+      }
+
+      li {
+        padding: 10px 12px;
+        border-radius: 2px;
+        cursor: pointer;
+        font-size: 13px;
+        color: variables.$middle_light_text;
+        transition: background 0.2s;
+
+        &:hover {
+          background-color: variables.$entries_header;
+        }
+      }
+    }
+  }
+}

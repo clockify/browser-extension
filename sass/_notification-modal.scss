@@ -1,5 +1,16 @@
 @use 'variables';
 
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .notification-modal {
   z-index: 1000;
   cursor: default;
@@ -18,16 +29,19 @@
   border-radius: 2px;
   text-align: center;
   align-items: center;
-  &--close-modal{
+
+  &--close-modal {
     position: absolute;
     width: 100%;
     height: 100%;
   }
+
   &__title-and-close {
     display: flex;
     margin-bottom: 20px;
     width: 100%;
   }
+
   &__close {
     position: absolute;
     right: 20px;
@@ -37,6 +51,7 @@
     content: url('../assets/images/x.png');
     cursor: pointer;
   }
+
   &--open {
     background-color: rgba(0, 0, 0, 0.8);
     position: fixed;
@@ -45,13 +60,16 @@
     left: 0;
     top: 0;
     z-index: 2147483647 !important;
+    animation: slideDown 0.3s ease-out forwards;
   }
+
   &--divider {
     margin-bottom: 10px;
     width: 100%;
     height: 1px;
     border-bottom: 1px dotted variables.$border;
   }
+
   &--title {
     position: relative;
     left: -60px;
@@ -63,6 +81,7 @@
     line-height: 21px;
     color: #333333;
   }
+
   &--tag-name {
     margin-bottom: 20px;
     padding-left: 10px;
@@ -70,15 +89,18 @@
     border-radius: 2px;
     width: 280px;
     height: 40px;
+
     &::placeholder {
       color: variables.$lighter_text;
     }
+
     &:focus {
       outline: none;
       border: 2px solid #0f3beb;
       border-radius: 5px;
     }
   }
+
   &--confirmation_button {
     margin-top: 10px;
     margin-bottom: 20px;
@@ -92,6 +114,7 @@
     text-transform: uppercase;
     cursor: pointer;
   }
+
   &--secondary {
     margin-top: 10px;
     margin-bottom: 20px;
@@ -100,22 +123,27 @@
     color: variables.$blue;
     cursor: pointer;
   }
+
   &--text {
     font-size: 14px;
     text-align: left;
     max-width: 240px;
     word-break: break-word;
+
     &--light {
       color: #999999;
     }
   }
+
   &--image {
     img {
       max-width: 80%;
     }
+
     padding-top: 10px;
     padding-bottom: 10px;
   }
+
   .ws-shield {
     margin-top: 20px;
     width: 299px;

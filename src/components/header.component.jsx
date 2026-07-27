@@ -1,6 +1,5 @@
 import * as React from 'react';
 import Menu from './menu.component';
-import Notifications from './notifications.component';
 import { getEnv } from '../environment';
 
 import { getLocalStorageEnums } from '../enums/local-storage.enum';
@@ -169,13 +168,6 @@ class Header extends React.Component {
 				});
 
 				this.props.workspaceChanged();
-			})
-			.catch(error => {
-				if (error.response?.data.code === 1013) {
-					this.setState({
-						show2FAPopup: true,
-					});
-				}
 			});
 	}
 
@@ -359,7 +351,7 @@ class Header extends React.Component {
 
 	render() {
 		return (
-			<div>
+			<div className={this.props.stickyHeader ? 'sticky-header' : ''}>
 				<div
 					className={
 						this.state.isMenuOpen || this.state.isNotificationsDropdownOpen
@@ -367,7 +359,6 @@ class Header extends React.Component {
 							: 'disabled'
 					}
 					onClick={this.closeMenus.bind(this)}></div>
-				<div className={this.props.isOffline ? 'header-offline' : 'disabled'}>Offline</div>
 				<div className="header">
 					<div className="self-hosted-url__logo">
 						<a target={'_blank'} href={this.state.clockifyLink}>
@@ -379,14 +370,6 @@ class Header extends React.Component {
 							onClick={this.handleRefresh}
 							title={locales.REFRESH}
 							className={this.props.showSync ? 'refresh-icon' : 'disabled'}></div>
-						{this.props.showActions && (
-							<Notifications
-								onClick={this.openNotificationsDropdown.bind(this)}
-								isDropdownOpen={this.state.isNotificationsDropdownOpen}
-								toaster={this.props.toaster}
-								changeWorkspaceTo={this.selectWorkspace}
-							/>
-						)}
 						{this.props.showActions && (
 							<div
 								className={this.props.showActions ? 'actions' : 'disabled'}

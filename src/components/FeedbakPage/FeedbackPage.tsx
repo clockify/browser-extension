@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Modal from 'react-modal';
 import Toaster from '../toaster-component';
 import HomePage from '../home-page.component';
@@ -280,7 +280,6 @@ function FeedbackPage(props: FeedbackPageProps): React.JSX.Element {
 					showActions={false}
 					backButton={true}
 					goBackTo={openModalIfAnyFieldIsChanged}
-					isOffline={!isOnline}
 				/>
 			</div>
 			<main>

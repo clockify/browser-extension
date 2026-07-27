@@ -4,6 +4,10 @@ clockifyButton.render('span[jsslot].kma42e', { observe: true }, eventCard => {
 
 	const eventTimeInterval = text('#xDetDlgWhen .AzuXid.O2VjS.CyPPBf');
 
+	const shouldShowCopyAsTimeEntry =
+		$('.bjMtic > i:first-child')?.parentElement.childNodes[1].textContent === 'Create' ||
+		$('.t9Sj3d-Q0XOV > i')?.parentElement.parentElement.nextSibling.textContent === 'Create';
+
 	if (!eventTimeInterval) return console.error("Interval can't be extracted.");
 
 	const description = text('[role="heading"]', eventCard);
@@ -13,11 +17,12 @@ clockifyButton.render('span[jsslot].kma42e', { observe: true }, eventCard => {
 
 	const container = createTag('div', 'clockify-widget-container');
 
+	container.style.display = shouldShowCopyAsTimeEntry ? 'grid' : 'flex';
+
 	container.append(link);
 	container.append(input);
 
-	// NOTE: we are showing this event "Copy as time entry" only for English language
-	if (text('.T57Ued-nBWOSb') === 'Create' || text('[aria-label=Create]')) {
+	if (shouldShowCopyAsTimeEntry) {
 		const eventTimeIntervalEndpoints = extractStartAndEnd(eventTimeInterval);
 		const start = eventTimeIntervalEndpoints.start;
 		const end = eventTimeIntervalEndpoints.end;
@@ -29,42 +34,6 @@ clockifyButton.render('span[jsslot].kma42e', { observe: true }, eventCard => {
 	eventCard.append(container);
 });
 
-// Google Calendar blocks wheel (scrolling) event
-// in Clockify integration modal, fix for it:
-allowScrollingInModalPopup();
-allowMovingScrollbarInModalPopup();
-
-async function allowScrollingInModalPopup() {
-	const modal = await waitForElement('.clockify-integration-popup');
-
-	document.addEventListener('wheel', async event => {
-		event.stopImmediatePropagation();
-
-		const { target, deltaY } = event;
-
-		const descriptionTextareaWrapper = $('.description-textarea');
-		const descriptionTextarea = $('textarea', descriptionTextareaWrapper);
-		const projectList = $('.tag-list');
-		const tagList = $('.edit-form__project_list');
-		const editForm = $('.edit-form');
-
-		if (target.isSameNode(descriptionTextareaWrapper)) descriptionTextarea.scrollBy(0, deltaY);
-		if (descriptionTextareaWrapper?.contains(target)) descriptionTextarea.scrollBy(0, deltaY);
-		if (target.isSameNode(projectList)) modal.scrollBy(0, deltaY);
-		if (projectList?.contains(target)) modal.scrollBy(0, deltaY);
-		if (target.isSameNode(tagList)) modal.scrollBy(0, deltaY);
-		if (tagList?.contains(target)) modal.scrollBy(0, deltaY);
-		if (target.isSameNode(editForm)) modal.scrollBy(0, deltaY);
-	});
-}
-
-async function allowMovingScrollbarInModalPopup() {
-	document.addEventListener('mousedown', event => {
-		if (event.target.classList.contains('clockify-integration-popup'))
-			event.stopImmediatePropagation();
-	});
-}
-
 applyStyles(`
 	#xDetDlg {
 		max-width: 600px;
@@ -75,8 +44,6 @@ applyStyles(`
 	}
 
 	.clockify-widget-container {
-		display: grid;
-		grid-template-columns: repeat(2, 1fr);
 		grid-template-rows: repeat(2, 1fr);
 		grid-column-gap: 0px;
 		grid-row-gap: 0px;
@@ -85,11 +52,7 @@ applyStyles(`
 		top: 10px;
 		padding-left: 30px;
 	}
-	#clockify-manual-input-form {
-		margin-left: -25px;
-	}
 	#clockify-manual-input-form input {
-		margin-left: -25px;
 		width: 125px;
 		margin-left: 7px;
 		box-shadow: none;

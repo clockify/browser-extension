@@ -1,0 +1,36 @@
+@use 'variables';
+
+.offline-mode {
+  background-color: variables.$background;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: inherit;
+  gap: 20px;
+
+  img {
+    width: 80px;
+  }
+
+  &-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+
+    &-title {
+      color: #000000DE;
+      font-weight: 500;
+      font-size: 18px;
+      line-height: 27px;
+    }
+
+
+    &-subtitle {
+      color: #0000008A;
+      font-size: 14px;
+      line-height: 21px;
+    }
+  }
+}

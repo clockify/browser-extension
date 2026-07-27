@@ -1116,6 +1116,20 @@ class ClockifyIntegrationBase {
 		sendResponse({ data, status });
 	}
 
+	static async restoreTimeEntries({ ids }, sendResponse) {
+		if (await isNavigatorOffline()) {
+			sendResponse('Connection is offline', 0);
+			return;
+		}
+
+		const { data, error, status } = await TimeEntry.restoreTimeEntries(ids);
+		if (error) {
+			sendResponse(error.message, error.status);
+			return;
+		}
+		sendResponse({ data, status });
+	}
+
 	static async invalidateToken(sendResponse) {
 		if (await isNavigatorOffline()) {
 			sendResponse('Connection is offline', 0);
@@ -1372,6 +1386,39 @@ class ClockifyIntegrationBase {
 			sendResponse({ error });
 			return;
 		}
+		sendResponse({ data, status });
+	}
+
+	static async getOnboardingSurvey(sendResponse) {
+		if (await isNavigatorOffline()) {
+			sendResponse('Connection is offline', 0);
+			return;
+		}
+
+		const { data, error, status } = await OnboardingSurveyService.getOnboardingSurvey();
+
+		if (error) {
+			sendResponse({ error });
+			return;
+		}
+
+		sendResponse({ data, status });
+	}
+
+	static async submitOnboardingSurvey(options, sendResponse) {
+		if (await isNavigatorOffline()) {
+			sendResponse('Connection is offline', 0);
+			return;
+		}
+
+		const { data, error, status } =
+			await OnboardingSurveyService.submitOnboardingSurvey(options);
+
+		if (error) {
+			sendResponse({ error });
+			return;
+		}
+
 		sendResponse({ data, status });
 	}
 

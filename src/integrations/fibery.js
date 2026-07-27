@@ -2,10 +2,10 @@
 clockifyButton.render(
 	'.extension-entity-view-header-spot:not(.clockify)',
 	{ observe: true },
-	elem => {
-		const description = () => {
-			return elem ? elem.dataset?.entityTitle : '';
-		};
+	async elem => {
+		await waitForElement('[data-testid="title-input"] textarea');
+
+		const description = () => value('[data-testid="title-input"] textarea');
 
 		const timer = clockifyButton.createButton({ description });
 		const input = clockifyButton.createInput({ description });
@@ -18,7 +18,7 @@ clockifyButton.render(
 	}
 );
 
-function createButtonOnView({ small, elem }) {
+function createButtonOnView({ small, elem, insertType = 'append' }) {
 	const description = () => {
 		return elem ? elem.dataset?.entityTitle : '';
 	};
@@ -28,7 +28,7 @@ function createButtonOnView({ small, elem }) {
 	const container = createContainer(timer);
 
 	preventEventPropagation(container);
-	elem.append(container);
+	elem[insertType](container);
 }
 
 // List View
@@ -36,7 +36,7 @@ clockifyButton.render(
 	'.i-role-list-view .extension-entity-card-spot:not(.clockify)',
 	{ observe: true },
 	elem => {
-		createButtonOnView({ small: true, elem });
+		createButtonOnView({ small: true, elem, insertType: 'after' });
 	}
 );
 

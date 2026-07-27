@@ -39,7 +39,8 @@
         "urls": [
             "*://*.basecamp.com/*",
             "*://*.basecamphq.com/*",
-            "*://basecamp.com/*"
+            "*://basecamp.com/*",
+            "*://app.basecamp.com/*"
         ],
         "script": "basecamp.js"
     },
@@ -408,7 +409,8 @@
         "name": "Notion",
         "urls": [
             "*://*.notion.so/*",
-            "*://notion.so/*"
+            "*://notion.so/*",
+            "*://app.notion.com/*"
         ],
         "script": "notion.js"
     },
@@ -486,6 +488,14 @@
             "*://placker.com/*"
         ],
         "script": "placker.js"
+    },
+    {
+        "name": "Plane",
+        "urls": [
+            "*://*.plane.so/*",
+            "*://plane.so/*"
+        ],
+        "script": "plane.js"
     },
     {
         "name": "Plutio",

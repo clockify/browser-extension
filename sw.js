@@ -15,6 +15,7 @@ try {
 		'api-services/tag-service.js',
 		'api-services/time-entry-service.js',
 		'api-services/client-service.js',
+		'api-services/onboardingSurvey.service.js',
 		'contentScripts/custom-field-service-background.js',
 		'contentScripts/clockifyLocales.js',
 		'api-services/selectors-service.js',
@@ -26,7 +27,6 @@ try {
 		'contentScripts/stop-timer-at-background.js',
 		'contentScripts/reminder-background.js',
 		'contentScripts/pomodoro-background.js',
-		'api-services/notification-service.js',
 		'api-services/feedback-service.js'
 	);
 } catch (error) {

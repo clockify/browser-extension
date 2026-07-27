@@ -53,10 +53,14 @@ clockifyButton.render(
 clockifyButton.render(
 	`
 		[data-page^="projects:issues:"] main div:has(> [data-testid="work-item-type"]):not(.clockify),
-		[data-page^="projects:work_items:show"] main div:has(> [data-testid="work-item-type"]):not(.clockify)
+		[data-page^="projects:work_items:show"] main div:has(> [data-testid="work-item-type"]):not(.clockify),
+		[data-testid="work-item-type"]:not(.clockify)
 	`,
 	{ observe: true },
 	async heading => {
+		await timeout({ milliseconds: 500 });
+		if ($('.clockify-widget-container')) return;
+
 		const labels = await waitForElement('[data-testid="work-item-labels"]');
 
 		const isSubitem = $('[data-page^="projects:work_items:show"]');
@@ -66,6 +70,7 @@ clockifyButton.render(
 
 		let id = () =>
 			text('[data-testid="work-item-drawer-ref-link"]')?.split('#')?.reverse()?.[0] ||
+			text('[data-testid="work-item-detail-panel-ref-link"]')?.split('#')?.reverse()?.[0] ||
 			text('.breadcrumb li:last-child a span').split('#').reverse()[0];
 
 		if (isSubitem && isCurrentPlanCommunityEdition) {
@@ -91,6 +96,8 @@ clockifyButton.render(
 		const input = clockifyButton.createInput(entry);
 
 		const container = createContainer(timer, input);
+
+		heading.parentElement.style.flexDirection = 'column';
 
 		heading.after(container);
 	}

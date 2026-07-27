@@ -24,21 +24,17 @@
     },
     "nozbe": {
         "sideTaskView": {
-            "hanger": ".PSnpO:not(.clockify)",
-            "description": "[class=\"_4Q-+e\"]",
-            "leftColumn": ".X9Cyv",
-            "rightColumn": "[class=\"n5+5r\"]",
-            "containerClassList": "clockify-widget-container sIw2A xnenn",
-            "line": ".xkSgE \u003E div"
+            "hanger": ".TAubd:not(.clockify)",
+            "description": "[class=\"_4Q-+e\"]"
         }
     },
     "wrike": {
         "taskView": {
-            "hanger": "action-panel.header__action-panel:not(.clockify), .task-view-header__actions.action-bar:not(.clockify), .wrike-panel-header-toolbar:not(.clockify), action-panel.work-item-header__action-panel:not(.clockify)",
-            "description": ".title__ghost",
+            "hanger": ".work-item-header__action-panel:not(.clockify), .header__action-panel:not(.clockify), .task-view-header__actions.action-bar:not(.clockify), .wrike-panel-header-toolbar:not(.clockify)",
+            "description": "[data-application=\"work-item-title\"] > textarea",
             "projectFromTaskTag": ".folder-tag-label__item--name",
             "projectFromPageHeader": "header .flex-text-input__ghost",
-            "projectFrom": "header .flex-text-input__ghost"
+            "projectFrom": ".work-item-header__location .chip__content"
         }
     },
     "coda": {
@@ -71,7 +67,7 @@
             "dealName": ".cui5-editable-text__input"
         },
         "activityView": {
-            "hanger": "[class*=ActivityTypeIcons]:not(.clockify), [class*='ActivitiesModalRewriteWrapper'] .cui5-compound-modal__content .cui5-button-group:not(.clockify)",
+            "hanger": "[class*=ActivityTypeIcons]:not(.clockify), [class*='ActivitiesModalRewriteWrapper'] .cui5-compound-modal__content .cui5-button-group:not(.clockify), [data-cy='activities-modal-container'] .cui5-compound-modal__content .cui5-button-group:not(.clockify)",
             "cardTitle": "[data-test=activity-subject]",
             "cardTitle2": "[data-cy='subject-field']"
         },
@@ -154,24 +150,50 @@
         "gridView": {
             "anchor": ".taskGridContainer .grid-row:not(.clockify)",
             "taskRowName": ".taskTitleCell",
-            "taskRowTags": ".taskGridContainer .labelPickerInner .editableLabel",
+            "taskRowTags": ".taskGridContainer .labelPickerInner .editableLabel, .editableLabelWrapper",
+            "taskRowOverflowTags": ".overflowLabelWrapper button",
             "projectName": ".planPickerItem",
-            "projectNameFromBreadcrumbs": ".ms-Breadcrumb-itemLink > div > div"
+            "projectNameFromBreadcrumbs": ".ms-Breadcrumb-itemLink > div > div",
+            "projectNameFromBreadcrumbsNewUI": "ol.fui-Breadcrumb__list > li:last-child button > span:not(.fui-Button__icon)"
         },
         "boardView": {
-            "anchor": ".taskCard:not(.clockify)",
+            "anchor": ".taskCard:not(.clockify), .planner-draggable-task-card:not(.clockify)",
             "cardTaskName": ".title",
-            "cardTaskTags": ".labelTag \u003E span",
+            "cardTaskTags": ".labelTag \u003E span, ul.labels li",
             "cardBottomSection": ".leftSection",
+            "completeCheckbox": ".fui-Button[role=\"checkbox\"]",
             "projectName": ".planName",
-            "projectNameFromBreadcrumbs": ".ms-Breadcrumb-itemLink > div > div"
+            "projectNameNewUI": ".planner-draggable-task-card > div > div:nth-of-type(2) > div:first-child",
+            "projectNameFromBreadcrumbs": ".ms-Breadcrumb-itemLink > div > div",
+            "projectNameFromBreadcrumbsNewUI": "ol.fui-Breadcrumb__list > li:last-child button > span:not(.fui-Button__icon)",
+            "projectNameDifferentTemplate": "ol.ms-Breadcrumb-list > li:last-child"
         },
         "modalView": {
-            "anchor": ".taskEditor-dialog-content:not(.clockify)",
+            "anchor": ".taskEditor-dialog-content:not(.clockify), .fui-DialogSurface:not(.clockify)",
             "taskNameInput": "[aria-label=\"Task name\"]",
             "cardHeaderTitle": ".planTitle",
-            "cardTaskTags": ".editableLabelWrapper .editableLabelInner",
+            "cardHeaderTitleNewUI": "ol > li:first-child",
+            "cardTaskTags": ".editableLabelWrapper .editableLabelInner, .editableLabelWrapper button:first-child",
             "taskTitleContainer": "[aria-label=\"Task name\"]"
+        },
+        "gridViewTemplates": {
+            "anchor": ".grid-body .grid-row:not(.clockify)",
+            "taskName": ".wrapped-content",
+            "projectName": "ol.ms-Breadcrumb-list > li:last-child",
+            "tagNames": ".labelPickerInner .editableLabelWrapper",
+            "taskRowOverflowTags": ".overflowLabelWrapper button"
+        },
+        "boardViewTemplates": {
+            "anchor": ".taskCardRoot.task-card:not(.clockify)",
+            "taskName": ".taskCardRoot.task-card .animButtonAndTitle > div",
+            "projectName": "ol.ms-Breadcrumb-list > li:last-child",
+            "tagNames": "ul.labels li .labelTitle"
+        },
+        "modalViewTemplates": {
+            "anchor": ".taskDetailsPane:not(.clockify)",
+            "taskNameInput": ".taskDetailsTopContent input.ms-TextField-field",
+            "projectName": "ol.ms-Breadcrumb-list > li:last-child",
+            "tagNames": ".labelPickerInner .editableLabelWrapper"
         }
     }
 }

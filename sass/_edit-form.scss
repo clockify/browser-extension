@@ -25,6 +25,11 @@
       background-size: 14px 14px;
     }
   }
+
+  textarea {
+    box-shadow: unset !important;
+    border-radius: 2px;
+  }
 }
 
 .edit-form-description {
@@ -264,5 +269,17 @@
   }
   100% {
     -o-origin-transform: translate(0px);
+  }
+}
+
+.sticky-header {
+  position: fixed;
+  width: 100vw;
+  z-index: 9999;
+  background: variables.$background;
+  top: 0;
+
+  &-padding-top {
+    padding-top: 60px;
   }
 }

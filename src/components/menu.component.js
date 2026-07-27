@@ -27,7 +27,6 @@ class Menu extends React.Component {
 			workspaceNameSelected: '',
 			subDomainName: '',
 			isOffline: null,
-			show2FAPopup: false,
 			workspaces: [],
 			selectedWorkspace: null,
 			previousWorkspace: null,
@@ -772,6 +771,7 @@ class Menu extends React.Component {
 							</div>
 
 							<span
+								data-testid="settings-link"
 								className={
 									this.state.isOffline || this.props.isTrackingDisabled
 										? 'disable-manual'
@@ -808,6 +808,7 @@ class Menu extends React.Component {
 									</svg>
 								</div>
 								<span
+									data-testid="integrations-link"
 									className={
 										this.state.isOffline || this.props.isTrackingDisabled
 											? 'disable-manual'
@@ -876,6 +877,7 @@ class Menu extends React.Component {
 							</div>
 
 							<span
+								data-testid="dashboard-link"
 								className={
 									this.state.isOffline || this.props.isTrackingDisabled
 										? 'disable-manual'
@@ -938,7 +940,9 @@ class Menu extends React.Component {
 									</g>
 								</svg>
 							</div>
-							<span className={this.state.isOffline ? 'disable-manual' : ''}>
+							<span
+								data-testid="feedback-link"
+								className={this.state.isOffline ? 'disable-manual' : ''}>
 								{locales.SHARE_FEEDBACK}
 							</span>
 						</a>
@@ -972,104 +976,12 @@ class Menu extends React.Component {
 								</svg>
 							</div>
 
-							<span className={this.state.isOffline ? 'disable-manual' : ''}>
+							<span
+								data-testid="log-out"
+								className={this.state.isOffline ? 'disable-manual' : ''}>
 								{locales.LOG_OUT}
 							</span>
 						</a>
-						{/* <a
-							onClick={this.openSettings.bind(this)}
-							className="dropdown-item item-horizontal subitem-container"
-							href="#">
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								width="40"
-								height="40"
-								viewBox="0 0 40 40"
-								fill="none">
-								<mask
-									id="mask0_17888_1481"
-									style={{ maskType: 'alpha' }}
-									maskUnits="userSpaceOnUse"
-									x="0"
-									y="0"
-									width="40"
-									height="40">
-									<rect width="40" height="40" fill="#D9D9D9" />
-								</mask>
-								<g mask="url(#mask0_17888_1481)">
-									<path
-										d="M17.5521 36.9458C17.0141 36.9458 16.5435 36.773 16.1404 36.4275C15.7374 36.0819 15.4989 35.6447 15.425 35.1158L14.8834 31.5783C14.4553 31.4222 14.0107 31.2105 13.5496 30.9433C13.0885 30.6764 12.6767 30.3998 12.3142 30.1137L9.07378 31.5862C8.561 31.8057 8.04489 31.8304 7.52545 31.6604C7.006 31.4904 6.60295 31.1642 6.31628 30.6817L3.89628 26.365C3.60517 25.8936 3.52142 25.3951 3.64503 24.8696C3.76864 24.3443 4.04989 23.9129 4.48878 23.5754L7.43711 21.3812C7.39767 21.1718 7.37322 20.9415 7.36378 20.6904C7.35461 20.4396 7.35003 20.2094 7.35003 20C7.35003 19.7905 7.35461 19.5604 7.36378 19.3096C7.37322 19.0585 7.39767 18.8282 7.43711 18.6187L4.48878 16.4346C4.0435 16.0971 3.76058 15.6657 3.64003 15.1404C3.51975 14.6148 3.60517 14.113 3.89628 13.635L6.31628 9.32165C6.60295 8.85026 7.00433 8.52679 7.52045 8.35123C8.03656 8.17568 8.55114 8.19762 9.0642 8.41707L12.3338 9.88957C12.6921 9.6079 13.1014 9.33512 13.5617 9.07124C14.0217 8.80762 14.4623 8.60485 14.8834 8.4629L15.425 4.89415C15.4989 4.3586 15.7374 3.91693 16.1404 3.56915C16.5435 3.22137 17.0141 3.04749 17.5521 3.04749H22.4479C22.986 3.04749 23.4566 3.22137 23.8596 3.56915C24.2627 3.91693 24.5011 4.3586 24.575 4.89415L25.1167 8.43499C25.5448 8.59554 25.9928 8.80304 26.4609 9.05749C26.9289 9.31193 27.3373 9.58929 27.6859 9.88957L30.9263 8.41707C31.4391 8.19762 31.9506 8.17568 32.4609 8.35123C32.9711 8.52679 33.3696 8.85026 33.6563 9.32165L36.1104 13.635C36.3971 14.113 36.4803 14.6194 36.36 15.1542C36.2395 15.6889 35.9566 16.1157 35.5113 16.4346L32.5529 18.5633C32.5927 18.7911 32.6182 19.0305 32.6296 19.2817C32.641 19.5328 32.6467 19.7722 32.6467 20C32.6467 20.2278 32.6404 20.4626 32.6279 20.7046C32.6154 20.9462 32.5857 21.181 32.5388 21.4087L35.4975 23.5654C35.9428 23.8843 36.2256 24.3111 36.3459 24.8458C36.4664 25.3805 36.3834 25.8869 36.0967 26.365L33.6563 30.6817C33.3696 31.1575 32.9681 31.4821 32.4517 31.6554C31.9356 31.8287 31.4211 31.8057 30.9084 31.5862L27.6729 30.1137C27.3102 30.3998 26.9034 30.68 26.4525 30.9542C26.0014 31.2283 25.5561 31.4364 25.1167 31.5783L24.575 35.1158C24.5011 35.6447 24.2627 36.0819 23.8596 36.4275C23.4566 36.773 22.986 36.9458 22.4479 36.9458H17.5521ZM18.3121 33.7892H21.6642L22.2575 29.2192C23.1623 28.9969 24.0166 28.6561 24.8204 28.1967C25.6243 27.7372 26.3503 27.1723 26.9984 26.5021L31.3146 28.3492L32.8679 25.5508L29.0854 22.7517C29.2057 22.2983 29.3006 21.8437 29.37 21.3879C29.4392 20.9323 29.4738 20.4697 29.4738 20C29.4738 19.5303 29.4438 19.0676 29.3838 18.6121C29.3238 18.1562 29.2243 17.7017 29.0854 17.2483L32.8813 14.4492L31.3146 11.6508L27.0084 13.5117C26.3789 12.8017 25.6657 12.2079 24.8688 11.7304C24.0721 11.2529 23.2017 10.9342 22.2575 10.7742L21.6879 6.21082H18.3225L17.7525 10.7708C16.8203 10.9678 15.9506 11.3004 15.1434 11.7687C14.3361 12.2371 13.6145 12.8135 12.9784 13.4979L8.68211 11.6508L7.11878 14.4492L10.8913 17.2246C10.771 17.6871 10.6761 18.1455 10.6067 18.6C10.5375 19.0544 10.5029 19.5211 10.5029 20C10.5029 20.4697 10.5375 20.9333 10.6067 21.3908C10.6761 21.8486 10.771 22.3067 10.8913 22.765L7.11878 25.5508L8.68211 28.3492L12.9784 26.4917C13.6331 27.1622 14.3646 27.7305 15.1729 28.1967C15.9813 28.6628 16.8411 29.0069 17.7525 29.2292L18.3121 33.7892ZM20.0046 25.5554C21.5416 25.5554 22.8517 25.0137 23.935 23.9304C25.0184 22.8471 25.56 21.5369 25.56 20C25.56 18.463 25.0184 17.1529 23.935 16.0696C22.8517 14.9862 21.5416 14.4446 20.0046 14.4446C18.4604 14.4446 17.1485 14.9862 16.0688 16.0696C14.9891 17.1529 14.4492 18.463 14.4492 20C14.4492 21.5369 14.9891 22.8471 16.0688 23.9304C17.1485 25.0137 18.4604 25.5554 20.0046 25.5554Z"
-										fill="#455A64"
-									/>
-								</g>
-							</svg>
-							<span
-								className={
-									this.state.isOffline || this.props.isTrackingDisabled
-										? 'disable-manual'
-										: ''
-								}>
-								{locales.SETTINGS}
-							</span>
-						</a>
-						<span
-							className="dropdown-item dropdown-item-horizontal subitem-container"
-							href="#">
-							<a
-								className="dropdown-subitem"
-								href="#"
-								onClick={this.openUrlPermissions.bind(this)}
-								style={{ width: '100%' }}>
-								<span
-									className={
-										this.state.isOffline || this.props.isTrackingDisabled
-											? 'disable-manual'
-											: ''
-									}>
-									{locales.INTEGRATIONS}
-								</span>
-							</a>
-							<a
-								className="dropdown-subitem"
-								href="#"
-								onClick={this.handleIntegrationsRefresh}
-								title={locales.REFRESH}>
-								<span className="refresh-icon" style={{ margin: '0' }}></span>
-							</a>
-						</span>
-						<a
-							onClick={this.openWebDashboard.bind(this)}
-							className="dropdown-item item-horizontal"
-							href="#">
-							<span
-								className={
-									this.state.isOffline || this.props.isTrackingDisabled
-										? 'disable-manual'
-										: ''
-								}>
-								{locales.DASHBOARD}
-							</span>
-							<span className="menu-img-right"></span>
-						</a>
-						<a
-							onClick={this.openShareFeedbackPage.bind(this)}
-							className="dropdown-item item-horizontal"
-							href="#"
-							style={{
-								display: 'flex',
-								justifyContent: 'space-between',
-								alignItems: 'center',
-							}}>
-							<span>{locales.SHARE_FEEDBACK}</span>
-						</a>
-						<a
-							onClick={this.handleLogoutClick.bind(this)}
-							className="dropdown-item item-horizontal"
-							href="#">
-							<span className={this.state.isOffline ? 'disable-manual' : ''}>
-								{locales.LOG_OUT}
-							</span>
-						</a> */}
 					</div>
 
 					{this.state.workspaceChangeConfirmationIsOpen && (
@@ -1078,13 +990,6 @@ class Menu extends React.Component {
 							confirmed={this.changeToSubdomainWorkspace}
 							workspaceName={this.state.workspaceNameSelected}
 							isChrome={isChrome()}
-						/>
-					)}
-
-					{this.state.show2FAPopup && (
-						<WsChange2FAPopupComponent
-							cancel={() => this.setState({ show2FAPopup: false, revert: true })}
-							workspaceName={this.state.workspaceNameSelected}
 						/>
 					)}
 				</div>

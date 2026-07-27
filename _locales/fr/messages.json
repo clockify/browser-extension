@@ -62,6 +62,27 @@
   "TRACKER__TIME_TRACKER__RECORDER__ADD_TIME_MANUALLY_TOOLTIP": {
     "message": "Ajouter l'heure manuellement ici"
   },
+  "ENTRY_DELETED_SUCCESS": {
+    "message": "Entrée supprimée"
+  },
+  "ENTRIES_DELETED_SUCCESS": {
+    "message": "Entrées supprimées"
+  },
+  "ENTRY_RESTORED_SUCCESS": {
+    "message": "Entrée restaurée"
+  },
+  "ENTRIES_RESTORED_SUCCESS": {
+    "message": "Entrées restaurées"
+  },
+  "ENTRY_RESTORED_ERROR": {
+    "message": "La saisie du temps n'a pas pu être restaurée"
+  },
+  "ENTRIES_RESTORED_ERROR": {
+    "message": "Les entrées de temps n'ont pas pu être restaurées"
+  },
+  "TIMER_CANCELLED": {
+    "message": "Minuteur annulé"
+  },
   "BILLABLE_LABEL": {
     "message": "Facturable"
   },
@@ -341,6 +362,9 @@
   "DESCRIPTION_LIMIT_ERROR_MSG": {
     "message": "Description raccourcie (longueur max { limit } caractères)"
   },
+  "GLOBAL__UNDO_LABEL": {
+    "message": "Annuler"
+  },
   "INSTAL_AND_TRACK_ANYWHERE": {
     "message": "Installez Clockify et suivez le temps n'importe où."
   },
@@ -496,6 +520,12 @@
   },
   "DISABLED_MANUAL_MODE": {
     "message": "Mode manuel désactivé"
+  },
+  "COPY_BTN_TOOLTIP": {
+    "message": "Copier comme créneau"
+  },
+  "CALENDAR_DATE_TIME": {
+    "message": "Date et heure"
   },
   "SETTINGS": {
     "message": "Paramètres"
@@ -1303,6 +1333,36 @@
   },
   "TOO_MANY_REQUESTS": {
     "message": "Trop de demandes, réessayez plus tard."
+  },
+  "DATA_IMPORT__NOTIFICATION__SUCCESS_BTN_LABEL": {
+    "message": "Voir le résumé"
+  },
+  "ONBOARDING_SURVEY__TITLE": {
+    "message": "Aidez-nous à personnaliser votre expérience sur Clockify"
+  },
+  "ONBOARDING_SURVEY__PART_1": {
+    "message": "Je suis ici pour"
+  },
+  "ONBOARDING_SURVEY__PART_2": {
+    "message": "avec mon équipe de"
+  },
+  "ONBOARDING_SURVEY__PART_3": {
+    "message": "et notre modèle de facturation principal est"
+  },
+  "ONBOARDING_SURVEY__GOAL_PLACEHOLDER": {
+    "message": "Sélectionner l’objectif principal"
+  },
+  "ONBOARDING_SURVEY__SIZE_PLACEHOLDER": {
+    "message": "Sélectionner la taille"
+  },
+  "ONBOARDING_SURVEY__MODEL_PLACEHOLDER": {
+    "message": "Sélectionner le modèle"
+  },
+  "ONBOARDING_SURVEY__START_USING_BUTTON": {
+    "message": "Commencer à utiliser Clockify"
+  },
+  "ONBOARDING_SURVEY__VALIDATION_POPOVER": {
+    "message": "Remplissez tous les champs ci-dessus."
   },
   "appName": {
     "message": "Clockify Suivi du temps",

@@ -1,10 +1,14 @@
 // Inbox emails
 clockifyButton.render(
-	'[aria-label="Reading Pane"] [role="heading"]:not(.clockify)',
+	'#ConversationReadingPaneContainer > div:first-child > div:not(.clockify)',
 	{ observe: true, onNavigationRerender: true },
-	elem => {
+	async elem => {
+		await timeout({ milliseconds: 500 });
+		if ($('.clockifyButton', elem)) return;
+
 		const link = clockifyButton.createButton(elem.textContent);
-		link.style.paddingLeft = '5px';
+		link.style.paddingLeft = '10px';
+		link.style.paddingBottom = '5px';
 
 		elem.appendChild(link);
 	}

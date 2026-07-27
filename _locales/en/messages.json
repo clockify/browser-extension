@@ -62,6 +62,27 @@
   "TRACKER__TIME_TRACKER__RECORDER__ADD_TIME_MANUALLY_TOOLTIP": {
     "message": "Add time manually here"
   },
+  "ENTRY_DELETED_SUCCESS": {
+    "message": "Entry deleted"
+  },
+  "ENTRIES_DELETED_SUCCESS": {
+    "message": "Entries deleted"
+  },
+  "ENTRY_RESTORED_SUCCESS": {
+    "message": "Entry restored"
+  },
+  "ENTRIES_RESTORED_SUCCESS": {
+    "message": "Entries restored"
+  },
+  "ENTRY_RESTORED_ERROR": {
+    "message": "Time entry could not be restored"
+  },
+  "ENTRIES_RESTORED_ERROR": {
+    "message": "Time entries could not be restored"
+  },
+  "TIMER_CANCELLED": {
+    "message": "Timer cancelled"
+  },
   "BILLABLE_LABEL": {
     "message": "Billable"
   },
@@ -341,6 +362,9 @@
   "DESCRIPTION_LIMIT_ERROR_MSG": {
     "message": "Description shortened (max length { limit } chars)"
   },
+  "GLOBAL__UNDO_LABEL": {
+    "message": "Undo"
+  },
   "INSTAL_AND_TRACK_ANYWHERE": {
     "message": "Install Clockify and track time anywhere."
   },
@@ -496,6 +520,12 @@
   },
   "DISABLED_MANUAL_MODE": {
     "message": "Manual mode disabled"
+  },
+  "COPY_BTN_TOOLTIP": {
+    "message": "Copy as time entry"
+  },
+  "CALENDAR_DATE_TIME": {
+    "message": "Time and date"
   },
   "SETTINGS": {
     "message": "Settings"
@@ -1303,6 +1333,42 @@
   },
   "TOO_MANY_REQUESTS": {
     "message": "Too many requests, try again later."
+  },
+  "DATA_IMPORT__NOTIFICATION__SUCCESS_BTN_LABEL": {
+    "message": "View summary"
+  },
+  "OFFLINE_MODE__TITLE": {
+    "message": "You're offline"
+  },
+  "OFFLINE_MODE__SUBTITLE": {
+    "message": "It looks like there's no internet connection."
+  },
+  "ONBOARDING_SURVEY__TITLE": {
+    "message": "Help us customize your Clockify experience"
+  },
+  "ONBOARDING_SURVEY__PART_1": {
+    "message": "I’m here to"
+  },
+  "ONBOARDING_SURVEY__PART_2": {
+    "message": "with my team of"
+  },
+  "ONBOARDING_SURVEY__PART_3": {
+    "message": "and our primary billing model is"
+  },
+  "ONBOARDING_SURVEY__GOAL_PLACEHOLDER": {
+    "message": "Select primary goal"
+  },
+  "ONBOARDING_SURVEY__SIZE_PLACEHOLDER": {
+    "message": "Select size"
+  },
+  "ONBOARDING_SURVEY__MODEL_PLACEHOLDER": {
+    "message": "Select model"
+  },
+  "ONBOARDING_SURVEY__START_USING_BUTTON": {
+    "message": "Start using Clockify"
+  },
+  "ONBOARDING_SURVEY__VALIDATION_POPOVER": {
+    "message": "Complete all fields above."
   },
   "appName": {
     "message": "Clockify Time Tracker",

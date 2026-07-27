@@ -12,7 +12,7 @@ clockifyButton.render(
 			/* text('[aria-label="Task Name"]') || */
 			text('.TaskPane-titleRow textarea') ||
 			text('.TaskPane-titleRow :first-child');
-		const asanaTaskTags = () => textList('.TaskTagTokenPills span');
+		const asanaTaskTags = () => textList('.TaskTags-potTokenizerPills a span');
 
 		const description = asanaTaskname;
 
@@ -101,8 +101,14 @@ applyStyles(`
 
 initializeBodyObserver();
 
+window
+	.matchMedia('(prefers-color-scheme: dark)')
+	.addEventListener('change', applyManualInputStyles);
+
 function initializeBodyObserver() {
-	const bodyObserver = new MutationObserver(applyManualInputStyles);
+	const bodyObserver = new MutationObserver(() =>
+		applyManualInputStyles(window.matchMedia('(prefers-color-scheme: dark)'))
+	);
 
 	const observationTarget = document.body;
 	const observationConfig = { childList: true };
@@ -110,9 +116,10 @@ function initializeBodyObserver() {
 	bodyObserver.observe(observationTarget, observationConfig);
 }
 
-function applyManualInputStyles() {
+function applyManualInputStyles(systemThemeEvent) {
 	const darkThemeClass = 'DesignTokenThemeSelectors-theme--darkMode';
-	const isDarkThemeEnabled = document.body.classList.contains(darkThemeClass);
+	const isDarkThemeEnabled =
+		systemThemeEvent.matches || document.body.classList.contains(darkThemeClass);
 
 	const darkStyles = `
 		#clockify-manual-input-form input { background: #1e1f21 !important; color: #f5f4f3 !important; border: 0.5px solid #1e1f21 !important; }

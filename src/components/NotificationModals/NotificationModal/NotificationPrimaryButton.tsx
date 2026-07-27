@@ -7,10 +7,7 @@ interface PropsInterface {
 
 export const NotificationPrimaryButton = (props: PropsInterface) => {
 	return (
-		<div
-			onClick={props.handleClick}
-			className="notification-modal--confirmation_button"
-		>
+		<div onClick={props.handleClick} className="notification-modal--confirmation_button">
 			{props.buttonTitle}
 		</div>
 	);

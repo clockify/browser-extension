@@ -6,14 +6,6 @@
   width: 100%;
   margin-bottom: 10px;
 
-  &.custom-field-required {
-    border: 1px solid variables.$red !important;
-
-    & > .tag-list-button {
-      border: none !important;
-    }
-  }
-
   &-name {
     display: inline-block !important;
     padding: 0 !important;
@@ -109,7 +101,7 @@
 
   &-add {
     display: inline-block;
-    padding: 5px 10px 5px 0px;
+    padding: 5px 0;
     font-size: 14px;
     color: #666;
   }
@@ -145,6 +137,7 @@
     }
 
     .tag-list-filter {
+      color: variables.$black;
       background-color: white;
 
       &:focus {
@@ -192,7 +185,6 @@
       top: 14px;
       height: 12px;
       width: 12px;
-      content: url('../assets/images/x.png');
       cursor: pointer;
     }
   }

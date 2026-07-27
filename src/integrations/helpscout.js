@@ -1,9 +1,12 @@
 clockifyButton.render(
 	'.StatusAssigneecss__ContainerUI-sc-2iztpe-0:not(.clockify)',
 	{ observe: true },
-	(actionMenu) => {
+	async actionMenu => {
+		observeTicketName();
+
 		const description = getHelpScoutDescription();
 		const tagNames = () => textList('[data-cy="Tag"]');
+
 		const entry = { description, tagNames };
 		const link = clockifyButton.createButton(entry);
 		const input = clockifyButton.createInput(entry);
@@ -17,27 +20,26 @@ clockifyButton.render(
 );
 
 // Helpscout legacy theme
-clockifyButton.render(
-	'.actions__wrapper:not(.clockify)',
-	{ observe: true },
-	(actionMenu) => {
-		const description = () => getHelpScoutDescription();
-		const tagNames = () => textList('.tag');
-		const entry = { description, tagNames };
-		const link = clockifyButton.createButton(entry);
-		const input = clockifyButton.createInput(entry);
+clockifyButton.render('.actions__wrapper:not(.clockify)', { observe: true }, async actionMenu => {
+	observeTicketName();
 
-		link.style.marginRight = '15px';
+	const description = getHelpScoutDescription();
+	const tagNames = () => textList('.tag');
 
-		const container = createTag('div', 'clockify-container');
-		addCustomCSS();
+	const entry = { description, tagNames };
+	const link = clockifyButton.createButton(entry);
+	const input = clockifyButton.createInput(entry);
 
-		container.append(link);
-		container.append(input);
+	link.style.marginRight = '15px';
 
-		actionMenu.insertBefore(container, actionMenu.children[1]);
-	}
-);
+	const container = createTag('div', 'clockify-container');
+	addCustomCSS();
+
+	container.append(link);
+	container.append(input);
+
+	actionMenu.insertBefore(container, actionMenu.children[1]);
+});
 
 function addCustomCSS() {
 	if ($('.clockify-custom-css')) return;
@@ -56,25 +58,19 @@ function addCustomCSS() {
 }
 
 function getHelpScoutDescription() {
-	const url = (() => {
-		try {
-			return window.top?.location?.href || location.href;
-		} catch {
-			return location.href || "";
-		}
-	})();
+	const id = text('[data-testid="conversation-info"] [data-cy="Text"]');
+	const subject = text('[aria-label="Conversation Subject"]') || text('#subjectLine');
 
-	const match = url.match(/(?:conversation|conversations)\/\d+\/(\d+)(?:[/?#]|$)/i);
+	return id + ' - ' + subject;
+}
 
-	let subject = text('[aria-label="Conversation Subject"]');
+function observeTicketName() {
+	const titleObserver = new MutationObserver(clockifyButton.rerenderAllButtons);
 
-	// Legacy theme
-	if (!subject) {
-		subject = text('#subjectLine');
+	const observationTarget = document.querySelector('h1[aria-label="Conversation Subject"]');
+
+	if (observationTarget) {
+		const observationConfig = { subtree: true, characterData: true };
+		titleObserver.observe(observationTarget, observationConfig);
 	}
-
-	subject = (subject || "").trim();
-	const ticketPrefix = match ? `#${match[1]} - ` : "";
-
-	return ticketPrefix + subject;
 }

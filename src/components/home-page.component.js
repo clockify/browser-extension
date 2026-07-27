@@ -3,20 +3,16 @@ import Header from './header.component.jsx';
 import StartTimer from './start-timer.component';
 import moment, { duration } from 'moment';
 import TimeEntryList from './time-entry-list.component';
-import { TimeEntryListNotSynced } from '~/components/TimeEntryListNotSynced';
 import 'moment-duration-format';
 import EditForm from './edit-form.component';
-import { isOffline } from './check-connection';
 import packageJson from '../../package.json';
 import { getIconStatus } from '~/enums/browser-icon-status-enum';
 import { Application } from '~/application';
 import { getBrowser } from '~/helpers/browser-helper';
 import { getWebSocketEventsEnums } from '~/enums/web-socket-events.enum';
 import { CountdownTimer } from '~/components/CountdownTimer.tsx';
-import { ModalsContainer } from './NotificationModals/ModalContainer.tsx';
 import { mapStateToProps } from '~/zustand/mapStateToProps';
 import { getWorkspacePermissionsEnums } from '~/enums/workspace-permissions.enum';
-import { getLocalStorageEnums } from '~/enums/local-storage.enum';
 import { HtmlStyleHelper } from '~/helpers/html-style-helper';
 import Toaster from './toaster-component';
 import { getManualTrackingModeEnums } from '~/enums/manual-tracking-mode.enum';
@@ -26,7 +22,10 @@ import { getWSCustomFields, offlineStorage } from '~/helpers/offlineStorage';
 import locales from '../helpers/locales';
 import { numberFormatTransform } from '~/helpers/duration-formater';
 import { parseTime } from './time-input-parser';
+import { ModalsContainer } from './NotificationModals/ModalContainer.tsx';
 import { BannerContainer } from '~/components/NotificationBanners/BannerContainer.tsx';
+import { NoInternetConnection } from '~/components/NoInternetConnection';
+import { OnboardingSurvey } from '~/features/onboardingSurvey';
 
 const messages = [
 	'TIME_ENTRY_STARTED',
@@ -51,9 +50,6 @@ let _receiveOfflineEventsName;
 let _logLines = [];
 let _loggerInterval = null;
 const _withLogger = false;
-
-let _networkHandlerListener;
-const networkMessages = ['STATUS_CHANGED_ONLINE', 'STATUS_CHANGED_OFFLINE'];
 
 class HomePage extends Component {
 	constructor(props) {
@@ -83,7 +79,6 @@ class HomePage extends Component {
 			weekStatusMap: {},
 			periodStatusMap: {},
 			isUserOwnerOrAdmin: null,
-			isOffline: null,
 			lang: 'en',
 			groups: [],
 			pomodoroTimeInterval: 5,
@@ -98,9 +93,7 @@ class HomePage extends Component {
 		this.initialJob = this.initialJob.bind(this);
 		this.loadMoreEntries = this.loadMoreEntries.bind(this);
 		this.getEntryFromPomodoroAndIdleEvents = this.getEntryFromPomodoroAndIdleEvents.bind(this);
-		this.saveAllOfflineEntries = this.saveAllOfflineEntries.bind(this);
 
-		this.connectionHandler = this.connectionHandler.bind(this);
 		this.handleRefresh = this.handleRefresh.bind(this);
 		// this.checkOffline = this.checkOffline.bind(this);
 		// this.checkReload = this.checkReload.bind(this);
@@ -115,16 +108,15 @@ class HomePage extends Component {
 		this.setAsyncStateItems = this.setAsyncStateItems.bind(this);
 		this.onStorageChange = this.onStorageChange.bind(this);
 		this.clearEntries = this.clearEntries.bind(this);
-		this.triggerOfflineEntrySync = this.triggerOfflineEntrySync.bind(this);
 		this.backgroundMessageListener = this.backgroundMessageListener.bind(this);
 		this.preventDragHandler = this.preventDragHandler.bind(this);
+		this.createUndoToaster = this.createUndoToaster.bind(this);
 
 		offlineStorage.load();
 	}
 
 	async setAsyncStateItems() {
 		let mode = await localStorage.getItem('mode');
-		const isOff = await isOffline();
 		const lang = await localStorage.getItem('lang');
 		moment.locale(lang);
 
@@ -133,7 +125,6 @@ class HomePage extends Component {
 		this.setState({
 			mode,
 			userSettings,
-			isOffline: isOff,
 		});
 
 		localStorage.setItem('appVersion', packageJson.version);
@@ -200,14 +191,14 @@ class HomePage extends Component {
 		}
 		getBrowser().runtime.onMessage.addListener(this.backgroundMessageListener);
 
-		window.ononline = event => {
-			this.connectionHandler({ type: 'online' });
-		};
-
-		window.onoffline = event => {
-			this.connectionHandler({ type: 'offline' });
-		};
 		this.setAsyncStateItems();
+
+		if (this.props?.entryToRestoreId && typeof this.props?.entryToRestoreId !== 'undefined') {
+			this.createUndoToaster(
+				this.props.entryToRestoreId,
+				this.props.entryToRestoreInProgress
+			);
+		}
 	}
 
 	componentDidUpdate(prevProps) {
@@ -253,7 +244,6 @@ class HomePage extends Component {
 
 	async initialJob() {
 		// const receiveOfflineEventsName = await localStorage.getItem(_receiveOfflineEventsName, 'false');
-		const isOnline = !(await isOffline());
 		// if ( receiveOfflineEventsName !== 'true') {
 		//     this.log('=> polling offline mode')
 		//     if (_timeoutCheckOffline)
@@ -263,26 +253,21 @@ class HomePage extends Component {
 
 		if (!websocketHandlerListener) this.webSocketMessagesHandler();
 
-		if (!_networkHandlerListener) this.networkMessagesHandler();
-
 		if (!_webSocketConnectExtensionDone) {
 			this.enableTimerShortcutForFirstTime();
-			if (isOnline) {
-				getBrowser()
-					.runtime.sendMessage({
-						eventName: 'webSocketConnect',
-					})
-					.catch(error => {
-						console.log('home-page.component.js | line 306 | error:', error);
-					});
-				_webSocketConnectExtensionDone = true;
-			}
+			getBrowser()
+				.runtime.sendMessage({
+					eventName: 'webSocketConnect',
+				})
+				.catch(error => {
+					console.log('home-page.component.js | line 306 | error:', error);
+				});
+			_webSocketConnectExtensionDone = true;
+
 			this.getEntryFromPomodoroAndIdleEvents();
 		}
 
-		if (isOnline) {
-			this.setIsUserOwnerOrAdmin();
-		}
+		this.setIsUserOwnerOrAdmin();
 		// else {
 
 		this.handleRefresh();
@@ -305,13 +290,6 @@ class HomePage extends Component {
 
 	componentWillUnmount() {
 		this.log('componentWillUnmount');
-		// if (_timeoutCheckOffline) {
-		//     clearTimeout(_timeoutCheckOffline);
-		//     _timeoutCheckOffline = null;
-		// }
-
-		getBrowser().runtime.onMessage.removeListener(_networkHandlerListener);
-		_networkHandlerListener = null;
 
 		getBrowser().runtime.onMessage.removeListener(websocketHandlerListener);
 		websocketHandlerListener = null;
@@ -344,32 +322,6 @@ class HomePage extends Component {
 		this.handleRefresh();
 	}
 
-	connectionHandler(event) {
-		// if (_timeoutCheckOffline) {
-		//     clearTimeout(_timeoutCheckOffline);
-		//     _timeoutCheckOffline = null;
-		// }
-		this.log(`handler event --------------> '${event.type}'`);
-		localStorage.setItem(
-			_receiveOfflineEventsName,
-			'true',
-			getLocalStorageEnums().PERMANENT_PREFIX
-		);
-		let isOff;
-		if (event.type === 'online') {
-			localStorage.setItem('offline', 'false');
-			isOff = false;
-			this.setState({ isOffline: false });
-		} else {
-			localStorage.setItem('offline', 'true');
-			isOff = true;
-			this.setState({ isOffline: true });
-		}
-
-		if (isOff) this.reloadOffline();
-		else this.reloadOnlineByEvent();
-	}
-
 	getEntryFromPomodoroAndIdleEvents() {
 		getBrowser().runtime.onMessage.addListener((request, sender, sendResponse) => {
 			if (request.eventName === 'pomodoroEvent' || request.eventName === 'idleEvent') {
@@ -386,30 +338,28 @@ class HomePage extends Component {
 	}
 
 	async setIsUserOwnerOrAdmin() {
-		if (!(await isOffline())) {
-			getBrowser()
-				.runtime.sendMessage({
-					eventName: 'getPermissionsForUser',
-				})
-				.then(response => {
-					if (!response?.data?.userRoles) return;
-					const isUserOwnerOrAdmin =
-						response.data.userRoles.filter(
-							permission =>
-								permission.role === getWorkspacePermissionsEnums().WORKSPACE_OWN ||
-								permission.role === getWorkspacePermissionsEnums().WORKSPACE_ADMIN
-						).length > 0;
-					this.setState(
-						{
-							isUserOwnerOrAdmin,
-						},
-						() => {
-							localStorage.setItem('isUserOwnerOrAdmin', isUserOwnerOrAdmin);
-							// this.handleRefresh(true);
-						}
-					);
-				});
-		}
+		getBrowser()
+			.runtime.sendMessage({
+				eventName: 'getPermissionsForUser',
+			})
+			.then(response => {
+				if (!response?.data?.userRoles) return;
+				const isUserOwnerOrAdmin =
+					response.data.userRoles.filter(
+						permission =>
+							permission.role === getWorkspacePermissionsEnums().WORKSPACE_OWN ||
+							permission.role === getWorkspacePermissionsEnums().WORKSPACE_ADMIN
+					).length > 0;
+				this.setState(
+					{
+						isUserOwnerOrAdmin,
+					},
+					() => {
+						localStorage.setItem('isUserOwnerOrAdmin', isUserOwnerOrAdmin);
+						// this.handleRefresh(true);
+					}
+				);
+			});
 	}
 
 	enableTimerShortcutForFirstTime() {
@@ -507,23 +457,12 @@ class HomePage extends Component {
 		getBrowser().runtime.onMessage.addListener(websocketHandlerListener);
 	}
 
-	networkMessagesHandler() {
-		_networkHandlerListener = (request, sender, sendResponse) => {
-			if (networkMessages.includes(request.eventName)) {
-				switch (request.eventName) {
-					case 'STATUS_CHANGED_ONLINE':
-						this.log('STATUS_CHANGED_ONLINE');
-						this.connectionHandler({ type: 'online' });
-						break;
-					case 'STATUS_CHANGED_OFFLINE':
-						this.log('STATUS_CHANGED_OFFLINE');
-						this.connectionHandler({ type: 'offline' });
-						break;
-				}
-			}
-		};
-
-		getBrowser().runtime.onMessage.addListener(_networkHandlerListener);
+	createUndoToaster(entryToRestore, runningEntry) {
+		if (runningEntry) {
+			this.showUndoMessage(locales.TIMER_CANCELLED, 5, entryToRestore);
+		} else {
+			this.showUndoMessage(locales.ENTRY_DELETED_SUCCESS, 5, entryToRestore);
+		}
 	}
 
 	async saveAllOfflineEntries() {
@@ -592,24 +531,21 @@ class HomePage extends Component {
 	}
 
 	async getWorkspaceSettings() {
-		if (!(await isOffline())) {
-			getBrowser()
-				.runtime.sendMessage({
-					eventName: 'getUserRoles',
-				})
-				.then(response => {
-					if (response && response.data && response.data.userRoles) {
-						const { userRoles } = response.data;
-						getBrowser().storage.local.set({
-							userRoles,
-						});
-					} else {
-					}
-				})
-				.catch(error => {
-					console.log(error);
-				});
-		}
+		getBrowser()
+			.runtime.sendMessage({
+				eventName: 'getUserRoles',
+			})
+			.then(response => {
+				if (response && response.data && response.data.userRoles) {
+					const { userRoles } = response.data;
+					getBrowser().storage.local.set({
+						userRoles,
+					});
+				}
+			})
+			.catch(error => {
+				console.log(error);
+			});
 
 		return getBrowser()
 			.runtime.sendMessage({
@@ -1119,18 +1055,40 @@ class HomePage extends Component {
 				// 		localStorage.setItem('timeEntryInProgress', data);
 				// 	})
 				// 	.catch(() => {});
+				if (!response.data) {
+					return this.toaster.toast('error', response, 2);
+				}
 			})
 			.catch(() => {});
+	}
+
+	checkRequiredCustomFields() {
+		const { inProgress } = this.state;
+		const customFields = inProgress.customFieldValues.filter(
+			cf => offlineStorage.getWSCustomField(cf.customFieldId).required
+		);
+		const requiredCustomFieldsNoValue = [];
+
+		this.state.inProgress.customFieldValues?.forEach(cf => {
+			const wsCfProjectValue = offlineStorage
+				.getWSCustomField(cf.customFieldId)
+				.projectDefaultValues.find(cf => cf.projectId === inProgress.projectId)?.value;
+
+			customFields.forEach(rcf =>
+				rcf.name === cf.name && cf.value === null && !wsCfProjectValue
+					? requiredCustomFieldsNoValue.push(cf.name)
+					: requiredCustomFieldsNoValue
+			);
+		});
+
+		return requiredCustomFieldsNoValue;
 	}
 
 	checkRequiredFields(timeEntry) {
 		const { inProgress } = this.state;
 		const { forceProjects, forceTasks, forceTags, forceDescription } =
 			this.state.workspaceSettings;
-		const customFields = inProgress.customFieldValues.filter(
-			cf => offlineStorage.getWSCustomField(cf.customFieldId).required
-		);
-
+		const requiredCustomFields = this.checkRequiredCustomFields();
 		let missingFields = '';
 
 		if (forceDescription && !inProgress.description) {
@@ -1149,18 +1107,8 @@ class HomePage extends Component {
 			missingFields += 'tags, ';
 		}
 
-		for (let cf of inProgress.customFieldValues) {
-			let value = inProgress.customFieldValues.find(
-				el => el.customFieldId === cf.customFieldId
-			).value;
-
-			if (inProgress.projectId !== null) {
-				value = timeEntry.customFieldValues.find(
-					el => el.customFieldId === cf.customFieldId
-				).value;
-			}
-
-			if (!cf.value && !value && cf.type !== 'CHECKBOX') missingFields += `${cf.name}, `;
+		if (requiredCustomFields.length !== 0) {
+			requiredCustomFields.forEach(cf => (missingFields += `${cf}, `));
 		}
 
 		missingFields = missingFields.trim();
@@ -1227,10 +1175,6 @@ class HomePage extends Component {
 				.runtime.sendMessage({
 					eventName: 'getEntryInProgress',
 				})
-				.then(response => {
-					// if there is no time entry in progress, then we can safely sync offline entries
-					!response.data && this.triggerOfflineEntrySync();
-				})
 				.finally(() => {
 					this.reloadData();
 				});
@@ -1239,37 +1183,19 @@ class HomePage extends Component {
 		}
 	}
 
-	async triggerOfflineEntrySync() {
-		if (!(await isOffline())) {
-			getBrowser()
-				.runtime.sendMessage({
-					eventName: 'getEntryInProgress',
-				})
-				.then(response => {
-					// if there is no time entry in progress, then we can safely sync offline entries
-					if (!response.data) this.saveAllOfflineEntries();
-					else this.toaster.toast('error', "Can't sync while entry in progress", 2);
-				});
-		}
-	}
-
 	async reloadData(reload = false) {
 		this.log('reloadData ' + (reload ? 'mount (why without unmount?)' : ''));
-		if (!(await isOffline())) {
-			this.setState(
-				{
-					pageCount: 0,
-					loading: false,
-				},
-				() => {
-					this.getTimeEntries(reload);
-				}
-			);
-			if (this.start) {
-				this.start.getTimeEntryInProgress();
+		this.setState(
+			{
+				pageCount: 0,
+				loading: false,
+			},
+			() => {
+				this.getTimeEntries(reload);
 			}
-		} else {
-			this.getTimeEntries(reload);
+		);
+		if (this.start) {
+			this.start.getTimeEntryInProgress();
 		}
 	}
 
@@ -1334,6 +1260,14 @@ class HomePage extends Component {
 		this.toaster.toast('info', message, n || 2);
 	}
 
+	showErrorMessage(message, n) {
+		this.toaster.toast('error', message, n || 2);
+	}
+
+	showUndoMessage(message, n, entryId) {
+		this.toaster.showUndoToast(message, n, [entryId]);
+	}
+
 	clearEntries() {
 		this.setState({
 			timeEntries: [],
@@ -1356,10 +1290,8 @@ class HomePage extends Component {
 	render() {
 		const {
 			inProgress,
-			isOffline,
 			mode,
 			ready,
-			activeWorkspaceId,
 			isFocusModeEnabled,
 			workspaceSettings,
 			features,
@@ -1377,10 +1309,6 @@ class HomePage extends Component {
 			wasRegionalEverAllowed,
 			selfHosted,
 		} = this.state;
-
-		const timeEntriesOffline = offlineStorage.timeEntriesOffline.filter(
-			timeEntry => !timeEntry.workspaceId || timeEntry.workspaceId === activeWorkspaceId
-		);
 
 		const isTrackingDisabled =
 			!selfHosted &&
@@ -1400,7 +1328,9 @@ class HomePage extends Component {
 				{isTrackingDisabled && (
 					<div className="clockify-subscription-expired-overlay"></div>
 				)}
+				<OnboardingSurvey showMessage={this.showErrorMessage.bind(this)} />
 				<ModalsContainer />
+				<NoInternetConnection />
 				{
 					<>
 						<div className="header_and_timer">
@@ -1420,7 +1350,6 @@ class HomePage extends Component {
 								workspaceSettings={workspaceSettings}
 								isTrackerPage={true}
 								workspaceChanged={this.workspaceChanged}
-								isOffline={isOffline}
 								toaster={this.toaster}
 								mode={mode}
 								manualModeDisabled={manualModeDisabled}
@@ -1446,6 +1375,7 @@ class HomePage extends Component {
 								ref={instance => {
 									this.toaster = instance;
 								}}
+								handleRefresh={this.handleRefresh.bind(this)}
 							/>
 							<StartTimer
 								ref={instance => {
@@ -1466,28 +1396,6 @@ class HomePage extends Component {
 								log={this.log}
 								activeWorkspaceId={this.state.activeWorkspaceId}
 							/>
-						</div>
-						<div
-							className={
-								!isOffline && timeEntriesOffline && timeEntriesOffline.length > 0
-									? ''
-									: 'disabled'
-							}>
-							{!isOffline && timeEntriesOffline.length > 0 && (
-								<TimeEntryListNotSynced
-									inProgress={inProgress}
-									timeEntries={timeEntriesOffline}
-									pullToRefresh={pullToRefresh}
-									handleRefresh={this.handleRefresh}
-									triggerOfflineEntrySync={this.triggerOfflineEntrySync}
-									workspaceSettings={workspaceSettings}
-									features={features}
-									timeFormat={userSettings.timeFormat}
-									userSettings={userSettings}
-									isUserOwnerOrAdmin={isUserOwnerOrAdmin}
-									manualModeDisabled={this.state.manualModeDisabled}
-								/>
-							)}
 						</div>
 						{pomodoroEnabled && isFocusModeEnabled && inProgress ? (
 							<div>
@@ -1532,7 +1440,6 @@ class HomePage extends Component {
 									workspaceSettings={workspaceSettings}
 									features={features}
 									userSettings={userSettings}
-									isOffline={isOffline}
 									isUserOwnerOrAdmin={isUserOwnerOrAdmin}
 									manualModeDisabled={this.state.manualModeDisabled}
 								/>

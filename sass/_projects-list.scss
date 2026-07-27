@@ -119,6 +119,7 @@ span.project-list-name-client {
   padding: 10px;
 
   input {
+    color: variables.$black !important;
     background-color: white !important;
   }
 
@@ -141,7 +142,6 @@ span.project-list-name-client {
     top: 14px;
     height: 12px;
     width: 12px;
-    content: url('../assets/images/x.png');
     cursor: pointer;
   }
 
@@ -209,7 +209,7 @@ li.project-item-tasks {
   flex: 0 0 90px;
 }
 
-li.project-item-tasks > span {
+li.project-item-tasks>span {
   color: variables.$lighter_text;
 
   img {
@@ -237,6 +237,7 @@ li.project-item-favorite {
   background-color: variables.$task-background;
   color: variables.$dark_text;
   font-size: 14px;
+
   // line-height: 16px;
   &:hover {
     background-color: variables.$entries_header;

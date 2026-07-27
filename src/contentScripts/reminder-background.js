@@ -1,25 +1,17 @@
-let reminderTimer;
-// const reminderButtons = [clockifyLocales.START_TIMER, clockifyLocales.ADD_MISSING_TIME];
-
-aBrowser.alarms.onAlarm.addListener(async (alarm) => {
+aBrowser.alarms.onAlarm.addListener(async alarm => {
 	if (alarm.name === 'createReminderNotification') {
 		const userId = await localStorage.getItem('userId');
-		const permReminderDandT = await localStorage.getItem(
-			'permanent_reminderDatesAndTimes'
-		);
+		const permReminderDandT = await localStorage.getItem('permanent_reminderDatesAndTimes');
 		const reminderByUserFromStorage = JSON.parse(permReminderDandT).filter(
-			(reminderDatesAndTime) => reminderDatesAndTime.userId === userId
+			reminderDatesAndTime => reminderDatesAndTime.userId === userId
 		)[0];
 		const dateTo = this.parseTimesToDates(reminderByUserFromStorage.timeTo);
-		createReminderNotification(
-			dateTo,
-			reminderByUserFromStorage.minutesSinceLastEntry
-		);
+		createReminderNotification(dateTo, reminderByUserFromStorage.minutesSinceLastEntry);
 	}
 });
 
 aBrowser.runtime.onMessage.addListener((request, sender, sendResponse) => {
-	aBrowser.storage.local.get(['timeEntryInProgress'], (result) => {
+	aBrowser.storage.local.get(['timeEntryInProgress'], result => {
 		if (request.eventName === 'reminder' && !result.timeEntryInProgress) {
 			addReminderTimer();
 		}
@@ -34,19 +26,15 @@ async function addReminderTimer() {
 	const userId = await localStorage.getItem('userId');
 	const permReminder = await localStorage.getItem('permanent_reminders');
 	const reminderEnabledForUser = permReminder
-		? JSON.parse(permReminder).filter(
-				(reminder) => reminder.userId === userId
-		  )[0]
+		? JSON.parse(permReminder).filter(reminder => reminder.userId === userId)[0]
 		: null;
 
 	if (!reminderEnabledForUser || !reminderEnabledForUser.enabled) {
 		return;
 	}
-	const permReminderDandT = await localStorage.getItem(
-		'permanent_reminderDatesAndTimes'
-	);
+	const permReminderDandT = await localStorage.getItem('permanent_reminderDatesAndTimes');
 	const reminderByUserFromStorage = JSON.parse(permReminderDandT).filter(
-		(reminderDatesAndTime) => reminderDatesAndTime.userId === userId
+		reminderDatesAndTime => reminderDatesAndTime.userId === userId
 	)[0];
 	const currentDate = new Date();
 	const dateFrom = this.parseTimesToDates(reminderByUserFromStorage.timeFrom);
@@ -60,18 +48,11 @@ async function addReminderTimer() {
 		aBrowser.alarms.create('createReminderNotification', {
 			delayInMinutes: reminderByUserFromStorage.minutesSinceLastEntry,
 		});
-
-		// reminderTimer = setTimeout(
-		//     () => this.createReminderNotification(dateTo, reminderByUserFromStorage.minutesSinceLastEntry),
-		//     reminderByUserFromStorage.minutesSinceLastEntry * 60 * 1000);
 	}
 }
 
 function removeReminderTimer() {
-	if (reminderTimer) {
-		// clearTimeout(reminderTimer);
-		aBrowser.alarms.clear('createReminderNotification');
-	}
+	aBrowser.alarms.clear('createReminderNotification');
 	this.clearNotification('reminder');
 }
 
@@ -92,7 +73,7 @@ function parseTimesToDates(time) {
 function createReminderNotification(dateTo, minutes) {
 	const currentTime = new Date().getTime();
 
-	aBrowser.storage.local.get(['timeEntryInProgress'], (result) => {
+	aBrowser.storage.local.get(['timeEntryInProgress'], result => {
 		if (currentTime > dateTo || result.timeEntryInProgress) {
 			this.removeReminderTimer();
 			return;

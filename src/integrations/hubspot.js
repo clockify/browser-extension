@@ -122,7 +122,10 @@ function extractIdFromUrl(isHelpDesk = false) {
 	const url = window.location.href;
 
 	if (isHelpDesk) {
-		return url.match(/\/ticket\/(\d+)\/thread/)?.[1];
+		return (
+			url.match(/\/ticket\/(\d+)\/thread/)?.[1] ||
+			text('[role="heading"] button[class*="UnstyledButton"]').replace('#', '')
+		);
 	}
 
 	return url.match(/(\d+)(?=\/?(?:[?#]|$))/)?.[1];

@@ -1,3 +1,5 @@
+let taskObserver;
+
 // List - New UI (September 2023.)
 clockifyButton.render(
 	'.cu-task-row__main:not(.clockify)',
@@ -6,49 +8,64 @@ clockifyButton.render(
 		showTimerOnhover: '.cu-task-row',
 	},
 	async taskRow => {
-		await timeout({ milliseconds: 500 });
+		await timeout({ milliseconds: 1000 });
+		if ($('.clockifyButton', taskRow)) return;
 
-		const taskNameSelector = `.cu-task-row-main__link-text-inner`;
-		const tagNamesSelector = `.cu-tags-select__name-container > span`;
-		const { projectName, listName } = getListProjectAndTask(taskRow.closest('cu-list-group'));
-		const clickUpTaskName = () => text(taskNameSelector, taskRow);
-		const taskLink = $('.cu-task-row-main__link', taskRow).href;
-		const taskId = taskLink.split('/').pop();
+		const projectName = () => getListProjectAndTask(taskRow, true);
+		const listName = () => getListProjectAndTask(taskRow);
+		const clickUpTaskName = () => text(`.cu-task-row-main__link-text-inner`, taskRow);
+		const taskId = () => $('.cu-task-row-main__link', taskRow).href.split('/').pop();
 
-		const description = () => `${clickUpTaskName()} | #${taskId}`;
+		const description = () => `${clickUpTaskName()} | #${taskId()}`;
 
-		const tagNames = () => textList(tagNamesSelector, taskRow);
+		const tagNames = () =>
+			textList('cu-tags-menu span.cu-value-tag-menu__custom-trigger', taskRow);
 		const entry = { description, projectName, taskName: listName, tagNames, small: true };
 
 		const timer = clockifyButton.createTimer(entry);
 
-		timer.style.position = 'absolute';
-		timer.style.left = '15px';
-		timer.style.zIndex = '9999';
-
-		taskRow.prepend(timer);
+		$('[data-test="task-row-status__limited-edit-status"]', taskRow).insertAdjacentElement(
+			'beforebegin',
+			timer
+		);
 	}
 );
 
 // Modal/Sidebar - New UI (March 2023.)
 clockifyButton.render(
 	'.cu-task-view__container .cu-task-view-header__left:not(.clockify)',
-	{ observe: true, onNavigationRerender: true },
+	{ observe: true },
 	async sidebarHeader => {
-		const pageBreadcrumbs = textList('span[class*="cu-task-view-breadcrumbs"]');
+		await timeout({ milliseconds: 500 });
+		if ($('.clockify-widget-container', sidebarHeader)) return;
+
+		const pageBreadcrumbs = () =>
+			textList('span[class*="cu-task-view-breadcrumbs"]:not([class$="__icon"])');
+		const taskDetailsSection = $(
+			'cu-task-hero-section',
+			sidebarHeader.parentElement.parentElement
+		);
+
 		observeTaskChange();
-		const sidebar = sidebarHeader.closest('.cu-task-view__container');
 
-		let projectName = pageBreadcrumbs.length === 3 ? pageBreadcrumbs[1] : pageBreadcrumbs[0];
+		const pageBreadcrumbsProjectName = () =>
+			pageBreadcrumbs().length === 3 ? pageBreadcrumbs()[1] : pageBreadcrumbs()[0];
 
-		const listName = pageBreadcrumbs[pageBreadcrumbs.length - 1];
+		const projectName = () =>
+			pageBreadcrumbsProjectName() === '...' || pageBreadcrumbs().length === 1
+				? getListProjectAndTask(sidebarHeader, true)
+				: pageBreadcrumbsProjectName();
 
-		const clickupTaskId = () =>
-			window.location.pathname.substring(window.location.pathname.lastIndexOf('/') + 1);
+		const listName = () =>
+			pageBreadcrumbsProjectName() === '...' || pageBreadcrumbs().length === 1
+				? getListProjectAndTask(sidebarHeader)
+				: pageBreadcrumbs()[pageBreadcrumbs().length - 1];
+
+		const clickupTaskId = () => text('.cu-task-id-button__label') || text('cu-hidden-task-id');
 		const clickupTaskName = () => text('.cu-task-title__overlay');
 
 		const description = () => `${clickupTaskName()} | #${clickupTaskId()}`;
-		const tagNames = () => textList('.cu-tags-badge__inner span', sidebar);
+		const tagNames = () => textList('.cu-tags-badge__inner span', taskDetailsSection);
 
 		const entry = { description, projectName, taskName: listName, tagNames };
 
@@ -71,13 +88,17 @@ clockifyButton.render(
 	}
 );
 
-function getListProjectAndTask(context) {
-	const pageBreadcrumbs = textList('cu-breadcrumb-item span:not(.avatar-initials)');
+function getListProjectAndTask(context, isProjectNeeded = false) {
+	let pageBreadcrumbs = textList('cu-breadcrumb-item span:not(.avatar-initials)');
+
+	if (!pageBreadcrumbs.length) {
+		pageBreadcrumbs = textList('span[class*="cu-task-view-breadcrumbs"]');
+	}
 
 	// default values
-	const listPath = text('.cu-list-group__header-breadcrumbs', context);
+	const listPath = text('.cu-list-group__header-breadcrumbs', context.closest('cu-list-group'));
 	let projectName = listPath.substring(listPath.indexOf('/') + 1).trim();
-	let listName = text('[data-test*="list-group-name"]', context);
+	let listName = text('[data-test*="list-group-name"]', context.closest('cu-list-group'));
 
 	if (pageBreadcrumbs.length === 3) {
 		projectName = pageBreadcrumbs[1];
@@ -90,7 +111,7 @@ function getListProjectAndTask(context) {
 		}
 	}
 
-	return { projectName, listName };
+	return isProjectNeeded ? projectName : listName;
 }
 
 applyStyles(
@@ -131,7 +152,9 @@ async function applyThemeDependentStyles() {
 }
 
 function observeTaskChange() {
-	const taskObserver = new MutationObserver(() => {
+	if (taskObserver) return;
+
+	taskObserver = new MutationObserver(() => {
 		setTimeout(clockifyButton.rerenderAllButtons, 0);
 	});
 
@@ -140,7 +163,15 @@ function observeTaskChange() {
 	);
 
 	if (observationTarget) {
-		const observationConfig = { childList: true, subtree: true, characterData: true };
+		const observationConfig = {
+			characterData: true,
+			attributes: true,
+			attributeFilter: ['aria-label'],
+		};
 		taskObserver.observe(observationTarget, observationConfig);
 	}
 }
+
+window.navigation.addEventListener('navigate', event => {
+	setTimeout(clockifyButton.rerenderAllButtons, 100);
+});

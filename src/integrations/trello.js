@@ -6,10 +6,13 @@
 		selectors.cardBoardView.hanger,
 		{
 			observe: true,
-			onNavigationRerender: true,
 			showTimerOnhover: '[data-testid="trello-card"]',
+			onNavigationRerender: true,
 		},
-		card => {
+		async card => {
+			await timeout({ milliseconds: 500 });
+			if ($('.clockifyButton', card)) return;
+
 			const description = () => text(selectors.cardBoardView.cardTitle, card);
 			const projectName = () => text(selectors.cardBoardView.boardTitle);
 

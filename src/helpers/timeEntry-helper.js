@@ -1,10 +1,7 @@
-import { isOffline } from '../components/check-connection';
 import { getBrowser } from './browser-helper';
 
 export class TimeEntryHelper {
 	async updateProjectTask(timeEntry, projectDB, taskDB) {
-		if (await isOffline()) return null;
-		 
 		if (taskDB) {
 			return getBrowser()
 				.runtime.sendMessage({
@@ -15,7 +12,7 @@ export class TimeEntryHelper {
 						id: timeEntry.id,
 					},
 				})
-				.then((response) => {
+				.then(response => {
 					const entry = response.data;
 					getBrowser().runtime.sendMessage({
 						eventName: 'editBillable',
@@ -30,9 +27,8 @@ export class TimeEntryHelper {
 						task: entry.task ? entry.task : taskDB,
 					});
 				})
-				.catch((error) => {});
+				.catch(error => {});
 		} else {
-			 
 			return getBrowser()
 				.runtime.sendMessage({
 					eventName: 'editProject',
@@ -41,8 +37,7 @@ export class TimeEntryHelper {
 						id: timeEntry.id,
 					},
 				})
-				.then((response) => {
-					 
+				.then(response => {
 					const entry = response.data; // not possible to use entry.project prop
 					getBrowser().runtime.sendMessage({
 						eventName: 'editBillable',
@@ -56,8 +51,7 @@ export class TimeEntryHelper {
 						billable: projectDB.billable,
 					});
 				})
-				.catch((error) => {
-					 
+				.catch(error => {
 					// this.notifyError(error);
 				});
 		}

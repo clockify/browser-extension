@@ -315,11 +315,13 @@ class ClockifyService {
 					/Task with name '.*' already exists/,
 					/You entered wrong value. Don't use \"<\" and \">\" characters/,
 					/Can't save, required fields are missing or archived./,
+					/Short survey already completed on workspace./,
 				];
 				switch (response.status) {
 					case 400:
 					case 501:
 						const { message } = await response.json();
+						if (endpoint.includes('/short-survey')) return errorObj(501, message);
 
 						const returnMessageToComponent =
 							errorMessagesThatShouldBeReturnedToComponent.find(pattern =>

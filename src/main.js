@@ -8,7 +8,6 @@ import { checkConnection } from './components/check-connection';
 import ErrorBoundary from './components/error-boundary';
 import ClockifyButton from './components/integrationPopup/ClockifyButton';
 import { offlineStorage } from './helpers/offlineStorage';
-import { isChrome } from './helpers/browser-helper';
 
 document.addEventListener('DOMContentLoaded', () => {
 	if (!navigator.userAgent.includes('Firefox')) return;
@@ -115,10 +114,6 @@ function Mac() {
 	}
 }
 
-const LoadingElement = () => {
-	return <div className="clockify-splash-screen"></div>;
-};
-
 function getSiblingButtonId(origin) {
 	const previousSibling = origin.previousElementSibling;
 	const nextSibling = origin.nextElementSibling;
@@ -157,7 +152,6 @@ if (
 	checkConnection();
 	window.mountHtmlElement = document.getElementById('mount');
 	window.reactRoot = createRoot(window.mountHtmlElement);
-	!navigator.onLine && window.reactRoot.render(<LoadingElement />);
 	document.addEventListener('DOMContentLoaded', async () => {
 		// since the navigator.onLine may be unreliable
 		// once it says we are offline we need to give extension

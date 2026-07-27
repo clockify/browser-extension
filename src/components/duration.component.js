@@ -86,8 +86,8 @@ class Duration extends React.Component {
 					end,
 					endTime,
 					time: duration(
-						moment(endTime.set('second', 0).set('milliseconds', 0)).diff(
-							startTime.set('second', 0).set('milliseconds', 0)
+						moment(endTime.set('milliseconds', 0)).diff(
+							startTime.set('milliseconds', 0)
 						)
 					),
 					datePickerOpen: false,

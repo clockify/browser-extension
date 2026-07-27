@@ -242,16 +242,29 @@ const CustomFieldNumber = ({ cf, updateValue, numberFormat, setIsValid }) => {
 				ref={inputRef}
 				index={index}
 				value={isValueless(value) ? '' : value}
-				className={`custom-field-number${isDisabled ? '-disabled' : ''} ${
-					isNotValid ? 'custom-field-required' : ''
-				}`}
+				className={`custom-field-number${isDisabled ? '-disabled' : ''}`}
+				id={`cf-number-${index}`}
+				data-testid={'custom-field-number'}
 				title={description}
-				placeholder={placeHolder}
 				disabled={isDisabled}
 				onChange={handleChange}
 				onBlur={handleBlur}
 				onFocus={handleFocus}
 			/>
+
+			{!value && typeof value !== 'number' && (
+				<label htmlFor={`cf-number-${index}`} className={'field-required-label-input'}>
+					{placeHolder}{' '}
+					{required && (
+						<span
+							data-testid={`custom-field-number-asterisk`}
+							className={'field-required-label-asterisk'}>
+							*
+						</span>
+					)}
+				</label>
+			)}
+
 			{!isDisabled && (
 				<div className="input-stepper">
 					<div

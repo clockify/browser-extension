@@ -323,24 +323,21 @@ class TagsList extends React.Component {
 				<div
 					data-testid="tag-dropdown"
 					title={title}
-					className={
-						this.state.isOffline
-							? 'tag-list-button-offline'
-							: this.props.tagsRequired
-								? 'tag-list-button-required'
-								: 'tag-list-button'
-					}
+					className={this.state.isOffline ? 'tag-list-button-offline' : 'tag-list-button'}
 					onClick={this.toggleTagsList}
 					tabIndex={'0'}
 					onKeyDown={e => {
 						if (e.key === 'Enter') this.toggleTagsList(e);
 					}}>
 					<span className={tags.length === 0 ? 'tag-list-add' : 'disabled'}>
-						{this.props.tagsRequired
-							? `${locales.ADD_TAGS} ${locales.REQUIRED_LABEL}`
-							: locales.ADD_TAGS}
+						{locales.ADD_TAGS}
+						{this.props.workspaceSettings.forceTags && (
+							<span data-testid="tag-dropdown-asterisk" className={'field-required-label-asterisk'}> *</span>
+						)}
 					</span>
-					<span className={tags.length > 0 ? 'tag-list-selected' : 'disabled'}>
+					<span
+						className={tags.length > 0 ? 'tag-list-selected' : 'disabled'}
+						data-testid="tag-list-selected">
 						{tags
 							.sort((a, b) =>
 								a.name.toLowerCase().localeCompare(b.name.toLowerCase())
@@ -380,6 +377,9 @@ class TagsList extends React.Component {
 									ref={this.tagFilterRef}
 								/>
 								<span
+									style={{
+										backgroundImage: `url("${aBrowser.runtime.getURL('assets/images/x.png')}")`,
+									}}
 									className={
 										!!this.state.filter ? 'tag-list-filter__clear' : 'disabled'
 									}

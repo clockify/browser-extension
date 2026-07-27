@@ -78,7 +78,6 @@ class Login extends React.Component {
 		};
 
 		this.onChange = this.onChange.bind(this);
-		this.forgotPassword = this.forgotPassword.bind(this);
 		this.openLoginPage = this.openLoginPage.bind(this);
 		this.openSignupPage = this.openSignupPage.bind(this);
 		this.setAsyncStateItems = this.setAsyncStateItems.bind(this);
@@ -86,7 +85,6 @@ class Login extends React.Component {
 
 	componentDidMount() {
 		removeDarkModeClassFromBodyElement();
-		this.setAppVersionToStorage();
 		// this.setAppType();
 		this.setAsyncStateItems();
 
@@ -95,6 +93,17 @@ class Login extends React.Component {
 		if (this.props.logout?.isTrue) {
 			this.logout();
 		}
+	}
+
+	async setAsyncStateItems() {
+		await getBrowser().runtime.sendMessage({ eventName: 'clearAnalyticsEvents' });
+
+		const selfHosted = JSON.parse(await localStorage.getItem('selfHosted', false));
+		const isSubDomain = !!(await localStorage.getItem('subDomainName'));
+
+		await this.setAppVersionToStorage();
+
+		this.setState({ selfHosted, isSubDomain });
 	}
 
 	async getBootData() {
@@ -110,52 +119,37 @@ class Login extends React.Component {
 
 		if (!response.ok) {
 			console.error('Get boot data response was not ok:', response.statusText);
+
 			return;
 		}
 
 		const data = await response.json();
+
 		extParameters.setBaseWriteUrl(data.writeEndpoint);
 	}
 
-	async setAsyncStateItems() {
-		await getBrowser().runtime.sendMessage({ eventName: 'clearAnalyticsEvents' });
-		const selfHosted = JSON.parse(await localStorage.getItem('selfHosted', false));
-		const isSubDomain = !!(await localStorage.getItem('subDomainName'));
-		this.setState({
-			selfHosted,
-			isSubDomain,
-		});
+	/* 	clearAllActiveTimers() {
+		getBrowser().runtime.sendMessage({ eventName: 'removeIdleListenerIfIdleIsEnabled' });
+
+		getBrowser().runtime.sendMessage({ eventName: 'restartPomodoro' });
+
+		getBrowser().runtime.sendMessage({ eventName: 'removeReminderTimer' });
+
+		getBrowser().runtime.sendMessage({ eventName: 'removeStopTimerEvent' });
+	} */
+
+	async setAppVersionToStorage() {
+		await localStorage.setItem('appVersion', packageJson.version);
 	}
 
-	clearAllActiveTimers() {
-		getBrowser().runtime.sendMessage({
-			eventName: 'removeIdleListenerIfIdleIsEnabled',
-		});
-		getBrowser().runtime.sendMessage({
-			eventName: 'restartPomodoro',
-		});
-		getBrowser().runtime.sendMessage({
-			eventName: 'removeReminderTimer',
-		});
-		getBrowser().runtime.sendMessage({
-			eventName: 'removeStopTimerEvent',
-		});
+	onChange(event) {
+		this.setState({ [event.target.name]: event.target.value });
 	}
-
-	setAppVersionToStorage() {
-		localStorage.setItem('appVersion', packageJson.version);
-	}
-
-	onChange(e) {
-		this.setState({
-			[e.target.name]: e.target.value,
-		});
-	}
-
-	forgotPassword() {}
 
 	async openLoginPage() {
-		await localStorage.setItem('signupExpected', 'false');
+		await getBrowser().runtime.sendMessage({ eventName: 'startSigninFlow' });
+
+		/* 		await localStorage.setItem('signupExpected', 'false');
 		const homeUrl = await localStorage.getItem('homeUrl');
 
 		let redirectNumb = mozzilaRedirectNumb;
@@ -168,12 +162,15 @@ class Login extends React.Component {
 			browser.tabs.create({
 				url: `${homeUrl}/redirect/${redirectNumb}?type=login`,
 			});
-		}
+		} */
+
 		window.close();
 	}
 
 	async openSignupPage() {
-		await localStorage.setItem('signupExpected', 'true');
+		await getBrowser().runtime.sendMessage({ eventName: 'startSignupFlow' });
+
+		/* 		await localStorage.setItem('signupExpected', 'true');
 		const homeUrl = await localStorage.getItem('homeUrl');
 		let redirectNumb = mozzilaRedirectNumb;
 		if (isChrome()) {
@@ -185,7 +182,8 @@ class Login extends React.Component {
 			browser.tabs.create({
 				url: `${homeUrl}/redirect/${redirectNumb}?type=signup`,
 			});
-		}
+		} */
+
 		window.close();
 	}
 
@@ -201,25 +199,25 @@ class Login extends React.Component {
 		window.reactRoot.render(<SubDomainName />);
 	}
 
-	backToCloudVersion() {
-		localStorage.setItem(
+	async backToCloudVersion() {
+		await localStorage.setItem(
 			'baseUrl',
 			environment.endpoint,
 			getLocalStorageEnums().PERMANENT_PREFIX
 		);
-		localStorage.setItem('homeUrl', environment.home, getLocalStorageEnums().PERMANENT_PREFIX);
-		localStorage.clearByPrefixes([
+		await localStorage.setItem(
+			'homeUrl',
+			environment.home,
+			getLocalStorageEnums().PERMANENT_PREFIX
+		);
+		await localStorage.clearByPrefixes([
 			getLocalStorageEnums().SELF_HOSTED_PREFIX,
 			getLocalStorageEnums().SUB_DOMAIN_PREFIX,
 		]);
 
 		this.getBootData();
 
-		this.setState({
-			selfHosted: false,
-			isSubDomain: false,
-			nativeLogin: true,
-		});
+		this.setState({ selfHosted: false, isSubDomain: false, nativeLogin: true });
 	}
 
 	async logout() {
@@ -229,7 +227,7 @@ class Login extends React.Component {
 			this.props.resetSlices();
 			let timeEntriesOffline = await localStorage.getItem('timeEntriesOffline');
 			timeEntriesOffline = timeEntriesOffline ? JSON.parse(timeEntriesOffline) : [];
-			getBrowser().runtime.sendMessage('closeOptionsPage');
+			await getBrowser().runtime.sendMessage('closeOptionsPage');
 
 			await localStorage.clearByPrefixes(
 				[
@@ -241,13 +239,11 @@ class Login extends React.Component {
 				true
 			);
 
-			localStorage.setItem('timeEntriesOffline', JSON.stringify(timeEntriesOffline));
+			await localStorage.setItem('timeEntriesOffline', JSON.stringify(timeEntriesOffline));
 		}
-		getBrowser().runtime.sendMessage({
-			eventName: 'removeBadge',
-		});
+		await getBrowser().runtime.sendMessage({ eventName: 'removeBadge' });
 
-		checkConnection();
+		/* await */ checkConnection();
 	}
 
 	render() {
@@ -300,8 +296,6 @@ class Login extends React.Component {
 	}
 }
 
-const selectedState = state => ({
-	resetSlices: state.resetSlices,
-});
+const selectedState = state => ({ resetSlices: state.resetSlices });
 
 export default mapStateToProps(selectedState)(Login);

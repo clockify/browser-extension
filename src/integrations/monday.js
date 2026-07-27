@@ -5,7 +5,7 @@
 	clockifyButton.render(selectors.hanger, { observe: true }, async elem => {
 		await timeout({ milliseconds: 500 });
 		if ($('.clockifyButton')) return;
-
+		
 		const { hasBoardNameColon, beforeColon, afterColon, boardName } = getBoardName(selectors);
 
 		const description = () =>
@@ -44,7 +44,7 @@
 			const { hasBoardNameColon, beforeColon, afterColon, boardName } =
 				getBoardName(selectors);
 
-			const description =
+			const description = () =>
 				text(selectors.descriptionFromMainTable) || text(selectors.descriptionFromModal);
 			const projectName = hasBoardNameColon ? beforeColon : boardName;
 			const taskName = hasBoardNameColon ? afterColon : '';

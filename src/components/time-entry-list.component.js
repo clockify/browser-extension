@@ -6,6 +6,8 @@ import { isEqual } from 'lodash';
 import { Application } from '../application';
 import { toDecimalFormat } from '../helpers/time.helper';
 import { areArraysSimilar } from '../helpers/utils';
+import { numberFormatTransform } from '~/helpers/duration-formater';
+import { parseTime } from './time-input-parser';
 
 class TimeEntryList extends React.Component {
 	constructor(props) {
@@ -14,6 +16,7 @@ class TimeEntryList extends React.Component {
 			timeEntry: {},
 			time: moment().hour(0).minute(0).second(0).format('HH:mm:ss'),
 			wsSettings: {},
+			timeZone: '',
 		};
 		this.application = new Application();
 		this.handleRefresh = this.handleRefresh.bind(this);
@@ -25,19 +28,28 @@ class TimeEntryList extends React.Component {
 
 	async getTimeFormat() {
 		const wsSettings = JSON.parse(await localStorage.getItem('workspaceSettings'));
+		const { timeZone } = JSON.parse(await localStorage.getItem('userSettings'));
 		this.setState({
 			wsSettings,
+			timeZone,
 		});
 	}
 
 	getCountingTotalTime(firstPart, lastPart) {
+		const formattedKey = moment().add(1, 'day').format('ddd, Do MMM');
+
 		const dateMapping = {
 			[locales.TODAY_LABEL]: moment(),
 			[locales.YESTERDAY_LABEL]: moment().subtract(1, 'day'),
+			[formattedKey]: moment().add(1, 'day'),
 		};
 		const targetDate = dateMapping[firstPart];
 
-		if (targetDate && moment(this.props.inProgressStartDate).isSame(targetDate, 'day')) {
+		if (
+			targetDate &&
+			moment(this.props.inProgressStartDate).tz(this.state.timeZone).format('ddd, Do MMM') ===
+				targetDate.format('ddd, Do MMM')
+		) {
 			return this.getTotalTimeFormatted(lastPart);
 		}
 
@@ -50,7 +62,15 @@ class TimeEntryList extends React.Component {
 				const result = Number(total) + Number(toDecimalFormat(duration(this.state.time)));
 				return result.toFixed(2);
 			}
-			return total;
+			const addedTime = moment
+				.duration(parseFloat(total.replace(',', '.')), 'hours')
+				.add(this.state.time);
+			const formatedTotal = numberFormatTransform(
+				parseTime(addedTime.toISOString(), 'h.hh'),
+				this.state.wsSettings?.numberFormat,
+				'h.hh'
+			);
+			return formatedTotal;
 		}
 
 		return duration(total.replace(',', ''))
@@ -136,14 +156,13 @@ class TimeEntryList extends React.Component {
 	}
 
 	render() {
-		const { isOffline } = this.props;
 		if (this.props.isLoading && !this.props.timeEntries.length) {
 			return (
 				<div>
 					<p className="loading-entries">{locales.TRACKER__ENTRY_MESSAGES__LOADING}</p>
 				</div>
 			);
-		} else if (this.props.timeEntries.length === 0 && !isOffline) {
+		} else if (this.props.timeEntries.length === 0) {
 			return (
 				<div className="no-entries">
 					<div className="no-entries-img"></div>
@@ -151,158 +170,142 @@ class TimeEntryList extends React.Component {
 					<label>{locales.YOU_HAVE_NOT_TRACKED}.</label>
 				</div>
 			);
-		} else if (this.props.timeEntries.length === 0 && isOffline) {
-			return (
-				<div className="no-entries">
-					<div className="no-entries-img"></div>
-					<span>{locales.GET_ONLINE}.</span>
-					<label>{locales.YOU_CAN_STILL_TRACK_TIME}.</label>
-				</div>
-			);
-		} else {
-			return (
-				<div>
-					{this.props.groups.map((group, index) => {
-						return (
-							<React.Fragment key={group.title}>
-								<div className="week-header" data-pw={`week-${index}`}>
-									<span className="week-header-dates">{group.title}</span>
-									<span className="week-header-total">
-										<span className="week-header-total-label">
-											{group.totalTitle}{' '}
-										</span>
-										<span className="week-header-total-time">
-											{group.title === locales.THIS_WEEK
-												? this.getTotalTimeFormatted(group.total)
-												: group.total}
-										</span>
-									</span>
-								</div>
-								{this.props.dates
-									.filter(date => group.dates.some(d => date.includes(d)))
-									.map((day, index) => {
-										const groupedIndexes = [];
-										const parts = day.split('-');
-										const lastPart = parts.pop();
-										const firstPart = parts.join('-');
-
-										return (
-											<div
-												className="time-entries-list"
-												key={day}
-												data-pw={`time-entries-list-${index}`}>
-												<div className="time-entries-list-time">
-													<span className="time-entries-list-day">
-														{firstPart}
-													</span>
-													<div className="time-entries-total-and-time">
-														<span className="time-entries-list-total">
-															{locales.TOTAL}
-														</span>
-														<span className="time-entries-list-total-time">
-															{this.getCountingTotalTime(
-																firstPart,
-																lastPart
-															)}
-														</span>
-													</div>
-												</div>
-												{this.props.timeEntries
-													.filter(
-														timeEntry => timeEntry.start === firstPart
-													)
-													.sort((a, b) => {
-														const aSeconds = moment(
-															a.timeInterval.start
-														).unix();
-														const bSeconds = moment(
-															b.timeInterval.start
-														).unix();
-
-														if (aSeconds === bSeconds) {
-															return isChrome() ? -1 : 1;
-														}
-
-														return aSeconds - bSeconds;
-													})
-													.map((timeEntry, index, array) => {
-														let group = [];
-														if (
-															!this.props.userSettings
-																?.groupSimilarEntriesDisabled
-														) {
-															if (groupedIndexes.includes(index)) {
-																return null;
-															}
-															groupedIndexes.push(index);
-															group = array.reduce(
-																(prev, curr, currIndex) => {
-																	if (
-																		currIndex !== index &&
-																		this.isSimilarEntry(
-																			timeEntry,
-																			curr
-																		)
-																	) {
-																		groupedIndexes.push(
-																			currIndex
-																		);
-																		prev.push(curr);
-																	}
-																	return prev;
-																},
-																[]
-															);
-															if (group.length) {
-																group.unshift(timeEntry);
-															}
-														}
-														return (
-															<TimeEntry
-																timeEntryIndex={index}
-																key={timeEntry.id}
-																timeEntry={timeEntry}
-																project={timeEntry?.project}
-																task={
-																	timeEntry?.project
-																		? timeEntry?.task
-																		: null
-																}
-																playTimeEntry={this.playTimeEntry.bind(
-																	this
-																)}
-																changeMode={this.changeMode.bind(
-																	this
-																)}
-																timeFormat={this.props.timeFormat}
-																workspaceSettings={
-																	this.props.workspaceSettings
-																}
-																features={this.props.features}
-																isUserOwnerOrAdmin={
-																	this.props.isUserOwnerOrAdmin
-																}
-																userSettings={
-																	this.props.userSettings
-																}
-																groupedEntries={group}
-																handleRefresh={this.handleRefresh}
-																manualModeDisabled={
-																	this.props.manualModeDisabled
-																}
-															/>
-														);
-													})
-													.reverse()}
-											</div>
-										);
-									})}
-							</React.Fragment>
-						);
-					})}
-				</div>
-			);
 		}
+
+		return (
+			<div>
+				{this.props.groups.map((group, index) => {
+					return (
+						<React.Fragment key={group.title}>
+							<div className="week-header" data-pw={`week-${index}`}>
+								<span className="week-header-dates">{group.title}</span>
+								<span className="week-header-total">
+									<span className="week-header-total-label">
+										{group.totalTitle}{' '}
+									</span>
+									<span className="week-header-total-time">
+										{group.title === locales.THIS_WEEK
+											? this.getTotalTimeFormatted(group.total)
+											: group.total}
+									</span>
+								</span>
+							</div>
+							{this.props.dates
+								.filter(date => group.dates.some(d => date.includes(d)))
+								.map((day, index) => {
+									const groupedIndexes = [];
+									const parts = day.split('-');
+									const lastPart = parts.pop();
+									const firstPart = parts.join('-');
+
+									return (
+										<div
+											className="time-entries-list"
+											key={day}
+											data-pw={`time-entries-list-${index}`}>
+											<div className="time-entries-list-time">
+												<span className="time-entries-list-day">
+													{firstPart}
+												</span>
+												<div className="time-entries-total-and-time">
+													<span className="time-entries-list-total">
+														{locales.TOTAL}
+													</span>
+													<span className="time-entries-list-total-time">
+														{this.getCountingTotalTime(
+															firstPart,
+															lastPart
+														)}
+													</span>
+												</div>
+											</div>
+											{this.props.timeEntries
+												.filter(timeEntry => timeEntry.start === firstPart)
+												.sort((a, b) => {
+													const aSeconds = moment(
+														a.timeInterval.start
+													).unix();
+													const bSeconds = moment(
+														b.timeInterval.start
+													).unix();
+
+													if (aSeconds === bSeconds) {
+														return isChrome() ? -1 : 1;
+													}
+
+													return aSeconds - bSeconds;
+												})
+												.map((timeEntry, index, array) => {
+													let group = [];
+													if (
+														!this.props.userSettings
+															?.groupSimilarEntriesDisabled
+													) {
+														if (groupedIndexes.includes(index)) {
+															return null;
+														}
+														groupedIndexes.push(index);
+														group = array.reduce(
+															(prev, curr, currIndex) => {
+																if (
+																	currIndex !== index &&
+																	this.isSimilarEntry(
+																		timeEntry,
+																		curr
+																	)
+																) {
+																	groupedIndexes.push(currIndex);
+																	prev.push(curr);
+																}
+																return prev;
+															},
+															[]
+														);
+														if (group.length) {
+															group.unshift(timeEntry);
+														}
+													}
+													return (
+														<TimeEntry
+															timeEntryIndex={index}
+															key={timeEntry.id}
+															timeEntry={timeEntry}
+															project={timeEntry?.project}
+															task={
+																timeEntry?.project
+																	? timeEntry?.task
+																	: null
+															}
+															playTimeEntry={this.playTimeEntry.bind(
+																this
+															)}
+															changeMode={this.changeMode.bind(this)}
+															timeFormat={this.props.timeFormat}
+															workspaceSettings={
+																this.props.workspaceSettings
+															}
+															features={this.props.features}
+															isUserOwnerOrAdmin={
+																this.props.isUserOwnerOrAdmin
+															}
+															userSettings={this.props.userSettings}
+															groupedEntries={group}
+															handleRefresh={this.handleRefresh}
+															manualModeDisabled={
+																this.props.manualModeDisabled
+															}
+														/>
+													);
+												})
+												.reverse()}
+										</div>
+									);
+								})}
+						</React.Fragment>
+					);
+				})}
+			</div>
+		);
 	}
 }
 

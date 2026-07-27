@@ -4,11 +4,12 @@ clockifyButton.render(
 	{ observe: true },
 	async taskRow => {
 		await timeout({ milliseconds: 500 });
+
 		const actionsBar = $('[data-identifier="task-list-item-action-bar"]', taskRow);
 		const tagsContainer = $('[data-identifier="task-list-item-inline-elements-tags"]', taskRow);
 
 		const description = () => text('[class*="group/taskName"]', taskRow);
-		const projectName = () => text('.tw-toolbar-title > span');
+		const projectName = () => value('.tw-toolbar-title textarea');
 		const tagNames = () => textList('[class*="group/LscChip"]', tagsContainer);
 
 		const entry = { description, projectName, tagNames, small: true };
@@ -36,7 +37,7 @@ clockifyButton.render(
 	},
 	card => {
 		const description = () => text('h1,h2,h3,h4', card);
-		const projectName = () => text('.tw-toolbar-title > span');
+		const projectName = () => value('.tw-toolbar-title textarea');
 		const tagNames = () =>
 			textList('[data-identifier="task-tag-list"] [class*="group/LscChip"]', card);
 
@@ -61,13 +62,21 @@ clockifyButton.render(
 clockifyButton.render(
 	'[data-task-details-section="main"]:not(.clockify)',
 	{ observe: true, observerConfig: { attributes: true }, onNavigationRerender: true },
-	sidebarDetails => {
+	async sidebarDetails => {
+		await timeout({ milliseconds: 500 });
+		if ($('.clockify-widget-container')) return;
+
 		const description = () =>
-			text(`a[class*="text-default"]`, sidebarDetails.children[1]) ||
-			text(`span[class*="text-default"]`, sidebarDetails.children[1]);
-		const projectName = () => text('.tw-toolbar-title > span');
-		const tagNames = () =>
-			textList('[class*="!hover:text-primary"] [class*="group/LscChip"]', sidebarDetails);
+			text('a.router-link-active', sidebarDetails) ||
+			text('span.text-h6', sidebarDetails) ||
+			text('.text-subtitle-2', sidebarDetails);
+
+		const projectName = () =>
+			text('[data-identifier="quick-view-breadcrumbs-project"]') ||
+			text('.tw-toolbar-title > span') ||
+			value('.tw-toolbar-title textarea');
+
+		const tagNames = () => textList('[class*="group/LscChip"]', sidebarDetails);
 
 		const entry = { description, projectName, tagNames };
 
@@ -76,15 +85,12 @@ clockifyButton.render(
 
 		const container = createContainer(timer, input);
 
+		container.style.marginLeft = '24px';
+		container.style.marginTop = '10px';
 		container.style.display = 'flex';
 		container.style.alignItems = 'center';
-		container.style.justifyContent = 'space-between';
-		container.style.gap = '1rem';
-		container.style.width = 'fit-content';
-		container.style.margin = '8px 0 0 25px';
-
-		$('input', container).style.padding = '5px';
-		$('input', container).style.borderRadius = '5px';
+		container.style.gap = '8px';
+		container.style.fontWeight = 400;
 
 		sidebarDetails.before(container);
 	}

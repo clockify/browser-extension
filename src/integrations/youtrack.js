@@ -1,100 +1,70 @@
-/* the first selector is required for youtrack-5 and the second for youtrack-6 */
+// Issue cards view
 clockifyButton.render(
-	'.fsi-toolbar-content:not(.clockify), .toolbar_fsi:not(.clockify)',
-	{ observe: true },
-	function (elem) {
-		let description;
-		const numElem = $('a.issueId');
-		const titleElem = $('.issue-summary');
+	'.yt-agile-card:not(.clockify)',
+	{ observe: true, showTimerOnhover: '[data-test="yt-agile-board-card"]' },
+	youtrackCard => {
+		const cardId = () => text('.yt-agile-card__summary span:nth-child(1) a', youtrackCard);
+		const cardTitle = () => text('.yt-agile-card__summary span:nth-child(2)', youtrackCard);
 
-		const projectElem = $(
-			'.fsi-properties a[title^="Project"], .fsi-properties .disabled.bold'
-		);
+		const description = () => `${cardId()} ${cardTitle()}`;
+		const tagNames = () => textList('.yt-issue-tags__tag', youtrackCard);
 
-		description = titleElem.textContent;
-		description = numElem.firstChild.textContent.trim() + ' ' + description.trim();
+		const entry = { description, tagNames, small: true };
 
-		const link = clockifyButton.createButton(description, projectElem.textContent);
-		elem.insertBefore(link, titleElem);
+		const timer = clockifyButton.createTimer(entry);
+
+		timer.style.position = 'absolute';
+		timer.style.top = '10px';
+		timer.style.right = '10px';
+
+		youtrackCard.append(timer);
 	}
 );
 
-/* new view for single issues — obligatory since YouTrack 2018.3 */
-clockifyButton.render('.yt-issue-view:not(.clockify)', { observe: true }, function (elem) {
-	const issueId = elem.querySelector('.js-issue-id').textContent;
-	const link = clockifyButton.createButton(
-		issueId + ' ' + $('h1').textContent.trim(),
-		issueId.split('-')[0]
-	);
-	const toolbar = $('.yt-issue-toolbar');
-	link.style.paddingLeft = '20px';
-	elem.style.display = 'flex';
-	toolbar.appendChild(link);
-});
-
-// lite view for single issues
-// $('h1[data-test="ticket-summary"]')
+// Issue page view
 clockifyButton.render(
 	'[data-test="issue-container"]:not(.clockify)',
 	{ observe: true, onNavigationRerender: true },
-	async elem => {
+	async issueContainer => {
 		await timeout({ milliseconds: 500 });
-		if ($('.clockify-container', elem)) return;
+
+		if ($('.clockify-widget-container', issueContainer)) return;
 		// when view goes to edit mode and back, rerender buttons
 		observeEditIssue();
 		// rerender on edit close
 		const ticketId = () =>
-			text('[data-test=breadcrumbs-container] [id*=id-link]') || text('[id*=id-link]');
-		const ticketTitle = () => text('[data-test="ticket-summary"]', elem);
+			text('[data-test=breadcrumbs-container] [id*="id-link"]') || text('[id*="id-link"]');
+		const ticketTitle = () => text('[data-test="ticket-summary"]', issueContainer);
 
 		const description = () => `${ticketId()} ${ticketTitle()}`;
 		const projectName = () => text('[aria-label="Project"] span[class^="fieldValue"]');
-		const tagNames = () => textList('[class*="tags"] a', elem);
+		const tagNames = () => textList('[class*="tags"] a', issueContainer);
 
 		const entry = { description, projectName, tagNames, small: true };
 
-		const link = clockifyButton.createButton(entry);
+		const timer = clockifyButton.createTimer(entry);
 		const input = clockifyButton.createInput(entry);
 
 		input.style.marginLeft = '16px';
 
-		const clockifyContainer = createTag('div', 'clockify-container');
-		clockifyContainer.style.display = 'flex';
-		clockifyContainer.style.alignItems = 'center';
-		clockifyContainer.append(link);
-		clockifyContainer.append(input);
+		const container = createContainer(timer, input);
 
-		const modalHeader = $('.summaryToolbar__c231', elem);
-		const firstChild = $('div', modalHeader);
-		modalHeader.insertBefore(clockifyContainer, firstChild.nextSibling);
+		container.style.display = 'flex';
+		container.style.alignItems = 'center';
+
+		const modalHeader = $('[class*="header__"]', issueContainer);
+
+		modalHeader.append(container);
 	}
 );
 
-// Cards view
-clockifyButton.render('.yt-agile-card:not(.clockify)', { observe: true }, youtrackCard => {
-	const cardId = () => text('.yt-agile-card__summary span:nth-child(1) a', youtrackCard);
-	const cardTitle = () => text('.yt-agile-card__summary span:nth-child(2)', youtrackCard);
-
-	const description = () => `${cardId()} ${cardTitle()}`;
-	const tagNames = () => textList('.yt-issue-tags__tag', youtrackCard);
-
-	const entry = { description, tagNames, small: true };
-
-	const link = clockifyButton.createButton(entry);
-
-	link.style.position = 'absolute';
-	link.style.top = '10px';
-	link.style.right = '10px';
-
-	youtrackCard.append(link);
-});
-
-// Modal view
+// Issue modal view
 clockifyButton.render(
 	'[data-test*="ticket-view-dialog"]:not(.clockify)',
 	{ observe: true },
 	async taskModal => {
 		await timeout({ milliseconds: 1000 });
+
 		// when view goes to edit mode and back, rerender buttons
 		observeEditIssue();
 		await waitForElement('[data-test="fields-sidebar"]', taskModal);
@@ -106,26 +76,26 @@ clockifyButton.render(
 		const projectName = () => text('[aria-label="Project"] span[class^="fieldValue"]');
 		const tagNames = () => textList('[class*="tags"] a', taskModal);
 
-		const entry = { description, projectName, tagNames };
+		const entry = { description, projectName, tagNames, small: true };
 
-		const link = clockifyButton.createSmallButton(entry);
+		const timer = clockifyButton.createTimer(entry);
 		const input = clockifyButton.createInput(entry);
 
 		input.style.marginLeft = '16px';
 
-		const clockifyContainer = createTag('div');
-		clockifyContainer.style.display = 'flex';
-		clockifyContainer.style.alignItems = 'center';
-		clockifyContainer.append(link);
-		clockifyContainer.append(input);
+		const container = createContainer(timer, input);
 
-		const modalHeader = $('.summaryToolbar__c231', taskModal);
-		modalHeader.append(clockifyContainer);
+		container.style.display = 'flex';
+		container.style.alignItems = 'center';
+
+		const modalHeader = $('[class*="header__"]', taskModal);
+
+		modalHeader.append(container);
 	}
 );
 
 applyStyles(`
-	.clockify-container {
+	.clockify-widget-container {
 		display: flex;
 		flex: 1;
 		justify-content: end;

@@ -11,6 +11,7 @@ import {
 	addDarkModeClassOnBodyElement,
 	removeDarkModeClassFromBodyElement,
 } from '~/zustand/slices/darkThemeSlice';
+import { NoInternetConnection } from '~/components/NoInternetConnection';
 
 let messageListener = null;
 
@@ -148,7 +149,7 @@ export class Extension {
 			} else {
 				console.log('[Clockify] [Debugger] 1.4');
 				if (window.mountHtmlElement) {
-					window.reactRoot.render(<HomePage />);
+					window.reactRoot.render(<NoInternetConnection />);
 				}
 			}
 		} else {

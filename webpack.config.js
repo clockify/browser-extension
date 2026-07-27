@@ -151,7 +151,8 @@ module.exports = {
 
 						if (
 							fileName === 'service-background.js' ||
-							fileName === 'service-localstorage.js'
+							fileName === 'service-localstorage.js' ||
+							fileName === 'background.js'
 						) {
 							return content
 								.toString()

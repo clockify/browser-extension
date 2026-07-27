@@ -1,5 +1,6 @@
 (async () => {
 	await timeout({ milliseconds: 300 });
+	const selectors = await getSelectors('nozbe', 'sideTaskView');
 
 	// app.nozbe.com
 	clockifyButton.render('#details-container', { observe: true }, async taskContainer => {
@@ -31,41 +32,29 @@
 		rightColumn && rightColumn.append(inputContainer);
 	});
 
-	// nozbe.app
 	clockifyButton.render(
-		await getSelectors('nozbe', 'sideTaskView', 'hanger'),
+		selectors.hanger,
 		{ observe: true, onNavigationRerender: true },
 		async elem => {
+			await timeout({ milliseconds: 500 });
 			if ($('.clockifyButton')) return;
-
-			initializeHangerObserver();
-			const selectors = await getSelectors('nozbe', 'sideTaskView');
-
-			const leftColumn = await waitForElement(selectors.leftColumn);
-			const rightColumn = await waitForElement(selectors.rightColumn);
-
-			const timerContainer = createTag('div', selectors.containerClassList);
-			const inputContainer = createTag('div', selectors.containerClassList);
 
 			const description = () => text(selectors.description);
 
-			const timer = clockifyButton.createTimer({ description });
-			const input = clockifyButton.createInput({ description });
+			const timer = clockifyButton.createSmallButton({ description });
 
-			elem.style.height = 'fit-content';
-			inputContainer.style.cursor = 'default';
-			input.style.cursor = 'text';
+			timer.style.margin = '5px';
 
-			timerContainer.append(timer);
-			inputContainer.append(input);
+			elem.append(timer);
 
-			leftColumn.append(timerContainer);
-			rightColumn.append(inputContainer);
-
-			const line = await waitForElement(selectors.line, elem);
-			line.style.marginTop = '30px';
+			applyStyles(`
+				.clockifyButton * { 
+					cursor: pointer; 
+				}
+			`);
 		}
 	);
+	// nozbe.app
 })();
 
 initializeBodyObserver();
@@ -78,22 +67,6 @@ function initializeBodyObserver() {
 	const observationConfig = { attributes: true, attributeFilter: ['data-theme'] };
 
 	bodyObserver.observe(observationTarget, observationConfig);
-}
-
-function initializeHangerObserver() {
-	const bodyObserver = new MutationObserver(async () => {
-		if (!document.querySelector('.mLYLD > div:first-child').style.height) {
-			await timeout({ milliseconds: 0 });
-			clockifyButton.rerenderAllButtons();
-		}
-	});
-
-	const observationTarget = document.querySelector('.mLYLD > div:first-child');
-
-	if (observationTarget) {
-		const observationConfig = { attributes: true, attributeFilter: ['style'] };
-		bodyObserver.observe(observationTarget, observationConfig);
-	}
 }
 
 function applyManualInputStyles() {

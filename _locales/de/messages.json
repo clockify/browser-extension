@@ -62,6 +62,27 @@
   "TRACKER__TIME_TRACKER__RECORDER__ADD_TIME_MANUALLY_TOOLTIP": {
     "message": "Zeit hier manuell hinzufügen"
   },
+  "ENTRY_DELETED_SUCCESS": {
+    "message": "Eintrag gelöscht"
+  },
+  "ENTRIES_DELETED_SUCCESS": {
+    "message": "Einträge gelöscht"
+  },
+  "ENTRY_RESTORED_SUCCESS": {
+    "message": "Eintrag wiederhergestellt"
+  },
+  "ENTRIES_RESTORED_SUCCESS": {
+    "message": "Einträge wiederhergestellt"
+  },
+  "ENTRY_RESTORED_ERROR": {
+    "message": "Der Zeiteintrag konnte nicht wiederhergestellt werden"
+  },
+  "ENTRIES_RESTORED_ERROR": {
+    "message": "Zeiteinträge konnten nicht wiederhergestellt werden"
+  },
+  "TIMER_CANCELLED": {
+    "message": "Timer abgebrochen"
+  },
   "BILLABLE_LABEL": {
     "message": "Abrechenbar"
   },
@@ -341,6 +362,9 @@
   "DESCRIPTION_LIMIT_ERROR_MSG": {
     "message": "Beschreibung gekürzt (maximale Länge { limit } Zeichen)"
   },
+  "GLOBAL__UNDO_LABEL": {
+    "message": "Rückgängig machen"
+  },
   "INSTAL_AND_TRACK_ANYWHERE": {
     "message": "Clockify installieren und die Zeit überall verfolgen."
   },
@@ -497,6 +521,12 @@
   "DISABLED_MANUAL_MODE": {
     "message": "Manueller Modus deaktiviert"
   },
+  "COPY_BTN_TOOLTIP": {
+    "message": "Als Zeiteintrag kopieren"
+  },
+  "CALENDAR_DATE_TIME": {
+    "message": "Zeit und Datum"
+  },
   "SETTINGS": {
     "message": "Einstellungen"
   },
@@ -603,7 +633,7 @@
     "message": "Dein Standardprojekt wird archiviert."
   },
   "DEFAULT_TASK_DONE": {
-    "message": "Deine Standardaufgabe ist fertig und nicht mehr verfügbar."
+    "message": "Deine Standardaufgabe ist erledigt und nicht mehr verfügbar."
   },
   "DEFAULT_TASK_DOES_NOT_EXIST": {
     "message": "Standardaufgabe ist nicht vorhanden."
@@ -891,7 +921,7 @@
     "message": "Fertig"
   },
   "SIGNUP_TITLE": {
-    "message": "Mit Clockify starten"
+    "message": "Erste Schritte mit Clockify"
   },
   "CREATE_ACCOUNT_EXPLANATION": {
     "message": "Erstelle ein kostenloses Konto, um mit der Zeiterfassung zu beginnen und deine Produktivität zu steigern."
@@ -1303,6 +1333,42 @@
   },
   "TOO_MANY_REQUESTS": {
     "message": "Zu viele Anträge. Später noch einmal versuchen."
+  },
+  "OFFLINE_MODE__TITLE": {
+    "message": "Du bist offline"
+  },
+  "OFFLINE_MODE__SUBTITLE": {
+    "message": "Anscheinend besteht keine Internetverbindung."
+  },
+  "DATA_IMPORT__NOTIFICATION__SUCCESS_BTN_LABEL": {
+    "message": "Zusammenfassung anzeigen"
+  },
+  "ONBOARDING_SURVEY__TITLE": {
+    "message": "Hilf uns, dein Clockify-Erlebnis anzupassen"
+  },
+  "ONBOARDING_SURVEY__PART_1": {
+    "message": "Ich bin hier, um"
+  },
+  "ONBOARDING_SURVEY__PART_2": {
+    "message": "mit meinem Team von"
+  },
+  "ONBOARDING_SURVEY__PART_3": {
+    "message": "und unser primäres Abrechnungsmodell ist"
+  },
+  "ONBOARDING_SURVEY__GOAL_PLACEHOLDER": {
+    "message": "Primäres Ziel auswählen"
+  },
+  "ONBOARDING_SURVEY__SIZE_PLACEHOLDER": {
+    "message": "Größe auswählen"
+  },
+  "ONBOARDING_SURVEY__MODEL_PLACEHOLDER": {
+    "message": "Modell auswählen"
+  },
+  "ONBOARDING_SURVEY__START_USING_BUTTON": {
+    "message": "Jetzt mit Clockify starten"
+  },
+  "ONBOARDING_SURVEY__VALIDATION_POPOVER": {
+    "message": "Fülle alle oben stehenden Felder aus."
   },
   "appName": {
     "message": "Clockify-Zeiterfassung",
