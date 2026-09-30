@@ -128,13 +128,20 @@ aBrowser.storage.onChanged.addListener(async changes => {
 })();
 
 async function extractAndStoreTokens(url) {
-	const [webAccessToken, webRefreshToken] = url
-		.split('?')[1]
-		.replace('accessToken=', '')
-		.replace('refreshToken=', '')
-		.split('&');
+	const callbackUrl = new URL(url);
+	const webAccessToken = callbackUrl.searchParams.get('accessToken');
+	const webRefreshToken = callbackUrl.searchParams.get('refreshToken');
 
-	const userId = JSON.parse(atob(webAccessToken.split('.')[1])).sub;
+	if (!webAccessToken || !webRefreshToken) {
+		throw new Error('Clockify OAuth callback is missing tokens.');
+	}
+
+	const payload = webAccessToken.split('.')[1];
+	if (!payload) {
+		throw new Error('Clockify OAuth access token has no payload.');
+	}
+
+	const userId = JSON.parse(decodeBase64Url(payload)).sub;
 
 	const exchangeToken = await TokenService.fetchExchangeToken(userId, webRefreshToken);
 	const { token, refreshToken } = await TokenService.fetchTokens(exchangeToken);
