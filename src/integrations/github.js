@@ -1,13 +1,10 @@
-// PR view, Issue view
+// PR view
 clockifyButton.render(
-	`[data-testid="issue-header"] [data-component="PH_Actions"]:not(.clockify),
-	[class*="PullRequestHeader-module__actionsAboveTitleOnNarrow"] [data-component="PH_Actions"]:not(.clockify)`,
+	'[class*="PullRequestHeader-module__actionsAboveTitleOnNarrow"] [data-component="PH_Actions"]:not(.clockify)',
 	{ observe: true },
 	async actions => {
 		await timeout({ milliseconds: 500 });
 		if ($('.clockifyButton')) return;
-
-		const isIssuesTab = window.location.pathname.includes('issues');
 
 		const repositoryName = location.href.split('/')[4];
 
@@ -22,10 +19,7 @@ clockifyButton.render(
 			text('[aria-label="Page context"] ul li:nth-child(2) span') ||
 			text('[itemprop="name"] a');
 		const taskName = () => `${id()} ${title()}`;
-		const tagNames = () =>
-			isIssuesTab
-				? textList('a[class*=LabelsList-module] > span:first-child')
-				: textList('.js-issue-labels .IssueLabel');
+		const tagNames = () => textList('.js-issue-labels .IssueLabel');
 
 		const entry = { description, projectName, taskName, tagNames };
 
@@ -34,31 +28,27 @@ clockifyButton.render(
 
 		timer.style.padding = '3px 14px';
 
-		if (isIssuesTab) {
-			$('[class*=HeaderMenu-module__menuActionsContainer]', actions).prepend(timer);
-			$('[class*=HeaderMenu-module__menuActionsContainer]', actions).prepend(input);
-			return;
-		}
-
 		actions.prepend(timer);
 		actions.prepend(input);
 	}
 );
 
-// Issue sidepanel view (project details)
+// Issue view, issue side panel (project details)
 clockifyButton.render(
-	'[class*=SidePanel-module] [data-component="PH_Actions"] > div:not(.clockify)',
+	'[data-testid="issue-header"] [data-component="PH_Actions"]:not(.clockify)',
 	{ observe: true },
 	async actions => {
-		const issueId =
-			(await waitForText('[data-testid="issue-header"] a[data-hovercard-type="issue"]')) ||
-			waitForText('h1 bdi + span, ');
-		const issueTitle = await waitForText('[data-testid="issue-title"]');
-		const repositoryName = $('[data-testid="issue-header"] a').href.split('/')[4];
+		await timeout({ milliseconds: 500 });
 
-		const description = `${issueId} ${issueTitle}`;
-		const projectName = repositoryName;
-		const taskName = `${issueId} ${issueTitle}`;
+		const header = actions.closest('[data-testid="issue-header"]');
+		if ($('.clockifyButton', header)) return;
+
+		const id = () => getIssueFromHeader(header).id;
+		const title = () => text('[data-testid="issue-title"]', header);
+
+		const description = () => joinIdAndTitle(id(), title());
+		const projectName = () => getIssueFromHeader(header).repositoryName;
+		const taskName = () => joinIdAndTitle(id(), title());
 		const tagNames = () =>
 			textList('[data-testid="issue-labels"] [class*="TokenTextContainer"]');
 
@@ -75,55 +65,62 @@ clockifyButton.render(
 		input.style.display = 'flex';
 		input.style.alignItems = 'center';
 
-		actions.prepend(container);
+		const menu = $('[class*="menuActionsContainer"]', actions) || actions;
+
+		menu.prepend(container);
 	}
 );
 
 // Project - board view
 clockifyButton.render(
-	'[data-board-card-id]:not(.clockify)',
+	'[data-board-card-id]:has([id^="board-card-title-"]):not(.clockify)',
 	{ observe: true, showTimerOnhover: '[data-board-card-id]', onNavigationRerender: true },
 	async card => {
 		await timeout({ milliseconds: 500 });
 		if ($('.clockifyButton', card)) return;
 
-		const cardHeaderTitle = () => text('[class*="header-module__Text__"]', card).split(' ');
-		const id = () => cardHeaderTitle()[1];
-		const title = () => text('[id*="board-card-title-"]', card);
-		const repositoryName = cardHeaderTitle()[0];
+		const headerTitle = $('[id^="board-card-header-title-"]', card);
+		const link = $('a[href*="/issues/"], a[href*="/pull/"]', card);
+		const [headerRepositoryName, headerId] = (headerTitle?.textContent.trim() || '').split(' ');
+		const { repositoryName = headerRepositoryName, id = headerId } = link
+			? parseItemUrl(link.href)
+			: {};
+		const title = () => text('[id^="board-card-title-"]', card);
 
-		const description = () => `${id()} ${title()}`;
+		const description = () => joinIdAndTitle(id, title());
 		const projectName = () => repositoryName;
-		const taskName = () => `${id()} ${title()}`;
+		const taskName = () => joinIdAndTitle(id, title());
+		const tagNames = () => textList('[class*="IssueLabel"] [class*="TokenTextContainer"]', card);
 
-		const entry = { description, projectName, taskName, small: true };
+		const entry = { description, projectName, taskName, tagNames, small: true };
 
 		const timer = clockifyButton.createTimer(entry);
 
-		$('[data-board-card-id] [class*="header-module__Box_3"]', card)?.append(timer);
+		const headerActions = headerTitle?.parentElement?.nextElementSibling;
+
+		(headerActions || headerTitle?.parentElement)?.append(timer);
 	}
 );
 
 // Project - table view
 clockifyButton.render(
-	'[class*="title-renderer-module__titleCell"]:not(.clockify)',
-	{ observe: true, showTimerOnhover: '[class*="title-renderer-module__titleCell"]' },
-	async row => {
+	'[role="row"] [class*="titleCell"]:not(.clockify)',
+	{ observe: true, showTimerOnhover: '[class*="titleCell"]' },
+	async cell => {
 		await timeout({ milliseconds: 750 });
-		if ($('.clockifyButton', row)) return;
+		if ($('.clockifyButton', cell)) return;
 
-		const iconAddPlusButton = $('[class*="title-renderer-module__PlusIconContainer"]', row);
+		const row = cell.closest('[role="row"]');
+		const iconAddPlusButton = $('[class*="PlusIconContainer"]', cell);
 
-		const id = await waitForText('[class*="title-renderer-module__Text"]', row);
-		const title = await waitForText('a', row);
-		const repositoryName = $('a', row).href.split('/')[4];
-		const labelsColumnIndex = getIndexOfCell('labels');
-		const tagsSelctor = `[role="gridcell"]:nth-child(${labelsColumnIndex}) [class*="TokenTextContainer"]`;
+		const link = $('a[href*="/issues/"], a[href*="/pull/"]', cell);
+		const { repositoryName, id } = link ? parseItemUrl(link.href) : {};
+		const title = () => (link ? link.textContent.trim() : cell.textContent.trim());
 
-		const description = () => `${id.trim()} ${title}`;
+		const description = () => joinIdAndTitle(id, title());
 		const projectName = () => repositoryName;
-		const taskName = () => `${id} ${title}`;
-		const tagNames = () => textList(tagsSelctor, row);
+		const taskName = () => joinIdAndTitle(id, title());
+		const tagNames = () => textList('[class*="IssueLabel"] [class*="TokenTextContainer"]', row);
 
 		const entry = { description, projectName, taskName, tagNames, small: true };
 
@@ -134,19 +131,36 @@ clockifyButton.render(
 		timer.style.width = 'fit-content';
 		timer.style.marginLeft = iconAddPlusButton ? '5px' : 'auto';
 
-		row.append(timer);
+		cell.append(timer);
 	}
 );
 
-function getIndexOfCell(cellTextContent) {
-	const firstRow = $('[role="row"]');
-	const allCellsWithinFirstRow = Array.from($$('[role="row"] > *', firstRow));
-	const index =
-		allCellsWithinFirstRow
-			.map(item => item.innerText.toLowerCase().trim())
-			.indexOf(cellTextContent.toLowerCase()) + 1;
+// Issue opened in the project side panel has its address in the "issue" query param: owner|repo|number
+function getIssueFromHeader(header) {
+	const sidePanelIssue = new URLSearchParams(location.search).get('issue');
 
-	return index;
+	if (sidePanelIssue) {
+		const [, repositoryName, number] = sidePanelIssue.split('|');
+
+		return { repositoryName, id: `#${number}` };
+	}
+
+	const issueFromLocation = parseItemUrl(location.href);
+	if (issueFromLocation.id) return issueFromLocation;
+
+	const issueLink = $('a[data-hovercard-type="issue"]', header);
+
+	return issueLink ? parseItemUrl(issueLink.href) : {};
+}
+
+function parseItemUrl(url) {
+	const [, , repositoryName, type, number] = new URL(url, location.origin).pathname.split('/');
+
+	return ['issues', 'pull'].includes(type) && number ? { repositoryName, id: `#${number}` } : {};
+}
+
+function joinIdAndTitle(id, title) {
+	return [id, title].filter(Boolean).join(' ');
 }
 
 applyStyles('.clockifyButton, .clockify-input { font-weight: 400; }');
