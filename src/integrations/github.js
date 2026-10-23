@@ -50,7 +50,10 @@ clockifyButton.render(
 		const projectName = () => getIssueFromHeader(header).repositoryName;
 		const taskName = () => joinIdAndTitle(id(), title());
 		const tagNames = () =>
-			textList('[data-testid="issue-labels"] [class*="TokenTextContainer"]');
+			textList(
+				`[data-testid="issue-type-container"] [class*="TokenTextContainer"],
+				[data-testid="issue-labels"] [class*="TokenTextContainer"]`
+			);
 
 		const entry = { description, projectName, taskName, tagNames };
 
@@ -71,6 +74,10 @@ clockifyButton.render(
 	}
 );
 
+// Issue type and labels shown on project board cards and table rows
+const itemTagsSelector = `[class*="IssueTypeToken"] [class*="TokenTextContainer"],
+	[class*="IssueLabel"] [class*="TokenTextContainer"]`;
+
 // Project - board view
 clockifyButton.render(
 	'[data-board-card-id]:has([id^="board-card-title-"]):not(.clockify)',
@@ -90,7 +97,7 @@ clockifyButton.render(
 		const description = () => joinIdAndTitle(id, title());
 		const projectName = () => repositoryName;
 		const taskName = () => joinIdAndTitle(id, title());
-		const tagNames = () => textList('[class*="IssueLabel"] [class*="TokenTextContainer"]', card);
+		const tagNames = () => textList(itemTagsSelector, card);
 
 		const entry = { description, projectName, taskName, tagNames, small: true };
 
@@ -120,7 +127,7 @@ clockifyButton.render(
 		const description = () => joinIdAndTitle(id, title());
 		const projectName = () => repositoryName;
 		const taskName = () => joinIdAndTitle(id, title());
-		const tagNames = () => textList('[class*="IssueLabel"] [class*="TokenTextContainer"]', row);
+		const tagNames = () => textList(itemTagsSelector, row);
 
 		const entry = { description, projectName, taskName, tagNames, small: true };
 
